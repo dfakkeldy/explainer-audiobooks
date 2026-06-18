@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Python
+__pycache__/
+*.pyc
+
+# Build scratch (chapters/cover intermediates if generated in-repo)
+*.tmp
+/tmp/
