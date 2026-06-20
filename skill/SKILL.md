@@ -36,8 +36,10 @@ read aloud**. That single constraint shapes everything.
 
 Three failure modes sink a project like this, and the process below exists to
 beat each one:
-1. **It sounds like code read aloud.** Solved by the narration style bible and a
-   post-generation code-leak sweep.
+1. **It sounds like code read aloud — or, overcorrecting, scrubs the real names
+   away.** Solved by the narration style bible (which both bans spoken syntax and
+   *requires* naming the real files, tools, and commands) plus a post-generation
+   code-leak and vocabulary sweep.
 2. **It hallucinates the worked example.** Solved by per-chapter *fact packs*
    built from the example's real docs/code, embedded in every writer's prompt.
 3. **It's a slog to generate 45,000 good words.** Solved by fanning out one
@@ -69,9 +71,12 @@ defaults so it stays a quick yes/no, not an interrogation:
 - **Title / author** — for the EPUB metadata.
 
 A key clarification worth surfacing early: "don't read code aloud" is the rule,
-which is *not* the same as "don't read code for accuracy." You should read
-whatever docs and source you need to get the facts right; you just never narrate
-syntax.
+which is *not* the same as "don't read code for accuracy" — and *not* the same as
+"don't name real things." Read whatever docs and source you need to get the facts
+right. You never narrate syntax, but you *do* name the real files, tools, and
+commands out loud (in spoken-friendly form) so the listener finishes knowing the
+vocabulary and could go find these things. Quietly erasing every real name into
+"the settings file" is the failure to avoid — see `references/narration-style.md`.
 
 ### 2. Design the chapter outline, and get approval before generating
 
@@ -80,9 +85,10 @@ expensive mistake, so present the outline and get a yes first.
 
 Build a table of contents in *pedagogical* order (foundations first, advanced
 last). Each chapter pairs **one concept** with **one real component** of the
-worked example, and promises the why + the tradeoff. Also pick **2-4
-throughlines** — recurring ideas that give the long listen a spine (see
-`references/narration-style.md` for why these matter and an example set).
+worked example, and promises the why — and the honest tradeoff where there's a
+real one (not every chapter needs one). Also pick **2-4 throughlines** — recurring
+ideas that give the long listen a spine (see `references/narration-style.md` for
+why these matter and an example set).
 
 Present the outline as a short table (chapter, concept taught, grounded-in) plus
 the throughlines, and ask the user to approve, reorder, or adjust. Tell them the
@@ -92,8 +98,10 @@ honest projected length and runtime.
 
 For each chapter, assemble:
 - a **fact pack**: concise, accurate, sourced details about the worked example —
-  read its real docs/code to get these right. This is the accuracy backbone; the
-  writers must not invent beyond it.
+  read its real docs/code to get these right. **Include the real names** the
+  listener should come away knowing (the actual files, tools, commands, and
+  components this chapter touches), each with a one-line gloss. This is the accuracy
+  backbone; the writers must not invent beyond it.
 - a **beat sheet**: 6-7 beats, each roughly 450-600 words, that walk the hook →
   concept → grounding → tradeoff → takeaway shape.
 
@@ -119,8 +127,12 @@ Follow `references/fanout-template.md`. It gives two ways to run the fan-out:
 Run the checklist in `references/narration-style.md`:
 - real word counts with `wc -w` (top up any chapter under its floor — never trust
   self-reported counts);
-- a code-leak grep sweep (backticks, snake_case, arrows, braces, spoken file
-  extensions) — scrub anything that would sound wrong narrated;
+- a code-leak grep sweep (backticks, snake_case, arrows, braces) — scrub raw
+  syntax, but leave plainly-spoken filenames like settings.json alone now;
+- a cliché / over-emphasis sweep — the "tattoo this" tics, inflated-stakes density,
+  and tradeoff drone this voice is prone to; flatten anything that oversells;
+- a vocabulary check — the real file/tool names from each fact pack actually get
+  named in the prose, not paraphrased into "the settings file";
 - heading-consistency check so the TOC comes out clean.
 
 Spot-read the tone-setting first chapter and the most technical chapter to
@@ -139,8 +151,13 @@ model running this skill right now, e.g. "Opus 4.8", "Sonnet 4.6", "Fable 5" —
 not the raw model id, not a guess). So: author = the human everywhere; model =
 contributor in metadata only.
 
-First generate a cover image. A cover makes the book look real in any library
-(and in Echo), so always make one unless the user supplies their own:
+Make the cover next. A cover makes the book look real in any library (and in
+Echo), and it should look like a bestseller and **show what the book is about
+through an image** — not the title on a plain colour. There is no text-to-image
+tool, so you author the illustration as bespoke vector art per book. Follow
+`references/cover-art.md`: design **2-3 distinct illustration concepts** for the
+subject, author each as its own SVG, and render each into a cover. The default
+layout is `bleed` (full illustration plus a scrim that carries the title):
 
 ```bash
 python3 scripts/make_cover.py \
@@ -148,18 +165,23 @@ python3 scripts/make_cover.py \
   --subtitle "<one-line subtitle>" \
   --author "Dan Fakkeldy" \
   --label "AUDIOBOOK" \
-  --out <build>/dist/cover.png
+  --art <build>/dist/cover-concept-1.svg \
+  --layout bleed \
+  --out <build>/dist/cover-1.png
 ```
 
-`make_cover.py` builds a clean typographic cover as an SVG (no image library
-needed) and rasterizes it to a 1600×2560 PNG using whatever is installed
-(`rsvg-convert`, then ImageMagick). The background hue is derived from the title,
-so every book gets its own color. If no rasterizer is found it writes a `.svg`
-beside the path and exits non-zero — in that case either install `librsvg`
-(`rsvg-convert`) or ImageMagick, or proceed without a cover. If the user gave you
-their own cover image, skip this and pass their file as `--cover` below.
+Then **send the candidates with `SendUserFile` and let the user pick** (or mix) —
+cover taste is theirs, and each render is cheap. `make_cover.py` composes your art
+into the layout and rasterizes a 1600×2560 PNG via `rsvg-convert`, then ImageMagick;
+the background hue is still derived from the title. `--layout hero` frames the art
+in a panel instead, for a quieter, more classic option worth including as one of
+the candidates. A complete example illustration ships at
+`references/cover-art-example.svg`. If no rasterizer is found the script writes a
+`.svg` beside the path and exits non-zero — install `librsvg`/ImageMagick or
+proceed without a cover. If the user supplied their own cover image, skip all this
+and pass their file as `--cover` below.
 
-Then assemble, passing the cover with `--cover`:
+Then assemble, passing the chosen cover with `--cover`:
 
 ```bash
 python3 scripts/build_book.py \
@@ -170,7 +192,7 @@ python3 scripts/build_book.py \
   --contributor "<your model name, e.g. Opus 4.8>" \
   --subtitle "<one-line subtitle>" \
   --slug <Output-Filename-Base> \
-  --cover <build>/dist/cover.png
+  --cover <build>/dist/cover-<chosen>.png
 ```
 
 It writes a valid EPUB 3 (with both a nav and an NCX table of contents, and the
@@ -205,12 +227,16 @@ code change, so it normally needs no repo-doc updates.
 - `scripts/build_book.py` — assembles `chNN.md` chapter files into an EPUB +
   combined Markdown. Title/author/subtitle/slug are arguments, plus an optional
   `--cover`. Run it; don't reimplement EPUB zipping by hand.
-- `scripts/make_cover.py` — generates a clean typographic cover PNG (title,
-  subtitle, author, hue derived from the title) via SVG + a rasterizer. Run it
-  before `build_book.py`; pass the result with `--cover`.
+- `scripts/make_cover.py` — composes a bespoke per-book illustration (`--art`, an
+  SVG you author for the book) into a bestseller-style cover PNG, in a `bleed`
+  (default) or `hero` layout. Render 2-3 concepts, let the user pick, then pass the
+  chosen PNG to `build_book.py --cover`.
 - `references/narration-style.md` — the voice & rules block to give every writer
   verbatim, the reasoning behind them, the length/runtime table, the fact-pack
   discipline, and the QC checklist. Read before writing fact packs.
+- `references/cover-art.md` — how to design good per-book cover art and run the
+  offer-a-few-candidates flow; ships with `cover-art-example.svg` as a starting
+  point.
 - `references/fanout-template.md` — the parallel chapter-writing pattern, both the
   Agent-tool default and the Workflow option, with the exact writer-prompt
   template.
