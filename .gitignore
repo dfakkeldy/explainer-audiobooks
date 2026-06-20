@@ -11,3 +11,4 @@ __pycache__/
 # Build scratch (chapters/cover intermediates if generated in-repo)
 *.tmp
 /tmp/
+.build/

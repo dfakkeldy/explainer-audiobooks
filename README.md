@@ -14,7 +14,7 @@ The books teach how to **build and ship software**, and most are taught through 
 
 Two different audiences:
 
-- **If you want to learn** — there are ~30 hours of narration-ready beginner guides below, free, grounded in real code. Drop an `.epub` into any audiobook or reader app and listen.
+- **If you want to learn** — there are ~32 hours of narration-ready beginner guides below, free, grounded in real code. Drop an `.epub` into any audiobook or reader app and listen.
 - **If you build with AI agents** — the genuinely interesting part is the *method*: how to make a language model write 50,000 accurate words it *won't* hallucinate, by grounding every chapter in real source and fanning the work across one agent per chapter. That's in **[docs/how-these-were-made.md](docs/how-these-were-made.md)**.
 
 ## The collection
@@ -27,6 +27,7 @@ Two different audiences:
 | [The Bug Is a Clue](books/the-bug-is-a-clue/) | Debugging in Xcode | 17 chapters · ~5.9 h | Opus 4.8 |
 | [Git Happens](books/git-happens/) | Git & GitHub, end to end | 15 chapters · ~4.1 h | DeepSeek v4 |
 | [Findable](books/findable/) | App Store Optimization for a small app | 8 chapters · ~3.0 h | Opus 4.8 |
+| [The Voice in the Machine](books/the-voice-in-the-machine/) | How on‑device AI narration works (Kokoro) | 10 chapters · ~2.8 h | Opus 4.8 |
 
 Each folder holds the **`.epub`** (for any audiobook/reader app, including on‑device text‑to‑speech), a combined **`.md`** (readable right here on GitHub), and the cover.
 
