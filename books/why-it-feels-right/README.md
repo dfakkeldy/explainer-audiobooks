@@ -1,29 +1,27 @@
 # Why It Feels Right
 
-_A Beginner's Guide to Apple's Human Interface Guidelines, told through Echo_
+_A Beginner's Guide to Apple Design, from the HIG to SwiftUI — told through Echo_
 
 ![Cover](cover.png)
 
-> You have felt it, even if you have never had a word for it — the app that settles, and the one that quietly nags. This book gives you the words.
+> You have felt it, even if you have never had a word for it — the app that settles, and the one that quietly nags. This book gives you the words. All of them.
 
-This is a narrated beginner's guide to Apple's design language — the written-down version of that feeling you cannot name. It teaches the Human Interface Guidelines not as a dry rulebook but through one real, shipping open-source app called **Echo**, an audiobook study player built by a solo developer with AI help. You will watch the rules work in a real product, and watch Echo break a few of them on purpose, for reasons it pays for. It is written entirely for the ear: no code, no symbols read aloud, just plain language and screens you already know by heart.
+This is a narrated beginner's guide to Apple's design language, rebuilt from the ground up to also teach the **real vocabulary** — both the Human Interface Guidelines' words and SwiftUI's. It grounds the psychology first in Don Norman's classics (*The Design of Everyday Things*, *Emotional Design*): **affordances, signifiers, mapping, feedback, and the three teapots**. Then it walks Apple's design system through one real, shipping open-source app called **Echo**, an audiobook study player built by a solo developer with AI help — naming every construct out loud along the way, from **NavigationStack** and **presentation detents** to **LazyVStack** and **UIViewRepresentable**, so you finish able to search, read the docs, and ask an AI for exactly the thing you mean.
 
 ## What you'll learn
 
-You start with the foundations everything rests on — the three core principles of **clarity, deference, and depth**, then the invisible scaffolding of **layout and the grid you never see**, **color that adapts** to light and dark and tired eyes, **type that breathes**, the small **language of glyphs**, and Apple's newest material, **Liquid Glass**.
+The foundations: Norman's psychology of "feels right", the HIG's three principles of **clarity, deference, and depth**, and a patient on-ramp to **speaking SwiftUI** (views, modifiers, state). Then the visual language: **layout and the invisible grid**, **color, materials, and Liquid Glass**, **type that breathes** (including Echo's dyslexia-friendly bundled fonts), the **SF Symbols glyph language**, and a full chapter on **app icon design and prototyping with Icon Composer**.
 
-From there you assemble an app out of its parts: the **bars** that frame the screen, the **buttons and controls** you push and slide, the **sheets** that interrupt you and when they have earned the right, and the **lists and collections** that hold everything in tidy rows.
-
-Then you step back to the patterns — how people **move through an app** without getting lost, how it **greets a newcomer** in the first ten seconds, and how it **talks back** with progress, errors, and a buzz of haptics at the right moment. A full chapter on **designing for everyone** sits near the secret center of the book, not bolted to the end. You finish with **one app across many screens**, and the most advanced skill of all — **knowing when to break the rules, and how to break them well**.
+From there, the parts and patterns: **bars**, **buttons and controls**, **sheets, alerts, and earned interruptions**, **lists, grids, and lazy stacks** (and when even those aren't enough — Echo's custom read-along Reader), **navigation**, **first run and feedback**, **designing for everyone**, **one app across five kinds of glass**, and finally **when to break the rules, and how to break them well**.
 
 ## Who it's for
 
-Anyone curious about why good design feels good — whether you build apps, are thinking about it, or just want to look at any screen and read it. No experience required.
+Anyone curious about why good design feels good — especially if you build (or review AI-written) SwiftUI and want the terminology to stick. No experience required.
 
 ## Listen & read
 
-Seventeen chapters, about 4.5 hours at 1.25x speed. Grab the [EPUB](why-it-feels-right.epub) for your reader or audiobook app, or read the [combined Markdown](why-it-feels-right.md).
+Eighteen chapters, about 56,000 words — roughly 5 hours at 1.25x speed. Grab the [EPUB](why-it-feels-right.epub) for your reader or audiobook app, or read the [combined Markdown](why-it-feels-right.md).
 
 ---
 
-Written by Opus 4.8 (an AI model), grounded in Echo's real code and docs, and spot-checked rather than expert-reviewed. See the collection's [honest disclosure](../../README.md#honest-disclosure).
+Written by Fable 5 (an AI model), grounded in Echo's real code and docs, Don Norman's two books, Apple's Human Interface Guidelines, and curated SwiftUI references — spot-checked rather than expert-reviewed. See the collection's [honest disclosure](../../README.md#honest-disclosure).
