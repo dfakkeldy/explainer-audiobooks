@@ -147,10 +147,13 @@ def title_block(title, subtitle, author, ink, accent, top_y, sizes):
             sy += 66
         ty = sy
     if author:
+        # Keep the classic position, but never let the rule strike through a
+        # subtitle that wrapped to multiple lines.
+        rule_y = max(2326, ty + 30)
         parts.append(
-            f'<line x1="{CX - 130}" y1="2326" x2="{CX + 130}" y2="2326" '
+            f'<line x1="{CX - 130}" y1="{rule_y}" x2="{CX + 130}" y2="{rule_y}" '
             f'stroke="{ink}" stroke-width="2" stroke-opacity="0.45"/>'
-            f'<text x="{CX}" y="2398" text-anchor="middle" fill="{ink}" '
+            f'<text x="{CX}" y="{rule_y + 72}" text-anchor="middle" fill="{ink}" '
             'font-family="Helvetica, Arial, sans-serif" font-size="44" '
             f'letter-spacing="3" fill-opacity="0.9">{escape("by " + author)}</text>'
         )
