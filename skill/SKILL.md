@@ -17,21 +17,26 @@ any audiobook/reader app, including on-device text-to-speech narration) plus a
 combined Markdown copy.
 
 The whole thing is *heard*, so it is written for the ear: warm second-person
-prose, every term defined in plain English, and **not one line of code or symbol
-read aloud**. That single constraint shapes everything.
+prose, every term defined in plain English, and **never more than one short line
+of code at a time — spoken slowly, then unpacked**. That constraint shapes
+everything.
 
 ## What makes this hard (and where this skill earns its keep)
 
-Three failure modes sink a project like this, and the process below exists to
+Four failure modes sink a project like this, and the process below exists to
 beat each one:
 1. **It sounds like code read aloud — or, overcorrecting, scrubs the real names
-   away.** Solved by the narration style bible (which both bans spoken syntax and
-   *requires* naming the real files, tools, and commands) plus a post-generation
-   code-leak and vocabulary sweep.
+   away.** Solved by the narration style bible (which caps code at one speakable
+   line at a time and *requires* naming the real files, tools, and commands) plus
+   a post-generation code-leak and vocabulary sweep.
 2. **It hallucinates the worked example.** Solved by per-chapter *fact packs*
    built from the example's real docs/code, embedded in every writer's prompt.
 3. **It's a slog to generate 45,000 good words.** Solved by fanning out one
    writer agent per chapter, in parallel, each writing its own file to disk.
+4. **The vocabulary washes over the listener without sticking.** Solved by the
+   reinforcement rules in the style bible: key terms and commands recur across
+   chapters with brief re-glosses, and each chapter's close re-names what it
+   introduced.
 
 ## Process
 
@@ -52,6 +57,14 @@ defaults so it stays a quick yes/no, not an interrogation:
 - **Audience level** — default: a curious near-beginner who can muddle through
   with AI help but wants the *why*. Other options: total newcomer, or someone
   experienced in an adjacent area.
+- **What the listener already knows** — don't stop at a level label. Ask two or
+  three quick follow-up questions about their actual prior exposure: tools
+  they've used, terms they already understand, where they tend to get lost
+  (`AskUserQuestion` with concrete options works well — e.g. for a git book:
+  "Have you used git at all? Never / I copy-paste commands / I commit but
+  branching scares me"). The answers set the true starting level, which terms
+  need a full definition versus a quick refresher, and which chapters to add or
+  skip.
 - **Target length** — default ~45,000 words (~4 hours at 1.25x). See the runtime
   table in `references/narration-style.md`.
 - **Voice** — default: warm mentor, second person, spoken. (Confirm if they want
@@ -60,12 +73,13 @@ defaults so it stays a quick yes/no, not an interrogation:
   `am_michael`, fall back to `am_puck`, and do not use `af_heart` as the default.
 - **Title / author** — for the EPUB metadata.
 
-A key clarification worth surfacing early: "don't read code aloud" is the rule,
-which is *not* the same as "don't read code for accuracy" — and *not* the same as
-"don't name real things." Read whatever docs and source you need to get the facts
-right. You never narrate syntax, but you *do* name the real files, tools, and
-commands out loud (in spoken-friendly form) so the listener finishes knowing the
-vocabulary and could go find these things. Quietly erasing every real name into
+A key clarification worth surfacing early: "at most one spoken line of code at a
+time" is the rule, which is *not* the same as "don't read code for accuracy" —
+and *not* the same as "don't name real things." Read whatever docs and source you
+need to get the facts right. You never narrate blocks or unspeakable syntax, but
+you *do* speak single commands and *do* name the real files, tools, and commands
+out loud (in spoken-friendly form) so the listener finishes knowing the
+vocabulary and could go find — and type — these things. Quietly erasing every real name into
 "the settings file" is the failure to avoid — see `references/narration-style.md`.
 
 ### 2. Design the chapter outline, and get approval before generating
@@ -88,15 +102,41 @@ honest projected length and runtime.
 
 For each chapter, assemble:
 - a **fact pack**: concise, accurate, sourced details about the worked example —
-  read its real docs/code to get these right. **Include the real names** the
+  read its real docs/code (or, for non-software subjects, whatever authoritative
+  sources the user points you at) to get these right. **Include the real names** the
   listener should come away knowing (the actual files, tools, commands, and
   components this chapter touches), each with a one-line gloss. This is the accuracy
   backbone; the writers must not invent beyond it.
 - a **beat sheet**: 6-7 beats, each roughly 450-600 words, that walk the hook →
-  concept → grounding → tradeoff → takeaway shape.
+  concept → grounding → tradeoff → takeaway shape. The closing beat re-names the
+  chapter's new terms and commands (the recap rule in the style bible).
 
 The fact-pack discipline is explained in `references/narration-style.md` — read
 that section before writing the packs.
+
+Optionally, also assemble a **figure pack**: zero to three images per chapter,
+saved to `<build>/chapters/images/` with speakable filenames. This is an
+audiobook first — most listeners never see them — but EPUB readers show them,
+and some audiobook apps surface the images you passed while listening (Echo's
+pic review at the end of a drive), so figures are a free bonus wherever a
+picture genuinely helps: UI patterns, hardware, the anatomy of a screen. Source
+priority:
+
+1. the worked example's own assets — screenshots, App Store images, repo art
+   (best fit, no rights questions);
+2. the subject's *official* documentation (e.g. Apple's HIG illustrations for a
+   HIG book) — use a search engine to find the right page, then download the
+   image from the official page itself, never a re-hosted copy from an image
+   search (those are routinely watermarked, low-res, or wrongly licensed);
+3. openly licensed sources (Wikimedia Commons and similar) for general subjects;
+4. an SVG diagram you author yourself (same craft as the cover art) — often
+   clearer than any found image.
+
+Record each figure's source URL and give it a caption that stands alone. These
+books are personal-library items, but still skip anything watermarked or
+paywalled, and if the environment blocks image downloads, skip figures rather
+than substituting junk. Each chapter's figure list (filename + caption + what it
+shows) goes into that chapter's writer prompt.
 
 ### 4. Fan out: one writer agent per chapter, in parallel
 
@@ -118,12 +158,17 @@ Run the checklist in `references/narration-style.md`:
 - real word counts with `wc -w` (top up any chapter under its floor — never trust
   self-reported counts);
 - a code-leak grep sweep (backticks, snake_case, arrows, braces) — scrub raw
-  syntax, but leave plainly-spoken filenames like settings.json alone now;
+  syntax and multi-line blocks, but leave plainly-spoken filenames like
+  settings.json and deliberate single-line spoken commands (git commit, swift
+  build) alone;
 - a cliché / over-emphasis sweep — the "tattoo this" tics, inflated-stakes density,
   and tradeoff drone this voice is prone to; flatten anything that oversells;
 - a vocabulary check — the real file/tool names from each fact pack actually get
   named in the prose, not paraphrased into "the settings file";
-- heading-consistency check so the TOC comes out clean.
+- heading-consistency check so the TOC comes out clean;
+- figure check (if figures were used) — every `![...]` line points at a file that
+  exists in `chapters/images/`, has alt text and a standalone caption, and the
+  surrounding prose never leans on it (`grep -rniE 'as you can see|shown below|see the (figure|image)|pictured' chapters/ch*.md` should return nothing).
 
 Spot-read the tone-setting first chapter and the most technical chapter to
 confirm voice and that nothing was hallucinated.
@@ -216,7 +261,11 @@ code change, so it normally needs no repo-doc updates.
 
 - `scripts/build_book.py` — assembles `chNN.md` chapter files into an EPUB +
   combined Markdown. Title/author/subtitle/slug are arguments, plus an optional
-  `--cover`. Run it; don't reimplement EPUB zipping by hand.
+  `--cover`. Standalone Markdown image lines (`![alt](images/f.png "caption")`)
+  become embedded figures automatically — images resolve relative to the
+  chapters dir, land inside the EPUB, and are copied beside the .md. Missing
+  images are dropped with a warning, so read the build output. Run it; don't
+  reimplement EPUB zipping by hand.
 - `scripts/make_cover.py` — composes a bespoke per-book illustration (`--art`, an
   SVG you author for the book) into a bestseller-style cover PNG, in a `bleed`
   (default) or `hero` layout. Render 2-3 concepts, let the user pick, then pass the

@@ -9,11 +9,17 @@ independently-written chapters depends on it.
 
 THIS WILL BE NARRATED ALOUD as an audiobook. Write 100% for the EAR.
 
-NEVER READ CODE OR SYMBOLS ALOUD (this one is absolute):
-- No code blocks, snippets, syntax, or pseudo-code.
-- Don't spell out multi-token identifiers or operators: no camelCase read letter
-  by letter, no snake_case (it narrates as "underscore"), no spoken "open brace",
-  "arrow", "colon", "equals", no empty "open paren close paren".
+CODE ALOUD — at most ONE short line at a time:
+- Never a code block, multi-line snippet, or two code lines back to back. Code the
+  listener can't follow by ear is packaging, not teaching.
+- A single short command or line IS allowed — and, for command-driven subjects
+  like git, encouraged — when every token speaks naturally: "git status", "git
+  commit", "swift build". Say it once, slowly, in spoken form, then immediately
+  unpack what each part does. Explanation always goes between lines.
+- If a line can't be spoken cleanly, describe it instead. Don't spell out
+  operators or multi-token identifiers: no camelCase read letter by letter, no
+  snake_case (it narrates as "underscore"), no spoken "open brace", "arrow",
+  "colon", "equals", no empty "open paren close paren".
 - For any name that would narrate badly (camelCase, snake_case, punctuation in the
   middle), say it in plain words instead — "the view-did-load step", "the
   render-version stamp" — and explain the idea.
@@ -32,6 +38,11 @@ DO NAME THE REAL THINGS (this is how the listener learns the vocabulary):
   you mean settings.json, or "a configuration thing" when you mean a named tool,
   robs the listener of the exact word they need. Prefer the real name plus a
   plain-English gloss every time.
+- Terms are learned by repetition, not introduction. After the first full gloss,
+  re-use each key term and command in later chapters with a half-breath reminder
+  ("git rebase — the rewrite-history command") until it plainly needs none. The
+  core vocabulary should be heard several times, in context, before the book
+  ends — one mention teaches recognition; several teach recall.
 
 EMPHASIS — say it once, plainly, then move on:
 - When something genuinely matters, say so in ordinary words, once, and let the
@@ -44,6 +55,16 @@ EMPHASIS — say it once, plainly, then move on:
   from this chapter", "the single most important", "the whole point / the whole
   show / the whole game / the entire job", "the most X in the whole craft", "it
   changes everything". They are verbal tics that ring false read aloud.
+
+FIGURES (only if your prompt lists figures for this chapter):
+- Insert each listed figure exactly once, as its own paragraph, at the beat where
+  it fits: `![alt text](images/filename.png "A caption that stands alone")`.
+- The listener probably can't see it — they may be driving and review the images
+  only afterwards. So the prose must work with eyes closed: describe the thing
+  fully in words as if the figure weren't there. Never say "as you can see",
+  "shown below", "see the figure", "pictured here".
+- The caption is read *later*, out of context, so it names what the image shows
+  and why it matters in one self-contained sentence.
 
 NUMBERS, JARGON, FORM:
 - Say numbers and units like a narrator: "about forty megabytes", "version
@@ -63,15 +84,19 @@ named worked-example component. Where the design genuinely gave up one thing to 
 another, name that tradeoff once and cleanly, then move on — only where the cost is
 real, never as a reflex, and never the same cost restated several ways (even when
 the whole chapter is about a tradeoff, you make the point once). Close with two to
-four spoken sentences that point ahead to what the listener can now understand or
-do — no heading, and without announcing it ("to sum up", "the takeaway", "carry
-this forward").
+four spoken sentences that briefly re-name the new terms and commands the chapter
+introduced (one more pass for the vocabulary) and point ahead to what the listener
+can now understand or do — no heading, and without announcing it ("to sum up",
+"the takeaway", "carry this forward").
 
 ## Why these rules matter (so you can adapt, not just obey)
 
-- **No code aloud** is the single non-negotiable. A symbol read by a
-  text-to-speech voice ("open paren, var, equals") is pure misery. The listener
-  wants the *concept*; raw syntax is packaging best left on the shelf.
+- **One line of code at a time, at most.** A block of symbols read by a
+  text-to-speech voice ("open paren, var, equals") is pure misery. But a single
+  speakable command — said slowly, then unpacked — is how a listener actually
+  learns the commands they'll type later; banning code outright taught concepts
+  while leaving the listener unable to *do* anything. The line count is the rule:
+  one line, then talk.
 - **Naming the real things** is the other half of that rule, and just as important.
   "No code aloud" does NOT mean "no real names." A listener who finishes a book on
   Claude Code without ever hearing the words *CLAUDE.md* or *settings.json* can't
@@ -132,7 +157,10 @@ gloss. Embed the fact pack in that chapter's writer prompt with an instruction
 like: "Ground everything in these real facts. Name these real things out loud and
 gloss them; use them; simplify for a beginner; translate code-like *syntax* into
 spoken English, but keep the real *names*; never contradict the facts and never
-invent technical specifics beyond them." Grounding beats trusting model memory
+invent technical specifics beyond them." For command-driven subjects (git, the
+shell, build tools), the fact pack should also mark the handful of commands the
+listener must come away knowing cold — writers voice each of those at least twice
+in the chapter, once introduced and once in passing. Grounding beats trusting model memory
 every time, and it is the difference between a guide the user can trust and
 plausible-sounding fiction.
 
@@ -150,9 +178,11 @@ chapter files:
   - arrows / braces / empty calls: `grep -nE -- '->|[{}]|\b[a-zA-Z]+\(\)' chapters/ch*.md`
     (also eyeball for stray camelCase identifiers like viewDidLoad — they're too
     entangled with legitimate brand names like iPhone, iOS, macOS to grep cleanly)
-  - Plain dotted *filenames* spoken naturally (settings.json, CLAUDE.md) are now
-    fine and wanted — do NOT scrub those. Scrub only raw syntax, operators, and
-    multi-token identifiers.
+  - Plain dotted *filenames* spoken naturally (settings.json, CLAUDE.md) are
+    fine and wanted — do NOT scrub those. The same goes for a deliberate
+    single-line spoken command ("git commit", "swift build"). Scrub only
+    multi-line blocks, raw operators, and multi-token identifiers — and confirm
+    no two code lines sit back to back without explanation between.
 - **Cliché / over-emphasis sweep** — the voice tics this skill is prone to:
   - dead phrases: `grep -rniE 'tattoo|burn (this\|it) into|sear (this\|it)|etch (this\|it)|carve (this\|it)|the one rule, if you|if you remember nothing else' chapters/ch*.md` — should return nothing; rewrite any hit. (Bare `sear`/`etch` are deliberately avoided — they match "search" and "sketch".)
   - emphasis-inflation density: `grep -ronE 'the (single )?most important|the heart of|the whole point|the real (magic|secret|power)|matters more than anything' chapters/ch*.md | cut -d: -f1 | sort | uniq -c | sort -rn` — a chapter with many hits is overselling; send it back to flatten the register.
@@ -161,6 +191,15 @@ chapter files:
   file/tool/command names from its fact pack actually appear *by name* in the prose
   (not paraphrased into "the settings file"). If the listener couldn't search for
   the thing afterwards, the chapter generalised too far — send it back to name it.
+  Also check *reinforcement*: grep a few core terms and commands across all of
+  chapters/ch*.md — the vocabulary the book most wants to teach should recur in
+  later chapters, not appear exactly once and vanish.
+- **Figure check (if figures were used):** every `![...]` line references a file
+  that actually exists in `chapters/images/` (build_book.py drops missing ones
+  with a warning — don't ship a book that warned), each has alt text and a
+  standalone caption, and the prose never leans on the image:
+  `grep -rniE 'as you can see|shown below|see the (figure|image)|pictured' chapters/ch*.md`
+  should return nothing.
 - **Heading consistency:** confirm every file's first line is a single heading in
   the same format (e.g. `## Chapter N - Title`), so the EPUB's table of contents
   comes out clean.
