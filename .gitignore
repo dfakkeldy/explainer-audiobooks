@@ -12,3 +12,7 @@ __pycache__/
 *.tmp
 /tmp/
 .build/
+/build/
+
+# Non-public-domain local book source
+books/everything-but-the-code/
