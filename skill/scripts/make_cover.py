@@ -9,14 +9,19 @@ What makes a cover "show what the book is about" is a bespoke illustration. Ther
 is no text-to-image tool here, so the illustration is authored as vector art (an
 SVG file) tailored to THIS book, and passed in with --art. This script places that
 art into a premium layout and sets the title/subtitle/author/badge around it. The
-background hue is still derived from a seed (default: the title) so each book keeps
-its own identity even before the art loads.
+background hue is derived from --accent when provided, otherwise from a seed
+(default: the title). Use --accent to carry the cover art's signature colour into
+the final layout so library UIs have a strong colour to derive from the cover.
 
 Two layouts:
   --layout bleed   the illustration fills the cover; a gradient scrim across the
                    lower third carries the title (the classic trade-paperback look).
   --layout hero    the illustration sits in a framed panel up top; the title block
                    sits on the background below it.
+
+Two tones:
+  --tone dark      deep, cinematic cover background.
+  --tone bright    high-key, bright marketplace cover background.
 
 If no --art is given, a restrained abstract motif is drawn so the script still
 produces a usable cover.
@@ -29,7 +34,7 @@ Example:
     --title "You Are the Architect" \
     --subtitle "Vibe-Coding Real iOS Apps with Claude Code" \
     --author "Dan Fakkeldy" --label "AUDIOBOOK" \
-    --art ./art.svg --layout bleed \
+    --art ./art.svg --accent "#2ee8b6" --tone bright --layout bleed \
     --out ./dist/cover.png
 """
 
@@ -53,6 +58,24 @@ USABLE = W - 2 * MARGIN
 def hex_color(h_deg, l, s):
     r, g, b = colorsys.hls_to_rgb((h_deg % 360) / 360.0, l, s)
     return "#%02x%02x%02x" % (int(r * 255), int(g * 255), int(b * 255))
+
+
+def parse_hex_color(value):
+    """Normalize #RRGGBB input for the deliberate cover accent."""
+    if not value:
+        return ""
+    m = re.fullmatch(r"#?([0-9a-fA-F]{6})", value.strip())
+    if not m:
+        raise argparse.ArgumentTypeError("accent must be a hex RGB colour like #2ee8b6")
+    return "#" + m.group(1).lower()
+
+
+def hue_from_hex(value):
+    r = int(value[1:3], 16) / 255.0
+    g = int(value[3:5], 16) / 255.0
+    b = int(value[5:7], 16) / 255.0
+    h, _l, _s = colorsys.rgb_to_hls(r, g, b)
+    return h * 360
 
 
 def wrap(text, max_chars):
@@ -112,6 +135,20 @@ def default_motif(accent):
     return "\n".join(p)
 
 
+def accent_signature(accent, layout):
+    """Visible accent treatment so the cover's derived colour has real signal."""
+    if layout == "bleed":
+        return (
+            f'<path d="M0 0 H{W} V30 H0 Z" fill="{accent}" opacity="0.95"/>'
+            f'<path d="M0 0 H38 V{H} H0 Z" fill="{accent}" opacity="0.86"/>'
+            f'<path d="M{W} 0 V620 L{W - 270} 0 Z" fill="{accent}" opacity="0.18"/>'
+        )
+    return (
+        f'<path d="M0 0 H{W} V34 H0 Z" fill="{accent}" opacity="0.95"/>'
+        f'<path d="M0 {H - 44} H{W} V{H} H0 Z" fill="{accent}" opacity="0.78"/>'
+    )
+
+
 def badge(label, accent, ink, y):
     if not label:
         return ""
@@ -129,6 +166,10 @@ def title_block(title, subtitle, author, ink, accent, top_y, sizes):
     size, lines = fit_title(title, sizes)
     line_h = int(size * 1.04)
     ty = top_y
+    parts.append(
+        f'<rect x="{CX - 112}" y="{top_y - 86}" width="224" height="8" rx="4" '
+        f'fill="{accent}" fill-opacity="0.95"/>'
+    )
     for ln in lines:
         parts.append(
             f'<text x="{CX}" y="{ty}" text-anchor="middle" fill="{ink}" '
@@ -160,10 +201,15 @@ def title_block(title, subtitle, author, ink, accent, top_y, sizes):
     return "\n".join(parts)
 
 
-def build_svg(title, subtitle, author, label, seed, art_path, layout):
-    hue = int(hashlib.sha256(seed.encode("utf-8")).hexdigest(), 16) % 360
-    accent = hex_color((hue + 16) % 360, 0.62, 0.62)
-    ink = "#F6F3EE"
+def build_svg(title, subtitle, author, label, seed, accent_color, art_path, layout, tone):
+    if accent_color:
+        hue = (hue_from_hex(accent_color) - 18) % 360
+        accent = accent_color
+    else:
+        hue = int(hashlib.sha256(seed.encode("utf-8")).hexdigest(), 16) % 360
+        accent = hex_color((hue + 16) % 360, 0.62, 0.72)
+    bright = tone == "bright"
+    ink = "#17130F" if bright else "#F6F3EE"
     art = load_art(art_path) if art_path else None
 
     parts = [
@@ -172,8 +218,16 @@ def build_svg(title, subtitle, author, label, seed, art_path, layout):
     ]
 
     if layout == "bleed":
-        bg_top = hex_color(hue, 0.13, 0.45)
-        bg_bot = hex_color(hue, 0.07, 0.5)
+        if bright:
+            bg_top = hex_color(hue, 0.94, 0.36)
+            bg_bot = hex_color(hue, 0.82, 0.42)
+            scrim_opacity = "0.94"
+            wash_opacity = "0.16"
+        else:
+            bg_top = hex_color(hue, 0.13, 0.45)
+            bg_bot = hex_color(hue, 0.07, 0.5)
+            scrim_opacity = "1"
+            wash_opacity = "0.20"
         parts.append(
             '<defs>'
             f'<linearGradient id="coverbg" x1="0" y1="0" x2="0.25" y2="1">'
@@ -182,8 +236,12 @@ def build_svg(title, subtitle, author, label, seed, art_path, layout):
             f'<linearGradient id="scrim" x1="0" y1="0" x2="0" y2="1">'
             f'<stop offset="0" stop-color="{bg_bot}" stop-opacity="0"/>'
             f'<stop offset="0.32" stop-color="{bg_bot}" stop-opacity="0.82"/>'
-            f'<stop offset="0.55" stop-color="{bg_bot}" stop-opacity="1"/>'
-            '</linearGradient></defs>'
+            f'<stop offset="0.55" stop-color="{bg_bot}" stop-opacity="{scrim_opacity}"/></linearGradient>'
+            f'<linearGradient id="accentwash" x1="0" y1="0" x2="1" y2="0.35">'
+            f'<stop offset="0" stop-color="{accent}" stop-opacity="{wash_opacity}"/>'
+            f'<stop offset="0.34" stop-color="{accent}" stop-opacity="0.07"/>'
+            f'<stop offset="1" stop-color="{accent}" stop-opacity="0"/></linearGradient>'
+            '</defs>'
         )
         parts.append(f'<rect width="{W}" height="{H}" fill="url(#coverbg)"/>')
         # Illustration fills the upper region, bleeding to the edges (slice = fill).
@@ -192,6 +250,8 @@ def build_svg(title, subtitle, author, label, seed, art_path, layout):
                                    preserve="xMidYMid slice"))
         else:
             parts.append(default_motif(accent))
+        parts.append(f'<rect x="0" y="0" width="{W}" height="1860" fill="url(#accentwash)"/>')
+        parts.append(accent_signature(accent, layout))
         # Scrim carries the title over the lower third.
         parts.append(f'<rect x="0" y="1500" width="{W}" height="{H - 1500}" fill="url(#scrim)"/>')
         parts.append(badge(label, accent, ink, 1760))
@@ -199,22 +259,36 @@ def build_svg(title, subtitle, author, label, seed, art_path, layout):
                                  sizes=(150, 132, 116, 100)))
 
     else:  # hero
-        bg_top = hex_color(hue, 0.16, 0.5)
-        bg_bot = hex_color(hue, 0.09, 0.55)
-        panel = hex_color(hue, 0.11, 0.45)
+        if bright:
+            bg_top = hex_color(hue, 0.94, 0.36)
+            bg_bot = hex_color(hue, 0.80, 0.42)
+            panel = hex_color(hue, 0.90, 0.28)
+            halo_opacity = "0.18"
+        else:
+            bg_top = hex_color(hue, 0.16, 0.5)
+            bg_bot = hex_color(hue, 0.09, 0.55)
+            panel = hex_color(hue, 0.11, 0.45)
+            halo_opacity = "0.24"
         parts.append(
             '<defs>'
             f'<linearGradient id="coverbg" x1="0" y1="0" x2="0.3" y2="1">'
             f'<stop offset="0" stop-color="{bg_top}"/>'
-            f'<stop offset="1" stop-color="{bg_bot}"/></linearGradient></defs>'
+            f'<stop offset="1" stop-color="{bg_bot}"/></linearGradient>'
+            f'<radialGradient id="accenthalo" cx="50%" cy="32%" r="62%">'
+            f'<stop offset="0" stop-color="{accent}" stop-opacity="{halo_opacity}"/>'
+            f'<stop offset="0.48" stop-color="{accent}" stop-opacity="0.08"/>'
+            f'<stop offset="1" stop-color="{accent}" stop-opacity="0"/></radialGradient>'
+            '</defs>'
         )
         parts.append(f'<rect width="{W}" height="{H}" fill="url(#coverbg)"/>')
+        parts.append(f'<rect width="{W}" height="{H}" fill="url(#accenthalo)"/>')
+        parts.append(accent_signature(accent, layout))
         parts.append(badge(label, accent, ink, 300))
         # Framed illustration panel.
         px, py, pw, ph = 130, 420, W - 260, 1180
         parts.append(
             f'<rect x="{px}" y="{py}" width="{pw}" height="{ph}" rx="40" '
-            f'fill="{panel}" stroke="{accent}" stroke-width="3" stroke-opacity="0.5"/>'
+            f'fill="{panel}" stroke="{accent}" stroke-width="5" stroke-opacity="0.72"/>'
         )
         if art:
             pad = 70
@@ -251,13 +325,17 @@ def main():
     ap.add_argument("--author", default="")
     ap.add_argument("--label", default="AUDIOBOOK")
     ap.add_argument("--seed", default="", help="Hue seed; defaults to the title")
+    ap.add_argument("--accent", default="", type=parse_hex_color,
+                    help="Signature cover-art accent as #RRGGBB; defaults to seed-derived")
     ap.add_argument("--art", default="", help="SVG illustration file for this book")
+    ap.add_argument("--tone", default="dark", choices=("dark", "bright"),
+                    help="Cover background tone; use bright for high-key covers")
     ap.add_argument("--layout", default="bleed", choices=("bleed", "hero"))
     ap.add_argument("--out", required=True, help="Output PNG path")
     a = ap.parse_args()
 
     svg = build_svg(a.title, a.subtitle, a.author, a.label, a.seed or a.title,
-                    a.art or None, a.layout)
+                    a.accent, a.art or None, a.layout, a.tone)
     os.makedirs(os.path.dirname(os.path.abspath(a.out)) or ".", exist_ok=True)
 
     with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False, encoding="utf-8") as f:

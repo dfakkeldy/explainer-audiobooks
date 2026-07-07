@@ -27,6 +27,29 @@ packages may also be copied to `books/<slug>/`.
 
 ## EPUB And Markdown
 
+Render a professional, image-led cover before building the EPUB. Follow
+`../../skill/references/cover-art.md`: make 2-3 distinct candidates, choose one
+signature accent colour per concept, use that colour in the SVG art, and pass the
+same value to `make_cover.py --accent` so the final cover has a strong
+cover-derived library identity. Include a bright/high-key candidate with
+`--tone bright` when the subject should feel approachable or giftable, and use
+`--tone dark` for cinematic/technical covers.
+
+Example:
+
+```bash
+python3 skill/scripts/make_cover.py \
+  --title "<Title>" \
+  --subtitle "<subtitle>" \
+  --author "Dan Fakkeldy" \
+  --label "AUDIOBOOK" \
+  --art .build/custom-learning-audiobooks/<slug>/dist/cover-concept-1.svg \
+  --accent "#2ee8b6" \
+  --tone bright \
+  --layout bleed \
+  --out .build/custom-learning-audiobooks/<slug>/dist/cover.png
+```
+
 From the repo root:
 
 ```bash

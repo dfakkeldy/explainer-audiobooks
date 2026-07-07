@@ -17,7 +17,8 @@ research, write one coherent manuscript, and package the result for Echo.
   M4B/alignment, copying packages, or reporting completion.
 - Reuse the existing explainer tooling from this repo:
   - `../../skill/references/narration-style.md` for spoken style and QC sweeps.
-  - `../../skill/references/cover-art.md` for cover concepts.
+  - `../../skill/references/cover-art.md` for cover concepts, visual quality,
+    and the signature accent-colour rule.
   - `../../skill/scripts/build_book.py` for EPUB and combined Markdown.
   - `../../skill/scripts/make_cover.py` for cover rendering.
 
@@ -68,7 +69,13 @@ research, write one coherent manuscript, and package the result for Echo.
    generic AI enthusiasm, and repeated disclaimers.
 
 8. **Build the book.** Generate or choose a cover, then run the existing
-   `build_book.py` script. The EPUB/Markdown outputs are always required.
+   `build_book.py` script. The EPUB/Markdown outputs are always required. For
+   generated covers, make 2-3 genuinely different beautiful candidates with a
+   strong subject image and one intentional signature accent colour. Use that
+   accent in the SVG art and pass the same hex value to `make_cover.py --accent`
+   so the final cover clearly sells the colour Echo will derive from it. Include
+   a bright/high-key background candidate when the topic would benefit from a
+   friendly, modern audiobook-store look.
 
 9. **Render Echo audio when available.** Use Echo's `echo-cli narrate` path from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
@@ -99,3 +106,8 @@ research, write one coherent manuscript, and package the result for Echo.
   user has permission to add it to the public learning library.
 - Do not copy private generated artifacts into the public repo or public KB.
 - Do not use `af_heart` as the default narrator.
+- Do not ship a generic title-on-colour cover when generating a cover yourself:
+  make a real image-led cover, and make the derived accent colour visible enough
+  to work as the book's library identity.
+- Do not default every candidate to a dark background; bright covers are allowed
+  and should be offered when they better sell the book.
