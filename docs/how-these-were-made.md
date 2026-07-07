@@ -32,7 +32,7 @@ The rest of the guide is voice: warm, second person, every piece of jargon defin
 
 ## Assembly
 
-A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the chapter files into a valid EPUB 3 — with both a modern navigation document and an old-style NCX table of contents, so it imports cleanly into the widest range of readers — plus a combined Markdown copy. A second script ([`skill/scripts/make_cover.py`](../skill/scripts/make_cover.py)) generates a typographic cover as an SVG (no image library needed) and rasterizes it, deriving each book's color from its title. Neither script assumes much about the machine it runs on.
+A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the chapter files into a valid EPUB 3 — with both a modern navigation document and an old-style NCX table of contents, so it imports cleanly into the widest range of readers — plus a combined Markdown copy. A second script ([`skill/scripts/make_cover.py`](../skill/scripts/make_cover.py)) turns bespoke SVG art into an image-led cover, carrying a deliberate cover-art accent colour when supplied, supporting bright or dark cover tones, and falling back to a title-derived colour otherwise. Neither script assumes much about the machine it runs on.
 
 ## Model-agnostic
 
