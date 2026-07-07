@@ -18,7 +18,7 @@ This custom-learning audiobook explains Andrej Karpathy's LLM Wiki pattern, Open
 - Word count: 17,877 body words from the EPUB builder; 18,000 words including chapter headings by `wc`
 - Runtime: about 2.0 hours at 1.0x; about 1.6 hours at 1.25x
 - Chapter count: 15
-- Narrator: not rendered; `am_michael` attempted first, `am_puck` fallback attempted, both blocked by `modelDownloadFailed`
+- Narrator: rendered with Echo `echo-cli` using `am_michael`
 - Research mode: deep
 - Source confidence: deep
 - Sensitive-topic guardrails: educational overview only; no legal, financial, safety, or private workplace advice
@@ -35,9 +35,9 @@ Curious builders, consultants, small-business operators, and AI-agent users who 
 
 ## Listen & Read
 
-Read it as an [EPUB](the-living-knowledge-base.epub) or in [Markdown](the-living-knowledge-base.md).
+Read it as an [EPUB](the-living-knowledge-base.epub), in [Markdown](the-living-knowledge-base.md), or listen to the rendered [M4B](the-living-knowledge-base.m4b). The alignment sidecar is included as [JSON](the-living-knowledge-base.alignment.json).
 
-Audio was attempted through Echo's `echo-cli narrate` workflow, but local voice resources for both `am_michael` and `am_puck` failed to download, so no M4B or alignment sidecar is included in the public repo package.
+Audio was rendered through Echo's `echo-cli narrate` workflow after repairing headless voice-resource packaging and disabling optional Foundation Models normalization for batch renders. `ffprobe` reported 7,416.917333 seconds, and the sidecar JSON parsed successfully with 324 anchors.
 
 ## Grounding
 
