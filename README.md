@@ -30,7 +30,7 @@ Two different audiences:
 | [Findable](books/findable/) | App Store Optimization for a small app | 8 chapters · ~3.0 h | Opus 4.8 |
 | [The Voice in the Machine](books/the-voice-in-the-machine/) | How on‑device AI narration works (Kokoro on ONNX Runtime) | 11 chapters · ~3.6 h | Opus 4.8 |
 | [The Long Route](books/the-long-route/) | Whether the indie road is the right career direction — evidence, not affirmation | 13 chapters · ~4.0 h | Fable 5 + Opus 4.8 |
-| [The Living Knowledge Base](books/the-living-knowledge-base/) | LLM wikis, research notebooks, embeddings, and company memory | 16 chapters · ~1.1 h | GPT-5 Codex |
+| [The Living Knowledge Base](books/the-living-knowledge-base/) | LLM wikis, research notebooks, embeddings, and company memory | 15 chapters · ~1.6 h | GPT-5 Codex |
 
 Each folder holds the **`.epub`** (for any audiobook/reader app, including on‑device text‑to‑speech), a combined **`.md`** (readable right here on GitHub), and the cover.
 
@@ -65,4 +65,4 @@ This repo is dual-licensed, split by folder:
 
 ## Credits
 
-Curated by **Dan Fakkeldy**. The worked example throughout is **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source audiobook study player. Books written by **Claude (Opus 4.8 and Fable 5)** and **GPT-5 Codex** via the `explainer-audiobook` skill (with an earlier edition of *Git Happens* by **DeepSeek v4**, kept in git history); each book's own README and EPUB metadata record its model.
+Curated by **Dan Fakkeldy**. The worked example throughout is **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source audiobook study player. Books written by **Claude (Opus 4.8 and Fable 5)** and **GPT-5 Codex** via the `explainer-audiobook` and `custom-learning-audiobook` skills (with an earlier edition of *Git Happens* by **DeepSeek v4**, kept in git history); each book's own README and EPUB metadata record its model.
