@@ -45,7 +45,8 @@ const THROUGHLINES = `1. ...\n2. ...\n3. ...`    // the 2-4 recurring ideas
 const CHAPTERS = [
   { n: 0, title: "Why This Book Exists",
     beats: ["Beat 1 ...", "Beat 2 ...", "..."],   // 6-7 beats, ~450-600 words each
-    facts: "Accurate, sourced facts about the worked example for THIS chapter." },
+    facts: "Accurate, sourced facts about the worked example for THIS chapter.",
+    figures: [] },  // optional: [{ file: "images/hig-tab-bars.png", caption: "...", shows: "..." }]
   // ... one object per chapter ...
 ]
 
@@ -62,6 +63,11 @@ const STATUS_SCHEMA = {
 function buildPrompt(ch) {
   const path = DIR + "/ch" + pad(ch.n) + ".md"
   const beats = ch.beats.map((b, i) => "Beat " + (i + 1) + ": " + b).join("\n")
+  const figs = (ch.figures || []).map(f =>
+    '![' + f.shows + '](' + f.file + ' "' + f.caption + '")').join("\n")
+  const figBlock = figs ? [
+    'FIGURES: insert each of these exactly once, as its own paragraph, at the beat where it fits. The listener may not see it (they may be driving and review images afterwards), so the prose must fully work without it — never "as you can see" / "shown below":',
+    figs, ''] : []
   return [
     'You are a warm, expert mentor writing ONE chapter of a beginner audiobook.',
     '', STYLE, '',
@@ -71,12 +77,13 @@ function buildPrompt(ch) {
     TOC, '',
     'YOUR CHAPTER: Chapter ' + ch.n + ' - ' + ch.title, '',
     'WRITE TO THESE BEATS (each ~450-600 spoken words; expand vividly):', beats, '',
-    'GROUND EVERYTHING IN THESE REAL FACTS (accurate; simplify for a beginner; translate code-like names to spoken English; never contradict; never invent beyond them):',
+    'GROUND EVERYTHING IN THESE REAL FACTS (accurate; simplify for a beginner; translate code-like syntax to spoken English but keep and speak the real names; voice each key command at least twice; never contradict; never invent beyond them):',
     ch.facts, '',
+    ...figBlock,
     SHAPE, '',
     'LENGTH: at least 2,800 words; aim 3,000-3,400. Earn the length with vivid explanation, analogy, and honest detail — do not pad with repetition.', '',
     'OUTPUT: 1) Write the chapter as plain spoken prose, beginning with exactly one heading line: "## Chapter ' + ch.n + ' - ' + ch.title + '". 2) Use the Write tool to save it to EXACTLY this absolute path (overwrite if present): ' + path + '. 3) Return the status object.', '',
-    'Final reminder: this is SPOKEN ALOUD. If a sentence would sound like someone reading code or symbols, rewrite it as natural English. No code, ever.',
+    'Final reminder: this is SPOKEN ALOUD. At most ONE short speakable line of code at a time — say it slowly, then unpack it; never two in a row, never a block. If a sentence would sound like someone reading symbols, rewrite it as natural English.',
   ].join("\n")
 }
 
