@@ -51,15 +51,25 @@ The full method, and *why* each step exists, is in **[docs/how-these-were-made.m
 
 These books are **written by AI** (the specific model is noted per book and recorded in each file's metadata), then **spot-checked, not expert-reviewed** line by line. They are deliberately *grounded* in real source and documentation to keep them accurate, but they can still be wrong. Treat them as a friendly, well-informed place to start — not an authority. Where a book teaches a real product's design rules (for example, Apple's), those rules evolve; check the primary source before you rely on a detail.
 
-## The skill
+## The skills
 
-The whole pipeline is packaged as a Claude Code skill in **[`skill/`](skill/)** — `SKILL.md` plus a cover generator, an EPUB builder, and the narration style guide. Point Claude Code at it and ask for a book on any subject, grounded in any codebase you can read.
+The long technical explainer pipeline is packaged as a Claude Code skill in
+**[`skill/`](skill/)** — `SKILL.md` plus a cover generator, an EPUB builder, and
+the narration style guide. Point Claude Code at it and ask for a book on any
+subject, grounded in any codebase you can read.
+
+The separate **[`custom-learning-audiobook`](skills/custom-learning-audiobook/)**
+skill is for short, listener-specific Echo beta books from plain topic requests:
+"I want to learn X." It defaults to roughly two hours, uses one lead writer for
+continuity, routes public/private books explicitly, and renders Echo-ready audio
+with `am_michael` when the Echo CLI is available.
 
 ## License
 
 This repo is dual-licensed, split by folder:
 
-- **Code** — everything in [`skill/`](skill/) — is **[MIT](LICENSE)**.
+- **Code** — everything in [`skill/`](skill/) and [`skills/`](skills/) — is
+  **[MIT](LICENSE)**.
 - **Books** — everything in [`books/`](books/) — is **[CC BY 4.0](LICENSE-CONTENT.md)**: share and adapt with attribution.
 
 ## Credits

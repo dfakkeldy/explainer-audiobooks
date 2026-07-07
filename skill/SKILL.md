@@ -1,22 +1,10 @@
 ---
 name: explainer-audiobook
 description: >-
-  Generate a long, narration-ready beginner's audiobook that teaches a technical
-  or specialized subject through one concrete worked example, delivered as a
-  chaptered EPUB plus a combined Markdown file, written entirely for the ear (no
-  code or symbols read aloud). Use this whenever the user wants an audiobook,
-  narrated guide, spoken course, listening course, or "beginner's guide" on a
-  topic they intend to LISTEN to — for example "make me a 45k-word audiobook
-  about GitHub", "a narrated guide to App Store Optimization", "turn the way our
-  app works into a spoken beginner's course", "an audiobook explaining how X
-  works, taught through our codebase", or "write me ~4 hours of audio teaching
-  Xcode debugging". Especially reach for this skill when the request should be
-  taught through a real example app, codebase, product, or system AND run to a
-  target length (tens of thousands of words / multiple hours of listening). It
-  also covers planning the chapter outline, writing the narration-friendly prose,
-  and assembling the final EPUB. Prefer this skill even when the user says
-  "guide" or "course" rather than literally "audiobook", as long as they mean to
-  listen to it.
+  Use when the user wants a long, narration-ready audiobook, spoken course,
+  beginner guide, or listenable explainer on a technical or specialized topic,
+  especially when it should be grounded in a real codebase, product, app, or
+  system and delivered as a chaptered EPUB plus combined Markdown.
 ---
 
 # Explainer Audiobook
@@ -68,6 +56,8 @@ defaults so it stays a quick yes/no, not an interrogation:
   table in `references/narration-style.md`.
 - **Voice** — default: warm mentor, second person, spoken. (Confirm if they want
   drier/funnier/more formal.)
+- **Narrator** — if the user also asks for rendered audio, default to
+  `am_michael`, fall back to `am_puck`, and do not use `af_heart` as the default.
 - **Title / author** — for the EPUB metadata.
 
 A key clarification worth surfacing early: "don't read code aloud" is the rule,
