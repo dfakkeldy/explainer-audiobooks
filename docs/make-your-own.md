@@ -1,13 +1,23 @@
 # Make your own
 
-The whole pipeline is a [Claude Code](https://claude.com/claude-code) skill, bundled in [`skill/`](../skill/). With it installed, you make a book by asking — in plain English — for one.
+The long technical pipeline is a [Claude Code](https://claude.com/claude-code)
+skill, bundled in [`skill/`](../skill/). With it installed, you make a book by
+asking — in plain English — for one.
+
+For a shorter, listener-specific Echo beta book from a topic request, use the
+separate [`custom-learning-audiobook`](../skills/custom-learning-audiobook/)
+skill instead. It is built for requests like "I want to learn small engine
+repair" or "make my coworker a two-hour book on X", where the requester should
+not have to gather sources first.
 
 ## Install
 
 Copy the skill into your Claude Code skills directory:
 
 ```bash
+mkdir -p ~/.claude/skills
 cp -R skill ~/.claude/skills/explainer-audiobook
+ln -s "$(pwd)/skills/custom-learning-audiobook" ~/.claude/skills/custom-learning-audiobook
 ```
 
 (Or drop it into a project's `.claude/skills/`.) It needs Python 3 and, for cover rasterizing, either `rsvg-convert` (from librsvg) or ImageMagick — both optional; without them the build just skips the cover.

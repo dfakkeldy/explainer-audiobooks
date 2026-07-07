@@ -1,0 +1,4 @@
+interface:
+  display_name: "Custom Learning Audiobook"
+  short_description: "Make Echo-ready custom learning books"
+  default_prompt: "Use $custom-learning-audiobook to make a short Echo-ready learning audiobook from this topic request."
