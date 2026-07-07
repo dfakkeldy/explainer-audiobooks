@@ -62,8 +62,14 @@ subject, grounded in any codebase you can read.
 The separate **[`custom-learning-audiobook`](skills/custom-learning-audiobook/)**
 skill is for short, listener-specific Echo beta books from plain topic requests:
 "I want to learn X." It defaults to roughly two hours, uses one lead writer for
-continuity, routes public/private books explicitly, and renders Echo-ready audio
-with `am_michael` when the Echo CLI is available.
+continuity, routes public/private books explicitly, supports approved interior
+pictures as EPUB figures, and renders Echo-ready audio with `am_michael` when
+the Echo CLI is available.
+
+The **[`longform-book-development`](skills/longform-book-development/)** skill is
+the slower front door for book ideas that need several rounds of shaping before
+production: rough concept, outline, source plan, picture gathering, visual
+provenance, and a final handoff packet for `custom-learning-audiobook`.
 
 ## License
 

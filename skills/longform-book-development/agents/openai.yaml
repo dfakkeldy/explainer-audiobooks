@@ -1,0 +1,4 @@
+interface:
+  display_name: "Longform Book Development"
+  short_description: "Shape long books before audiobook synthesis"
+  default_prompt: "Use $longform-book-development to turn my rough book idea into an approved outline and handoff packet."
