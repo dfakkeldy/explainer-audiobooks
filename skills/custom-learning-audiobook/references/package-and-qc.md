@@ -10,12 +10,16 @@ Use this run layout:
 ```text
 .build/custom-learning-audiobooks/<slug>/
   research/
+    visuals.md
   chapters/
     ch01.md
     ch02.md
+    images/
+      figure-01.png
   dist/
     <slug>.epub
     <slug>.md
+    images/
     <slug>.m4b
     <slug>.alignment.json
     cover.png
@@ -24,6 +28,30 @@ Use this run layout:
 
 The canonical transient build output stays under `.build/`. Public-safe final
 packages may also be copied to `books/<slug>/`.
+
+## Interior Figures
+
+`skill/scripts/build_book.py` can embed pictures in the EPUB and copy them beside
+the combined Markdown. Store package images under `chapters/images/`, then insert
+each approved figure as its own Markdown paragraph:
+
+```markdown
+![Descriptive alt text](images/figure-01.png "Caption shown under the figure")
+```
+
+Image paths resolve relative to the chapters directory. Supported formats are
+PNG, JPEG, GIF, SVG, and WebP. Keep `research/visuals.md` with each image's
+source/provenance, license or permission status, intended placement, alt text,
+caption, and public/private safety.
+
+Rules:
+
+- Use user-supplied, generated, self-created, public-domain, permissively
+  licensed, or explicitly permissioned images.
+- Treat found web images as references unless the rights allow inclusion.
+- Do not copy private or sensitive images into public repo or KB outputs.
+- Use meaningful alt text and captions; avoid decorative filler.
+- Prefer a few purposeful figures that teach, orient, compare, or document.
 
 ## EPUB And Markdown
 
@@ -69,6 +97,8 @@ Validate:
 ```bash
 unzip -t .build/custom-learning-audiobooks/<slug>/dist/<slug>.epub
 wc -w .build/custom-learning-audiobooks/<slug>/chapters/ch*.md
+test ! -d .build/custom-learning-audiobooks/<slug>/chapters/images || \
+  unzip -l .build/custom-learning-audiobooks/<slug>/dist/<slug>.epub | rg 'OEBPS/images/'
 ```
 
 ## Echo M4B And Alignment
@@ -157,6 +187,8 @@ At minimum:
 - sensitive/private-term scan,
 - first chapter and most technical chapter spot-read,
 - source-confidence label assigned.
+- for illustrated books, every intended figure has alt text, caption, provenance,
+  and an `OEBPS/images/` entry in the EPUB.
 
 ## README Or Manifest Fields
 
@@ -175,6 +207,7 @@ Record:
 - research mode,
 - source-confidence label,
 - sensitive-topic guardrails,
+- figure count and image provenance/licensing summary,
 - output files,
 - QC gates passed/skipped.
 
@@ -189,6 +222,9 @@ cp -R "$DIST"/. "/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/B
 mkdir -p "books/<slug>"
 cp "$DIST/<slug>.epub" "$DIST/<slug>.md" "$DIST/cover.png" "books/<slug>/"
 test -f "$DIST/README.md" && cp "$DIST/README.md" "books/<slug>/README.md"
+if [ -d "$DIST/images" ]; then
+  cp -R "$DIST/images" "books/<slug>/images"
+fi
 ```
 
 Commit only public-safe repo copies. Large `.m4b` and alignment sidecars should

@@ -21,6 +21,9 @@ research, write one coherent manuscript, and package the result for Echo.
     and the signature accent-colour rule.
   - `../../skill/scripts/build_book.py` for EPUB and combined Markdown.
   - `../../skill/scripts/make_cover.py` for cover rendering.
+- If the request came from `longform-book-development`, read its handoff packet
+  first and preserve approved outline, source, and figure decisions unless the
+  user changes them.
 
 ## Defaults
 
@@ -59,43 +62,56 @@ research, write one coherent manuscript, and package the result for Echo.
    listener wants to understand or do. For Dan/internal runs, get outline
    approval unless the user explicitly asked for a full autonomous run.
 
-6. **Write with one lead author.** Do not fan out chapter writing by default.
+6. **Plan any interior pictures.** If the user wants pictures, or a handoff
+   packet includes a figure plan, gather only usable images: user-supplied,
+   generated, self-created, public-domain, permissively licensed, or explicitly
+   permissioned. Save them under `chapters/images/`, keep a provenance note in
+   `research/visuals.md`, and plan chapter placement with alt text and captions.
+   Treat unclear web images as visual references, not package assets.
+
+7. **Write with one lead author.** Do not fan out chapter writing by default.
    Subagents may help with research or QC only when subagent use is allowed, but
    one lead writer owns the manuscript voice and continuity. If chapter fan-out
    is ever used for speed, run a lead-author continuity rewrite before delivery.
 
-7. **Save chapter files.** Write `chapters/ch01.md`, `chapters/ch02.md`, and so
+8. **Save chapter files.** Write `chapters/ch01.md`, `chapters/ch02.md`, and so
    on. Keep chapter headings clean and spoken-friendly. Avoid repeated openings,
-   generic AI enthusiasm, and repeated disclaimers.
+   generic AI enthusiasm, and repeated disclaimers. Add approved figures as
+   standalone Markdown image paragraphs, for example
+   `![Alt text](images/example.png "Caption")`.
 
-8. **Build the book.** Generate or choose a cover, then run the existing
+9. **Build the book.** Generate or choose a cover, then run the existing
    `build_book.py` script. The EPUB/Markdown outputs are always required. For
    generated covers, make 2-3 genuinely different beautiful candidates with a
    strong subject image and one intentional signature accent colour. Use that
    accent in the SVG art and pass the same hex value to `make_cover.py --accent`
    so the final cover clearly sells the colour Echo will derive from it. Include
    a bright/high-key background candidate when the topic would benefit from a
-   friendly, modern audiobook-store look.
+   friendly, modern audiobook-store look. `build_book.py` embeds standalone
+   Markdown images as EPUB figures and copies them beside the combined Markdown.
 
-9. **Render Echo audio when available.** Use Echo's `echo-cli narrate` path from
+10. **Render Echo audio when available.** Use Echo's `echo-cli narrate` path from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
    only as fallback. Produce `<slug>.m4b` and `<slug>.alignment.json` whenever
    the CLI can run. If audio rendering is blocked, deliver EPUB/Markdown and
    report the exact blocker.
 
-10. **QC before copying.** Validate EPUB, parse alignment JSON, inspect M4B
+11. **QC before copying.** Validate EPUB, parse alignment JSON, inspect M4B
     duration with `ffprobe`, run narration/prose sweeps, and record missing QC
-    steps honestly.
+    steps honestly. For books with pictures, verify every figure appears in the
+    EPUB, every image has alt text and a caption, and the provenance/licensing
+    note is complete.
 
-11. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`.
+12. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`.
     Public-safe packages copy to the iCloud Books folder and a repo
     `books/<slug>/` folder. Private packages stay out of the public repo and
     copy to iCloud only when the user explicitly wants that private reading
     copy.
 
-12. **Report plainly.** Include title, slug, privacy status, research mode,
+13. **Report plainly.** Include title, slug, privacy status, research mode,
     source-confidence label, word count, runtime, narrator, output paths, and
-    which QC gates passed or were skipped.
+    which QC gates passed or were skipped. If the book includes pictures, report
+    figure count and any image rights/privacy caveats.
 
 ## Hard Rules
 
@@ -106,6 +122,11 @@ research, write one coherent manuscript, and package the result for Echo.
   user has permission to add it to the public learning library.
 - Do not copy private generated artifacts into the public repo or public KB.
 - Do not use `af_heart` as the default narrator.
+- Do not include pictures in a public package unless their rights and privacy
+  status are clear. Keep private, client, workplace, and personally sensitive
+  images out of public repo and KB surfaces.
+- Do not include decorative images without a learning, evidence, reference, or
+  orientation purpose.
 - Do not ship a generic title-on-colour cover when generating a cover yourself:
   make a real image-led cover, and make the derived accent colour visible enough
   to work as the book's library identity.

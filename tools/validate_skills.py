@@ -53,6 +53,7 @@ def validate_skill(path: str, name: str) -> None:
 def main() -> int:
     validate_skill("skill", "explainer-audiobook")
     validate_skill("skills/custom-learning-audiobook", "custom-learning-audiobook")
+    validate_skill("skills/longform-book-development", "longform-book-development")
 
     contains(
         "skill/SKILL.md",
@@ -65,6 +66,7 @@ def main() -> int:
         "one lead writer",
         "source-confidence label",
         "public-safe",
+        "interior pictures",
         "M4B/alignment",
         "Do not use `af_heart` as the default narrator.",
     )
@@ -80,10 +82,27 @@ def main() -> int:
         "--voice am_michael",
         "<slug>.alignment.json",
         "ffprobe",
+        "Interior Figures",
     )
     contains(
         "skills/custom-learning-audiobook/agents/openai.yaml",
         "$custom-learning-audiobook",
+    )
+    contains(
+        "skills/longform-book-development/SKILL.md",
+        "handoff packet",
+        "picture plan",
+        "custom-learning-audiobook",
+    )
+    contains(
+        "skills/longform-book-development/references/handoff-packet.md",
+        "Figure Plan",
+        "chapters/images/",
+        "$custom-learning-audiobook",
+    )
+    contains(
+        "skills/longform-book-development/agents/openai.yaml",
+        "$longform-book-development",
     )
 
     print("validate_skills: clean")
