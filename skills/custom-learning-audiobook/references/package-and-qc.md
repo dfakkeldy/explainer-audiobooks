@@ -10,6 +10,10 @@ Use this run layout:
 ```text
 .build/custom-learning-audiobooks/<slug>/
   research/
+    coverage-ledger.md
+    continuity.md
+    prose-qc.md
+    editorial-review.md
     visuals.md
   chapters/
     ch01.md
@@ -202,15 +206,28 @@ If the database schema differs, skip this optional QA and report why.
 
 ## Prose QC
 
-Run the narration-style checks from `../../skill/references/narration-style.md`.
+Read `../../skill/references/frontier-manuscript-pipeline.md` and run the
+narration-style checks from `../../skill/references/narration-style.md`. The
+frontier-authored chapter Markdown remains canonical throughout this step.
+
 At minimum:
 
-- word count matches the chosen length mode,
+- word count matches the ledger's **chapter-specific** ranges or has a written
+  reason to be outside them; do not pad a short chapter automatically,
 - no raw code/symbol narration leaks,
-- repeated phrase/opening sweep,
+- run `python3 skill/scripts/prose_qc.py --chapters-dir
+  .build/custom-learning-audiobooks/<slug>/chapters --out
+  .build/custom-learning-audiobooks/<slug>/research/prose-qc.md`,
+- have a cheaper reviewer use that report and `coverage-ledger.md` to flag only
+  exact locations for redundant ideas, formulaic openings/closings, unexplained
+  leaps, shallow concepts, jargon without a concrete case, or missing
+  boundaries/counterexamples; it recommends a repair **type**, not replacement
+  prose,
+- the frontier author accepts/rejects findings and makes every substantive
+  content edit before packaging,
 - sensitive/private-term scan,
 - first chapter and most technical chapter spot-read,
-- source-confidence label assigned.
+- source-confidence label assigned,
 - for illustrated books, every intended figure has alt text, caption, provenance,
   and an `OEBPS/images/` entry in the EPUB.
 
@@ -228,6 +245,7 @@ Record:
 - runtime,
 - chapter count,
 - narrator,
+- frontier author model and model used for research/review/production (when used),
 - research mode,
 - source-confidence label,
 - sensitive-topic guardrails,

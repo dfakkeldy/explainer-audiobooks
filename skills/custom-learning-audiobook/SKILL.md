@@ -17,6 +17,8 @@ research, write one coherent manuscript, and package the result for Echo.
   M4B/alignment, copying packages, or reporting completion.
 - Reuse the existing explainer tooling from this repo:
   - `../../skill/references/narration-style.md` for spoken style and QC sweeps.
+  - `../../skill/references/frontier-manuscript-pipeline.md` for the frontier-author
+    / cheaper-worker split, continuity ledger, and citation-first reader review.
   - `../../skill/references/cover-art.md` for cover concepts, visual quality,
     and the signature accent-colour rule.
   - `../../skill/scripts/build_book.py` for EPUB and combined Markdown.
@@ -36,7 +38,8 @@ research, write one coherent manuscript, and package the result for Echo.
 | Narrator | `am_michael`; fallback `am_puck`; do not default to `af_heart` |
 | Audio renderer | Native Echo/Kokoro through `echo-cli narrate`; no Apple/system-voice substitute |
 | Author metadata | `Dan Fakkeldy` |
-| Writing model metadata | Record the generating model as contributor/source note |
+| Writing model metadata | Record the frontier author as contributor/source note |
+| Model routing | Frontier model: outline, Markdown prose, substantive revisions. Cheaper workers: research extraction, citation checks, diagnostics, package/render/QC only. |
 | Build folder | `.build/custom-learning-audiobooks/<slug>/` |
 | Delivery copy | Complete package folder in iCloud Drive `Books/<Title>/` |
 
@@ -58,11 +61,18 @@ research, write one coherent manuscript, and package the result for Echo.
 
 4. **Research for the listener.** Use quick, deep, Open Notebook, user-supplied,
    or mixed research mode. Label source confidence. The requester does not have
-   to provide sources. Browse current or high-stakes topics when needed.
+   to provide sources. Browse current or high-stakes topics when needed. Cheaper
+   workers may extract and reconcile evidence, but their deliverable is a cited
+   fact pack and uncertainty list — never a substitute manuscript.
 
-5. **Outline the book.** Build a short table of contents around what the
-   listener wants to understand or do. For Dan/internal runs, get outline
-   approval unless the user explicitly asked for a full autonomous run.
+5. **Outline the book and build the learning ledger.** Build a short table of
+   contents around what the listener wants to understand or do. For every core
+   concept, record in `research/coverage-ledger.md`: its first explanation,
+   planned later retrieval/deepening/application, a real example, an expected
+   listener ability, and why any repeated mention earns its place. Vary chapter
+   jobs and target ranges; do not divide the total word count into identical
+   chapters. For Dan/internal runs, get outline approval unless the user
+   explicitly asked for a full autonomous run.
 
 6. **Plan any interior pictures.** If the user wants pictures, or a handoff
    packet includes a figure plan, gather only usable images: user-supplied,
@@ -71,15 +81,23 @@ research, write one coherent manuscript, and package the result for Echo.
    `research/visuals.md`, and plan chapter placement with alt text and captions.
    Treat unclear web images as visual references, not package assets.
 
-7. **Write with one lead author.** Do not fan out chapter writing by default.
-   Subagents may help with research or QC only when subagent use is allowed, but
-   one lead writer owns the manuscript voice and continuity. If chapter fan-out
-   is ever used for speed, run a lead-author continuity rewrite before delivery.
+7. **Write with one lead writer — a frontier model.** The frontier model owns the
+   outline,
+   explanation choices, voice, canonical Markdown chapters, and every substantive
+   revision. Do not fan out chapter writing. If the book is too long for one
+   context, write `ch01.md`, `ch02.md`, and so on sequentially with the same
+   frontier author; before each chapter provide the approved TOC, the relevant
+   fact pack, the coverage-ledger rows, and `research/continuity.md`. Update that
+   record after each chapter with terms already defined, examples/analogies used,
+   deliberate callbacks, and promises that later chapters must resolve.
 
-8. **Save chapter files.** Write `chapters/ch01.md`, `chapters/ch02.md`, and so
-   on. Keep chapter headings clean and spoken-friendly. Avoid repeated openings,
-   generic AI enthusiasm, and repeated disclaimers. Add approved figures as
-   standalone Markdown image paragraphs, for example
+8. **Keep Markdown canonical; use cheap workers as evidence and production
+   sidecars.** Save the frontier author's chapter files under `chapters/`. Cheap
+   workers may produce cited research, a beginner-reader report, prose-lint
+   findings, and EPUB/M4B/cover/manifest artifacts, but not a competing prose
+   draft. A cheap model may make only meaning-preserving mechanical fixes; send
+   all depth, factual, structural, and voice repairs back to the frontier author.
+   Add approved figures as standalone Markdown image paragraphs, for example
    `![Alt text](images/example.png "Caption")`.
 
 9. **Build the book.** Generate or choose a cover, then run the existing
@@ -106,10 +124,15 @@ research, write one coherent manuscript, and package the result for Echo.
    EPUB/Markdown and report the blocker instead of shipping substitute audio.
 
 11. **QC before copying.** Validate EPUB, parse alignment JSON, inspect M4B
-    duration with `ffprobe`, run narration/prose sweeps, and record missing QC
-    steps honestly. For books with pictures, verify every figure appears in the
-    EPUB, every image has alt text and a caption, and the provenance/licensing
-    note is complete.
+    duration with `ffprobe`, and run narration/prose sweeps. Run
+    `python3 skill/scripts/prose_qc.py --chapters-dir <build>/chapters --out
+    <build>/research/prose-qc.md`, then have a cheaper reviewer produce only
+    citation-first findings for redundancy, unexplained leaps, shallow concepts,
+    jargon without a concrete case, and formulaic openings/closings. Compare each
+    finding with the coverage ledger; the frontier author makes accepted
+    substantive repairs before packaging. Record skipped QC steps honestly. For
+    books with pictures, verify every figure appears in the EPUB, every image has
+    alt text and a caption, and the provenance/licensing note is complete.
 
 12. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
     copy the complete `dist/` contents into an easy-to-find iCloud Drive
@@ -123,14 +146,18 @@ research, write one coherent manuscript, and package the result for Echo.
     import staging, not as the primary place the user has to find the book.
 
 13. **Report plainly.** Include title, slug, privacy status, research mode,
-    source-confidence label, word count, runtime, narrator, output paths, the
-    iCloud Drive delivery folder, and which QC gates passed or were skipped. If
-    the book includes pictures, report figure count and any image rights/privacy
-    caveats.
+    source-confidence label, word count, runtime, narrator, frontier author
+    model, lower-cost review/production roles used, output paths, the iCloud
+    Drive delivery folder, and which QC gates passed or were skipped. If the book
+    includes pictures, report figure count and any image rights/privacy caveats.
 
 ## Hard Rules
 
 - Do not make the requester look up sources.
+- Do not fan out substantive chapter prose or let a cheaper model replace a
+  frontier-authored chapter. Cheaper workers may report evidence and apply only
+  meaning-preserving mechanical corrections; the frontier author decides and
+  writes depth, structural, factual, and voice changes.
 - Do not turn medical, legal, financial, safety-critical, workplace-private,
   customer, confidential, or professional-advice topics into advice books.
 - Do not publish or commit a requester book unless it is public-safe and the

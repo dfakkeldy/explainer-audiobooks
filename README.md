@@ -42,9 +42,18 @@ Together they trace the life of a real app — *what it's made of* → *how it s
 
 1. **Pin the brief** — subject, the real worked example, target length, voice.
 2. **Outline** — one chapter per concept, in teaching order, each grounded in one real piece of the example.
-3. **Fact packs** — before any prose is written, distill *accurate* facts from the real docs and source into each chapter's prompt, with a hard "don't invent beyond this" rule. This is what keeps tens of thousands of AI-written words from drifting into confident fiction.
-4. **Fan out** — one agent writes each chapter, in parallel, grounded in its fact pack and a shared style guide: warm, second person, and **no code read aloud, ever**.
-5. **QC + assemble** — sweep for anything that would sound wrong narrated, then build a chaptered EPUB (with a generated cover) and a combined Markdown file.
+3. **Fact packs + coverage ledger** — before prose is written, distill *accurate*
+   facts from the real docs and source into each chapter's evidence, then map each
+   core concept to a real example, a knowledge delta, and a purposeful later
+   retrieval. This keeps tens of thousands of AI-written words accurate and
+   prevents definition-shaped padding.
+4. **Frontier-author Markdown** — one frontier model writes every substantive
+   chapter in sequence, using a continuity record to preserve the book's voice,
+   examples, and promises. Cheaper workers research, diagnose, render, and
+   package; they do not replace chapters.
+5. **QC + assemble** — prose diagnostics and citation-first reader reports flag
+   exact repair candidates, then build a chaptered EPUB (with a generated cover)
+   and a combined Markdown file from the reviewed manuscript.
 
 The full method, and *why* each step exists, is in **[docs/how-these-were-made.md](docs/how-these-were-made.md)**. To make your own, see **[docs/make-your-own.md](docs/make-your-own.md)**.
 
