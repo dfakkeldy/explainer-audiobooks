@@ -38,6 +38,7 @@ research, write one coherent manuscript, and package the result for Echo.
 | Author metadata | `Dan Fakkeldy` |
 | Writing model metadata | Record the generating model as contributor/source note |
 | Build folder | `.build/custom-learning-audiobooks/<slug>/` |
+| Delivery copy | Complete package folder in iCloud Drive `Books/<Title>/` |
 
 ## Workflow
 
@@ -110,16 +111,22 @@ research, write one coherent manuscript, and package the result for Echo.
     EPUB, every image has alt text and a caption, and the provenance/licensing
     note is complete.
 
-12. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`.
-    Public-safe packages copy to the iCloud Books folder and a repo
-    `books/<slug>/` folder. Private packages stay out of the public repo and
-    copy to iCloud only when the user explicitly wants that private reading
-    copy.
+12. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
+    copy the complete `dist/` contents into an easy-to-find iCloud Drive
+    delivery folder:
+    `/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/`.
+    This iCloud Drive folder is the default listening/delivery surface for
+    public-safe and private books unless the user explicitly says not to copy to
+    iCloud. Public-safe, permissioned packages may also copy EPUB/Markdown/cover
+    into the repo `books/<slug>/` folder. Private packages stay out of the
+    public repo and public KB. Use `~/Downloads/book-inbox` only as optional
+    import staging, not as the primary place the user has to find the book.
 
 13. **Report plainly.** Include title, slug, privacy status, research mode,
-    source-confidence label, word count, runtime, narrator, output paths, and
-    which QC gates passed or were skipped. If the book includes pictures, report
-    figure count and any image rights/privacy caveats.
+    source-confidence label, word count, runtime, narrator, output paths, the
+    iCloud Drive delivery folder, and which QC gates passed or were skipped. If
+    the book includes pictures, report figure count and any image rights/privacy
+    caveats.
 
 ## Hard Rules
 
@@ -134,6 +141,9 @@ research, write one coherent manuscript, and package the result for Echo.
   is allowed work, not a reason to downgrade the package.
 - Do not use Apple/macOS/system narration as a fallback for Echo audio unless
   the user explicitly asks for a non-Echo preview or substitute.
+- Do not leave the finished package only in `~/Downloads/book-inbox` or the
+  transient `.build/` folder. Copy the complete package to the iCloud Drive
+  `Books/<Title>/` delivery folder unless the user explicitly opts out.
 - Do not include pictures in a public package unless their rights and privacy
   status are clear. Keep private, client, workplace, and personally sensitive
   images out of public repo and KB surfaces.

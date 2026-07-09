@@ -66,7 +66,8 @@ continuity, routes public/private books explicitly, supports approved interior
 pictures as EPUB figures, and renders Echo-ready audio with `am_michael` when
 the Echo CLI is available. It does not substitute Apple/macOS system narration
 for native Echo/Kokoro audio unless the requester explicitly asks for a
-non-Echo preview.
+non-Echo preview. Finished packages are copied to a complete iCloud Drive
+`Books/<Title>/` folder by default so they are easy to find.
 
 The **[`longform-book-development`](skills/longform-book-development/)** skill is
 the slower front door for book ideas that need several rounds of shaping before
