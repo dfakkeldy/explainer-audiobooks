@@ -34,9 +34,11 @@ research, write one coherent manuscript, and package the result for Echo.
 | Sampler | 45-75 minutes when the topic is vague or commitment is light |
 | Audience | Curious beginner unless the request says otherwise |
 | Narrator | `am_michael`; fallback `am_puck`; do not default to `af_heart` |
+| Audio renderer | Native Echo/Kokoro through `echo-cli narrate`; no Apple/system-voice substitute |
 | Author metadata | `Dan Fakkeldy` |
 | Writing model metadata | Record the generating model as contributor/source note |
 | Build folder | `.build/custom-learning-audiobooks/<slug>/` |
+| Delivery copy | Complete package folder in iCloud Drive `Books/<Title>/` |
 
 ## Workflow
 
@@ -90,11 +92,18 @@ research, write one coherent manuscript, and package the result for Echo.
    friendly, modern audiobook-store look. `build_book.py` embeds standalone
    Markdown images as EPUB figures and copies them beside the combined Markdown.
 
-10. **Render Echo audio when available.** Use Echo's `echo-cli narrate` path from
+10. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
-   only as fallback. Produce `<slug>.m4b` and `<slug>.alignment.json` whenever
-   the CLI can run. If audio rendering is blocked, deliver EPUB/Markdown and
-   report the exact blocker.
+   only as an Echo voice fallback. Echo audio is part of the delivery contract:
+   do not impose your own time limit, deadline, or "too slow" threshold just
+   because synthesis may take hours. Let long renders run, resume partial
+   renders, or report the exact live blocker. Do not replace Echo/Kokoro with
+   macOS `say`, Apple system voices, AVSpeechSynthesizer, audiobook-app TTS, or
+   any other non-Echo renderer unless the user explicitly asks for that
+   non-Echo preview/fallback after you name the tradeoff. Produce `<slug>.m4b`
+   and `<slug>.alignment.json` whenever the CLI can run. If native Echo audio is
+   blocked and the user has not approved a non-Echo substitute, deliver
+   EPUB/Markdown and report the blocker instead of shipping substitute audio.
 
 11. **QC before copying.** Validate EPUB, parse alignment JSON, inspect M4B
     duration with `ffprobe`, run narration/prose sweeps, and record missing QC
@@ -102,16 +111,22 @@ research, write one coherent manuscript, and package the result for Echo.
     EPUB, every image has alt text and a caption, and the provenance/licensing
     note is complete.
 
-12. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`.
-    Public-safe packages copy to the iCloud Books folder and a repo
-    `books/<slug>/` folder. Private packages stay out of the public repo and
-    copy to iCloud only when the user explicitly wants that private reading
-    copy.
+12. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
+    copy the complete `dist/` contents into an easy-to-find iCloud Drive
+    delivery folder:
+    `/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/`.
+    This iCloud Drive folder is the default listening/delivery surface for
+    public-safe and private books unless the user explicitly says not to copy to
+    iCloud. Public-safe, permissioned packages may also copy EPUB/Markdown/cover
+    into the repo `books/<slug>/` folder. Private packages stay out of the
+    public repo and public KB. Use `~/Downloads/book-inbox` only as optional
+    import staging, not as the primary place the user has to find the book.
 
 13. **Report plainly.** Include title, slug, privacy status, research mode,
-    source-confidence label, word count, runtime, narrator, output paths, and
-    which QC gates passed or were skipped. If the book includes pictures, report
-    figure count and any image rights/privacy caveats.
+    source-confidence label, word count, runtime, narrator, output paths, the
+    iCloud Drive delivery folder, and which QC gates passed or were skipped. If
+    the book includes pictures, report figure count and any image rights/privacy
+    caveats.
 
 ## Hard Rules
 
@@ -122,6 +137,13 @@ research, write one coherent manuscript, and package the result for Echo.
   user has permission to add it to the public learning library.
 - Do not copy private generated artifacts into the public repo or public KB.
 - Do not use `af_heart` as the default narrator.
+- Do not invent a timebox for audio rendering. A multi-hour Echo/Kokoro render
+  is allowed work, not a reason to downgrade the package.
+- Do not use Apple/macOS/system narration as a fallback for Echo audio unless
+  the user explicitly asks for a non-Echo preview or substitute.
+- Do not leave the finished package only in `~/Downloads/book-inbox` or the
+  transient `.build/` folder. Copy the complete package to the iCloud Drive
+  `Books/<Title>/` delivery folder unless the user explicitly opts out.
 - Do not include pictures in a public package unless their rights and privacy
   status are clear. Keep private, client, workplace, and personally sensitive
   images out of public repo and KB surfaces.

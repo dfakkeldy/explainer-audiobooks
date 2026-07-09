@@ -26,7 +26,14 @@ Use this run layout:
     README.md or manifest.json
 ```
 
-The canonical transient build output stays under `.build/`. Public-safe final
+The canonical transient build output stays under `.build/`. The durable local
+delivery copy goes to iCloud Drive under:
+
+```text
+/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/
+```
+
+Use that iCloud Drive folder as the findable delivery surface. Public-safe final
 packages may also be copied to `books/<slug>/`.
 
 ## Interior Figures
@@ -152,6 +159,23 @@ If `am_michael` fails because the voice resource is unavailable, retry with
 If the command exits partial, rerun with `--resume`. Keep the same `--work-dir`
 and `--db`.
 
+Do not add a self-imposed timeout around `echo-cli narrate`, kill a progressing
+render because it may take several hours, or replace it with Apple/macOS/system
+voice narration for convenience. Native Echo/Kokoro output is the custom-learning
+audio contract. The only automatic narrator fallback is from `am_michael` to the
+Echo voice `am_puck` when the preferred Echo voice is unavailable.
+
+If native Echo rendering is blocked, distinguish the cases clearly:
+
+- **Slow but progressing**: let it run, use `--resume` if interrupted, and report
+  the active render state if the session must hand off.
+- **Blocked by resources/build/schema**: fix the Echo blocker when practical, or
+  deliver EPUB/Markdown with audio marked blocked.
+- **User-approved non-Echo preview**: only if the user explicitly asks for it,
+  create the preview with a loud `non_echo_audio` status. Do not call it
+  Echo-ready, and do not let it replace the native Echo render unless the user
+  cancels Echo audio.
+
 ## Audio And Alignment QC
 
 Run what is available and record anything skipped:
@@ -213,12 +237,31 @@ Record:
 
 ## Copy Rules
 
-Public-safe, permissioned packages:
+Always create a complete iCloud Drive delivery folder for finished packages
+unless the user explicitly says not to copy to iCloud:
 
 ```bash
-mkdir -p "/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>"
-cp -R "$DIST"/. "/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/"
+ICLOUD_DIR="/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>"
+mkdir -p "$ICLOUD_DIR"
+ditto "$DIST" "$ICLOUD_DIR"
+```
 
+After copying, verify the copied package from the iCloud path, not only from
+`.build/`:
+
+```bash
+unzip -t "$ICLOUD_DIR/<slug>.epub"
+test ! -f "$ICLOUD_DIR/<slug>.m4b" || \
+  ffprobe -v error -show_entries format=duration \
+    -of default=noprint_wrappers=1:nokey=1 "$ICLOUD_DIR/<slug>.m4b"
+test ! -f "$ICLOUD_DIR/<slug>.alignment.json" || \
+  python3 -m json.tool "$ICLOUD_DIR/<slug>.alignment.json" >/dev/null
+```
+
+Public-safe, permissioned packages may also copy the public-facing files to the
+repo:
+
+```bash
 mkdir -p "books/<slug>"
 cp "$DIST/<slug>.epub" "$DIST/<slug>.md" "$DIST/cover.png" "books/<slug>/"
 test -f "$DIST/README.md" && cp "$DIST/README.md" "books/<slug>/README.md"
@@ -235,6 +278,10 @@ Private packages:
 
 - Do not copy into `books/`.
 - Do not copy into the public KB.
-- Copy to iCloud Books only when the user explicitly wants a private reading
-  copy.
+- Copy the complete package to the iCloud Drive `Books/<Title>/` delivery folder
+  by default, because the user wants finished books to be findable there.
 - Keep private delivery folders under the agreed private path for that run.
+
+`~/Downloads/book-inbox` is optional import staging only. Do not treat it as the
+primary delivery surface, and do not report a package as done if the user would
+have to hunt through `book-inbox` to find the finished book.
