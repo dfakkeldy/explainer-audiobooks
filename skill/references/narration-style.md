@@ -1,11 +1,11 @@
 # Narration style bible
 
 This is the craft layer of the explainer-audiobook skill. The whole product is
-*heard*, never read on a page, so every rule below exists to serve the ear. Hand
-the "Voice & rules" block to every chapter-writer verbatim — consistency across
-independently-written chapters depends on it.
+*heard*, never read on a page, so every rule below exists to serve the ear. Give
+the "Voice & rules" block to the frontier lead author verbatim. Cheap workers may
+review against it, but they must not replace its prose with a different voice.
 
-## Voice & rules (give this block to every writer agent verbatim)
+## Voice & rules (give this block to the frontier lead author verbatim)
 
 THIS WILL BE NARRATED ALOUD as an audiobook. Write 100% for the EAR.
 
@@ -44,6 +44,26 @@ DO NAME THE REAL THINGS (this is how the listener learns the vocabulary):
   core vocabulary should be heard several times, in context, before the book
   ends — one mention teaches recognition; several teach recall.
 
+NOVELTY AND DEPTH — every paragraph earns its place:
+- Give each paragraph one dominant job: introduce, explain a mechanism, work
+  through an example, contrast an alternative, expose a failure mode, apply the
+  idea, or retrieve it briefly. Do not say the same claim again with different
+  metaphors unless the new paragraph adds a different job.
+- A return to a core concept must perform a named learning function: retrieve it
+  after a gap, deepen its mechanism, apply it in a new situation, compare it to
+  an alternative, or correct a likely misconception. A bare redefinition is
+  padding, even if it is elegantly phrased.
+- Teach important concepts in layers across the book: what it is, why it exists,
+  how it works, a concrete case, and the boundary where the simple story breaks.
+  Do not make every minor term carry all five layers, but do not call a concept
+  explained after one vague definition either.
+- Prefer a specific observation, decision, failure, or worked example to a
+  generic claim about what "matters." Use analogies sparingly and never recycle
+  the same one as if it were new.
+- Do not inflate a chapter to hit a uniform word count. End a chapter when its
+  promised knowledge delta is complete; deeper concepts may need more space,
+  while orientation and transition chapters may be shorter.
+
 EMPHASIS — say it once, plainly, then move on:
 - When something genuinely matters, say so in ordinary words, once, and let the
   explanation itself carry the weight. The clearest writing rarely announces its
@@ -78,16 +98,19 @@ VOICE: second person ("you"), patient, encouraging, a little wry — a smart fri
 explaining over coffee, not a motivational speaker. Short, varied sentences.
 Concrete analogies used sparingly. Trust the listener; never oversell.
 
-SHAPE of each chapter: open with a hook — a small scene, a question, or a problem
-(NOT "In this chapter we will"). Teach the concept plainly. Ground it in the real,
-named worked-example component. Where the design genuinely gave up one thing to get
-another, name that tradeoff once and cleanly, then move on — only where the cost is
-real, never as a reflex, and never the same cost restated several ways (even when
-the whole chapter is about a tradeoff, you make the point once). Close with two to
-four spoken sentences that briefly re-name the new terms and commands the chapter
-introduced (one more pass for the vocabulary) and point ahead to what the listener
-can now understand or do — no heading, and without announcing it ("to sum up",
-"the takeaway", "carry this forward").
+SHAPE of each chapter: give the chapter a distinct job in the book — perhaps a
+scene, a mechanism, a guided walkthrough, a comparison, a failure analysis, or
+an application — rather than running every chapter through the same hook →
+concept → tradeoff → recap mould. Open with a concrete scene, question, or
+problem when it serves the chapter; never use a generic "In this chapter" opener.
+Teach the concept plainly and ground it in the real, named worked-example
+component. Where the design genuinely gave up one thing to get another, name that
+tradeoff once and cleanly, then move on — only where the cost is real, never as a
+reflex, and never the same cost restated several ways. Close with the natural
+last beat for this chapter: a short retrieval, a consequence, a mini-application,
+or the next useful question. Do not bolt on the same generic recap or "you can now"
+line every time. A core term may be re-named at the close only when it helps recall
+or advances the next chapter.
 
 ## Why these rules matter (so you can adapt, not just obey)
 
@@ -130,7 +153,12 @@ can now understand or do — no heading, and without announcing it ("to sum up",
 
 ## Length and runtime math
 
-A natural narration runs roughly 150 words per minute at 1.0x, ~187 at 1.25x.
+Use these as book-level planning ranges, not a quota to divide equally among
+chapters. A natural narration runs roughly 150 words per minute at 1.0x, ~187 at
+1.25x. Let a chapter be as short as the listener's knowledge delta allows and as
+long as a worked explanation needs; uniform three-thousand-word chapters are a
+reliable way to manufacture filler. Set a range per chapter in the coverage ledger
+and report the real final total.
 
 | Target listen | ~Words | Suggested chapters |
 |---|---|---|
@@ -139,12 +167,10 @@ A natural narration runs roughly 150 words per minute at 1.0x, ~187 at 1.25x.
 | ~4 hours (1.25x) | ~45,000 | 15-17 |
 | ~5 hours (1.25x) | ~56,000 | 17-19 |
 
-Per chapter, aim for ~3,000 words (a 15-18 minute listen). Models reliably hit
-this when each chapter has a 6-7 beat sheet with ~450-600 words per beat. They
-tend to *overshoot* slightly when given beats — budget for landing 10-25% over
-target and tell the user the real number. A few chapters long is fine for an
-audiobook; you can offer to trim by tightening prose across all chapters rather
-than cutting any single chapter, so the arc stays intact.
+A dense technical chapter may need 2,500-3,500 words, while an orientation,
+bridge, or application chapter may be much shorter. If the book runs long, first
+remove redundant explanations and decorative transitions; do not cut the only
+worked example or boundary that makes a difficult concept understandable.
 
 ## The fact-pack discipline (this is what keeps it accurate)
 
@@ -153,25 +179,27 @@ chapter, assemble a concise **fact pack** — accurate, sourced details about th
 worked example — by actually reading its real docs and/or code first. **Include the
 real names** the listener should come away knowing: the actual files, tools,
 commands, and components this chapter touches, each with a one-line plain-English
-gloss. Embed the fact pack in that chapter's writer prompt with an instruction
+gloss. Embed the fact pack in that chapter's frontier-author prompt with an instruction
 like: "Ground everything in these real facts. Name these real things out loud and
 gloss them; use them; simplify for a beginner; translate code-like *syntax* into
 spoken English, but keep the real *names*; never contradict the facts and never
 invent technical specifics beyond them." For command-driven subjects (git, the
 shell, build tools), the fact pack should also mark the handful of commands the
-listener must come away knowing cold — writers voice each of those at least twice
-in the chapter, once introduced and once in passing. Grounding beats trusting model memory
+listener must come away knowing cold — the frontier author voices each of those at
+least twice in the chapter, once introduced and once in passing. Grounding beats trusting model memory
 every time, and it is the difference between a guide the user can trust and
 plausible-sounding fiction.
 
 ## QC checklist (run after generation, before assembling)
 
-Cheap shell checks catch the things that ruin a narration. Run them over the
-chapter files:
+Tool-backed checks and cheap editorial review catch the things that ruin a
+narration without letting a lower-cost model take over the author's voice. Run
+them over the chapter files:
 
-- **Real word counts:** `wc -w chapters/ch*.md`. Top up any chapter under its
-  floor with a targeted expansion agent. Never trust a model's self-reported
-  count.
+- **Real word counts:** `wc -w chapters/ch*.md`. Investigate a chapter that
+  misses its ledger range; do not automatically top it up. The question is
+  whether its promised knowledge delta is incomplete, not whether it matches a
+  uniform quota.
 - **Code-leak sweep** — narration killers that slipped past the rules:
   - backticks / code fences: `grep -l '`' chapters/ch*.md`
   - snake_case tokens (narrate terribly): `grep -oE '[A-Za-z]+_[A-Za-z_]+' chapters/ch*.md | sort | uniq -c | sort -rn`
@@ -187,6 +215,18 @@ chapter files:
   - dead phrases: `grep -rniE 'tattoo|burn (this\|it) into|sear (this\|it)|etch (this\|it)|carve (this\|it)|the one rule, if you|if you remember nothing else' chapters/ch*.md` — should return nothing; rewrite any hit. (Bare `sear`/`etch` are deliberately avoided — they match "search" and "sketch".)
   - emphasis-inflation density: `grep -ronE 'the (single )?most important|the heart of|the whole point|the real (magic|secret|power)|matters more than anything' chapters/ch*.md | cut -d: -f1 | sort | uniq -c | sort -rn` — a chapter with many hits is overselling; send it back to flatten the register.
   - tradeoff drone: `grep -roniE 'trade[- ]?off|the cost of|every (choice|decision)|comes at a (cost|price)|nothing is free' chapters/ch*.md | cut -d: -f1 | sort | uniq -c | sort -rn` — more than two or three in one chapter usually means the tradeoff throughline has become a tic; thin it to the moments that are real.
+- **Repetition and depth review:** run
+  `python3 scripts/prose_qc.py --chapters-dir chapters --out research/prose-qc.md`.
+  Inspect its repeated-phrase, similar-paragraph, and opening/closing candidates
+  against `coverage-ledger.md`: retain a repeat only when it retrieves, deepens,
+  applies, compares, or corrects a concept. Give a cheap reviewer the report and
+  the ledger, then require a citation-first finding for every genuine issue:
+  location, evidence, listener cost, and repair type. It reports; the frontier
+  author writes substantive fixes.
+- **Explanation-stack check:** for each core ledger row, verify the book gives
+  the listener the promised definition, reason, mechanism, concrete case, and
+  useful boundary/counterexample where applicable. Flag a shallow claim with its
+  exact location rather than asking a cheaper model to expand it generically.
 - **Vocabulary check (codebase-grounded books):** for each chapter, confirm the real
   file/tool/command names from its fact pack actually appear *by name* in the prose
   (not paraphrased into "the settings file"). If the listener couldn't search for

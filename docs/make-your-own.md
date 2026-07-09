@@ -31,10 +31,16 @@ Then say something like:
 The skill will walk the process in [`skill/SKILL.md`](../skill/SKILL.md):
 
 1. **Pin the brief** — it confirms the subject, the real worked example to ground everything in, the target length, and the voice.
-2. **Propose an outline** — and wait for your yes before writing 45,000 words against the wrong structure.
-3. **Build fact packs** — it reads the real docs/source of your worked example so the prose stays true to it.
-4. **Fan out** — one writer agent per chapter, in parallel.
-5. **QC + assemble** — a code-leak sweep, then a chaptered EPUB (with cover) and a combined Markdown.
+2. **Propose an outline and coverage ledger** — it maps each core concept to a
+   useful knowledge delta, real example, and purposeful later retrieval before
+   spending money on prose.
+3. **Build fact packs** — lower-cost workers read the real docs/source of your
+   worked example so the frontier author stays true to it.
+4. **Author canonical Markdown** — one frontier model writes the chapters in
+   sequence, carrying a continuity record instead of fanning out competing voices.
+5. **Review + assemble** — cheap diagnostics and reader reports identify exact
+   repair candidates; the frontier author handles substantive fixes, then EPUB,
+   cover, audio, and Markdown are rendered from the reviewed chapters.
 6. **Deliver** — the finished `.epub` lands in `~/Downloads/book-inbox/`.
 
 ## The two ingredients that matter

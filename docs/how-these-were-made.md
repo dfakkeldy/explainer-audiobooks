@@ -1,43 +1,96 @@
 # How these were made
 
-Each book here is roughly 45,000–75,000 words of beginner-friendly technical prose, written by a language model, and meant to be *listened to*. Three things make that hard, and most of the method is just three answers to them.
+Each book here is beginner-friendly technical prose, written by a language model,
+and meant to be *listened to*. That is harder than merely making a long document:
+the listener needs a coherent mental model, concrete examples, and a voice that
+does not turn into boilerplate halfway through.
 
 ## The three problems
 
-1. **Length is a slog.** Asking one model, in one pass, for a 50,000-word book gets you something that sags in the middle and quietly gives up on the back half.
-2. **It hallucinates.** Ask a model to "explain how this app handles audio" and it will happily invent plausible-sounding internals that aren't real.
-3. **It sounds like code read aloud.** The moment a technical writer reaches for `someFunction()` or `snake_case`, a text-to-speech voice turns it into misery — *"open paren close paren"* — and the listener checks out.
+1. **A long book can feel assembled instead of authored.** Independently drafted
+   chapters often repeat the same definition, hook, transition, or tradeoff
+   without adding a new layer of understanding.
+2. **It can hallucinate.** Ask a model to “explain how this app handles audio”
+   and it can invent plausible-sounding internals that are not real.
+3. **It can sound like code read aloud.** Multi-line syntax and symbols turn into
+   “open paren, underscore, arrow” in a text-to-speech voice — and the listener
+   checks out.
 
-## The three answers
+## The production method
 
-### 1. One agent per chapter, fanned out
+### 1. One frontier model authors the canonical Markdown
 
-The book is outlined first — one chapter per concept, in teaching order. Then **each chapter is written by its own agent, in parallel.** No single context has to hold the whole book, so chapter 14 is written with the same care as chapter 1. Each writer gets the full table of contents (so it can make light transitions) but only *its* chapter to write.
+The book begins with a learner brief, a table of contents, and a
+**concept-coverage ledger**. The ledger records what each core concept first
+means, how it will be retrieved or deepened later, which real example will make
+it concrete, and what new ability the listener should have afterward.
 
-A short orchestration script ([`skill/references/fanout-template.md`](../skill/references/fanout-template.md)) dispatches the writers and each one saves its own chapter file straight to disk — the prose never round-trips through the orchestrator's context.
+One frontier model then writes every substantive Markdown chapter in sequence.
+For a long book, that is several focused passes rather than one enormous output:
+the author receives the outline, the relevant fact pack, ledger rows, and a small
+continuity record of prior terminology, analogies, examples, and unresolved
+promises. The chapter Markdown is the source of truth; EPUB and audio are
+renderings of it.
 
-### 2. Fact packs — the anti-hallucination layer
+This is intentionally not a “one agent per chapter” assembly line. A repeated
+idea is allowed only when it does a different learning job — retrieval, deeper
+mechanism, application, comparison, or correction of a misconception. Otherwise
+it is edited as padding.
 
-This is the part that matters most. **Before any prose is written, the real source is read and distilled into a per-chapter "fact pack"** — a compact list of accurate, sourced details about the worked example. Each writer's prompt embeds its fact pack with a blunt instruction:
+### 2. Fact packs keep the author grounded
 
-> Ground everything in these real facts. Simplify them for a beginner; translate any code-like names into plain spoken English; but never contradict them, and never invent technical specifics beyond them.
+Before prose is written, lower-cost workers read the real source and build a
+per-chapter **fact pack**: cited details about the worked example, the actual
+names a listener should learn, likely uncertainty, and contradictions to avoid.
+The frontier author receives the evidence, not a cheaper model’s draft to mimic.
 
-Grounding the model in real, retrieved facts beats trusting its memory every time. It's the difference between a guide that's true to the actual codebase and one that's merely plausible. The books about Echo were grounded in Echo's own architecture docs and source; the book about Apple's design guidelines was grounded in the current guidelines (Liquid Glass and all), not a model's stale recollection of them.
+That grounding beats trusting model memory. It is the difference between a guide
+that is true to an actual codebase and one that is merely plausible.
 
-### 3. A narration style guide — written for the ear
+### 3. Cheap workers review evidence; they do not take over the voice
 
-Every writer gets the same style rules ([`skill/references/narration-style.md`](../skill/references/narration-style.md)), and the hard one is: **no code, ever.** No snippets, no symbols, no camelCase spelled out, no file extensions. When a real component has to be named, the writer says it in plain words ("the part called the Player Model") and then explains the *idea* in English. After generation, a cheap automated sweep greps every chapter for the things that slip through — backticks, `snake_case`, arrows, braces — and anything caught gets scrubbed before assembly.
+Lower-cost workers are ideal for source extraction, citation checks, prose
+linting, beginner-reader reports, cover generation, EPUB/M4B assembly, and file
+validation. Their editorial reports cite the exact paragraph and say what kind of
+repair is needed — for example, “this redefines a cache without adding an
+application; replace it with a counterexample.” They do not redraft whole
+chapters in a different voice.
 
-The rest of the guide is voice: warm, second person, every piece of jargon defined in one breath the first time it appears, honest about the trade-offs behind each decision.
+A small standard-library tool,
+[`skill/scripts/prose_qc.py`](../skill/scripts/prose_qc.py), reports candidates
+for repeated phrases, similar paragraphs, and formulaic chapter openings or
+closings. It is a prompt for judgment, not an automatic rewrite: deliberate
+vocabulary retrieval can be pedagogically useful. The frontier author decides
+which findings are real and makes only the necessary substantive repair pass.
+
+### 4. Narration is designed for the ear
+
+The narration guide ([`skill/references/narration-style.md`](../skill/references/narration-style.md)) keeps prose warm, second person, concrete, and plain-spoken.
+A short, speakable command may appear once and be unpacked, but code blocks,
+symbol-heavy syntax, and two code lines in a row do not belong in an audiobook.
+The book still names real files, tools, and commands so a listener can find them
+later.
+
+The same guide requires a layered explanation for the important ideas: what it
+is, why it exists, how it works, a real case, and the boundary where the simple
+story breaks. That is how the books get deeper without getting longer merely by
+repeating themselves.
 
 ## Assembly
 
-A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the chapter files into a valid EPUB 3 — with both a modern navigation document and an old-style NCX table of contents, so it imports cleanly into the widest range of readers — plus a combined Markdown copy. A second script ([`skill/scripts/make_cover.py`](../skill/scripts/make_cover.py)) turns bespoke SVG art into an image-led cover, carrying a deliberate cover-art accent colour when supplied, supporting bright or dark cover tones, and falling back to a title-derived colour otherwise. Neither script assumes much about the machine it runs on.
+A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the reviewed chapter files into a valid EPUB 3 — with both a modern navigation document and an old-style NCX table of contents — plus a combined Markdown copy. A second script ([`skill/scripts/make_cover.py`](../skill/scripts/make_cover.py)) turns bespoke SVG art into an image-led cover with an intentional accent colour. Echo can then render the EPUB into M4B audio and alignment data.
 
-## Model-agnostic
+## Model-aware, not model-agnostic
 
-The method is just orchestration plus grounding, so it doesn't depend on a particular model. One of the books in this collection (*Git Happens*) was written by **DeepSeek v4**; the others by **Opus 4.8**. Each book records the model that wrote it in its EPUB metadata. Swap the model, keep the method.
+The method does not require one specific vendor, but it is deliberately
+**model-routed**: pay for a frontier model where judgment, explanation, and voice
+matter; use cheaper models for bounded, checkable work. Each finished package
+records the authoring model and the review/production roles used.
 
 ## What it is not
 
-It is not a replacement for an expert author. The fact packs keep the prose honest about *what the code does*, but no one reviewed every sentence for pedagogical nuance. These are a fast, grounded, friendly first pass — and they're upfront about that. See the honest-disclosure note in the [README](../README.md).
+It is not a replacement for an expert author or a line-by-line expert review. The
+method makes the work more grounded, coherent, and inspectable; it does not make
+every claim infallible. Check primary sources before relying on a real product's
+current rules or behavior, and keep the AI-authorship disclosure with any public
+book.

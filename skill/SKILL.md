@@ -23,20 +23,26 @@ everything.
 
 ## What makes this hard (and where this skill earns its keep)
 
-Four failure modes sink a project like this, and the process below exists to
+Five failure modes sink a project like this, and the process below exists to
 beat each one:
 1. **It sounds like code read aloud — or, overcorrecting, scrubs the real names
    away.** Solved by the narration style bible (which caps code at one speakable
    line at a time and *requires* naming the real files, tools, and commands) plus
    a post-generation code-leak and vocabulary sweep.
 2. **It hallucinates the worked example.** Solved by per-chapter *fact packs*
-   built from the example's real docs/code, embedded in every writer's prompt.
-3. **It's a slog to generate 45,000 good words.** Solved by fanning out one
-   writer agent per chapter, in parallel, each writing its own file to disk.
+   built from the example's real docs/code, embedded in the lead author's prompt.
+3. **It feels padded, repetitive, or assembled.** Solved by a single frontier
+   lead author, a concept-coverage ledger, deliberately varied chapter jobs,
+   and an editorial pass that treats repetition as a defect unless it has a
+   named learning purpose.
 4. **The vocabulary washes over the listener without sticking.** Solved by the
    reinforcement rules in the style bible: key terms and commands recur across
    chapters with brief re-glosses, and each chapter's close re-names what it
    introduced.
+5. **Expensive prose work gets wasted on mechanical production.** Solved by
+   routing research extraction, fact checking, diagnostics, packaging, and
+   rendering to cheaper workers while the frontier author owns only the prose
+   and substantive editorial decisions.
 
 ## Process
 
@@ -106,10 +112,18 @@ For each chapter, assemble:
   sources the user points you at) to get these right. **Include the real names** the
   listener should come away knowing (the actual files, tools, commands, and
   components this chapter touches), each with a one-line gloss. This is the accuracy
-  backbone; the writers must not invent beyond it.
-- a **beat sheet**: 6-7 beats, each roughly 450-600 words, that walk the hook →
-  concept → grounding → tradeoff → takeaway shape. The closing beat re-names the
-  chapter's new terms and commands (the recap rule in the style bible).
+  backbone; the author must not invent beyond it.
+- a **beat sheet**: a short sequence of distinct jobs, such as a scene,
+  mechanism, worked example, failure mode, comparison, or application. Do not
+  force every chapter into the same 6-7-beat shape or a uniform word target;
+  a short orienting chapter and a dense technical chapter should earn different
+  lengths.
+- a **concept-coverage ledger** in `research/coverage-ledger.md`: for every
+  core concept, record its first introduction, planned later use, why any
+  repetition helps (retrieve, deepen, apply, compare, or correct a
+  misconception), its real example, and the listener's expected new ability.
+  Every chapter needs a clear *knowledge delta* — what the listener can explain
+  or do afterward that they could not before. This is the anti-padding spec.
 
 The fact-pack discipline is explained in `references/narration-style.md` — read
 that section before writing the packs.
@@ -136,27 +150,38 @@ Record each figure's source URL and give it a caption that stands alone. These
 books are personal-library items, but still skip anything watermarked or
 paywalled, and if the environment blocks image downloads, skip figures rather
 than substituting junk. Each chapter's figure list (filename + caption + what it
-shows) goes into that chapter's writer prompt.
+shows) goes into that chapter's frontier-author prompt.
 
-### 4. Fan out: one writer agent per chapter, in parallel
+### 4. Use a frontier lead author; keep Markdown canonical
 
-Pre-create a build directory with a `chapters/` subfolder. Then dispatch the
-writers concurrently — each gets the style bible + throughlines + full TOC + its
-own beats + its own fact pack, and each writes its own `chNN.md` file to disk
-(large prose belongs on disk, not round-tripped through your context).
+Pre-create a build directory with a `chapters/` subfolder. One frontier model
+owns every chapter's narration and all substantive revisions. It may write the
+book sequentially, chapter by chapter, to `chNN.md` when the whole manuscript
+will not fit in one context, but do **not** fan out prose drafting to cheaper
+models or independent chapter writers.
 
-Follow `references/fanout-template.md`. It gives two ways to run the fan-out:
-- **Default (anywhere):** parallel `Agent` tool calls, in batches.
-- **When the user has opted into multi-agent orchestration** (e.g. an
-  "ultracode" session, or they asked for a workflow): the `Workflow` script in
-  that file gives nicer progress and concurrency control. Only use the Workflow
-  tool under that opt-in.
+Give the frontier author the approved TOC, throughlines, voice bible,
+concept-coverage ledger, the relevant fact pack and beat sheet, plus a compact
+continuity record after each chapter. Store that record in
+`research/continuity.md`: newly introduced terms, analogies already used,
+examples, deliberate callbacks, unresolved promises, and facts that must remain
+consistent. The chapter files are the canonical manuscript; EPUB, audio, and all
+other formats are downstream renderings.
 
-### 5. QC sweep (cheap shell checks, before assembling)
+Cheaper workers may extract sources, build fact packs, check citations, run
+diagnostics, simulate a beginner listener, assemble files, make covers, render
+audio, and produce short editorial reports with exact quotations and locations.
+They do **not** write or replace whole chapters. A bounded mechanical edit is
+acceptable only when it cannot change meaning; return depth, structure,
+explanation, and factual corrections to the frontier author. Follow
+`references/frontier-manuscript-pipeline.md` for the role contract and review
+format.
+
+### 5. QC sweep and targeted editorial repair
 
 Run the checklist in `references/narration-style.md`:
-- real word counts with `wc -w` (top up any chapter under its floor — never trust
-  self-reported counts);
+- real word counts with `wc -w` (investigate a chapter outside its ledger range;
+  never trust a model's self-reported count or pad automatically);
 - a code-leak grep sweep (backticks, snake_case, arrows, braces) — scrub raw
   syntax and multi-line blocks, but leave plainly-spoken filenames like
   settings.json and deliberate single-line spoken commands (git commit, swift
@@ -165,13 +190,24 @@ Run the checklist in `references/narration-style.md`:
   and tradeoff drone this voice is prone to; flatten anything that oversells;
 - a vocabulary check — the real file/tool names from each fact pack actually get
   named in the prose, not paraphrased into "the settings file";
+- `python3 scripts/prose_qc.py --chapters-dir <build>/chapters` to surface
+  repeated phrases, similar paragraphs, and formulaic openings/closings. Treat
+  it as a candidate list, not a blind rewrite instruction: intentional
+  vocabulary retrieval is allowed only when the coverage ledger explains it;
+- a cheap-reader report that cites the exact paragraph for: redundant idea,
+  unexplained leap, weak or missing mechanism, jargon without an example,
+  generic phrasing, and a place that needs a counterexample, boundary, or
+  concrete walkthrough. It should recommend the *type* of repair, not rewrite
+  the manuscript in a different voice;
 - heading-consistency check so the TOC comes out clean;
 - figure check (if figures were used) — every `![...]` line points at a file that
   exists in `chapters/images/`, has alt text and a standalone caption, and the
   surrounding prose never leans on it (`grep -rniE 'as you can see|shown below|see the (figure|image)|pictured' chapters/ch*.md` should return nothing).
 
 Spot-read the tone-setting first chapter and the most technical chapter to
-confirm voice and that nothing was hallucinated.
+confirm voice and that nothing was hallucinated. Have the frontier author make
+one targeted editorial pass over accepted findings; do not pay for a wholesale
+second draft if the report only finds local polish.
 
 ### 6. Make a cover, then assemble the EPUB + Markdown
 
@@ -281,12 +317,11 @@ code change, so it normally needs no repo-doc updates.
   the finished cover strongly carries the library-derived accent. Use `--tone
   bright` or `--tone dark` deliberately. Render 2-3 concepts, let the user pick,
   then pass the chosen PNG to `build_book.py --cover`.
-- `references/narration-style.md` — the voice & rules block to give every writer
-  verbatim, the reasoning behind them, the length/runtime table, the fact-pack
-  discipline, and the QC checklist. Read before writing fact packs.
+- `references/narration-style.md` — the voice & rules block to give the frontier
+  author verbatim, the reasoning behind them, the length/runtime table, the
+  fact-pack discipline, and the QC checklist. Read before writing fact packs.
 - `references/cover-art.md` — how to design good per-book cover art and run the
   offer-a-few-candidates flow; ships with `cover-art-example.svg` as a starting
   point.
-- `references/fanout-template.md` — the parallel chapter-writing pattern, both the
-  Agent-tool default and the Workflow option, with the exact writer-prompt
-  template.
+- `references/frontier-manuscript-pipeline.md` — the frontier-author / cheaper-worker
+  split, continuity protocol, and citation-first cheap-review format.

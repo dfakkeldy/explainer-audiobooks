@@ -12,6 +12,7 @@ Ask only questions that materially improve the book:
 
 - What should the listener be able to do or understand after finishing?
 - Is the listener brand new, rusty, or already familiar?
+- What has been confusing, too shallow, or too repetitive in other explanations?
 - Is this practical, curiosity-driven, work-related, or hobby-related?
 - Is there a specific situation the book should prepare them for?
 - Anything to include, avoid, simplify, or keep private?
@@ -56,6 +57,11 @@ Save notes under `research/`:
 - `sources.md` - links/files used, source-quality labels, retrieval date.
 - `fact-pack.md` - facts the manuscript may rely on.
 - `outline.md` - chapter plan and learning throughlines.
+- `coverage-ledger.md` - each core concept's introduction, deliberate later use,
+  example, explanation depth, expected listener ability, and reason for any
+  repetition.
+- `continuity.md` - terms, analogies, examples, callbacks, and open promises the
+  frontier author must carry forward between Markdown chapters.
 
 Source-confidence labels:
 
