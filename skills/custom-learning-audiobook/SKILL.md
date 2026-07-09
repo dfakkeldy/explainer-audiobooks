@@ -34,6 +34,7 @@ research, write one coherent manuscript, and package the result for Echo.
 | Sampler | 45-75 minutes when the topic is vague or commitment is light |
 | Audience | Curious beginner unless the request says otherwise |
 | Narrator | `am_michael`; fallback `am_puck`; do not default to `af_heart` |
+| Audio renderer | Native Echo/Kokoro through `echo-cli narrate`; no Apple/system-voice substitute |
 | Author metadata | `Dan Fakkeldy` |
 | Writing model metadata | Record the generating model as contributor/source note |
 | Build folder | `.build/custom-learning-audiobooks/<slug>/` |
@@ -90,11 +91,18 @@ research, write one coherent manuscript, and package the result for Echo.
    friendly, modern audiobook-store look. `build_book.py` embeds standalone
    Markdown images as EPUB figures and copies them beside the combined Markdown.
 
-10. **Render Echo audio when available.** Use Echo's `echo-cli narrate` path from
+10. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
-   only as fallback. Produce `<slug>.m4b` and `<slug>.alignment.json` whenever
-   the CLI can run. If audio rendering is blocked, deliver EPUB/Markdown and
-   report the exact blocker.
+   only as an Echo voice fallback. Echo audio is part of the delivery contract:
+   do not impose your own time limit, deadline, or "too slow" threshold just
+   because synthesis may take hours. Let long renders run, resume partial
+   renders, or report the exact live blocker. Do not replace Echo/Kokoro with
+   macOS `say`, Apple system voices, AVSpeechSynthesizer, audiobook-app TTS, or
+   any other non-Echo renderer unless the user explicitly asks for that
+   non-Echo preview/fallback after you name the tradeoff. Produce `<slug>.m4b`
+   and `<slug>.alignment.json` whenever the CLI can run. If native Echo audio is
+   blocked and the user has not approved a non-Echo substitute, deliver
+   EPUB/Markdown and report the blocker instead of shipping substitute audio.
 
 11. **QC before copying.** Validate EPUB, parse alignment JSON, inspect M4B
     duration with `ffprobe`, run narration/prose sweeps, and record missing QC
@@ -122,6 +130,10 @@ research, write one coherent manuscript, and package the result for Echo.
   user has permission to add it to the public learning library.
 - Do not copy private generated artifacts into the public repo or public KB.
 - Do not use `af_heart` as the default narrator.
+- Do not invent a timebox for audio rendering. A multi-hour Echo/Kokoro render
+  is allowed work, not a reason to downgrade the package.
+- Do not use Apple/macOS/system narration as a fallback for Echo audio unless
+  the user explicitly asks for a non-Echo preview or substitute.
 - Do not include pictures in a public package unless their rights and privacy
   status are clear. Keep private, client, workplace, and personally sensitive
   images out of public repo and KB surfaces.

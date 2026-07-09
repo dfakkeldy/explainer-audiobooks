@@ -152,6 +152,23 @@ If `am_michael` fails because the voice resource is unavailable, retry with
 If the command exits partial, rerun with `--resume`. Keep the same `--work-dir`
 and `--db`.
 
+Do not add a self-imposed timeout around `echo-cli narrate`, kill a progressing
+render because it may take several hours, or replace it with Apple/macOS/system
+voice narration for convenience. Native Echo/Kokoro output is the custom-learning
+audio contract. The only automatic narrator fallback is from `am_michael` to the
+Echo voice `am_puck` when the preferred Echo voice is unavailable.
+
+If native Echo rendering is blocked, distinguish the cases clearly:
+
+- **Slow but progressing**: let it run, use `--resume` if interrupted, and report
+  the active render state if the session must hand off.
+- **Blocked by resources/build/schema**: fix the Echo blocker when practical, or
+  deliver EPUB/Markdown with audio marked blocked.
+- **User-approved non-Echo preview**: only if the user explicitly asks for it,
+  create the preview with a loud `non_echo_audio` status. Do not call it
+  Echo-ready, and do not let it replace the native Echo render unless the user
+  cancels Echo audio.
+
 ## Audio And Alignment QC
 
 Run what is available and record anything skipped:

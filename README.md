@@ -64,7 +64,9 @@ skill is for short, listener-specific Echo beta books from plain topic requests:
 "I want to learn X." It defaults to roughly two hours, uses one lead writer for
 continuity, routes public/private books explicitly, supports approved interior
 pictures as EPUB figures, and renders Echo-ready audio with `am_michael` when
-the Echo CLI is available.
+the Echo CLI is available. It does not substitute Apple/macOS system narration
+for native Echo/Kokoro audio unless the requester explicitly asks for a
+non-Echo preview.
 
 The **[`longform-book-development`](skills/longform-book-development/)** skill is
 the slower front door for book ideas that need several rounds of shaping before
