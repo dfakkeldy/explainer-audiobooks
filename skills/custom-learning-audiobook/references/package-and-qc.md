@@ -66,13 +66,17 @@ Rules:
 
 ## EPUB And Markdown
 
-Render a professional, image-led cover before building the EPUB. Follow
-`../../skill/references/cover-art.md`: make 2-3 distinct candidates, choose one
-signature accent colour per concept, use that colour in the SVG art, and pass the
-same value to `make_cover.py --accent` so the final cover has a strong
-cover-derived library identity. Include a bright/high-key candidate with
-`--tone bright` when the subject should feel approachable or giftable, and use
-`--tone dark` for cinematic/technical covers.
+Render **exactly three award-worthy, genre-distinct image-led cover candidates**
+before building the EPUB; this is the default, not an opt-in. Follow
+`../../skill/references/cover-art.md`: research transferable visual principles,
+write a brief for each candidate, select three genuinely different visual
+languages, render them, and let the user choose or mix. Use generated raster art
+(no text/logos/watermarks), bespoke SVG, or rights-cleared art; never copy or
+closely imitate a specific existing cover. `make_cover.py --art` accepts SVG,
+PNG, JPEG, WebP, and GIF. Give each candidate its own visible signature accent
+and pass the matching value to `--accent`; include a bright/high-key option unless
+three dark directions are truly warranted. Reject a generic template, slide icon,
+AI wallpaper, or recolour before the user sees it.
 
 Example:
 

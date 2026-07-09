@@ -223,17 +223,27 @@ not the raw model id, not a guess). So: author = the human everywhere; model =
 contributor in metadata only.
 
 Make the cover next. A cover makes the book look real in any library (and in
-Echo), and it should look like a professional audiobook-store cover: beautiful,
-thumbnail-legible, and specific to the book, with an image that **shows what the
-book is about** — not the title on a plain colour. There is no text-to-image
-tool, so you author the illustration as bespoke vector art per book. Follow
-`references/cover-art.md`: design **2-3 distinct illustration concepts** for the
-subject, choose a signature accent colour for each concept, use that colour in
-the SVG art, and pass the same hex value to `make_cover.py --accent` so the final
-cover sells the colour Echo/library UIs will derive from it. Include a
-bright/high-key background candidate when the topic would benefit from a modern,
-friendly audiobook-store look; not every professional cover should be dark. The
-default layout is `bleed` (full illustration plus a scrim that carries the title):
+Echo), and it must look like a professional audiobook-store cover: specific,
+thumbnail-legible, and built around an image with an editorial point of view —
+not title text on a plain colour. Follow `references/cover-art.md` and make
+**exactly three award-worthy candidates by default.** They must have different
+central metaphors, compositions, palettes, and visual languages; recolours and
+minor crops do not count. Use the reference's style menu and genre calibration to
+choose three appropriate directions, write a short art brief for each, and reject
+generic genre clichés before rendering.
+
+Use original raster art from an available image-generation tool, bespoke SVG art,
+or rights-cleared photography/art. Generated images must contain no lettering,
+logos, watermarks, mockup frame, or close imitation of a named existing cover or
+designer. `make_cover.py --art` accepts SVG, PNG, JPEG, WebP, and GIF art and
+adds the reliable title/subtitle/author metadata itself. Choose an intentional
+signature accent colour for each candidate, make it visibly present in the art,
+and pass it to `--accent` so Echo/library UIs can derive a meaningful identity
+from the finished cover. Include at least one high-key/bright candidate unless the
+subject genuinely demands three dark directions.
+
+The default layout is `bleed` (full illustration plus a scrim that carries the
+title):
 
 ```bash
 python3 scripts/make_cover.py \
@@ -311,12 +321,13 @@ code change, so it normally needs no repo-doc updates.
   chapters dir, land inside the EPUB, and are copied beside the .md. Missing
   images are dropped with a warning, so read the build output. Run it; don't
   reimplement EPUB zipping by hand.
-- `scripts/make_cover.py` — composes a bespoke per-book illustration (`--art`, an
-  SVG you author for the book) into a bestseller-style cover PNG, in a `bleed`
-  (default) or `hero` layout. Pass `--accent` with the art's signature colour so
-  the finished cover strongly carries the library-derived accent. Use `--tone
-  bright` or `--tone dark` deliberately. Render 2-3 concepts, let the user pick,
-  then pass the chosen PNG to `build_book.py --cover`.
+- `scripts/make_cover.py` — composes original per-book SVG or raster art (`--art`
+  accepts SVG, PNG, JPEG, WebP, and GIF) into a bestseller-style cover PNG, in a
+  `bleed` (default) or `hero` layout. Pass `--accent` with the art's signature
+  colour so the finished cover strongly carries the library-derived accent. Follow
+  `references/cover-art.md` to render **exactly three award-worthy, genre-distinct
+  concepts** by default, let the user pick or mix, then pass the chosen PNG to
+  `build_book.py --cover`.
 - `references/narration-style.md` — the voice & rules block to give the frontier
   author verbatim, the reasoning behind them, the length/runtime table, the
   fact-pack discipline, and the QC checklist. Read before writing fact packs.
