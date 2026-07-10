@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 SCRIPT = Path(__file__).parents[1] / "skill" / "scripts" / "make_cover.py"
@@ -76,6 +77,35 @@ class MakeCoverArtLoadingTests(unittest.TestCase):
         self.assertLess(signature, panel)
         self.assertLess(badge, panel)
         self.assertLess(panel, motif)
+
+    def test_cli_defaults_to_bright_tone_and_keeps_dark_opt_in(self) -> None:
+        def render_svg(arguments: list[str]) -> str:
+            captured: list[str] = []
+
+            def capture(svg_path: str, _png_path: str) -> bool:
+                captured.append(Path(svg_path).read_text(encoding="utf-8"))
+                return True
+
+            with tempfile.TemporaryDirectory() as raw_dir, \
+                    mock.patch.object(
+                        sys,
+                        "argv",
+                        [
+                            str(SCRIPT),
+                            *arguments,
+                            "--out",
+                            str(Path(raw_dir) / "cover.png"),
+                        ],
+                    ), \
+                    mock.patch.object(make_cover, "rasterize", side_effect=capture):
+                self.assertEqual(0, make_cover.main())
+            return captured[0]
+
+        bright_svg = render_svg(["--title", "A Better System"])
+        dark_svg = render_svg(["--title", "A Better System", "--tone", "dark"])
+
+        self.assertIn('fill="#17130F"', bright_svg)
+        self.assertIn('fill="#F6F3EE"', dark_svg)
 
     @unittest.skipUnless(
         shutil.which("magick") or shutil.which("convert"),

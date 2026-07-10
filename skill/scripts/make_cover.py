@@ -21,8 +21,8 @@ Two layouts:
                    sits on the background below it.
 
 Two tones:
-  --tone dark      deep, cinematic cover background.
-  --tone bright    high-key, bright marketplace cover background.
+  --tone bright    high-key, bright marketplace cover background (default).
+  --tone dark      deep, cinematic cover background (explicit opt-in).
 
 If no --art is given, a restrained abstract motif is drawn so the script still
 produces a usable cover.
@@ -463,8 +463,8 @@ def main():
     ap.add_argument("--accent", default="", type=parse_hex_color,
                     help="Signature cover-art accent as #RRGGBB; defaults to seed-derived")
     ap.add_argument("--art", default="", help="SVG, PNG, JPEG, WebP, or GIF art for this book")
-    ap.add_argument("--tone", default="dark", choices=("dark", "bright"),
-                    help="Cover background tone; use bright for high-key covers")
+    ap.add_argument("--tone", default="bright", choices=("dark", "bright"),
+                    help="Cover background tone; defaults to bright; use dark for cinematic covers")
     ap.add_argument("--layout", default="bleed", choices=("bleed", "hero"))
     ap.add_argument("--out", required=True, help="Output PNG path")
     a = ap.parse_args()
