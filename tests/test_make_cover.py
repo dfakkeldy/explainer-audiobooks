@@ -56,6 +56,27 @@ class MakeCoverArtLoadingTests(unittest.TestCase):
             self.assertIn('viewBox="0 0 300 400"', embedded)
             self.assertIn('preserveAspectRatio="xMidYMid slice"', embedded)
 
+    def test_no_art_hero_keeps_the_original_signature_before_the_motif(self) -> None:
+        svg = make_cover.build_svg(
+            "A Better System",
+            "A practical guide",
+            "Dan Fakkeldy",
+            "AUDIOBOOK",
+            "A Better System",
+            "#2ee8b6",
+            None,
+            "hero",
+            "bright",
+        )
+
+        signature = svg.index('<path d="M0 0 H1600 V34')
+        badge = svg.index('letter-spacing="13"')
+        panel = svg.index('<rect x="130" y="420" width="1340" height="1180"')
+        motif = svg.index('<circle cx="800" cy="720"')
+        self.assertLess(signature, panel)
+        self.assertLess(badge, panel)
+        self.assertLess(panel, motif)
+
     @unittest.skipUnless(
         shutil.which("magick") or shutil.which("convert"),
         "ImageMagick is required for raster-cover composition",

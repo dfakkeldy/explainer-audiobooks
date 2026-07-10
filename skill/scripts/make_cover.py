@@ -337,6 +337,12 @@ def build_svg(
         if include_background:
             parts.append(f'<rect width="{W}" height="{H}" fill="url(#coverbg)"/>')
             parts.append(f'<rect width="{W}" height="{H}" fill="url(#accenthalo)"/>')
+        if include_overlays and include_background:
+            # Keep the original full-cover order: signature and badge sit before
+            # the panel/motif, while the title remains the final foreground layer.
+            parts.append(accent_signature(accent, layout))
+            parts.append(badge(label, accent, ink, 300))
+        if include_background:
             # Framed illustration panel.
             px, py, pw, ph = 130, 420, W - 260, 1180
             parts.append(
@@ -353,8 +359,9 @@ def build_svg(
             else:
                 parts.append(default_motif(accent))
         if include_overlays:
-            parts.append(accent_signature(accent, layout))
-            parts.append(badge(label, accent, ink, 300))
+            if not include_background:
+                parts.append(accent_signature(accent, layout))
+                parts.append(badge(label, accent, ink, 300))
             parts.append(title_block(title, subtitle, author, ink, accent, 1830,
                                      sizes=(140, 124, 108, 94)))
 
