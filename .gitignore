@@ -16,3 +16,7 @@ __pycache__/
 
 # Non-public-domain local book source
 books/everything-but-the-code/
+
+# Reclassified private 2026-07-09 (Dan's decision) — local copies stay untracked
+books/the-long-route/
+books/the-living-knowledge-base/

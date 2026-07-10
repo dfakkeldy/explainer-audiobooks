@@ -14,7 +14,7 @@ The books teach how to **build and ship software**, and most are taught through 
 
 Two different audiences:
 
-- **If you want to learn** — there are ~40 hours of narration-ready beginner guides below, free, mostly grounded in real code and public technical sources. Drop an `.epub` into any audiobook or reader app and listen.
+- **If you want to learn** — there are ~35 hours of narration-ready beginner guides below, free, mostly grounded in real code and public technical sources. Drop an `.epub` into any audiobook or reader app and listen.
 - **If you build with AI agents** — the genuinely interesting part is the *method*: how to make a language model write 50,000 accurate words it *won't* hallucinate, by grounding every chapter in real source and fanning the work across one agent per chapter. That's in **[docs/how-these-were-made.md](docs/how-these-were-made.md)**.
 
 ## The collection
@@ -29,12 +29,10 @@ Two different audiences:
 | [Git Happens](books/git-happens/) | Git & GitHub, end to end (incl. the nightly→weekly→main release ladder) | 16 chapters · ~4.6 h | Opus 4.8 |
 | [Findable](books/findable/) | App Store Optimization for a small app | 8 chapters · ~3.0 h | Opus 4.8 |
 | [The Voice in the Machine](books/the-voice-in-the-machine/) | How on‑device AI narration works (Kokoro on ONNX Runtime) | 11 chapters · ~3.6 h | Opus 4.8 |
-| [The Long Route](books/the-long-route/) | Whether the indie road is the right career direction — evidence, not affirmation | 13 chapters · ~4.0 h | Fable 5 + Opus 4.8 |
-| [The Living Knowledge Base](books/the-living-knowledge-base/) | LLM wikis, research notebooks, embeddings, and company memory | 15 chapters · ~1.6 h | GPT-5 Codex |
 
 Each folder holds the **`.epub`** (for any audiobook/reader app, including on‑device text‑to‑speech), a combined **`.md`** (readable right here on GitHub), and the cover.
 
-Together they trace the life of a real app — *what it's made of* → *how it should look* → *how to build it with AI* → *how to test it* → *how to debug it* → *how to version it* → *how to get it found* — mostly through the same real codebase. Two books step outside the app stack: *The Long Route* turns the same evidence-first method on a career question, while *The Living Knowledge Base* applies it to LLM-maintained wikis, research notebooks, and public-safe company-memory patterns.
+Together they trace the life of a real app — *what it's made of* → *how it should look* → *how to build it with AI* → *how to test it* → *how to debug it* → *how to version it* → *how to get it found* — mostly through the same real codebase.
 
 **Model-agnostic, on purpose.** The method doesn't care which model runs it; each book's EPUB metadata records the model that wrote it (as the `contributor`), with the human curator as the author. *Git Happens* makes the point twice over: it was first written by **DeepSeek v4**, then rewritten by **Opus 4.8** (the original DeepSeek edition is preserved in this repo's git history).
 
