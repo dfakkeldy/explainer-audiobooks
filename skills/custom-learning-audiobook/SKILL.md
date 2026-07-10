@@ -100,15 +100,21 @@ research, write one coherent manuscript, and package the result for Echo.
    Add approved figures as standalone Markdown image paragraphs, for example
    `![Alt text](images/example.png "Caption")`.
 
-9. **Build the book.** Generate or choose a cover, then run the existing
-   `build_book.py` script. The EPUB/Markdown outputs are always required. For
-   generated covers, make 2-3 genuinely different beautiful candidates with a
-   strong subject image and one intentional signature accent colour. Use that
-   accent in the SVG art and pass the same hex value to `make_cover.py --accent`
-   so the final cover clearly sells the colour Echo will derive from it. Include
-   a bright/high-key background candidate when the topic would benefit from a
-   friendly, modern audiobook-store look. `build_book.py` embeds standalone
-   Markdown images as EPUB figures and copies them beside the combined Markdown.
+9. **Build the book.** Create **exactly three award-worthy, genuinely different
+   cover candidates by default**, then ask the user to choose or combine them.
+   Follow `../../skill/references/cover-art.md` for the research-derived visual
+   directions, genre calibration, candidate briefs, acceptance bar, and
+   rights-safe provenance rules. The three candidates must differ in central
+   metaphor, composition, palette, and visual language—not mere recolours. Use
+   original generated raster art when an image tool is available, bespoke SVG, or
+   rights-cleared art; generated art must have no lettering, logos, watermarks,
+   mockup frame, or close imitation of a named existing cover/designer. Use the
+   supplied `make_cover.py` compositor for dependable title metadata, pass each
+   art's intentional signature accent with `--accent`, and include one bright
+   high-key candidate unless the subject truly requires three dark directions.
+   Then run the existing `build_book.py` script. The EPUB/Markdown outputs are
+   always required. `build_book.py` embeds standalone Markdown images as EPUB
+   figures and copies them beside the combined Markdown.
 
 10. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`

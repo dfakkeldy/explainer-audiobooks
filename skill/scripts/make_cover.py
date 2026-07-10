@@ -5,13 +5,14 @@ The cover is composed as an SVG with the standard library only (full control, no
 image library needed), then rasterized to PNG with whatever is installed —
 rsvg-convert first, then ImageMagick (magick/convert).
 
-What makes a cover "show what the book is about" is a bespoke illustration. There
-is no text-to-image tool here, so the illustration is authored as vector art (an
-SVG file) tailored to THIS book, and passed in with --art. This script places that
-art into a premium layout and sets the title/subtitle/author/badge around it. The
-background hue is derived from --accent when provided, otherwise from a seed
-(default: the title). Use --accent to carry the cover art's signature colour into
-the final layout so library UIs have a strong colour to derive from the cover.
+What makes a cover "show what the book is about" is original, book-specific art.
+Pass either a self-contained SVG illustration or high-resolution PNG/JPEG/WebP/GIF
+art with `--art`; raster art is embedded as a data URI so the composed SVG remains
+portable. This script places the art into a premium layout and sets the
+title/subtitle/author/badge around it. The background hue is derived from --accent
+when provided, otherwise from a seed (default: the title). Use --accent to carry
+the cover art's signature colour into the final layout so library UIs have a
+strong colour to derive from the cover.
 
 Two layouts:
   --layout bleed   the illustration fills the cover; a gradient scrim across the
@@ -39,6 +40,7 @@ Example:
 """
 
 import argparse
+import base64
 import colorsys
 import hashlib
 import os
@@ -47,12 +49,31 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from xml.sax.saxutils import escape
 
 W, H = 1600, 2560
 CX = W // 2
 MARGIN = 140
 USABLE = W - 2 * MARGIN
+
+
+@dataclass(frozen=True)
+class Art:
+    """Self-contained vector or raster artwork suitable for embedding in the cover SVG."""
+
+    kind: str
+    viewbox: str
+    content: str
+
+
+RASTER_MIME_TYPES = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp",
+    ".gif": "image/gif",
+}
 
 
 def hex_color(h_deg, l, s):
@@ -104,20 +125,37 @@ def fit_title(title, sizes):
 
 
 def load_art(path):
-    """Return (viewBox, inner_xml) from an SVG illustration file."""
+    """Return self-contained SVG or raster artwork for placement on the cover.
+
+    SVG preserves editable vector geometry. PNG/JPEG/WebP/GIF files are encoded as
+    data URIs so the temporary composition SVG remains portable when rasterized.
+    """
+    suffix = os.path.splitext(os.fspath(path))[1].lower()
+    if suffix in RASTER_MIME_TYPES:
+        with open(path, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode("ascii")
+        return Art("raster", "", f"data:{RASTER_MIME_TYPES[suffix]};base64,{encoded}")
+
+    if suffix and suffix != ".svg":
+        raise ValueError("art must be SVG, PNG, JPEG, WebP, or GIF")
     with open(path, "r", encoding="utf-8") as f:
         text = f.read()
     m = re.search(r'viewBox="([^"]+)"', text)
     vb = m.group(1) if m else "0 0 1000 1000"
     inner = re.sub(r"^.*?<svg[^>]*>", "", text, count=1, flags=re.S)
     inner = re.sub(r"</svg>\s*$", "", inner, count=1, flags=re.S)
-    return vb, inner
+    return Art("svg", vb, inner)
 
 
-def embed_art(vb, inner, x, y, w, h, preserve="xMidYMid meet"):
+def embed_art(art, x, y, w, h, preserve="xMidYMid meet"):
+    if art.kind == "raster":
+        return (
+            f'<image href="{art.content}" x="{x}" y="{y}" width="{w}" height="{h}" '
+            f'preserveAspectRatio="{preserve}"/>'
+        )
     return (
-        f'<svg x="{x}" y="{y}" width="{w}" height="{h}" viewBox="{vb}" '
-        f'preserveAspectRatio="{preserve}">{inner}</svg>'
+        f'<svg x="{x}" y="{y}" width="{w}" height="{h}" viewBox="{art.viewbox}" '
+        f'preserveAspectRatio="{preserve}">{art.content}</svg>'
     )
 
 
@@ -201,7 +239,20 @@ def title_block(title, subtitle, author, ink, accent, top_y, sizes):
     return "\n".join(parts)
 
 
-def build_svg(title, subtitle, author, label, seed, accent_color, art_path, layout, tone):
+def build_svg(
+    title,
+    subtitle,
+    author,
+    label,
+    seed,
+    accent_color,
+    art_path,
+    layout,
+    tone,
+    include_background=True,
+    include_art=True,
+    include_overlays=True,
+):
     if accent_color:
         hue = (hue_from_hex(accent_color) - 18) % 360
         accent = accent_color
@@ -243,20 +294,23 @@ def build_svg(title, subtitle, author, label, seed, accent_color, art_path, layo
             f'<stop offset="1" stop-color="{accent}" stop-opacity="0"/></linearGradient>'
             '</defs>'
         )
-        parts.append(f'<rect width="{W}" height="{H}" fill="url(#coverbg)"/>')
+        if include_background:
+            parts.append(f'<rect width="{W}" height="{H}" fill="url(#coverbg)"/>')
         # Illustration fills the upper region, bleeding to the edges (slice = fill).
-        if art:
-            parts.append(embed_art(art[0], art[1], 0, 0, W, 1860,
-                                   preserve="xMidYMid slice"))
-        else:
-            parts.append(default_motif(accent))
-        parts.append(f'<rect x="0" y="0" width="{W}" height="1860" fill="url(#accentwash)"/>')
-        parts.append(accent_signature(accent, layout))
-        # Scrim carries the title over the lower third.
-        parts.append(f'<rect x="0" y="1500" width="{W}" height="{H - 1500}" fill="url(#scrim)"/>')
-        parts.append(badge(label, accent, ink, 1760))
-        parts.append(title_block(title, subtitle, author, ink, accent, 1940,
-                                 sizes=(150, 132, 116, 100)))
+        if include_art:
+            if art:
+                parts.append(embed_art(art, 0, 0, W, 1860,
+                                       preserve="xMidYMid slice"))
+            else:
+                parts.append(default_motif(accent))
+        if include_overlays:
+            parts.append(f'<rect x="0" y="0" width="{W}" height="1860" fill="url(#accentwash)"/>')
+            parts.append(accent_signature(accent, layout))
+            # Scrim carries the title over the lower third.
+            parts.append(f'<rect x="0" y="1500" width="{W}" height="{H - 1500}" fill="url(#scrim)"/>')
+            parts.append(badge(label, accent, ink, 1760))
+            parts.append(title_block(title, subtitle, author, ink, accent, 1940,
+                                     sizes=(150, 132, 116, 100)))
 
     else:  # hero
         if bright:
@@ -280,24 +334,36 @@ def build_svg(title, subtitle, author, label, seed, accent_color, art_path, layo
             f'<stop offset="1" stop-color="{accent}" stop-opacity="0"/></radialGradient>'
             '</defs>'
         )
-        parts.append(f'<rect width="{W}" height="{H}" fill="url(#coverbg)"/>')
-        parts.append(f'<rect width="{W}" height="{H}" fill="url(#accenthalo)"/>')
-        parts.append(accent_signature(accent, layout))
-        parts.append(badge(label, accent, ink, 300))
-        # Framed illustration panel.
-        px, py, pw, ph = 130, 420, W - 260, 1180
-        parts.append(
-            f'<rect x="{px}" y="{py}" width="{pw}" height="{ph}" rx="40" '
-            f'fill="{panel}" stroke="{accent}" stroke-width="5" stroke-opacity="0.72"/>'
-        )
-        if art:
-            pad = 70
-            parts.append(embed_art(art[0], art[1], px + pad, py + pad,
-                                   pw - 2 * pad, ph - 2 * pad))
+        if include_background:
+            parts.append(f'<rect width="{W}" height="{H}" fill="url(#coverbg)"/>')
+            parts.append(f'<rect width="{W}" height="{H}" fill="url(#accenthalo)"/>')
+        if include_overlays and include_background:
+            # Keep the original full-cover order: signature and badge sit before
+            # the panel/motif, while the title remains the final foreground layer.
+            parts.append(accent_signature(accent, layout))
+            parts.append(badge(label, accent, ink, 300))
+        if include_background:
+            # Framed illustration panel.
+            px, py, pw, ph = 130, 420, W - 260, 1180
+            parts.append(
+                f'<rect x="{px}" y="{py}" width="{pw}" height="{ph}" rx="40" '
+                f'fill="{panel}" stroke="{accent}" stroke-width="5" stroke-opacity="0.72"/>'
+            )
         else:
-            parts.append(default_motif(accent))
-        parts.append(title_block(title, subtitle, author, ink, accent, 1830,
-                                 sizes=(140, 124, 108, 94)))
+            px, py, pw, ph = 130, 420, W - 260, 1180
+        if include_art:
+            if art:
+                pad = 70
+                parts.append(embed_art(art, px + pad, py + pad,
+                                       pw - 2 * pad, ph - 2 * pad))
+            else:
+                parts.append(default_motif(accent))
+        if include_overlays:
+            if not include_background:
+                parts.append(accent_signature(accent, layout))
+                parts.append(badge(label, accent, ink, 300))
+            parts.append(title_block(title, subtitle, author, ink, accent, 1830,
+                                     sizes=(140, 124, 108, 94)))
 
     parts.append("</svg>")
     return "\n".join(parts)
@@ -318,6 +384,75 @@ def rasterize(svg_path, png_path):
     return False
 
 
+def rasterize_raster_art_cover(
+    title,
+    subtitle,
+    author,
+    label,
+    seed,
+    accent_color,
+    art_path,
+    layout,
+    tone,
+    png_path,
+):
+    """Compose raster art with SVG background/overlay layers through ImageMagick.
+
+    ImageMagick's SVG decoder cannot reliably follow raster `data:` URIs. Render
+    the simple vector layers separately, then place the source image between them.
+    """
+    tool = next((candidate for candidate in ("magick", "convert")
+                 if shutil.which(candidate)), None)
+    if not tool:
+        return False
+
+    def run(args):
+        result = subprocess.run(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return result.returncode == 0
+
+    with tempfile.TemporaryDirectory(prefix="audiobook-cover-") as raw_dir:
+        tmp_dir = os.fspath(raw_dir)
+        background_svg = os.path.join(tmp_dir, "background.svg")
+        overlay_svg = os.path.join(tmp_dir, "overlay.svg")
+        background_png = os.path.join(tmp_dir, "background.png")
+        fitted_art = os.path.join(tmp_dir, "art.png")
+        composed_png = os.path.join(tmp_dir, "composed.png")
+        overlay_png = os.path.join(tmp_dir, "overlay.png")
+
+        common = (title, subtitle, author, label, seed, accent_color, "", layout, tone)
+        with open(background_svg, "w", encoding="utf-8") as f:
+            f.write(build_svg(*common, include_background=True, include_art=False,
+                              include_overlays=False))
+        with open(overlay_svg, "w", encoding="utf-8") as f:
+            f.write(build_svg(*common, include_background=False, include_art=False,
+                              include_overlays=True))
+
+        if not run([tool, "-background", "none", background_svg, "-resize",
+                    f"{W}x{H}!", background_png]):
+            return False
+        if not run([tool, "-background", "none", overlay_svg, "-resize",
+                    f"{W}x{H}!", overlay_png]):
+            return False
+
+        if layout == "bleed":
+            art_w, art_h, art_x, art_y = W, 1860, 0, 0
+            resize = f"{art_w}x{art_h}^"
+        else:
+            art_w, art_h, art_x, art_y = 1200, 1040, 200, 490
+            resize = f"{art_w}x{art_h}"
+
+        source = os.fspath(art_path) + "[0]"  # Animated GIF covers use the first frame.
+        if not run([tool, source, "-auto-orient", "-resize", resize, "-gravity", "center",
+                    "-background", "none", "-extent", f"{art_w}x{art_h}", fitted_art]):
+            return False
+        if not run([tool, background_png, fitted_art, "-geometry",
+                    f"+{art_x}+{art_y}", "-composite", composed_png]):
+            return False
+        if not run([tool, composed_png, overlay_png, "-composite", png_path]):
+            return False
+        return os.path.exists(png_path) and os.path.getsize(png_path) > 0
+
+
 def main():
     ap = argparse.ArgumentParser(description="Generate a bestseller-style audiobook cover PNG.")
     ap.add_argument("--title", required=True)
@@ -327,16 +462,34 @@ def main():
     ap.add_argument("--seed", default="", help="Hue seed; defaults to the title")
     ap.add_argument("--accent", default="", type=parse_hex_color,
                     help="Signature cover-art accent as #RRGGBB; defaults to seed-derived")
-    ap.add_argument("--art", default="", help="SVG illustration file for this book")
+    ap.add_argument("--art", default="", help="SVG, PNG, JPEG, WebP, or GIF art for this book")
     ap.add_argument("--tone", default="dark", choices=("dark", "bright"),
                     help="Cover background tone; use bright for high-key covers")
     ap.add_argument("--layout", default="bleed", choices=("bleed", "hero"))
     ap.add_argument("--out", required=True, help="Output PNG path")
     a = ap.parse_args()
 
+    os.makedirs(os.path.dirname(os.path.abspath(a.out)) or ".", exist_ok=True)
+
+    art_suffix = os.path.splitext(a.art)[1].lower() if a.art else ""
+    if art_suffix in RASTER_MIME_TYPES:
+        if rasterize_raster_art_cover(
+            a.title,
+            a.subtitle,
+            a.author,
+            a.label,
+            a.seed or a.title,
+            a.accent,
+            a.art,
+            a.layout,
+            a.tone,
+            a.out,
+        ):
+            print("COVER:", a.out)
+            return 0
+
     svg = build_svg(a.title, a.subtitle, a.author, a.label, a.seed or a.title,
                     a.accent, a.art or None, a.layout, a.tone)
-    os.makedirs(os.path.dirname(os.path.abspath(a.out)) or ".", exist_ok=True)
 
     with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False, encoding="utf-8") as f:
         f.write(svg)
