@@ -66,7 +66,13 @@ status are unclear in a public package.
 ## Style Notes
 
 Preferred voice, pacing, examples, jokes, repeated language to avoid, vocabulary
-to introduce, and any sample passage the user liked.
+to introduce, and any sample passage the user liked. Record the humanizer
+decision here:
+
+- Humanizer pass: required / optional / skipped
+- AI-writing patterns to avoid:
+- Voice constraints and things that must not be invented:
+- Voice sample path, if any:
 
 ## Open Questions
 

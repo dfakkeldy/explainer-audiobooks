@@ -209,6 +209,16 @@ confirm voice and that nothing was hallucinated. Have the frontier author make
 one targeted editorial pass over accepted findings; do not pay for a wholesale
 second draft if the report only finds local polish.
 
+Then load the `humanizer` skill and follow `references/humanizer-pass.md` for a
+light, bounded humanizing pass over the canonical Markdown. Remove AI tics,
+generic signposting, inflated claims, and repetitive rhythm, while preserving
+facts, citations, technical names, teaching structure, intentional retrieval,
+and the frontier author's voice. The humanizer must not invent anecdotes,
+opinions, first-person experience, sources, jokes, or new claims, and must not
+rewrite the book wholesale. The frontier author reviews and accepts every
+non-mechanical change before EPUB/audio packaging; rerun factual, ledger, and
+narration checks afterward.
+
 ### 6. Make a cover, then assemble the EPUB + Markdown
 
 **Authorship — the author is the human owner: "Dan Fakkeldy".** Set the
@@ -232,15 +242,21 @@ minor crops do not count. Use the reference's style menu and genre calibration t
 choose three appropriate directions, write a short art brief for each, and reject
 generic genre clichés before rendering.
 
-Use original raster art from an available image-generation tool, bespoke SVG art,
-or rights-cleared photography/art. Generated images must contain no lettering,
-logos, watermarks, mockup frame, or close imitation of a named existing cover or
-designer. `make_cover.py --art` accepts SVG, PNG, JPEG, WebP, and GIF art and
+Use the strongest available image-generation tool directly for the art (for
+example, `image_generate`), rather than asking a cheaper text model to draw a
+generic SVG of icons, cards, arrows, or diagrams. Follow the copy-ready prompt in
+`references/cover-art.md`: give the model one specific visual thesis, one large
+central metaphor, an art-directed composition, an intentional title-safe area,
+and an eye-catching 2–4-colour palette with a vivid signature accent. Generated
+images must contain no lettering, logos, watermarks, mockup frame, interface,
+infographic, stock-template look, or close imitation of a named existing cover or
+designer. Reject weak outputs and regenerate; do not ship the first technically
+valid image. `make_cover.py --art` accepts SVG, PNG, JPEG, WebP, and GIF art and
 adds the reliable title/subtitle/author metadata itself. Choose an intentional
 signature accent colour for each candidate, make it visibly present in the art,
 and pass it to `--accent` so Echo/library UIs can derive a meaningful identity
-from the finished cover. Include at least one high-key/bright candidate unless the
-subject genuinely demands three dark directions.
+from the finished cover. Include at least one high-key/bright candidate unless
+the subject genuinely demands three dark directions.
 
 The default layout is `bleed` (full illustration plus a scrim that carries the
 title):
@@ -336,3 +352,5 @@ code change, so it normally needs no repo-doc updates.
   point.
 - `references/frontier-manuscript-pipeline.md` — the frontier-author / cheaper-worker
   split, continuity protocol, and citation-first cheap-review format.
+- `references/humanizer-pass.md` — the bounded `humanizer` pass for removing
+  AI-writing tells without replacing the frontier author's voice or meaning.

@@ -19,6 +19,8 @@ research, write one coherent manuscript, and package the result for Echo.
   - `../../skill/references/narration-style.md` for spoken style and QC sweeps.
   - `../../skill/references/frontier-manuscript-pipeline.md` for the frontier-author
     / cheaper-worker split, continuity ledger, and citation-first reader review.
+  - `../../skill/references/humanizer-pass.md` for the bounded `humanizer` pass
+    that removes AI tics without replacing the frontier author's voice.
   - `../../skill/references/cover-art.md` for cover concepts, visual quality,
     and the signature accent-colour rule.
   - `../../skill/scripts/build_book.py` for EPUB and combined Markdown.
@@ -106,12 +108,18 @@ research, write one coherent manuscript, and package the result for Echo.
    directions, genre calibration, candidate briefs, acceptance bar, and
    rights-safe provenance rules. The three candidates must differ in central
    metaphor, composition, palette, and visual language—not mere recolours. Use
-   original generated raster art when an image tool is available, bespoke SVG, or
-   rights-cleared art; generated art must have no lettering, logos, watermarks,
-   mockup frame, or close imitation of a named existing cover/designer. Use the
-   supplied `make_cover.py` compositor for dependable title metadata, pass each
-   art's intentional signature accent with `--accent`, and include one bright
-   high-key candidate unless the subject truly requires three dark directions.
+   original generated raster art from the strongest available image tool (use it
+   directly, e.g. `image_generate`), bespoke SVG, or rights-cleared art. Use the
+   copy-ready editorial prompt in `../../skill/references/cover-art.md`: demand
+   one specific visual thesis, one large physical metaphor, a deliberate
+   title-safe area, and an eye-catching 2–4-colour palette. Do not ask a cheaper
+   text model to make generic icon diagrams. Generated art must have no lettering,
+   logos, watermarks, interface, infographic, mockup frame, or close imitation of
+   a named existing cover/designer; reject and regenerate weak or generic output.
+   Use the supplied `make_cover.py` compositor for dependable title metadata, pass
+   each art's intentional signature accent with `--accent`, and include one
+   bright high-key candidate unless the subject truly requires three dark
+   directions.
    Then run the existing `build_book.py` script. The EPUB/Markdown outputs are
    always required. `build_book.py` embeds standalone Markdown images as EPUB
    figures and copies them beside the combined Markdown.
@@ -129,7 +137,17 @@ research, write one coherent manuscript, and package the result for Echo.
    blocked and the user has not approved a non-Echo substitute, deliver
    EPUB/Markdown and report the blocker instead of shipping substitute audio.
 
-11. **QC before copying.** Validate EPUB, parse alignment JSON, inspect M4B
+11. **Humanize, then QC before copying.** After accepted substantive repairs,
+    load the `humanizer` skill and follow `../../skill/references/humanizer-pass.md`
+    on the canonical chapter Markdown. Make only targeted voice edits: remove
+    AI-isms, generic signposting, inflated claims, filler, and repetitive rhythm
+    while preserving facts, citations, technical names, teaching structure,
+    intentional retrieval, and the frontier author's voice. Do not invent
+    anecdotes, feelings, opinions, first-person experience, sources, jokes, or new
+    claims; do not rewrite the book wholesale. The frontier author reviews and
+    accepts every non-mechanical suggestion. Record the chapters touched and any
+    rejected/skipped suggestions, then rerun factual, coverage-ledger, and
+    narration checks. Validate EPUB, parse alignment JSON, inspect M4B
     duration with `ffprobe`, and run narration/prose sweeps. Run
     `python3 skill/scripts/prose_qc.py --chapters-dir <build>/chapters --out
     <build>/research/prose-qc.md`, then have a cheaper reviewer produce only

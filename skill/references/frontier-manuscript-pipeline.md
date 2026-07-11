@@ -52,7 +52,14 @@ Everything else goes back to the frontier author as a precise repair request.
    or revises each substantive finding. A report with only local issues earns a
    local patch pass, not a costly full regeneration.
 
-7. **Cheap workers package and validate.** Render EPUB/M4B, build covers, check
+7. **Humanize without changing authorship.** After substantive repairs, load the
+   `humanizer` skill and follow `references/humanizer-pass.md`. It may remove
+   AI-writing tics and improve spoken rhythm, but it must not invent anecdotes,
+   claims, sources, first-person experience, or a competing voice. The frontier
+   author reviews every non-mechanical edit; rerun factual, ledger, and narration
+   checks afterward.
+
+8. **Cheap workers package and validate.** Render EPUB/M4B, build covers, check
    files and metadata, and write the manifest. They must not “improve” the prose
    while packaging.
 
@@ -100,5 +107,7 @@ real and writes all non-mechanical prose changes.
 - [ ] Cheap review reports cite exact locations and recommend repairs rather than
   supplying a replacement voice.
 - [ ] The frontier author accepted/rejected substantive findings before packaging.
+- [ ] The bounded humanizer pass was reviewed by the frontier author, or its
+      explicit skip was recorded.
 - [ ] The published EPUB/M4B was derived from the reviewed Markdown, with no
   downstream prose rewriting.

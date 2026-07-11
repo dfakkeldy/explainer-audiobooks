@@ -60,6 +60,11 @@ def main() -> int:
         "am_michael",
         "am_puck",
         "do not use `af_heart` as the default",
+        "image_generate",
+        "one specific visual thesis",
+        "Reject weak outputs and regenerate",
+        "load the `humanizer` skill",
+        "must not invent anecdotes",
     )
     contains(
         "skills/custom-learning-audiobook/SKILL.md",
@@ -68,7 +73,30 @@ def main() -> int:
         "public-safe",
         "interior pictures",
         "M4B/alignment",
+        "copy-ready editorial prompt",
+        "eye-catching 2–4-colour palette",
+        "load the `humanizer` skill",
+        "Do not invent\n    anecdotes",
         "Do not use `af_heart` as the default narrator.",
+    )
+    contains(
+        "skills/longform-book-development/SKILL.md",
+        "humanizer-pass.md",
+        "desired humanizing level",
+        "bounded `humanizer` pass",
+    )
+    contains(
+        "skill/references/humanizer-pass.md",
+        "bounded voice pass",
+        "Do not invent anecdotes",
+        "targeted edits with a short reason",
+    )
+    contains(
+        "skill/references/cover-art.md",
+        "Copy-ready image-generation prompt",
+        "No title, no subtitle, no author name",
+        "generic infographic",
+        "stronger art direction",
     )
     contains(
         "skills/custom-learning-audiobook/references/intake-and-research.md",

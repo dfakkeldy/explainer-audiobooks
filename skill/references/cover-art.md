@@ -91,13 +91,15 @@ its anti-brief is empty.
 
 ## Making the Art
 
-Use the strongest available original-art route for the book:
+Use the strongest available original-art route for the book. Do not accept the
+first technically valid image: the bar is a beautiful, specific, image-led cover
+that could sit in a serious bookstore or audiobook storefront.
 
-1. **Generated image art** when an image-generation tool is available. Prompt for
-   the composition and material language above, at portrait ratio, **with no
-   text, lettering, logos, watermarks, mockup frame, or imitation of a named
-   cover/designer**. Treat generated art as visual illustration, not documentary
-   evidence.
+1. **Generated image art** when an image-generation tool is available. Use the
+   image tool directly (for example, `image_generate`), not a cheap text model
+   inventing a generic SVG of icons, cards, arrows, or a house-shaped diagram.
+   Generate at portrait ratio, then compose the chosen art at 1600×2560. Treat
+   generated art as visual illustration, not documentary evidence.
 2. **Bespoke SVG illustration** when a graphic, diagrammatic, or typographic
    system will be stronger or when image generation is unavailable. SVG must look
    like deliberate editorial art, not a slide icon.
@@ -112,6 +114,53 @@ central safe area: `bleed` crops edges, whereas `hero` frames the complete image
 The title, subtitle, author, and audiobook label are added by `make_cover.py`.
 Do **not** bake text into the art itself; generated text is unreliable, fights the
 metadata, and rarely reads well at thumbnail size.
+
+### Copy-ready image-generation prompt
+
+For a generated candidate, fill in the bracketed fields and send this as one
+complete prompt to the image model. The art model should make the visual world;
+the compositor should make the typography. Keep the prompt concrete rather than
+asking for “a nice cover” or “something professional.”
+
+```text
+Create original portrait editorial artwork for a premium nonfiction audiobook
+cover about [SUBJECT]. The book's audience is [AUDIENCE], and its promise is
+[AUDIENCE PROMISE]. The single visual thesis is [ONE SENTENCE VISUAL THESIS].
+
+Show one unforgettable central metaphor: [SPECIFIC OBJECT, SCENE, OR VISUAL
+PARADOX]. Make that subject large, beautifully art-directed, and immediately
+legible at a small thumbnail. Use [COMPOSITION: CLOSE CROP / WIDE STILL LIFE /
+SINGLE FIGURE / DIAGONAL ACTION], with a strong silhouette, one clear focal point,
+and generous intentional negative space in the [TOP / BOTTOM / LEFT / RIGHT]
+third for title typography. The image should feel like a finished editorial book
+cover image, not an illustration for a slide deck.
+
+Visual language: [CHOOSE ONE: cinematic editorial photograph / tactile cut-paper
+collage / expressive ink and gouache / refined screen print / painterly realism /
+surreal editorial illustration]. Material and surface: [PAPER GRAIN, PRINT
+TEXTURE, FABRIC, METAL, GLASS, WEATHER, OR OTHER SINGLE MATERIAL LANGUAGE]. Use a
+confident, eye-catching palette of [2–4 COLOURS], including a vivid signature
+accent [HEX COLOUR] that is visibly present in the main image. Use sophisticated
+colour relationships, controlled contrast, dimensional light, and deliberate
+texture; avoid a washed-out pastel gradient. Make the result emotionally [MOOD]
+and genre-appropriate without using genre clichés.
+
+High-end art direction, specific physical detail, elegant composition, premium
+print sensibility, visual hierarchy, subtle human imperfection, striking colour,
+strong thumbnail read, original concept. No title, no subtitle, no author name,
+no lettering, no typography, no logo, no watermark, no border, no mockup, no book
+mockup, no audiobook icon, no interface, no dashboard, no floating UI cards, no
+generic infographic, no stock-photo look, no random symbols, no collage of tiny
+objects, no split-screen, no decorative icon cloud, no close imitation of any
+named artist, designer, publisher, or existing book cover.
+```
+
+For each candidate, change the **visual thesis**, central metaphor, composition,
+material language, and palette—not just the colour values. If the output is a
+generic gradient, diagram, icon illustration, cluttered scene, or weak literal
+stock image, discard it and regenerate with a sharper physical metaphor and
+stronger art direction. Ask for a clean image with no lettering even when the
+model claims to handle typography; add all text afterward with `make_cover.py`.
 
 ## Render and Compare
 
