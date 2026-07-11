@@ -15,9 +15,11 @@ This corrected edition treats American red squirrels as a leading daytime candid
 | `cover.png` | Selected cover, 1600 × 2560 |
 | `rodents-in-the-walls.m4b` | Echo audiobook, `am_michael`, 9 chapters |
 | `rodents-in-the-walls.alignment.json` | Echo read-along sidecar |
-| `rodents-in-the-walls.qa.json` | Sanitized deterministic narration-QA report |
 
-The public repository package contains the Markdown, EPUB, selected cover, chaptered M4B, alignment sidecar, and this README. The narration-QA report and delivery checksums remain in the private delivery package.
+The public repository package contains only the Markdown, EPUB, selected cover,
+chaptered M4B, alignment sidecar, and this README. The narration-QA JSON and
+delivery checksums are private delivery evidence and are intentionally absent
+from this public package.
 
 ## Edition details
 
@@ -67,7 +69,9 @@ The live provincial consolidations, permit page, and 2026–27 annual hunting an
 ## Verification
 
 - EPUB ZIP integrity: passed, no compressed-data errors.
-- EPUB metadata: title, subtitle, author, contributor, embedded cover, and 9 chapter documents confirmed.
+- EPUB package metadata/navigation: title, creator, language, embedded cover
+  declaration and image, navigation document, NCX, and 9 chapter spine entries
+  confirmed.
 - Cover: 1600 × 2560; selected from three original, rights-safe SVG concepts.
 - M4B: title/artist/album tags confirmed; 9 named chapters; duration confirmed by `ffprobe`.
 - Sidecar: native Echo verifier returned `SIDECAR_OK` with 245 anchors and 9 chapters.
