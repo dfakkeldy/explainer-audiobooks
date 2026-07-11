@@ -10,7 +10,7 @@
 - **Permission-to-publish status:** Approved by Dan for public release on 2026-07-11.
 - **Length mode:** Standard beta book (~2 hours, 16,471 words)
 - **Word count:** 16,471 words
-- **Runtime:** ~1.8 hours at 1.0x, ~1.5 hours at 1.25x
+- **Runtime:** 1:55:42 at 1.0x (6,942.336 seconds), about 1.5 hours at 1.25x
 - **Chapter count:** 9
 - **Narrator:** am_michael (native Echo/Kokoro)
 - **Frontier author model:** GLM-5.2 (Z.AI)
@@ -45,12 +45,14 @@ Two alternate candidates were rendered during production:
 - `the-new-deal.epub` — EPUB 3 with nav + NCX
 - `the-new-deal.md` — combined Markdown
 - `cover.png` — selected initial release cover
+- `the-new-deal.m4b` — chaptered native Echo/Kokoro audiobook
+- `the-new-deal.alignment.json` — Echo read-along sidecar
 - `README.md` — this manifest
 
-The complete Echo listening package, including native M4B audio and alignment
-sidecar, remains in the iCloud Books delivery folder. The public repository
-follows the collection convention of publishing EPUB, combined Markdown, and
-the selected cover.
+The public repository package includes the EPUB, combined Markdown, selected
+cover, chaptered native M4B audio, alignment sidecar, and this README. Private
+research, production scratch, and optional narration-QA artifacts remain out of
+the public package.
 
 ## QC Gates
 
@@ -66,9 +68,10 @@ the selected cover.
 - ✅ Critical-claim verification: agreement terms verified across Canada Post official, HR Reporter, InfoPost, and WSWS agreement-text reporting
 
 ### Passed after delivery
-- ✅ M4B duration: 6,942.336 seconds (1:55:42)
-- ✅ Alignment JSON parses successfully
+- ✅ M4B: AAC, 9 named chapters, 6,942.336 seconds (1:55:42)
+- ✅ Alignment JSON: 151 monotonic anchors
+- ✅ Echo sidecar verification: `SIDECAR_OK`, 151 anchors, 9 chapters
 
 ### Skipped
 - Cheaper editorial reviewer report — single-model frontier run, no cheap-worker review used
-- Optional Echo QA (`echo-cli qa`) — will attempt after render completes
+- Optional Echo QA (`echo-cli qa`) — not included in the public package

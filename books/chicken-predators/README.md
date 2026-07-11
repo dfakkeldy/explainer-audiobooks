@@ -20,7 +20,7 @@ workplaces, or sensitive material.
 Granted by user (public-safe, share in the library).
 
 ## Length mode
-Deep (~4 hours target). **Actual: ~3.4 hours at 1.0x, ~2.7 hours at 1.25x.**
+Deep (~4 hours target). **Actual: 3:05:40 at 1.0x, about 2.5 hours at 1.25x.**
 30,798 words across 16 chapters. Came in shorter than the 45k deep-mode target;
 chapters were ended when their knowledge delta was complete rather than padded
 to hit a word quota (per narration-style.md: "uniform three-thousand-word
@@ -30,13 +30,13 @@ chapters are a reliable way to manufacture filler").
 30,798 words (build script total)
 
 ## Runtime
-~3.4 hours at 1.0x / ~2.7 hours at 1.25x (estimated at 150 wpm)
+3:05:40 at 1.0x (verified with `ffprobe`)
 
 ## Chapter count
 16
 
 ## Narrator
-`am_michael` (Echo/Kokoro). Fallback `am_puck` if am_michael unavailable.
+`am_michael` (native Echo/Kokoro render)
 
 ## Frontier author model
 **GLM-5.2** (zai) — authored outline, all 16 Markdown chapters, and substantive
@@ -72,14 +72,12 @@ book does not instruct on killing protected species.
 required). Cover art is bespoke SVG, authored for this book — no external image
 rights involved.
 
-## Output files
+## Public files
 - `chicken-predators.epub` — validated EPUB 3 with nav + NCX TOC
 - `chicken-predators.md` — combined Markdown
 - `cover.png` — selected cover (Concept 1: fortress coop at dusk, amber accent)
-- `cover-1.png`, `cover-2.png`, `cover-3.png` — all three rendered candidates
-- `cover-concept-1.svg`, `cover-concept-2.svg`, `cover-concept-3.svg` — source SVG art
-- `chicken-predators.m4b` — Echo/Kokoro audio (render in progress at manifest time)
-- `chicken-predators.alignment.json` — Echo alignment sidecar (render in progress)
+- `chicken-predators.m4b` — chaptered Echo/Kokoro audiobook
+- `chicken-predators.alignment.json` — 231-anchor Echo read-along sidecar
 - `README.md` — this manifest
 
 ## QC gates passed
@@ -97,13 +95,13 @@ rights involved.
 - ✅ Frontier-author repair pass complete
 - ✅ Cover rendered (3 candidates, 1 selected, accent colour visible)
 
-## QC gates in progress / pending
-- ⏳ M4B duration (`ffprobe`) — awaiting narration render completion
-- ⏳ Alignment JSON parse — awaiting narration render completion
-- ⏳ Optional Echo QA report — schema-dependent, may skip
+## Audio verification
+- M4B duration: 11,140.181 seconds (3:05:40), AAC, 16 named chapters.
+- Alignment JSON: 231 monotonic anchors.
+- Echo sidecar verification: `SIDECAR_OK`, 231 anchors, 16 chapters.
 
 ## iCloud Drive delivery folder
 `/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/Chicken Predators/`
 
 ## Public repo copy
-`books/chicken-predators/` — public-safe EPUB, Markdown, cover, README.
+`books/chicken-predators/` — public-safe EPUB, Markdown, cover, M4B, alignment sidecar, and README.
