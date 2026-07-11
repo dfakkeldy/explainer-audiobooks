@@ -86,8 +86,9 @@ Write a five-line brief for each direction:
    accent (`#RRGGBB`).
 5. **Anti-brief:** the genre clichés and visual treatments this candidate refuses.
 
-A candidate is not ready to render if its central idea could fit any book, or if
-its anti-brief is empty.
+A candidate is not ready to render if its central idea could fit any book, if
+its anti-brief is empty, or if a text model produced vector art without first
+using an available image-generation tool.
 
 ## Making the Art
 
@@ -100,8 +101,11 @@ that could sit in a serious bookstore or audiobook storefront.
    inventing a generic SVG of icons, cards, arrows, or a house-shaped diagram.
    Generate at portrait ratio, then compose the chosen art at 1600×2560. Treat
    generated art as visual illustration, not documentary evidence.
-2. **Bespoke SVG illustration** when a graphic, diagrammatic, or typographic
-   system will be stronger or when image generation is unavailable. SVG must look
+2. **Bespoke SVG illustration is an explicit fallback, not a peer default.** Use
+   it only when the user specifically requests vector art, or when image
+   generation is unavailable and the user approves the fallback after the
+   limitation is explained. Never choose SVG merely because it is faster,
+   deterministic, or easier for a text model to produce. SVG must still look
    like deliberate editorial art, not a slide icon.
 3. **User-supplied, self-created, official, public-domain, or permissively
    licensed photography/art** only when the rights and provenance are clear.
@@ -215,6 +219,9 @@ Reject and replace any candidate that:
   collisions with the compositor.
 - Raster art may be PNG, JPEG, WebP, or GIF. Use high-resolution portrait art;
   no external image URLs are embedded.
+- Availability of SVG input in the compositor is a compatibility feature, not a
+  cover-generation default. An available image-generation tool requires raster
+  candidate art unless the user explicitly asks for vector art.
 - Make the signature accent unmistakable enough for Echo/library colour derivation
   to find it, but do not flatten the whole cover into one colour.
 - Preserve safe margins. `bleed` fills and crops; `hero` keeps the full artwork in

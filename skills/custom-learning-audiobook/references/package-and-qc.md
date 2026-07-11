@@ -70,10 +70,15 @@ Render **exactly three award-worthy, genre-distinct image-led cover candidates**
 before building the EPUB; this is the default, not an opt-in. Follow
 `../../skill/references/cover-art.md`: research transferable visual principles,
 write a brief for each candidate, select three genuinely different visual
-languages, render them, and let the user choose or mix. Use generated raster art
-(no text/logos/watermarks), bespoke SVG, or rights-cleared art; never copy or
-closely imitate a specific existing cover. `make_cover.py --art` accepts SVG,
-PNG, JPEG, WebP, and GIF. Give each candidate its own visible signature accent
+languages, render them, and let the user choose or mix. When an image-generation
+tool is available, generated raster art is mandatory (no text, logos, or
+watermarks); do not substitute bespoke SVG, programmatic vector art, diagrams,
+or icon compositions. Use SVG only when the user explicitly requests vector art
+or approves it as a fallback after image generation is confirmed unavailable.
+Rights-cleared raster art remains acceptable; never copy or closely imitate a
+specific existing cover. `make_cover.py --art` accepts SVG, PNG, JPEG, WebP, and
+GIF, but format support is not permission to bypass image generation. Give each
+candidate its own visible signature accent
 and pass the matching value to `--accent`; include a bright/high-key option unless
 three dark directions are truly warranted. Reject a generic template, slide icon,
 AI wallpaper, or recolour before the user sees it.
@@ -86,7 +91,7 @@ python3 skill/scripts/make_cover.py \
   --subtitle "<subtitle>" \
   --author "Dan Fakkeldy" \
   --label "AUDIOBOOK" \
-  --art .build/custom-learning-audiobooks/<slug>/dist/cover-concept-1.svg \
+  --art .build/custom-learning-audiobooks/<slug>/dist/cover-concept-1.png \
   --accent "#2ee8b6" \
   --tone bright \
   --layout bleed \
