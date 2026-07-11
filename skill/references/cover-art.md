@@ -27,9 +27,10 @@ patterns:
 - **Controlled contrast and negative space.** Premium covers often use fewer
   elements, larger scale, and breathing room. A bright cover can be as serious as
   a dark one when the silhouette and hierarchy are strong. Negative space must
-  still feel designed: reserve only the field the real title block needs, usually
-  about 25–35% of the canvas, and carry texture, atmosphere, or compositional
-  energy through it. A visibly empty top half is not premium restraint.
+  still feel designed. The supplied `make_cover.py` compositor places its title
+  in the lower third, so carry visual energy through the top and middle and keep
+  only the lower 25–35% calm enough for type. A visibly empty top half is not
+  premium restraint.
 - **Tactility and imperfection.** Paper grain, ink bleed, collage edges, an
   imperfect line, a physical object, or restrained photo realism can add human
   presence. Use one texture language, not a pile of effects.

@@ -14,7 +14,7 @@
 - Generate at least three genuinely different raster candidates per title with the built-in image-generation tool; do not fall back to SVG or CLI/API image generation without explicit user approval.
 - Generated art contains no lettering, title, subtitle, author, logos, watermarks, UI, dashboards, mockup frames, or imitation of named covers/designers.
 - Bright or high-key treatment is the collection default. Select a dark cover only when it is materially stronger and the subject genuinely benefits; regenerate a bright direction when no award-worthy bright option exists.
-- Title-safe space normally occupies only the upper 25–35%; texture, atmosphere, or compositional energy must continue through it. Reject and regenerate covers with a visibly dead or vacant top half.
+- Because `make_cover.py` places titles in the lower third, title-safe space is the lower 25–35%. Carry visual energy through the top and middle; reject and regenerate covers with a dead or vacant upper field.
 - Composite final covers at exactly 1600 by 2560 pixels with `skill/scripts/make_cover.py`.
 - Preserve every prior public `cover.png` as `cover-legacy.png` before replacement.
 - Update existing EPUB cover assets in place; never rebuild public books from combined Markdown.

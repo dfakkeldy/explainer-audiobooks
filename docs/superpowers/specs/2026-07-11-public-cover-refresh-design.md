@@ -50,11 +50,11 @@ when it is materially stronger and the subject genuinely benefits from it; if a
 title has no award-worthy bright option, regenerate one direction brighter
 before selection.
 
-Title-safe space must not become a visibly empty upper half. Reserve only the
-space the actual compositor title block needs—normally the upper 25–35%—while
-texture, atmosphere, or compositional energy continues through that field. A
-large vacant gradient or blank field is a regeneration failure, not premium
-negative space.
+Title-safe space must match the actual compositor. `make_cover.py` places its
+title block in the lower third, so generated art should carry visual energy
+through the top and middle and reserve only the lower 25–35% as a calmer title
+field. A large vacant upper field or blank top half is a regeneration failure,
+not premium negative space.
 
 ## Autonomous Selection
 
