@@ -69,13 +69,23 @@ book does not instruct on killing protected species.
 
 ## Figure count and image provenance
 **0 interior figures.** The book is prose-only (no pictures requested or
-required). Cover art is bespoke SVG, authored for this book — no external image
-rights involved.
+required). Cover provenance and selection evidence are recorded in the
+collection [cover-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md).
+
+## Cover
+
+Refreshed in July 2026 with original raster artwork generated through the
+built-in image-generation tool, then composed with the repository cover tool.
+The artwork follows the current collection policy: visual energy continues
+through the top and middle, with only the lower 25–35% reserved as a calmer
+title field. The previous public cover is preserved as `cover-legacy.png`;
+generation prompt and selection evidence are recorded in the collection
+[cover-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md).
 
 ## Public files
 - `chicken-predators.epub` — validated EPUB 3 with nav + NCX TOC
 - `chicken-predators.md` — combined Markdown
-- `cover.png` — selected cover (Concept 1: fortress coop at dusk, amber accent)
+- `cover.png` — July 2026 generated-raster cover, 1600 × 2560
 - `chicken-predators.m4b` — chaptered Echo/Kokoro audiobook
 - `chicken-predators.alignment.json` — 231-anchor Echo read-along sidecar
 - `README.md` — this manifest
@@ -93,7 +103,7 @@ rights involved.
 - ✅ Editorial review (citation-first, 3/3 findings resolved)
 - ✅ Coverage-ledger spot-check (all core concepts delivered)
 - ✅ Frontier-author repair pass complete
-- ✅ Cover rendered (3 candidates, 1 selected, accent colour visible)
+- ✅ Cover refreshed under the generated-raster and lower-title-field policy
 
 ## Audio verification
 - M4B duration: 11,140.181 seconds (3:05:40), AAC, 16 named chapters.
