@@ -18,7 +18,7 @@
 - **Research mode:** Deep — multiple source classes compared (Canada Post official, CUPW official/bulletins, independent journalism, government IIC report, critical analysis)
 - **Source-confidence label:** deep
 - **Sensitive-topic guardrails:** Educational overview framing. Multiple perspectives presented (CUPW, Canada Post, government, critical/rank-and-file). No advice on what any worker should do. Not a substitute for the actual collective agreement text.
-- **Figure count and image provenance/licensing summary:** 0 interior figures. The original run produced three bespoke SVG candidates with no third-party imagery. Candidate 1 is retained here as the release cover; its vector-derived artwork predates the raster-AI cover requirement added after this run.
+- **Figure count and image provenance/licensing summary:** 0 interior figures. Current cover provenance and selection evidence are recorded in the collection [cover-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md).
 
 ## Chapters
 
@@ -34,17 +34,19 @@
 
 ## Cover
 
-**Selected: Candidate 1 — Editorial Hero.** Weathered rural mailbox against Cape Breton coastal landscape. Bright, bleed layout, accent #C8102E. Embedded in the EPUB and retained as `cover.png` for this initial public release. The cover is a known weak point and may be replaced with generated raster artwork in a later cover-refresh pass.
-
-Two alternate candidates were rendered during production:
-2. Contract Grid — gold document system on navy (dark, hero)
-3. Route Map — archival parchment postal routes (bright, bleed)
+Refreshed in July 2026 with original raster artwork generated through the
+built-in image-generation tool, then composed with the repository cover tool.
+The artwork follows the current collection policy: visual energy continues
+through the top and middle, with only the lower 25–35% reserved as a calmer
+title field. The previous public cover is preserved as `cover-legacy.png`;
+generation prompt and selection evidence are recorded in the collection
+[cover-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md).
 
 ## Output Files
 
 - `the-new-deal.epub` — EPUB 3 with nav + NCX
 - `the-new-deal.md` — combined Markdown
-- `cover.png` — selected initial release cover
+- `cover.png` — July 2026 generated-raster cover, 1600 × 2560
 - `the-new-deal.m4b` — chaptered native Echo/Kokoro audiobook
 - `the-new-deal.alignment.json` — Echo read-along sidecar
 - `README.md` — this manifest

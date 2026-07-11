@@ -21,6 +21,16 @@ chaptered M4B, alignment sidecar, and this README. The narration-QA JSON and
 delivery checksums are private delivery evidence and are intentionally absent
 from this public package.
 
+## Cover
+
+Refreshed in July 2026 with original raster artwork generated through the
+built-in image-generation tool, then composed with the repository cover tool.
+The artwork follows the current collection policy: visual energy continues
+through the top and middle, with only the lower 25–35% reserved as a calmer
+title field. The previous public cover is preserved as `cover-legacy.png`;
+generation prompt and selection evidence are recorded in the collection
+[cover-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md).
+
 ## Edition details
 
 - Canonical word count: 16,826 build words
@@ -72,7 +82,7 @@ The live provincial consolidations, permit page, and 2026–27 annual hunting an
 - EPUB package metadata/navigation: title, creator, language, embedded cover
   declaration and image, navigation document, NCX, and 9 chapter spine entries
   confirmed.
-- Cover: 1600 × 2560; selected from three original, rights-safe SVG concepts.
+- Cover: 1600 × 2560 generated-raster artwork; embedded bytes match `cover.png`.
 - M4B: title/artist/album tags confirmed; 9 named chapters; duration confirmed by `ffprobe`.
 - Sidecar: native Echo verifier returned `SIDECAR_OK` with 245 anchors and 9 chapters.
 - Independent review: high-priority factual, legal, and safety findings were repaired before final delivery. The revision removes unsupported entry rankings and chewing times, separates red-squirrel hunting from fur-trapping dates, identifies the property-damage exception without treating it as method permission, states Nova Scotia's prohibition on poisoning wildlife except rats, requires DNR or licensed-operator confirmation before a flying-squirrel exclusion device is installed, limits building repair guidance to supported principles and trade decisions, and separates PHAC's public cleanup sequence from contractor-specific remediation practice.
