@@ -20,6 +20,9 @@ for one-pass production. Use `custom-learning-audiobook` directly for that.
 ## Required Reference
 
 - Read `references/handoff-packet.md` before preparing the final handoff.
+- Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
+  preparing the production handoff. The final prose pass is bounded: it removes
+  AI tics without inventing personality, anecdotes, sources, or claims.
 
 ## Workflow
 
@@ -56,8 +59,11 @@ for one-pass production. Use `custom-learning-audiobook` directly for that.
 6. **Prepare the synthesis handoff.** When the user approves the direction, write
    `handoff/handoff-packet.md` using `references/handoff-packet.md`. Include the
    final brief, outline, throughlines, source plan, figure plan, asset paths, and
-   unresolved choices. The handoff should be complete enough that a fresh agent
-   can run `custom-learning-audiobook` without re-litigating the concept.
+   unresolved choices. Include the desired humanizing level, voice sample or
+   style notes, AI-writing patterns to avoid, and the instruction to preserve
+   facts, citations, technical names, and intentional teaching repetition. The
+   handoff should be complete enough that a fresh agent can run
+   `custom-learning-audiobook` without re-litigating the concept.
 
 7. **Invoke the audiobook skill for production.** Hand the packet to
    `custom-learning-audiobook` for research finalization, manuscript writing,
@@ -86,3 +92,7 @@ them, or explicitly asks to proceed without another gate:
 - source/research plan,
 - figure/image plan with provenance,
 - handoff packet ready for `custom-learning-audiobook`.
+
+The handoff also records whether the bounded `humanizer` pass is required,
+optional, or explicitly skipped, plus any voice constraints the production
+author must preserve.
