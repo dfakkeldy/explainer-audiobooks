@@ -109,7 +109,13 @@ research, write one coherent manuscript, and package the result for Echo.
    rights-safe provenance rules. The three candidates must differ in central
    metaphor, composition, palette, and visual language—not mere recolours. Use
    original generated raster art from the strongest available image tool (use it
-   directly, e.g. `image_generate`), bespoke SVG, or rights-cleared art. Use the
+   directly, e.g. `image_gen`) whenever one is available. Do not substitute
+   bespoke SVG, programmatic vector art, diagrams, or icon compositions for
+   generated raster artwork merely because they are faster or deterministic.
+   SVG is allowed only when the user explicitly requests vector art, or when no
+   image-generation tool is available and the user approves that fallback after
+   seeing the limitation. Rights-cleared raster photography or art remains
+   acceptable when it is the stronger editorial choice. Use the
    copy-ready editorial prompt in `../../skill/references/cover-art.md`: demand
    one specific visual thesis, one large physical metaphor, a deliberate
    title-safe area, and an eye-catching 2–4-colour palette. Do not ask a cheaper
@@ -205,3 +211,6 @@ research, write one coherent manuscript, and package the result for Echo.
   to work as the book's library identity.
 - Do not default every candidate to a dark background; bright covers are allowed
   and should be offered when they better sell the book.
+- Do not use SVG or programmatic vector artwork for a generated cover when an
+  image-generation tool is available. Generate raster artwork and inspect it at
+  full size and thumbnail size before compositing the title.
