@@ -329,3 +329,17 @@ Earlier per-title review also regenerated **Tests First B** after a square outpu
 Provenance is intentionally honest about incomplete historical prompt capture. The exact targeted-regeneration prompt that produced the final selected **The New Deal B** raster was not persisted in the build ledger, brief, report, or built-in output metadata; the title section records that limitation and reproduces only the exact initial, rejected direction prompt for context. Two discarded historical calls also lack recoverable exact prompts: **Why It Feels Right A, call 2** and **You Are the Architect B, call 2**. Those outputs were not selected. No missing prompt was reconstructed or fabricated.
 
 The contact-sheet review found eleven unique selected-cover hashes and no publication-blocking outlier. Warm peach lower fields recur because the shared compositor derives them consistently, but title-specific metaphors, silhouettes, accents, camera angles, and material languages keep the collection distinct. Generated art remains illustrative; deterministic typography and package embedding happened after image generation.
+
+## iCloud package sync
+
+- Chicken Predators — updated
+- Echo, From the Inside — no matching public package
+- Findable — no matching public package
+- Git Happens — no matching public package
+- Rodents in the Walls — updated
+- Tests First — no matching public package
+- The Bug Is a Clue — no matching public package
+- The New Deal — updated
+- The Voice in the Machine — no matching public package
+- Why It Feels Right — no matching public package
+- You Are the Architect — no matching public package
