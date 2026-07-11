@@ -50,6 +50,12 @@ when it is materially stronger and the subject genuinely benefits from it; if a
 title has no award-worthy bright option, regenerate one direction brighter
 before selection.
 
+Title-safe space must not become a visibly empty upper half. Reserve only the
+space the actual compositor title block needs—normally the upper 25–35%—while
+texture, atmosphere, or compositional energy continues through that field. A
+large vacant gradient or blank field is a regeneration failure, not premium
+negative space.
+
 ## Autonomous Selection
 
 The agent chooses one final cover per book without pausing after each generation.
