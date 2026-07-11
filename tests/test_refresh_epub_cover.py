@@ -67,7 +67,14 @@ def make_epub_fixture(
 </package>"""
     old_cover = make_png(directory / "old.png", (600, 900), "#111111").read_bytes()
     with zipfile.ZipFile(source, "w", zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr("mimetype", "application/epub+zip", compress_type=zipfile.ZIP_STORED)
+        mimetype = zipfile.ZipInfo("mimetype", date_time=(2024, 2, 4, 6, 8, 10))
+        mimetype.compress_type = zipfile.ZIP_STORED
+        mimetype.comment = b"original mimetype metadata"
+        mimetype.extra = b"\x0a\x00\x04\x00META"
+        mimetype.create_system = 3
+        mimetype.internal_attr = 1
+        mimetype.external_attr = 0o100644 << 16
+        archive.writestr(mimetype, "application/epub+zip")
         archive.writestr(
             "META-INF/container.xml",
             '<?xml version="1.0"?><container xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
@@ -93,7 +100,33 @@ def assert_epub_invariants(test: unittest.TestCase, output: Path, source: Path) 
         test.assertEqual(["OEBPS/cover-old.png"], changed)
 
 
+def mimetype_metadata(info: zipfile.ZipInfo) -> tuple[object, ...]:
+    return (
+        info.date_time,
+        info.comment,
+        info.extra,
+        info.create_system,
+        info.internal_attr,
+        info.external_attr,
+    )
+
+
 class RefreshEpubCoverTests(unittest.TestCase):
+    def test_preserves_mimetype_zip_metadata_while_stored_first(self) -> None:
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            source = make_epub_fixture(root)
+            cover = make_png(root / "new.png", (1600, 2560))
+
+            refresh_epub_cover.replace_epub_cover(source, cover, root / "out.epub")
+
+            with zipfile.ZipFile(source) as before, zipfile.ZipFile(root / "out.epub") as after:
+                original = before.getinfo("mimetype")
+                rebuilt = after.infolist()[0]
+                self.assertEqual("mimetype", rebuilt.filename)
+                self.assertEqual(zipfile.ZIP_STORED, rebuilt.compress_type)
+                self.assertEqual(mimetype_metadata(original), mimetype_metadata(rebuilt))
+
     def test_replaces_declared_cover_and_preserves_epub(self) -> None:
         with TemporaryDirectory() as raw_dir:
             tmp_path = Path(raw_dir)
@@ -227,6 +260,35 @@ class RefreshEpubCoverTests(unittest.TestCase):
                         rebuilt,
                         "OEBPS/cover-old.png",
                         source.read("OEBPS/cover-old.png"),
+                    )
+
+    def test_rebuilt_validation_rejects_changed_mimetype_metadata(self) -> None:
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            source_path = make_epub_fixture(root)
+            cover_data = make_png(root / "new.png", (1600, 2560)).read_bytes()
+            rebuilt_path = root / "rebuilt.epub"
+            with zipfile.ZipFile(source_path) as source, zipfile.ZipFile(
+                rebuilt_path, "w"
+            ) as rebuilt:
+                for info in source.infolist():
+                    payload = (
+                        cover_data
+                        if info.filename == "OEBPS/cover-old.png"
+                        else source.read(info)
+                    )
+                    if info.filename == "mimetype":
+                        info.comment = b"changed metadata"
+                    rebuilt.writestr(info, payload)
+            with zipfile.ZipFile(source_path) as source, zipfile.ZipFile(
+                rebuilt_path
+            ) as rebuilt:
+                with self.assertRaisesRegex(ValueError, "mimetype metadata changed"):
+                    refresh_epub_cover._validate_rebuilt_epub(
+                        source,
+                        rebuilt,
+                        "OEBPS/cover-old.png",
+                        cover_data,
                     )
 
     def _assert_rejected(

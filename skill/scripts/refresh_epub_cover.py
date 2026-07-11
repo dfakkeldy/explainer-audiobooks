@@ -11,6 +11,7 @@ import posixpath
 import struct
 import tempfile
 import zipfile
+from copy import copy
 from dataclasses import asdict, dataclass
 from io import BytesIO
 from pathlib import Path
@@ -22,6 +23,24 @@ from PIL import Image, UnidentifiedImageError
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 EXPECTED_DIMENSIONS = (1600, 2560)
+
+
+def _zipinfo_metadata(info: zipfile.ZipInfo) -> tuple[object, ...]:
+    """Return member metadata that must survive a payload-preserving rewrite."""
+    return (
+        info.date_time,
+        info.compress_type,
+        info.comment,
+        info.extra,
+        info.create_system,
+        info.create_version,
+        info.extract_version,
+        info.reserved,
+        info.flag_bits,
+        info.volume,
+        info.internal_attr,
+        info.external_attr,
+    )
 
 
 @dataclass(frozen=True)
@@ -196,6 +215,10 @@ def _validate_rebuilt_epub(
     first = rebuilt.infolist()[0]
     if first.filename != "mimetype" or first.compress_type != zipfile.ZIP_STORED:
         raise ValueError("rebuilt EPUB does not preserve stored-first mimetype")
+    expected_mimetype = copy(source.getinfo("mimetype"))
+    expected_mimetype.compress_type = zipfile.ZIP_STORED
+    if _zipinfo_metadata(first) != _zipinfo_metadata(expected_mimetype):
+        raise ValueError("rebuilt EPUB mimetype metadata changed")
     for name in source_names:
         actual = rebuilt.read(name)
         if name == cover_member:
@@ -235,9 +258,9 @@ def replace_epub_cover(
             os.close(descriptor)
             temporary_path = Path(raw_path)
             with zipfile.ZipFile(temporary_path, "w") as destination:
-                destination.writestr(
-                    "mimetype", source.read("mimetype"), compress_type=zipfile.ZIP_STORED
-                )
+                mimetype_info = copy(source.getinfo("mimetype"))
+                mimetype_info.compress_type = zipfile.ZIP_STORED
+                destination.writestr(mimetype_info, source.read("mimetype"))
                 for info in source.infolist():
                     if info.filename == "mimetype":
                         continue
