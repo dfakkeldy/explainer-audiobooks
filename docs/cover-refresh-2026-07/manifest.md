@@ -188,7 +188,7 @@ Avoid: square or landscape output, dead blank upper half, empty white void, titl
 - **Directions:**
   - **A — Revealing Shadow:** A single beetle casting the shadow of a magnifying glass.
   - **B — One Red Thread:** A detective evidence board reduced to one red thread and one broken component.
-  - **C — Diagnostic Light:** A dark machine room with one warm diagnostic light revealing the real fault.
+  - **C — Missing Tooth:** A bright machine room where one missing flywheel tooth and the matching loose tooth reveal the exact fault.
 - **Selected:** A — Revealing Shadow
 - **Accent / tone / layout:** `#F28C28` / `bright` / `bleed`
 - **Generated-art filename:** `candidate-a-art.png`
@@ -227,22 +227,24 @@ Avoid: square or landscape output, dead blank upper half, empty white void, titl
 - **Final / legacy cover:** `books/the-new-deal/cover.png` / `books/the-new-deal/cover-legacy.png`
 - **EPUB / declared cover member:** `books/the-new-deal/the-new-deal.epub` / `OEBPS/cover.png`
 - **Inspection:** full size — pass; 160-pixel thumbnail — pass. Satchel on old-road/new-grid seam is collection-unique; dark lower field is a justified contrast treatment over tactile, active art rather than a dark-art default.
-- **Final cover SHA-256:** `852a31fa7eb4e2e80a73cea4b004d899d4d159ac38a766c9c39132dd9c9a9ff7`
+- **Final cover SHA-256:** `abd82438a29e37808da5c153a9b5d7bc9775a6aa328736d79f4f1f328d1eb457`
 
 **Exact prompt for the selected art:**
 
-**Unavailable.** The exact targeted-regeneration prompt was not persisted in the manifest, brief, or Task 6 report, and the generated image source records only the output path; it cannot be recovered exactly without fabricating text.
-
-For audit context only, the exact initial prompt for this selected direction (which produced the rejected pre-regeneration raster, not the final raster) was:
-
 ```text
-Create original portrait editorial artwork for a premium nonfiction audiobook cover about The New Deal. The book's audience is rural postal workers and communities seeking a clear educational overview of change, and its promise is a clear, humane and memorable way into The New Deal. The single visual thesis is a weathered postal satchel balanced between an old road and a new measured grid.
-
-Show one unforgettable central metaphor: a weathered postal satchel balanced between an old road and a new measured grid. Make that subject large, beautifully art-directed, and immediately legible at a small thumbnail. Use satchel centered at boundary of organic road and precise grid, quiet top, with a strong silhouette, one clear focal point, and generous intentional negative space for title typography. The image should feel like a finished editorial book cover image, not an illustration for a slide deck.
-
-Visual language: tactile cut-paper collage. Material and surface: worn leather, road grey, blueprint blue, route yellow. Use a confident, eye-catching palette including a vivid signature accent #F2B705 that is visibly present in the main image. Use sophisticated colour relationships, controlled contrast, dimensional light, and deliberate texture; avoid a washed-out pastel gradient. Make the result emotionally specific, grounded, and genre-appropriate without using genre clichés.
-
-High-end art direction, specific physical detail, elegant composition, premium print sensibility, visual hierarchy, subtle human imperfection, striking colour, strong thumbnail read, original concept. No title, no subtitle, no author name, no lettering, no typography, no logo, no watermark, no border, no mockup, no book mockup, no audiobook icon, no interface, no dashboard, no floating UI cards, no generic infographic, no stock-photo look, no random symbols, no collage of tiny objects, no split-screen, no decorative icon cloud, no close imitation of any named artist, designer, publisher, or existing book cover.
+Use case: stylized-concept
+Asset type: original portrait raster artwork for a premium nonfiction audiobook cover, art only
+Primary request: Regenerate selected Candidate B for The New Deal, an educational book about Canada Post, CUPW, institutional change, and rural mail. Preserve the central thesis: a weathered postal satchel stands at the transition from an old rural road to a new measured service grid.
+Scene/backdrop: a tactile Cape Breton rural landscape rendered as layered cut paper and weathered cartographic material; an old winding gravel road and stone edges transition visibly into a precise blue measured grid and route geometry.
+Subject: one unbranded, well-used brown leather postal satchel with plain hardware, large and unmistakable, placed at the seam where the organic old road becomes the new measured grid. The satchel is the human-scale bridge between inherited rural service and measured institutional change.
+Style/medium: premium tactile cut-paper collage with editorial realism, worn surfaces, dimensional paper edges, restrained hand-made imperfection.
+Composition/framing: strict PORTRAIT 2:3 vertical composition. Place the satchel and road-to-grid seam through the upper and middle 65-75% of the canvas. The road rises and bends through the upper field while measured grid lines cross and organize the middle, keeping both areas active. Reserve ONLY the bottom 25-35% as a calmer dark-blue textured field for later title typography, with the grid fading softly into it. Strong 160-pixel thumbnail silhouette.
+Lighting/mood: bright coastal daylight, grounded, humane, sober but hopeful; controlled dimensional shadows.
+Color palette: worn leather brown, road grey, slate and coastal blue, cream paper, vivid route-yellow accent #F2B705.
+Materials/textures: cracked unbranded leather, rough gravel paper, torn map layers, blueprint paper, thin route-yellow thread or painted line.
+Text (verbatim): none.
+Constraints: one central satchel; old-road/new-measured-grid transition must be instantly legible; active top and middle; only lower 25-35% calm; no organization branding or claims.
+Avoid: Canada Post logo, CUPW logo, crown symbols, postal trademarks, false labels, fake stamps, propaganda poster styling, heroic worker propaganda, flags, title, subtitle, author, words, letters, numbers, typography, watermark, border, mockup, UI, dashboard, literal infographic, generic corporate stock art, crowded collage.
 ```
 
 ## The Voice in the Machine (`the-voice-in-the-machine`)
@@ -251,19 +253,27 @@ High-end art direction, specific physical detail, elegant composition, premium p
 - **Directions:**
   - **A — Sentence to Sound:** A paper sentence entering a small acoustic machine and leaving as a waveform ribbon.
   - **B — Phonetic Microphone:** An intimate microphone still life containing layered phonetic textures without text.
-  - **C — Glass Voice Box:** A glass voice box glowing inside a closed phone-sized object without UI.
+  - **C — Contained Voice Box:** A palm-sized maple-and-brass cutaway encloses bellows, reeds, a diaphragm, felt chambers, and an internal vibration path.
 - **Selected:** A — Sentence to Sound
 - **Accent / tone / layout:** `#FF9F1C` / `bright` / `bleed`
 - **Generated-art filename:** `candidate-a-art.png`
 - **Final / legacy cover:** `books/the-voice-in-the-machine/cover.png` / `books/the-voice-in-the-machine/cover-legacy.png`
 - **EPUB / declared cover member:** `books/the-voice-in-the-machine/the-voice-in-the-machine.epub` / `OEBPS/cover.png`
-- **Inspection:** full size — pass; 160-pixel thumbnail — pass. Paper-to-acoustic-ribbon transformation is title-specific; soft wall shadows and diagonal geometry animate the high-key upper region, with a calm lower peach field.
-- **Final cover SHA-256:** `85f6b2c22680f097c919cdfceebf9bada1dfdf80c326faebfa5b58222407a07b`
+- **Inspection:** full size — pass; 160-pixel thumbnail — pass. Blank paper enters a contained roller, resonating chamber, copper diaphragm, and horn before emerging as a physical amber sound ribbon; the top and middle carry the sequence while the lower field stays calm.
+- **Final cover SHA-256:** `9ecdf6c46c44b5c906855f69a76f036af4cc8a5088a15ce21483eb316d7d0f17`
 
 **Exact prompt for the selected art:**
 
 ```text
-Create original PORTRAIT 2:3 editorial artwork for a premium nonfiction audiobook cover about The Voice in the Machine, private on-device speech synthesis. Single visual thesis: a blank paper strip enters a small acoustic machine and leaves as one flowing waveform-like ribbon. Side-on physical transformation across lower half, broad pale upper title field. Cinematic editorial still life; paper ivory, brushed aluminium, copper, visible amber accent #FF9F1C. Binding direction: bright high-key daylight, airy and human-scale, no dark void and no generic glowing technology. Paper must be completely blank; waveform is abstract physical ribbon, not UI. No letters, words, title, subtitle, author, typography, logo, watermark, border, phone, screen, interface, dashboard, robot, code texture, random symbols, icon cloud, or stock-photo look.
+Use case: precise-object-edit
+Asset type: portrait raster artwork for a premium nonfiction audiobook cover, art only
+Input images: Image 1 is the edit target and current regenerated Voice A artwork.
+Primary request: Recompose this exact paper -> contained acoustic machine -> amber sound ribbon still life so the physical transformation occupies and activates the upper 70-75% of the portrait, leaving only the bottom 25-30% as the calm title field.
+Change only composition and framing: enlarge the existing paper strip, enclosed brushed-metal acoustic mechanism, copper diaphragm, horn channel, and amber ribbon slightly and extend their diagonal presence farther down through the middle. Preserve the same machine design, materials, bright high-key editorial style, warm ivory background, shadows, and amber #FF9F1C ribbon.
+Composition/framing: strict PORTRAIT 2:3. Keep the top active with the large amber ribbon loop and tactile shadow. Keep the middle dominated by the blank paper -> machine -> sound transition. Begin the calm warm textured field at approximately 72% canvas height, not halfway down. No vacant pale upper half.
+Text (verbatim): none.
+Constraints: paper remains completely blank; machine remains physical, enclosed, acoustic, and human-scale; ribbon remains a physical sound-energy ribbon, not UI; lower calm field is only 25-30%; preserve all other visual qualities.
+Avoid: changing the concept, removing the top ribbon, increasing blank lower field, title, subtitle, author, words, letters, numbers, typography, logo, watermark, border, mockup, phone, screen, UI, dashboard, code, robot, generic glowing technology, futuristic product render.
 ```
 
 ## Why It Feels Right (`why-it-feels-right`)
@@ -326,7 +336,7 @@ The labelled eleven-cover review passed after one targeted collection-level rege
 
 Earlier per-title review also regenerated **Tests First B** after a square output and then an overly vacant upper field, and **The Bug Is a Clue A** after a dead upper field. Task 6 re-audited the final three-title batch against the actual lower-third compositor and replaced or recomposed art as needed. These interventions explain why some selected prompts are targeted-regeneration prompts rather than the original direction prompts.
 
-Provenance is intentionally honest about incomplete historical prompt capture. The exact targeted-regeneration prompt that produced the final selected **The New Deal B** raster was not persisted in the build ledger, brief, report, or built-in output metadata; the title section records that limitation and reproduces only the exact initial, rejected direction prompt for context. Two discarded historical calls also lack recoverable exact prompts: **Why It Feels Right A, call 2** and **You Are the Architect B, call 2**. Those outputs were not selected. No missing prompt was reconstructed or fabricated.
+Final whole-branch review added five separate built-in image-generation calls: a selected Voice A regeneration plus targeted recomposition, a selected New Deal B regeneration, and valid replacements for rejected Bug C and Voice C. The build ledger records every exact prompt, tool path, generated source, copied path, decision, history, and current status. All 33 current comparison slots now have complete, accepted images; every selected image has exact prompt provenance. Two discarded historical calls still lack recoverable exact prompts: **Why It Feels Right A, call 2** and **You Are the Architect B, call 2**. Those outputs were not selected, and no missing historical prompt was reconstructed.
 
 The contact-sheet review found eleven unique selected-cover hashes and no publication-blocking outlier. Warm peach lower fields recur because the shared compositor derives them consistently, but title-specific metaphors, silhouettes, accents, camera angles, and material languages keep the collection distinct. Generated art remains illustrative; deterministic typography and package embedding happened after image generation.
 

@@ -219,13 +219,17 @@ def _validate_rebuilt_epub(
     expected_mimetype.compress_type = zipfile.ZIP_STORED
     if _zipinfo_metadata(first) != _zipinfo_metadata(expected_mimetype):
         raise ValueError("rebuilt EPUB mimetype metadata changed")
-    for name in source_names:
-        actual = rebuilt.read(name)
+    for source_info, rebuilt_info in zip(source.infolist(), rebuilt.infolist()):
+        name = source_info.filename
+        actual = rebuilt.read(rebuilt_info)
         if name == cover_member:
             if actual != cover_data:
                 raise ValueError("rebuilt EPUB cover bytes do not match input")
-        elif actual != source.read(name):
-            raise ValueError(f"rebuilt EPUB non-cover payload changed: {name}")
+        else:
+            if actual != source.read(source_info):
+                raise ValueError(f"rebuilt EPUB non-cover payload changed: {name}")
+            if _zipinfo_metadata(rebuilt_info) != _zipinfo_metadata(source_info):
+                raise ValueError(f"rebuilt EPUB non-cover metadata changed: {name}")
     if png_dimensions(rebuilt.read(cover_member)) != EXPECTED_DIMENSIONS:
         raise ValueError("rebuilt EPUB cover validation failed")
 
