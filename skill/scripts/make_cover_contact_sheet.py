@@ -53,6 +53,8 @@ def _validated_entries(entries: Sequence[dict[str, str]]) -> list[tuple[str, Pat
         try:
             with Image.open(cover) as image:
                 dimensions = image.size
+                image_format = image.format
+                image_mode = image.mode
                 image.verify()
         except (OSError, UnidentifiedImageError) as error:
             raise ValueError(f"entry {index} ({title}): invalid cover image: {cover}") from error
@@ -61,10 +63,61 @@ def _validated_entries(entries: Sequence[dict[str, str]]) -> list[tuple[str, Pat
                 f"entry {index} ({title}): cover must be 1600x2560; "
                 f"found {dimensions[0]}x{dimensions[1]}"
             )
+        if image_format != "PNG":
+            raise ValueError(
+                f"entry {index} ({title}): cover must use PNG format; "
+                f"found {image_format or 'unknown'}"
+            )
+        if image_mode != "RGB":
+            raise ValueError(
+                f"entry {index} ({title}): cover must use RGB mode; found {image_mode}"
+            )
 
         titles.add(title)
         validated.append((title, cover))
     return validated
+
+
+def _ellipsize(
+    text: str,
+    draw: ImageDraw.ImageDraw,
+    font: ImageFont.ImageFont,
+    width: int,
+) -> str:
+    ellipsis = "..."
+    candidate = text.rstrip()
+    while candidate and draw.textlength(candidate + ellipsis, font=font) > width:
+        candidate = candidate[:-1].rstrip()
+    return candidate + ellipsis
+
+
+def _wrapped_label(
+    title: str,
+    draw: ImageDraw.ImageDraw,
+    font: ImageFont.ImageFont,
+) -> str:
+    """Wrap a title deterministically within the drawable label rectangle."""
+    max_width = THUMBNAIL_SIZE[0] - 12
+    line_height = draw.textbbox((0, 0), "Ag", font=font)[3]
+    max_lines = max(1, (LABEL_HEIGHT - 12) // line_height)
+    words = title.split()
+    lines: list[str] = []
+
+    while words and len(lines) < max_lines:
+        line = words.pop(0)
+        if draw.textlength(line, font=font) > max_width:
+            line = _ellipsize(line, draw, font, max_width)
+        while words:
+            candidate = f"{line} {words[0]}"
+            if draw.textlength(candidate, font=font) > max_width:
+                break
+            line = candidate
+            words.pop(0)
+        lines.append(line)
+
+    if words:
+        lines[-1] = _ellipsize(f"{lines[-1]} {' '.join(words)}", draw, font, max_width)
+    return "\n".join(lines)
 
 
 def render(entries: Sequence[dict[str, str]], out: str | Path) -> ContactSheetResult:
@@ -87,7 +140,16 @@ def render(entries: Sequence[dict[str, str]], out: str | Path) -> ContactSheetRe
         with Image.open(cover) as image:
             thumbnail = image.convert("RGB").resize(THUMBNAIL_SIZE, Image.Resampling.LANCZOS)
             sheet.paste(thumbnail, (x, y))
-        draw.text((x + 6, y + THUMBNAIL_SIZE[1] + 6), title, fill=TEXT_COLOR, font=font)
+        label = Image.new("RGB", (cell_width, LABEL_HEIGHT), BACKGROUND)
+        label_draw = ImageDraw.Draw(label)
+        label_draw.multiline_text(
+            (6, 6),
+            _wrapped_label(title, label_draw, font),
+            fill=TEXT_COLOR,
+            font=font,
+            spacing=0,
+        )
+        sheet.paste(label, (x, y + THUMBNAIL_SIZE[1]))
 
     output = Path(out)
     output.parent.mkdir(parents=True, exist_ok=True)
