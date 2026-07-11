@@ -11,11 +11,13 @@ import posixpath
 import struct
 import tempfile
 import zipfile
-import zlib
 from dataclasses import asdict, dataclass
+from io import BytesIO
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 from xml.etree import ElementTree
+
+from PIL import Image, UnidentifiedImageError
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -126,7 +128,23 @@ def discover_cover_member(archive: zipfile.ZipFile, opf_member: str) -> str:
 def png_dimensions(data: bytes) -> tuple[int, int]:
     if data[:8] != PNG_SIGNATURE:
         raise ValueError("cover must be PNG")
+    _validate_png_critical_chunks(data)
+    try:
+        with Image.open(BytesIO(data)) as image:
+            if image.format != "PNG":
+                raise ValueError("cover must be PNG")
+            dimensions = image.size
+            image.verify()
+        with Image.open(BytesIO(data)) as image:
+            if image.format != "PNG" or image.size != dimensions:
+                raise ValueError("invalid PNG: inconsistent image metadata")
+            image.load()
+    except (OSError, SyntaxError, UnidentifiedImageError) as error:
+        raise ValueError("invalid PNG: image cannot be decoded") from error
+    return dimensions
 
+
+def _validate_png_critical_chunks(data: bytes) -> None:
     offset = len(PNG_SIGNATURE)
     chunks: list[tuple[bytes, bytes]] = []
     while offset < len(data):
@@ -137,72 +155,32 @@ def png_dimensions(data: bytes) -> tuple[int, int]:
         if end > len(data):
             raise ValueError("invalid PNG: truncated chunk data")
         kind = data[offset + 4 : offset + 8]
-        payload = data[offset + 8 : offset + 8 + length]
-        expected_crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
-        if zlib.crc32(kind + payload) & 0xFFFFFFFF != expected_crc:
-            raise ValueError("invalid PNG: chunk CRC mismatch")
-        chunks.append((kind, payload))
+        chunks.append((kind, data[offset + 8 : offset + 8 + length]))
         offset = end
-        if kind == b"IEND":
-            break
 
-    if offset != len(data) or not chunks or chunks[0][0] != b"IHDR":
-        raise ValueError("invalid PNG: incomplete or malformed structure")
-    if len(chunks[0][1]) != 13 or chunks[-1] != (b"IEND", b""):
+    kinds = [kind for kind, _ in chunks]
+    if not chunks or kinds[0] != b"IHDR" or kinds[-1] != b"IEND":
+        raise ValueError("invalid PNG: critical chunks are out of order")
+    if kinds.count(b"IHDR") != 1 or kinds.count(b"IEND") != 1:
+        raise ValueError("invalid PNG: duplicate critical chunk")
+    if len(chunks[0][1]) != 13 or chunks[-1][1]:
         raise ValueError("invalid PNG: malformed IHDR or IEND")
-    if sum(kind == b"IHDR" for kind, _ in chunks) != 1:
-        raise ValueError("invalid PNG: duplicate IHDR")
-    idat_chunks = [payload for kind, payload in chunks if kind == b"IDAT"]
-    if not idat_chunks:
+    if not any(kind == b"IDAT" for kind in kinds):
         raise ValueError("invalid PNG: missing image data")
-    try:
-        decompressor = zlib.decompressobj()
-        pixels = decompressor.decompress(b"".join(idat_chunks)) + decompressor.flush()
-    except zlib.error as error:
-        raise ValueError("invalid PNG: undecodable image data") from error
-    if not decompressor.eof or decompressor.unused_data:
-        raise ValueError("invalid PNG: incomplete image data")
 
-    width, height, bit_depth, color_type, compression, filtering, interlace = struct.unpack(
-        ">IIBBBBB", chunks[0][1]
-    )
-    if width < 1 or height < 1:
-        raise ValueError("invalid PNG: dimensions must be positive")
-    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(color_type)
-    valid_depths = {
-        0: {1, 2, 4, 8, 16},
-        2: {8, 16},
-        3: {1, 2, 4, 8},
-        4: {8, 16},
-        6: {8, 16},
-    }
-    if (
-        channels is None
-        or bit_depth not in valid_depths[color_type]
-        or compression != 0
-        or filtering != 0
-        or interlace not in (0, 1)
-    ):
-        raise ValueError("invalid PNG: unsupported IHDR values")
+    known_critical = {b"IHDR", b"PLTE", b"IDAT", b"IEND"}
+    if any(kind[0] & 0x20 == 0 and kind not in known_critical for kind in kinds):
+        raise ValueError("invalid PNG: unknown critical chunk")
+    first_idat = kinds.index(b"IDAT")
+    last_idat = len(kinds) - 1 - kinds[::-1].index(b"IDAT")
+    if any(kind != b"IDAT" for kind in kinds[first_idat : last_idat + 1]):
+        raise ValueError("invalid PNG: IDAT chunks must be consecutive")
+    if b"PLTE" in kinds and (kinds.count(b"PLTE") != 1 or kinds.index(b"PLTE") > first_idat):
+        raise ValueError("invalid PNG: PLTE chunk is out of order")
 
-    passes = [(0, 0, 1, 1)] if interlace == 0 else [
-        (0, 0, 8, 8), (4, 0, 8, 8), (0, 4, 4, 8), (2, 0, 4, 4),
-        (0, 2, 2, 4), (1, 0, 2, 2), (0, 1, 1, 2),
-    ]
-    cursor = 0
-    for start_x, start_y, step_x, step_y in passes:
-        pass_width = max(0, (width - start_x + step_x - 1) // step_x)
-        pass_height = max(0, (height - start_y + step_y - 1) // step_y)
-        if pass_width == 0 or pass_height == 0:
-            continue
-        row_bytes = (pass_width * channels * bit_depth + 7) // 8
-        for _ in range(pass_height):
-            if cursor + 1 + row_bytes > len(pixels) or pixels[cursor] > 4:
-                raise ValueError("invalid PNG: incomplete or invalid pixel data")
-            cursor += 1 + row_bytes
-    if cursor != len(pixels):
-        raise ValueError("invalid PNG: unexpected pixel data length")
-    return width, height
+    color_type = chunks[0][1][9]
+    if color_type == 3 and b"PLTE" not in kinds:
+        raise ValueError("invalid PNG: indexed color requires PLTE")
 
 
 def _validate_rebuilt_epub(

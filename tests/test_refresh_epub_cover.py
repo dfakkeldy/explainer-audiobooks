@@ -169,7 +169,33 @@ class RefreshEpubCoverTests(unittest.TestCase):
             )
             cover = root / "incomplete-pixels.png"
             cover.write_bytes(malformed)
-            with self.assertRaisesRegex(ValueError, "pixel data"):
+            with self.assertRaisesRegex(ValueError, "invalid PNG"):
+                refresh_epub_cover.replace_epub_cover(source, cover, root / "out.epub")
+
+    def test_rejects_indexed_png_without_palette(self) -> None:
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            source = make_epub_fixture(root)
+
+            def chunk(kind: bytes, data: bytes) -> bytes:
+                payload = kind + data
+                return (
+                    struct.pack(">I", len(data))
+                    + payload
+                    + struct.pack(">I", binascii.crc32(payload))
+                )
+
+            scanline = b"\x00" + bytes(1600)
+            malformed = (
+                b"\x89PNG\r\n\x1a\n"
+                + chunk(b"IHDR", struct.pack(">IIBBBBB", 1600, 2560, 8, 3, 0, 0, 0))
+                + chunk(b"IDAT", zlib.compress(scanline * 2560))
+                + chunk(b"IEND", b"")
+            )
+            cover = root / "indexed-without-palette.png"
+            cover.write_bytes(malformed)
+
+            with self.assertRaisesRegex(ValueError, "invalid PNG"):
                 refresh_epub_cover.replace_epub_cover(source, cover, root / "out.epub")
 
     def test_rejects_cover_href_fragment(self) -> None:
