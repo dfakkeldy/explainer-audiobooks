@@ -11,6 +11,7 @@ import posixpath
 import struct
 import tempfile
 import zipfile
+import zlib
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -36,7 +37,7 @@ def _local_name(tag: str) -> str:
 
 def _safe_member(path: str, *, base: str = "", label: str) -> str:
     parsed = urlsplit(path)
-    if parsed.scheme or parsed.netloc or parsed.query:
+    if parsed.scheme or parsed.netloc or parsed.query or parsed.fragment:
         raise ValueError(f"{label} must be an internal EPUB path")
     decoded = unquote(parsed.path)
     if not decoded or decoded.startswith("/") or "\\" in decoded:
@@ -123,12 +124,109 @@ def discover_cover_member(archive: zipfile.ZipFile, opf_member: str) -> str:
 
 
 def png_dimensions(data: bytes) -> tuple[int, int]:
-    if len(data) < 24 or data[:8] != PNG_SIGNATURE or data[12:16] != b"IHDR":
+    if data[:8] != PNG_SIGNATURE:
         raise ValueError("cover must be PNG")
-    width, height = struct.unpack(">II", data[16:24])
+
+    offset = len(PNG_SIGNATURE)
+    chunks: list[tuple[bytes, bytes]] = []
+    while offset < len(data):
+        if len(data) - offset < 12:
+            raise ValueError("invalid PNG: truncated chunk")
+        length = struct.unpack(">I", data[offset : offset + 4])[0]
+        end = offset + 12 + length
+        if end > len(data):
+            raise ValueError("invalid PNG: truncated chunk data")
+        kind = data[offset + 4 : offset + 8]
+        payload = data[offset + 8 : offset + 8 + length]
+        expected_crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
+        if zlib.crc32(kind + payload) & 0xFFFFFFFF != expected_crc:
+            raise ValueError("invalid PNG: chunk CRC mismatch")
+        chunks.append((kind, payload))
+        offset = end
+        if kind == b"IEND":
+            break
+
+    if offset != len(data) or not chunks or chunks[0][0] != b"IHDR":
+        raise ValueError("invalid PNG: incomplete or malformed structure")
+    if len(chunks[0][1]) != 13 or chunks[-1] != (b"IEND", b""):
+        raise ValueError("invalid PNG: malformed IHDR or IEND")
+    if sum(kind == b"IHDR" for kind, _ in chunks) != 1:
+        raise ValueError("invalid PNG: duplicate IHDR")
+    idat_chunks = [payload for kind, payload in chunks if kind == b"IDAT"]
+    if not idat_chunks:
+        raise ValueError("invalid PNG: missing image data")
+    try:
+        decompressor = zlib.decompressobj()
+        pixels = decompressor.decompress(b"".join(idat_chunks)) + decompressor.flush()
+    except zlib.error as error:
+        raise ValueError("invalid PNG: undecodable image data") from error
+    if not decompressor.eof or decompressor.unused_data:
+        raise ValueError("invalid PNG: incomplete image data")
+
+    width, height, bit_depth, color_type, compression, filtering, interlace = struct.unpack(
+        ">IIBBBBB", chunks[0][1]
+    )
     if width < 1 or height < 1:
-        raise ValueError("PNG dimensions must be positive")
+        raise ValueError("invalid PNG: dimensions must be positive")
+    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}.get(color_type)
+    valid_depths = {
+        0: {1, 2, 4, 8, 16},
+        2: {8, 16},
+        3: {1, 2, 4, 8},
+        4: {8, 16},
+        6: {8, 16},
+    }
+    if (
+        channels is None
+        or bit_depth not in valid_depths[color_type]
+        or compression != 0
+        or filtering != 0
+        or interlace not in (0, 1)
+    ):
+        raise ValueError("invalid PNG: unsupported IHDR values")
+
+    passes = [(0, 0, 1, 1)] if interlace == 0 else [
+        (0, 0, 8, 8), (4, 0, 8, 8), (0, 4, 4, 8), (2, 0, 4, 4),
+        (0, 2, 2, 4), (1, 0, 2, 2), (0, 1, 1, 2),
+    ]
+    cursor = 0
+    for start_x, start_y, step_x, step_y in passes:
+        pass_width = max(0, (width - start_x + step_x - 1) // step_x)
+        pass_height = max(0, (height - start_y + step_y - 1) // step_y)
+        if pass_width == 0 or pass_height == 0:
+            continue
+        row_bytes = (pass_width * channels * bit_depth + 7) // 8
+        for _ in range(pass_height):
+            if cursor + 1 + row_bytes > len(pixels) or pixels[cursor] > 4:
+                raise ValueError("invalid PNG: incomplete or invalid pixel data")
+            cursor += 1 + row_bytes
+    if cursor != len(pixels):
+        raise ValueError("invalid PNG: unexpected pixel data length")
     return width, height
+
+
+def _validate_rebuilt_epub(
+    source: zipfile.ZipFile,
+    rebuilt: zipfile.ZipFile,
+    cover_member: str,
+    cover_data: bytes,
+) -> None:
+    source_names = source.namelist()
+    rebuilt_names = rebuilt.namelist()
+    if rebuilt_names != source_names:
+        raise ValueError("rebuilt EPUB member names or order changed")
+    first = rebuilt.infolist()[0]
+    if first.filename != "mimetype" or first.compress_type != zipfile.ZIP_STORED:
+        raise ValueError("rebuilt EPUB does not preserve stored-first mimetype")
+    for name in source_names:
+        actual = rebuilt.read(name)
+        if name == cover_member:
+            if actual != cover_data:
+                raise ValueError("rebuilt EPUB cover bytes do not match input")
+        elif actual != source.read(name):
+            raise ValueError(f"rebuilt EPUB non-cover payload changed: {name}")
+    if png_dimensions(rebuilt.read(cover_member)) != EXPECTED_DIMENSIONS:
+        raise ValueError("rebuilt EPUB cover validation failed")
 
 
 def replace_epub_cover(
@@ -168,14 +266,10 @@ def replace_epub_cover(
                     payload = cover_data if info.filename == cover_member else source.read(info)
                     destination.writestr(info, payload)
 
-        with zipfile.ZipFile(temporary_path, "r") as rebuilt:
-            first = rebuilt.infolist()[0]
-            if first.filename != "mimetype" or first.compress_type != zipfile.ZIP_STORED:
-                raise ValueError("rebuilt EPUB does not preserve stored-first mimetype")
-            if png_dimensions(rebuilt.read(cover_member)) != EXPECTED_DIMENSIONS:
-                raise ValueError("rebuilt EPUB cover validation failed")
-            if rebuilt.read(cover_member) != cover_data:
-                raise ValueError("rebuilt EPUB cover bytes do not match input")
+        with zipfile.ZipFile(epub_path, "r") as source, zipfile.ZipFile(
+            temporary_path, "r"
+        ) as rebuilt:
+            _validate_rebuilt_epub(source, rebuilt, cover_member, cover_data)
 
         os.replace(temporary_path, output_path)
         temporary_path = None

@@ -8,8 +8,10 @@ import struct
 import sys
 import unittest
 import zipfile
+import zlib
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).parents[1] / "skill" / "scripts"))
 import refresh_epub_cover  # noqa: E402
@@ -74,8 +76,9 @@ def make_epub_fixture(
         archive.writestr("OEBPS/content.opf", opf)
         for index in range(len(cover_properties)):
             href = cover_href if index == 0 else f"cover-{index}.png"
-            if href and not href.startswith("../"):
-                archive.writestr(f"OEBPS/{href}", old_cover)
+            href_path = urlsplit(href or "").path
+            if href_path and not href_path.startswith("../"):
+                archive.writestr(f"OEBPS/{href_path}", old_cover)
         archive.writestr("OEBPS/chapter.xhtml", b"<p>untouched chapter bytes</p>")
     return source
 
@@ -130,6 +133,75 @@ class RefreshEpubCoverTests(unittest.TestCase):
             cover = make_png(root / "new.png", (1200, 1800))
             with self.assertRaisesRegex(ValueError, "1600x2560"):
                 refresh_epub_cover.replace_epub_cover(source, cover, root / "out.epub")
+
+    def test_rejects_truncated_png_with_valid_signature_and_ihdr(self) -> None:
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            source = make_epub_fixture(root)
+            valid = make_png(root / "valid.png", (1600, 2560)).read_bytes()
+            cover = root / "truncated.png"
+            cover.write_bytes(valid[:33])
+            with self.assertRaisesRegex(ValueError, "invalid PNG"):
+                refresh_epub_cover.replace_epub_cover(source, cover, root / "out.epub")
+
+    def test_rejects_png_with_decodable_zlib_but_incomplete_pixels(self) -> None:
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            source = make_epub_fixture(root)
+            valid = make_png(root / "valid.png", (1600, 2560)).read_bytes()
+            idat = valid.index(b"IDAT")
+            chunk_start = idat - 4
+            chunk_length = struct.unpack(">I", valid[chunk_start:idat])[0]
+            chunk_end = idat + 4 + chunk_length + 4
+
+            def chunk(kind: bytes, data: bytes) -> bytes:
+                payload = kind + data
+                return (
+                    struct.pack(">I", len(data))
+                    + payload
+                    + struct.pack(">I", binascii.crc32(payload))
+                )
+
+            malformed = (
+                valid[:chunk_start]
+                + chunk(b"IDAT", zlib.compress(b""))
+                + valid[chunk_end:]
+            )
+            cover = root / "incomplete-pixels.png"
+            cover.write_bytes(malformed)
+            with self.assertRaisesRegex(ValueError, "pixel data"):
+                refresh_epub_cover.replace_epub_cover(source, cover, root / "out.epub")
+
+    def test_rejects_cover_href_fragment(self) -> None:
+        self._assert_rejected(
+            ("cover-image",),
+            "internal EPUB path",
+            cover_href="cover-old.png#alternate",
+        )
+
+    def test_rebuilt_validation_rejects_changed_non_cover_payload(self) -> None:
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            source_path = make_epub_fixture(root)
+            rebuilt_path = root / "rebuilt.epub"
+            with zipfile.ZipFile(source_path) as source, zipfile.ZipFile(
+                rebuilt_path, "w"
+            ) as rebuilt:
+                for info in source.infolist():
+                    payload = source.read(info)
+                    if info.filename == "OEBPS/chapter.xhtml":
+                        payload = b"changed"
+                    rebuilt.writestr(info, payload)
+            with zipfile.ZipFile(source_path) as source, zipfile.ZipFile(
+                rebuilt_path
+            ) as rebuilt:
+                with self.assertRaisesRegex(ValueError, "payload changed"):
+                    refresh_epub_cover._validate_rebuilt_epub(
+                        source,
+                        rebuilt,
+                        "OEBPS/cover-old.png",
+                        source.read("OEBPS/cover-old.png"),
+                    )
 
     def _assert_rejected(
         self,
