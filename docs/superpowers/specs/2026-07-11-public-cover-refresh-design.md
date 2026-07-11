@@ -44,9 +44,11 @@ of an existing cover or named designer. Typography is added afterward with
 
 The collection shares a restrained typographic hierarchy and metadata treatment,
 not a repeated visual template. Each title must remain recognizable by its own
-metaphor, colour identity, and silhouette. At least one of the three candidates
-for each title is bright or high-key unless the subject makes that genuinely
-inappropriate.
+metaphor, colour identity, and silhouette. Bright or high-key treatment is the
+collection default, not merely one candidate per title. Select a dark cover only
+when it is materially stronger and the subject genuinely benefits from it; if a
+title has no award-worthy bright option, regenerate one direction brighter
+before selection.
 
 ## Autonomous Selection
 

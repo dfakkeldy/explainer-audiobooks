@@ -13,6 +13,7 @@
 - Scope is exactly the eleven tracked public book directories listed in the approved design; private, ignored, build-only, and untracked books are excluded.
 - Generate at least three genuinely different raster candidates per title with the built-in image-generation tool; do not fall back to SVG or CLI/API image generation without explicit user approval.
 - Generated art contains no lettering, title, subtitle, author, logos, watermarks, UI, dashboards, mockup frames, or imitation of named covers/designers.
+- Bright or high-key treatment is the collection default. Select a dark cover only when it is materially stronger and the subject genuinely benefits; regenerate a bright direction when no award-worthy bright option exists.
 - Composite final covers at exactly 1600 by 2560 pixels with `skill/scripts/make_cover.py`.
 - Preserve every prior public `cover.png` as `cover-legacy.png` before replacement.
 - Update existing EPUB cover assets in place; never rebuild public books from combined Markdown.
