@@ -2,7 +2,8 @@
 
 **Date:** 2026-07-12
 
-**Status:** Verbally approved; awaiting written-spec review
+**Status:** Approved by Dan on 2026-07-12; implementation planned in
+[`2026-07-12-rodents-c2-cover-refinement.md`](../plans/2026-07-12-rodents-c2-cover-refinement.md)
 
 **Parent design:**
 [`2026-07-12-adaptive-cover-specification-design.md`](2026-07-12-adaptive-cover-specification-design.md)
