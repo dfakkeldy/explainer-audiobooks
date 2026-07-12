@@ -43,7 +43,7 @@ research, write one coherent manuscript, and package the result for Echo.
 | Writing model metadata | Record the frontier author as contributor/source note |
 | Model routing | Frontier model: outline, Markdown prose, substantive revisions. Cheaper workers: research extraction, citation checks, diagnostics, package/render/QC only. |
 | Build folder | `.build/custom-learning-audiobooks/<slug>/` |
-| Delivery copy | Complete package folder in iCloud Drive `Books/<Title>/` |
+| Delivery copy | Public-safe: iCloud Drive `Books/<Title>/` by default. Private/sensitive: agreed private project folder; iCloud Books reading copy only on explicit user request. |
 
 ## Workflow
 
@@ -96,14 +96,16 @@ research, write one coherent manuscript, and package the result for Echo.
 8. **Keep Markdown canonical; use cheap workers as evidence and production
    sidecars.** Save the frontier author's chapter files under `chapters/`. Cheap
    workers may produce cited research, a beginner-reader report, prose-lint
-   findings, and EPUB/M4B/cover/manifest artifacts, but not a competing prose
-   draft. A cheap model may make only meaning-preserving mechanical fixes; send
-   all depth, factual, structural, and voice repairs back to the frontier author.
-   Add approved figures as standalone Markdown image paragraphs, for example
+   findings, cover candidates, and manifest templates, but not a competing prose
+   draft. EPUB/M4B assembly waits until the accepted manuscript clears Step 10.
+   A cheap model may make only meaning-preserving mechanical fixes; send all
+   depth, factual, structural, and voice repairs back to the frontier author. Add
+   approved figures as standalone Markdown image paragraphs, for example
    `![Alt text](images/example.png "Caption")`.
 
-9. **Build the book.** Create **exactly three award-worthy, complete art-and-type
-   cover candidates by default**, then ask the user to choose or request a mix.
+9. **Design and render the cover candidates.** Create **exactly three award-worthy,
+   complete art-and-type cover candidates by default**, then ask the user to
+   choose or request a mix.
    Follow `../../skill/references/cover-art.md` for the research-derived visual
    directions, genre calibration, candidate briefs, acceptance bar, and
    rights-safe provenance rules. The three candidates must differ in metaphor,
@@ -141,19 +143,41 @@ research, write one coherent manuscript, and package the result for Echo.
    Repeat for candidates 2 and 3. Human-review every full-size render and
    generated 160-pixel thumbnail with its art-and-type brief, font/palette note,
    and warnings. The renderer never selects automatically; a requested mix
-   becomes a new specification and render. Only after the human choice, create
-   `cover-selection.json` with `selection_source=explicit-user-choice` (or
-   `requested-mix`). Follow `references/package-and-qc.md` for the exact
-   `cover_receipts.py select`, governed `build_book.py --cover-selection`, and
-   `cover_receipts.py verify` commands. Before changing an existing delivery
-   folder, run `sync_selected_cover.py` as a dry run, read the destination
-   classification, and add `--apply` only after it is expected; a newer explicit
-   choice requires `--intent supersede`, and an unreceipted destination is a
-   conflict unless explicitly superseded. The EPUB/Markdown outputs remain
-   required, and `build_book.py` still embeds standalone Markdown images as EPUB
-   figures and copies them beside the combined Markdown.
+   becomes a new specification and render. Record the human choice with
+   `selection_source=explicit-user-choice` (or `requested-mix`), but defer the
+   `cover-selection.json` command and governed EPUB build until the canonical
+   Markdown finishes humanization, prose QC, frontier-author acceptance, and
+   every substantive repair.
 
-10. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
+10. **Humanize and complete prose QC before packaging.** Run
+    `python3 skill/scripts/prose_qc.py --chapters-dir <build>/chapters --out
+    <build>/research/prose-qc.md`, then have a cheaper reviewer produce only
+    citation-first findings for redundancy, unexplained leaps, shallow concepts,
+    jargon without a concrete case, and formulaic openings/closings. Compare each
+    finding with the coverage ledger. The frontier author accepts or rejects each
+    finding and makes every accepted substantive, factual, structural, depth, and
+    voice repair in the canonical Markdown before any EPUB or audio build.
+
+    After those substantive repairs, load the `humanizer` skill and follow
+    `../../skill/references/humanizer-pass.md`. Make only targeted voice edits:
+    remove AI-isms, generic signposting, inflated claims, filler, and repetitive
+    rhythm while preserving facts, citations, technical names, teaching
+    structure, intentional retrieval, and the frontier author's voice. Do not invent
+    anecdotes, feelings, opinions, first-person experience, sources, jokes, or new
+    claims; do not rewrite the book wholesale. The frontier author
+    reviews and accepts every non-mechanical suggestion. Record touched chapters
+    and rejected/skipped suggestions, then rerun factual, coverage-ledger,
+    narration, sensitive-term, figure-provenance, and prose checks. The canonical
+    Markdown must be final before Step 11 starts.
+
+11. **Build the governed EPUB.** Only now follow the selection and EPUB sections
+    in `references/package-and-qc.md`: create the explicit receipt with
+    `cover_receipts.py select`, then run the governed
+    `build_book.py --cover-selection` command. The required EPUB and combined
+    Markdown are downstream renderings of the accepted manuscript; standalone
+    Markdown figures remain embedded and copied beside the combined Markdown.
+
+12. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
    only as an Echo voice fallback. Echo audio is part of the delivery contract:
    do not impose your own time limit, deadline, or "too slow" threshold just
@@ -163,46 +187,47 @@ research, write one coherent manuscript, and package the result for Echo.
    any other non-Echo renderer unless the user explicitly asks for that
    non-Echo preview/fallback after you name the tradeoff. Produce `<slug>.m4b`
    and `<slug>.alignment.json` whenever the CLI can run. If native Echo audio is
-   blocked and the user has not approved a non-Echo substitute, deliver
-   EPUB/Markdown and report the blocker instead of shipping substitute audio.
+   blocked and the user has not approved a non-Echo substitute, surface only the
+   EPUB/Markdown from the run folder as clearly labelled interim files and report
+   the blocker. Do not call that an Echo-ready or complete governed package, and
+   do not proceed to delivery sync.
 
-11. **Humanize, then QC before copying.** After accepted substantive repairs,
-    load the `humanizer` skill and follow `../../skill/references/humanizer-pass.md`
-    on the canonical chapter Markdown. Make only targeted voice edits: remove
-    AI-isms, generic signposting, inflated claims, filler, and repetitive rhythm
-    while preserving facts, citations, technical names, teaching structure,
-    intentional retrieval, and the frontier author's voice. Do not invent
-    anecdotes, feelings, opinions, first-person experience, sources, jokes, or new
-    claims; do not rewrite the book wholesale. The frontier author reviews and
-    accepts every non-mechanical suggestion. Record the chapters touched and any
-    rejected/skipped suggestions, then rerun factual, coverage-ledger, and
-    narration checks. Validate EPUB, parse alignment JSON, inspect M4B
-    duration with `ffprobe`, and run narration/prose sweeps. Run
-    `python3 skill/scripts/prose_qc.py --chapters-dir <build>/chapters --out
-    <build>/research/prose-qc.md`, then have a cheaper reviewer produce only
-    citation-first findings for redundancy, unexplained leaps, shallow concepts,
-    jargon without a concrete case, and formulaic openings/closings. Compare each
-    finding with the coverage ledger; the frontier author makes accepted
-    substantive repairs before packaging. Record skipped QC steps honestly. For
-    books with pictures, verify every figure appears in the EPUB, every image has
-    alt text and a caption, and the provenance/licensing note is complete.
+13. **Final-verify the governed package.** After native Echo narration succeeds,
+    verify that the explicit selection matches the selected cover, EPUB, and M4B:
 
-12. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
-    copy the complete `dist/` contents into an easy-to-find iCloud Drive
-    delivery folder:
-    `/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/`.
-    This iCloud Drive folder is the default listening/delivery surface for
-    public-safe and private books unless the user explicitly says not to copy to
-    iCloud. Public-safe, permissioned packages may also copy EPUB/Markdown/cover
-    into the repo `books/<slug>/` folder. Private packages stay out of the
-    public repo and public KB. Use `~/Downloads/book-inbox` only as optional
-    import staging, not as the primary place the user has to find the book.
+    ```bash
+    SELECTED="<selected candidate number>"
+    DIST=".build/custom-learning-audiobooks/$SLUG/dist"
+    /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+      --selection "$DIST/cover-selection.json" \
+      --cover "$DIST/cover-$SELECTED.png" \
+      --epub "$DIST/$SLUG.epub" \
+      --m4b "$DIST/$SLUG.m4b" \
+      --receipt "$DIST/cover-selection.json"
+    ```
 
-13. **Report plainly.** Include title, slug, privacy status, research mode,
+    Parse alignment JSON, inspect M4B duration with `ffprobe`, run any available
+    Echo QA, and verify EPUB figures before delivery. A failed receipt or media
+    check returns to the build/audio step; it never falls through to copying.
+
+14. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
+    follow `references/package-and-qc.md`. Run `sync_selected_cover.py` first as
+    a dry run, read its destination classification, and add `--apply` only after
+    the result and chosen `reuse`/`supersede` intent are expected. Public-safe
+    packages keep the default iCloud Books delivery behavior and may publish to
+    the public repo only when permission and repo artifact policy allow the
+    governed sync. Private or sensitive packages stay in the agreed private
+    project folder and receive an iCloud Books reading copy only on an explicit
+    user request. Private/sensitive artifacts never enter the public repo or
+    public KB. Use `~/Downloads/book-inbox` only as optional import staging.
+
+15. **Report plainly.** Include title, slug, privacy status, research mode,
     source-confidence label, word count, runtime, narrator, frontier author
-    model, lower-cost review/production roles used, output paths, the iCloud
-    Drive delivery folder, and which QC gates passed or were skipped. If the book
-    includes pictures, report figure count and any image rights/privacy caveats.
+    model, lower-cost review/production roles used, output paths, the actual
+    delivery folder, receipt/destination classifications, and which QC gates
+    passed or were skipped. Report an iCloud Books path only when a copy was
+    actually created. If the book includes pictures, report figure count and any
+    image rights/privacy caveats.
 
 ## Hard Rules
 
@@ -221,9 +246,10 @@ research, write one coherent manuscript, and package the result for Echo.
   is allowed work, not a reason to downgrade the package.
 - Do not use Apple/macOS/system narration as a fallback for Echo audio unless
   the user explicitly asks for a non-Echo preview or substitute.
-- Do not leave the finished package only in `~/Downloads/book-inbox` or the
-  transient `.build/` folder. Copy the complete package to the iCloud Drive
-  `Books/<Title>/` delivery folder unless the user explicitly opts out.
+- Do not leave a public-safe finished package only in `~/Downloads/book-inbox`
+  or the transient `.build/` folder; use the governed default iCloud delivery.
+- Private or sensitive packages stay in the agreed private project folder and
+  receive an iCloud Books reading copy only on an explicit user request.
 - Do not include pictures in a public package unless their rights and privacy
   status are clear. Keep private, client, workplace, and personally sensitive
   images out of public repo and KB surfaces.

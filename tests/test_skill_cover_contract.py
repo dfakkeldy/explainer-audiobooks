@@ -9,14 +9,125 @@ FILES = {
     "long": ROOT / "skill" / "SKILL.md",
     "custom": ROOT / "skills" / "custom-learning-audiobook" / "SKILL.md",
     "package": ROOT / "skills" / "custom-learning-audiobook" / "references" / "package-and-qc.md",
+    "public": ROOT / "docs" / "how-these-were-made.md",
 }
 
 
 class SkillCoverContractTests(unittest.TestCase):
-    def test_active_workflows_use_spec_selection_and_receipt_verification(self) -> None:
-        text = "\n".join(path.read_text(encoding="utf-8") for path in FILES.values())
-        for required in ("--spec", "cover-selection.json", "explicit-user-choice", "--cover-selection", "cover_receipts.py verify"):
+    def assert_in_order(self, text: str, markers: tuple[str, ...]) -> None:
+        cursor = 0
+        for marker in markers:
+            position = text.find(marker, cursor)
+            self.assertNotEqual(-1, position, f"missing or out-of-order marker: {marker}")
+            cursor = position + len(marker)
+
+    def test_each_active_skill_uses_the_complete_governed_workflow(self) -> None:
+        for key in ("long", "custom"):
+            text = FILES[key].read_text(encoding="utf-8")
+            for required in (
+                "--spec",
+                "cover-selection.json",
+                "explicit-user-choice",
+                "--cover-selection",
+                "Echo/Kokoro",
+                "cover_receipts.py verify",
+                "--m4b",
+                "sync_selected_cover.py",
+                "dry run",
+                "--apply",
+            ):
+                with self.subTest(skill=key, required=required):
+                    self.assertIn(required, text)
+
+    def test_long_skill_orders_selection_build_audio_verify_and_delivery(self) -> None:
+        text = FILES["long"].read_text(encoding="utf-8")
+        self.assert_in_order(
+            text,
+            (
+                "cover_receipts.py select",
+                "/usr/local/bin/python3 skill/scripts/build_book.py",
+                "Native Echo/Kokoro M4B",
+                "/usr/local/bin/python3 skill/scripts/cover_receipts.py verify",
+                "--m4b",
+                "/usr/local/bin/python3 skill/scripts/sync_selected_cover.py",
+                "--apply",
+            ),
+        )
+        self.assertGreaterEqual(
+            text.count("/usr/local/bin/python3 skill/scripts/sync_selected_cover.py"),
+            2,
+        )
+        self.assertNotIn("cp <build>/dist/<Output-Filename-Base>.epub", text)
+
+    def test_custom_skill_finishes_manuscript_before_build_and_audio(self) -> None:
+        text = FILES["custom"].read_text(encoding="utf-8")
+        self.assert_in_order(
+            text,
+            (
+                "**Humanize and complete prose QC before packaging.**",
+                "**Build the governed EPUB.**",
+                "**Render native Echo audio.**",
+                "/usr/local/bin/python3 skill/scripts/cover_receipts.py verify",
+                "--m4b",
+                "**Package and copy.**",
+            ),
+        )
+
+    def test_package_reference_orders_prose_build_audio_verify_and_copy(self) -> None:
+        text = FILES["package"].read_text(encoding="utf-8")
+        self.assert_in_order(
+            text,
+            (
+                "## Prose QC",
+                "## EPUB And Markdown",
+                "## Echo M4B And Alignment",
+                "## Final Cover Receipt Verification",
+                "--m4b",
+                "## Copy Rules",
+            ),
+        )
+
+    def test_public_repo_delivery_uses_governed_sync(self) -> None:
+        text = FILES["package"].read_text(encoding="utf-8")
+        self.assertIn("--public-destination", text)
+        for forbidden in (
+            'cp "$DIST/$SLUG.epub"',
+            'cp "$DIST/cover-$SELECTED.png"',
+            'cp "$DIST/cover-selection.json"',
+        ):
+            self.assertNotIn(forbidden, text)
+
+    def test_private_icloud_copy_requires_an_explicit_user_request(self) -> None:
+        required = (
+            "Private or sensitive packages stay in the agreed private project "
+            "folder and receive an iCloud Books reading copy only on an explicit "
+            "user request."
+        )
+        forbidden = (
+            "default listening/delivery surface for public-safe and private books",
+            "public-safe and private books unless the user explicitly says not",
+            "always create a complete icloud drive delivery folder for finished packages unless",
+            "copy the complete package to the icloud drive `books/<title>/` delivery folder by default",
+        )
+        for key in ("custom", "package"):
+            text = " ".join(FILES[key].read_text(encoding="utf-8").split())
             self.assertIn(required, text)
+            for old_wording in forbidden:
+                self.assertNotIn(old_wording, text.casefold())
+
+    def test_public_method_states_governed_chronology(self) -> None:
+        text = FILES["public"].read_text(encoding="utf-8")
+        self.assert_in_order(
+            text,
+            (
+                "selected cover",
+                "governed EPUB",
+                "Echo",
+                "M4B",
+                "receipt verification",
+                "delivery",
+            ),
+        )
 
     def test_candidate_contract_varies_typography_as_well_as_art(self) -> None:
         for key in ("cover", "long", "custom", "package"):

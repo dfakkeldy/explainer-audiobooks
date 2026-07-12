@@ -275,37 +275,43 @@ candidate automatically.
 
 Only after the human choice, create `cover-selection.json` with
 `cover_receipts.py select`, using `selection_source=explicit-user-choice` (or
-`requested-mix`) plus the approved edition and privacy metadata. Then assemble
-with both the selected cover and its governing receipt:
+`requested-mix`) plus the approved edition and privacy metadata. Assign all
+values from the approved run metadata, then select and build in that order:
 
 ```bash
 SELECTED=1
 SLUG="<Output-Filename-Base>"
+TITLE="<Book Title>"
+SUBTITLE="<one-line subtitle>"
+CONTRIBUTOR="<your model name, e.g. Opus 4.8>"
+EDITION_ID="<edition identifier>"
+SELECTED_AT="<ISO-8601 timestamp with UTC offset>"
+CLASSIFICATION="<private|public-safe|sensitive>"
+PERMISSION_TO_PUBLISH="<denied|granted|not-requested>"
 RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
+DIST="$RUN_ROOT/dist"
+
+/usr/local/bin/python3 skill/scripts/cover_receipts.py select \
+  --render-receipt "$DIST/cover-$SELECTED.render.json" \
+  --out "$DIST/cover-selection.json" \
+  --book-slug "$SLUG" \
+  --edition-id "$EDITION_ID" \
+  --selection-source explicit-user-choice \
+  --selected-at "$SELECTED_AT" \
+  --classification "$CLASSIFICATION" \
+  --permission-to-publish "$PERMISSION_TO_PUBLISH"
+
 /usr/local/bin/python3 skill/scripts/build_book.py \
   --chapters-dir "$RUN_ROOT/chapters" \
-  --out-dir "$RUN_ROOT/dist" \
-  --title "<Book Title>" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
   --author "Dan Fakkeldy" \
-  --contributor "<your model name, e.g. Opus 4.8>" \
-  --subtitle "<one-line subtitle>" \
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
   --slug "$SLUG" \
-  --cover "$RUN_ROOT/dist/cover-$SELECTED.png" \
-  --cover-selection "$RUN_ROOT/dist/cover-selection.json"
-
-/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
-  --selection "$RUN_ROOT/dist/cover-selection.json" \
-  --cover "$RUN_ROOT/dist/cover-$SELECTED.png" \
-  --epub "$RUN_ROOT/dist/$SLUG.epub" \
-  --receipt "$RUN_ROOT/dist/cover-selection.json"
+  --cover "$DIST/cover-$SELECTED.png" \
+  --cover-selection "$DIST/cover-selection.json"
 ```
-
-When propagating a selected cover, EPUB, and M4B into an existing delivery
-folder, run `sync_selected_cover.py` without `--apply` first and read its
-classification. Use `--intent reuse` for the same receipt, or `--intent
-supersede` only for a newer explicit choice; add `--apply` only after the result
-is expected. A cover-bearing destination without a receipt is an `unreceipted`
-conflict unless the operation is an explicit supersession.
 
 It writes a valid EPUB 3 (with both a nav and an NCX table of contents, and the
 cover embedded as both the library thumbnail and a full-bleed first page) plus a
@@ -314,21 +320,90 @@ runtime. The EPUB author (`dc:creator`) is the human; the generating model is
 recorded as a `dc:contributor`. `--cover` and `--contributor` are optional.
 Verify the EPUB is valid (the `mimetype` check in `references/narration-style.md`).
 
-### 7. Deliver
+### 7. Native Echo/Kokoro M4B and alignment
 
-Always save the finished `.epub` to the user's book inbox so it's where they
-expect it, then surface it in chat:
+For a complete governed package, render native Echo/Kokoro audio only after the
+governed EPUB exists. Follow the Echo build and CLI-discovery procedure in
+`skills/custom-learning-audiobook/references/package-and-qc.md`, set `CLI` to the
+built `echo-cli`, and keep the same work directory/database across resumes:
 
 ```bash
-mkdir -p ~/Downloads/book-inbox
-cp <build>/dist/<Output-Filename-Base>.epub ~/Downloads/book-inbox/
+CLI="<path to the built echo-cli>"
+WORK="$RUN_ROOT/audio-work"
+DB="$RUN_ROOT/narration.sqlite"
+
+"$CLI" narrate \
+  --epub "$DIST/$SLUG.epub" \
+  --out "$DIST/$SLUG.m4b" \
+  --sidecar "$DIST/$SLUG.alignment.json" \
+  --voice am_michael \
+  --title "$TITLE" \
+  --author "Dan Fakkeldy" \
+  --work-dir "$WORK" \
+  --db "$DB"
 ```
 
-Then send the `.epub` (and the `.md`, which is handy for reading/editing) with
-`SendUserFile`. Report the real total word count and the honest runtime estimate.
-If it ran long, offer to trim by tightening prose across all chapters (preserving
-the arc) rather than cutting chapters. Offer to regenerate any single chapter,
-adjust the voice or cover, or change length.
+If `am_michael` is unavailable, retry with the Echo voice `am_puck` and record
+the fallback. Do not impose a timeout on a progressing render, and do not silently
+replace Echo/Kokoro with Apple/macOS/system narration. Resume a partial render
+with the same command plus `--resume`.
+
+After Echo writes the M4B and alignment sidecar, run the final receipt check
+across the selected cover, governed EPUB, and M4B:
+
+```bash
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --receipt "$DIST/cover-selection.json"
+```
+
+If native Echo audio is blocked, the EPUB and Markdown may be surfaced directly
+from `dist/` as clearly labelled **interim** files. They are not a complete
+governed package, and the workflow does not proceed to package sync until native
+Echo audio and the final M4B receipt verification succeed.
+
+### 8. Governed delivery
+
+Set `DELIVERY_DIR` to the approved delivery folder. Run the sync as a dry run
+first; it reports `new`, `reuse`, `supersede`, or a conflict without writing:
+
+```bash
+DELIVERY_DIR="<approved delivery folder>"
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse
+```
+
+Use `--intent supersede` only for a newer explicit choice. A cover-bearing
+destination without a receipt is an `unreceipted` conflict unless the operation
+is an explicit supersession. Only after the reported classification is expected,
+rerun the same sync with explicit apply (and the same chosen intent):
+
+```bash
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse \
+  --apply
+```
+
+After governed apply, copy only non-governed Markdown, alignment, manifest, and
+image files as needed; never raw-copy the selected cover, EPUB, M4B, or selection
+receipt around classification. Surface the delivered EPUB/Markdown in chat and
+report the real total word count, runtime, narrator, receipt verification, and
+destination classification. If it ran long, offer to trim by tightening prose
+across all chapters (preserving the arc) rather than cutting chapters. Offer to
+regenerate any single chapter, adjust the voice or cover, or change length.
 
 If the user produced this from a real codebase that has living docs, consider
 whether anything is worth noting — but this skill creates a *deliverable*, not a
