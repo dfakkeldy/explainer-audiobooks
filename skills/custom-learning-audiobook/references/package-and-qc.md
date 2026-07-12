@@ -21,14 +21,23 @@ Use this run layout:
     images/
       figure-01.png
   dist/
+    cover-source-1.png
+    cover-spec-1.json
+    cover-1.png
+    cover-1-thumbnail.png
+    cover-1.render.json
+    cover-selection.json
     <slug>.epub
     <slug>.md
     images/
     <slug>.m4b
     <slug>.alignment.json
-    cover.png
     README.md or manifest.json
 ```
+
+Repeat the numbered cover source/spec/render/thumbnail/receipt set for candidates
+2 and 3. `cover-selection.json` appears only after the user chooses or requests a
+mix.
 
 The canonical transient build output stays under `.build/`. The durable local
 delivery copy goes to iCloud Drive under:
@@ -66,50 +75,82 @@ Rules:
 
 ## EPUB And Markdown
 
-Render **exactly three award-worthy, genre-distinct image-led cover candidates**
+Render **exactly three award-worthy, complete art-and-type cover candidates**
 before building the EPUB; this is the default, not an opt-in. Follow
 `../../skill/references/cover-art.md`: research transferable visual principles,
-write a brief for each candidate, select three genuinely different visual
-languages, render them, and let the user choose or mix. When an image-generation
-tool is available, generated raster art is mandatory (no text, logos, or
-watermarks); do not substitute bespoke SVG, programmatic vector art, diagrams,
-or icon compositions. Use SVG only when the user explicitly requests vector art
-or approves it as a fallback after image generation is confirmed unavailable.
-Rights-cleared raster art remains acceptable; never copy or closely imitate a
-specific existing cover. `make_cover.py --art` accepts SVG, PNG, JPEG, WebP, and
-GIF, but format support is not permission to bypass image generation. Give each
-candidate its own visible signature accent
-and pass the matching value to `--accent`; include a bright/high-key option unless
-three dark directions are truly warranted. Reject a generic template, slide icon,
-AI wallpaper, or recolour before the user sees it.
+write a complete brief for each candidate, render all three, and let the user
+choose or request a mix. The three candidates must differ in metaphor,
+composition, palette, material language, and title strategy. Font, line breaks,
+scale, placement, and effects are part of the candidate—not a shared footer
+applied afterward.
 
-Example:
+When an image-generation tool is available, generated raster art is mandatory;
+keep it text-free, with no logos or watermarks. Do not substitute bespoke SVG,
+programmatic vector art, diagrams, or icon compositions. Use SVG only when the
+user explicitly requests vector art or approves it as a fallback after image
+generation is confirmed unavailable. Rights-cleared raster art remains
+acceptable; never copy or closely imitate a specific existing cover. Include a
+bright/high-key option unless three dark directions are truly warranted, and
+reject a generic template, slide icon, AI wallpaper, or recolour before the user
+sees it.
+
+Save each art file beside its validated specification. Assign `SLUG` from the run
+metadata, then render candidate 1:
 
 ```bash
-python3 skill/scripts/make_cover.py \
-  --title "<Title>" \
-  --subtitle "<subtitle>" \
-  --author "Dan Fakkeldy" \
-  --label "AUDIOBOOK" \
-  --art .build/custom-learning-audiobooks/<slug>/dist/cover-concept-1.png \
-  --accent "#2ee8b6" \
-  --tone bright \
-  --layout bleed \
-  --out .build/custom-learning-audiobooks/<slug>/dist/cover.png
+RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
+/usr/local/bin/python3 skill/scripts/make_cover.py \
+  --spec "$RUN_ROOT/dist/cover-spec-1.json" \
+  --out "$RUN_ROOT/dist/cover-1.png"
 ```
 
-From the repo root:
+Repeat for candidates 2 and 3. Human-review each full-size render, generated
+160-pixel thumbnail, art-and-type brief, font/palette note, and warning. The
+renderer never selects a candidate automatically. Ask the user to choose or
+request a mix; a mix becomes a new specification and render.
+
+Only after that choice, assign `SLUG`, `EDITION_ID`, `SELECTED_AT`,
+`CLASSIFICATION`, `PERMISSION_TO_PUBLISH`, `TITLE`, `SUBTITLE`, and `CONTRIBUTOR`
+from the approved run metadata. `SELECTED_AT` is an ISO-8601 timestamp;
+classification is `private`, `public-safe`, or `sensitive`; publication
+permission is `denied`, `granted`, or `not-requested`. Use
+`selection_source=explicit-user-choice`; for a requested mix, substitute
+`requested-mix` after rendering the new specification.
+
+Run the selection and governed build commands now. Run the final verification
+stanza after the native Echo step has produced the M4B and before any copy or
+delivery:
 
 ```bash
-python3 skill/scripts/build_book.py \
-  --chapters-dir .build/custom-learning-audiobooks/<slug>/chapters \
-  --out-dir .build/custom-learning-audiobooks/<slug>/dist \
-  --title "<Title>" \
+SELECTED=1
+DIST=".build/custom-learning-audiobooks/$SLUG/dist"
+/usr/local/bin/python3 skill/scripts/cover_receipts.py select \
+  --render-receipt "$DIST/cover-$SELECTED.render.json" \
+  --out "$DIST/cover-selection.json" \
+  --book-slug "$SLUG" \
+  --edition-id "$EDITION_ID" \
+  --selection-source explicit-user-choice \
+  --selected-at "$SELECTED_AT" \
+  --classification "$CLASSIFICATION" \
+  --permission-to-publish "$PERMISSION_TO_PUBLISH"
+
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir ".build/custom-learning-audiobooks/$SLUG/chapters" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
   --author "Dan Fakkeldy" \
-  --contributor "<model name>" \
-  --subtitle "<subtitle>" \
-  --slug <slug> \
-  --cover .build/custom-learning-audiobooks/<slug>/dist/cover.png
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
+  --slug "$SLUG" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --cover-selection "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --receipt "$DIST/cover-selection.json"
 ```
 
 Validate:
@@ -265,35 +306,78 @@ Record:
 ## Copy Rules
 
 Always create a complete iCloud Drive delivery folder for finished packages
-unless the user explicitly says not to copy to iCloud:
+unless the user explicitly says not to copy to iCloud. Assign `ICLOUD_DIR` from
+the approved title metadata:
 
 ```bash
-ICLOUD_DIR="/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>"
-mkdir -p "$ICLOUD_DIR"
-ditto "$DIST" "$ICLOUD_DIR"
+ICLOUD_DIR="/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/$TITLE"
+```
+
+For an existing delivery folder, the following dry run and its reported
+classification are mandatory before applying or copying anything:
+
+```bash
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$ICLOUD_DIR" \
+  --intent reuse
+```
+
+Use `--intent supersede` only for a newer explicit choice. Add `--apply` only
+after the reported classification is expected. If a destination has
+cover-bearing files but no receipt, it is an `unreceipted` conflict unless the
+operation is an explicit supersession. The same dry-run/apply path is safe for a
+new destination; after it applies the governed cover, EPUB, M4B, and receipt,
+copy the remaining non-cover package files without replacing those four
+verified artifacts.
+
+After the explicit apply succeeds, copy the rest of `dist/` without overwriting
+the governed files:
+
+```bash
+rsync -a \
+  --exclude "cover.png" \
+  --exclude "cover-selection.json" \
+  --exclude "$SLUG.epub" \
+  --exclude "$SLUG.m4b" \
+  "$DIST/" "$ICLOUD_DIR/"
 ```
 
 After copying, verify the copied package from the iCloud path, not only from
 `.build/`:
 
 ```bash
-unzip -t "$ICLOUD_DIR/<slug>.epub"
-test ! -f "$ICLOUD_DIR/<slug>.m4b" || \
-  ffprobe -v error -show_entries format=duration \
-    -of default=noprint_wrappers=1:nokey=1 "$ICLOUD_DIR/<slug>.m4b"
-test ! -f "$ICLOUD_DIR/<slug>.alignment.json" || \
-  python3 -m json.tool "$ICLOUD_DIR/<slug>.alignment.json" >/dev/null
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$ICLOUD_DIR/cover-selection.json" \
+  --cover "$ICLOUD_DIR/cover.png" \
+  --epub "$ICLOUD_DIR/$SLUG.epub" \
+  --m4b "$ICLOUD_DIR/$SLUG.m4b" \
+  --receipt "$ICLOUD_DIR/cover-selection.json"
+
+unzip -t "$ICLOUD_DIR/$SLUG.epub"
+ffprobe -v error -show_entries format=duration \
+  -of default=noprint_wrappers=1:nokey=1 "$ICLOUD_DIR/$SLUG.m4b"
+test ! -f "$ICLOUD_DIR/$SLUG.alignment.json" || \
+  python3 -m json.tool "$ICLOUD_DIR/$SLUG.alignment.json" >/dev/null
 ```
 
 Public-safe, permissioned packages may also copy the public-facing files to the
-repo:
+repo. If `books/$SLUG/cover-selection.json` already exists, treat it as canonical:
+do not replace a different receipt through a routine copy. A replacement needs
+the newer explicit choice recorded above, and the package must still be
+`public-safe` with `permission_to_publish=granted`.
 
 ```bash
-mkdir -p "books/<slug>"
-cp "$DIST/<slug>.epub" "$DIST/<slug>.md" "$DIST/cover.png" "books/<slug>/"
-test -f "$DIST/README.md" && cp "$DIST/README.md" "books/<slug>/README.md"
+mkdir -p "books/$SLUG"
+cp "$DIST/$SLUG.epub" "$DIST/$SLUG.md" "books/$SLUG/"
+cp "$DIST/cover-$SELECTED.png" "books/$SLUG/cover.png"
+cp "$DIST/cover-selection.json" "books/$SLUG/cover-selection.json"
+test -f "$DIST/README.md" && cp "$DIST/README.md" "books/$SLUG/README.md"
 if [ -d "$DIST/images" ]; then
-  cp -R "$DIST/images" "books/<slug>/images"
+  cp -R "$DIST/images" "books/$SLUG/images"
 fi
 ```
 

@@ -102,32 +102,55 @@ research, write one coherent manuscript, and package the result for Echo.
    Add approved figures as standalone Markdown image paragraphs, for example
    `![Alt text](images/example.png "Caption")`.
 
-9. **Build the book.** Create **exactly three award-worthy, genuinely different
-   cover candidates by default**, then ask the user to choose or combine them.
+9. **Build the book.** Create **exactly three award-worthy, complete art-and-type
+   cover candidates by default**, then ask the user to choose or request a mix.
    Follow `../../skill/references/cover-art.md` for the research-derived visual
    directions, genre calibration, candidate briefs, acceptance bar, and
-   rights-safe provenance rules. The three candidates must differ in central
-   metaphor, composition, palette, and visual language—not mere recolours. Use
-   original generated raster art from the strongest available image tool (use it
-   directly, e.g. `image_gen`) whenever one is available. Do not substitute
-   bespoke SVG, programmatic vector art, diagrams, or icon compositions for
-   generated raster artwork merely because they are faster or deterministic.
-   SVG is allowed only when the user explicitly requests vector art, or when no
-   image-generation tool is available and the user approves that fallback after
-   seeing the limitation. Rights-cleared raster photography or art remains
-   acceptable when it is the stronger editorial choice. Use the
-   copy-ready editorial prompt in `../../skill/references/cover-art.md`: demand
-   one specific visual thesis, one large physical metaphor, a deliberate
-   title-safe area, and an eye-catching 2–4-colour palette. Do not ask a cheaper
-   text model to make generic icon diagrams. Generated art must have no lettering,
-   logos, watermarks, interface, infographic, mockup frame, or close imitation of
-   a named existing cover/designer; reject and regenerate weak or generic output.
-   Use the supplied `make_cover.py` compositor for dependable title metadata, pass
-   each art's intentional signature accent with `--accent`, and include one
-   bright high-key candidate unless the subject truly requires three dark
+   rights-safe provenance rules. The three candidates must differ in metaphor,
+   composition, palette, material language, and title strategy.
+   Font, line breaks, scale, placement, and effects are part of the candidate—not
+   a shared footer applied afterward.
+
+   Use original generated raster art from the strongest available image tool
+   (use it directly, e.g. `image_gen`) whenever one is available. Do not
+   substitute bespoke SVG, programmatic vector art, diagrams, or icon
+   compositions merely because they are faster or deterministic. SVG is allowed
+   only when the user explicitly requests vector art, or when no image-generation
+   tool is available and the user approves that fallback after seeing the
+   limitation. Rights-cleared raster photography or art remains acceptable when
+   it is the stronger editorial choice. Use the copy-ready editorial prompt in
+   `../../skill/references/cover-art.md` to keep each visual thesis and physical
+   metaphor specific and give it an eye-catching 2–4-colour palette. Keep
+   generated art text-free: no lettering, logos, watermarks, interface,
+   infographic, mockup frame, or close imitation of a named existing
+   cover/designer. Reject and regenerate weak or generic output, and include one
+   bright/high-key candidate unless the subject truly requires three dark
    directions.
-   Then run the existing `build_book.py` script. The EPUB/Markdown outputs are
-   always required. `build_book.py` embeds standalone Markdown images as EPUB
+
+   Save each art file beside its validated `cover-spec-N.json`, then render each
+   complete candidate with the specification-driven path:
+
+   ```bash
+   SLUG="<slug>"
+   RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
+   /usr/local/bin/python3 skill/scripts/make_cover.py \
+     --spec "$RUN_ROOT/dist/cover-spec-1.json" \
+     --out "$RUN_ROOT/dist/cover-1.png"
+   ```
+
+   Repeat for candidates 2 and 3. Human-review every full-size render and
+   generated 160-pixel thumbnail with its art-and-type brief, font/palette note,
+   and warnings. The renderer never selects automatically; a requested mix
+   becomes a new specification and render. Only after the human choice, create
+   `cover-selection.json` with `selection_source=explicit-user-choice` (or
+   `requested-mix`). Follow `references/package-and-qc.md` for the exact
+   `cover_receipts.py select`, governed `build_book.py --cover-selection`, and
+   `cover_receipts.py verify` commands. Before changing an existing delivery
+   folder, run `sync_selected_cover.py` as a dry run, read the destination
+   classification, and add `--apply` only after it is expected; a newer explicit
+   choice requires `--intent supersede`, and an unreceipted destination is a
+   conflict unless explicitly superseded. The EPUB/Markdown outputs remain
+   required, and `build_book.py` still embeds standalone Markdown images as EPUB
    figures and copies them beside the combined Markdown.
 
 10. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
@@ -213,4 +236,6 @@ research, write one coherent manuscript, and package the result for Echo.
   and should be offered when they better sell the book.
 - Do not use SVG or programmatic vector artwork for a generated cover when an
   image-generation tool is available. Generate raster artwork and inspect it at
-  full size and thumbnail size before compositing the title.
+  full size and thumbnail size as part of each complete art-and-type candidate.
+- Do not select a cover automatically or build a new package without its
+  explicit `cover-selection.json` receipt.
