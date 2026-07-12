@@ -8,6 +8,7 @@ import struct
 import sys
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from unittest import mock
 
@@ -100,6 +101,31 @@ def write_spec(root: Path, payload: dict[str, object], name: str) -> Path:
     "renderer tools required",
 )
 class CoverRendererTests(unittest.TestCase):
+    def test_pinned_title_fonts_render_distinct_pixels(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            cover_hashes: set[str] = set()
+            font_ids = (
+                "display-condensed",
+                "editorial-serif",
+                "geometric-sans",
+            )
+
+            for font_id in font_ids:
+                payload = base_spec()
+                for layer in payload["layers"]:
+                    if layer["role"] == "title":
+                        layer["font_id"] = font_id
+                spec = write_spec(root, payload, font_id)
+                result = render_cover_spec(
+                    spec,
+                    root / f"{font_id}.png",
+                    FONT_MANIFEST,
+                )
+                cover_hashes.add(result.cover_sha256)
+
+            self.assertEqual(len(font_ids), len(cover_hashes))
+
     def test_renders_full_bleed_band_and_expressive_runs(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -319,8 +345,96 @@ class CoverRendererSafetyTests(unittest.TestCase):
             self.assertEqual(output.name, os.readlink(receipt))
 
     @staticmethod
-    def fake_render(_svg: Path, destination: Path, width: int, height: int) -> None:
+    def fake_render(
+        _svg: Path,
+        destination: Path,
+        width: int,
+        height: int,
+        _environment: dict[str, str],
+    ) -> None:
         destination.write_bytes(f"rendered {width}x{height}".encode("ascii"))
+
+    def test_render_uses_an_isolated_fontconfig_for_selected_fonts(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            font_root = root / "fonts & <pinned>"
+            shutil.copytree(FONT_MANIFEST.parent, font_root)
+            manifest = font_root / "manifest.json"
+            spec = write_spec(root, base_spec(), "candidate")
+            dimensions_by_raw: dict[Path, tuple[int, int]] = {}
+
+            def fake_run(
+                command: list[str],
+                *,
+                check: bool,
+                capture_output: bool,
+                env: dict[str, str] | None = None,
+            ) -> None:
+                self.assertTrue(check)
+                self.assertTrue(capture_output)
+                if command[0] == "rsvg-convert":
+                    self.assertIsNotNone(env)
+                    assert env is not None
+                    self.assertIsNot(env, os.environ)
+                    self.assertEqual("fc", env["PANGOCAIRO_BACKEND"])
+                    self.assertEqual("/global/fonts.conf", os.environ["FONTCONFIG_FILE"])
+                    self.assertEqual("global", os.environ["PANGOCAIRO_BACKEND"])
+
+                    config_path = Path(env["FONTCONFIG_FILE"])
+                    self.assertTrue(config_path.is_absolute())
+                    config = ET.parse(config_path).getroot()
+                    self.assertEqual(
+                        {str(font_root.resolve())},
+                        {node.text for node in config.findall("dir")},
+                    )
+                    cache_nodes = config.findall("cachedir")
+                    self.assertEqual(1, len(cache_nodes))
+                    cache_path = Path(cache_nodes[0].text or "")
+                    self.assertTrue(cache_path.is_absolute())
+                    self.assertEqual(config_path.parent, cache_path.parent)
+                    self.assertTrue(cache_path.is_dir())
+                    raw_config = config_path.read_text(encoding="utf-8")
+                    self.assertIn("&amp;", raw_config)
+                    self.assertIn("&lt;", raw_config)
+
+                    output = Path(command[command.index("-o") + 1])
+                    dimensions_by_raw[output] = (
+                        int(command[command.index("-w") + 1]),
+                        int(command[command.index("-h") + 1]),
+                    )
+                    output.write_bytes(b"raw")
+                    return
+
+                source = Path(command[1])
+                width, height = dimensions_by_raw[source]
+                normalized = Path(command[-1].removeprefix("PNG24:"))
+                header = bytearray(29)
+                header[:8] = b"\x89PNG\r\n\x1a\n"
+                header[16:24] = struct.pack(">II", width, height)
+                header[25] = 2
+                normalized.write_bytes(header)
+
+            with mock.patch.dict(
+                os.environ,
+                {
+                    "FONTCONFIG_FILE": "/global/fonts.conf",
+                    "PANGOCAIRO_BACKEND": "global",
+                },
+                clear=False,
+            ), mock.patch.object(
+                cover_renderer.shutil,
+                "which",
+                side_effect=lambda name: f"/fake/{name}",
+            ), mock.patch.object(
+                cover_renderer.subprocess,
+                "run",
+                side_effect=fake_run,
+            ):
+                result = render_cover_spec(spec, root / "cover.png", manifest)
+
+            self.assertTrue(result.output_path.is_file())
+            self.assertTrue(result.thumbnail_path.is_file())
+            self.assertTrue(result.receipt_path.is_file())
 
     def test_publish_failure_restores_existing_thumbnail_symlink(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

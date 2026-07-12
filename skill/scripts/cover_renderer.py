@@ -113,7 +113,12 @@ def _art_markup(spec: ValidatedCoverSpec, definitions: list[str]) -> str:
     )
 
 
-def _text_markup(layer: dict[str, Any], index: int, definitions: list[str]) -> str:
+def _text_markup(
+    layer: dict[str, Any],
+    index: int,
+    definitions: list[str],
+    fonts: dict[str, FontRecord],
+) -> str:
     x, y, width, _height = layer["box"]
     anchor = {"left": "start", "center": "middle", "right": "end"}[layer["align"]]
     origin_x = {
@@ -152,9 +157,14 @@ def _text_markup(layer: dict[str, Any], index: int, definitions: list[str]) -> s
         if layer["rotation"]
         else ""
     )
+    font_id = layer["font_id"]
+    font_family = escape(
+        f"Cover-{font_id}, {fonts[font_id].family}",
+        {'"': "&quot;"},
+    )
     common = (
         f'x="{origin_x:g}" y="{origin_y:g}" text-anchor="{anchor}" '
-        f'font-family="Cover-{layer["font_id"]}" font-size="{layer["size"]:g}" '
+        f'font-family="{font_family}" font-size="{layer["size"]:g}" '
         f'letter-spacing="{layer["tracking"]:g}" fill="{layer["colour"]}" '
         f'fill-opacity="{layer["opacity"]:g}" style="{";".join(style)}"'
         f"{stroke}{filter_attribute}"
@@ -232,7 +242,7 @@ def build_svg(spec: ValidatedCoverSpec) -> str:
                 f'opacity="{layer["opacity"]:g}"/>'
             )
         else:
-            body.append(_text_markup(layer, index, definitions))
+            body.append(_text_markup(layer, index, definitions, spec.fonts))
     defs = f'<defs><style>{_font_css(spec.fonts)}</style>{"".join(definitions)}</defs>'
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
@@ -240,7 +250,43 @@ def build_svg(spec: ValidatedCoverSpec) -> str:
     )
 
 
-def _render(svg_path: Path, destination: Path, width: int, height: int) -> None:
+def _font_environment(
+    fonts: dict[str, FontRecord],
+    staging: Path,
+) -> dict[str, str]:
+    cache = (staging / "fontconfig-cache").resolve()
+    cache.mkdir()
+    directories = sorted(
+        {record.path.resolve().parent for record in fonts.values()},
+        key=str,
+    )
+    directory_nodes = "".join(
+        f"  <dir>{escape(str(directory))}</dir>\n"
+        for directory in directories
+    )
+    config = (staging / "fonts.conf").resolve()
+    config.write_text(
+        '<?xml version="1.0"?>\n'
+        '<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">\n'
+        "<fontconfig>\n"
+        f"{directory_nodes}"
+        f"  <cachedir>{escape(str(cache))}</cachedir>\n"
+        "</fontconfig>\n",
+        encoding="utf-8",
+    )
+    environment = os.environ.copy()
+    environment["FONTCONFIG_FILE"] = str(config)
+    environment["PANGOCAIRO_BACKEND"] = "fc"
+    return environment
+
+
+def _render(
+    svg_path: Path,
+    destination: Path,
+    width: int,
+    height: int,
+    environment: dict[str, str],
+) -> None:
     raw = destination.with_name(f".{destination.name}.raw.png")
     normalized = destination.with_name(f".{destination.name}.normalized.png")
     try:
@@ -267,7 +313,7 @@ def _render(svg_path: Path, destination: Path, width: int, height: int) -> None:
             ]
         else:
             raise CoverRenderError("no SVG rasterizer found")
-        subprocess.run(command, check=True, capture_output=True)
+        subprocess.run(command, check=True, capture_output=True, env=environment)
         if not shutil.which("magick"):
             raise CoverRenderError("ImageMagick is required to normalize RGB PNG output")
         subprocess.run(
@@ -283,6 +329,7 @@ def _render(svg_path: Path, destination: Path, width: int, height: int) -> None:
             ],
             check=True,
             capture_output=True,
+            env=environment,
         )
         payload = normalized.read_bytes()
         if (
@@ -409,8 +456,9 @@ def render_cover_spec(
         staged_thumbnail = staging / thumbnail.name
         staged_receipt = staging / receipt.name
         raw_svg.write_text(svg, encoding="utf-8")
-        _render(raw_svg, staged_output, WIDTH, HEIGHT)
-        _render(raw_svg, staged_thumbnail, 160, 256)
+        environment = _font_environment(spec.fonts, staging)
+        _render(raw_svg, staged_output, WIDTH, HEIGHT, environment)
+        _render(raw_svg, staged_thumbnail, 160, 256, environment)
         payload = {
             "receipt_version": 1,
             "renderer_version": RENDERER_VERSION,
