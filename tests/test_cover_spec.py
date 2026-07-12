@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).parents[1] / "skill" / "scripts"))
 from cover_spec import CoverSpecError, load_cover_spec
 
 FONT_MANIFEST = Path(__file__).parents[1] / "skill" / "assets" / "fonts" / "manifest.json"
+SCHEMA = Path(__file__).parents[1] / "skill" / "schemas" / "cover-spec-v1.schema.json"
 
 
 def valid_payload() -> dict[str, object]:
@@ -135,6 +136,61 @@ def write_fixture(root: Path, payload: object) -> Path:
 
 
 class CoverSpecValidationTests(unittest.TestCase):
+    def test_schema_matches_runtime_text_and_coordinate_constraints(self) -> None:
+        schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+        text_layer = schema["$defs"]["text_layer"]
+        role_rules = {
+            rule.get("if", {}).get("properties", {}).get("role", {}).get("const"): rule.get("then", {})
+            for rule in text_layer.get("allOf", [])
+        }
+        expected_role_rules = {
+            "title": {
+                "required": ["title_order"],
+                "properties": {"size": {"minimum": 72}, "line_height": {"minimum": 72}},
+            },
+            "subtitle": {
+                "properties": {"size": {"minimum": 36}, "line_height": {"minimum": 36}},
+            },
+        }
+        for role, expected in expected_role_rules.items():
+            with self.subTest(role=role):
+                self.assertIn(role, role_rules)
+                self.assertEqual(expected, role_rules[role])
+
+        expected_x = {"type": "number", "minimum": -1600, "maximum": 3200}
+        expected_y = {"type": "number", "minimum": -2560, "maximum": 5120}
+        with self.subTest(definition="box"):
+            self.assertEqual(
+                [
+                    expected_x,
+                    expected_y,
+                    {"type": "number", "minimum": 1, "maximum": 3200},
+                    {"type": "number", "minimum": 1, "maximum": 5120},
+                ],
+                schema["$defs"]["box"]["prefixItems"],
+            )
+        with self.subTest(definition="point"):
+            self.assertEqual([expected_x, expected_y], schema["$defs"]["point"]["prefixItems"])
+
+    def test_rejects_distinct_unicode_title_tokens(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            payload = valid_payload()
+            payload["metadata"]["title"] = "Rodénts in the Walls"
+            payload["layers"][1]["text"] = "RODÈNTS"
+            with self.assertRaisesRegex(CoverSpecError, "title layers must reproduce canonical title"):
+                load_cover_spec(write_fixture(Path(raw), payload), FONT_MANIFEST)
+
+    def test_accepts_canonical_unicode_and_apostrophe_variants(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            payload = valid_payload()
+            payload["metadata"]["title"] = "Rodént’s in the Walls"
+            payload["layers"][1]["text"] = "RODE\u0301NT'S"
+            try:
+                spec = load_cover_spec(write_fixture(Path(raw), payload), FONT_MANIFEST)
+            except CoverSpecError as error:
+                self.fail(f"canonical Unicode/apostrophe variants were rejected: {error}")
+            self.assertEqual("Rodént’s in the Walls", spec.metadata["title"])
+
     def test_loads_valid_spec_and_reconstructs_canonical_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             spec = load_cover_spec(write_fixture(Path(raw), valid_payload()), FONT_MANIFEST)

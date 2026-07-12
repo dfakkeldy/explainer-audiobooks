@@ -14,7 +14,6 @@ WIDTH = 1600
 HEIGHT = 2560
 SAFE_MARGIN = 96
 COLOUR = re.compile(r"^#[0-9A-Fa-f]{6}$")
-TOKEN = re.compile(r"[0-9A-Za-z]+(?:['’][0-9A-Za-z]+)?")
 BLENDS = {"normal", "multiply", "screen", "overlay", "soft-light"}
 ART_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"}
 TEXT_KEYS = {
@@ -157,7 +156,25 @@ def _is_choice(value: object, choices: set[str]) -> bool:
 
 
 def _tokens(value: str) -> list[str]:
-    return [match.group(0).casefold().replace("’", "'") for match in TOKEN.finditer(value)]
+    normalized = unicodedata.normalize("NFC", unicodedata.normalize("NFC", value).casefold())
+    tokens: list[str] = []
+    current: list[str] = []
+    for index, character in enumerate(normalized):
+        if character.isalnum():
+            current.append(character)
+        elif (
+            character in {"'", "’"}
+            and current
+            and index + 1 < len(normalized)
+            and normalized[index + 1].isalnum()
+        ):
+            current.append("'")
+        elif current:
+            tokens.append("".join(current))
+            current = []
+    if current:
+        tokens.append("".join(current))
+    return tokens
 
 
 def _validate_glyphs(value: str, font: FontRecord, label: str) -> None:

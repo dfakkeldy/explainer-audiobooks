@@ -69,13 +69,17 @@
     "colour": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
     "box": {
       "type": "array", "prefixItems": [
-        {"type": "number"}, {"type": "number"},
-        {"type": "number", "exclusiveMinimum": 0},
-        {"type": "number", "exclusiveMinimum": 0}
+        {"type": "number", "minimum": -1600, "maximum": 3200},
+        {"type": "number", "minimum": -2560, "maximum": 5120},
+        {"type": "number", "minimum": 1, "maximum": 3200},
+        {"type": "number", "minimum": 1, "maximum": 5120}
       ], "minItems": 4, "maxItems": 4
     },
     "point": {
-      "type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}],
+      "type": "array", "prefixItems": [
+        {"type": "number", "minimum": -1600, "maximum": 3200},
+        {"type": "number", "minimum": -2560, "maximum": 5120}
+      ],
       "minItems": 2, "maxItems": 2
     },
     "blend": {"enum": ["normal", "multiply", "screen", "overlay", "soft-light"]},
@@ -166,7 +170,22 @@
         "runs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/run"}},
         "contrast_against": {"$ref": "#/$defs/colour"},
         "blend_mode": {"$ref": "#/$defs/blend"}
-      }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"role": {"const": "title"}}, "required": ["role"]},
+          "then": {
+            "required": ["title_order"],
+            "properties": {"size": {"minimum": 72}, "line_height": {"minimum": 72}}
+          }
+        },
+        {
+          "if": {"properties": {"role": {"const": "subtitle"}}, "required": ["role"]},
+          "then": {
+            "properties": {"size": {"minimum": 36}, "line_height": {"minimum": 36}}
+          }
+        }
+      ]
     },
     "field_layer": {
       "type": "object", "additionalProperties": false,
