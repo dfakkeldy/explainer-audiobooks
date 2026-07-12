@@ -1,7 +1,8 @@
 # Adaptive Audiobook Cover Specification Design
 
 **Date:** 2026-07-12
-**Status:** Approved direction; implementation pending written-spec review
+**Status:** Approved by Dan on 2026-07-12; implementation planned in
+`docs/superpowers/plans/2026-07-12-adaptive-cover-specification.md`
 
 ## Objective
 
