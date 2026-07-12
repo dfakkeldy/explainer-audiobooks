@@ -95,6 +95,68 @@ def write_json(path: Path, payload: object) -> Path:
     return path
 
 
+def raw_selection_receipt(
+    cover_hash: str,
+    *,
+    duplicate_top_level: str = "",
+    duplicate_privacy: str = "",
+) -> str:
+    return f"""{{
+  "receipt_version": 1,
+  "book_slug": "rodents-in-the-walls",
+  {duplicate_top_level}
+  "edition_id": "corrected-v2",
+  "selected_candidate": "c1-full-bleed",
+  "direction_name": "Full Bleed Display",
+  "schema_version": 1,
+  "spec_sha256": "{'1' * 64}",
+  "source_art_sha256": "{'2' * 64}",
+  "rendered_cover_sha256": "{cover_hash}",
+  "font_manifest_version": 1,
+  "font_manifest_sha256": "{'3' * 64}",
+  "dimensions": [1600, 2560],
+  "colour_mode": "RGB",
+  "selected_at": "2026-07-12T13:00:00-03:00",
+  "selection_source": "explicit-user-choice",
+  "privacy": {{
+    "classification": "public-safe",
+    "permission_to_publish": "granted"{duplicate_privacy}
+  }}
+}}"""
+
+
+def raw_render_receipt(
+    cover: Path,
+    *,
+    duplicate_top_level: str = "",
+    duplicate_candidate: str = "",
+) -> str:
+    return f"""{{
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "candidate": {{
+    "id": "c1-full-bleed",
+    "direction_name": "Full Bleed Display"{duplicate_candidate}
+  }},
+  "spec": "cover-spec-1.json",
+  {duplicate_top_level}
+  "spec_sha256": "{'1' * 64}",
+  "source_art": "cover-source.png",
+  "source_art_sha256": "{'2' * 64}",
+  "font_manifest_version": 1,
+  "font_manifest_sha256": "{'3' * 64}",
+  "fonts": {{"display-condensed": "{'4' * 64}"}},
+  "output": "{cover.name}",
+  "output_sha256": "{hashlib.sha256(cover.read_bytes()).hexdigest()}",
+  "thumbnail": "cover-thumbnail.png",
+  "thumbnail_sha256": "{'5' * 64}",
+  "dimensions": [1600, 2560],
+  "colour_mode": "RGB",
+  "warnings": []
+}}"""
+
+
 def make_render_receipt(
     root: Path,
     cover: Path,
@@ -117,6 +179,83 @@ def create_valid_selection(root: Path, cover: Path) -> Path:
 
 
 class CoverReceiptTests(unittest.TestCase):
+    def test_rejects_duplicate_top_level_key_in_selection_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            cover = make_cover(root / "cover.png")
+            selection = root / "duplicate-selection.json"
+            selection.write_text(
+                raw_selection_receipt(
+                    hashlib.sha256(cover.read_bytes()).hexdigest(),
+                    duplicate_top_level='"receipt_version": 1,',
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "duplicate key|invalid .*receipt"):
+                cover_receipts.load_selection(selection)
+
+    def test_rejects_duplicate_nested_privacy_key_in_selection_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            cover = make_cover(root / "cover.png")
+            selection = root / "duplicate-privacy.json"
+            selection.write_text(
+                raw_selection_receipt(
+                    hashlib.sha256(cover.read_bytes()).hexdigest(),
+                    duplicate_privacy=',\n    "classification": "public-safe"',
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "duplicate key|invalid .*receipt"):
+                cover_receipts.load_selection(selection)
+
+    def test_rejects_duplicate_top_level_key_in_render_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            cover = make_cover(root / "cover.png")
+            render = root / "duplicate.render.json"
+            render.write_text(
+                raw_render_receipt(
+                    cover,
+                    duplicate_top_level='"receipt_version": 1,',
+                ),
+                encoding="utf-8",
+            )
+            output = root / "selection.json"
+            output.write_bytes(b"existing selection")
+
+            with self.assertRaisesRegex(ValueError, "duplicate key|invalid .*receipt"):
+                cover_receipts.create_selection(
+                    render,
+                    output,
+                    **VALID_SELECTION,
+                )
+            self.assertEqual(b"existing selection", output.read_bytes())
+
+    def test_rejects_duplicate_nested_candidate_key_in_render_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            cover = make_cover(root / "cover.png")
+            render = root / "duplicate-candidate.render.json"
+            render.write_text(
+                raw_render_receipt(
+                    cover,
+                    duplicate_candidate=',\n    "id": "c1-full-bleed"',
+                ),
+                encoding="utf-8",
+            )
+            output = root / "selection.json"
+
+            with self.assertRaisesRegex(ValueError, "duplicate key|invalid .*receipt"):
+                cover_receipts.create_selection(
+                    render,
+                    output,
+                    **VALID_SELECTION,
+                )
+            self.assertFalse(output.exists())
+
     def test_creates_explicit_selection_from_verified_render(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

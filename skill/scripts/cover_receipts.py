@@ -102,6 +102,19 @@ class PackageVerification:
     checks: tuple[str, ...]
 
 
+class _DuplicateJSONKeyError(ValueError):
+    pass
+
+
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise _DuplicateJSONKeyError(f"duplicate key: {key}")
+        result[key] = value
+    return result
+
+
 def _path(value: object, label: str) -> Path:
     try:
         return Path(value)  # type: ignore[arg-type]
@@ -112,7 +125,12 @@ def _path(value: object, label: str) -> Path:
 def _read_json(path: Path, label: str) -> dict[str, object]:
     source = _path(path, label)
     try:
-        payload = json.loads(source.read_text(encoding="utf-8"))
+        payload = json.loads(
+            source.read_text(encoding="utf-8"),
+            object_pairs_hook=_unique_json_object,
+        )
+    except _DuplicateJSONKeyError as error:
+        raise ValueError(f"invalid {label}: {error}") from error
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise ValueError(f"invalid {label}: {source}") from error
     if not isinstance(payload, dict):
