@@ -17,6 +17,13 @@ THUMBNAIL_SIZE = (320, 512)
 COLUMNS = 3
 GUTTER = 24
 LABEL_HEIGHT = 52
+LABEL_FONT_SIZE = 18
+LABEL_FONT_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "assets"
+    / "fonts"
+    / "SpaceGrotesk-Variable.ttf"
+)
 BACKGROUND = "white"
 TEXT_COLOR = "black"
 
@@ -27,6 +34,15 @@ class ContactSheetResult:
     cover_count: int
     columns: int
     rows: int
+
+
+def _load_label_font() -> ImageFont.FreeTypeFont:
+    try:
+        return ImageFont.truetype(str(LABEL_FONT_PATH), LABEL_FONT_SIZE)
+    except OSError as error:
+        raise ValueError(
+            f"could not load bundled contact-sheet font {LABEL_FONT_PATH}: {error}"
+        ) from error
 
 
 def _validated_entries(entries: Sequence[dict[str, str]]) -> list[tuple[str, Path]]:
@@ -130,7 +146,7 @@ def render(entries: Sequence[dict[str, str]], out: str | Path) -> ContactSheetRe
     sheet_height = rows * cell_height + (rows - 1) * GUTTER
     sheet = Image.new("RGB", (sheet_width, sheet_height), BACKGROUND)
     draw = ImageDraw.Draw(sheet)
-    font = ImageFont.load_default()
+    font = _load_label_font()
 
     for index, (title, cover) in enumerate(validated):
         column = index % COLUMNS
