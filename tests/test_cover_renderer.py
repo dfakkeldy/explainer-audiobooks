@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
+import stat
 import struct
 import sys
 import tempfile
@@ -218,6 +220,223 @@ class CoverRendererTests(unittest.TestCase):
             self.assertEqual(b"existing cover", output.read_bytes())
             self.assertEqual(b"existing thumbnail", thumbnail.read_bytes())
             self.assertEqual("existing receipt\n", receipt.read_text(encoding="utf-8"))
+
+
+class CoverRendererSafetyTests(unittest.TestCase):
+    def assert_input_alias_rejected(
+        self,
+        spec: Path,
+        output: Path,
+        protected_sources: tuple[Path, ...],
+        manifest: Path = FONT_MANIFEST,
+    ) -> None:
+        snapshots = {
+            source: (stat.S_IFMT(source.lstat().st_mode), source.read_bytes())
+            for source in protected_sources
+        }
+        with mock.patch.object(
+            cover_renderer,
+            "_render",
+            side_effect=AssertionError("rendering began before alias rejection"),
+        ) as render, self.assertRaisesRegex(
+            CoverRenderError,
+            "artifact path aliases renderer input",
+        ):
+            render_cover_spec(spec, output, manifest)
+        render.assert_not_called()
+        for source, (file_type, payload) in snapshots.items():
+            self.assertEqual(file_type, stat.S_IFMT(source.lstat().st_mode))
+            self.assertEqual(payload, source.read_bytes())
+
+    def test_rejects_output_aliasing_spec_before_render(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            spec = write_spec(root, base_spec(), "candidate")
+            self.assert_input_alias_rejected(spec, spec, (spec,))
+
+    def test_rejects_output_aliasing_art_before_render(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            spec = write_spec(root, base_spec(), "candidate")
+            art = root / "art.svg"
+            self.assert_input_alias_rejected(spec, art, (art,))
+
+    def test_rejects_derived_receipt_aliasing_spec_before_render(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            original = write_spec(root, base_spec(), "candidate")
+            spec = root / "cover.render.json"
+            original.replace(spec)
+            self.assert_input_alias_rejected(spec, root / "cover.png", (spec,))
+
+    def test_rejects_derived_thumbnail_aliasing_spec_before_render(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            original = write_spec(root, base_spec(), "candidate")
+            spec = root / "cover-thumbnail.png"
+            original.replace(spec)
+            self.assert_input_alias_rejected(spec, root / "cover.png", (spec,))
+
+    def test_rejects_aliases_to_full_custom_font_manifest_inventory(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            spec = write_spec(root, base_spec(), "candidate")
+            fonts = root / "fonts"
+            shutil.copytree(FONT_MANIFEST.parent, fonts)
+            manifest = fonts / "manifest.json"
+            protected = {
+                "manifest": manifest,
+                "unselected font": fonts / "IBMPlexMono-Bold.ttf",
+                "unselected license": fonts / "licenses" / "ibm-plex-mono-OFL.txt",
+            }
+            for label, output in protected.items():
+                with self.subTest(alias=label):
+                    self.assert_input_alias_rejected(
+                        spec,
+                        output,
+                        (output,),
+                        manifest,
+                    )
+
+    def test_rejects_final_artifact_paths_resolving_to_same_location(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            spec = write_spec(root, base_spec(), "candidate")
+            output = root / "cover.png"
+            receipt = root / "cover.render.json"
+            receipt.symlink_to(output.name)
+            with mock.patch.object(
+                cover_renderer,
+                "_render",
+                side_effect=AssertionError("rendering began before collision rejection"),
+            ) as render, self.assertRaisesRegex(
+                CoverRenderError,
+                "artifact paths collide",
+            ):
+                render_cover_spec(spec, output, FONT_MANIFEST)
+            render.assert_not_called()
+            self.assertTrue(receipt.is_symlink())
+            self.assertEqual(output.name, os.readlink(receipt))
+
+    @staticmethod
+    def fake_render(_svg: Path, destination: Path, width: int, height: int) -> None:
+        destination.write_bytes(f"rendered {width}x{height}".encode("ascii"))
+
+    def test_publish_failure_restores_existing_thumbnail_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            spec = write_spec(root, base_spec(), "candidate")
+            output = root / "cover.png"
+            thumbnail = root / "cover-thumbnail.png"
+            receipt = root / "cover.render.json"
+            target = root / "thumbnail-target.bin"
+            output.write_bytes(b"existing cover")
+            target.write_bytes(b"linked thumbnail target")
+            raw_target = target.name
+            thumbnail.symlink_to(raw_target)
+            receipt.write_bytes(b"existing receipt")
+            real_replace = os.replace
+
+            def fail_receipt_publish(source: Path, destination: Path) -> None:
+                if Path(destination) == receipt:
+                    raise OSError("receipt publication failed")
+                real_replace(source, destination)
+
+            with mock.patch.object(
+                cover_renderer,
+                "_render",
+                side_effect=self.fake_render,
+            ), mock.patch.object(
+                cover_renderer.os,
+                "replace",
+                side_effect=fail_receipt_publish,
+            ), self.assertRaisesRegex(
+                CoverRenderError,
+                "rendered artifacts could not be published",
+            ):
+                render_cover_spec(spec, output, FONT_MANIFEST)
+
+            self.assertEqual(b"existing cover", output.read_bytes())
+            self.assertTrue(thumbnail.is_symlink())
+            self.assertEqual(raw_target, os.readlink(thumbnail))
+            self.assertEqual(b"linked thumbnail target", target.read_bytes())
+            self.assertEqual(b"existing receipt", receipt.read_bytes())
+
+    def test_publish_failure_restores_dangling_thumbnail_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            spec = write_spec(root, base_spec(), "candidate")
+            output = root / "cover.png"
+            thumbnail = root / "cover-thumbnail.png"
+            receipt = root / "cover.render.json"
+            output.write_bytes(b"existing cover")
+            raw_target = "missing-thumbnail-target.bin"
+            thumbnail.symlink_to(raw_target)
+            receipt.write_bytes(b"existing receipt")
+            real_replace = os.replace
+
+            def fail_receipt_publish(source: Path, destination: Path) -> None:
+                if Path(destination) == receipt:
+                    raise OSError("receipt publication failed")
+                real_replace(source, destination)
+
+            with mock.patch.object(
+                cover_renderer,
+                "_render",
+                side_effect=self.fake_render,
+            ), mock.patch.object(
+                cover_renderer.os,
+                "replace",
+                side_effect=fail_receipt_publish,
+            ), self.assertRaisesRegex(
+                CoverRenderError,
+                "rendered artifacts could not be published",
+            ):
+                render_cover_spec(spec, output, FONT_MANIFEST)
+
+            self.assertEqual(b"existing cover", output.read_bytes())
+            self.assertTrue(thumbnail.is_symlink())
+            self.assertEqual(raw_target, os.readlink(thumbnail))
+            self.assertFalse((root / raw_target).exists())
+            self.assertEqual(b"existing receipt", receipt.read_bytes())
+
+    def test_rollback_continues_after_one_destination_cannot_be_restored(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            spec = write_spec(root, base_spec(), "candidate")
+            output = root / "cover.png"
+            thumbnail = root / "cover-thumbnail.png"
+            receipt = root / "cover.render.json"
+            output.write_bytes(b"existing cover")
+            thumbnail.write_bytes(b"existing thumbnail")
+            receipt.write_bytes(b"existing receipt")
+            real_replace = os.replace
+
+            def fail_publish_and_one_restore(source: Path, destination: Path) -> None:
+                source_path = Path(source)
+                destination_path = Path(destination)
+                if destination_path == receipt:
+                    raise OSError("receipt publication failed")
+                if destination_path == thumbnail and source_path.name == "backup-1":
+                    raise OSError("thumbnail rollback failed")
+                real_replace(source, destination)
+
+            with mock.patch.object(
+                cover_renderer,
+                "_render",
+                side_effect=self.fake_render,
+            ), mock.patch.object(
+                cover_renderer.os,
+                "replace",
+                side_effect=fail_publish_and_one_restore,
+            ), self.assertRaisesRegex(
+                CoverRenderError,
+                "rollback failed",
+            ):
+                render_cover_spec(spec, output, FONT_MANIFEST)
+
+            self.assertEqual(b"existing cover", output.read_bytes())
+            self.assertEqual(b"existing receipt", receipt.read_bytes())
 
 
 if __name__ == "__main__":

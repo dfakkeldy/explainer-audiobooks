@@ -306,26 +306,79 @@ def _render(svg_path: Path, destination: Path, width: int, height: int) -> None:
 
 
 def _publish(staged: list[tuple[Path, Path]], staging: Path) -> None:
-    backups: dict[Path, Path] = {}
+    backups: dict[Path, tuple[str, Path | str]] = {}
     for index, (_source, destination) in enumerate(staged):
-        if destination.exists():
+        if destination.is_symlink():
+            backups[destination] = ("symlink", os.readlink(destination))
+        elif destination.exists():
             backup = staging / f"backup-{index}"
-            shutil.copyfile(destination, backup)
-            backups[destination] = backup
+            shutil.copy2(destination, backup)
+            backups[destination] = ("file", backup)
 
     published: list[Path] = []
     try:
         for source, destination in staged:
             os.replace(source, destination)
             published.append(destination)
-    except Exception:
+    except Exception as publish_error:
+        rollback_errors: list[str] = []
         for destination in reversed(published):
-            backup = backups.get(destination)
-            if backup is None:
-                destination.unlink(missing_ok=True)
-            else:
-                os.replace(backup, destination)
+            try:
+                backup = backups.get(destination)
+                if backup is None:
+                    destination.unlink(missing_ok=True)
+                elif backup[0] == "symlink":
+                    destination.unlink(missing_ok=True)
+                    os.symlink(backup[1], destination)
+                else:
+                    os.replace(backup[1], destination)
+            except Exception as rollback_error:
+                rollback_errors.append(f"{destination}: {rollback_error}")
+        if rollback_errors:
+            raise CoverRenderError(
+                "artifact publication failed and rollback failed: "
+                + "; ".join(rollback_errors)
+            ) from publish_error
         raise
+
+
+def _validate_artifact_paths(
+    spec: ValidatedCoverSpec,
+    artifacts: dict[str, Path],
+) -> None:
+    resolved_artifacts: dict[str, Path] = {}
+    names_by_path: dict[Path, str] = {}
+    for name, artifact in artifacts.items():
+        try:
+            resolved = artifact.resolve()
+        except (OSError, RuntimeError, ValueError) as error:
+            raise CoverRenderError(f"{name} artifact path is invalid: {artifact}") from error
+        try:
+            resolved.relative_to(spec.path.parent)
+        except ValueError as error:
+            raise CoverRenderError(
+                f"{name} path escapes specification run folder"
+            ) from error
+        if resolved in names_by_path:
+            raise CoverRenderError(
+                f"artifact paths collide: {names_by_path[resolved]} and {name}"
+            )
+        names_by_path[resolved] = name
+        resolved_artifacts[name] = resolved
+
+    protected_inputs = {
+        spec.path.resolve(),
+        spec.art_path.resolve(),
+        spec.font_manifest.path.resolve(),
+    }
+    for record in spec.font_manifest.fonts.values():
+        protected_inputs.add(record.path.resolve())
+        protected_inputs.add(record.license_path.resolve())
+    for name, resolved in resolved_artifacts.items():
+        if resolved in protected_inputs:
+            raise CoverRenderError(
+                f"artifact path aliases renderer input: {name} -> {resolved}"
+            )
 
 
 def render_cover_spec(
@@ -342,6 +395,10 @@ def render_cover_spec(
 
     thumbnail = output.with_name(f"{output.stem}-thumbnail.png")
     receipt = output.with_name(f"{output.stem}.render.json")
+    _validate_artifact_paths(
+        spec,
+        {"output": output, "thumbnail": thumbnail, "receipt": receipt},
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     svg = build_svg(spec)
 
