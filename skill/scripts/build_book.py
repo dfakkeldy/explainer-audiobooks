@@ -31,8 +31,12 @@ import html
 import os
 import re
 import shutil
+import tempfile
 import uuid
 import zipfile
+from pathlib import Path
+
+from cover_receipts import load_selection, sha256_file, verify_package
 
 IMG_RE = re.compile(r'^!\[(?P<alt>[^\]]*)\]\((?P<src>[^)\s]+)(?:\s+"(?P<cap>[^"]*)")?\)$')
 
@@ -81,7 +85,19 @@ def parse_chapter(path):
 
 
 def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover=None,
-          contributor=""):
+          contributor="", cover_selection=None):
+    selection_path = Path(cover_selection) if cover_selection else None
+    if selection_path is not None:
+        if not cover or not os.path.exists(cover):
+            raise ValueError("--cover-selection requires an existing --cover")
+        selected = load_selection(selection_path)
+        if selected.book_slug != slug:
+            raise ValueError(
+                f"selection book_slug {selected.book_slug} does not match build slug {slug}"
+            )
+        if sha256_file(Path(cover)) != selected.rendered_cover_sha256:
+            raise ValueError("selected cover hash does not match --cover")
+
     os.makedirs(out_dir, exist_ok=True)
     files = sorted(glob.glob(os.path.join(chapters_dir, "ch*.md")))
     if not files:
@@ -265,27 +281,46 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
     )
 
     epub_path = os.path.join(out_dir, slug + ".epub")
-    with zipfile.ZipFile(epub_path, "w", zipfile.ZIP_DEFLATED) as z:
-        z.writestr("mimetype", "application/epub+zip", compress_type=zipfile.ZIP_STORED)
-        z.writestr("META-INF/container.xml",
-                   '<?xml version="1.0" encoding="utf-8"?>\n'
-                   '<container version="1.0" '
-                   'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n'
-                   '<rootfiles><rootfile full-path="OEBPS/content.opf" '
-                   'media-type="application/oebps-package+xml"/></rootfiles></container>')
-        z.writestr("OEBPS/style.css", css)
-        z.writestr("OEBPS/content.opf", opf)
-        z.writestr("OEBPS/nav.xhtml", nav)
-        z.writestr("OEBPS/toc.ncx", ncx)
-        z.writestr("OEBPS/titlepage.xhtml", title_doc)
-        if cover_bytes is not None:
-            z.writestr("OEBPS/" + cover_name, cover_bytes)
-            z.writestr("OEBPS/cover.xhtml", cover_doc)
-        for fn, _, doc in chapter_docs:
-            z.writestr("OEBPS/" + fn, doc)
-        for name, p in figures.items():
-            with open(p, "rb") as imf:
-                z.writestr("OEBPS/images/" + name, imf.read())
+    staged_epub = None
+    epub_write_path = epub_path
+    if selection_path is not None:
+        descriptor, staged_epub = tempfile.mkstemp(
+            prefix=f".{Path(epub_path).name}.",
+            suffix=".incoming",
+            dir=out_dir,
+        )
+        os.close(descriptor)
+        epub_write_path = staged_epub
+    try:
+        with zipfile.ZipFile(epub_write_path, "w", zipfile.ZIP_DEFLATED) as z:
+            z.writestr("mimetype", "application/epub+zip", compress_type=zipfile.ZIP_STORED)
+            z.writestr("META-INF/container.xml",
+                       '<?xml version="1.0" encoding="utf-8"?>\n'
+                       '<container version="1.0" '
+                       'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n'
+                       '<rootfiles><rootfile full-path="OEBPS/content.opf" '
+                       'media-type="application/oebps-package+xml"/></rootfiles></container>')
+            z.writestr("OEBPS/style.css", css)
+            z.writestr("OEBPS/content.opf", opf)
+            z.writestr("OEBPS/nav.xhtml", nav)
+            z.writestr("OEBPS/toc.ncx", ncx)
+            z.writestr("OEBPS/titlepage.xhtml", title_doc)
+            if cover_bytes is not None:
+                z.writestr("OEBPS/" + cover_name, cover_bytes)
+                z.writestr("OEBPS/cover.xhtml", cover_doc)
+            for fn, _, doc in chapter_docs:
+                z.writestr("OEBPS/" + fn, doc)
+            for name, p in figures.items():
+                with open(p, "rb") as imf:
+                    z.writestr("OEBPS/images/" + name, imf.read())
+
+        if selection_path is not None:
+            verify_package(selection_path, Path(cover), epub_path=Path(epub_write_path))
+            os.replace(epub_write_path, epub_path)
+            staged_epub = None
+    finally:
+        if staged_epub is not None:
+            Path(staged_epub).unlink(missing_ok=True)
 
     print("Chapters:", len(chapters))
     for i, c in enumerate(chapters):
@@ -312,9 +347,11 @@ def main():
     ap.add_argument("--cover", default=None, help="Optional cover image (PNG/JPEG) to embed")
     ap.add_argument("--contributor", default="",
                     help="Optional second name credited in metadata (e.g., the human owner)")
+    ap.add_argument("--cover-selection", default=None,
+                    help="Selection receipt that must match --cover and the built EPUB")
     a = ap.parse_args()
     build(a.chapters_dir, a.out_dir, a.title, a.author, a.subtitle, a.slug, a.lang, a.cover,
-          a.contributor)
+          a.contributor, a.cover_selection)
 
 
 if __name__ == "__main__":
