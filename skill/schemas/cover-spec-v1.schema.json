@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dfakkeldy/explainer-audiobooks/skill/schemas/cover-spec-v1.schema.json",
+  "title": "Explainer Audiobook Cover Specification v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate", "metadata", "canvas", "art", "layers"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "direction_name"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "direction_name": {"type": "string", "minLength": 1}
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "subtitle", "author", "label"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "subtitle": {"type": "string"},
+        "author": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1}
+      }
+    },
+    "canvas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "background", "safe_margin"],
+      "properties": {
+        "width": {"const": 1600},
+        "height": {"const": 2560},
+        "background": {"$ref": "#/$defs/colour"},
+        "safe_margin": {"const": 96}
+      }
+    },
+    "art": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "mode", "anchor", "box", "opacity", "blend_mode"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["bleed", "fit", "crop"]},
+        "anchor": {"enum": ["center", "center-top", "center-bottom", "left", "right"]},
+        "box": {"$ref": "#/$defs/box"},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "blend_mode": {"$ref": "#/$defs/blend"},
+        "mask": {"$ref": "#/$defs/mask"}
+      }
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {"$ref": "#/$defs/text_layer"},
+          {"$ref": "#/$defs/field_layer"},
+          {"$ref": "#/$defs/shape_layer"},
+          {"$ref": "#/$defs/line_layer"}
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "colour": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+    "box": {
+      "type": "array", "prefixItems": [
+        {"type": "number"}, {"type": "number"},
+        {"type": "number", "exclusiveMinimum": 0},
+        {"type": "number", "exclusiveMinimum": 0}
+      ], "minItems": 4, "maxItems": 4
+    },
+    "point": {
+      "type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}],
+      "minItems": 2, "maxItems": 2
+    },
+    "blend": {"enum": ["normal", "multiply", "screen", "overlay", "soft-light"]},
+    "fill": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "colour"],
+          "properties": {"kind": {"const": "solid"}, "colour": {"$ref": "#/$defs/colour"}}
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["kind", "start", "end", "stops"],
+          "properties": {
+            "kind": {"const": "linear-gradient"},
+            "start": {"$ref": "#/$defs/point"},
+            "end": {"$ref": "#/$defs/point"},
+            "stops": {
+              "type": "array", "minItems": 2,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["offset", "colour", "opacity"],
+                "properties": {
+                  "offset": {"type": "number", "minimum": 0, "maximum": 1},
+                  "colour": {"$ref": "#/$defs/colour"},
+                  "opacity": {"type": "number", "minimum": 0, "maximum": 1}
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "mask": {
+      "type": "object", "additionalProperties": false,
+      "required": ["shape", "box"],
+      "properties": {
+        "shape": {"enum": ["rect", "ellipse"]},
+        "box": {"$ref": "#/$defs/box"},
+        "radius": {"type": "number", "minimum": 0, "maximum": 300}
+      }
+    },
+    "run": {
+      "type": "object", "additionalProperties": false, "required": ["text"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1},
+        "colour": {"$ref": "#/$defs/colour"},
+        "size_scale": {"type": "number", "minimum": 0.5, "maximum": 1.5},
+        "rotation": {"type": "number", "minimum": -12, "maximum": 12},
+        "baseline_shift": {"type": "number", "minimum": -80, "maximum": 80},
+        "dx": {"type": "number", "minimum": -80, "maximum": 80},
+        "tracking": {"type": "number", "minimum": -8, "maximum": 40}
+      }
+    },
+    "text_layer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "role", "text", "font_id", "box", "size", "line_height", "tracking", "align", "colour", "opacity", "rotation", "baseline_shift"],
+      "properties": {
+        "kind": {"const": "text"},
+        "role": {"enum": ["title", "subtitle", "author", "label"]},
+        "title_order": {"type": "integer", "minimum": 1},
+        "text": {"type": "string", "minLength": 1},
+        "font_id": {"type": "string", "minLength": 1},
+        "font_variation": {"type": "object", "additionalProperties": {"type": "number"}},
+        "box": {"$ref": "#/$defs/box"},
+        "size": {"type": "number", "minimum": 28, "maximum": 420},
+        "line_height": {"type": "number", "minimum": 28, "maximum": 500},
+        "tracking": {"type": "number", "minimum": -8, "maximum": 40},
+        "align": {"enum": ["left", "center", "right"]},
+        "colour": {"$ref": "#/$defs/colour"},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "rotation": {"type": "number", "minimum": -12, "maximum": 12},
+        "baseline_shift": {"type": "number", "minimum": -80, "maximum": 80},
+        "outline": {
+          "type": "object", "additionalProperties": false, "required": ["colour", "width"],
+          "properties": {"colour": {"$ref": "#/$defs/colour"}, "width": {"type": "number", "minimum": 0, "maximum": 16}}
+        },
+        "shadow": {
+          "type": "object", "additionalProperties": false, "required": ["colour", "dx", "dy", "blur", "opacity"],
+          "properties": {
+            "colour": {"$ref": "#/$defs/colour"},
+            "dx": {"type": "number", "minimum": -48, "maximum": 48},
+            "dy": {"type": "number", "minimum": -48, "maximum": 48},
+            "blur": {"type": "number", "minimum": 0, "maximum": 48},
+            "opacity": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        },
+        "runs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/run"}},
+        "contrast_against": {"$ref": "#/$defs/colour"},
+        "blend_mode": {"$ref": "#/$defs/blend"}
+      }
+    },
+    "field_layer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "box", "fill", "opacity", "blend_mode", "purpose"],
+      "properties": {
+        "kind": {"enum": ["field", "scrim"]},
+        "box": {"$ref": "#/$defs/box"},
+        "fill": {"$ref": "#/$defs/fill"},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "blend_mode": {"$ref": "#/$defs/blend"},
+        "purpose": {"type": "string", "minLength": 1}
+      }
+    },
+    "shape_layer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "shape", "box", "fill", "opacity", "rotation", "blend_mode", "purpose"],
+      "properties": {
+        "kind": {"const": "shape"},
+        "shape": {"enum": ["rect", "ellipse"]},
+        "box": {"$ref": "#/$defs/box"},
+        "fill": {"$ref": "#/$defs/fill"},
+        "stroke": {"$ref": "#/$defs/colour"},
+        "stroke_width": {"type": "number", "minimum": 0, "maximum": 40},
+        "radius": {"type": "number", "minimum": 0, "maximum": 300},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "rotation": {"type": "number", "minimum": -180, "maximum": 180},
+        "blend_mode": {"$ref": "#/$defs/blend"},
+        "purpose": {"type": "string", "minLength": 1}
+      }
+    },
+    "line_layer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "start", "end", "colour", "width", "opacity", "purpose"],
+      "properties": {
+        "kind": {"const": "line"},
+        "start": {"$ref": "#/$defs/point"},
+        "end": {"$ref": "#/$defs/point"},
+        "colour": {"$ref": "#/$defs/colour"},
+        "width": {"type": "number", "minimum": 1, "maximum": 40},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "purpose": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
