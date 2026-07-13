@@ -3,6 +3,12 @@ _An Honest Guide to Getting a Small App Discovered_
 
 ![Cover](cover.png)
 
+The July 2026 paired-cover release uses **The Exact Phrase**. `cover.png` is
+the portrait EPUB and library cover; `m4b-cover.png` is the independently
+composed square audiobook artwork. `cover-selection.json` binds both variants
+to one approved source and public EPUB edition. The previous portrait is
+preserved as `cover-pre-paired.png`.
+
 > Picture a bookshelf the size of a city, two million spines pressed shoulder to shoulder, and you standing somewhere in the middle holding the one thing you made. That shelf is the App Store. Nobody is searching for your app by name. They can't — they've never heard it. This book is about how the right few thousand people find it anyway.
 
 **Findable** is a beginner's audiobook about App Store Optimization for a small, indie app with no marketing budget and no crowd yet. It teaches the craft the honest way — as matchmaking, not trickery — and grounds every lesson in the real store data of a real one-person launch, while staying generic enough to apply to *your* app, whatever you built. It's written for the ear: no jargon dumped on you, every term explained in plain language as it arrives, every idea carried by a picture you can actually hold in your head.

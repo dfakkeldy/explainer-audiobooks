@@ -1,0 +1,41 @@
+{
+  "book_slug": "the-new-deal",
+  "candidate": {
+    "direction_name": "The Weight of the Mailbag",
+    "id": "weight-of-the-mailbag"
+  },
+  "edition_id": "9f7f1202-acf1-4343-a99f-5b0f83da7c03",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-13T14:38:48-03:00",
+  "selection_source": "user",
+  "source_art_sha256": "9a34ad8f8c382ea278a659b316133dcdb5d1a7f79227c06af9781a23fa0ba54b",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "3d6ded0e0af6c9454d6a5712e78fbba84fb8aa4f0dbd72fd5ce7e72768d14a37",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "ae7c3d3df12c5db56444f7afa81810ea468db135bf51fbf0064e8d73f036596c",
+      "specification_sha256": "b6f801a44d7b944189c482d9d4836bb0d03d0d81274f75ff57d36abb018113df",
+      "subtitle_included": true,
+      "thumbnail_sha256": "7e17ebe0d9c1df9a2ca1f51592b5d4764dd097360e6a3fc4201cd44eaa3923ec"
+    },
+    "square": {
+      "cover_sha256": "2034da6997ad9c451a3542049fbce5cfbc0203a6675a36bc405413de20a437c0",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "5617c9e5547dc31a635246b50669b4e7ac9252f2a393e2130517dcf3d1fb7917",
+      "specification_sha256": "be94fee278f98d193e7a809f83f385b5da169bb39c3b3a453209e98d8915ec0d",
+      "subtitle_included": false,
+      "thumbnail_sha256": "49a366051cf9b885a4bf0fe2b3369db29b334fe02d1f4ee626ed404b8c07763d"
+    }
+  }
+}

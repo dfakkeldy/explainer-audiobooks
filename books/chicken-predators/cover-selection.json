@@ -1,0 +1,41 @@
+{
+  "book_slug": "chicken-predators",
+  "candidate": {
+    "direction_name": "Night at the Fence",
+    "id": "night-at-the-fence"
+  },
+  "edition_id": "54643b56-8f40-4315-839e-e4df670d456d",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-13T14:38:48-03:00",
+  "selection_source": "user",
+  "source_art_sha256": "7e2ae6a9ffaf9b099d9bcc33e6ba05ce05887d49c615b84202d9a30c5cd15cbc",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "1745b28342f6e70061f5333f9c7f29e1e5adcbe726e111432f88563648b87210",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "8c2755aab5fbb3b96f18c4aeec4b8dd4aaa2d26fbc8116535cb201398f979250",
+      "specification_sha256": "89d3b59a714aefe45e3d7c88f26dd3e5b8f78a004e2b38d598f3d302b70086f3",
+      "subtitle_included": true,
+      "thumbnail_sha256": "64e4b78d75f3cc3475bb9ef0e69276d073a5d93fd4fe051bb3f6472cfa529b25"
+    },
+    "square": {
+      "cover_sha256": "18c6520b20c4ba39346d03e84a856eb1785968327cce69bdb58ce234f031d59d",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "61f1a6bcd377328868669b2c1a9327b1be1f6eb14a9dcc27e10220416c7704fc",
+      "specification_sha256": "404a3b69dabcdc2b20e8ad83de179a8fefdd3bc13faa2035f6e09a35a3a833ea",
+      "subtitle_included": false,
+      "thumbnail_sha256": "fb104fe5d847f18fdcb0e967c24a6aef59d77e41d2a94dd5ccefd4d2ca139dac"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "candidate": {
+    "direction_name": "Night at the Fence",
+    "id": "night-at-the-fence"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    2400,
+    2400
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+  },
+  "output": "m4b-cover.png",
+  "output_sha256": "18c6520b20c4ba39346d03e84a856eb1785968327cce69bdb58ce234f031d59d",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "source.png",
+  "source_art_sha256": "7e2ae6a9ffaf9b099d9bcc33e6ba05ce05887d49c615b84202d9a30c5cd15cbc",
+  "spec": "square-spec.json",
+  "spec_sha256": "404a3b69dabcdc2b20e8ad83de179a8fefdd3bc13faa2035f6e09a35a3a833ea",
+  "thumbnail": "m4b-cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    160
+  ],
+  "thumbnail_sha256": "fb104fe5d847f18fdcb0e967c24a6aef59d77e41d2a94dd5ccefd4d2ca139dac",
+  "variant": "square",
+  "warnings": []
+}

@@ -1,0 +1,36 @@
+{
+  "candidate": {
+    "direction_name": "The Impossible Teapot",
+    "id": "impossible-teapot"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    1600,
+    2560
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+  },
+  "output": "cover.png",
+  "output_sha256": "3fbc32510e611766c150c6280dc0059b634d1c6d4f0923beec84291fb0e819b3",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "source.png",
+  "source_art_sha256": "ed258c0ed5a4083c3798cf7f4350b2fa997842663a550be002b965ee65808ffa",
+  "spec": "portrait-spec.json",
+  "spec_sha256": "61c356e384e430fc579e0ee002224110895db47d7b2249ae6b317942389aad63",
+  "thumbnail": "cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    256
+  ],
+  "thumbnail_sha256": "6a3856b9e2ef226d0b59d3c7e9063c33bc84ba81c9a131b0ce5addcd797d3baa",
+  "variant": "portrait",
+  "warnings": [
+    "layer 1 advisory contrast ratio is 4.26:1"
+  ]
+}

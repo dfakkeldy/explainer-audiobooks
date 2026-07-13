@@ -4,6 +4,12 @@ _A Beginner's Guide to Apple Design, from the HIG to SwiftUI — told through Ec
 
 ![Cover](cover.png)
 
+The July 2026 paired-cover release uses **The Impossible Teapot**. `cover.png`
+is the portrait EPUB and library cover; `m4b-cover.png` is the independently
+composed square audiobook artwork. `cover-selection.json` binds both variants
+to one approved source and public EPUB edition. The previous portrait is
+preserved as `cover-pre-paired.png`.
+
 > You have felt it, even if you have never had a word for it — the app that settles, and the one that quietly nags. This book gives you the words. All of them.
 
 This is a narrated beginner's guide to Apple's design language, rebuilt from the ground up to also teach the **real vocabulary** — both the Human Interface Guidelines' words and SwiftUI's. It grounds the psychology first in Don Norman's classics (*The Design of Everyday Things*, *Emotional Design*): **affordances, signifiers, mapping, feedback, and the three teapots**. Then it walks Apple's design system through one real, shipping open-source app called **Echo**, an audiobook study player built by a solo developer with AI help — naming every construct out loud along the way, from **NavigationStack** and **presentation detents** to **LazyVStack** and **UIViewRepresentable**, so you finish able to search, read the docs, and ask an AI for exactly the thing you mean.
