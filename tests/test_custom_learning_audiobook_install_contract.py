@@ -40,6 +40,17 @@ EXTERNAL_PACKAGE_STUB = f"""# {DISABLED_MARKER}
 Stop. This duplicate package reference is not executable.
 Load `{CANONICAL_ROUTE}` and follow that canonical skill.
 """
+SKILL_FILES = {
+    "SKILL.md": 0o644,
+    "agents/openai.yaml": 0o644,
+    "references/intake-and-research.md": 0o644,
+    "references/package-and-qc.md": 0o644,
+    "scripts/echo_pronunciation_preflight.sh": 0o755,
+    "scripts/validate_pronunciation_audit.py": 0o755,
+    "scripts/echo_pronunciation_narrate.sh": 0o755,
+    "scripts/echo_pronunciation_lease.py": 0o755,
+    "scripts/echo_pronunciation_state.py": 0o755,
+}
 
 
 class InstalledCustomLearningSkillContractTests(unittest.TestCase):
@@ -55,6 +66,7 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         self.hermes_agent = self.tmp / "hermes-agent"
         self.hermes_python = self.tmp / "hermes-python"
         for root in (self.candidate, self.canonical, self.external):
+            (root / "agents").mkdir(parents=True)
             (root / "references").mkdir(parents=True)
             (root / "scripts").mkdir()
         for link in self.links:
@@ -68,31 +80,17 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
 
     @staticmethod
     def write_skill(root: Path, value: str) -> None:
-        (root / "SKILL.md").write_text(value, encoding="utf-8")
-        (root / "references" / "package-and-qc.md").write_text(
-            value,
-            encoding="utf-8",
-        )
-        (root / "scripts" / "echo_pronunciation_preflight.sh").write_text(
-            value,
-            encoding="utf-8",
-        )
-        (root / "scripts" / "validate_pronunciation_audit.py").write_text(
-            value,
-            encoding="utf-8",
-        )
-        (root / "scripts" / "echo_pronunciation_narrate.sh").write_text(
-            value,
-            encoding="utf-8",
-        )
-        (root / "scripts" / "echo_pronunciation_lease.py").write_text(
-            value,
-            encoding="utf-8",
-        )
-        (root / "scripts" / "echo_pronunciation_state.py").write_text(
-            value,
-            encoding="utf-8",
-        )
+        for relative, mode in SKILL_FILES.items():
+            path = root / relative
+            path.write_text(value, encoding="utf-8")
+            path.chmod(mode)
+
+    def integrate_candidate(self) -> None:
+        for relative_path in SKILL_FILES:
+            shutil.copy2(
+                self.candidate / relative_path,
+                self.canonical / relative_path,
+            )
 
     def write_disabled_external(self) -> None:
         (self.external / "SKILL.disabled.md").write_text(
@@ -163,58 +161,84 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         self.assertIn("installed_skill_parity: pending-integration", result.stdout)
 
     def test_reports_current_after_candidate_is_integrated(self) -> None:
-        for relative_path in (
-            "SKILL.md",
-            "references/package-and-qc.md",
-            "scripts/echo_pronunciation_preflight.sh",
-            "scripts/validate_pronunciation_audit.py",
-            "scripts/echo_pronunciation_narrate.sh",
-            "scripts/echo_pronunciation_lease.py",
-            "scripts/echo_pronunciation_state.py",
-        ):
-            shutil.copy2(
-                self.candidate / relative_path,
-                self.canonical / relative_path,
-            )
+        self.integrate_candidate()
         result = self.run_validator()
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("installed_skill_parity: current", result.stdout)
 
     def test_reports_pending_when_canonical_lacks_a_new_helper(self) -> None:
-        for relative_path in (
-            "SKILL.md",
-            "references/package-and-qc.md",
-            "scripts/echo_pronunciation_preflight.sh",
-            "scripts/validate_pronunciation_audit.py",
-            "scripts/echo_pronunciation_narrate.sh",
-            "scripts/echo_pronunciation_lease.py",
-            "scripts/echo_pronunciation_state.py",
-        ):
-            shutil.copy2(
-                self.candidate / relative_path,
-                self.canonical / relative_path,
-            )
+        self.integrate_candidate()
         (self.canonical / "scripts" / "echo_pronunciation_preflight.sh").unlink()
         result = self.run_validator()
         self.assertEqual(2, result.returncode, result.stderr)
         self.assertIn("installed_skill_parity: pending-integration", result.stdout)
 
     def test_reports_pending_when_contract_file_mode_differs(self) -> None:
-        for relative_path in (
-            "SKILL.md",
-            "references/package-and-qc.md",
-            "scripts/echo_pronunciation_preflight.sh",
-            "scripts/validate_pronunciation_audit.py",
-            "scripts/echo_pronunciation_narrate.sh",
-            "scripts/echo_pronunciation_lease.py",
-            "scripts/echo_pronunciation_state.py",
-        ):
-            shutil.copy2(self.candidate / relative_path, self.canonical / relative_path)
+        self.integrate_candidate()
         helper = self.canonical / "scripts" / "echo_pronunciation_state.py"
-        helper.chmod(helper.stat().st_mode | stat.S_IXUSR)
+        helper.chmod(0o700)
         result = self.run_validator()
         self.assertEqual(2, result.returncode, result.stderr)
         self.assertIn("installed_skill_parity: pending-integration", result.stdout)
+
+    def test_declared_manifest_covers_non_runtime_skill_files(self) -> None:
+        self.integrate_candidate()
+        (self.canonical / "agents" / "openai.yaml").write_text(
+            "stale agent metadata", encoding="utf-8"
+        )
+        stale_agent = self.run_validator()
+        self.assertEqual(2, stale_agent.returncode, stale_agent.stderr)
+
+        shutil.copy2(
+            self.candidate / "agents" / "openai.yaml",
+            self.canonical / "agents" / "openai.yaml",
+        )
+        (self.canonical / "references" / "intake-and-research.md").unlink()
+        missing_reference = self.run_validator()
+        self.assertEqual(2, missing_reference.returncode, missing_reference.stderr)
+
+    def test_declared_manifest_rejects_missing_unexpected_and_wrong_mode_candidate(self) -> None:
+        missing = self.candidate / "agents" / "openai.yaml"
+        original = missing.read_bytes()
+        missing.unlink()
+        missing_result = self.run_validator()
+        self.assertEqual(1, missing_result.returncode)
+        self.assertIn("candidate manifest", missing_result.stderr)
+
+        missing.write_bytes(original)
+        missing.chmod(0o644)
+        unexpected = self.candidate / "scripts" / "shadow_runtime.py"
+        unexpected.write_text("pass\n", encoding="utf-8")
+        unexpected_result = self.run_validator()
+        self.assertEqual(1, unexpected_result.returncode)
+        self.assertIn("unexpected", unexpected_result.stderr)
+
+        unexpected.unlink()
+        helper = self.candidate / "scripts" / "echo_pronunciation_state.py"
+        helper.chmod(0o644)
+        wrong_mode = self.run_validator()
+        self.assertEqual(1, wrong_mode.returncode)
+        self.assertIn("mode", wrong_mode.stderr)
+
+    def test_declared_manifest_rejects_unexpected_installed_entry(self) -> None:
+        self.integrate_candidate()
+        (self.canonical / "references" / "shadow.md").write_text(
+            "stale", encoding="utf-8"
+        )
+        result = self.run_validator()
+        self.assertEqual(2, result.returncode, result.stderr)
+        self.assertIn("pending-integration", result.stdout)
+
+    def test_declared_manifest_ignores_only_explicit_transient_files(self) -> None:
+        self.integrate_candidate()
+        for root, value in ((self.candidate, b"candidate"), (self.canonical, b"old")):
+            cache = root / "scripts" / "__pycache__"
+            cache.mkdir()
+            (cache / "helper.cpython-314.pyc").write_bytes(value)
+            (root / ".DS_Store").write_bytes(value)
+        result = self.run_validator()
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("installed_skill_parity: current", result.stdout)
 
     def test_rejects_active_alternate_with_marker_and_route_later(self) -> None:
         (self.external / "SKILL.md").write_text(

@@ -296,6 +296,99 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             text=True,
         )
 
+    def preflight_fields(self) -> dict[str, str]:
+        names = (
+            "APPROVED_ECHO_PRONUNCIATION_SHA",
+            "ECHO_SOURCE_SHA",
+            "EPUB",
+            "EPUB_SHA256",
+            "CLI",
+            "ECHO_CLI_SHA256",
+            "ECHO_RESOURCE_DIR",
+            "ECHO_RESOURCES_SHA256",
+            "VOICE",
+            "RUN_ID",
+            "WORK",
+            "DB",
+            "ECHO_RENDER_INPUT_RECEIPT",
+        )
+        body_lines = ["echo_pronunciation_preflight"]
+        for name in names:
+            body_lines.append(f'printf "{name}=%s\\n" "${{{name}}}"')
+        body = "\n".join(body_lines)
+        result = self.run_preflight(body=body)
+        self.assertEqual(0, result.returncode, result.stderr)
+        return dict(
+            line.split("=", 1)
+            for line in result.stdout.splitlines()
+            if line.split("=", 1)[0] in names
+        )
+
+    def run_direct_leased(
+        self,
+        fields: dict[str, str],
+        *,
+        environment: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess[str]:
+        direct_environment = environment or self.environment()
+        direct_environment.update(fields)
+        dist = self.run_root / "dist"
+        output = dist / "fixture.m4b"
+        sidecar = dist / "fixture.alignment.json"
+        audit = dist / "fixture.pronunciation-audit.json"
+        reel = dist / "fixture.pronunciation-reel.m4b"
+        direct_environment.update(
+            {
+                "OUTPUT": str(output),
+                "SIDECAR": str(sidecar),
+                "AUDIT": str(audit),
+                "REEL": str(reel),
+                "DIST": str(dist),
+                "OWNER_FILE": str(
+                    self.run_root / "research" / "echo-render-output.owner.env"
+                ),
+                "STATE_RECEIPT": str(
+                    self.run_root
+                    / "research"
+                    / f"echo-resume-state-{fields['RUN_ID']}.json"
+                ),
+                "SUCCESS_RECEIPT": str(
+                    self.run_root
+                    / "research"
+                    / f"echo-render-success-{fields['RUN_ID']}.json"
+                ),
+                "STAGE": str(self.run_root / ".untrusted-stage"),
+            }
+        )
+        command = [
+            str(LEASE_HELPER),
+            "--lock-root",
+            str(
+                self.home
+                / ".cache"
+                / "explainer-audiobooks"
+                / "echo-pronunciation-leases"
+            ),
+        ]
+        for resource in (
+            self.echo / ".build" / "cli",
+            output,
+            sidecar,
+            audit,
+            reel,
+            Path(fields["WORK"]),
+            Path(fields["DB"]),
+        ):
+            command.extend(("--resource", str(resource)))
+        command.extend(("--", str(NARRATE_WRAPPER), "--leased-run"))
+        return subprocess.run(
+            command,
+            cwd=self.explainer,
+            env=direct_environment,
+            capture_output=True,
+            text=True,
+        )
+
     @staticmethod
     def wait_for_path(path: Path, process: subprocess.Popen[str]) -> None:
         deadline = time.monotonic() + 5
@@ -448,6 +541,42 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertNotEqual(0, forged_fd.returncode)
         self.assertIn("inherited FD-backed lease capability", forged_fd.stderr)
 
+    def test_direct_leased_run_rechecks_exact_approval_and_release_version(self) -> None:
+        fields = self.preflight_fields()
+        receipt = Path(fields["ECHO_RENDER_INPUT_RECEIPT"])
+        receipt_text = receipt.read_text(encoding="utf-8")
+        fields["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.first_sha
+        receipt.write_text(
+            receipt_text.replace(self.second_sha, self.first_sha, 1),
+            encoding="utf-8",
+        )
+        unapproved = self.run_direct_leased(fields)
+        self.assertNotEqual(0, unapproved.returncode)
+        self.assertIn("must exactly equal Echo source HEAD", unapproved.stderr)
+
+        receipt.write_text(receipt_text, encoding="utf-8")
+        fields = self.preflight_fields()
+        receipt = Path(fields["ECHO_RENDER_INPUT_RECEIPT"])
+        self.cli.write_text(
+            self.cli.read_text(encoding="utf-8").replace(
+                "fixture rv12 (Release)", "fixture rv11 (Release)"
+            ),
+            encoding="utf-8",
+        )
+        cli_sha = hashlib.sha256(self.cli.read_bytes()).hexdigest()
+        fields["ECHO_CLI_SHA256"] = cli_sha
+        receipt.write_text(
+            re.sub(
+                r"(?m)^echo_cli_sha256=.*$",
+                f"echo_cli_sha256={cli_sha}",
+                receipt.read_text(encoding="utf-8"),
+            ),
+            encoding="utf-8",
+        )
+        stale_cli = self.run_direct_leased(fields)
+        self.assertNotEqual(0, stale_cli.returncode)
+        self.assertIn("pre-v12", stale_cli.stderr)
+
     def test_preflight_rejects_dirty_echo_source(self) -> None:
         (self.echo / "revision.txt").write_text("uncommitted\n", encoding="utf-8")
         result = self.run_preflight()
@@ -562,6 +691,26 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertFalse(
             (self.run_root / "research" / "echo-render-output.owner.env").exists()
         )
+
+    def test_success_publishes_run_scoped_media_and_current_selector(self) -> None:
+        result = self.run_narrate()
+        self.assertEqual(0, result.returncode, result.stderr)
+
+        attempt_path = self.run_root / "research" / "echo-render-current-attempt.json"
+        selector_path = (
+            self.run_root / "research" / "echo-render-current-accepted.json"
+        )
+        self.assertTrue(attempt_path.is_file())
+        self.assertTrue(selector_path.is_file())
+        attempt = json.loads(attempt_path.read_text(encoding="utf-8"))
+        selector = json.loads(selector_path.read_text(encoding="utf-8"))
+        self.assertEqual(attempt["attemptID"], selector["attemptID"])
+        artifact_root = Path(selector["artifactRoot"])
+        self.assertTrue(artifact_root.is_relative_to(self.run_root / "dist" / "echo-renders"))
+        self.assertEqual(selector["runID"], artifact_root.parent.name)
+        self.assertEqual(selector["attemptID"], artifact_root.name)
+        self.assertTrue((artifact_root / "fixture.m4b").is_file())
+        self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
 
     def test_wrapper_replaces_inherited_echo_resource_dir_for_every_cli_call(
         self,
@@ -964,6 +1113,57 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         tampered = subprocess.run(command, capture_output=True, text=True)
         self.assertNotEqual(0, tampered.returncode)
         self.assertIn("SHA-256 differs", tampered.stderr)
+
+    def test_failed_newer_source_attempt_invalidates_old_delivery_acceptance(self) -> None:
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        research = self.run_root / "research"
+        attempt_path = research / "echo-render-current-attempt.json"
+        selector_path = research / "echo-render-current-accepted.json"
+        first_attempt = json.loads(attempt_path.read_text(encoding="utf-8"))
+        first_selector = json.loads(selector_path.read_text(encoding="utf-8"))
+        first_artifacts = Path(first_selector["artifactRoot"])
+        first_success = Path(first_selector["successReceipt"])
+
+        epub = self.run_root / "dist" / "fixture.epub"
+        epub.write_bytes(b"newer source epub")
+        failed_environment = self.environment()
+        failed_environment["FAKE_NARRATE_EXIT"] = "42"
+        failed = self.run_narrate(environment=failed_environment)
+        self.assertEqual(42, failed.returncode, failed.stderr)
+
+        newest_attempt = json.loads(attempt_path.read_text(encoding="utf-8"))
+        self.assertNotEqual(first_attempt["attemptID"], newest_attempt["attemptID"])
+        self.assertTrue((first_artifacts / "fixture.m4b").is_file())
+        verify = subprocess.run(
+            [
+                "/usr/local/bin/python3",
+                str(STATE_HELPER),
+                "verify-delivery",
+                "--attempt",
+                str(attempt_path),
+                "--selector",
+                str(selector_path),
+                "--receipt",
+                str(first_success),
+                "--input-receipt",
+                str(first_selector["inputReceipt"]),
+                "--epub",
+                str(epub),
+                "--audiobook",
+                str(first_artifacts / "fixture.m4b"),
+                "--sidecar",
+                str(first_artifacts / "fixture.alignment.json"),
+                "--audit",
+                str(first_artifacts / "fixture.pronunciation-audit.json"),
+                "--reel",
+                str(first_artifacts / "fixture.pronunciation-reel.m4b"),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(0, verify.returncode)
+        self.assertIn("current attempt", verify.stderr)
 
     def test_lease_hashes_each_canonical_shared_resource_identity(self) -> None:
         log = self.tmp / "resources.log"
