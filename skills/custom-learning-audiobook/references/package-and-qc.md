@@ -152,6 +152,8 @@ Use this run layout:
     images/
     <slug>.m4b
     <slug>.alignment.json
+    <slug>.pronunciation-audit.json
+    <slug>.pronunciation-reel.m4b  # present when review samples exist
     README.md or manifest.json
 ```
 
@@ -312,37 +314,50 @@ test ! -d .build/custom-learning-audiobooks/<slug>/chapters/images || \
 
 ## Echo M4B And Alignment
 
-Echo owns the M4B/alignment renderer. Build `echo-cli` from the Echo repo when
-needed:
+Echo owns the M4B, alignment, and pronunciation-review renderer. Always build
+the canonical Release CLI immediately before a governed render; a Debug binary
+or a binary discovered from stale Xcode build settings does not prove that the
+current pronunciation pipeline is active:
 
 ```bash
 cd /Users/dfakkeldy/Developer/Echo
-"$HOME/.claude/bin/xcode-build-gate.sh" --wait && \
-  xcodebuild build \
-    -project Echo.xcodeproj \
-    -scheme echo-cli \
-    -destination 'platform=macOS' \
-    -parallelizeTargets NO \
-    CODE_SIGNING_ALLOWED=NO
+"$HOME/.claude/bin/xcode-build-gate.sh" --wait && make echo-cli
 ```
 
-Find the built binary:
+Use only the deterministic Release product and preflight both its configuration
+and its pronunciation-review interface:
 
 ```bash
-CLI_DIR=$(xcodebuild -project /Users/dfakkeldy/Developer/Echo/Echo.xcodeproj \
-  -scheme echo-cli \
-  -destination 'platform=macOS' \
-  -showBuildSettings 2>/dev/null \
-  | awk -F= '/ TARGET_BUILD_DIR / {gsub(/^ +| +$/, "", $2); print $2; exit}')
-CLI="$CLI_DIR/echo-cli"
+CLI="/Users/dfakkeldy/Developer/Echo/.build/cli/Build/Products/Release/echo-cli"
+test -x "$CLI" || { echo "missing Release echo-cli: $CLI" >&2; exit 1; }
+
+CLI_VERSION=$("$CLI" --version) || exit 1
+case "$CLI_VERSION" in
+  *"(Release)"*) ;;
+  *) echo "stale/non-Release echo-cli: $CLI_VERSION" >&2; exit 1 ;;
+esac
+
+"$CLI" narrate --help | rg --fixed-strings -- '--no-pronunciation-review' >/dev/null || {
+  echo "stale echo-cli: pronunciation review is unavailable" >&2
+  exit 1
+}
 ```
 
-Render with the custom-learning defaults:
+Stop immediately if either preflight fails. Do not narrate first and discover
+afterward that a stale CLI silently omitted the acceptance artifacts.
+
+Render with the custom-learning defaults. Pronunciation review is on by default;
+it applies approved rules before TTS and emits review evidence automatically.
+Do not pass `--no-pronunciation-review` for a governed custom-learning render.
+Keep synthesis bounded at one chapter job and two Kokoro threads:
 
 ```bash
 DIST=".build/custom-learning-audiobooks/$SLUG/dist"
-WORK=".build/custom-learning-audiobooks/$SLUG/audio-work"
-DB=".build/custom-learning-audiobooks/$SLUG/narration.sqlite"
+EPUB_SHA=$(shasum -a 256 "$DIST/$SLUG.epub" | awk '{print $1}')
+CLI_SHA=$(shasum -a 256 "$CLI" | awk '{print $1}')
+RUN_ID="${EPUB_SHA:0:12}-${CLI_SHA:0:12}-am_michael"
+WORK=".build/custom-learning-audiobooks/$SLUG/audio-work-$RUN_ID"
+DB=".build/custom-learning-audiobooks/$SLUG/narration-$RUN_ID.sqlite"
 
 "$CLI" narrate \
   --epub "$DIST/$SLUG.epub" \
@@ -352,14 +367,28 @@ DB=".build/custom-learning-audiobooks/$SLUG/narration.sqlite"
   --title "$TITLE" \
   --author "Dan Fakkeldy" \
   --work-dir "$WORK" \
-  --db "$DB"
+  --db "$DB" \
+  --jobs 1 \
+  --threads 2
 ```
 
-If `am_michael` fails because the voice resource is unavailable, retry with
-`--voice am_puck` and record the fallback. Do not silently use `af_heart`.
+The output stem also produces `$DIST/$SLUG.pronunciation-audit.json` on every
+reviewed render and `$DIST/$SLUG.pronunciation-reel.m4b` when review samples are
+available. The audit JSON is required even when there are zero decisions; an
+empty reel is not created.
 
-If the command exits partial, rerun with `--resume`. Keep the same `--work-dir`
-and `--db`.
+If `am_michael` fails because the voice resource is unavailable, retry with
+`--voice am_puck`, recompute `RUN_ID` with an `-am_puck` suffix so the fallback
+gets fresh `WORK`/`DB` paths, and record the fallback. Do not silently use
+`af_heart`.
+
+Use a fresh `--work-dir` and `--db` whenever the source EPUB changes or the
+Release CLI binary changes. Permit `--resume` only for the same immutable source
+EPUB, Release CLI binary, and capture set: rerun the exact command with
+`--resume`, the original `WORK`/`DB`, matching SHA-256 values, and unmodified
+completed captures. Never copy old captures into a new run or resume after
+editing the EPUB or rebuilding Echo; the content-addressed `RUN_ID` should then
+select fresh paths.
 
 Do not add a self-imposed timeout around `echo-cli narrate`, kill a progressing
 render because it may take several hours, or replace it with Apple/macOS/system
@@ -381,14 +410,66 @@ If native Echo rendering is blocked, distinguish the cases clearly:
 
 ## Audio And Alignment QC
 
-Run what is available and record anything skipped:
+Verify the final sidecar against the exact EPUB and audio, then validate the
+automatic pronunciation audit. These are release gates, not optional QA:
 
 ```bash
 ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "$DIST/$SLUG.m4b"
 
 python3 -m json.tool "$DIST/$SLUG.alignment.json" >/dev/null
+
+"$CLI" verify-sidecar \
+  --epub "$DIST/$SLUG.epub" \
+  --audio "$DIST/$SLUG.m4b" \
+  --sidecar "$DIST/$SLUG.alignment.json"
+
+AUDIT="$DIST/$SLUG.pronunciation-audit.json"
+python3 - "$AUDIT" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+audit_path = Path(sys.argv[1])
+audit = json.loads(audit_path.read_text(encoding="utf-8"))
+required = {
+    "schemaVersion", "renderVersion", "voice", "coverage", "watchCounts",
+    "decisions", "diagnostics", "audiobookFileName",
+    "legacyChapterIndexes",
+}
+missing = sorted(required - audit.keys())
+assert not missing, f"pronunciation audit missing fields: {missing}"
+assert audit["schemaVersion"] == 1, audit["schemaVersion"]
+assert audit["coverage"] == "complete", audit["coverage"]
+assert isinstance(audit["decisions"], list)
+assert isinstance(audit["diagnostics"], list)
+assert isinstance(audit["legacyChapterIndexes"], list)
+stem = audit_path.name.removesuffix(".pronunciation-audit.json")
+assert audit["audiobookFileName"] == f"{stem}.m4b"
+reel_file = audit.get("listeningReelFileName")
+assert reel_file is None or reel_file == f"{stem}.pronunciation-reel.m4b"
+reel_path = audit_path.parent / f"{stem}.pronunciation-reel.m4b"
+assert reel_path.exists() == (reel_file is not None)
+watch_counts = audit["watchCounts"]
+assert isinstance(watch_counts, dict)
+for word in ("startable", "filesystem", "verified", "live", "lives", "record"):
+    assert word in watch_counts, f"missing watch count for {word}"
+    assert isinstance(watch_counts[word], int) and watch_counts[word] >= 0
+PY
+
+REEL="$DIST/$SLUG.pronunciation-reel.m4b"
+test ! -f "$REEL" || ffprobe -v error -show_entries format=duration \
+  -of default=noprint_wrappers=1:nokey=1 "$REEL"
 ```
+
+Require `SIDECAR_OK` from `verify-sidecar`. The manifest schema version is `1`.
+Require `coverage=complete`, preserve all watch counts including zero counts,
+and reconcile every diagnostic before delivery. A missing reel is valid only
+when `listeningReelFileName` is absent or null and there are no review samples.
+When a reel exists, inspect its chapter labels and listen to its samples (or the
+matching final-audiobook passages). Automated checks do not substitute for
+hearing the result: human listening remains explicitly pending until someone
+actually listens, and the report must say so.
 
 Optional Echo QA after narration:
 
@@ -442,6 +523,10 @@ Record:
 - sensitive-topic guardrails,
 - figure count and image provenance/licensing summary,
 - output files,
+- pronunciation audit path, schema version, coverage, watch counts, and
+  diagnostic count,
+- pronunciation reel path or the reason no reel was emitted,
+- pronunciation human-listening status (`pending` until actually heard),
 - QC gates passed/skipped.
 
 ## Copy Rules
@@ -516,6 +601,11 @@ ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "$DELIVERY_DIR/$SLUG.m4b"
 test ! -f "$DELIVERY_DIR/$SLUG.alignment.json" || \
   python3 -m json.tool "$DELIVERY_DIR/$SLUG.alignment.json" >/dev/null
+python3 -m json.tool "$DELIVERY_DIR/$SLUG.pronunciation-audit.json" >/dev/null
+test ! -f "$DELIVERY_DIR/$SLUG.pronunciation-reel.m4b" || \
+  ffprobe -v error -show_entries format=duration \
+    -of default=noprint_wrappers=1:nokey=1 \
+    "$DELIVERY_DIR/$SLUG.pronunciation-reel.m4b"
 ```
 
 Public publishing is a separate governed destination. It requires

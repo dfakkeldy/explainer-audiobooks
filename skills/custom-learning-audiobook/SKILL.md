@@ -304,11 +304,15 @@ research, write one coherent manuscript, and package the result for Echo.
    macOS `say`, Apple system voices, AVSpeechSynthesizer, audiobook-app TTS, or
    any other non-Echo renderer unless the user explicitly asks for that
    non-Echo preview/fallback after you name the tradeoff. Produce `<slug>.m4b`
-   and `<slug>.alignment.json` whenever the CLI can run. If native Echo audio is
-   blocked and the user has not approved a non-Echo substitute, surface only the
-   EPUB/Markdown from the run folder as clearly labelled interim files and report
-   the blocker. Do not call that an Echo-ready or complete governed package, and
-   do not proceed to delivery sync.
+   and `<slug>.alignment.json` whenever the CLI can run. Pronunciation review is
+   on by default and produces a pronunciation audit plus an optional
+   pronunciation reel. Do not pass `--no-pronunciation-review` for a governed
+   render. Use a freshly built, preflighted Release CLI and the bounded job/thread
+   settings in the package reference. If native Echo audio is blocked and the
+   user has not approved a non-Echo substitute, surface only the EPUB/Markdown
+   from the run folder as clearly labelled interim files and report the blocker.
+   Do not call that an Echo-ready or complete governed package, and do not proceed
+   to delivery sync.
 
 13. **Final-verify the governed package.** After native Echo narration succeeds,
     verify that the paired receipt matches the portrait, square, EPUB, and M4B.
@@ -327,9 +331,13 @@ research, write one coherent manuscript, and package the result for Echo.
       --receipt "$DIST/cover-selection.json"
     ```
 
-    Parse alignment JSON, inspect M4B duration with `ffprobe`, run any available
-    Echo QA, and verify EPUB figures before delivery. A failed receipt or media
-    check returns to the build/audio step; it never falls through to copying.
+    Parse alignment JSON, run `verify-sidecar`, inspect M4B duration with
+    `ffprobe`, validate pronunciation-audit schema/coverage/watch counts, inspect
+    the pronunciation reel when present, run any available Echo QA, and verify
+    EPUB figures before delivery. Keep human listening explicitly `pending` until
+    the reel or matching final-audiobook passages have actually been heard. A
+    failed receipt or media check returns to the build/audio step; it never falls
+    through to copying.
 
 14. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
     follow `references/package-and-qc.md`. Run `sync_selected_cover.py` first as
@@ -346,9 +354,10 @@ research, write one coherent manuscript, and package the result for Echo.
     source-confidence label, word count, runtime, narrator, frontier author
     model, lower-cost review/production roles used, output paths, the actual
     delivery folder, receipt/destination classifications, and which QC gates
-    passed or were skipped. Report an iCloud Books path only when a copy was
-    actually created. If the book includes pictures, report figure count and any
-    image rights/privacy caveats.
+    passed or were skipped. Include the pronunciation audit, optional
+    pronunciation reel, coverage/watch-count summary, and human listening status.
+    Report an iCloud Books path only when a copy was actually created. If the book
+    includes pictures, report figure count and any image rights/privacy caveats.
 
 ## Hard Rules
 
