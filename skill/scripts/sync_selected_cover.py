@@ -414,17 +414,13 @@ def sync_selected_cover(
         intent,
         destination_has_artifacts,
     )
-    checksum_sources = sources
-    checksum_bytes = (
-        _checksum_payload(
-            checksum_path,
-            checksum_sources,
-            add_missing=PAIRED_ARTIFACT_NAMES if paired else None,
-        )
-        if checksum_path is not None
-        else None
-    )
     if not apply:
+        if checksum_path is not None:
+            _checksum_payload(
+                checksum_path,
+                sources,
+                add_missing=PAIRED_ARTIFACT_NAMES if paired else None,
+            )
         return SyncResult(decision, str(destination), False, files)
 
     if _lexists(destination) and not destination.is_dir():
@@ -460,6 +456,15 @@ def sync_selected_cover(
                     m4b_path=staged_sources.get(m4b_path.name) if m4b_path is not None else None,
                     receipt_path=staged_sources["cover-selection.json"],
                 )
+            checksum_bytes = (
+                _checksum_payload(
+                    checksum_path,
+                    staged_sources,
+                    add_missing=PAIRED_ARTIFACT_NAMES if paired else None,
+                )
+                if checksum_path is not None
+                else None
+            )
             ordered_targets = [targets[name] for name in files]
             if checksum_path is not None:
                 ordered_targets.append(checksum_path)

@@ -507,6 +507,43 @@ class SyncSelectedCoverTests(unittest.TestCase):
             self.assertEqual({"marker"}, {path.name for path in destination.iterdir()})
             self.assertEqual(b"unchanged", marker.read_bytes())
 
+    def test_paired_checksum_rows_bind_exact_staged_package_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            _selected, artifacts, epub, m4b = write_paired_package(root)
+            destination = root / "destination"; destination.mkdir()
+            checksums = destination / "SHA256SUMS"
+            checksums.write_text(
+                f"{'a' * 64}  book.epub\n{'b' * 64}  book.m4b\n",
+                encoding="utf-8",
+            )
+            real_copy2 = sync_selected_cover.shutil.copy2
+
+            def mutate_package_during_staging(source: Path, target: Path):
+                result = real_copy2(source, target)
+                if Path(target).name in {"book.epub", "book.m4b"}:
+                    with Path(target).open("ab") as stream:
+                        stream.write(b"-staged-non-art-mutation")
+                return result
+
+            with mock.patch.object(sync_selected_cover, "verify_package"), mock.patch.object(
+                sync_selected_cover.shutil,
+                "copy2",
+                side_effect=mutate_package_during_staging,
+            ):
+                sync_selected_cover.sync_selected_cover(
+                    artifacts["cover-selection.json"], artifacts["cover.png"], epub,
+                    m4b, destination, intent="reuse", apply=True,
+                    artifact_map=artifacts, checksum_manifest=checksums,
+                )
+
+            manifest = checksums.read_text(encoding="utf-8")
+            for name in ("book.epub", "book.m4b"):
+                published = destination / name
+                digest = hashlib.sha256(published.read_bytes()).hexdigest()
+                self.assertIn(f"{digest}  {name}\n", manifest)
+                self.assertTrue(published.read_bytes().endswith(b"-staged-non-art-mutation"))
+
 
 if __name__ == "__main__":
     unittest.main()
