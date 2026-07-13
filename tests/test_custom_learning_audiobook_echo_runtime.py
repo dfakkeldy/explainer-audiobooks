@@ -39,6 +39,20 @@ NARRATE_WRAPPER = (
     / "scripts"
     / "echo_pronunciation_narrate.sh"
 )
+LEASE_HELPER = (
+    ROOT
+    / "skills"
+    / "custom-learning-audiobook"
+    / "scripts"
+    / "echo_pronunciation_lease.py"
+)
+STATE_HELPER = (
+    ROOT
+    / "skills"
+    / "custom-learning-audiobook"
+    / "scripts"
+    / "echo_pronunciation_state.py"
+)
 
 
 def load_audit_validator_module():
@@ -64,12 +78,14 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.echo = self.tmp / "Echo"
         self.explainer = self.tmp / "explainer-audiobooks"
         self.home = self.tmp / "home"
+        self.fake_bin = self.home / "bin"
         self.run_root = (
             self.explainer / ".build" / "custom-learning-audiobooks" / "fixture"
         )
         self.cli = (
             self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
         )
+        self.resources = self.cli.parent / "EchoNarrationResources"
 
         self.echo.mkdir(parents=True)
         self.explainer.mkdir()
@@ -79,7 +95,20 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         )
         (self.echo / ".gitignore").write_text(".build/\n", encoding="utf-8")
         self.cli.parent.mkdir(parents=True)
+        self.resources.mkdir()
+        (self.resources / "pronunciations.json").write_text(
+            '{"renderVersion":12}\n', encoding="utf-8"
+        )
         self.write_cli(include_review_flag=True)
+
+        self.fake_bin.mkdir(parents=True)
+        ffprobe = self.fake_bin / "ffprobe"
+        ffprobe.write_text(
+            "#!/usr/bin/env bash\nprintf '%s\\n' "
+            '\'{"format":{"duration":"5.0"}}\'\n',
+            encoding="utf-8",
+        )
+        ffprobe.chmod(ffprobe.stat().st_mode | stat.S_IXUSR)
 
         gate = self.home / ".claude" / "bin" / "xcode-build-gate.sh"
         gate.parent.mkdir(parents=True)
@@ -113,6 +142,52 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
 
     def write_cli(self, *, include_review_flag: bool) -> None:
         help_text = "--no-pronunciation-review" if include_review_flag else "--voice"
+        emitter = self.cli.parent / "fake_echo_emit.py"
+        emitter.write_text(
+            """#!/usr/bin/env python3
+import hashlib, json, os, pathlib, sys
+
+epub, out, sidecar, work, db = map(pathlib.Path, sys.argv[1:6])
+voice = sys.argv[6]
+out.parent.mkdir(parents=True, exist_ok=True)
+work.mkdir(parents=True, exist_ok=True)
+db.write_bytes(b"fixture database")
+audio = work / "chapter-0.m4a"
+audio.write_bytes(b"fixture chapter audio")
+def frame(value):
+    data = value.encode()
+    return str(len(data)).encode() + b":" + data
+raw = epub.read_bytes()
+source = hashlib.sha256(frame("source-kind=epub") + frame(f"bytes={len(raw)}") + raw).hexdigest()
+payload = {"duration": 1.0, "anchors": [], "pronunciationEvidence": {"decisions": [], "diagnostics": []}}
+payload_bytes = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+identity = {
+    "schemaVersion": 1, "captureSetID": "c" * 64, "sourceFingerprint": source,
+    "voice": voice, "renderVersion": 12, "rendererIdentity": "fixture-renderer",
+    "normalizationMode": "spoken", "chapterIndex": 0,
+    "chapterContentSignature": "d" * 64, "audioFileName": audio.name,
+    "audioFileByteCount": audio.stat().st_size,
+    "audioSHA256": hashlib.sha256(audio.read_bytes()).hexdigest(),
+    "payloadSHA256": hashlib.sha256(payload_bytes).hexdigest(),
+}
+marker = dict(payload)
+marker["identity"] = identity
+(work / ".anchors-ch0.json").write_text(json.dumps(marker, sort_keys=True, separators=(",", ":")))
+out.write_bytes(b"fixture audiobook bytes")
+sidecar.write_text("{}\\n")
+words = ("arithmetic", "campbell", "content", "fakkeldy", "filesystem", "live", "lives", "re", "read", "readme", "record", "resume", "resumes", "résumé", "résumés", "startable", "timeframe", "verified", "xcassets", "xcode")
+audit = {
+    "schemaVersion": 2, "renderVersion": 12, "voice": voice, "coverage": "complete",
+    "watchCounts": {word: 0 for word in words}, "decisions": [], "diagnostics": [],
+    "legacyChapterIndexes": [], "audiobookFileName": out.name,
+    "audiobookSHA256": hashlib.sha256(out.read_bytes()).hexdigest(),
+}
+if not os.environ.get("FAKE_SKIP_AUDIT"):
+    out.with_suffix(".pronunciation-audit.json").write_text(json.dumps(audit))
+""",
+            encoding="utf-8",
+        )
+        emitter.chmod(emitter.stat().st_mode | stat.S_IXUSR)
         self.cli.write_text(
             "#!/usr/bin/env bash\n"
             "set -euo pipefail\n"
@@ -122,21 +197,26 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             '>>"$FAKE_ECHO_ENV_LOG"\n'
             "fi\n"
             "if [[ ${1:-} == --version ]]; then\n"
-            "  echo 'echo-cli fixture (Release)'\n"
+            "  echo 'echo-cli fixture rv12 (Release)'\n"
             "elif [[ ${1:-} == narrate && ${2:-} == --help ]]; then\n"
             f"  echo '{help_text}'\n"
+            "elif [[ ${1:-} == verify-sidecar ]]; then\n"
+            "  exit 0\n"
             "elif [[ ${1:-} == narrate ]]; then\n"
             "  shift\n"
             "  if [[ -n ${FAKE_NARRATE_LOG:-} ]]; then\n"
             '    printf \'BEGIN=%s\\n\' "$BASHPID" >>"$FAKE_NARRATE_LOG"\n'
             '    printf \'ARG=%s\\n\' "$@" >>"$FAKE_NARRATE_LOG"\n'
             "  fi\n"
-            "  work= db= out=\n"
+            "  work= db= out= sidecar= epub= voice=\n"
             "  while (( $# )); do\n"
             '    case "$1" in\n'
             "      --work-dir) work=$2; shift 2 ;;\n"
             "      --db) db=$2; shift 2 ;;\n"
             "      --out) out=$2; shift 2 ;;\n"
+            "      --sidecar) sidecar=$2; shift 2 ;;\n"
+            "      --epub) epub=$2; shift 2 ;;\n"
+            "      --voice) voice=$2; shift 2 ;;\n"
             "      --resume) shift ;;\n"
             "      *) shift ;;\n"
             "    esac\n"
@@ -145,9 +225,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             "  if [[ -n ${FAKE_NARRATE_RELEASE:-} ]]; then\n"
             "    while [[ ! -e $FAKE_NARRATE_RELEASE ]]; do sleep 0.05; done\n"
             "  fi\n"
-            '  [[ -z $work ]] || mkdir -p "$work"\n'
-            '  [[ -z $db ]] || touch "$db"\n'
-            '  [[ -z $out ]] || touch "$out"\n'
+            f'  "{emitter}" "$epub" "$out" "$sidecar" "$work" "$db" "$voice"\n'
             '  exit "${FAKE_NARRATE_EXIT:-0}"\n'
             "else\n"
             "  exit 64\n"
@@ -162,13 +240,15 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             {
                 "HOME": str(self.home),
                 "ECHO_REPO": str(self.echo),
-                "APPROVED_ECHO_PRONUNCIATION_SHA": self.first_sha,
+                "APPROVED_ECHO_PRONUNCIATION_SHA": self.second_sha,
+                "EXPLAINER_ROOT": str(self.explainer),
                 "SLUG": "fixture",
                 "RUN_ROOT": str(self.run_root),
                 "VOICE": "am_michael",
                 "TITLE": "Fixture Book",
             }
         )
+        environment["PATH"] = f"{self.fake_bin}:{environment['PATH']}"
         return environment
 
     def run_preflight(
@@ -181,7 +261,22 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             "set -euo pipefail\n" f"source {shlex.quote(str(PREFLIGHT))}\n" f"{body}\n"
         )
         return subprocess.run(
-            ["bash", "-c", command],
+            [
+                str(LEASE_HELPER),
+                "--lock-root",
+                str(
+                    self.home
+                    / ".cache"
+                    / "explainer-audiobooks"
+                    / "echo-pronunciation-leases"
+                ),
+                "--resource",
+                str(self.echo / ".build" / "cli"),
+                "--",
+                "bash",
+                "-c",
+                command,
+            ],
             cwd=self.explainer,
             env=environment or self.environment(),
             capture_output=True,
@@ -237,56 +332,31 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             line.split("=", 1)
             for line in receipt.read_text(encoding="utf-8").splitlines()
         )
-        self.assertEqual(self.first_sha, fields["approved_echo_pronunciation_sha"])
+        self.assertEqual(self.second_sha, fields["approved_echo_pronunciation_sha"])
         self.assertEqual(self.second_sha, fields["echo_source_sha"])
         self.assertRegex(fields["epub_sha256"], r"^[0-9a-f]{64}$")
         self.assertRegex(fields["echo_cli_sha256"], r"^[0-9a-f]{64}$")
+        self.assertRegex(fields["echo_resources_sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(str(self.resources), fields["echo_resource_dir"])
 
-    def test_approved_revision_is_part_of_every_render_identity(self) -> None:
-        def run_with_approval(approved_sha: str) -> dict[str, str]:
-            environment = self.environment()
-            environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = approved_sha
-            result = self.run_preflight(
-                environment=environment,
-                body=(
-                    "echo_pronunciation_preflight\n"
-                    'printf "run_id=%s\\nwork=%s\\ndb=%s\\nreceipt=%s\\n" '
-                    '"$RUN_ID" "$WORK" "$DB" "$ECHO_RENDER_INPUT_RECEIPT"'
-                ),
-            )
-            self.assertEqual(0, result.returncode, result.stderr)
-            return dict(
-                line.split("=", 1)
-                for line in result.stdout.splitlines()
-                if line.startswith(("run_id=", "work=", "db=", "receipt="))
-            )
-
-        first = run_with_approval(self.first_sha)
-        second = run_with_approval(self.second_sha)
-
-        for field in ("run_id", "work", "db", "receipt"):
-            with self.subTest(field=field):
-                self.assertNotEqual(first[field], second[field])
-        self.assertIn(self.first_sha, first["run_id"])
-        self.assertIn(self.second_sha, second["run_id"])
-        self.assertEqual(
-            self.first_sha,
-            dict(
-                line.split("=", 1)
-                for line in Path(first["receipt"])
-                .read_text(encoding="utf-8")
-                .splitlines()
-            )["approved_echo_pronunciation_sha"],
+    def test_standalone_preflight_rejects_make_without_build_lease(self) -> None:
+        command = f"source {shlex.quote(str(PREFLIGHT))}; echo_pronunciation_preflight"
+        result = subprocess.run(
+            ["bash", "-c", command],
+            cwd=self.explainer,
+            env=self.environment(),
+            capture_output=True,
+            text=True,
         )
-        self.assertEqual(
-            self.second_sha,
-            dict(
-                line.split("=", 1)
-                for line in Path(second["receipt"])
-                .read_text(encoding="utf-8")
-                .splitlines()
-            )["approved_echo_pronunciation_sha"],
-        )
+        self.assertEqual(70, result.returncode)
+        self.assertIn("requires the inherited build lease", result.stderr)
+
+    def test_preflight_requires_the_exact_reviewed_echo_source(self) -> None:
+        environment = self.environment()
+        environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.first_sha
+        result = self.run_preflight(environment=environment)
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("must exactly equal Echo source HEAD", result.stderr)
 
     def test_preflight_rejects_mismatched_receipt_or_unreceipted_capture(self) -> None:
         result = self.run_preflight(
@@ -321,9 +391,6 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         result = self.run_preflight(
             body=(
                 "echo_pronunciation_preflight\n"
-                'mkdir -p "$WORK"\n'
-                'touch "$DB"\n'
-                "echo_pronunciation_preflight\n"
                 'printf "receipt=%s\\n" "$ECHO_RENDER_INPUT_RECEIPT"'
             )
         )
@@ -350,7 +417,36 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.second_sha
         result = self.run_preflight(environment=environment)
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("not an ancestor", result.stderr)
+        self.assertIn("must exactly equal Echo source HEAD", result.stderr)
+
+    def test_preflight_rejects_unsafe_slug_and_run_root(self) -> None:
+        for slug in ("../escape", "Fixture", "fixture/other"):
+            with self.subTest(slug=slug):
+                environment = self.environment()
+                environment["SLUG"] = slug
+                result = self.run_preflight(environment=environment)
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn("SLUG", result.stderr)
+
+        environment = self.environment()
+        environment["RUN_ROOT"] = str(self.tmp / "outside" / "fixture")
+        result = self.run_preflight(environment=environment)
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("canonical run path", result.stderr)
+
+    def test_internal_modes_reject_a_forged_environment_capability(self) -> None:
+        environment = self.environment()
+        environment["ECHO_PRONUNCIATION_LEASE_HELD"] = "1"
+        result = self.run_narrate("--leased-run", environment=environment)
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("inherited FD-backed lease capability", result.stderr)
+
+        environment["ECHO_PRONUNCIATION_LEASE_CAPABILITY"] = json.dumps(
+            {str((self.echo / ".build" / "cli").resolve()): 1}
+        )
+        forged_fd = self.run_narrate("--leased-preflight", environment=environment)
+        self.assertNotEqual(0, forged_fd.returncode)
+        self.assertIn("inherited FD-backed lease capability", forged_fd.stderr)
 
     def test_preflight_rejects_dirty_echo_source(self) -> None:
         (self.echo / "revision.txt").write_text("uncommitted\n", encoding="utf-8")
@@ -381,6 +477,15 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertIn("pronunciation review is unavailable", result.stderr)
 
+    def test_preflight_rejects_pre_v12_release_cli(self) -> None:
+        cli_text = self.cli.read_text(encoding="utf-8").replace(
+            "fixture rv12 (Release)", "fixture rv11 (Release)"
+        )
+        self.cli.write_text(cli_text, encoding="utf-8")
+        result = self.run_preflight()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("pre-v12", result.stderr)
+
     def test_narration_wrapper_uses_exact_content_addressed_paths(self) -> None:
         log = self.tmp / "narrate.log"
         environment = self.environment()
@@ -394,14 +499,31 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             for line in log.read_text(encoding="utf-8").splitlines()
             if line.startswith("ARG=")
         ]
+        staged_output = next(
+            argument
+            for index, argument in enumerate(arguments)
+            if arguments[index - 1] == "--out"
+        )
+        staged_sidecar = next(
+            argument
+            for index, argument in enumerate(arguments)
+            if arguments[index - 1] == "--sidecar"
+        )
+        self.assertRegex(
+            staged_output,
+            rf"^{re.escape(str(self.run_root))}/\.echo-output-.+/fixture\.m4b$",
+        )
+        self.assertEqual(
+            str(Path(staged_output).parent / "fixture.alignment.json"), staged_sidecar
+        )
         self.assertEqual(
             [
                 "--epub",
                 str(self.run_root / "dist" / "fixture.epub"),
                 "--out",
-                str(self.run_root / "dist" / "fixture.m4b"),
+                staged_output,
                 "--sidecar",
-                str(self.run_root / "dist" / "fixture.alignment.json"),
+                staged_sidecar,
                 "--voice",
                 "am_michael",
                 "--title",
@@ -436,12 +558,12 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         lease_root = (
             self.home / ".cache" / "explainer-audiobooks" / "echo-pronunciation-leases"
         )
-        self.assertEqual(6, len(list(lease_root.glob("*.lock"))))
+        self.assertGreaterEqual(len(list(lease_root.glob("*.lock"))), 7)
         self.assertFalse(
             (self.run_root / "research" / "echo-render-output.owner.env").exists()
         )
 
-    def test_wrapper_clears_inherited_echo_resource_dir_for_every_cli_call(
+    def test_wrapper_replaces_inherited_echo_resource_dir_for_every_cli_call(
         self,
     ) -> None:
         environment_log = self.tmp / "echo-environment.log"
@@ -455,9 +577,11 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         calls = environment_log.read_text(encoding="utf-8").splitlines()
         self.assertEqual(
             [
-                "CALL=--version: ECHO_RESOURCE_DIR=<unset>",
-                "CALL=narrate:--help ECHO_RESOURCE_DIR=<unset>",
-                "CALL=narrate:--epub ECHO_RESOURCE_DIR=<unset>",
+                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources}",
+                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources}",
+                f"CALL=narrate:--epub ECHO_RESOURCE_DIR={self.resources}",
+                f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources}",
+                f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources}",
             ],
             calls,
         )
@@ -488,7 +612,6 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.assertTrue(owner.is_file())
 
         contender_environment = environment.copy()
-        contender_environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.second_sha
         contender = self.run_narrate(environment=contender_environment)
 
         self.assertEqual(75, contender.returncode, contender.stderr)
@@ -528,7 +651,10 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         )
         owner = self.run_root / "research" / "echo-render-output.owner.env"
 
-        def write_owner(hostname: str = socket.gethostname()) -> None:
+        def write_owner(
+            hostname: str = socket.gethostname(),
+            run_id: str = fields["run_id"],
+        ) -> None:
             owner.write_text(
                 "\n".join(
                     (
@@ -537,9 +663,9 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
                         "owner_pid=99999999",
                         f"owner_host={hostname}",
                         "owner_start=Mon Jan  1 00:00:00 2001",
-                        f"run_id={fields['run_id']}",
-                        f"work_dir={fields['work']}",
-                        f"narration_db={fields['db']}",
+                        f"run_id={run_id}",
+                        f"work_dir={self.run_root / f'audio-work-{run_id}'}",
+                        f"narration_db={self.run_root / f'narration-{run_id}.sqlite'}",
                         f"output_m4b={self.run_root / 'dist' / 'fixture.m4b'}",
                         f"output_sidecar={self.run_root / 'dist' / 'fixture.alignment.json'}",
                         f"output_audit={self.run_root / 'dist' / 'fixture.pronunciation-audit.json'}",
@@ -576,6 +702,13 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         recovered = self.run_narrate("--recover-stale-lock")
         self.assertEqual(0, recovered.returncode, recovered.stderr)
         self.assertIn("stale narration lock recovered", recovered.stdout)
+        self.assertFalse(owner.exists())
+
+        old_run_id = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'d' * 40}-am_michael"
+        write_owner(run_id=old_run_id)
+        old_recovered = self.run_narrate("--recover-stale-lock")
+        self.assertEqual(0, old_recovered.returncode, old_recovered.stderr)
+        self.assertIn("stale narration lock recovered", old_recovered.stdout)
         self.assertFalse(owner.exists())
 
         fresh = self.run_narrate()
@@ -672,6 +805,166 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         owner = self.run_root / "research" / "echo-render-output.owner.env"
         self.assertFalse(owner.exists())
 
+    def test_locked_postcheck_rejects_resource_bundle_changed_during_narration(
+        self,
+    ) -> None:
+        ready = self.tmp / "resource-ready"
+        release = self.tmp / "resource-release"
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_READY": str(ready),
+                "FAKE_NARRATE_RELEASE": str(release),
+            }
+        )
+        process = subprocess.Popen(
+            [str(NARRATE_WRAPPER)],
+            cwd=self.explainer,
+            env=environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.addCleanup(lambda: process.poll() is None and process.kill())
+        self.wait_for_path(ready, process)
+        (self.resources / "pronunciations.json").write_text(
+            '{"renderVersion":13}\n', encoding="utf-8"
+        )
+        release.touch()
+        stdout, stderr = process.communicate(timeout=5)
+        self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
+        self.assertIn("Echo resources changed while narration lease was held", stderr)
+
+    def test_resume_requires_hash_bound_current_v12_capture_state(self) -> None:
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        marker = next(self.run_root.glob("audio-work-*/.anchors-ch0.json"))
+        marker_payload = json.loads(marker.read_text(encoding="utf-8"))
+        marker_payload["identity"]["renderVersion"] = True
+        marker.write_text(json.dumps(marker_payload), encoding="utf-8")
+
+        resumed = self.run_narrate("--resume")
+        self.assertNotEqual(0, resumed.returncode)
+        self.assertIn("resume state", resumed.stderr)
+
+    def test_resume_rejects_database_mutation(self) -> None:
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        database = next(self.run_root.glob("narration-*.sqlite"))
+        database.write_bytes(b"substituted database")
+        changed_database = self.run_narrate("--resume")
+        self.assertNotEqual(0, changed_database.returncode)
+        self.assertIn("resume state", changed_database.stderr)
+
+    def test_resume_rejects_identity_free_legacy_capture(self) -> None:
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        marker = next(self.run_root.glob("audio-work-*/.anchors-ch0.json"))
+        payload = json.loads(marker.read_text(encoding="utf-8"))
+        payload["identity"] = None
+        marker.write_text(json.dumps(payload), encoding="utf-8")
+        resumed = self.run_narrate("--resume")
+        self.assertNotEqual(0, resumed.returncode)
+        self.assertIn("sealed Echo identity", resumed.stderr)
+
+    def test_success_exit_without_complete_outputs_is_not_published(self) -> None:
+        environment = self.environment()
+        environment["FAKE_SKIP_AUDIT"] = "1"
+        result = self.run_narrate(environment=environment)
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("did not produce required output", result.stderr)
+        self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
+        self.assertFalse(
+            list((self.run_root / "research").glob("echo-render-success-*.json"))
+        )
+
+    def test_output_symlink_is_rejected_without_clobbering_its_target(self) -> None:
+        target = self.tmp / "outside-output"
+        target.write_bytes(b"do not replace")
+        output = self.run_root / "dist" / "fixture.m4b"
+        output.symlink_to(target)
+        result = self.run_narrate()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("final narration output must not be a symlink", result.stderr)
+        self.assertEqual(b"do not replace", target.read_bytes())
+        self.assertTrue(output.is_symlink())
+
+    def test_success_receipt_binds_final_media_and_audit(self) -> None:
+        result = self.run_narrate()
+        self.assertEqual(0, result.returncode, result.stderr)
+        receipts = list((self.run_root / "research").glob("echo-render-success-*.json"))
+        self.assertEqual(1, len(receipts))
+        receipt = json.loads(receipts[0].read_text(encoding="utf-8"))
+        self.assertEqual(1, receipt["schemaVersion"])
+        for field in ("audiobookSHA256", "sidecarSHA256", "auditSHA256"):
+            self.assertRegex(receipt[field], r"^[0-9a-f]{64}$")
+
+        input_receipt = next(
+            (self.run_root / "research").glob("echo-render-inputs-*.env")
+        )
+        input_fields = dict(
+            line.split("=", 1)
+            for line in input_receipt.read_text(encoding="utf-8").splitlines()
+        )
+        unleased_record = subprocess.run(
+            [
+                "/usr/local/bin/python3",
+                str(STATE_HELPER),
+                "record-state",
+                "--work",
+                input_fields["work_dir"],
+                "--db",
+                input_fields["narration_db"],
+                "--receipt",
+                str(self.run_root / "research" / "forged-resume-state.json"),
+                "--epub",
+                str(self.run_root / "dist" / "fixture.epub"),
+                "--source-sha",
+                self.second_sha,
+                "--voice",
+                "am_michael",
+                "--input-receipt",
+                str(input_receipt),
+                "--lock-root",
+                str(
+                    self.home
+                    / ".cache"
+                    / "explainer-audiobooks"
+                    / "echo-pronunciation-leases"
+                ),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(0, unleased_record.returncode)
+        self.assertIn(
+            "missing inherited FD-backed lease capability", unleased_record.stderr
+        )
+
+        command = [
+            "/usr/local/bin/python3",
+            str(STATE_HELPER),
+            "verify-delivery",
+            "--receipt",
+            str(receipts[0]),
+            "--audiobook",
+            str(self.run_root / "dist" / "fixture.m4b"),
+            "--sidecar",
+            str(self.run_root / "dist" / "fixture.alignment.json"),
+            "--audit",
+            str(self.run_root / "dist" / "fixture.pronunciation-audit.json"),
+            "--reel",
+            str(self.run_root / "dist" / "fixture.pronunciation-reel.m4b"),
+        ]
+        verified = subprocess.run(command, capture_output=True, text=True)
+        self.assertEqual(0, verified.returncode, verified.stderr)
+        (self.run_root / "dist" / "fixture.alignment.json").write_text(
+            '{"tampered":true}\n', encoding="utf-8"
+        )
+        tampered = subprocess.run(command, capture_output=True, text=True)
+        self.assertNotEqual(0, tampered.returncode)
+        self.assertIn("SHA-256 differs", tampered.stderr)
+
     def test_lease_hashes_each_canonical_shared_resource_identity(self) -> None:
         log = self.tmp / "resources.log"
         environment = self.environment()
@@ -684,6 +977,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             if line.startswith("ARG=")
         ]
         resources = (
+            self.echo / ".build" / "cli",
             self.run_root / "dist" / "fixture.m4b",
             self.run_root / "dist" / "fixture.alignment.json",
             self.run_root / "dist" / "fixture.pronunciation-audit.json",
@@ -759,6 +1053,14 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
         self.audit = self.tmp / "fixture.pronunciation-audit.json"
         self.audiobook = self.tmp / "fixture.m4b"
         self.audiobook.write_bytes(b"fixture audiobook bytes")
+        self.fake_bin = self.tmp / "bin"
+        self.fake_bin.mkdir()
+        ffprobe = self.fake_bin / "ffprobe"
+        ffprobe.write_text(
+            '#!/usr/bin/env bash\nprintf \'%s\\n\' \'{"format":{"duration":"5.0"}}\'\n',
+            encoding="utf-8",
+        )
+        ffprobe.chmod(ffprobe.stat().st_mode | stat.S_IXUSR)
         self.payload = {
             "schemaVersion": 2,
             "renderVersion": 12,
@@ -794,8 +1096,11 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
 
     def run_validator(self) -> subprocess.CompletedProcess[str]:
         self.audit.write_text(json.dumps(self.payload), encoding="utf-8")
+        environment = os.environ.copy()
+        environment["PATH"] = f"{self.fake_bin}:{environment['PATH']}"
         return subprocess.run(
             ["/usr/local/bin/python3", str(AUDIT_VALIDATOR), str(self.audit)],
+            env=environment,
             capture_output=True,
             text=True,
         )
@@ -814,6 +1119,12 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
     def test_accepts_full_schema_decision_and_matching_watch_count(self) -> None:
         self.payload["decisions"] = [self.valid_decision()]
         self.payload["watchCounts"]["filesystem"] = 1
+        reel = self.tmp / "fixture.pronunciation-reel.m4b"
+        reel.write_bytes(b"fixture reel")
+        self.payload["listeningReelFileName"] = reel.name
+        self.payload["listeningReelSHA256"] = hashlib.sha256(
+            reel.read_bytes()
+        ).hexdigest()
         result = self.run_validator()
         self.assertEqual(0, result.returncode, result.stderr)
 
@@ -834,6 +1145,51 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
                 result = self.run_validator()
                 self.assertNotEqual(0, result.returncode)
                 self.payload[field] = original
+
+    def test_rejects_disallowed_voice_or_pre_v12_render(self) -> None:
+        for field, value, message in (
+            ("voice", "af_heart", "voice must be am_michael or am_puck"),
+            ("renderVersion", 11, "renderVersion must be at least 12"),
+        ):
+            with self.subTest(field=field):
+                original = self.payload[field]
+                self.payload[field] = value
+                result = self.run_validator()
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn(message, result.stderr)
+                self.payload[field] = original
+
+    def test_timed_decisions_require_a_reel_and_in_media_ranges(self) -> None:
+        self.payload["decisions"] = [self.valid_decision()]
+        self.payload["watchCounts"]["filesystem"] = 1
+        missing_reel = self.run_validator()
+        self.assertNotEqual(0, missing_reel.returncode)
+        self.assertIn(
+            "timed pronunciation decisions require a listening reel",
+            missing_reel.stderr,
+        )
+
+        reel = self.tmp / "fixture.pronunciation-reel.m4b"
+        reel.write_bytes(b"fixture reel")
+        self.payload["listeningReelFileName"] = reel.name
+        self.payload["listeningReelSHA256"] = hashlib.sha256(
+            reel.read_bytes()
+        ).hexdigest()
+        self.payload["decisions"][0]["bookRelativeAudioRange"] = {
+            "start": 4.5,
+            "end": 9999.0,
+        }
+        outside = self.run_validator()
+        self.assertNotEqual(0, outside.returncode)
+        self.assertIn("exceeds audiobook duration", outside.stderr)
+
+    def test_rejects_decision_word_missing_from_watch_counts(self) -> None:
+        decision = self.valid_decision()
+        decision["normalizedWord"] = "not-watched"
+        self.payload["decisions"] = [decision]
+        result = self.run_validator()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("is absent from watchCounts", result.stderr)
 
     def test_rejects_schema_invalid_decision_fields_and_ranges(self) -> None:
         valid = self.valid_decision()
@@ -1011,7 +1367,9 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
         self.payload.pop("listeningReelSHA256")
         unlisted = self.run_validator()
         self.assertNotEqual(0, unlisted.returncode)
-        self.assertIn("unlisted listening reel", unlisted.stderr)
+        self.assertIn(
+            "timed pronunciation decisions require a listening reel", unlisted.stderr
+        )
 
     def test_audiobook_hash_binds_exact_sibling_bytes(self) -> None:
         accepted = self.run_validator()

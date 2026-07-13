@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -29,6 +30,7 @@ CONTRACT_FILES = (
     Path("scripts/echo_pronunciation_preflight.sh"),
     Path("scripts/echo_pronunciation_narrate.sh"),
     Path("scripts/echo_pronunciation_lease.py"),
+    Path("scripts/echo_pronunciation_state.py"),
     Path("scripts/validate_pronunciation_audit.py"),
 )
 EXTERNAL_DISCOVERABLE_SKILL = Path("SKILL.md")
@@ -193,6 +195,10 @@ def main(arguments: list[str]) -> int:
         if not canonical_path.is_file():
             return pending(options.candidate_root, options.canonical_root)
         if candidate_path.read_bytes() != canonical_path.read_bytes():
+            return pending(options.candidate_root, options.canonical_root)
+        if stat.S_IMODE(candidate_path.stat().st_mode) != stat.S_IMODE(
+            canonical_path.stat().st_mode
+        ):
             return pending(options.candidate_root, options.canonical_root)
 
     print("installed_skill_parity: current")

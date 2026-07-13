@@ -12,9 +12,10 @@ Use `render_cover_pair` in `skill/scripts/cover_pairs.py` to produce `cover.png`
 at 1600×2560 and `m4b-cover.png` at 2400×2400 plus thumbnails and receipts.
 Require human review and explicit pair selection, then use `cover_receipts.py
 select-pair` for the paired receipt. Build with `build_book.py --cover ...
---m4b-cover ... --cover-selection ...`; after narration use
-`replace_m4b_cover.py --cover ... --portrait-cover ... --cover-selection ...`
-to preserve audio. Run `cover_receipts.py verify --cover ... --m4b-cover ...
+--m4b-cover ... --cover-selection ...`. Echo resolves the OPF-declared cover
+before export and binds the exact resulting M4B bytes into the pronunciation
+audit. Never run `replace_m4b_cover.py` or otherwise mutate an audited Echo M4B
+after narration. Run `cover_receipts.py verify --cover ... --m4b-cover ...
 --epub ... --m4b ...` for post-embed verification, then dry-run and apply
 `sync_selected_cover.py --paired-artifact-dir ...` for governed
 public/iCloud/site sync under the public/private rules below.
@@ -80,14 +81,6 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
   --cover-selection "$DIST/cover-selection.json"
-
-/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
-  --m4b "$DIST/$SLUG.m4b" \
-  --cover "$PAIR/m4b-cover.png" \
-  --out "$DIST/$SLUG.covered.m4b" \
-  --cover-selection "$DIST/cover-selection.json" \
-  --portrait-cover "$PAIR/cover.png"
-mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
 
 /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
   --selection "$DIST/cover-selection.json" \
@@ -298,9 +291,9 @@ research, write one coherent manuscript, and package the result for Echo.
 12. **Render native Echo audio.** Use the governed Echo narration wrapper from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
    only as an Echo voice fallback. The wrapper owns the Release preflight,
-   content-addressed paths, and FD-backed leases for the canonicalized
-   work/database and every emitted media path. Those leases remain held through
-   locked pre/post hash verification and the actual `echo-cli narrate` process;
+   content-addressed paths, and FD-backed leases for the shared Release build,
+   canonicalized work/database, and every emitted media path. Those leases remain held through
+   locked pre/post CLI/resource-tree hash verification and the actual `echo-cli narrate` process;
    do not bypass the wrapper with a direct CLI command. Echo
    audio is part of the delivery contract:
    do not impose your own time limit, deadline, or "too slow" threshold just
@@ -314,9 +307,11 @@ research, write one coherent manuscript, and package the result for Echo.
    pronunciation reel. Do not pass `--no-pronunciation-review` for a governed
    render. Supply and record the reviewed
    `APPROVED_ECHO_PRONUNCIATION_SHA`; the package preflight fails closed unless
-   it is an ancestor of or equal to the Echo source being built. Use the tested
-   Release preflight, immutable-input receipt, resource leases, and bounded
-   job/thread settings in the package reference. If native Echo audio is blocked
+   it exactly equals the clean Echo source `HEAD` being built. Resume only with
+   the matching hash-bound DB and sealed Echo-v12 capture-state receipt. A render
+   is complete only after staged output validation and the schema-v1 success
+   receipt. Use the tested Release preflight, immutable-input receipt, resource
+   leases, and bounded job/thread settings in the package reference. If native Echo audio is blocked
    and the user has not
    approved a non-Echo substitute, surface only the EPUB/Markdown from the run
    folder as clearly labelled interim files and report the blocker. Do not call
@@ -325,6 +320,8 @@ research, write one coherent manuscript, and package the result for Echo.
 
 13. **Final-verify the governed package.** After native Echo narration succeeds,
     verify that the paired receipt matches the portrait, square, EPUB, and M4B.
+    Also verify the render-success receipt and pronunciation audit. Never replace
+    the cover or otherwise rewrite the audited M4B after Echo emits it.
     The older command below is verification-only compatibility for legacy
     single-cover receipts; new packages use the paired verification command in
     `references/package-and-qc.md`:

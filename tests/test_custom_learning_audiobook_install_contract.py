@@ -89,6 +89,10 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
             value,
             encoding="utf-8",
         )
+        (root / "scripts" / "echo_pronunciation_state.py").write_text(
+            value,
+            encoding="utf-8",
+        )
 
     def write_disabled_external(self) -> None:
         (self.external / "SKILL.disabled.md").write_text(
@@ -166,6 +170,7 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
             "scripts/validate_pronunciation_audit.py",
             "scripts/echo_pronunciation_narrate.sh",
             "scripts/echo_pronunciation_lease.py",
+            "scripts/echo_pronunciation_state.py",
         ):
             shutil.copy2(
                 self.candidate / relative_path,
@@ -183,12 +188,30 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
             "scripts/validate_pronunciation_audit.py",
             "scripts/echo_pronunciation_narrate.sh",
             "scripts/echo_pronunciation_lease.py",
+            "scripts/echo_pronunciation_state.py",
         ):
             shutil.copy2(
                 self.candidate / relative_path,
                 self.canonical / relative_path,
             )
         (self.canonical / "scripts" / "echo_pronunciation_preflight.sh").unlink()
+        result = self.run_validator()
+        self.assertEqual(2, result.returncode, result.stderr)
+        self.assertIn("installed_skill_parity: pending-integration", result.stdout)
+
+    def test_reports_pending_when_contract_file_mode_differs(self) -> None:
+        for relative_path in (
+            "SKILL.md",
+            "references/package-and-qc.md",
+            "scripts/echo_pronunciation_preflight.sh",
+            "scripts/validate_pronunciation_audit.py",
+            "scripts/echo_pronunciation_narrate.sh",
+            "scripts/echo_pronunciation_lease.py",
+            "scripts/echo_pronunciation_state.py",
+        ):
+            shutil.copy2(self.candidate / relative_path, self.canonical / relative_path)
+        helper = self.canonical / "scripts" / "echo_pronunciation_state.py"
+        helper.chmod(helper.stat().st_mode | stat.S_IXUSR)
         result = self.run_validator()
         self.assertEqual(2, result.returncode, result.stderr)
         self.assertIn("installed_skill_parity: pending-integration", result.stdout)

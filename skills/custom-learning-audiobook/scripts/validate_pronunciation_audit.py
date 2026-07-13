@@ -7,6 +7,7 @@ import hashlib
 import json
 import math
 import re
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -80,6 +81,7 @@ DECISION_SOURCES = {
 TIMING_PRECISIONS = {"exactSynthesisWord", "blockAnchorFallback"}
 INT32_MAX = (2**31) - 1
 INT64_MAX = (2**63) - 1
+ALLOWED_VOICES = {"am_michael", "am_puck"}
 
 
 class AuditValidationError(ValueError):
@@ -118,6 +120,39 @@ def require_sha256(value: object, field: str) -> str:
 def file_sha256(path: Path) -> str:
     with path.open("rb") as input_file:
         return hashlib.file_digest(input_file, "sha256").hexdigest()
+
+
+def media_duration(path: Path) -> float:
+    process = subprocess.run(
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "json",
+            str(path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        process.returncode == 0, f"ffprobe could not read media duration: {path.name}"
+    )
+    try:
+        payload = json.loads(process.stdout)
+        duration = float(payload["format"]["duration"])
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+        raise AuditValidationError(
+            f"ffprobe returned an invalid media duration: {path.name}"
+        ) from error
+    require(
+        math.isfinite(duration) and duration > 0,
+        f"media duration must be positive: {path.name}",
+    )
+    return duration
 
 
 def validate_audio_range(value: object, field: str) -> bool:
@@ -212,8 +247,9 @@ def validate(audit_path: Path) -> None:
         "schemaVersion must be 2",
     )
     render_version = require_nonnegative_int(payload["renderVersion"], "renderVersion")
-    require(render_version > 0, "renderVersion must be a positive integer")
-    require_nonempty_string(payload["voice"], "voice")
+    require(render_version >= 12, "renderVersion must be at least 12")
+    voice = require_nonempty_string(payload["voice"], "voice")
+    require(voice in ALLOWED_VOICES, "voice must be am_michael or am_puck")
     require(payload["coverage"] == "complete", "coverage must be complete")
     require(isinstance(payload["decisions"], list), "decisions must be an array")
     require(isinstance(payload["diagnostics"], list), "diagnostics must be an array")
@@ -247,6 +283,7 @@ def validate(audit_path: Path) -> None:
         file_sha256(audiobook_path) == audiobook_sha256,
         "audiobookSHA256 does not match exact sibling audiobook bytes",
     )
+    audiobook_duration = media_duration(audiobook_path)
 
     decisions = [
         validate_decision(decision, index)
@@ -261,6 +298,11 @@ def validate(audit_path: Path) -> None:
     for word in WATCH_WORDS:
         require(word in watch_counts, f"watchCounts is missing {word}")
     decision_counts = Counter(decision["normalizedWord"] for decision in decisions)
+    for word in decision_counts:
+        require(
+            word in watch_counts,
+            f"decision normalizedWord {word} is absent from watchCounts",
+        )
     for word, count in watch_counts.items():
         require(
             count == decision_counts[word],
@@ -279,6 +321,26 @@ def validate(audit_path: Path) -> None:
         "listening reel filename is not relative or does not match the audit stem",
     )
     reel_path = audit_path.parent / expected_reel_name
+    timed_decisions = [
+        decision
+        for decision in decisions
+        if decision.get("chapterRelativeAudioRange") is not None
+        or decision.get("bookRelativeAudioRange") is not None
+        or decision.get("timingPrecision") is not None
+    ]
+    require(
+        not timed_decisions or reel_name is not None,
+        "timed pronunciation decisions require a listening reel",
+    )
+    if timed_decisions:
+        for index, decision in enumerate(decisions):
+            for field in ("chapterRelativeAudioRange", "bookRelativeAudioRange"):
+                audio_range = decision.get(field)
+                if audio_range is not None:
+                    require(
+                        audio_range["end"] <= audiobook_duration,
+                        f"decisions[{index}].{field} exceeds audiobook duration",
+                    )
     if reel_name is None:
         require(
             not reel_path.exists() and not reel_path.is_symlink(),
@@ -303,6 +365,7 @@ def validate(audit_path: Path) -> None:
             ),
             "listed listening reel requires an eligible timed pronunciation decision",
         )
+        media_duration(reel_path)
 
 
 def main(arguments: list[str]) -> int:

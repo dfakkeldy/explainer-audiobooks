@@ -7,9 +7,10 @@ New packages require exactly three paired candidates. Each has a 1600×2560
 with `render_cover_pair` from `skill/scripts/cover_pairs.py`. After thumbnail
 review and explicit pair selection, create a paired receipt with
 `cover_receipts.py select-pair`. Pass both files to `build_book.py` using
-`--cover`, `--m4b-cover`, and `--cover-selection`; after narration run
-`replace_m4b_cover.py --m4b ... --cover ... --out ... --cover-selection ...
---portrait-cover ...`. Run `cover_receipts.py verify --cover ... --m4b-cover ...
+`--cover`, `--m4b-cover`, and `--cover-selection`. Echo resolves the EPUB's
+OPF-declared cover before export and hashes the exact resulting M4B into its
+pronunciation audit. Never run `replace_m4b_cover.py` or otherwise mutate an
+audited Echo M4B after narration. Run `cover_receipts.py verify --cover ... --m4b-cover ...
 --epub ... --m4b ...` for post-embed verification and media preservation. Sync
 all nine pair/provenance artifacts using `sync_selected_cover.py
 --paired-artifact-dir ...`, first dry and then with `--apply`.
@@ -78,14 +79,6 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --cover-selection "$DIST/cover-selection.json" \
   --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
-/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
-  --m4b "$DIST/$SLUG.m4b" \
-  --cover "$PAIR/m4b-cover.png" \
-  --out "$DIST/$SLUG.covered.m4b" \
-  --cover-selection "$DIST/cover-selection.json" \
-  --portrait-cover "$PAIR/cover.png"
-mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
-
 /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
@@ -131,6 +124,8 @@ Use this run layout:
     editorial-review.md
     visuals.md
     echo-render-inputs-<run-id>.env
+    echo-resume-state-<run-id>.json
+    echo-render-success-<run-id>.json
     echo-render-output.owner.env  # present only while governed narration runs
   chapters/
     ch01.md
@@ -330,8 +325,9 @@ Every governed render needs a nonempty approved source revision. Set
 the pronunciation behavior being accepted; do not derive approval from the
 current `HEAD`. The preflight resolves that commit, captures `ECHO_SOURCE_SHA`,
 requires the Echo working tree to be clean, and fails unless the approved
-revision is an ancestor of or equal to the source being built. This is an
-explicit review boundary, not a transient hard-coded SHA.
+revision exactly equals the source `HEAD` being built. Descendants are not
+implicitly approved. This is an explicit review boundary, not a transient
+hard-coded SHA.
 
 A feature-worktree edit does not update installed agents merely because their
 paths are symlinks: those links resolve the canonical checkout at
@@ -346,22 +342,28 @@ loads the canonical `SKILL.md` content.
 installed canonical checkout is still old; do not report installed parity until
 the tool says `current` after integration.
 
-The preflight also requires `--version` to contain `(Release)`, requires
+The public wrapper first takes a kernel lease on Echo's shared `.build/cli`
+root, so `make echo-cli`, the Release executable, and its resource bundle cannot
+race another governed render. Every hidden wrapper mode verifies the inherited
+lock descriptors and their exact lock-file inodes; an environment variable by
+itself is not a capability. The preflight also requires `--version` to contain
+`rv12 (Release)`, requires
 `narrate --help` to expose `--no-pronunciation-review`, validates EPUB and CLI
-SHA-256 values as exactly 64 lowercase hexadecimal characters, and records the
-approved revision, source revision, `EPUB_SHA256`, and `ECHO_CLI_SHA256` in an
-immutable-input receipt. The full approved revision is a component of `RUN_ID`,
-so two approved ancestor boundaries never share `WORK`, `DB`, or a receipt. An
+SHA-256 values as exactly 64 lowercase hexadecimal characters, deterministically
+hashes the complete sibling `EchoNarrationResources` tree, and records the
+approved revision, source revision, `EPUB_SHA256`, `ECHO_CLI_SHA256`,
+`ECHO_RESOURCES_SHA256`, and exact resource path in an immutable-input receipt.
+The full exact approved revision is a component of `RUN_ID`. An
 existing receipt for the same ID must match byte-for-byte, and pre-existing
 `WORK` or `DB` data without that matching receipt fails closed before resume.
 The narration wrapper then acquires nonblocking kernel leases for every
 canonicalized shared resource: `WORK`, `DB`, M4B, sidecar, audit, and reel. Each
 resource identity is SHA-256-keyed independently, so different `RUN_ID` values
-still conflict if any output path overlaps. The lease file descriptors are
+still conflict if any output path overlaps. The build and render lease file descriptors are
 inherited by the governed shell and Echo child, remain held through all of
 `echo-cli narrate`, and release automatically after process exit—even if the
 outer helper is killed. The wrapper revalidates Echo source, EPUB, Release CLI,
-and the immutable receipt both before and after narration while those leases are
+the complete resource-tree hash, and the immutable receipt both before and after narration while those leases are
 held. A mismatch exits nonzero; its artifacts are not accepted, validated, or
 published. Stop immediately on any failure:
 
@@ -389,6 +391,14 @@ reviewed render and `$DIST/$SLUG.pronunciation-reel.m4b` when review samples are
 available. The audit JSON is required even when there are zero decisions; an
 empty reel is not created.
 
+Echo renders into a run-scoped staging directory. A zero CLI exit is not enough:
+the wrapper requires a nonempty M4B, validates the sidecar and schema-v2 audit,
+then publishes the staged files. It writes
+`research/echo-render-success-$RUN_ID.json` last, binding the exact input receipt,
+resume-state receipt, M4B, sidecar, audit, and optional reel hashes. Absence or
+mismatch of that schema-v1 success receipt means the render is not deliverable.
+Do not edit, retag, replace the cover of, or otherwise mutate the published M4B.
+
 If `am_michael` fails because the voice resource is unavailable, set and export
 `VOICE=am_puck`, then rerun the wrapper. Its preflight derives a new `RUN_ID`,
 `WORK`, `DB`, receipt, and resource leases. Record the fallback. Do not silently use
@@ -396,9 +406,17 @@ If `am_michael` fails because the voice resource is unavailable, set and export
 
 Use a fresh `--work-dir` and `--db` whenever the source EPUB changes or the
 Release CLI binary or Echo source revision changes. Permit `--resume` only for
-the same immutable source EPUB, approved/source revisions, Release CLI binary,
-voice, and capture set. Re-read `ECHO_RENDER_INPUT_RECEIPT`, require every value
-and existing completed capture to match, then rerun the wrapper with `--resume`;
+the same immutable source EPUB, exact approved/source revision, Release CLI and
+resource-tree hashes, voice, and capture set. The wrapper requires
+`research/echo-resume-state-$RUN_ID.json` to bind the current DB and every
+capture-marker/audio hash. Every capture must carry a sealed schema-v1 Echo
+identity for render version 12, the current EPUB fingerprint and voice, one
+consistent capture-set ID, pronunciation evidence, and matching audio byte count
+and SHA-256. Legacy identity-free captures are never blessed by this workflow.
+State reset, capture receipt, and success receipt writes also require the live
+inherited resource-lease descriptors; invoking the helper directly cannot bless
+unleased files.
+Only then rerun the wrapper with `--resume`;
 it must select the original `WORK`/`DB` and acquire all resource leases before it
 invokes Echo:
 
@@ -414,7 +432,9 @@ An active kernel lease fails closed before a second Echo process starts. Owner
 metadata is diagnostic, not the lock itself. After acquiring all kernel leases,
 the wrapper may remove exact local stale metadata only when its hostname, PID,
 process-start identity, run, and all resource paths prove that the old owner is
-gone. It never automatically removes remote-host or malformed metadata. For an
+gone. A structurally valid stale owner from an older content-addressed run can
+be recovered after inputs change; its recorded `WORK` and `DB` must still derive
+exactly from its own safe run ID. It never automatically removes remote-host or malformed metadata. For an
 operator-led check of an exact local stale record, use:
 
 ```bash
@@ -448,8 +468,12 @@ Verify the final sidecar against the exact EPUB and audio, then validate the
 automatic pronunciation audit. These are release gates, not optional QA:
 
 ```bash
-source "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_preflight.sh"
-echo_pronunciation_preflight
+INPUT_RECEIPT="$RUN_ROOT/research/echo-render-inputs-$RUN_ID.env"
+CLI=$(awk -F= '$1 == "echo_cli_path" { print substr($0, index($0, "=") + 1) }' \
+  "$INPUT_RECEIPT")
+ECHO_RESOURCE_DIR=$(awk -F= '$1 == "echo_resource_dir" { print substr($0, index($0, "=") + 1) }' \
+  "$INPUT_RECEIPT")
+export ECHO_RESOURCE_DIR
 
 ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "$DIST/$SLUG.m4b"
@@ -472,15 +496,17 @@ test ! -f "$REEL" || ffprobe -v error -show_entries format=duration \
 
 Require `SIDECAR_OK` from `verify-sidecar`. The media-bound manifest schema
 version is `2`.
-Require `coverage=complete`, a positive integer render version, a nonempty
-voice, schema-valid decision objects and timing ranges, and watch counts that
+Require `coverage=complete`, render version 12 or newer, `am_michael` or
+`am_puck`, schema-valid decision objects and timing ranges, and watch counts that
 match decisions across the complete emitted watch vocabulary, including zero
 counts. Require `audiobookSHA256` to match the exact raw sibling M4B bytes. When
 a reel is listed, require `listeningReelSHA256` to match the exact raw sibling
 reel bytes; reel filename and hash must be present or absent together. Reconcile
 every diagnostic before delivery. A missing reel is valid
-only when `listeningReelFileName` is absent or null and there are no review
-samples. A listed reel must exist and have at least one eligible pronunciation
+only when `listeningReelFileName` is absent or null and there are no timed review
+samples. Every timed decision requires a listed reel, and every chapter/book
+range must fit within the probed audiobook duration. A listed reel must exist,
+probe as positive-duration media, and have at least one eligible pronunciation
 decision with validated chapter- and book-relative timing.
 When a reel exists, inspect its chapter labels and listen to its samples (or the
 matching final-audiobook passages). Automated checks do not substitute for
@@ -514,6 +540,10 @@ cover, governed EPUB, and M4B before any delivery or public publishing step:
   --receipt "$DIST/cover-selection.json"
 ```
 
+This is verification only. Never repair a failure by replacing the cover or
+otherwise rewriting the audited M4B. Correct the source/selection and rerender
+so Echo emits and hashes the final package bytes itself.
+
 If native Echo rendering is blocked, EPUB/Markdown may be surfaced from the run
 folder only as clearly labelled interim files. Do not call them a complete
 governed package, and do not proceed to sync/copy until native Echo audio and
@@ -544,12 +574,16 @@ Record:
 - pronunciation reel path or the reason no reel was emitted,
 - pronunciation human-listening status (`pending` until actually heard),
 - approved Echo pronunciation SHA, actual Echo source SHA, EPUB SHA-256, CLI
-  SHA-256, and the `ECHO_RENDER_INPUT_RECEIPT` path,
+  SHA-256, resource-tree SHA-256, and the input, resume-state, and schema-v1
+  render-success receipt paths,
 - QC gates passed/skipped.
 
 ## Copy Rules
 
-The final cover receipt verification above must pass before any copy. For a
+The final cover receipt verification above must pass before any copy. Also run
+`echo_pronunciation_state.py verify-success` with the same paths used by the
+wrapper; only the matching `research/echo-render-success-$RUN_ID.json` authorizes
+copying. For a
 public-safe package, the default delivery folder is iCloud Books:
 
 ```bash
@@ -601,6 +635,9 @@ rsync -a \
   --exclude "$SLUG.epub" \
   --exclude "$SLUG.m4b" \
   "$DIST/" "$DELIVERY_DIR/"
+
+cp "$RUN_ROOT/research/echo-render-success-$RUN_ID.json" \
+  "$DELIVERY_DIR/$SLUG.echo-render-success.json"
 ```
 
 After copying, verify the copied package from the delivery path, not only from
@@ -619,11 +656,20 @@ ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "$DELIVERY_DIR/$SLUG.m4b"
 test ! -f "$DELIVERY_DIR/$SLUG.alignment.json" || \
   python3 -m json.tool "$DELIVERY_DIR/$SLUG.alignment.json" >/dev/null
-python3 -m json.tool "$DELIVERY_DIR/$SLUG.pronunciation-audit.json" >/dev/null
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/validate_pronunciation_audit.py" \
+  "$DELIVERY_DIR/$SLUG.pronunciation-audit.json"
 test ! -f "$DELIVERY_DIR/$SLUG.pronunciation-reel.m4b" || \
   ffprobe -v error -show_entries format=duration \
     -of default=noprint_wrappers=1:nokey=1 \
     "$DELIVERY_DIR/$SLUG.pronunciation-reel.m4b"
+
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_state.py" \
+  verify-delivery \
+  --receipt "$DELIVERY_DIR/$SLUG.echo-render-success.json" \
+  --audiobook "$DELIVERY_DIR/$SLUG.m4b" \
+  --sidecar "$DELIVERY_DIR/$SLUG.alignment.json" \
+  --audit "$DELIVERY_DIR/$SLUG.pronunciation-audit.json" \
+  --reel "$DELIVERY_DIR/$SLUG.pronunciation-reel.m4b"
 ```
 
 Public publishing is a separate governed destination. It requires

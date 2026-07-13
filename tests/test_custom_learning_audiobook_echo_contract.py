@@ -52,7 +52,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
         self.assertIn("echo_pronunciation_preflight.sh", self.narrate_wrapper)
         self.assertIn('"$CLI" narrate', self.narrate_wrapper)
-        self.assertIn("/usr/bin/env -u ECHO_RESOURCE_DIR", self.narrate_wrapper)
+        self.assertIn('ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR"', self.narrate_wrapper)
         self.assertNotIn('"$CLI" narrate', self.package)
         self.assertIn("Never invoke a DerivedData `Debug/echo-cli`", self.package)
         self.assertIn("Do not bypass the governed narration wrapper", self.skill)
@@ -85,6 +85,9 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "remote narration lock",
             "malformed narration lock",
             'wait "$NARRATE_PID"',
+            "--leased-preflight",
+            "--assert-held",
+            "BUILD_RESOURCE",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.narrate_wrapper)
@@ -92,9 +95,11 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         for marker in (
             "fcntl.flock",
             "fcntl.LOCK_EX | fcntl.LOCK_NB",
-            "pass_fds=tuple(lock_fds)",
+            "pass_fds=tuple(sorted(set(capability.values())))",
             "hashlib.sha256",
             "Path(resource).resolve()",
+            "ECHO_PRONUNCIATION_LEASE_CAPABILITY",
+            "validate_capability",
         ):
             self.assertIn(marker, self.lease_helper)
 
@@ -110,10 +115,9 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "fresh `--work-dir` and `--db`",
             "source EPUB changes",
             "Release CLI binary or Echo source revision changes",
-            (
-                "same immutable source EPUB, approved/source revisions, "
-                "Release CLI binary, voice, and capture set"
-            ),
+            "exact approved/source revision",
+            "render version 12",
+            "echo-resume-state-$RUN_ID.json",
             "SHA-256",
         ):
             with self.subTest(marker=marker):
@@ -134,9 +138,14 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "including zero counts",
             "human listening remains explicitly pending",
             "validate_pronunciation_audit.py",
+            "echo-render-success-$RUN_ID.json",
+            "verify-delivery",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, normalized)
+
+        self.assertNotIn('mv "$DIST/$SLUG.covered.m4b"', self.skill)
+        self.assertNotIn('mv "$DIST/$SLUG.covered.m4b"', self.package)
 
         for marker in (
             "pronunciation audit",

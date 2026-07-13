@@ -23,8 +23,21 @@ require_git_commit_sha() {
 echo_pronunciation_preflight() {
   local original_pwd=$PWD
   local echo_repo=${ECHO_REPO:-/Users/dfakkeldy/Developer/Echo}
+  local script_dir
+  script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+  local state_helper="$script_dir/echo_pronunciation_state.py"
+  local lease_helper="$script_dir/echo_pronunciation_lease.py"
+  local explainer_root=${EXPLAINER_ROOT:-$(cd -- "$script_dir/../../.." && pwd -P)}
   local build_gate=${ECHO_BUILD_GATE:-$HOME/.claude/bin/xcode-build-gate.sh}
+  local lease_root=${ECHO_PRONUNCIATION_LEASE_ROOT:-$HOME/.cache/explainer-audiobooks/echo-pronunciation-leases}
+  local build_resource="$echo_repo/.build/cli"
   local approved_input=${APPROVED_ECHO_PRONUNCIATION_SHA:-}
+
+  if ! "$lease_helper" --assert-held --lock-root "$lease_root" \
+    --resource "$build_resource" >/dev/null 2>&1; then
+    printf 'Echo pronunciation preflight requires the inherited build lease\n' >&2
+    return 70
+  fi
 
   if [[ -z "$approved_input" ]]; then
     printf '%s\n' \
@@ -32,14 +45,31 @@ echo_pronunciation_preflight() {
       'record the reviewed Echo commit boundary before rendering' >&2
     return 64
   fi
-  if [[ -z ${SLUG:-} ]]; then
-    printf 'SLUG is required\n' >&2
+  if [[ ! ${SLUG:-} =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
+    printf 'SLUG must use lowercase letters, digits, and internal hyphens only\n' >&2
     return 64
   fi
   if [[ -z ${RUN_ROOT:-} || "$RUN_ROOT" != /* ]]; then
     printf 'RUN_ROOT must be a nonempty absolute explainer-audiobooks run path\n' >&2
     return 64
   fi
+  local canonical_explainer_root expected_run_root
+  canonical_explainer_root=$(cd -- "$explainer_root" && pwd -P)
+  expected_run_root="$canonical_explainer_root/.build/custom-learning-audiobooks/$SLUG"
+  local canonical_run_root
+  canonical_run_root=$(cd -- "$RUN_ROOT" 2>/dev/null && pwd -P) || canonical_run_root=
+  if [[ "$canonical_run_root" != "$expected_run_root" ]]; then
+    printf 'RUN_ROOT must equal the canonical run path: %s\n' "$expected_run_root" >&2
+    return 64
+  fi
+  for governed_path in \
+    "$RUN_ROOT" "$RUN_ROOT/dist" "$RUN_ROOT/research" \
+    "$RUN_ROOT/dist/$SLUG.epub"; do
+    if [[ -L "$governed_path" ]]; then
+      printf 'governed narration path must not be a symlink: %s\n' "$governed_path" >&2
+      return 65
+    fi
+  done
   if [[ ! -x "$build_gate" ]]; then
     printf 'Echo build gate is missing or not executable: %s\n' "$build_gate" >&2
     return 66
@@ -64,9 +94,8 @@ echo_pronunciation_preflight() {
   fi
   require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA "$APPROVED_ECHO_PRONUNCIATION_SHA"
   require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
-  if ! git -C "$echo_repo" merge-base --is-ancestor \
-    "$APPROVED_ECHO_PRONUNCIATION_SHA" "$ECHO_SOURCE_SHA"; then
-    printf 'approved Echo pronunciation revision %s is not an ancestor of source %s\n' \
+  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
+    printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
       "$APPROVED_ECHO_PRONUNCIATION_SHA" "$ECHO_SOURCE_SHA" >&2
     return 65
   fi
@@ -79,20 +108,30 @@ echo_pronunciation_preflight() {
     printf 'missing Release echo-cli: %s\n' "$CLI" >&2
     return 66
   fi
+  ECHO_RESOURCE_DIR="$(dirname -- "$CLI")/EchoNarrationResources"
+  if [[ -L "$ECHO_RESOURCE_DIR" || ! -d "$ECHO_RESOURCE_DIR" ]]; then
+    printf 'missing or unsafe Release EchoNarrationResources: %s\n' \
+      "$ECHO_RESOURCE_DIR" >&2
+    return 66
+  fi
+  ECHO_RESOURCES_SHA256=$(
+    /usr/local/bin/python3 "$state_helper" hash-tree "$ECHO_RESOURCE_DIR"
+  )
+  require_sha256 ECHO_RESOURCES_SHA256 "$ECHO_RESOURCES_SHA256"
   local cli_version
-  cli_version=$(/usr/bin/env -u ECHO_RESOURCE_DIR "$CLI" --version)
-  if [[ "$cli_version" != *"(Release)"* ]]; then
-    printf 'stale/non-Release echo-cli: %s\n' "$cli_version" >&2
+  cli_version=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" --version)
+  if [[ "$cli_version" != *"rv12 (Release)"* ]]; then
+    printf 'stale, pre-v12, or non-Release echo-cli: %s\n' "$cli_version" >&2
     return 65
   fi
-  if ! /usr/bin/env -u ECHO_RESOURCE_DIR "$CLI" narrate --help \
+  if ! ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help \
     | rg --fixed-strings -- '--no-pronunciation-review' >/dev/null; then
     printf 'stale echo-cli: pronunciation review is unavailable\n' >&2
     return 65
   fi
 
   EPUB="$RUN_ROOT/dist/$SLUG.epub"
-  if [[ ! -f "$EPUB" ]]; then
+  if [[ -L "$EPUB" || ! -f "$EPUB" ]]; then
     printf 'source EPUB is missing: %s\n' "$EPUB" >&2
     return 66
   fi
@@ -110,57 +149,50 @@ echo_pronunciation_preflight() {
       ;;
   esac
 
-  RUN_ID="${EPUB_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-${ECHO_SOURCE_SHA:0:12}-$VOICE"
+  RUN_ID="${EPUB_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
   ECHO_RENDER_INPUT_RECEIPT="$RUN_ROOT/research/echo-render-inputs-$RUN_ID.env"
-  local receipt_tmp="$ECHO_RENDER_INPUT_RECEIPT.tmp.$$"
-  printf '%s\n' \
+  local receipt_text
+  receipt_text=$(printf '%s\n' \
     "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
     "echo_source_sha=$ECHO_SOURCE_SHA" \
     "epub_sha256=$EPUB_SHA256" \
     "echo_cli_sha256=$ECHO_CLI_SHA256" \
     "echo_cli_path=$CLI" \
+    "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
+    "echo_resource_dir=$ECHO_RESOURCE_DIR" \
     "voice=$VOICE" \
     "run_id=$RUN_ID" \
     "work_dir=$WORK" \
-    "narration_db=$DB" >"$receipt_tmp"
+    "narration_db=$DB")
 
   if [[ -L "$ECHO_RENDER_INPUT_RECEIPT" ]]; then
-    rm -f "$receipt_tmp"
     printf 'render-input receipt must not be a symlink: %s\n' \
       "$ECHO_RENDER_INPUT_RECEIPT" >&2
     return 65
   fi
   if [[ -e "$ECHO_RENDER_INPUT_RECEIPT" ]]; then
-    if ! cmp -s "$receipt_tmp" "$ECHO_RENDER_INPUT_RECEIPT"; then
-      rm -f "$receipt_tmp"
+    local actual_receipt
+    actual_receipt=$(<"$ECHO_RENDER_INPUT_RECEIPT")
+    if [[ "$receipt_text" != "$actual_receipt" ]]; then
       printf 'existing render-input receipt does not match immutable inputs: %s\n' \
         "$ECHO_RENDER_INPUT_RECEIPT" >&2
       return 65
     fi
-    rm -f "$receipt_tmp"
   else
     if [[ -e "$WORK" || -L "$WORK" || -e "$DB" || -L "$DB" ]]; then
-      rm -f "$receipt_tmp"
       printf 'pre-existing WORK or DB requires a matching receipt: %s\n' "$RUN_ID" >&2
       return 65
     fi
-    if ! ln "$receipt_tmp" "$ECHO_RENDER_INPUT_RECEIPT"; then
-      if [[ ! -L "$ECHO_RENDER_INPUT_RECEIPT" \
-        && -f "$ECHO_RENDER_INPUT_RECEIPT" \
-        && -r "$ECHO_RENDER_INPUT_RECEIPT" ]] \
-        && cmp -s "$receipt_tmp" "$ECHO_RENDER_INPUT_RECEIPT"; then
-        : # A concurrent identical preflight won the atomic create.
-      else
-        rm -f "$receipt_tmp"
-        printf 'could not create immutable render-input receipt: %s\n' \
-          "$ECHO_RENDER_INPUT_RECEIPT" >&2
-        return 65
-      fi
+    if ! printf '%s\n' "$receipt_text" \
+      | /usr/local/bin/python3 "$state_helper" immutable-file \
+        "$ECHO_RENDER_INPUT_RECEIPT"; then
+      printf 'could not create immutable render-input receipt: %s\n' \
+        "$ECHO_RENDER_INPUT_RECEIPT" >&2
+      return 65
     fi
-    rm -f "$receipt_tmp"
   fi
 
   if [[ "$PWD" != "$original_pwd" ]]; then
@@ -169,7 +201,8 @@ echo_pronunciation_preflight() {
   fi
 
   export APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA EPUB EPUB_SHA256
-  export CLI ECHO_CLI_SHA256 VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
+  export CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256
+  export VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
 }
 
 if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
