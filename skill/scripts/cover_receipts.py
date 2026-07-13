@@ -16,6 +16,8 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 
+from cover_fonts import DEFAULT_MANIFEST
+from cover_spec import load_cover_spec
 from refresh_epub_cover import (
     discover_cover_member,
     discover_opf_member,
@@ -698,27 +700,37 @@ def _validated_paired_render(
     ):
         raise ValueError(f"{expected_variant} thumbnail hash mismatch")
     spec = render_path.parent / _file_name(render["spec"], f"{expected_variant} spec")
-    spec_bytes = _read_bytes(spec, f"{expected_variant} specification")
-    if hashlib.sha256(spec_bytes).hexdigest() != render["spec_sha256"]:
+    try:
+        validated_spec = load_cover_spec(spec, DEFAULT_MANIFEST)
+    except ValueError as error:
+        raise ValueError(
+            f"invalid {expected_variant} specification: {error}"
+        ) from error
+    if validated_spec.spec_sha256 != render["spec_sha256"]:
         raise ValueError(f"{expected_variant} specification hash mismatch")
-    spec_payload = _read_json(spec, f"{expected_variant} specification")
-    if spec_payload.get("variant") != expected_variant:
+    if validated_spec.variant != expected_variant:
         raise ValueError(f"{expected_variant} specification has wrong variant")
-    if spec_payload.get("candidate") != candidate:
+    if validated_spec.data["candidate"] != candidate:
         raise ValueError(
             f"{expected_variant} render candidate does not match specification"
         )
-    metadata = spec_payload.get("metadata")
-    if not isinstance(metadata, dict):
-        raise ValueError(f"{expected_variant} specification metadata is invalid")
-    parsed_metadata = {
-        field: _text(metadata.get(field), f"{expected_variant} {field}")
-        for field in ("title", "author")
+    if validated_spec.art_path.name != render["source_art"]:
+        raise ValueError(f"{expected_variant} source_art does not match specification")
+    if validated_spec.art_sha256 != render["source_art_sha256"]:
+        raise ValueError(f"{expected_variant} source art hash mismatch")
+    if validated_spec.font_manifest.version != render["font_manifest_version"]:
+        raise ValueError(f"{expected_variant} font manifest version mismatch")
+    if validated_spec.font_manifest.sha256 != render["font_manifest_sha256"]:
+        raise ValueError(f"{expected_variant} font manifest hash mismatch")
+    expected_fonts = {
+        font_id: record.sha256 for font_id, record in validated_spec.fonts.items()
     }
-    subtitle = metadata.get("subtitle")
-    if not isinstance(subtitle, str):
-        raise ValueError(f"{expected_variant} subtitle must be a string")
-    parsed_metadata["subtitle"] = subtitle
+    if render["fonts"] != expected_fonts:
+        raise ValueError(f"{expected_variant} selected font hashes mismatch")
+    parsed_metadata = {
+        field: validated_spec.metadata[field]
+        for field in ("title", "author", "subtitle")
+    }
     return (
         render,
         cover,
@@ -956,7 +968,13 @@ def verify_package(
             checks.append("m4b-square-normalized-pixels")
         if receipt_path is not None:
             delivered = load_selection(receipt_path)
-            if asdict(delivered) != asdict(selected):
+            if not isinstance(delivered, PairedSelectionReceipt) or _read_bytes(
+                _path(receipt_path, "destination paired selection receipt"),
+                "destination paired selection receipt",
+            ) != _read_bytes(
+                _path(selection_path, "source paired selection receipt"),
+                "source paired selection receipt",
+            ):
                 raise ValueError(
                     "destination paired selection receipt does not match source"
                 )

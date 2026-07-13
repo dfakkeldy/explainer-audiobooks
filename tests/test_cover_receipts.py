@@ -4,6 +4,7 @@ import hashlib
 import io
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -17,6 +18,9 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).parents[1] / "skill" / "scripts"))
 import cover_receipts
+from cover_renderer import render_cover_spec
+from cover_spec import load_cover_spec
+from tests.test_cover_renderer import FONT_MANIFEST, base_spec
 
 
 VALID_SELECTION = {
@@ -98,23 +102,54 @@ def paired_render_payload(
     candidate_id: str = "open-machine",
     source_hash: str = "2" * 64,
     subtitle: str | None = None,
+    font_manifest: Path = FONT_MANIFEST,
 ) -> dict[str, object]:
     dimensions = (1600, 2560) if variant == "portrait" else (2400, 2400)
     thumbnail_dimensions = (160, 256) if variant == "portrait" else (160, 160)
     metadata_subtitle = "The Exact Subtitle" if subtitle is None else subtitle
-    spec = {
-        "schema_version": 2,
-        "variant": variant,
-        "candidate": {"id": candidate_id, "direction_name": "The Open Machine"},
-        "metadata": {
-            "title": "Fixture Book",
-            "subtitle": metadata_subtitle,
-            "author": "Dan Fakkeldy",
-            "label": "AUDIOBOOK",
-        },
+    art = root / "art.svg"
+    if not art.exists():
+        art.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 2560">'
+            '<rect width="2400" height="2560" fill="#132238"/></svg>',
+            encoding="utf-8",
+        )
+    spec = base_spec()
+    spec["schema_version"] = 2
+    spec["variant"] = variant
+    spec["candidate"] = {
+        "id": candidate_id,
+        "direction_name": "The Open Machine",
     }
+    spec["metadata"]["title"] = "Fixture Book"
+    spec["metadata"]["subtitle"] = metadata_subtitle
+    for layer in spec["layers"]:
+        if layer.get("role") == "title":
+            layer["text"] = "FIXTURE" if layer["title_order"] == 1 else "BOOK"
+        elif layer.get("role") == "subtitle":
+            layer["text"] = metadata_subtitle
+    if not metadata_subtitle:
+        spec["layers"] = [
+            layer for layer in spec["layers"] if layer.get("role") != "subtitle"
+        ]
+    if variant == "square":
+        spec["canvas"].update(width=2400, height=2400, safe_margin=120)
+        spec["art"]["box"] = [0, 0, 2400, 2400]
+        for layer in spec["layers"]:
+            layer["box"][0] = 120
+        spec["layers"][0]["box"][1] = 120
+        author_layer = next(
+            layer for layer in spec["layers"] if layer.get("role") == "author"
+        )
+        author_layer["box"] = [120, 2150, 1408, 90]
+        subtitle_layer = next(
+            (layer for layer in spec["layers"] if layer.get("role") == "subtitle"), None
+        )
+        if subtitle_layer:
+            subtitle_layer["box"] = [120, 1950, 1408, 130]
     spec_path = root / f"{variant}.json"
-    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    spec_path.write_text(json.dumps(spec, indent=2), encoding="utf-8")
+    validated = load_cover_spec(spec_path, font_manifest)
     thumbnail = root / f"{variant}-thumbnail.png"
     make_cover(thumbnail, size=thumbnail_dimensions)
     return {
@@ -124,12 +159,16 @@ def paired_render_payload(
         "variant": variant,
         "candidate": {"id": candidate_id, "direction_name": "The Open Machine"},
         "spec": spec_path.name,
-        "spec_sha256": hashlib.sha256(spec_path.read_bytes()).hexdigest(),
-        "source_art": "cover-source.png",
-        "source_art_sha256": source_hash,
+        "spec_sha256": validated.spec_sha256,
+        "source_art": validated.art_path.name,
+        "source_art_sha256": source_hash
+        if source_hash != "2" * 64
+        else validated.art_sha256,
         "font_manifest_version": 1,
-        "font_manifest_sha256": "3" * 64,
-        "fonts": {"display-condensed": "4" * 64},
+        "font_manifest_sha256": validated.font_manifest.sha256,
+        "fonts": {
+            font_id: record.sha256 for font_id, record in validated.fonts.items()
+        },
         "output": cover.name,
         "output_sha256": hashlib.sha256(cover.read_bytes()).hexdigest(),
         "thumbnail": thumbnail.name,
@@ -230,6 +269,51 @@ def create_valid_selection(root: Path, cover: Path) -> Path:
 
 
 class CoverReceiptTests(unittest.TestCase):
+    @unittest.skipUnless(
+        shutil.which("rsvg-convert") and shutil.which("magick"),
+        "renderer tools required",
+    )
+    def test_consumes_actual_renderer_receipts_for_pretty_formatted_specs(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            portrait = make_cover(root / "portrait.png")
+            square = make_cover(root / "square.png", size=(2400, 2400))
+            paired_render_payload(root, portrait, "portrait")
+            paired_render_payload(root, square, "square", subtitle="")
+            portrait_receipt = root / "portrait.render.json"
+            square_receipt = root / "square.render.json"
+            render_cover_spec(
+                root / "portrait.json",
+                portrait,
+                root / "portrait-thumbnail.png",
+                portrait_receipt,
+                FONT_MANIFEST,
+            )
+            render_cover_spec(
+                root / "square.json",
+                square,
+                root / "square-thumbnail.png",
+                square_receipt,
+                FONT_MANIFEST,
+            )
+
+            receipt = cover_receipts.create_paired_selection(
+                portrait_receipt,
+                square_receipt,
+                root / "selection.json",
+                "fixture-book",
+                "public-v1",
+                "user",
+                "2026-07-13T12:00:00-03:00",
+                "public-safe",
+                True,
+            )
+
+            self.assertEqual(
+                receipt.variants["portrait"].specification_sha256,
+                load_cover_spec(root / "portrait.json", FONT_MANIFEST).spec_sha256,
+            )
+
     def create_pair_fixture(self, root: Path):
         portrait = make_cover(root / "portrait.png")
         square = make_cover(root / "square.png", size=(2400, 2400))
@@ -386,9 +470,9 @@ class CoverReceiptTests(unittest.TestCase):
             spec = json.loads(square_spec.read_text(encoding="utf-8"))
             spec["candidate"]["id"] = "different-in-spec"
             square_spec.write_text(json.dumps(spec), encoding="utf-8")
-            square_payload["spec_sha256"] = hashlib.sha256(
-                square_spec.read_bytes()
-            ).hexdigest()
+            square_payload["spec_sha256"] = load_cover_spec(
+                square_spec, FONT_MANIFEST
+            ).spec_sha256
             portrait_render = write_json(
                 root / "portrait.render.json", portrait_payload
             )
@@ -405,6 +489,97 @@ class CoverReceiptTests(unittest.TestCase):
                     selected_at="2026-07-13T12:00:00-03:00",
                     privacy_classification="public-safe",
                     permission_to_publish=True,
+                )
+
+    def test_rejects_mutated_art_manifest_font_or_license_artifacts(self) -> None:
+        for artifact in ("art", "manifest", "font", "license"):
+            with self.subTest(artifact=artifact), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                font_root = root / "fonts"
+                shutil.copytree(FONT_MANIFEST.parent, font_root)
+                manifest = font_root / "manifest.json"
+                portrait = make_cover(root / "portrait.png")
+                square = make_cover(root / "square.png", size=(2400, 2400))
+                portrait_render = write_json(
+                    root / "portrait.render.json",
+                    paired_render_payload(
+                        root, portrait, "portrait", font_manifest=manifest
+                    ),
+                )
+                square_render = write_json(
+                    root / "square.render.json",
+                    paired_render_payload(
+                        root, square, "square", subtitle="", font_manifest=manifest
+                    ),
+                )
+                manifest_payload = json.loads(manifest.read_text(encoding="utf-8"))
+                selected = next(
+                    item
+                    for item in manifest_payload["fonts"]
+                    if item["font_id"] == "display-condensed"
+                )
+                if artifact == "art":
+                    (root / "art.svg").write_text(
+                        "<svg xmlns='http://www.w3.org/2000/svg'/>", encoding="utf-8"
+                    )
+                elif artifact == "manifest":
+                    manifest_payload["source_commit"] = "tampered"
+                    manifest.write_text(json.dumps(manifest_payload), encoding="utf-8")
+                elif artifact == "font":
+                    (font_root / selected["path"]).write_bytes(b"tampered font")
+                else:
+                    (font_root / selected["license_path"]).write_bytes(
+                        b"tampered license"
+                    )
+
+                with mock.patch.object(
+                    cover_receipts, "DEFAULT_MANIFEST", manifest
+                ), self.assertRaisesRegex(ValueError, "art|font|license|manifest"):
+                    cover_receipts.create_paired_selection(
+                        portrait_render,
+                        square_render,
+                        root / "selection.json",
+                        "fixture-book",
+                        "public-v1",
+                        "user",
+                        "2026-07-13T12:00:00-03:00",
+                        "public-safe",
+                        True,
+                    )
+
+    def test_paired_receipt_identity_is_byte_exact(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            _receipt, portrait, square, *_ = self.create_pair_fixture(root)
+            source = root / "selection.json"
+            reformatted = root / "reformatted-selection.json"
+            reformatted.write_text(
+                json.dumps(json.loads(source.read_text(encoding="utf-8"))),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "receipt"):
+                cover_receipts.verify_package(
+                    source, portrait, m4b_cover_path=square, receipt_path=reformatted
+                )
+
+    def test_rejects_paired_m4b_normalized_pixel_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            _receipt, portrait, square, *_ = self.create_pair_fixture(root)
+            m4b = root / "book.m4b"
+            m4b.write_bytes(b"fixture")
+            with mock.patch.object(
+                cover_receipts, "normalized_m4b_art_sha256", return_value="a" * 64
+            ), mock.patch.object(
+                cover_receipts, "normalized_image_sha256", return_value="b" * 64
+            ), self.assertRaisesRegex(
+                ValueError, "square"
+            ):
+                cover_receipts.verify_package(
+                    root / "selection.json",
+                    portrait,
+                    m4b_cover_path=square,
+                    m4b_path=m4b,
                 )
 
     def test_verifies_paired_epub_and_m4b_artwork(self) -> None:
