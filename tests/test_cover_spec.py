@@ -274,6 +274,13 @@ class CoverSpecValidationTests(unittest.TestCase):
             with self.assertRaisesRegex(CoverSpecError, "unsupported glyph"):
                 load_cover_spec(write_fixture(Path(raw), payload), FONT_MANIFEST)
 
+    def test_rejects_ascii_codepoint_absent_from_hash_pinned_face_before_rendering(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            payload = valid_payload()
+            payload["layers"][1]["text"] = "RODENTS\u007f"
+            with self.assertRaisesRegex(CoverSpecError, r"unsupported glyph U\+007F.*display-condensed"):
+                load_cover_spec(write_fixture(Path(raw), payload), FONT_MANIFEST)
+
     def test_rejects_malformed_json_shapes_with_validation_errors(self) -> None:
         malformed_payloads: list[tuple[str, object]] = [("top-level", [])]
 

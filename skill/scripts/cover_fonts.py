@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import struct
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 DEFAULT_MANIFEST = Path(__file__).parents[1] / "assets" / "fonts" / "manifest.json"
@@ -57,6 +59,108 @@ def _safe_asset(root: Path, value: str) -> Path:
     except ValueError as error:
         raise CoverFontError(f"asset path escapes font directory: {value}") from error
     return candidate
+
+
+def _uint16(data: bytes, offset: int) -> int:
+    if offset < 0 or offset + 2 > len(data):
+        raise CoverFontError("truncated TTF cmap")
+    return struct.unpack_from(">H", data, offset)[0]
+
+
+def _uint32(data: bytes, offset: int) -> int:
+    if offset < 0 or offset + 4 > len(data):
+        raise CoverFontError("truncated TTF cmap")
+    return struct.unpack_from(">I", data, offset)[0]
+
+
+def _format_4_codepoints(table: bytes) -> set[int]:
+    length = _uint16(table, 2)
+    if length > len(table):
+        raise CoverFontError("truncated TTF cmap format 4")
+    table = table[:length]
+    segment_count = _uint16(table, 6) // 2
+    end_codes = 14
+    start_codes = end_codes + segment_count * 2 + 2
+    deltas = start_codes + segment_count * 2
+    range_offsets = deltas + segment_count * 2
+    codepoints: set[int] = set()
+    for index in range(segment_count):
+        start = _uint16(table, start_codes + index * 2)
+        end = _uint16(table, end_codes + index * 2)
+        delta = _uint16(table, deltas + index * 2)
+        range_offset_position = range_offsets + index * 2
+        range_offset = _uint16(table, range_offset_position)
+        if start > end:
+            raise CoverFontError("invalid TTF cmap format 4 segment")
+        for codepoint in range(start, end + 1):
+            if codepoint == 0xFFFF:
+                continue
+            if range_offset == 0:
+                glyph = (codepoint + delta) & 0xFFFF
+            else:
+                glyph_position = range_offset_position + range_offset + (codepoint - start) * 2
+                glyph = _uint16(table, glyph_position)
+                if glyph:
+                    glyph = (glyph + delta) & 0xFFFF
+            if glyph:
+                codepoints.add(codepoint)
+    return codepoints
+
+
+def _format_12_codepoints(table: bytes) -> set[int]:
+    length = _uint32(table, 4)
+    if length > len(table):
+        raise CoverFontError("truncated TTF cmap format 12")
+    group_count = _uint32(table, 12)
+    codepoints: set[int] = set()
+    for index in range(group_count):
+        offset = 16 + index * 12
+        start = _uint32(table, offset)
+        end = _uint32(table, offset + 4)
+        first_glyph = _uint32(table, offset + 8)
+        if start > end or end > 0x10FFFF:
+            raise CoverFontError("invalid TTF cmap format 12 group")
+        for codepoint in range(start, end + 1):
+            if first_glyph + codepoint - start:
+                codepoints.add(codepoint)
+    return codepoints
+
+
+@lru_cache(maxsize=32)
+def read_ttf_codepoints(path: Path) -> frozenset[int]:
+    data = Path(path).read_bytes()
+    table_count = _uint16(data, 4)
+    cmap: bytes | None = None
+    for index in range(table_count):
+        entry = 12 + index * 16
+        if entry + 16 > len(data):
+            raise CoverFontError("truncated TTF table directory")
+        if data[entry:entry + 4] == b"cmap":
+            offset = _uint32(data, entry + 8)
+            length = _uint32(data, entry + 12)
+            if offset + length > len(data):
+                raise CoverFontError("truncated TTF cmap table")
+            cmap = data[offset:offset + length]
+            break
+    if cmap is None:
+        raise CoverFontError("TTF has no cmap table")
+    record_count = _uint16(cmap, 2)
+    codepoints: set[int] = set()
+    for index in range(record_count):
+        record = 4 + index * 8
+        platform = _uint16(cmap, record)
+        encoding = _uint16(cmap, record + 2)
+        if platform != 0 and (platform != 3 or encoding not in {1, 10}):
+            continue
+        offset = _uint32(cmap, record + 4)
+        format_number = _uint16(cmap, offset)
+        if format_number == 4:
+            codepoints.update(_format_4_codepoints(cmap[offset:]))
+        elif format_number == 12:
+            codepoints.update(_format_12_codepoints(cmap[offset:]))
+    if not codepoints:
+        raise CoverFontError("TTF has no supported Unicode cmap format 4 or 12")
+    return frozenset(codepoints)
 
 
 def load_font_manifest(path: Path = DEFAULT_MANIFEST) -> FontManifest:

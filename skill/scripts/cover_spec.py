@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from cover_fonts import DEFAULT_MANIFEST, CoverFontError, FontManifest, FontRecord, load_font_manifest
+from cover_fonts import DEFAULT_MANIFEST, CoverFontError, FontManifest, FontRecord, load_font_manifest, read_ttf_codepoints
 
 WIDTH = 1600
 HEIGHT = 2560
@@ -69,9 +69,6 @@ SHAPE_KEYS = {
 }
 LINE_KEYS = {"kind", "start", "end", "colour", "width", "opacity", "purpose"}
 RUN_KEYS = {"text", "colour", "size_scale", "rotation", "baseline_shift", "dx", "tracking"}
-LATIN_PUNCTUATION = set("–—‘’“”…•·©®™")
-
-
 class CoverSpecError(ValueError):
     pass
 
@@ -178,13 +175,12 @@ def _tokens(value: str) -> list[str]:
 
 
 def _validate_glyphs(value: str, font: FontRecord, label: str) -> None:
+    codepoints = read_ttf_codepoints(font.path)
     for character in unicodedata.normalize("NFC", value):
         codepoint = ord(character)
-        if character.isspace() or codepoint < 128 or character in LATIN_PUNCTUATION:
+        if character.isspace():
             continue
-        if codepoint <= 0x024F and "latin-ext" in font.glyph_coverage:
-            continue
-        if 0x1E00 <= codepoint <= 0x1EFF and "vietnamese" in font.glyph_coverage:
+        if codepoint in codepoints:
             continue
         name = unicodedata.name(character, f"U+{codepoint:04X}")
         raise CoverSpecError(f"{label} contains unsupported glyph {name} for {font.font_id}")

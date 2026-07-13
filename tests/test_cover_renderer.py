@@ -383,6 +383,7 @@ class CoverRendererSafetyTests(unittest.TestCase):
                     config_path = Path(env["FONTCONFIG_FILE"])
                     self.assertTrue(config_path.is_absolute())
                     config = ET.parse(config_path).getroot()
+                    self.assertEqual([], config.findall("include"))
                     self.assertEqual(
                         {str(font_root.resolve())},
                         {node.text for node in config.findall("dir")},
