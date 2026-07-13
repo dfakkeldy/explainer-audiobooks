@@ -7,6 +7,7 @@ import hashlib
 import struct
 import sys
 import unittest
+from unittest import mock
 import zipfile
 import zlib
 from pathlib import Path
@@ -112,6 +113,24 @@ def mimetype_metadata(info: zipfile.ZipInfo) -> tuple[object, ...]:
 
 
 class RefreshEpubCoverTests(unittest.TestCase):
+    def test_governed_post_embed_failure_preserves_output_and_cleans_temp(self) -> None:
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            source = make_epub_fixture(root)
+            cover = make_png(root / "new.png", (1600, 2560))
+            square = make_png(root / "square.png", (2400, 2400))
+            selection = root / "selection.json"; selection.write_text("{}")
+            output = root / "out.epub"; output.write_bytes(b"keep-me")
+            with mock.patch.object(
+                refresh_epub_cover, "verify_package",
+                side_effect=[mock.DEFAULT, ValueError("post EPUB verification")],
+            ), self.assertRaisesRegex(ValueError, "post EPUB"):
+                refresh_epub_cover.replace_epub_cover(
+                    source, cover, output, selection_path=selection,
+                    m4b_cover_path=square,
+                )
+            self.assertEqual(b"keep-me", output.read_bytes())
+            self.assertEqual([], list(root.glob(".out.epub.*")))
     def test_preserves_mimetype_zip_metadata_while_stored_first(self) -> None:
         with TemporaryDirectory() as raw_dir:
             root = Path(raw_dir)

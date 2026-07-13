@@ -85,7 +85,7 @@ def parse_chapter(path):
 
 
 def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover=None,
-          contributor="", cover_selection=None):
+          contributor="", cover_selection=None, m4b_cover=None):
     selection_path = Path(cover_selection) if cover_selection else None
     if selection_path is not None:
         if not cover or not os.path.exists(cover):
@@ -95,8 +95,13 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
             raise ValueError(
                 f"selection book_slug {selected.book_slug} does not match build slug {slug}"
             )
-        if sha256_file(Path(cover)) != selected.rendered_cover_sha256:
-            raise ValueError("selected cover hash does not match --cover")
+        if hasattr(selected, "rendered_cover_sha256"):
+            if sha256_file(Path(cover)) != selected.rendered_cover_sha256:
+                raise ValueError("selected cover hash does not match --cover")
+        verify_package(
+            selection_path, Path(cover),
+            **({"m4b_cover_path": Path(m4b_cover)} if m4b_cover is not None else {}),
+        )
 
     os.makedirs(out_dir, exist_ok=True)
     files = sorted(glob.glob(os.path.join(chapters_dir, "ch*.md")))
@@ -315,7 +320,11 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
                     z.writestr("OEBPS/images/" + name, imf.read())
 
         if selection_path is not None:
-            verify_package(selection_path, Path(cover), epub_path=Path(epub_write_path))
+            verify_package(
+                selection_path, Path(cover),
+                **({"m4b_cover_path": Path(m4b_cover)} if m4b_cover is not None else {}),
+                epub_path=Path(epub_write_path),
+            )
             os.replace(epub_write_path, epub_path)
             staged_epub = None
     finally:
@@ -349,9 +358,11 @@ def main():
                     help="Optional second name credited in metadata (e.g., the human owner)")
     ap.add_argument("--cover-selection", default=None,
                     help="Selection receipt that must match --cover and the built EPUB")
+    ap.add_argument("--m4b-cover", default=None,
+                    help="Square cover required by paired selection receipts")
     a = ap.parse_args()
     build(a.chapters_dir, a.out_dir, a.title, a.author, a.subtitle, a.slug, a.lang, a.cover,
-          a.contributor, a.cover_selection)
+          a.contributor, a.cover_selection, a.m4b_cover)
 
 
 if __name__ == "__main__":
