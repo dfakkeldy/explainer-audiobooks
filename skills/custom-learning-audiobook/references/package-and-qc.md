@@ -75,7 +75,8 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --slug "$SLUG" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
-  --cover-selection "$DIST/cover-selection.json"
+  --cover-selection "$DIST/cover-selection.json" \
+  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
 /usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
   --m4b "$DIST/$SLUG.m4b" \
@@ -201,7 +202,9 @@ Complete prose QC, humanization, frontier-author acceptance, and every
 substantive repair before building the EPUB or rendering Echo audio. Read
 `../../skill/references/frontier-manuscript-pipeline.md`, the narration-style
 checks in `../../skill/references/narration-style.md`, and
-`../../skill/references/humanizer-pass.md`. The frontier-authored chapter
+`../../skill/references/humanizer-pass.md`. Also follow
+`../../skill/references/declaudification.md` for the independent inventory,
+family-density gate, accepted/rejected decisions, and hash-bound receipt. The frontier-authored chapter
 Markdown remains canonical throughout this step.
 
 At minimum:
@@ -211,7 +214,8 @@ At minimum:
 - no raw code/symbol narration leaks,
 - run `python3 skill/scripts/prose_qc.py --chapters-dir
   .build/custom-learning-audiobooks/<slug>/chapters --out
-  .build/custom-learning-audiobooks/<slug>/research/prose-qc.md`,
+  .build/custom-learning-audiobooks/<slug>/research/prose-qc-before.md
+  --fail-on-style` for the initial independent inventory,
 - have a cheaper reviewer use that report and `coverage-ledger.md` to flag only
   exact locations for redundant ideas, formulaic openings/closings, unexplained
   leaps, shallow concepts, jargon without a concrete case, or missing
@@ -222,6 +226,9 @@ At minimum:
 - run the bounded humanizer pass, have the frontier author accept or reject each
   non-mechanical suggestion, then rerun factual, ledger, narration, and prose
   checks,
+- save the decisions and rerun with `--fail-on-style`, `--decisions`, and
+  `--style-receipt-out .../research/prose-style-receipt.json`; a failed family
+  budget or stale chapter hash blocks packaging,
 - complete the sensitive/private-term scan, first-chapter and technical-chapter
   spot reads, and source-confidence label,
 - for illustrated books, every intended figure source exists and has alt text,
@@ -290,7 +297,8 @@ DIST=".build/custom-learning-audiobooks/$SLUG/dist"
   --subtitle "$SUBTITLE" \
   --slug "$SLUG" \
   --cover "$DIST/cover-$SELECTED.png" \
-  --cover-selection "$DIST/cover-selection.json"
+  --cover-selection "$DIST/cover-selection.json" \
+  --prose-receipt ".build/custom-learning-audiobooks/$SLUG/research/prose-style-receipt.json"
 ```
 
 Validate:

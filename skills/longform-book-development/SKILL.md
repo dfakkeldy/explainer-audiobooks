@@ -23,6 +23,9 @@ for one-pass production. Use `custom-learning-audiobook` directly for that.
 - Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
   preparing the production handoff. The final prose pass is bounded: it removes
   AI tics without inventing personality, anecdotes, sources, or claims.
+- Read `../../skill/references/declaudification.md` and capture the listener's
+  **AI-writing patterns to avoid**, disliked phrase families, and any positive
+  voice sample before preparing the production handoff.
 
 ## Workflow
 
@@ -96,3 +99,6 @@ them, or explicitly asks to proceed without another gate:
 The handoff also records whether the bounded `humanizer` pass is required,
 optional, or explicitly skipped, plus any voice constraints the production
 author must preserve.
+For audiobook production, the de-Claudification gate is required even when a
+general humanizer pass is optional: drafting prevention, whole-manuscript family
+density review, accepted/rejected decisions, and a final hash-bound receipt.

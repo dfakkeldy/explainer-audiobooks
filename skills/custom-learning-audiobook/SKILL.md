@@ -134,6 +134,8 @@ research, write one coherent manuscript, and package the result for Echo.
     / cheaper-worker split, continuity ledger, and citation-first reader review.
   - `../../skill/references/humanizer-pass.md` for the bounded `humanizer` pass
     that removes AI tics without replacing the frontier author's voice.
+  - `../../skill/references/declaudification.md` for drafting-time prevention,
+    phrase-family density review, and the hash-bound prose receipt.
   - `../../skill/references/cover-art.md` for cover concepts, visual quality,
     and the signature accent-colour rule.
   - `../../skill/scripts/build_book.py` for EPUB and combined Markdown.
@@ -205,6 +207,10 @@ research, write one coherent manuscript, and package the result for Echo.
    fact pack, the coverage-ledger rows, and `research/continuity.md`. Update that
    record after each chapter with terms already defined, examples/analogies used,
    deliberate callbacks, and promises that later chapters must resolve.
+   Also provide the listener's **AI-writing patterns to avoid** and the complete
+   `declaudification.md` drafting rule. State facts directly instead of managing
+   the listener's reaction with `hold`, `sit with`, `notice`, or synonym-cycled
+   commands.
 
 8. **Keep Markdown canonical; use cheap workers as evidence and production
    sidecars.** Save the frontier author's chapter files under `chapters/`. Cheap
@@ -274,12 +280,20 @@ research, write one coherent manuscript, and package the result for Echo.
     narration, sensitive-term, figure-provenance, and prose checks. The canonical
     Markdown must be final before Step 11 starts.
 
+    Run the independent inventory and final family-density gate exactly as
+    specified in `../../skill/references/declaudification.md`. The final command
+    uses `--fail-on-style`, records accepted and rejected decisions, and writes
+    `research/prose-style-receipt.json` bound to the final chapter hashes.
+
 11. **Build the governed EPUB.** Only now follow the paired selection and EPUB
     sections in `references/package-and-qc.md`: create the paired receipt with
     `cover_receipts.py select-pair`, then run the governed `build_book.py`
     command with `--cover`, `--m4b-cover`, and `--cover-selection`. The EPUB and combined
     Markdown are downstream renderings of the accepted manuscript; standalone
     Markdown figures remain embedded and copied beside the combined Markdown.
+    New builds also pass `--prose-receipt
+    "$RUN_ROOT/research/prose-style-receipt.json"`; packaging stops if it is
+    missing, failed, or stale.
 
 12. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
