@@ -6,6 +6,11 @@ been applied. The goal is prose that sounds like a thoughtful person explaining 
 real subject aloud, not prose that has been cosmetically rewritten by another
 model.
 
+Read `declaudification.md` first. The humanizer is a two-pass gate: an
+independent inventory before edits, followed by frontier-author repairs and a
+final verified run. Review chapter by chapter and then across the whole manuscript
+so synonym-cycled habits are not hidden by chapter boundaries.
+
 ## What the pass should do
 
 - Remove obvious AI tics: inflated significance, generic signposting, promotional
@@ -36,16 +41,19 @@ model.
 
 ## Order of operations
 
-1. Run the humanizer pass on the canonical `chapters/chNN.md` files, not on the
-   EPUB, combined Markdown, or audio derivative.
-2. Ask the humanizer to return targeted edits or a patch-sized change list first
-   when the manuscript is large. A full rewrite is not the default.
-3. Have the frontier author review and accept the proposed changes. The frontier
-   author owns every non-mechanical prose decision.
-4. Re-run factual/citation checks, the coverage-ledger comparison, and the
-   narration-style sweeps after accepted edits.
-5. Record the pass in the manifest: model/skill used, chapters touched, and any
-   skipped or rejected suggestions.
+1. Run the family-level independent inventory on the canonical
+   `chapters/chNN.md` files, not on the EPUB, combined Markdown, or audio
+   derivative. Save the before report.
+2. Run the humanizer pass on those canonical files. Return targeted edits or a
+   patch-sized change list first when the manuscript is large.
+3. Have the frontier author review every finding, record accepted and rejected
+   items with reasons, and make every accepted non-mechanical change.
+4. Re-run factual/citation checks, the coverage-ledger comparison, narration
+   checks, and the whole-manuscript prose gate after accepted edits.
+5. Record counts before and after plus the reviewer/model/skill version,
+   accepted and rejected findings, rerun checks, and chapter hashes in the final
+   `prose-style-receipt.json`. Packaging must verify the receipt against the
+   canonical chapters.
 
 A cheaper worker may flag AI patterns and quote exact locations, but may not
 rewrite the book in a competing voice. If humanization changes explanation,

@@ -59,6 +59,11 @@ Everything else goes back to the frontier author as a precise repair request.
    author reviews every non-mechanical edit; rerun factual, ledger, and narration
    checks afterward.
 
+   Follow `references/declaudification.md`: run an independent phrase-family
+   inventory before edits, repair accepted findings, rerun the whole-manuscript
+   density gate, and create a receipt containing before/after counts, accepted
+   and rejected decisions, rerun checks, and chapter hashes.
+
 8. **Cheap workers package and validate.** Render EPUB/M4B, build covers, check
    files and metadata, and write the manifest. They must not “improve” the prose
    while packaging.
@@ -109,5 +114,7 @@ real and writes all non-mechanical prose changes.
 - [ ] The frontier author accepted/rejected substantive findings before packaging.
 - [ ] The bounded humanizer pass was reviewed by the frontier author, or its
       explicit skip was recorded.
+- [ ] The de-Claudification family gate passes and its receipt matches the final
+      chapter hashes.
 - [ ] The published EPUB/M4B was derived from the reviewed Markdown, with no
   downstream prose rewriting.

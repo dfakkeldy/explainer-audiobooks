@@ -85,7 +85,8 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --slug "$SLUG" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
-  --cover-selection "$DIST/cover-selection.json"
+  --cover-selection "$DIST/cover-selection.json" \
+  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
 /usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
   --m4b "$DIST/$SLUG.m4b" \
@@ -130,6 +131,11 @@ points you at — and explaining each part: what it does, how it works, why it w
 chosen, and what was traded away. The output is a chaptered EPUB (importable into
 any audiobook/reader app, including on-device text-to-speech narration) plus a
 combined Markdown copy.
+
+Read `references/declaudification.md` before outlining or drafting. Record the
+listener's **AI-writing patterns to avoid**, prevent those phrase families in the
+lead-author prompt, and require the family-density gate plus hash-bound prose
+receipt before packaging.
 
 The whole thing is *heard*, so it is written for the ear: warm second-person
 prose, every term defined in plain English, and **never more than one short line
@@ -309,6 +315,11 @@ Run the checklist in `references/narration-style.md`:
   repeated phrases, similar paragraphs, and formulaic openings/closings. Treat
   it as a candidate list, not a blind rewrite instruction: intentional
   vocabulary retrieval is allowed only when the coverage ledger explains it;
+- follow `references/declaudification.md` and run `prose_qc.py` with
+  `--fail-on-style` before and after the humanizer. The initial run is an
+  independent inventory; the final run records accepted and rejected decisions
+  and writes `research/prose-style-receipt.json` bound to the canonical chapter
+  hashes;
 - a cheap-reader report that cites the exact paragraph for: redundant idea,
   unexplained leap, weak or missing mechanism, jargon without an example,
   generic phrasing, and a place that needs a counterexample, boundary, or
@@ -415,7 +426,8 @@ DIST="$RUN_ROOT/dist"
   --subtitle "$SUBTITLE" \
   --slug "$SLUG" \
   --cover "$DIST/cover-$SELECTED.png" \
-  --cover-selection "$DIST/cover-selection.json"
+  --cover-selection "$DIST/cover-selection.json" \
+  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 ```
 
 It writes a valid EPUB 3 (with both a nav and an NCX table of contents, and the
@@ -544,3 +556,6 @@ code change, so it normally needs no repo-doc updates.
   split, continuity protocol, and citation-first cheap-review format.
 - `references/humanizer-pass.md` — the bounded `humanizer` pass for removing
   AI-writing tells without replacing the frontier author's voice or meaning.
+- `references/declaudification.md` — drafting prohibitions, rhetorical phrase
+  families, density limits, the two-pass humanizer inventory, and the
+  hash-bound prose receipt required for new packages.

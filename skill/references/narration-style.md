@@ -98,6 +98,12 @@ VOICE: second person ("you"), patient, encouraging, a little wry — a smart fri
 explaining over coffee, not a motivational speaker. Short, varied sentences.
 Concrete analogies used sparingly. Trust the listener; never oversell.
 
+DE-CLAUDIFICATION — follow `declaudification.md` during drafting. State the fact
+directly instead of managing the listener's reaction. The listener's named
+AI-writing patterns to avoid are hard bans. Do not synonym-cycle through hold,
+carry, keep, sit with, notice, pause, resist, or let-that-land instructions; do
+not use repeated `let me`, `not X but Y`, or announced transitions as a voice.
+
 SHAPE of each chapter: give the chapter a distinct job in the book — perhaps a
 scene, a mechanism, a guided walkthrough, a comparison, a failure analysis, or
 an application — rather than running every chapter through the same hook →

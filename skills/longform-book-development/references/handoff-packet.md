@@ -70,7 +70,10 @@ to introduce, and any sample passage the user liked. Record the humanizer
 decision here:
 
 - Humanizer pass: required / optional / skipped
+- De-Claudification gate: required
 - AI-writing patterns to avoid:
+- Disliked phrase families:
+- Positive voice sample:
 - Voice constraints and things that must not be invented:
 - Voice sample path, if any:
 
