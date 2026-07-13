@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import importlib.util
+import io
 import shutil
 import struct
 import subprocess
@@ -14,6 +15,7 @@ from unittest import mock
 from pathlib import Path
 
 SCRIPT = Path(__file__).parents[1] / "skill" / "scripts" / "make_cover.py"
+sys.path.insert(0, str(SCRIPT.parent))
 SPEC = importlib.util.spec_from_file_location("make_cover", SCRIPT)
 assert SPEC and SPEC.loader
 make_cover = importlib.util.module_from_spec(SPEC)
@@ -27,6 +29,48 @@ PIXEL_PNG = base64.b64decode(
 
 
 class MakeCoverArtLoadingTests(unittest.TestCase):
+    def test_spec_mode_rejects_legacy_flags_instead_of_falling_back(self) -> None:
+        stderr = io.StringIO()
+        with tempfile.TemporaryDirectory() as raw_dir, \
+                mock.patch.object(
+                    sys,
+                    "argv",
+                    [
+                        str(SCRIPT),
+                        "--spec",
+                        "candidate.json",
+                        "--title",
+                        "Wrong",
+                        "--out",
+                        str(Path(raw_dir) / "cover.png"),
+                    ],
+                ), \
+                mock.patch.object(sys, "stderr", stderr), \
+                self.assertRaises(SystemExit) as raised:
+            make_cover.main()
+        self.assertEqual(2, raised.exception.code)
+        self.assertIn("--spec cannot be combined with legacy cover flags", stderr.getvalue())
+
+    def test_spec_mode_rejects_equals_form_legacy_flags(self) -> None:
+        stderr = io.StringIO()
+        with tempfile.TemporaryDirectory() as raw_dir, \
+                mock.patch.object(
+                    sys,
+                    "argv",
+                    [
+                        str(SCRIPT),
+                        "--spec=candidate.json",
+                        "--title=Wrong",
+                        "--out",
+                        str(Path(raw_dir) / "cover.png"),
+                    ],
+                ), \
+                mock.patch.object(sys, "stderr", stderr), \
+                self.assertRaises(SystemExit) as raised:
+            make_cover.main()
+        self.assertEqual(2, raised.exception.code)
+        self.assertIn("--spec cannot be combined with legacy cover flags", stderr.getvalue())
+
     def test_load_raster_art_embeds_a_png_data_uri(self) -> None:
         with tempfile.TemporaryDirectory() as raw_dir:
             image = Path(raw_dir) / "hero.png"

@@ -12,24 +12,28 @@ This corrected edition treats American red squirrels as a leading daytime candid
 |---|---|
 | `rodents-in-the-walls.md` | Canonical reading manuscript |
 | `rodents-in-the-walls.epub` | EPUB edition with embedded cover and chapter navigation |
-| `cover.png` | Selected cover, 1600 × 2560 |
+| `cover.png` | Approved C2A adaptive cover, 1600 × 2560 |
+| `cover-selection.json` | Governed corrected-v2 selection receipt |
 | `rodents-in-the-walls.m4b` | Echo audiobook, `am_michael`, 9 chapters |
 | `rodents-in-the-walls.alignment.json` | Echo read-along sidecar |
 
-The public repository package contains only the Markdown, EPUB, selected cover,
-chaptered M4B, alignment sidecar, and this README. The narration-QA JSON and
-delivery checksums are private delivery evidence and are intentionally absent
-from this public package.
+The public repository package contains the Markdown, EPUB, selected cover and
+its governed source/specification/render/selection provenance, chaptered M4B,
+alignment sidecar, and this README. The narration-QA JSON and delivery checksums
+are private delivery evidence and are intentionally absent from this package.
 
 ## Cover
 
-Refreshed in July 2026 with original raster artwork generated through the
-built-in image-generation tool, then composed with the repository cover tool.
-The artwork follows the current collection policy: visual energy continues
-through the top and middle, with only the lower 25–35% reserved as a calmer
-title field. The previous public cover is preserved as `cover-legacy.png`;
-generation prompt and selection evidence are recorded in the collection
-[cover-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md).
+Refined in July 2026 as **C2A — Compact Ribbon / Editorial Footer**, an adaptive
+art/type composition that keeps the full branching-shadow artwork and central
+wall opening visible while moving the title into a compact orange ribbon and
+the supporting metadata into a soft editorial footer. The governed selection,
+four reviewed directions, hashes, font roles, and edition-specific verification
+are recorded in the [adaptive-cover pilot manifest](../../docs/cover-pilots/rodents-adaptive-2026-07/manifest.md).
+
+The earlier July [collection-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md)
+and contact sheet remain historical evidence of that separate refresh. The
+immediately previous public cover is preserved as `cover-pre-adaptive.png`.
 
 ## Edition details
 
@@ -82,7 +86,7 @@ The live provincial consolidations, permit page, and 2026–27 annual hunting an
 - EPUB package metadata/navigation: title, creator, language, embedded cover
   declaration and image, navigation document, NCX, and 9 chapter spine entries
   confirmed.
-- Cover: 1600 × 2560 generated-raster artwork; embedded bytes match `cover.png`.
+- Cover: approved C2A render is 1600 × 2560; `cover-selection.json` verifies standalone bytes, EPUB cover bytes, M4B normalized pixels, and corrected-v2 receipt identity. Full provenance and the four-direction review are in the [adaptive-cover pilot manifest](../../docs/cover-pilots/rodents-adaptive-2026-07/manifest.md).
 - M4B: title/artist/album tags confirmed; 9 named chapters; duration confirmed by `ffprobe`.
 - Sidecar: native Echo verifier returned `SIDECAR_OK` with 245 anchors and 9 chapters.
 - Independent review: high-priority factual, legal, and safety findings were repaired before final delivery. The revision removes unsupported entry rankings and chewing times, separates red-squirrel hunting from fur-trapping dates, identifies the property-damage exception without treating it as method permission, states Nova Scotia's prohibition on poisoning wildlife except rats, requires DNR or licensed-operator confirmation before a flying-squirrel exclusion device is installed, limits building repair guidance to supported principles and trade decisions, and separates PHAC's public cleanup sequence from contractor-specific remediation practice.

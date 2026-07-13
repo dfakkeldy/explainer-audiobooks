@@ -236,69 +236,81 @@ Make the cover next. A cover makes the book look real in any library (and in
 Echo), and it must look like a professional audiobook-store cover: specific,
 thumbnail-legible, and built around an image with an editorial point of view —
 not title text on a plain colour. Follow `references/cover-art.md` and make
-**exactly three award-worthy candidates by default.** They must have different
-central metaphors, compositions, palettes, and visual languages; recolours and
-minor crops do not count. Use the reference's style menu and genre calibration to
-choose three appropriate directions, write a short art brief for each, and reject
-generic genre clichés before rendering.
+**exactly three award-worthy, complete art-and-type candidates by default.** The
+three candidates must differ in metaphor, composition, palette, material
+language, and title strategy. Font, line breaks, scale, placement, and effects
+are part of the candidate—not a shared footer applied afterward. Use the
+reference's style menu and genre calibration to choose three appropriate
+directions, write a complete art-and-type brief for each, and reject generic
+genre clichés before rendering.
 
 Use the strongest available image-generation tool directly for the art (for
 example, `image_generate`), rather than asking a cheaper text model to draw a
 generic SVG of icons, cards, arrows, or diagrams. Follow the copy-ready prompt in
 `references/cover-art.md`: give the model one specific visual thesis, one large
-central metaphor, an art-directed composition, an intentional title-safe area,
-and an eye-catching 2–4-colour palette with a vivid signature accent. Generated
-images must contain no lettering, logos, watermarks, mockup frame, interface,
-infographic, stock-template look, or close imitation of a named existing cover or
-designer. Reject weak outputs and regenerate; do not ship the first technically
-valid image. `make_cover.py --art` accepts SVG, PNG, JPEG, WebP, and GIF art and
-adds the reliable title/subtitle/author metadata itself. Choose an intentional
-signature accent colour for each candidate, make it visibly present in the art,
-and pass it to `--accent` so Echo/library UIs can derive a meaningful identity
-from the finished cover. Include at least one high-key/bright candidate unless
-the subject genuinely demands three dark directions.
+central metaphor, an art-directed composition for that candidate's intended
+title relationship, and an eye-catching two-to-four-colour palette with a vivid
+signature accent. Keep generated art text-free: no lettering, logos, watermarks,
+mockup frame, interface, infographic, stock-template look, or close imitation of
+a named existing cover or designer. Reject weak outputs and regenerate; do not
+ship the first technically valid image. Include at least one high-key/bright
+candidate unless the subject genuinely demands three dark directions.
 
-The default layout is `bleed` (full illustration plus a scrim that carries the
-title):
+Save each art file beside a validated `cover-spec-N.json`. New books render the
+whole composition from the specification:
 
 ```bash
-python3 scripts/make_cover.py \
-  --title "<Book Title>" \
-  --subtitle "<one-line subtitle>" \
-  --author "Dan Fakkeldy" \
-  --label "AUDIOBOOK" \
-  --art <build>/dist/cover-concept-1.svg \
-  --accent "#2ee8b6" \
-  --tone bright \
-  --layout bleed \
-  --out <build>/dist/cover-1.png
+SLUG="<Output-Filename-Base>"
+RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
+/usr/local/bin/python3 skill/scripts/make_cover.py \
+  --spec "$RUN_ROOT/dist/cover-spec-1.json" \
+  --out "$RUN_ROOT/dist/cover-1.png"
 ```
 
-Then **send the candidates with `SendUserFile` and let the user pick** (or mix) —
-cover taste is theirs, and each render is cheap. `make_cover.py` composes your art
-into the layout and rasterizes a 1600×2560 PNG via `rsvg-convert`, then ImageMagick;
-the background hue is derived from `--accent` when supplied, otherwise from the
-title. Use `--tone bright` for high-key covers and `--tone dark` for cinematic
-covers. `--layout hero` frames the art in a panel instead, for a quieter, more
-classic option worth including as one of the candidates. A complete example
-illustration ships at
-`references/cover-art-example.svg`. If no rasterizer is found the script writes a
-`.svg` beside the path and exits non-zero — install `librsvg`/ImageMagick or
-proceed without a cover. If the user supplied their own cover image, skip all this
-and pass their file as `--cover` below.
+Repeat for candidates 2 and 3. Review every full-size render and generated
+160-pixel thumbnail with its brief, font/palette note, and warnings. Send all
+three complete candidates to the user and ask them to choose or request a mix;
+a mix becomes a new specification and render. The renderer never selects a
+candidate automatically.
 
-Then assemble, passing the chosen cover with `--cover`:
+Only after the human choice, create `cover-selection.json` with
+`cover_receipts.py select`, using `selection_source=explicit-user-choice` (or
+`requested-mix`) plus the approved edition and privacy metadata. Assign all
+values from the approved run metadata, then select and build in that order:
 
 ```bash
-python3 scripts/build_book.py \
-  --chapters-dir <build>/chapters \
-  --out-dir <build>/dist \
-  --title "<Book Title>" \
+SELECTED=1
+SLUG="<Output-Filename-Base>"
+TITLE="<Book Title>"
+SUBTITLE="<one-line subtitle>"
+CONTRIBUTOR="<your model name, e.g. Opus 4.8>"
+EDITION_ID="<edition identifier>"
+SELECTED_AT="<ISO-8601 timestamp with UTC offset>"
+CLASSIFICATION="<private|public-safe|sensitive>"
+PERMISSION_TO_PUBLISH="<denied|granted|not-requested>"
+RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
+DIST="$RUN_ROOT/dist"
+
+/usr/local/bin/python3 skill/scripts/cover_receipts.py select \
+  --render-receipt "$DIST/cover-$SELECTED.render.json" \
+  --out "$DIST/cover-selection.json" \
+  --book-slug "$SLUG" \
+  --edition-id "$EDITION_ID" \
+  --selection-source explicit-user-choice \
+  --selected-at "$SELECTED_AT" \
+  --classification "$CLASSIFICATION" \
+  --permission-to-publish "$PERMISSION_TO_PUBLISH"
+
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir "$RUN_ROOT/chapters" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
   --author "Dan Fakkeldy" \
-  --contributor "<your model name, e.g. Opus 4.8>" \
-  --subtitle "<one-line subtitle>" \
-  --slug <Output-Filename-Base> \
-  --cover <build>/dist/cover-<chosen>.png
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
+  --slug "$SLUG" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --cover-selection "$DIST/cover-selection.json"
 ```
 
 It writes a valid EPUB 3 (with both a nav and an NCX table of contents, and the
@@ -308,21 +320,90 @@ runtime. The EPUB author (`dc:creator`) is the human; the generating model is
 recorded as a `dc:contributor`. `--cover` and `--contributor` are optional.
 Verify the EPUB is valid (the `mimetype` check in `references/narration-style.md`).
 
-### 7. Deliver
+### 7. Native Echo/Kokoro M4B and alignment
 
-Always save the finished `.epub` to the user's book inbox so it's where they
-expect it, then surface it in chat:
+For a complete governed package, render native Echo/Kokoro audio only after the
+governed EPUB exists. Follow the Echo build and CLI-discovery procedure in
+`skills/custom-learning-audiobook/references/package-and-qc.md`, set `CLI` to the
+built `echo-cli`, and keep the same work directory/database across resumes:
 
 ```bash
-mkdir -p ~/Downloads/book-inbox
-cp <build>/dist/<Output-Filename-Base>.epub ~/Downloads/book-inbox/
+CLI="<path to the built echo-cli>"
+WORK="$RUN_ROOT/audio-work"
+DB="$RUN_ROOT/narration.sqlite"
+
+"$CLI" narrate \
+  --epub "$DIST/$SLUG.epub" \
+  --out "$DIST/$SLUG.m4b" \
+  --sidecar "$DIST/$SLUG.alignment.json" \
+  --voice am_michael \
+  --title "$TITLE" \
+  --author "Dan Fakkeldy" \
+  --work-dir "$WORK" \
+  --db "$DB"
 ```
 
-Then send the `.epub` (and the `.md`, which is handy for reading/editing) with
-`SendUserFile`. Report the real total word count and the honest runtime estimate.
-If it ran long, offer to trim by tightening prose across all chapters (preserving
-the arc) rather than cutting chapters. Offer to regenerate any single chapter,
-adjust the voice or cover, or change length.
+If `am_michael` is unavailable, retry with the Echo voice `am_puck` and record
+the fallback. Do not impose a timeout on a progressing render, and do not silently
+replace Echo/Kokoro with Apple/macOS/system narration. Resume a partial render
+with the same command plus `--resume`.
+
+After Echo writes the M4B and alignment sidecar, run the final receipt check
+across the selected cover, governed EPUB, and M4B:
+
+```bash
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --receipt "$DIST/cover-selection.json"
+```
+
+If native Echo audio is blocked, the EPUB and Markdown may be surfaced directly
+from `dist/` as clearly labelled **interim** files. They are not a complete
+governed package, and the workflow does not proceed to package sync until native
+Echo audio and the final M4B receipt verification succeed.
+
+### 8. Governed delivery
+
+Set `DELIVERY_DIR` to the approved delivery folder. Run the sync as a dry run
+first; it reports `new`, `reuse`, `supersede`, or a conflict without writing:
+
+```bash
+DELIVERY_DIR="<approved delivery folder>"
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse
+```
+
+Use `--intent supersede` only for a newer explicit choice. A cover-bearing
+destination without a receipt is an `unreceipted` conflict unless the operation
+is an explicit supersession. Only after the reported classification is expected,
+rerun the same sync with explicit apply (and the same chosen intent):
+
+```bash
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse \
+  --apply
+```
+
+After governed apply, copy only non-governed Markdown, alignment, manifest, and
+image files as needed; never raw-copy the selected cover, EPUB, M4B, or selection
+receipt around classification. Surface the delivered EPUB/Markdown in chat and
+report the real total word count, runtime, narrator, receipt verification, and
+destination classification. If it ran long, offer to trim by tightening prose
+across all chapters (preserving the arc) rather than cutting chapters. Offer to
+regenerate any single chapter, adjust the voice or cover, or change length.
 
 If the user produced this from a real codebase that has living docs, consider
 whether anything is worth noting — but this skill creates a *deliverable*, not a
@@ -332,24 +413,28 @@ code change, so it normally needs no repo-doc updates.
 
 - `scripts/build_book.py` — assembles `chNN.md` chapter files into an EPUB +
   combined Markdown. Title/author/subtitle/slug are arguments, plus an optional
-  `--cover`. Standalone Markdown image lines (`![alt](images/f.png "caption")`)
-  become embedded figures automatically — images resolve relative to the
-  chapters dir, land inside the EPUB, and are copied beside the .md. Missing
-  images are dropped with a warning, so read the build output. Run it; don't
-  reimplement EPUB zipping by hand.
-- `scripts/make_cover.py` — composes original per-book SVG or raster art (`--art`
-  accepts SVG, PNG, JPEG, WebP, and GIF) into a bestseller-style cover PNG, in a
-  `bleed` (default) or `hero` layout. Pass `--accent` with the art's signature
-  colour so the finished cover strongly carries the library-derived accent. Follow
-  `references/cover-art.md` to render **exactly three award-worthy, genre-distinct
-  concepts** by default, let the user pick or mix, then pass the chosen PNG to
-  `build_book.py --cover`.
+  `--cover`. New builds also pass `--cover-selection` so the selected cover is
+  verified while the EPUB is assembled. Standalone Markdown image lines
+  (`![alt](images/f.png "caption")`) become embedded figures automatically —
+  images resolve relative to the chapters dir, land inside the EPUB, and are
+  copied beside the .md. Missing images are dropped with a warning, so read the
+  build output. Run it; don't reimplement EPUB zipping by hand.
+- `scripts/make_cover.py` — validates a candidate specification, renders its
+  complete art-and-type composition with bundled fonts, and writes a full-size
+  cover, thumbnail, and render receipt. New books use `--spec`; the old title,
+  art, accent, tone, and layout flags are compatibility-only for existing calls.
+- `scripts/cover_receipts.py` — creates an explicit human selection receipt and
+  verifies that receipt through the selected cover and packaged artifacts.
+- `scripts/sync_selected_cover.py` — classifies a delivery destination in a dry
+  run and applies the selected cover-bearing artifacts only after explicit
+  approval.
 - `references/narration-style.md` — the voice & rules block to give the frontier
   author verbatim, the reasoning behind them, the length/runtime table, the
   fact-pack discipline, and the QC checklist. Read before writing fact packs.
-- `references/cover-art.md` — how to design good per-book cover art and run the
-  offer-a-few-candidates flow; ships with `cover-art-example.svg` as a starting
-  point.
+- `references/cover-art.md` — how to design, render, review, and explicitly
+  select three complete art-and-type candidates; ships with
+  `cover-art-example.svg` as a structural reference for an approved vector
+  fallback.
 - `references/frontier-manuscript-pipeline.md` — the frontier-author / cheaper-worker
   split, continuity protocol, and citation-first cheap-review format.
 - `references/humanizer-pass.md` — the bounded `humanizer` pass for removing

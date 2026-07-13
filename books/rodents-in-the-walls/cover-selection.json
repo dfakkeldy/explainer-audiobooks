@@ -1,0 +1,24 @@
+{
+  "book_slug": "rodents-in-the-walls",
+  "colour_mode": "RGB",
+  "dimensions": [
+    1600,
+    2560
+  ],
+  "direction_name": "Compact Ribbon / Editorial Footer",
+  "edition_id": "corrected-v2",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": "granted"
+  },
+  "receipt_version": 1,
+  "rendered_cover_sha256": "e1afe1fbcbd440927c8d4d62de475af3230afe0d8edbbb6a886c498fc21af2a2",
+  "schema_version": 1,
+  "selected_at": "2026-07-13T00:07:44-03:00",
+  "selected_candidate": "c2a-compact-ribbon-editorial-footer",
+  "selection_source": "requested-mix",
+  "source_art_sha256": "cced16a14a0aaced901af7ffd0b140c4d6e13fdf88bd3da22a9724fb7bad9812",
+  "spec_sha256": "917f7f7b6866e668c3da8b144609ecf093d111112c0177d2d92a179678fc53e3"
+}

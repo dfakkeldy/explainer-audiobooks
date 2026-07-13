@@ -19,7 +19,7 @@ patterns:
   inventory of the subject.
 - **Type is part of the composition.** The title has a deliberate field, scale,
   contrast, and relationship to the art. It does not look pasted over a stock
-  image. Build art with clear room for the compositor's title block.
+  image. Build art around the intended relationship between image and type.
 - **A confident system, not decoration.** A grid, repeated mark, archival label,
   rough paper texture, colour field, or precise diagram creates a visual world.
   It should feel intentional at thumbnail size, not like a generic presentation
@@ -27,10 +27,9 @@ patterns:
 - **Controlled contrast and negative space.** Premium covers often use fewer
   elements, larger scale, and breathing room. A bright cover can be as serious as
   a dark one when the silhouette and hierarchy are strong. Negative space must
-  still feel designed. The supplied `make_cover.py` compositor places its title
-  in the lower third, so carry visual energy through the top and middle and keep
-  only the lower 25–35% calm enough for type. A visibly empty top half is not
-  premium restraint.
+  still feel designed. Generate art for the intended candidate composition;
+  negative space may be top, bottom, side, central, interrupted, or supplied by
+  an integrated band when the brief makes that relationship deliberate.
 - **Tactility and imperfection.** Paper grain, ink bleed, collage edges, an
   imperfect line, a physical object, or restrained photo realism can add human
   presence. Use one texture language, not a pile of effects.
@@ -44,10 +43,12 @@ specific existing cover. Borrow the **design principle**, not the cover.
 
 ## Non-Negotiable Default: Three Distinct Directions
 
-Prepare exactly three candidates, all rendered at the final 1600×2560 size. They
-must differ in **central metaphor, composition, palette, and visual language** —
-not merely in background colour or crop. Give each a one-line art-direction name
-and a short rationale before rendering.
+Prepare exactly three complete art-and-type candidates, all rendered at the final
+1600×2560 size. The three candidates must differ in metaphor, composition,
+palette, material language, and title strategy. Font, line breaks, scale,
+placement, and effects are part of the candidate—not a shared footer applied
+afterward. Give each a one-line art-direction name and a short rationale before
+rendering.
 
 Choose the three most appropriate directions from this menu. Do not use a
 weak/placeholder direction just to fill the count.
@@ -81,19 +82,26 @@ weak/placeholder direction just to fill the count.
 
 ## Candidate Brief Before Making Art
 
-Write a five-line brief for each direction:
+Write one complete art-and-type brief per candidate before image generation:
 
-1. **Audience promise:** the emotional or intellectual pull at a glance.
-2. **Central metaphor:** one object, scene, system, or visual paradox.
-3. **Composition:** scale, crop, negative space, and where the title will live.
-4. **Material and palette:** 2–4 core colours, texture language, and signature
-   accent (`#RRGGBB`).
-5. **Anti-brief:** the genre clichés and visual treatments this candidate refuses.
+1. Audience promise.
+2. Central metaphor.
+3. Composition, crop, and intended title field.
+4. Material language and two-to-four-colour palette.
+5. Anti-brief.
+6. Title archetype and font roles.
+7. Planned line breaks and hierarchy.
+8. Title anchor, alignment, and approximate occupied area.
+9. Intended relationship between title and art.
+10. Subtitle, author, and AUDIOBOOK placement.
+
+The three candidates must differ in metaphor, composition, palette, material
+language, and title strategy. Font, line breaks, scale, placement, and effects
+are part of the candidate—not a shared footer applied afterward.
 
 A candidate is not ready to render if its central idea could fit any book, if
 its anti-brief is empty, or if a text model produced vector art without first
-using an available image-generation tool. It is also not ready when “title-safe
-space” has become a dead or vacant upper half.
+using an available image-generation tool.
 
 ## Making the Art
 
@@ -115,14 +123,11 @@ that could sit in a serious bookstore or audiobook storefront.
 3. **User-supplied, self-created, official, public-domain, or permissively
    licensed photography/art** only when the rights and provenance are clear.
 
-`make_cover.py --art` accepts self-contained SVG plus PNG, JPEG, WebP, and GIF
-art. For raster artwork it embeds the file into the composed SVG, so the final
-PNG render remains portable. Keep all visual content comfortably inside the
-central safe area: `bleed` crops edges, whereas `hero` frames the complete image.
-
-The title, subtitle, author, and audiobook label are added by `make_cover.py`.
-Do **not** bake text into the art itself; generated text is unreliable, fights the
-metadata, and rarely reads well at thumbnail size.
+The validated specification may reference self-contained SVG, PNG, JPEG, WebP,
+or GIF art. Keep generated artwork text-free: title, subtitle, author, and the
+audiobook label belong to the specification, where their font, line breaks,
+scale, placement, and effects remain reproducible. Generated text is unreliable,
+fights the metadata, and rarely reads well at thumbnail size.
 
 ### Copy-ready image-generation prompt
 
@@ -139,10 +144,11 @@ cover about [SUBJECT]. The book's audience is [AUDIENCE], and its promise is
 Show one unforgettable central metaphor: [SPECIFIC OBJECT, SCENE, OR VISUAL
 PARADOX]. Make that subject large, beautifully art-directed, and immediately
 legible at a small thumbnail. Use [COMPOSITION: CLOSE CROP / WIDE STILL LIFE /
-SINGLE FIGURE / DIAGONAL ACTION], with a strong silhouette, one clear focal point,
-and generous intentional negative space in the [TOP / BOTTOM / LEFT / RIGHT]
-third for title typography. The image should feel like a finished editorial book
-cover image, not an illustration for a slide deck.
+SINGLE FIGURE / DIAGONAL ACTION], with a strong silhouette and one clear focal
+point. Compose around [INTENDED TITLE FIELD AND RELATIONSHIP TO ART]; that field
+may be top, bottom, side, central, interrupted, or an integrated band. The image
+should feel like finished editorial cover artwork, not an illustration for a
+slide deck.
 
 Visual language: [CHOOSE ONE: cinematic editorial photograph / tactile cut-paper
 collage / expressive ink and gouache / refined screen print / painterly realism /
@@ -169,36 +175,30 @@ material language, and palette—not just the colour values. If the output is a
 generic gradient, diagram, icon illustration, cluttered scene, or weak literal
 stock image, discard it and regenerate with a sharper physical metaphor and
 stronger art direction. Ask for a clean image with no lettering even when the
-model claims to handle typography; add all text afterward with `make_cover.py`.
+model claims to handle typography; encode all text and layout afterward in each
+candidate specification.
 
-## Render and Compare
+## Render, Compare, and Select
 
-For each candidate:
-
-1. Save art as `cover-concept-1.<svg|png|jpg|webp>`, and similarly for 2/3.
-2. Pass the art's visible accent to `--accent`; the same colour must appear in the
-   artwork, not only as a thin border.
-3. Deliberately vary `--layout` and `--tone` where that serves the concept. At
-   least one candidate should be high-key/bright unless the subject genuinely
-   demands three dark directions.
-4. Render with `make_cover.py` at 1600×2560.
-5. Inspect at full size **and at thumbnail scale**. Send all three candidates to
-   the user; invite a pick or a mix.
-
-Example:
+Assign `SLUG` from the approved run metadata. Keep generated artwork text-free.
+Save each art file beside its validated `cover-spec-N.json`, then render each
+complete composition:
 
 ```bash
-python3 scripts/make_cover.py \
-  --title "<Book Title>" \
-  --subtitle "<one-line subtitle>" \
-  --author "Dan Fakkeldy" \
-  --label "AUDIOBOOK" \
-  --art <build>/dist/cover-concept-1.webp \
-  --accent "#2ee8b6" \
-  --tone bright \
-  --layout bleed \
-  --out <build>/dist/cover-1.png
+RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
+/usr/local/bin/python3 skill/scripts/make_cover.py \
+  --spec "$RUN_ROOT/dist/cover-spec-1.json" \
+  --out "$RUN_ROOT/dist/cover-1.png"
 ```
+
+Repeat for candidates 2 and 3. Review every full-size render, generated
+160-pixel thumbnail, art-and-type brief, font/palette note, and warning. Ask the
+user to choose or request a mix. A mix becomes a new specification and render.
+
+Only after the user chooses, create `cover-selection.json` with
+`selection_source=explicit-user-choice` (or `requested-mix`). The renderer never
+selects a candidate automatically. New books use `--spec`; the old
+title/art/accent/tone/layout flags remain compatibility-only for existing calls.
 
 ## Award-Worthy Acceptance Bar
 
@@ -219,18 +219,18 @@ Reject and replace any candidate that:
 
 ## Technical Contract
 
-- SVG should be a complete `<svg viewBox="0 0 1200 1400">…</svg>` with
-  self-contained shapes, gradients, and patterns. Namespace IDs to avoid
-  collisions with the compositor.
-- Raster art may be PNG, JPEG, WebP, or GIF. Use high-resolution portrait art;
-  no external image URLs are embedded.
-- Availability of SVG input in the compositor is a compatibility feature, not a
-  cover-generation default. An available image-generation tool requires raster
-  candidate art unless the user explicitly asks for vector art.
-- Make the signature accent unmistakable enough for Echo/library colour derivation
-  to find it, but do not flatten the whole cover into one colour.
-- Preserve safe margins. `bleed` fills and crops; `hero` keeps the full artwork in
-  a panel.
+- Each validated JSON specification owns its candidate metadata, 1600×2560
+  canvas, art placement, ordered fields/shapes/type, and bundled font IDs.
+- Raster art may be PNG, JPEG, WebP, or GIF. Self-contained SVG remains an
+  explicit-request or approved-unavailable-image-tool fallback. Use
+  high-resolution portrait art and no external image URLs.
+- Each spec-driven render writes the full-size RGB cover, a 160×256 thumbnail,
+  and a `.render.json` receipt. Treat every warning as part of human review.
+- Keep the candidate's signature accent unmistakable enough for Echo/library
+  colour derivation to find it, but do not flatten the whole cover into one
+  colour.
+- The legacy title, art, accent, tone, and layout flags exist only for compatible
+  existing calls. Do not use them for a new-book workflow.
 - A complete SVG example remains available at
-  `references/cover-art-example.svg`; use it as a structural reference, not a
-  visual template.
+  `references/cover-art-example.svg`; use it only as a structural reference for
+  an approved vector fallback, not a visual template.

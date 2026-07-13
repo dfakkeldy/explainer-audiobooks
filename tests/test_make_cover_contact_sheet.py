@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from PIL import Image
 
@@ -32,6 +33,50 @@ def make_single_entry(
 
 
 class MakeCoverContactSheetTests(unittest.TestCase):
+    def test_task_8_unicode_labels_render_visible_pixels(self) -> None:
+        from tempfile import TemporaryDirectory
+
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            entries = make_entries(root, count=3)
+            labels = (
+                "C1 — Full-Bleed Display",
+                "C2 — Integrated Colour Band",
+                "B1 — Shadow Branches",
+            )
+            for entry, label in zip(entries, labels, strict=True):
+                entry["title"] = label
+
+            try:
+                result = make_cover_contact_sheet.render(entries, root / "sheet.png")
+            except UnicodeEncodeError as error:
+                self.fail(f"exact Task 8 labels must render: {error}")
+
+            with Image.open(result.path) as sheet:
+                for index, label in enumerate(labels):
+                    left = index * 344
+                    band = sheet.crop((left, 512, left + 320, 564))
+                    self.assertTrue(
+                        any(pixel != (255, 255, 255) for pixel in band.getdata()),
+                        f"{label!r} should produce visible label pixels",
+                    )
+
+    def test_bundled_label_font_load_failure_is_clear(self) -> None:
+        from tempfile import TemporaryDirectory
+
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            entries = make_entries(root, count=1)
+            with mock.patch.object(
+                make_cover_contact_sheet.ImageFont,
+                "truetype",
+                side_effect=OSError("invalid bundled font"),
+            ), self.assertRaisesRegex(
+                ValueError,
+                "could not load bundled contact-sheet font.*invalid bundled font",
+            ):
+                make_cover_contact_sheet.render(entries, root / "sheet.png")
+
     def test_builds_three_column_contact_sheet_in_manifest_order(self) -> None:
         from tempfile import TemporaryDirectory
 

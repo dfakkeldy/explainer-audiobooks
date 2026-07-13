@@ -21,24 +21,35 @@ Use this run layout:
     images/
       figure-01.png
   dist/
+    cover-source-1.png
+    cover-spec-1.json
+    cover-1.png
+    cover-1-thumbnail.png
+    cover-1.render.json
+    cover-selection.json
     <slug>.epub
     <slug>.md
     images/
     <slug>.m4b
     <slug>.alignment.json
-    cover.png
     README.md or manifest.json
 ```
 
-The canonical transient build output stays under `.build/`. The durable local
-delivery copy goes to iCloud Drive under:
+Repeat the numbered cover source/spec/render/thumbnail/receipt set for candidates
+2 and 3. `cover-selection.json` appears only after the user chooses or requests a
+mix.
+
+The canonical transient build output stays under `.build/`. A public-safe
+package defaults to a durable iCloud Drive delivery copy under:
 
 ```text
 /Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/
 ```
 
-Use that iCloud Drive folder as the findable delivery surface. Public-safe final
-packages may also be copied to `books/<slug>/`.
+Private or sensitive packages stay in the agreed private project folder and
+receive an iCloud Books reading copy only on an explicit user request. Public-safe
+final packages may also publish to `books/<slug>/` only through the governed
+public sync described below.
 
 ## Interior Figures
 
@@ -64,52 +75,109 @@ Rules:
 - Use meaningful alt text and captions; avoid decorative filler.
 - Prefer a few purposeful figures that teach, orient, compare, or document.
 
+## Prose QC
+
+Complete prose QC, humanization, frontier-author acceptance, and every
+substantive repair before building the EPUB or rendering Echo audio. Read
+`../../skill/references/frontier-manuscript-pipeline.md`, the narration-style
+checks in `../../skill/references/narration-style.md`, and
+`../../skill/references/humanizer-pass.md`. The frontier-authored chapter
+Markdown remains canonical throughout this step.
+
+At minimum:
+
+- word count matches the ledger's **chapter-specific** ranges or has a written
+  reason to be outside them; do not pad a short chapter automatically,
+- no raw code/symbol narration leaks,
+- run `python3 skill/scripts/prose_qc.py --chapters-dir
+  .build/custom-learning-audiobooks/<slug>/chapters --out
+  .build/custom-learning-audiobooks/<slug>/research/prose-qc.md`,
+- have a cheaper reviewer use that report and `coverage-ledger.md` to flag only
+  exact locations for redundant ideas, formulaic openings/closings, unexplained
+  leaps, shallow concepts, jargon without a concrete case, or missing
+  boundaries/counterexamples; it recommends a repair **type**, not replacement
+  prose,
+- the frontier author accepts/rejects findings and makes every substantive
+  content edit in canonical Markdown,
+- run the bounded humanizer pass, have the frontier author accept or reject each
+  non-mechanical suggestion, then rerun factual, ledger, narration, and prose
+  checks,
+- complete the sensitive/private-term scan, first-chapter and technical-chapter
+  spot reads, and source-confidence label,
+- for illustrated books, every intended figure source exists and has alt text,
+  caption, provenance, and permission before build; verify its `OEBPS/images/`
+  entry after the governed EPUB is assembled.
+
 ## EPUB And Markdown
 
-Render **exactly three award-worthy, genre-distinct image-led cover candidates**
+Render **exactly three award-worthy, complete art-and-type cover candidates**
 before building the EPUB; this is the default, not an opt-in. Follow
 `../../skill/references/cover-art.md`: research transferable visual principles,
-write a brief for each candidate, select three genuinely different visual
-languages, render them, and let the user choose or mix. When an image-generation
-tool is available, generated raster art is mandatory (no text, logos, or
-watermarks); do not substitute bespoke SVG, programmatic vector art, diagrams,
-or icon compositions. Use SVG only when the user explicitly requests vector art
-or approves it as a fallback after image generation is confirmed unavailable.
-Rights-cleared raster art remains acceptable; never copy or closely imitate a
-specific existing cover. `make_cover.py --art` accepts SVG, PNG, JPEG, WebP, and
-GIF, but format support is not permission to bypass image generation. Give each
-candidate its own visible signature accent
-and pass the matching value to `--accent`; include a bright/high-key option unless
-three dark directions are truly warranted. Reject a generic template, slide icon,
-AI wallpaper, or recolour before the user sees it.
+write a complete brief for each candidate, render all three, and let the user
+choose or request a mix. The three candidates must differ in metaphor,
+composition, palette, material language, and title strategy. Font, line breaks,
+scale, placement, and effects are part of the candidate—not a shared footer
+applied afterward.
 
-Example:
+When an image-generation tool is available, generated raster art is mandatory;
+keep it text-free, with no logos or watermarks. Do not substitute bespoke SVG,
+programmatic vector art, diagrams, or icon compositions. Use SVG only when the
+user explicitly requests vector art or approves it as a fallback after image
+generation is confirmed unavailable. Rights-cleared raster art remains
+acceptable; never copy or closely imitate a specific existing cover. Include a
+bright/high-key option unless three dark directions are truly warranted, and
+reject a generic template, slide icon, AI wallpaper, or recolour before the user
+sees it.
+
+Save each art file beside its validated specification. Assign `SLUG` from the run
+metadata, then render candidate 1:
 
 ```bash
-python3 skill/scripts/make_cover.py \
-  --title "<Title>" \
-  --subtitle "<subtitle>" \
-  --author "Dan Fakkeldy" \
-  --label "AUDIOBOOK" \
-  --art .build/custom-learning-audiobooks/<slug>/dist/cover-concept-1.png \
-  --accent "#2ee8b6" \
-  --tone bright \
-  --layout bleed \
-  --out .build/custom-learning-audiobooks/<slug>/dist/cover.png
+RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
+/usr/local/bin/python3 skill/scripts/make_cover.py \
+  --spec "$RUN_ROOT/dist/cover-spec-1.json" \
+  --out "$RUN_ROOT/dist/cover-1.png"
 ```
 
-From the repo root:
+Repeat for candidates 2 and 3. Human-review each full-size render, generated
+160-pixel thumbnail, art-and-type brief, font/palette note, and warning. The
+renderer never selects a candidate automatically. Ask the user to choose or
+request a mix; a mix becomes a new specification and render.
+
+Only after that choice, assign `SLUG`, `EDITION_ID`, `SELECTED_AT`,
+`CLASSIFICATION`, `PERMISSION_TO_PUBLISH`, `TITLE`, `SUBTITLE`, and `CONTRIBUTOR`
+from the approved run metadata. `SELECTED_AT` is an ISO-8601 timestamp;
+classification is `private`, `public-safe`, or `sensitive`; publication
+permission is `denied`, `granted`, or `not-requested`. Use
+`selection_source=explicit-user-choice`; for a requested mix, substitute
+`requested-mix` after rendering the new specification.
+
+Run the selection and governed EPUB build commands now. Final receipt
+verification waits until the native Echo step has produced the M4B:
 
 ```bash
-python3 skill/scripts/build_book.py \
-  --chapters-dir .build/custom-learning-audiobooks/<slug>/chapters \
-  --out-dir .build/custom-learning-audiobooks/<slug>/dist \
-  --title "<Title>" \
+SELECTED=1
+DIST=".build/custom-learning-audiobooks/$SLUG/dist"
+/usr/local/bin/python3 skill/scripts/cover_receipts.py select \
+  --render-receipt "$DIST/cover-$SELECTED.render.json" \
+  --out "$DIST/cover-selection.json" \
+  --book-slug "$SLUG" \
+  --edition-id "$EDITION_ID" \
+  --selection-source explicit-user-choice \
+  --selected-at "$SELECTED_AT" \
+  --classification "$CLASSIFICATION" \
+  --permission-to-publish "$PERMISSION_TO_PUBLISH"
+
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir ".build/custom-learning-audiobooks/$SLUG/chapters" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
   --author "Dan Fakkeldy" \
-  --contributor "<model name>" \
-  --subtitle "<subtitle>" \
-  --slug <slug> \
-  --cover .build/custom-learning-audiobooks/<slug>/dist/cover.png
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
+  --slug "$SLUG" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --cover-selection "$DIST/cover-selection.json"
 ```
 
 Validate:
@@ -151,16 +219,16 @@ CLI="$CLI_DIR/echo-cli"
 Render with the custom-learning defaults:
 
 ```bash
-DIST=".build/custom-learning-audiobooks/<slug>/dist"
-WORK=".build/custom-learning-audiobooks/<slug>/audio-work"
-DB=".build/custom-learning-audiobooks/<slug>/narration.sqlite"
+DIST=".build/custom-learning-audiobooks/$SLUG/dist"
+WORK=".build/custom-learning-audiobooks/$SLUG/audio-work"
+DB=".build/custom-learning-audiobooks/$SLUG/narration.sqlite"
 
 "$CLI" narrate \
-  --epub "$DIST/<slug>.epub" \
-  --out "$DIST/<slug>.m4b" \
-  --sidecar "$DIST/<slug>.alignment.json" \
+  --epub "$DIST/$SLUG.epub" \
+  --out "$DIST/$SLUG.m4b" \
+  --sidecar "$DIST/$SLUG.alignment.json" \
   --voice am_michael \
-  --title "<Title>" \
+  --title "$TITLE" \
   --author "Dan Fakkeldy" \
   --work-dir "$WORK" \
   --db "$DB"
@@ -183,7 +251,8 @@ If native Echo rendering is blocked, distinguish the cases clearly:
 - **Slow but progressing**: let it run, use `--resume` if interrupted, and report
   the active render state if the session must hand off.
 - **Blocked by resources/build/schema**: fix the Echo blocker when practical, or
-  deliver EPUB/Markdown with audio marked blocked.
+  surface EPUB/Markdown from the run folder as clearly labelled interim files;
+  do not sync or call the package complete.
 - **User-approved non-Echo preview**: only if the user explicitly asks for it,
   create the preview with a loud `non_echo_audio` status. Do not call it
   Echo-ready, and do not let it replace the native Echo render unless the user
@@ -195,9 +264,9 @@ Run what is available and record anything skipped:
 
 ```bash
 ffprobe -v error -show_entries format=duration \
-  -of default=noprint_wrappers=1:nokey=1 "$DIST/<slug>.m4b"
+  -of default=noprint_wrappers=1:nokey=1 "$DIST/$SLUG.m4b"
 
-python3 -m json.tool "$DIST/<slug>.alignment.json" >/dev/null
+python3 -m json.tool "$DIST/$SLUG.alignment.json" >/dev/null
 ```
 
 Optional Echo QA after narration:
@@ -213,32 +282,24 @@ AUDIOBOOK_ID=$(sqlite3 "$DB" "select id from audiobook order by rowid desc limit
 
 If the database schema differs, skip this optional QA and report why.
 
-## Prose QC
+## Final Cover Receipt Verification
 
-Read `../../skill/references/frontier-manuscript-pipeline.md` and run the
-narration-style checks from `../../skill/references/narration-style.md`. The
-frontier-authored chapter Markdown remains canonical throughout this step.
+After Echo renders the M4B, verify the explicit selection across the selected
+cover, governed EPUB, and M4B before any delivery or public publishing step:
 
-At minimum:
+```bash
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --receipt "$DIST/cover-selection.json"
+```
 
-- word count matches the ledger's **chapter-specific** ranges or has a written
-  reason to be outside them; do not pad a short chapter automatically,
-- no raw code/symbol narration leaks,
-- run `python3 skill/scripts/prose_qc.py --chapters-dir
-  .build/custom-learning-audiobooks/<slug>/chapters --out
-  .build/custom-learning-audiobooks/<slug>/research/prose-qc.md`,
-- have a cheaper reviewer use that report and `coverage-ledger.md` to flag only
-  exact locations for redundant ideas, formulaic openings/closings, unexplained
-  leaps, shallow concepts, jargon without a concrete case, or missing
-  boundaries/counterexamples; it recommends a repair **type**, not replacement
-  prose,
-- the frontier author accepts/rejects findings and makes every substantive
-  content edit before packaging,
-- sensitive/private-term scan,
-- first chapter and most technical chapter spot-read,
-- source-confidence label assigned,
-- for illustrated books, every intended figure has alt text, caption, provenance,
-  and an `OEBPS/images/` entry in the EPUB.
+If native Echo rendering is blocked, EPUB/Markdown may be surfaced from the run
+folder only as clearly labelled interim files. Do not call them a complete
+governed package, and do not proceed to sync/copy until native Echo audio and
+this final verification succeed.
 
 ## README Or Manifest Fields
 
@@ -264,51 +325,126 @@ Record:
 
 ## Copy Rules
 
-Always create a complete iCloud Drive delivery folder for finished packages
-unless the user explicitly says not to copy to iCloud:
+The final cover receipt verification above must pass before any copy. For a
+public-safe package, the default delivery folder is iCloud Books:
 
 ```bash
-ICLOUD_DIR="/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>"
-mkdir -p "$ICLOUD_DIR"
-ditto "$DIST" "$ICLOUD_DIR"
+DELIVERY_DIR="/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/$TITLE"
 ```
 
-After copying, verify the copied package from the iCloud path, not only from
+Private or sensitive packages stay in the agreed private project folder and
+receive an iCloud Books reading copy only on an explicit user request. Set
+`DELIVERY_DIR` to that agreed private folder first. If the user explicitly asks
+for an iCloud reading copy, repeat the same governed delivery sequence with the
+authorized iCloud path only after the private project copy is complete.
+
+For every authorized delivery folder, run this dry run and inspect its reported
+classification before applying or copying anything:
+
+```bash
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse
+```
+
+Use `--intent supersede` only for a newer explicit choice. If a destination has
+cover-bearing files but no receipt, it is an `unreceipted` conflict unless the
+operation is an explicit supersession. Only after the classification is expected,
+rerun the same chosen intent with explicit apply:
+
+```bash
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse \
+  --apply
+```
+
+After the explicit apply succeeds, copy the rest of `dist/` without overwriting
+the governed files:
+
+```bash
+rsync -a \
+  --exclude "cover.png" \
+  --exclude "cover-selection.json" \
+  --exclude "$SLUG.epub" \
+  --exclude "$SLUG.m4b" \
+  "$DIST/" "$DELIVERY_DIR/"
+```
+
+After copying, verify the copied package from the delivery path, not only from
 `.build/`:
 
 ```bash
-unzip -t "$ICLOUD_DIR/<slug>.epub"
-test ! -f "$ICLOUD_DIR/<slug>.m4b" || \
-  ffprobe -v error -show_entries format=duration \
-    -of default=noprint_wrappers=1:nokey=1 "$ICLOUD_DIR/<slug>.m4b"
-test ! -f "$ICLOUD_DIR/<slug>.alignment.json" || \
-  python3 -m json.tool "$ICLOUD_DIR/<slug>.alignment.json" >/dev/null
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DELIVERY_DIR/cover-selection.json" \
+  --cover "$DELIVERY_DIR/cover.png" \
+  --epub "$DELIVERY_DIR/$SLUG.epub" \
+  --m4b "$DELIVERY_DIR/$SLUG.m4b" \
+  --receipt "$DELIVERY_DIR/cover-selection.json"
+
+unzip -t "$DELIVERY_DIR/$SLUG.epub"
+ffprobe -v error -show_entries format=duration \
+  -of default=noprint_wrappers=1:nokey=1 "$DELIVERY_DIR/$SLUG.m4b"
+test ! -f "$DELIVERY_DIR/$SLUG.alignment.json" || \
+  python3 -m json.tool "$DELIVERY_DIR/$SLUG.alignment.json" >/dev/null
 ```
 
-Public-safe, permissioned packages may also copy the public-facing files to the
-repo:
+Public publishing is a separate governed destination. It requires
+`classification=public-safe`, `permission_to_publish=granted`, and the
+`--public-destination` check. Run the public dry run first:
 
 ```bash
-mkdir -p "books/<slug>"
-cp "$DIST/<slug>.epub" "$DIST/<slug>.md" "$DIST/cover.png" "books/<slug>/"
-test -f "$DIST/README.md" && cp "$DIST/README.md" "books/<slug>/README.md"
+PUBLIC_DIR="books/$SLUG"
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$PUBLIC_DIR" \
+  --intent reuse \
+  --public-destination
+```
+
+Apply this public sync only when the repo policy permits all four governed
+artifacts: `cover.png`, EPUB, M4B, and `cover-selection.json`. If M4B or another
+governed artifact is not permitted, do not bypass classification with raw copy;
+leave public publishing pending. When the classification and policy are both
+expected, rerun with explicit apply:
+
+```bash
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$DIST/cover-$SELECTED.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --destination "$PUBLIC_DIR" \
+  --intent reuse \
+  --public-destination \
+  --apply
+```
+
+Only after governed public apply may non-governed Markdown, README, and images be
+copied; these commands do not replace any of the four governed files:
+
+```bash
+test ! -f "$DIST/$SLUG.md" || cp "$DIST/$SLUG.md" "$PUBLIC_DIR/$SLUG.md"
+test ! -f "$DIST/README.md" || cp "$DIST/README.md" "$PUBLIC_DIR/README.md"
 if [ -d "$DIST/images" ]; then
-  cp -R "$DIST/images" "books/<slug>/images"
+  cp -R "$DIST/images" "$PUBLIC_DIR/images"
 fi
 ```
 
-Commit only public-safe repo copies. Large `.m4b` and alignment sidecars should
-stay out of the public repo unless the repo's current policy explicitly allows
-that book and file size.
-
-Private packages:
-
-- Do not copy into `books/`.
-- Do not copy into the public KB.
-- Copy the complete package to the iCloud Drive `Books/<Title>/` delivery folder
-  by default, because the user wants finished books to be findable there.
-- Keep private delivery folders under the agreed private path for that run.
+Private/sensitive artifacts never go to `books/` or the public KB.
 
 `~/Downloads/book-inbox` is optional import staging only. Do not treat it as the
 primary delivery surface, and do not report a package as done if the user would
-have to hunt through `book-inbox` to find the finished book.
+have to hunt through `book-inbox` to find the approved public-safe iCloud folder
+or the agreed private project folder.

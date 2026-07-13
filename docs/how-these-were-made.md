@@ -78,7 +78,7 @@ repeating themselves.
 
 ## Assembly
 
-A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the reviewed chapter files into a valid EPUB 3 — with both a modern navigation document and an old-style NCX table of contents — plus a combined Markdown copy. A second script ([`skill/scripts/make_cover.py`](../skill/scripts/make_cover.py)) composes original SVG or raster cover art into an image-led cover with an intentional accent colour. Every book gets three award-worthy, genre-distinct cover concepts by default; the user chooses or combines them. Echo can then render the EPUB into M4B audio and alignment data.
+A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the reviewed chapter files into a valid EPUB 3 — with both a modern navigation document and an old-style NCX table of contents — plus a combined Markdown copy. A second script ([`skill/scripts/make_cover.py`](../skill/scripts/make_cover.py)) renders validated art-and-type specifications using bundled fonts, and the user chooses among three complete candidates. The selected cover and explicit receipt then produce a governed EPUB. Echo renders that EPUB into M4B audio and alignment data. Final receipt verification checks the cover, EPUB, and M4B before governed delivery.
 
 ## Model-aware, not model-agnostic
 

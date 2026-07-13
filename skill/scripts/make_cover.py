@@ -50,7 +50,11 @@ import subprocess
 import sys
 import tempfile
 from dataclasses import dataclass
+from pathlib import Path
 from xml.sax.saxutils import escape
+
+from cover_renderer import CoverRenderError, render_cover_spec
+from cover_spec import CoverSpecError
 
 W, H = 1600, 2560
 CX = W // 2
@@ -455,7 +459,8 @@ def rasterize_raster_art_cover(
 
 def main():
     ap = argparse.ArgumentParser(description="Generate a bestseller-style audiobook cover PNG.")
-    ap.add_argument("--title", required=True)
+    ap.add_argument("--spec", default="", help="Validated cover-specification JSON")
+    ap.add_argument("--title", default="")
     ap.add_argument("--subtitle", default="")
     ap.add_argument("--author", default="")
     ap.add_argument("--label", default="AUDIOBOOK")
@@ -468,6 +473,44 @@ def main():
     ap.add_argument("--layout", default="bleed", choices=("bleed", "hero"))
     ap.add_argument("--out", required=True, help="Output PNG path")
     a = ap.parse_args()
+
+    legacy_flags = {
+        "--title",
+        "--subtitle",
+        "--author",
+        "--label",
+        "--seed",
+        "--accent",
+        "--art",
+        "--tone",
+        "--layout",
+    }
+    arguments = sys.argv[1:]
+    provided = {
+        flag
+        for flag in legacy_flags
+        if any(argument == flag or argument.startswith(f"{flag}=") for argument in arguments)
+    }
+    spec_requested = any(
+        argument == "--spec" or argument.startswith("--spec=")
+        for argument in arguments
+    )
+    if spec_requested:
+        if provided:
+            ap.error("--spec cannot be combined with legacy cover flags")
+        if not a.spec:
+            ap.error("--spec requires a non-empty path")
+        try:
+            result = render_cover_spec(Path(a.spec), Path(a.out))
+        except (CoverSpecError, CoverRenderError, ValueError) as error:
+            sys.stderr.write(f"COVER_SPEC_ERROR: {error}\n")
+            return 2
+        print("COVER:", result.output_path)
+        print("THUMBNAIL:", result.thumbnail_path)
+        print("RECEIPT:", result.receipt_path)
+        return 0
+    if not a.title:
+        ap.error("--title is required when --spec is not used")
 
     os.makedirs(os.path.dirname(os.path.abspath(a.out)) or ".", exist_ok=True)
 
