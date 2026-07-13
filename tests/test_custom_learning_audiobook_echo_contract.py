@@ -26,12 +26,13 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
     def test_builds_and_preflights_the_exact_release_cli(self) -> None:
         for marker in (
-            "cd /Users/dfakkeldy/Developer/Echo",
-            '"$HOME/.claude/bin/xcode-build-gate.sh" --wait && make echo-cli',
-            'CLI="/Users/dfakkeldy/Developer/Echo/.build/cli/Build/Products/Release/echo-cli"',
-            '"$CLI" --version',
-            "(Release)",
-            '"$CLI" narrate --help',
+            "echo_pronunciation_preflight.sh",
+            "APPROVED_ECHO_PRONUNCIATION_SHA",
+            "approved source revision",
+            "ECHO_SOURCE_SHA",
+            "ECHO_CLI_SHA256",
+            "EPUB_SHA256",
+            "RUN_ROOT",
             "--no-pronunciation-review",
             "Stop immediately",
         ):
@@ -41,6 +42,8 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         for stale_debug_discovery in ("xcodebuild build", "TARGET_BUILD_DIR"):
             with self.subTest(stale=stale_debug_discovery):
                 self.assertNotIn(stale_debug_discovery, self.package)
+
+        self.assertNotIn("cd /Users/dfakkeldy/Developer/Echo", self.package)
 
     def test_pronunciation_review_defaults_on_with_bounded_render_concurrency(self) -> None:
         for text in (self.skill, self.package):
@@ -57,8 +60,11 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         for marker in (
             "fresh `--work-dir` and `--db`",
             "source EPUB changes",
-            "Release CLI binary changes",
-            "same immutable source EPUB, Release CLI binary, and capture set",
+            "Release CLI binary or Echo source revision changes",
+            (
+                "same immutable source EPUB, approved/source revisions, "
+                "Release CLI binary, voice, and capture set"
+            ),
             "SHA-256",
         ):
             with self.subTest(marker=marker):
@@ -78,6 +84,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "watch counts",
             "including zero counts",
             "human listening remains explicitly pending",
+            "validate_pronunciation_audit.py",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, normalized)

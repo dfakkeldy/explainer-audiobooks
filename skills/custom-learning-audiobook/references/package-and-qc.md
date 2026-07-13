@@ -130,6 +130,7 @@ Use this run layout:
     prose-qc.md
     editorial-review.md
     visuals.md
+    echo-render-inputs-<run-id>.env
   chapters/
     ch01.md
     ch02.md
@@ -314,56 +315,50 @@ test ! -d .build/custom-learning-audiobooks/<slug>/chapters/images || \
 
 ## Echo M4B And Alignment
 
-Echo owns the M4B, alignment, and pronunciation-review renderer. Always build
-the canonical Release CLI immediately before a governed render; a Debug binary
-or a binary discovered from stale Xcode build settings does not prove that the
-current pronunciation pipeline is active:
+Echo owns the M4B, alignment, and pronunciation-review renderer. Run this from
+the explainer-audiobooks repo root in Bash. The bundled preflight starts with
+`set -euo pipefail`, calls the memory gate and `make -C "$ECHO_REPO" echo-cli`
+without changing the caller's directory, and accepts only the deterministic
+`$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli` product.
+
+Every governed render needs a nonempty approved source revision. Set
+`APPROVED_ECHO_PRONUNCIATION_SHA` to the reviewed Echo commit that established
+the pronunciation behavior being accepted; do not derive approval from the
+current `HEAD`. The preflight resolves that commit, captures `ECHO_SOURCE_SHA`,
+requires the Echo working tree to be clean, and fails unless the approved
+revision is an ancestor of or equal to the source being built. This is an
+explicit review boundary, not a transient hard-coded SHA.
+
+A feature-worktree edit does not update installed agents merely because their
+paths are symlinks: those links resolve the canonical checkout at
+`/Users/dfakkeldy/Developer/explainer-audiobooks`. Run
+`tools/validate_custom_learning_skill_install.py` before claiming parity.
+`installed_skill_parity: pending-integration` means the branch is tested but the
+installed canonical checkout is still old; do not report installed parity until
+the tool says `current` after integration.
+
+The preflight also requires `--version` to contain `(Release)`, requires
+`narrate --help` to expose `--no-pronunciation-review`, validates EPUB and CLI
+SHA-256 values as exactly 64 lowercase hexadecimal characters, and records the
+approved revision, source revision, `EPUB_SHA256`, and `ECHO_CLI_SHA256` in an
+immutable-input receipt. Stop immediately on any failure:
 
 ```bash
-cd /Users/dfakkeldy/Developer/Echo
-"$HOME/.claude/bin/xcode-build-gate.sh" --wait && make echo-cli
-```
+set -euo pipefail
+EXPLAINER_ROOT=$(git rev-parse --show-toplevel)
+RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
+DIST="$RUN_ROOT/dist"
+VOICE=am_michael
+: "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
 
-Use only the deterministic Release product and preflight both its configuration
-and its pronunciation-review interface:
-
-```bash
-CLI="/Users/dfakkeldy/Developer/Echo/.build/cli/Build/Products/Release/echo-cli"
-test -x "$CLI" || { echo "missing Release echo-cli: $CLI" >&2; exit 1; }
-
-CLI_VERSION=$("$CLI" --version) || exit 1
-case "$CLI_VERSION" in
-  *"(Release)"*) ;;
-  *) echo "stale/non-Release echo-cli: $CLI_VERSION" >&2; exit 1 ;;
-esac
-
-"$CLI" narrate --help | rg --fixed-strings -- '--no-pronunciation-review' >/dev/null || {
-  echo "stale echo-cli: pronunciation review is unavailable" >&2
-  exit 1
-}
-```
-
-Stop immediately if either preflight fails. Do not narrate first and discover
-afterward that a stale CLI silently omitted the acceptance artifacts.
-
-Render with the custom-learning defaults. Pronunciation review is on by default;
-it applies approved rules before TTS and emits review evidence automatically.
-Do not pass `--no-pronunciation-review` for a governed custom-learning render.
-Keep synthesis bounded at one chapter job and two Kokoro threads:
-
-```bash
-DIST=".build/custom-learning-audiobooks/$SLUG/dist"
-EPUB_SHA=$(shasum -a 256 "$DIST/$SLUG.epub" | awk '{print $1}')
-CLI_SHA=$(shasum -a 256 "$CLI" | awk '{print $1}')
-RUN_ID="${EPUB_SHA:0:12}-${CLI_SHA:0:12}-am_michael"
-WORK=".build/custom-learning-audiobooks/$SLUG/audio-work-$RUN_ID"
-DB=".build/custom-learning-audiobooks/$SLUG/narration-$RUN_ID.sqlite"
+source "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_preflight.sh"
+echo_pronunciation_preflight
 
 "$CLI" narrate \
   --epub "$DIST/$SLUG.epub" \
   --out "$DIST/$SLUG.m4b" \
   --sidecar "$DIST/$SLUG.alignment.json" \
-  --voice am_michael \
+  --voice "$VOICE" \
   --title "$TITLE" \
   --author "Dan Fakkeldy" \
   --work-dir "$WORK" \
@@ -372,23 +367,30 @@ DB=".build/custom-learning-audiobooks/$SLUG/narration-$RUN_ID.sqlite"
   --threads 2
 ```
 
+Pronunciation review is on by default; it applies approved rules before TTS and
+emits review evidence automatically. Do not pass
+`--no-pronunciation-review` for a governed custom-learning render. The command
+uses the custom-learning default `--voice am_michael` through `VOICE` and keeps
+synthesis bounded at one chapter job and two Kokoro threads.
+
 The output stem also produces `$DIST/$SLUG.pronunciation-audit.json` on every
 reviewed render and `$DIST/$SLUG.pronunciation-reel.m4b` when review samples are
 available. The audit JSON is required even when there are zero decisions; an
 empty reel is not created.
 
 If `am_michael` fails because the voice resource is unavailable, retry with
-`--voice am_puck`, recompute `RUN_ID` with an `-am_puck` suffix so the fallback
-gets fresh `WORK`/`DB` paths, and record the fallback. Do not silently use
-`af_heart`.
+`VOICE=am_puck`, rerun `echo_pronunciation_preflight`, and then rerun narration
+with the newly exported `RUN_ID`, `WORK`, and `DB`. Record the fallback. Do not
+silently use `af_heart`.
 
 Use a fresh `--work-dir` and `--db` whenever the source EPUB changes or the
-Release CLI binary changes. Permit `--resume` only for the same immutable source
-EPUB, Release CLI binary, and capture set: rerun the exact command with
-`--resume`, the original `WORK`/`DB`, matching SHA-256 values, and unmodified
-completed captures. Never copy old captures into a new run or resume after
-editing the EPUB or rebuilding Echo; the content-addressed `RUN_ID` should then
-select fresh paths.
+Release CLI binary or Echo source revision changes. Permit `--resume` only for
+the same immutable source EPUB, approved/source revisions, Release CLI binary,
+voice, and capture set. Re-read `ECHO_RENDER_INPUT_RECEIPT`, require every value
+and existing completed capture to match, then rerun the exact narration command
+with `--resume` and its original `WORK`/`DB`. Never copy old captures into a new
+run or resume after editing the EPUB or rebuilding Echo; the content-addressed
+`RUN_ID` then selects fresh paths.
 
 Do not add a self-imposed timeout around `echo-cli narrate`, kill a progressing
 render because it may take several hours, or replace it with Apple/macOS/system
@@ -425,37 +427,8 @@ python3 -m json.tool "$DIST/$SLUG.alignment.json" >/dev/null
   --sidecar "$DIST/$SLUG.alignment.json"
 
 AUDIT="$DIST/$SLUG.pronunciation-audit.json"
-python3 - "$AUDIT" <<'PY'
-import json
-import sys
-from pathlib import Path
-
-audit_path = Path(sys.argv[1])
-audit = json.loads(audit_path.read_text(encoding="utf-8"))
-required = {
-    "schemaVersion", "renderVersion", "voice", "coverage", "watchCounts",
-    "decisions", "diagnostics", "audiobookFileName",
-    "legacyChapterIndexes",
-}
-missing = sorted(required - audit.keys())
-assert not missing, f"pronunciation audit missing fields: {missing}"
-assert audit["schemaVersion"] == 1, audit["schemaVersion"]
-assert audit["coverage"] == "complete", audit["coverage"]
-assert isinstance(audit["decisions"], list)
-assert isinstance(audit["diagnostics"], list)
-assert isinstance(audit["legacyChapterIndexes"], list)
-stem = audit_path.name.removesuffix(".pronunciation-audit.json")
-assert audit["audiobookFileName"] == f"{stem}.m4b"
-reel_file = audit.get("listeningReelFileName")
-assert reel_file is None or reel_file == f"{stem}.pronunciation-reel.m4b"
-reel_path = audit_path.parent / f"{stem}.pronunciation-reel.m4b"
-assert reel_path.exists() == (reel_file is not None)
-watch_counts = audit["watchCounts"]
-assert isinstance(watch_counts, dict)
-for word in ("startable", "filesystem", "verified", "live", "lives", "record"):
-    assert word in watch_counts, f"missing watch count for {word}"
-    assert isinstance(watch_counts[word], int) and watch_counts[word] >= 0
-PY
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/validate_pronunciation_audit.py" \
+  "$AUDIT"
 
 REEL="$DIST/$SLUG.pronunciation-reel.m4b"
 test ! -f "$REEL" || ffprobe -v error -show_entries format=duration \
@@ -527,6 +500,8 @@ Record:
   diagnostic count,
 - pronunciation reel path or the reason no reel was emitted,
 - pronunciation human-listening status (`pending` until actually heard),
+- approved Echo pronunciation SHA, actual Echo source SHA, EPUB SHA-256, CLI
+  SHA-256, and the `ECHO_RENDER_INPUT_RECEIPT` path,
 - QC gates passed/skipped.
 
 ## Copy Rules

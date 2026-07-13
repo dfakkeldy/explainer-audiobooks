@@ -307,12 +307,15 @@ research, write one coherent manuscript, and package the result for Echo.
    and `<slug>.alignment.json` whenever the CLI can run. Pronunciation review is
    on by default and produces a pronunciation audit plus an optional
    pronunciation reel. Do not pass `--no-pronunciation-review` for a governed
-   render. Use a freshly built, preflighted Release CLI and the bounded job/thread
-   settings in the package reference. If native Echo audio is blocked and the
-   user has not approved a non-Echo substitute, surface only the EPUB/Markdown
-   from the run folder as clearly labelled interim files and report the blocker.
-   Do not call that an Echo-ready or complete governed package, and do not proceed
-   to delivery sync.
+   render. Supply and record the reviewed
+   `APPROVED_ECHO_PRONUNCIATION_SHA`; the package preflight fails closed unless
+   it is an ancestor of or equal to the Echo source being built. Use the tested
+   Release preflight, immutable-input receipt, and bounded job/thread settings in
+   the package reference. If native Echo audio is blocked and the user has not
+   approved a non-Echo substitute, surface only the EPUB/Markdown from the run
+   folder as clearly labelled interim files and report the blocker. Do not call
+   that an Echo-ready or complete governed package, and do not proceed to
+   delivery sync.
 
 13. **Final-verify the governed package.** After native Echo narration succeeds,
     verify that the paired receipt matches the portrait, square, EPUB, and M4B.
@@ -355,9 +358,11 @@ research, write one coherent manuscript, and package the result for Echo.
     model, lower-cost review/production roles used, output paths, the actual
     delivery folder, receipt/destination classifications, and which QC gates
     passed or were skipped. Include the pronunciation audit, optional
-    pronunciation reel, coverage/watch-count summary, and human listening status.
-    Report an iCloud Books path only when a copy was actually created. If the book
-    includes pictures, report figure count and any image rights/privacy caveats.
+    pronunciation reel, coverage/watch-count summary, human listening status,
+    approved/source Echo revisions, and EPUB/CLI hashes from the render-input
+    receipt. Report an iCloud Books path only when a copy was actually created.
+    If the book includes pictures, report figure count and any image rights/privacy
+    caveats.
 
 ## Hard Rules
 
