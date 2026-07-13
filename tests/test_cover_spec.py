@@ -15,7 +15,7 @@ SCHEMA = Path(__file__).parents[1] / "skill" / "schemas" / "cover-spec-v1.schema
 
 def valid_payload() -> dict[str, object]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "variant": "portrait",
         "candidate": {"id": "candidate-a", "direction_name": "Full Bleed Display"},
         "metadata": {
@@ -150,6 +150,31 @@ def write_fixture(root: Path, payload: object) -> Path:
 
 
 class CoverSpecValidationTests(unittest.TestCase):
+    def test_loads_legacy_v1_as_portrait_without_mutating_source(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            payload = valid_payload()
+            payload["schema_version"] = 1
+            payload.pop("variant")
+            path = write_fixture(Path(raw), payload)
+            before = path.read_bytes()
+
+            loaded = load_cover_spec(path, FONT_MANIFEST)
+
+            self.assertEqual((loaded.variant, loaded.width, loaded.height), ("portrait", 1600, 2560))
+            self.assertEqual(before, path.read_bytes())
+            self.assertNotIn("variant", loaded.data)
+
+    def test_v2_requires_explicit_known_variant(self) -> None:
+        for variant in (None, "album"):
+            with self.subTest(variant=variant), tempfile.TemporaryDirectory() as raw:
+                payload = valid_payload()
+                if variant is None:
+                    payload.pop("variant")
+                else:
+                    payload["variant"] = variant
+                with self.assertRaises(CoverSpecError):
+                    load_cover_spec(write_fixture(Path(raw), payload), FONT_MANIFEST)
+
     def test_schema_matches_runtime_text_and_coordinate_constraints(self) -> None:
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
         text_layer = schema["$defs"]["text_layer"]

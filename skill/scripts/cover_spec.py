@@ -471,13 +471,15 @@ def load_cover_spec(
     if (
         isinstance(schema_version, bool)
         or not isinstance(schema_version, (int, float))
-        or schema_version != 1
+        or schema_version not in {1, 2}
     ):
-        raise CoverSpecError("schema_version must be 1")
-    if set(payload) != {"schema_version", "variant", "candidate", "metadata", "canvas", "art", "layers"}:
+        raise CoverSpecError("schema_version must be 1 or 2")
+    common_fields = {"schema_version", "candidate", "metadata", "canvas", "art", "layers"}
+    expected_fields = common_fields if schema_version == 1 else common_fields | {"variant"}
+    if set(payload) != expected_fields:
         raise CoverSpecError("cover specification has missing or unknown top-level fields")
 
-    variant = payload.get("variant")
+    variant = "portrait" if schema_version == 1 else payload.get("variant")
     if not isinstance(variant, str) or variant not in VARIANT_CANVASES:
         raise CoverSpecError("variant must be portrait or square")
     width, height, safe_margin = VARIANT_CANVASES[variant]

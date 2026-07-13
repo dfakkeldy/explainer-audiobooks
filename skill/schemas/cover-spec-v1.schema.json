@@ -4,9 +4,9 @@
   "title": "Explainer Audiobook Cover Specification v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "variant", "candidate", "metadata", "canvas", "art", "layers"],
+  "required": ["schema_version", "candidate", "metadata", "canvas", "art", "layers"],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"enum": [1, 2]},
     "variant": {"enum": ["portrait", "square"]},
     "candidate": {
       "type": "object",
@@ -68,11 +68,24 @@
   },
   "allOf": [
     {
+      "if": {"properties": {"schema_version": {"const": 1}}, "required": ["schema_version"]},
+      "then": {
+        "not": {"required": ["variant"]},
+        "properties": {"canvas": {"properties": {
+          "width": {"const": 1600}, "height": {"const": 2560}, "safe_margin": {"const": 96}
+        }}}
+      },
+      "else": {"required": ["variant"]}
+    },
+    {
       "if": {"properties": {"variant": {"const": "portrait"}}, "required": ["variant"]},
       "then": {"properties": {"canvas": {"properties": {
         "width": {"const": 1600}, "height": {"const": 2560}, "safe_margin": {"const": 96}
-      }}}},
-      "else": {"properties": {"canvas": {"properties": {
+      }}}}
+    },
+    {
+      "if": {"properties": {"variant": {"const": "square"}}, "required": ["variant"]},
+      "then": {"properties": {"canvas": {"properties": {
         "width": {"const": 2400}, "height": {"const": 2400}, "safe_margin": {"const": 120}
       }}}}
     }
