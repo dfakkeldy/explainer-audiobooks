@@ -10,6 +10,8 @@ FILES = {
     "custom": ROOT / "skills" / "custom-learning-audiobook" / "SKILL.md",
     "package": ROOT / "skills" / "custom-learning-audiobook" / "references" / "package-and-qc.md",
     "public": ROOT / "docs" / "how-these-were-made.md",
+    "readme": ROOT / "README.md",
+    "make": ROOT / "docs" / "make-your-own.md",
 }
 
 
@@ -142,6 +144,42 @@ class SkillCoverContractTests(unittest.TestCase):
             self.assertNotIn("--layout bleed", text)
             self.assertNotIn("lower 25–35% reserved", text)
             self.assertNotIn("lower third carries the title", text)
+
+    def test_active_surfaces_teach_the_universal_paired_cover_contract(self) -> None:
+        required = (
+            "exactly three",
+            "1600×2560",
+            "cover.png",
+            "2400×2400",
+            "m4b-cover.png",
+            "explicit pair selection",
+            "paired receipt",
+            "EPUB portrait",
+            "M4B square",
+            "post-embed verification",
+        )
+        for key in ("cover", "long", "custom", "package", "public", "readme", "make"):
+            text = FILES[key].read_text(encoding="utf-8")
+            for marker in required:
+                with self.subTest(file=key, marker=marker):
+                    self.assertIn(marker, text)
+
+    def test_active_skills_teach_paired_commands_not_new_single_cover_selection(self) -> None:
+        for key in ("long", "custom", "package"):
+            text = FILES[key].read_text(encoding="utf-8")
+            for marker in ("cover_pairs.py", "select-pair", "--m4b-cover", "replace_m4b_cover.py", "--paired-artifact-dir"):
+                with self.subTest(file=key, marker=marker):
+                    self.assertIn(marker, text)
+            self.assertIn("verification-only compatibility", text)
+
+    def test_public_docs_state_governed_sync_boundaries_and_migration_scope(self) -> None:
+        for key in ("public", "readme", "make"):
+            text = FILES[key].read_text(encoding="utf-8")
+            self.assertIn("public/iCloud/site sync", text)
+            self.assertIn("private", text)
+        combined = "\n".join(FILES[key].read_text(encoding="utf-8") for key in ("long", "custom", "package", "public", "readme", "make"))
+        self.assertIn("five-book migration", combined)
+        self.assertIn("not a universal future rule", combined)
 
 
 if __name__ == "__main__":

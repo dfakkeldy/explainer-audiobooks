@@ -78,6 +78,20 @@ repeating themselves.
 
 ## Assembly
 
+Cover production uses exactly three coordinated portrait/square candidates.
+After thumbnail review, a human makes the explicit pair selection. Its paired
+receipt binds `cover.png` at 1600×2560 to the EPUB portrait and `m4b-cover.png`
+at 2400×2400 to the M4B square. Post-embed verification checks both and confirms
+media preservation before governed public/iCloud/site sync; private packages do
+not enter public destinations. Legacy single-cover receipts are verification-only
+compatibility.
+
+Order: research → three source directions → portrait/square render pairs →
+thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
+M4B square embedding → post-embed verification → governed public/iCloud/site
+sync. *Rodents in the Walls* is excluded only from the current five-book
+migration; that is not a universal future rule.
+
 A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the reviewed chapter files into a valid EPUB 3 — with both a modern navigation document and an old-style NCX table of contents — plus a combined Markdown copy. A second script ([`skill/scripts/make_cover.py`](../skill/scripts/make_cover.py)) renders validated art-and-type specifications using bundled fonts, and the user chooses among three complete candidates. The selected cover and explicit receipt then produce a governed EPUB. Echo renders that EPUB into M4B audio and alignment data. Final receipt verification checks the cover, EPUB, and M4B before governed delivery.
 
 ## Model-aware, not model-agnostic

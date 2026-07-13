@@ -5,6 +5,25 @@ description: Use when making a custom, personalized, beta-test, Echo-ready, or t
 
 # Custom Learning Audiobook
 
+## Universal paired-cover publishing contract
+
+Every new run creates exactly three coordinated portrait/square candidates.
+Use `render_cover_pair` in `skill/scripts/cover_pairs.py` to produce `cover.png`
+at 1600×2560 and `m4b-cover.png` at 2400×2400 plus thumbnails and receipts.
+Require human review and explicit pair selection, then use `cover_receipts.py
+select-pair` for the paired receipt. Build with `build_book.py --cover ...
+--m4b-cover ... --cover-selection ...`; after narration use
+`replace_m4b_cover.py --cover ... --portrait-cover ... --cover-selection ...`
+to preserve audio. Run `cover_receipts.py verify --cover ... --m4b-cover ...
+--epub ... --m4b ...` for post-embed verification, then dry-run and apply
+`sync_selected_cover.py --paired-artifact-dir ...` for governed
+public/iCloud/site sync under the public/private rules below.
+
+Order: research → three source directions → portrait/square render pairs →
+thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
+M4B square embedding → post-embed verification → governed public/iCloud/site
+sync. Legacy single-cover selection is verification-only compatibility.
+
 Make a listener-specific learning audiobook from a topic request. The requester
 should feel helped, not assigned homework: ask only useful questions, do the
 research, write one coherent manuscript, and package the result for Echo.
@@ -170,10 +189,10 @@ research, write one coherent manuscript, and package the result for Echo.
     narration, sensitive-term, figure-provenance, and prose checks. The canonical
     Markdown must be final before Step 11 starts.
 
-11. **Build the governed EPUB.** Only now follow the selection and EPUB sections
-    in `references/package-and-qc.md`: create the explicit receipt with
-    `cover_receipts.py select`, then run the governed
-    `build_book.py --cover-selection` command. The required EPUB and combined
+11. **Build the governed EPUB.** Only now follow the paired selection and EPUB
+    sections in `references/package-and-qc.md`: create the paired receipt with
+    `cover_receipts.py select-pair`, then run the governed `build_book.py`
+    command with `--cover`, `--m4b-cover`, and `--cover-selection`. The EPUB and combined
     Markdown are downstream renderings of the accepted manuscript; standalone
     Markdown figures remain embedded and copied beside the combined Markdown.
 
@@ -193,7 +212,10 @@ research, write one coherent manuscript, and package the result for Echo.
    do not proceed to delivery sync.
 
 13. **Final-verify the governed package.** After native Echo narration succeeds,
-    verify that the explicit selection matches the selected cover, EPUB, and M4B:
+    verify that the paired receipt matches the portrait, square, EPUB, and M4B.
+    The older command below is verification-only compatibility for legacy
+    single-cover receipts; new packages use the paired verification command in
+    `references/package-and-qc.md`:
 
     ```bash
     SELECTED="<selected candidate number>"

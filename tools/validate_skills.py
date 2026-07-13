@@ -55,6 +55,19 @@ def main() -> int:
     validate_skill("skills/custom-learning-audiobook", "custom-learning-audiobook")
     validate_skill("skills/longform-book-development", "longform-book-development")
 
+    paired_contract = (
+        "exactly three", "1600×2560", "cover.png", "2400×2400",
+        "m4b-cover.png", "explicit pair selection", "paired receipt",
+        "EPUB portrait", "M4B square", "post-embed verification",
+    )
+    for path in (
+        "skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md",
+        "skill/references/cover-art.md",
+        "skills/custom-learning-audiobook/references/package-and-qc.md",
+        "README.md", "docs/how-these-were-made.md", "docs/make-your-own.md",
+    ):
+        contains(path, *paired_contract)
+
     contains(
         "skill/SKILL.md",
         "am_michael",

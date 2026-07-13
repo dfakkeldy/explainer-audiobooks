@@ -1,5 +1,21 @@
 # Award-Worthy Audiobook Covers
 
+## Universal paired-cover rule
+
+Every new book develops exactly three coordinated portrait/square candidates.
+Each direction shares one source-art identity but has two deliberately composed
+specifications: `cover.png` at 1600×2560 for the EPUB portrait and
+`m4b-cover.png` at 2400×2400 for the M4B square. Review both full-size images and
+both thumbnails together. The user makes an explicit pair selection; never mix
+variants or select automatically. That choice becomes a paired receipt before
+packaging, followed by post-embed verification.
+
+The chronological contract is: research → three source directions →
+portrait/square render pairs → thumbnail review → explicit pair selection →
+paired receipt → EPUB portrait + M4B square embedding → post-embed verification
+→ governed public/iCloud/site sync. Legacy single-cover receipts and renderer
+flags are verification-only compatibility; do not teach them for new work.
+
 A cover is not a title placed on a coloured rectangle. It is a compact editorial
 argument for why a person should choose this book. The default is **three fully
 rendered, genuinely different, award-worthy cover candidates for every book**.
@@ -195,10 +211,11 @@ Repeat for candidates 2 and 3. Review every full-size render, generated
 160-pixel thumbnail, art-and-type brief, font/palette note, and warning. Ask the
 user to choose or request a mix. A mix becomes a new specification and render.
 
-Only after the user chooses, create `cover-selection.json` with
-`selection_source=explicit-user-choice` (or `requested-mix`). The renderer never
-selects a candidate automatically. New books use `--spec`; the old
-title/art/accent/tone/layout flags remain compatibility-only for existing calls.
+After the user chooses the pair, use `cover_receipts.py select-pair` as described
+by the universal rule. A paired user choice uses `selection_source=user`; a
+requested mix uses `requested-mix`. The renderer never selects automatically.
+The old single-render receipt and title/art/accent/tone/layout paths are
+verification-only compatibility for existing packages.
 
 ## Award-Worthy Acceptance Bar
 

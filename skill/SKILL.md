@@ -9,6 +9,27 @@ description: >-
 
 # Explainer Audiobook
 
+## Universal paired-cover publishing contract
+
+Every new book creates exactly three source directions and renders each as a
+coordinated pair: `cover.png` at 1600×2560 for the EPUB portrait and
+`m4b-cover.png` at 2400×2400 for the M4B square. Use `render_cover_pair` from
+`skill/scripts/cover_pairs.py`, review both thumbnails, and require explicit
+pair selection. Create the paired receipt with `cover_receipts.py select-pair`.
+Embed with `build_book.py --cover ... --m4b-cover ... --cover-selection ...`,
+then use `replace_m4b_cover.py --cover ... --portrait-cover ...
+--cover-selection ...` to embed square art while preserving M4B media. Run
+`cover_receipts.py verify --cover ... --m4b-cover ... --epub ... --m4b ...` for
+post-embed verification. Finally dry-run and apply `sync_selected_cover.py
+--paired-artifact-dir ...` for governed public/iCloud/site sync under the
+public/private rules below.
+
+Order: research → three source directions → portrait/square render pairs →
+thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
+M4B square embedding → post-embed verification → governed public/iCloud/site
+sync. Legacy single-cover selection commands are verification-only compatibility
+and must not be used for new work.
+
 Produce a book-length, *listenable* explainer that teaches a subject by touring a
 real worked example — the actual app, codebase, product, or system the user
 points you at — and explaining each part: what it does, how it works, why it was
@@ -273,10 +294,9 @@ three complete candidates to the user and ask them to choose or request a mix;
 a mix becomes a new specification and render. The renderer never selects a
 candidate automatically.
 
-Only after the human choice, create `cover-selection.json` with
-`cover_receipts.py select`, using `selection_source=explicit-user-choice` (or
-`requested-mix`) plus the approved edition and privacy metadata. Assign all
-values from the approved run metadata, then select and build in that order:
+The following single-cover command block is verification-only compatibility for
+an existing legacy receipt. Do not run or teach it for new work; new work uses
+the paired commands in the universal contract above:
 
 ```bash
 SELECTED=1

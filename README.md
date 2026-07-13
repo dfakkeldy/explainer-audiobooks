@@ -41,6 +41,24 @@ Together they trace the life of a real app — *what it's made of* → *how it s
 
 ## How it works (the short version)
 
+Every new title uses exactly three coordinated portrait/square candidates. A
+human makes the explicit pair selection after thumbnail review; the paired
+receipt binds `cover.png` at 1600×2560 to the EPUB portrait and `m4b-cover.png`
+at 2400×2400 to the M4B square. Post-embed verification proves both identities
+and media preservation before governed public/iCloud/site sync. Public-safe
+work may reach approved public, iCloud, and site destinations; private work
+stays private. Legacy single-cover receipts are verification-only compatibility.
+
+Order: research → three source directions → portrait/square render pairs →
+thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
+M4B square embedding → post-embed verification → governed public/iCloud/site
+sync.
+
+The *Rodents in the Walls* exclusion applies only to the current five-book
+migration because that edition already has approved square art. It is not a
+universal future rule; future editions use this same paired contract.
+This five-book migration exception is historical scope, not ongoing policy.
+
 1. **Pin the brief** — subject, the real worked example, target length, voice.
 2. **Outline** — one chapter per concept, in teaching order, each grounded in one real piece of the example.
 3. **Fact packs + coverage ledger** — before prose is written, distill *accurate*

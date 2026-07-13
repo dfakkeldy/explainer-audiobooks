@@ -1,5 +1,25 @@
 # Package And QC
 
+## Universal paired-cover gate
+
+New packages require exactly three paired candidates. Each has a 1600×2560
+`cover.png` EPUB portrait and a 2400×2400 `m4b-cover.png` M4B square, generated
+with `render_cover_pair` from `skill/scripts/cover_pairs.py`. After thumbnail
+review and explicit pair selection, create a paired receipt with
+`cover_receipts.py select-pair`. Pass both files to `build_book.py` using
+`--cover`, `--m4b-cover`, and `--cover-selection`; after narration run
+`replace_m4b_cover.py --m4b ... --cover ... --out ... --cover-selection ...
+--portrait-cover ...`. Run `cover_receipts.py verify --cover ... --m4b-cover ...
+--epub ... --m4b ...` for post-embed verification and media preservation. Sync
+all nine pair/provenance artifacts using `sync_selected_cover.py
+--paired-artifact-dir ...`, first dry and then with `--apply`.
+
+Order: research → three source directions → portrait/square render pairs →
+thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
+M4B square embedding → post-embed verification → governed public/iCloud/site
+sync. Public/private boundaries below govern destinations. Legacy single-cover
+selection is verification-only compatibility, not a new-package workflow.
+
 Use this reference before building, narrating, copying, or reporting a custom
 learning audiobook package.
 
@@ -152,8 +172,9 @@ permission is `denied`, `granted`, or `not-requested`. Use
 `selection_source=explicit-user-choice`; for a requested mix, substitute
 `requested-mix` after rendering the new specification.
 
-Run the selection and governed EPUB build commands now. Final receipt
-verification waits until the native Echo step has produced the M4B:
+The following single-cover commands are verification-only compatibility for an
+existing legacy package. Do not use them for a new package, which must follow
+the paired gate above. Final receipt verification waits for the M4B:
 
 ```bash
 SELECTED=1
