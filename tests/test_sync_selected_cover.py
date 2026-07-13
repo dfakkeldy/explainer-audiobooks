@@ -445,6 +445,68 @@ class SyncSelectedCoverTests(unittest.TestCase):
                 self.assertFalse((destination / "cover-thumbnail.png").exists())
                 self.assertEqual(b"keep", unrelated.read_bytes())
 
+    def test_paired_checksums_refresh_existing_package_rows_without_adding_missing_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            _selected, artifacts, epub, m4b = write_paired_package(root)
+            destination = root / "destination"; destination.mkdir()
+            checksums = destination / "SHA256SUMS"
+            checksums.write_text(
+                f"{'a' * 64}  book.epub\n{'b' * 64}  book.m4b\n"
+                f"{'c' * 64}  alignment.json\n",
+                encoding="utf-8",
+            )
+            with mock.patch.object(sync_selected_cover, "verify_package"):
+                sync_selected_cover.sync_selected_cover(
+                    artifacts["cover-selection.json"], artifacts["cover.png"], epub,
+                    m4b, destination, intent="reuse", apply=True,
+                    artifact_map=artifacts, checksum_manifest=checksums,
+                )
+            manifest = checksums.read_text(encoding="utf-8")
+            self.assertIn(f"{hashlib.sha256(epub.read_bytes()).hexdigest()}  book.epub", manifest)
+            self.assertIn(f"{hashlib.sha256(m4b.read_bytes()).hexdigest()}  book.m4b", manifest)
+            self.assertIn(f"{'c' * 64}  alignment.json", manifest)
+
+            without_package_rows = destination / "OTHER-SHA256SUMS"
+            without_package_rows.write_text(f"{'c' * 64}  alignment.json\n", encoding="utf-8")
+            with mock.patch.object(sync_selected_cover, "verify_package"):
+                sync_selected_cover.sync_selected_cover(
+                    artifacts["cover-selection.json"], artifacts["cover.png"], epub,
+                    m4b, destination, intent="reuse", apply=True,
+                    artifact_map=artifacts, checksum_manifest=without_package_rows,
+                )
+            second = without_package_rows.read_text(encoding="utf-8")
+            self.assertNotIn("  book.epub", second)
+            self.assertNotIn("  book.m4b", second)
+            for name in PAIRED_NAMES:
+                self.assertIn(f"  {name}\n", second)
+
+    def test_paired_staged_copy_corruption_aborts_before_destination_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            _selected, artifacts, epub, m4b = write_paired_package(root)
+            destination = root / "destination"; destination.mkdir()
+            marker = destination / "marker"; marker.write_bytes(b"unchanged")
+            real_copy2 = sync_selected_cover.shutil.copy2
+
+            def corrupt_thumbnail(source: Path, target: Path):
+                result = real_copy2(source, target)
+                if Path(target).name == "cover-thumbnail.png":
+                    Path(target).write_bytes(b"corrupted-after-copy")
+                return result
+
+            with mock.patch.object(sync_selected_cover, "verify_package"), mock.patch.object(
+                sync_selected_cover.shutil, "copy2", side_effect=corrupt_thumbnail,
+            ), self.assertRaisesRegex(ValueError, "cover-thumbnail.png"):
+                sync_selected_cover.sync_selected_cover(
+                    artifacts["cover-selection.json"], artifacts["cover.png"], epub,
+                    m4b, destination, intent="reuse", apply=True,
+                    artifact_map=artifacts,
+                )
+
+            self.assertEqual({"marker"}, {path.name for path in destination.iterdir()})
+            self.assertEqual(b"unchanged", marker.read_bytes())
+
 
 if __name__ == "__main__":
     unittest.main()

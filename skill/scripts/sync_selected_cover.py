@@ -177,7 +177,12 @@ _CHECKSUM_ROW = re.compile(
 )
 
 
-def _checksum_payload(path: Path, replacements: dict[str, Path]) -> bytes:
+def _checksum_payload(
+    path: Path,
+    replacements: dict[str, Path],
+    *,
+    add_missing: tuple[str, ...] | None = None,
+) -> bytes:
     try:
         original = path.read_text(encoding="utf-8")
     except (OSError, UnicodeError) as error:
@@ -201,12 +206,48 @@ def _checksum_payload(path: Path, replacements: dict[str, Path]) -> bytes:
         updated.append(digests[name] + match.group("rest") + (match.group("ending") or ""))
         seen.add(name)
 
-    missing = [name for name in replacements if name not in seen]
+    missing = [
+        name for name in (add_missing if add_missing is not None else replacements)
+        if name not in seen
+    ]
     if missing:
         if updated and not updated[-1].endswith(("\n", "\r")):
             updated[-1] += "\n"
         updated.extend(f"{digests[name]}  {name}\n" for name in missing)
     return "".join(updated).encode("utf-8")
+
+
+def _paired_governed_hashes(
+    selection: PairedSelectionReceipt,
+) -> dict[str, str]:
+    return {
+        "cover.png": selection.variants["portrait"].cover_sha256,
+        "m4b-cover.png": selection.variants["square"].cover_sha256,
+        "cover-thumbnail.png": selection.variants["portrait"].thumbnail_sha256,
+        "m4b-cover-thumbnail.png": selection.variants["square"].thumbnail_sha256,
+        "cover-spec.json": selection.variants["portrait"].specification_sha256,
+        "m4b-cover-spec.json": selection.variants["square"].specification_sha256,
+        "cover-render.json": selection.variants["portrait"].render_receipt_sha256,
+        "m4b-cover-render.json": selection.variants["square"].render_receipt_sha256,
+    }
+
+
+def _validate_paired_artifacts(
+    sources: dict[str, Path],
+    *,
+    expected_receipt_bytes: bytes | None = None,
+) -> PairedSelectionReceipt:
+    receipt_path = sources["cover-selection.json"]
+    receipt_bytes = receipt_path.read_bytes()
+    if expected_receipt_bytes is not None and receipt_bytes != expected_receipt_bytes:
+        raise ValueError("cover-selection.json staged receipt identity changed")
+    selection = load_selection(receipt_path)
+    if not isinstance(selection, PairedSelectionReceipt):
+        raise ValueError("paired artifact map requires a paired selection receipt")
+    for name, expected in _paired_governed_hashes(selection).items():
+        if hashlib.sha256(sources[name].read_bytes()).hexdigest() != expected:
+            raise ValueError(f"{name} does not match paired selection receipt")
+    return selection
 
 
 def _incoming_path(target: Path) -> Path:
@@ -341,6 +382,7 @@ def sync_selected_cover(
     files, targets = _validate_paths(sources, destination, checksum_path)
 
     source = load_selection(selection_path)
+    source_receipt_bytes: bytes | None = None
     if paired:
         verify_package(
             selection_path, cover_path, m4b_cover_path=sources["m4b-cover.png"],
@@ -352,21 +394,8 @@ def sync_selected_cover(
             m4b_path=m4b_path, receipt_path=selection_path,
         )
     if paired:
-        if not isinstance(source, PairedSelectionReceipt):
-            raise ValueError("paired artifact map requires a paired selection receipt")
-        governed_hashes = {
-            "cover.png": source.variants["portrait"].cover_sha256,
-            "m4b-cover.png": source.variants["square"].cover_sha256,
-            "cover-thumbnail.png": source.variants["portrait"].thumbnail_sha256,
-            "m4b-cover-thumbnail.png": source.variants["square"].thumbnail_sha256,
-            "cover-spec.json": source.variants["portrait"].specification_sha256,
-            "m4b-cover-spec.json": source.variants["square"].specification_sha256,
-            "cover-render.json": source.variants["portrait"].render_receipt_sha256,
-            "m4b-cover-render.json": source.variants["square"].render_receipt_sha256,
-        }
-        for name, expected in governed_hashes.items():
-            if hashlib.sha256(sources[name].read_bytes()).hexdigest() != expected:
-                raise ValueError(f"{name} does not match paired selection receipt")
+        source = _validate_paired_artifacts(sources)
+        source_receipt_bytes = sources["cover-selection.json"].read_bytes()
     if public_destination:
         require_public_permission(source)
 
@@ -385,9 +414,13 @@ def sync_selected_cover(
         intent,
         destination_has_artifacts,
     )
-    governed_checksums = sources if not paired else {name: sources[name] for name in PAIRED_ARTIFACT_NAMES}
+    checksum_sources = sources
     checksum_bytes = (
-        _checksum_payload(checksum_path, governed_checksums)
+        _checksum_payload(
+            checksum_path,
+            checksum_sources,
+            add_missing=PAIRED_ARTIFACT_NAMES if paired else None,
+        )
         if checksum_path is not None
         else None
     )
@@ -414,6 +447,12 @@ def sync_selected_cover(
                 shutil.copy2(sources[name], staged)
                 staged_sources[name] = staged
             if paired:
+                if source_receipt_bytes is None:
+                    raise RuntimeError("missing paired source receipt bytes")
+                _validate_paired_artifacts(
+                    staged_sources,
+                    expected_receipt_bytes=source_receipt_bytes,
+                )
                 verify_package(
                     staged_sources["cover-selection.json"], staged_sources["cover.png"],
                     m4b_cover_path=staged_sources["m4b-cover.png"],
