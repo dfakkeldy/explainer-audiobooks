@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import os
 import re
@@ -36,8 +37,12 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.echo = self.tmp / "Echo"
         self.explainer = self.tmp / "explainer-audiobooks"
         self.home = self.tmp / "home"
-        self.run_root = self.explainer / ".build" / "custom-learning-audiobooks" / "fixture"
-        self.cli = self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
+        self.run_root = (
+            self.explainer / ".build" / "custom-learning-audiobooks" / "fixture"
+        )
+        self.cli = (
+            self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
+        )
 
         self.echo.mkdir(parents=True)
         self.explainer.mkdir()
@@ -116,9 +121,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         body: str = "echo_pronunciation_preflight",
     ) -> subprocess.CompletedProcess[str]:
         command = (
-            "set -euo pipefail\n"
-            f"source {shlex.quote(str(PREFLIGHT))}\n"
-            f"{body}\n"
+            "set -euo pipefail\n" f"source {shlex.quote(str(PREFLIGHT))}\n" f"{body}\n"
         )
         return subprocess.run(
             ["bash", "-c", command],
@@ -154,6 +157,94 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.assertEqual(self.second_sha, fields["echo_source_sha"])
         self.assertRegex(fields["epub_sha256"], r"^[0-9a-f]{64}$")
         self.assertRegex(fields["echo_cli_sha256"], r"^[0-9a-f]{64}$")
+
+    def test_approved_revision_is_part_of_every_render_identity(self) -> None:
+        def run_with_approval(approved_sha: str) -> dict[str, str]:
+            environment = self.environment()
+            environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = approved_sha
+            result = self.run_preflight(
+                environment=environment,
+                body=(
+                    "echo_pronunciation_preflight\n"
+                    'printf "run_id=%s\\nwork=%s\\ndb=%s\\nreceipt=%s\\n" '
+                    '"$RUN_ID" "$WORK" "$DB" "$ECHO_RENDER_INPUT_RECEIPT"'
+                ),
+            )
+            self.assertEqual(0, result.returncode, result.stderr)
+            return dict(
+                line.split("=", 1)
+                for line in result.stdout.splitlines()
+                if line.startswith(("run_id=", "work=", "db=", "receipt="))
+            )
+
+        first = run_with_approval(self.first_sha)
+        second = run_with_approval(self.second_sha)
+
+        for field in ("run_id", "work", "db", "receipt"):
+            with self.subTest(field=field):
+                self.assertNotEqual(first[field], second[field])
+        self.assertIn(self.first_sha, first["run_id"])
+        self.assertIn(self.second_sha, second["run_id"])
+        self.assertEqual(
+            self.first_sha,
+            dict(
+                line.split("=", 1)
+                for line in Path(first["receipt"])
+                .read_text(encoding="utf-8")
+                .splitlines()
+            )["approved_echo_pronunciation_sha"],
+        )
+        self.assertEqual(
+            self.second_sha,
+            dict(
+                line.split("=", 1)
+                for line in Path(second["receipt"])
+                .read_text(encoding="utf-8")
+                .splitlines()
+            )["approved_echo_pronunciation_sha"],
+        )
+
+    def test_preflight_rejects_mismatched_receipt_or_unreceipted_capture(self) -> None:
+        result = self.run_preflight(
+            body=(
+                "echo_pronunciation_preflight\n"
+                'printf "work=%s\\nreceipt=%s\\n" '
+                '"$WORK" "$ECHO_RENDER_INPUT_RECEIPT"'
+            )
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        fields = dict(
+            line.split("=", 1)
+            for line in result.stdout.splitlines()
+            if line.startswith(("work=", "receipt="))
+        )
+        receipt = Path(fields["receipt"])
+        receipt.write_text("approved_echo_pronunciation_sha=wrong\n", encoding="utf-8")
+
+        mismatch = self.run_preflight()
+        self.assertNotEqual(0, mismatch.returncode)
+        self.assertIn("existing render-input receipt does not match", mismatch.stderr)
+
+        receipt.unlink()
+        Path(fields["work"]).mkdir(parents=True)
+        unreceipted = self.run_preflight()
+        self.assertNotEqual(0, unreceipted.returncode)
+        self.assertIn(
+            "pre-existing WORK or DB requires a matching receipt", unreceipted.stderr
+        )
+
+    def test_preflight_accepts_matching_receipt_for_resume_paths(self) -> None:
+        result = self.run_preflight(
+            body=(
+                "echo_pronunciation_preflight\n"
+                'mkdir -p "$WORK"\n'
+                'touch "$DB"\n'
+                "echo_pronunciation_preflight\n"
+                'printf "receipt=%s\\n" "$ECHO_RENDER_INPUT_RECEIPT"'
+            )
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("receipt=", result.stdout)
 
     def test_preflight_rejects_missing_approval(self) -> None:
         environment = self.environment()
@@ -220,16 +311,36 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
             "coverage": "complete",
             "watchCounts": {
                 "startable": 0,
-                "filesystem": 1,
+                "filesystem": 0,
                 "verified": 0,
-                "live": 1,
-                "lives": 1,
-                "record": 1,
+                "live": 0,
+                "lives": 0,
+                "record": 0,
             },
             "decisions": [],
             "diagnostics": [],
             "legacyChapterIndexes": [],
             "audiobookFileName": "fixture.m4b",
+        }
+
+    @staticmethod
+    def valid_decision() -> dict[str, object]:
+        return {
+            "blockID": "fixture-s0-b1",
+            "wordStart": 1,
+            "wordEnd": 1,
+            "normalizedWord": "filesystem",
+            "sourceWord": "filesystem",
+            "sourceContext": "The filesystem stores the result.",
+            "selectedIPA": "fˈIl sˌɪstəm",
+            "kokoroTokenIDs": [48, 156, 25, 54],
+            "source": "builtInOverride",
+            "ruleID": "override.built-in.filesystem",
+            "rationale": "Built-in override matched filesystem.",
+            "chapterIndex": 0,
+            "chapterRelativeAudioRange": {"start": 1.25, "end": 1.75},
+            "bookRelativeAudioRange": {"start": 1.25, "end": 1.75},
+            "timingPrecision": "exactSynthesisWord",
         }
 
     def run_validator(self) -> subprocess.CompletedProcess[str]:
@@ -250,6 +361,102 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
         result = self.run_validator()
         self.assertNotEqual(0, result.returncode)
         self.assertIn("schemaVersion must be 1", result.stderr)
+
+    def test_accepts_full_schema_decision_and_matching_watch_count(self) -> None:
+        self.payload["decisions"] = [self.valid_decision()]
+        self.payload["watchCounts"]["filesystem"] = 1
+        result = self.run_validator()
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_rejects_null_manifest_scalars_and_null_decision(self) -> None:
+        cases = {
+            "renderVersion=null": ("renderVersion", None),
+            "renderVersion=bool": ("renderVersion", True),
+            "renderVersion=string": ("renderVersion", "11"),
+            "voice=null": ("voice", None),
+            "voice=empty": ("voice", ""),
+            "voice=number": ("voice", 11),
+            "decisions=[null]": ("decisions", [None]),
+        }
+        for name, (field, value) in cases.items():
+            with self.subTest(name=name):
+                original = self.payload[field]
+                self.payload[field] = value
+                result = self.run_validator()
+                self.assertNotEqual(0, result.returncode)
+                self.payload[field] = original
+
+    def test_rejects_schema_invalid_decision_fields_and_ranges(self) -> None:
+        valid = self.valid_decision()
+        invalid_decisions: dict[str, object] = {}
+
+        missing_block = copy.deepcopy(valid)
+        missing_block.pop("blockID")
+        invalid_decisions["missing required field"] = missing_block
+
+        reversed_words = copy.deepcopy(valid)
+        reversed_words["wordEnd"] = 0
+        invalid_decisions["reversed word range"] = reversed_words
+
+        boundary_token = copy.deepcopy(valid)
+        boundary_token["kokoroTokenIDs"] = [0]
+        invalid_decisions["synthetic boundary token"] = boundary_token
+
+        oversized_token = copy.deepcopy(valid)
+        oversized_token["kokoroTokenIDs"] = [2**31]
+        invalid_decisions["out-of-range token"] = oversized_token
+
+        invalid_source = copy.deepcopy(valid)
+        invalid_source["source"] = "madeUpSource"
+        invalid_decisions["unknown source"] = invalid_source
+
+        invalid_source_type = copy.deepcopy(valid)
+        invalid_source_type["source"] = []
+        invalid_decisions["non-string source"] = invalid_source_type
+
+        reversed_audio = copy.deepcopy(valid)
+        reversed_audio["chapterRelativeAudioRange"] = {"start": 2.0, "end": 1.0}
+        invalid_decisions["reversed audio range"] = reversed_audio
+
+        invalid_precision = copy.deepcopy(valid)
+        invalid_precision["timingPrecision"] = "estimated"
+        invalid_decisions["unknown timing precision"] = invalid_precision
+
+        missing_chapter_range = copy.deepcopy(valid)
+        missing_chapter_range.pop("chapterRelativeAudioRange")
+        invalid_decisions["book timing without chapter timing"] = missing_chapter_range
+
+        negative_chapter = copy.deepcopy(valid)
+        negative_chapter["chapterIndex"] = -1
+        invalid_decisions["negative chapter index"] = negative_chapter
+
+        for name, decision in invalid_decisions.items():
+            with self.subTest(name=name):
+                self.payload["decisions"] = [decision]
+                self.payload["watchCounts"]["filesystem"] = 1
+                result = self.run_validator()
+                self.assertNotEqual(0, result.returncode)
+
+    def test_rejects_watch_count_inconsistency_across_full_vocabulary(self) -> None:
+        self.payload["watchCounts"]["arithmetic"] = 1
+        result = self.run_validator()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("does not match decisions", result.stderr)
+
+    def test_reel_filename_and_file_presence_must_agree(self) -> None:
+        reel_name = "fixture.pronunciation-reel.m4b"
+        self.payload["listeningReelFileName"] = reel_name
+        missing = self.run_validator()
+        self.assertNotEqual(0, missing.returncode)
+
+        (self.tmp / reel_name).write_bytes(b"fixture reel")
+        present = self.run_validator()
+        self.assertEqual(0, present.returncode, present.stderr)
+
+        self.payload.pop("listeningReelFileName")
+        unlisted = self.run_validator()
+        self.assertNotEqual(0, unlisted.returncode)
+        self.assertIn("unlisted listening reel", unlisted.stderr)
 
 
 if __name__ == "__main__":

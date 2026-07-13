@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import subprocess
 import sys
 from pathlib import Path
 
@@ -12,7 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CANONICAL = Path(
     "/Users/dfakkeldy/Developer/explainer-audiobooks/skills/custom-learning-audiobook"
 )
-DEFAULT_EXTERNAL = Path.home() / ".hermes/skills/openclaw-imports/custom-learning-audiobook"
+DEFAULT_EXTERNAL = (
+    Path.home() / ".hermes/skills/openclaw-imports/custom-learning-audiobook"
+)
 DEFAULT_LINKS = tuple(
     Path.home() / base / "skills/custom-learning-audiobook"
     for base in (".codex", ".agents", ".claude", ".hermes")
@@ -26,6 +29,27 @@ CONTRACT_FILES = (
 EXTERNAL_GUARD_FILES = (Path("SKILL.md"), Path("references/package-and-qc.md"))
 DISABLED_MARKER = "DISABLED: canonical skill required"
 CANONICAL_ROUTE = "/Users/dfakkeldy/.hermes/skills/custom-learning-audiobook"
+EXTERNAL_SKILL_STUB = f"""---
+name: custom-learning-audiobook
+description: Disabled duplicate. Load the canonical shared custom-learning-audiobook skill.
+---
+
+# Disabled Duplicate
+
+## {DISABLED_MARKER}
+
+Stop. Do not execute any workflow from this directory.
+Load `{CANONICAL_ROUTE}` and follow that canonical skill.
+"""
+EXTERNAL_PACKAGE_STUB = f"""# {DISABLED_MARKER}
+
+Stop. This duplicate package reference is not executable.
+Load `{CANONICAL_ROUTE}` and follow that canonical skill.
+"""
+EXTERNAL_STUBS = {
+    Path("SKILL.md"): EXTERNAL_SKILL_STUB,
+    Path("references/package-and-qc.md"): EXTERNAL_PACKAGE_STUB,
+}
 
 
 def fail(message: str) -> int:
@@ -49,6 +73,7 @@ def parse_arguments(arguments: list[str]) -> argparse.Namespace:
     )
     parser.add_argument("--canonical-root", type=Path, default=DEFAULT_CANONICAL)
     parser.add_argument("--external-root", type=Path, default=DEFAULT_EXTERNAL)
+    parser.add_argument("--hermes-command", type=Path, default=Path("hermes"))
     parser.add_argument("--link", action="append", type=Path)
     return parser.parse_args(arguments)
 
@@ -69,8 +94,29 @@ def main(arguments: list[str]) -> int:
         if not external_path.is_file():
             return fail(f"missing independent Hermes guard: {external_path}")
         external_text = external_path.read_text(encoding="utf-8")
-        if DISABLED_MARKER not in external_text or CANONICAL_ROUTE not in external_text:
-            return fail(f"independent Hermes import is not disabled: {external_path}")
+        if external_text != EXTERNAL_STUBS[relative_path]:
+            return fail(
+                f"independent Hermes import is not the exact disabled stub: {external_path}"
+            )
+
+    try:
+        discovery = subprocess.run(
+            [str(options.hermes_command), "skills", "list", "--source", "local"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    except OSError as error:
+        return fail(f"cannot run Hermes discovery: {error}")
+    if discovery.returncode != 0:
+        return fail(f"Hermes discovery failed: {discovery.stderr.strip()}")
+    discovery_rows = [
+        line
+        for line in discovery.stdout.splitlines()
+        if "custom-learning-audiobook" in line
+    ]
+    if len(discovery_rows) != 1 or "openclaw-imports" in discovery_rows[0]:
+        return fail("Hermes discovery did not select the canonical skill exactly once")
 
     for relative_path in CONTRACT_FILES:
         candidate_path = options.candidate_root / relative_path

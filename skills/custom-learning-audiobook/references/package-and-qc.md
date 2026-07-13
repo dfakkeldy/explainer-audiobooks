@@ -333,6 +333,9 @@ A feature-worktree edit does not update installed agents merely because their
 paths are symlinks: those links resolve the canonical checkout at
 `/Users/dfakkeldy/Developer/explainer-audiobooks`. Run
 `tools/validate_custom_learning_skill_install.py` before claiming parity.
+The validator also requires the independent OpenClaw import to be the exact
+disabled stub and confirms that `hermes skills list --source local` discovers
+the canonical skill rather than the duplicate.
 `installed_skill_parity: pending-integration` means the branch is tested but the
 installed canonical checkout is still old; do not report installed parity until
 the tool says `current` after integration.
@@ -341,7 +344,11 @@ The preflight also requires `--version` to contain `(Release)`, requires
 `narrate --help` to expose `--no-pronunciation-review`, validates EPUB and CLI
 SHA-256 values as exactly 64 lowercase hexadecimal characters, and records the
 approved revision, source revision, `EPUB_SHA256`, and `ECHO_CLI_SHA256` in an
-immutable-input receipt. Stop immediately on any failure:
+immutable-input receipt. The full approved revision is a component of `RUN_ID`,
+so two approved ancestor boundaries never share `WORK`, `DB`, or a receipt. An
+existing receipt for the same ID must match byte-for-byte, and pre-existing
+`WORK` or `DB` data without that matching receipt fails closed before resume.
+Stop immediately on any failure:
 
 ```bash
 set -euo pipefail
@@ -389,8 +396,9 @@ the same immutable source EPUB, approved/source revisions, Release CLI binary,
 voice, and capture set. Re-read `ECHO_RENDER_INPUT_RECEIPT`, require every value
 and existing completed capture to match, then rerun the exact narration command
 with `--resume` and its original `WORK`/`DB`. Never copy old captures into a new
-run or resume after editing the EPUB or rebuilding Echo; the content-addressed
-`RUN_ID` then selects fresh paths.
+run, edit a receipt, or resume after editing the EPUB or rebuilding Echo; the
+content-addressed `RUN_ID` selects fresh paths and the preflight rejects
+unreceipted or mismatched pre-existing paths.
 
 Do not add a self-imposed timeout around `echo-cli narrate`, kill a progressing
 render because it may take several hours, or replace it with Apple/macOS/system
@@ -436,9 +444,12 @@ test ! -f "$REEL" || ffprobe -v error -show_entries format=duration \
 ```
 
 Require `SIDECAR_OK` from `verify-sidecar`. The manifest schema version is `1`.
-Require `coverage=complete`, preserve all watch counts including zero counts,
-and reconcile every diagnostic before delivery. A missing reel is valid only
-when `listeningReelFileName` is absent or null and there are no review samples.
+Require `coverage=complete`, a positive integer render version, a nonempty
+voice, schema-valid decision objects and timing ranges, and watch counts that
+match decisions across the complete emitted watch vocabulary, including zero
+counts. Reconcile every diagnostic before delivery. A missing reel is valid
+only when `listeningReelFileName` is absent or null and there are no review
+samples.
 When a reel exists, inspect its chapter labels and listen to its samples (or the
 matching final-audiobook passages). Automated checks do not substitute for
 hearing the result: human listening remains explicitly pending until someone

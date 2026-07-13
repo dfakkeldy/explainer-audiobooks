@@ -110,7 +110,7 @@ echo_pronunciation_preflight() {
       ;;
   esac
 
-  RUN_ID="${EPUB_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_SOURCE_SHA:0:12}-$VOICE"
+  RUN_ID="${EPUB_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-${ECHO_SOURCE_SHA:0:12}-$VOICE"
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
@@ -122,8 +122,46 @@ echo_pronunciation_preflight() {
     "epub_sha256=$EPUB_SHA256" \
     "echo_cli_sha256=$ECHO_CLI_SHA256" \
     "echo_cli_path=$CLI" \
-    "voice=$VOICE" >"$receipt_tmp"
-  mv "$receipt_tmp" "$ECHO_RENDER_INPUT_RECEIPT"
+    "voice=$VOICE" \
+    "run_id=$RUN_ID" \
+    "work_dir=$WORK" \
+    "narration_db=$DB" >"$receipt_tmp"
+
+  if [[ -L "$ECHO_RENDER_INPUT_RECEIPT" ]]; then
+    rm -f "$receipt_tmp"
+    printf 'render-input receipt must not be a symlink: %s\n' \
+      "$ECHO_RENDER_INPUT_RECEIPT" >&2
+    return 65
+  fi
+  if [[ -e "$ECHO_RENDER_INPUT_RECEIPT" ]]; then
+    if ! cmp -s "$receipt_tmp" "$ECHO_RENDER_INPUT_RECEIPT"; then
+      rm -f "$receipt_tmp"
+      printf 'existing render-input receipt does not match immutable inputs: %s\n' \
+        "$ECHO_RENDER_INPUT_RECEIPT" >&2
+      return 65
+    fi
+    rm -f "$receipt_tmp"
+  else
+    if [[ -e "$WORK" || -L "$WORK" || -e "$DB" || -L "$DB" ]]; then
+      rm -f "$receipt_tmp"
+      printf 'pre-existing WORK or DB requires a matching receipt: %s\n' "$RUN_ID" >&2
+      return 65
+    fi
+    if ! ln "$receipt_tmp" "$ECHO_RENDER_INPUT_RECEIPT"; then
+      if [[ ! -L "$ECHO_RENDER_INPUT_RECEIPT" \
+        && -f "$ECHO_RENDER_INPUT_RECEIPT" \
+        && -r "$ECHO_RENDER_INPUT_RECEIPT" ]] \
+        && cmp -s "$receipt_tmp" "$ECHO_RENDER_INPUT_RECEIPT"; then
+        : # A concurrent identical preflight won the atomic create.
+      else
+        rm -f "$receipt_tmp"
+        printf 'could not create immutable render-input receipt: %s\n' \
+          "$ECHO_RENDER_INPUT_RECEIPT" >&2
+        return 65
+      fi
+    fi
+    rm -f "$receipt_tmp"
+  fi
 
   if [[ "$PWD" != "$original_pwd" ]]; then
     printf 'Echo preflight changed cwd from %s to %s\n' "$original_pwd" "$PWD" >&2
