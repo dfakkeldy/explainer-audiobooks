@@ -611,7 +611,7 @@ git commit -m "feat: publish paired covers for public learning books"
 - Modify: `Tools/build-listen-catalog.sh`
 - Modify: `Resources/listen/books.json`
 - Modify: `Resources/listen/books/{echo-from-the-inside,why-it-feels-right,findable,chicken-predators,the-new-deal}/cover.jpg` for migrated slugs represented in the listening catalogue
-- Create: `Resources/learn/covers/{echo-from-the-inside,why-it-feels-right,findable,chicken-predators,the-new-deal}.png`
+- Create: `Resources/learn/covers/{echo-from-the-inside,why-it-feels-right,findable,rodents-in-the-walls,chicken-predators,the-new-deal}.png`; the Rodents file is a byte-derived website copy of its existing approved portrait, not a redesigned or republished book asset
 - Modify generated outputs under `Output/` through the repository's normal publish command
 - Modify: `Tests/site/learn-library.test.mjs`
 - Create: `Tests/site/paired-cover-assets.test.mjs`
@@ -626,7 +626,7 @@ Read site `AGENTS.md`/`CLAUDE.md`, inspect deployment branch/configuration, run 
 
 - [ ] **Step 2: Write failing site tests**
 
-Assert each of the six `/learn` books appears once, Rodents retains its existing asset, the five migrated cards have portrait images with meaningful alt text, and listening entries for migrated books resolve to square assets. Validate actual dimensions with the site's available image inspection tool rather than filename assumptions.
+Assert each of the six `/learn` books appears once and has a portrait image with meaningful alt text. Rodents must use a hash-verified derivative of its existing approved portrait; the five migrated cards use their newly selected portraits. Listening entries for migrated books resolve to square assets, while Rodents retains its existing player asset. Validate actual dimensions with the site's available image inspection tool rather than filename assumptions.
 
 - [ ] **Step 3: Add a verified asset-copy command**
 
@@ -634,7 +634,7 @@ Extend `build-listen-catalog.sh` or add a focused helper that reads paired recei
 
 - [ ] **Step 4: Render responsive `/learn` cards**
 
-Add portrait `<img>` markup within each migrated card using the site's existing semantic HTML and CSS conventions. Preserve title, runtime, description, and links. Use intrinsic width/height and `object-fit: cover` without distorting the 5:8 image. Do not add decorative image duplication to Rodents during this rollout.
+Add portrait `<img>` markup within all six cards using the site's existing semantic HTML and CSS conventions. Preserve title, runtime, description, and links. Use intrinsic width/height and `object-fit: cover` without distorting the 5:8 image. Rodents uses its existing approved portrait and is never sent through candidate generation or book-package promotion.
 
 - [ ] **Step 5: Use square player artwork**
 
