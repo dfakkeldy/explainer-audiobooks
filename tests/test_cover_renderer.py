@@ -15,6 +15,7 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).parents[1] / "skill" / "scripts"))
 import cover_renderer
 from cover_renderer import CoverRenderError, render_cover_spec
+from PIL import Image
 
 FONT_MANIFEST = Path(__file__).parents[1] / "skill" / "assets" / "fonts" / "manifest.json"
 
@@ -101,6 +102,39 @@ def write_spec(root: Path, payload: dict[str, object], name: str) -> Path:
     "renderer tools required",
 )
 class CoverRendererTests(unittest.TestCase):
+    def test_renders_square_cover_thumbnail_and_receipt_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            payload = base_spec()
+            payload["schema_version"] = 2
+            payload["variant"] = "square"
+            payload["canvas"].update(width=2400, height=2400, safe_margin=120)
+            payload["art"]["box"] = [0, 0, 2400, 2400]
+            for layer in payload["layers"]:
+                layer["box"][0] = 120
+            payload["layers"][0]["box"][1] = 120
+            payload["layers"][3]["box"] = [120, 1950, 1408, 130]
+            payload["layers"][4]["box"] = [120, 2150, 1408, 90]
+            spec = write_spec(root, payload, "square")
+            cover = root / "square.png"
+            thumbnail = root / "square-thumbnail.png"
+            receipt = root / "square.render.json"
+
+            result = render_cover_spec(
+                spec, cover, thumbnail, receipt, FONT_MANIFEST
+            )
+
+            with Image.open(cover) as image:
+                self.assertEqual((image.mode, image.size), ("RGB", (2400, 2400)))
+            with Image.open(thumbnail) as image:
+                self.assertEqual((image.mode, image.size), ("RGB", (160, 160)))
+            self.assertEqual(result.variant, "square")
+            payload = json.loads(receipt.read_text(encoding="utf-8"))
+            self.assertEqual(payload["schema_version"], 1)
+            self.assertEqual(payload["variant"], "square")
+            self.assertEqual(payload["dimensions"], [2400, 2400])
+            self.assertEqual(payload["thumbnail_dimensions"], [160, 160])
+
     def test_pinned_title_fonts_render_distinct_pixels(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

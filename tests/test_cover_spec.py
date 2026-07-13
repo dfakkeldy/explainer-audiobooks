@@ -239,6 +239,18 @@ class CoverSpecValidationTests(unittest.TestCase):
                 with tempfile.TemporaryDirectory() as raw, self.assertRaises(CoverSpecError):
                     load_cover_spec(write_fixture(Path(raw), payload), FONT_MANIFEST)
 
+    def test_square_uses_its_larger_safe_margin_for_layer_coordinates(self) -> None:
+        portrait_payload = valid_payload()
+        portrait_payload["layers"][0]["box"][0] = 96
+        with tempfile.TemporaryDirectory() as raw:
+            load_cover_spec(write_fixture(Path(raw), portrait_payload), FONT_MANIFEST)
+
+        square_payload = valid_square_payload()
+        square_payload["layers"][0]["box"][0] = 96
+        with tempfile.TemporaryDirectory() as raw:
+            with self.assertRaisesRegex(CoverSpecError, "outside 120px safe margin"):
+                load_cover_spec(write_fixture(Path(raw), square_payload), FONT_MANIFEST)
+
     def test_square_may_omit_but_not_rewrite_subtitle(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             square = valid_square_payload()
