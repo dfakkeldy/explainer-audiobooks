@@ -68,6 +68,27 @@ def main() -> int:
     ):
         contains(path, *paired_contract)
 
+    complete_paired = (
+        "render_cover_pair(", "portrait_spec=", "square_spec=",
+        "portrait_output=", "square_output=", "portrait_thumbnail=",
+        "square_thumbnail=", "portrait_receipt=", "square_receipt=",
+        "--portrait-render-receipt", "--square-render-receipt",
+        "--selection-source user", "--privacy-classification",
+        "--m4b-cover \"$PAIR/m4b-cover.png\"",
+        "--portrait-cover \"$PAIR/cover.png\"",
+        "--paired-artifact-dir \"$PAIR\"", "--intent reuse", "--apply",
+    )
+    for path in (
+        "skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md",
+        "skill/references/cover-art.md",
+        "skills/custom-learning-audiobook/references/package-and-qc.md",
+    ):
+        contains(path, *complete_paired)
+        require(
+            "/make_cover.py \\\n  --spec" not in read(path),
+            f"{path} teaches active single-cover rendering",
+        )
+
     contains(
         "skill/SKILL.md",
         "am_michael",

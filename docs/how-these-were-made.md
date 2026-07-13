@@ -92,7 +92,7 @@ M4B square embedding → post-embed verification → governed public/iCloud/site
 sync. *Rodents in the Walls* is excluded only from the current five-book
 migration; that is not a universal future rule.
 
-A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the reviewed chapter files into a valid EPUB 3 — with both a modern navigation document and an old-style NCX table of contents — plus a combined Markdown copy. A second script ([`skill/scripts/make_cover.py`](../skill/scripts/make_cover.py)) renders validated art-and-type specifications using bundled fonts, and the user chooses among three complete candidates. The selected cover and explicit receipt then produce a governed EPUB. Echo renders that EPUB into M4B audio and alignment data. Final receipt verification checks the cover, EPUB, and M4B before governed delivery.
+A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the reviewed chapters into EPUB 3 and combined Markdown. The paired renderer creates portrait and square variants from each of three source directions, and the human chooses one complete pair. Its paired receipt governs portrait EPUB embedding and square M4B embedding. Echo renders the EPUB into audio and alignment data; the square-art replacement preserves that media. Post-embed verification checks both images and both containers before governed delivery.
 
 ## Model-aware, not model-agnostic
 

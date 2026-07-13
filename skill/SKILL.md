@@ -30,6 +30,100 @@ M4B square embedding → post-embed verification → governed public/iCloud/site
 sync. Legacy single-cover selection commands are verification-only compatibility
 and must not be used for new work.
 
+
+### Complete paired command example
+
+Create exactly three directories, `candidate-1/`, `candidate-2/`, and
+`candidate-3/`. Each contains schema-v2 `cover-spec.json` and
+`m4b-cover-spec.json`, shared source art, and portrait/square outputs,
+thumbnails, and receipts. Repeat this call for candidates 1 through 3:
+
+```python
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path("skill/scripts").resolve()))
+from cover_pairs import render_cover_pair
+
+PAIR = Path(os.environ["PAIR"])
+render_cover_pair(
+    portrait_spec=PAIR / "cover-spec.json",
+    square_spec=PAIR / "m4b-cover-spec.json",
+    portrait_output=PAIR / "cover.png",
+    square_output=PAIR / "m4b-cover.png",
+    portrait_thumbnail=PAIR / "cover-thumbnail.png",
+    square_thumbnail=PAIR / "m4b-cover-thumbnail.png",
+    portrait_receipt=PAIR / "cover-render.json",
+    square_receipt=PAIR / "m4b-cover-render.json",
+)
+```
+
+After human review selects one pair, run the complete governed sequence:
+
+```bash
+PAIR="$DIST/candidate-$SELECTED"
+/usr/local/bin/python3 skill/scripts/cover_receipts.py select-pair \
+  --portrait-render-receipt "$PAIR/cover-render.json" \
+  --square-render-receipt "$PAIR/m4b-cover-render.json" \
+  --out "$DIST/cover-selection.json" \
+  --book-slug "$SLUG" \
+  --edition-id "$EDITION_ID" \
+  --selection-source user \
+  --selected-at "$SELECTED_AT" \
+  --privacy-classification "$CLASSIFICATION" \
+  --permission-to-publish
+cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir "$RUN_ROOT/chapters" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
+  --author "Dan Fakkeldy" \
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
+  --slug "$SLUG" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --cover-selection "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
+  --m4b "$DIST/$SLUG.m4b" \
+  --cover "$PAIR/m4b-cover.png" \
+  --out "$DIST/$SLUG.covered.m4b" \
+  --cover-selection "$DIST/cover-selection.json" \
+  --portrait-cover "$PAIR/cover.png"
+mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
+
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --receipt "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse
+
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse \
+  --apply
+```
+
+
 Produce a book-length, *listenable* explainer that teaches a subject by touring a
 real worked example — the actual app, codebase, product, or system the user
 points you at — and explaining each part: what it does, how it works, why it was
@@ -277,18 +371,9 @@ a named existing cover or designer. Reject weak outputs and regenerate; do not
 ship the first technically valid image. Include at least one high-key/bright
 candidate unless the subject genuinely demands three dark directions.
 
-Save each art file beside a validated `cover-spec-N.json`. New books render the
-whole composition from the specification:
-
-```bash
-SLUG="<Output-Filename-Base>"
-RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
-/usr/local/bin/python3 skill/scripts/make_cover.py \
-  --spec "$RUN_ROOT/dist/cover-spec-1.json" \
-  --out "$RUN_ROOT/dist/cover-1.png"
-```
-
-Repeat for candidates 2 and 3. Review every full-size render and generated
+Save the shared art and two schema-v2 specifications in each candidate directory,
+then use the complete `render_cover_pair(...)` call above for candidates 1, 2,
+and 3. Review every full-size portrait and square render and generated
 160-pixel thumbnail with its brief, font/palette note, and warnings. Send all
 three complete candidates to the user and ask them to choose or request a mix;
 a mix becomes a new specification and render. The renderer never selects a

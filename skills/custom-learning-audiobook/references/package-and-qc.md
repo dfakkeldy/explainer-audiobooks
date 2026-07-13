@@ -20,6 +20,100 @@ M4B square embedding → post-embed verification → governed public/iCloud/site
 sync. Public/private boundaries below govern destinations. Legacy single-cover
 selection is verification-only compatibility, not a new-package workflow.
 
+
+### Complete paired command example
+
+Create exactly three directories, `candidate-1/`, `candidate-2/`, and
+`candidate-3/`. Each contains schema-v2 `cover-spec.json` and
+`m4b-cover-spec.json`, shared source art, and portrait/square outputs,
+thumbnails, and receipts. Repeat this call for candidates 1 through 3:
+
+```python
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path("skill/scripts").resolve()))
+from cover_pairs import render_cover_pair
+
+PAIR = Path(os.environ["PAIR"])
+render_cover_pair(
+    portrait_spec=PAIR / "cover-spec.json",
+    square_spec=PAIR / "m4b-cover-spec.json",
+    portrait_output=PAIR / "cover.png",
+    square_output=PAIR / "m4b-cover.png",
+    portrait_thumbnail=PAIR / "cover-thumbnail.png",
+    square_thumbnail=PAIR / "m4b-cover-thumbnail.png",
+    portrait_receipt=PAIR / "cover-render.json",
+    square_receipt=PAIR / "m4b-cover-render.json",
+)
+```
+
+After human review selects one pair, run the complete governed sequence:
+
+```bash
+PAIR="$DIST/candidate-$SELECTED"
+/usr/local/bin/python3 skill/scripts/cover_receipts.py select-pair \
+  --portrait-render-receipt "$PAIR/cover-render.json" \
+  --square-render-receipt "$PAIR/m4b-cover-render.json" \
+  --out "$DIST/cover-selection.json" \
+  --book-slug "$SLUG" \
+  --edition-id "$EDITION_ID" \
+  --selection-source user \
+  --selected-at "$SELECTED_AT" \
+  --privacy-classification "$CLASSIFICATION" \
+  --permission-to-publish
+cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir "$RUN_ROOT/chapters" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
+  --author "Dan Fakkeldy" \
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
+  --slug "$SLUG" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --cover-selection "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
+  --m4b "$DIST/$SLUG.m4b" \
+  --cover "$PAIR/m4b-cover.png" \
+  --out "$DIST/$SLUG.covered.m4b" \
+  --cover-selection "$DIST/cover-selection.json" \
+  --portrait-cover "$PAIR/cover.png"
+mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
+
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --receipt "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse
+
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse \
+  --apply
+```
+
+
 Use this reference before building, narrating, copying, or reporting a custom
 learning audiobook package.
 
@@ -41,11 +135,16 @@ Use this run layout:
     images/
       figure-01.png
   dist/
-    cover-source-1.png
-    cover-spec-1.json
-    cover-1.png
-    cover-1-thumbnail.png
-    cover-1.render.json
+    candidate-1/
+      source-art.png
+      cover-spec.json
+      m4b-cover-spec.json
+      cover.png
+      m4b-cover.png
+      cover-thumbnail.png
+      m4b-cover-thumbnail.png
+      cover-render.json
+      m4b-cover-render.json
     cover-selection.json
     <slug>.epub
     <slug>.md
@@ -55,9 +154,10 @@ Use this run layout:
     README.md or manifest.json
 ```
 
-Repeat the numbered cover source/spec/render/thumbnail/receipt set for candidates
-2 and 3. `cover-selection.json` appears only after the user chooses or requests a
-mix.
+Repeat that directory for `candidate-2/` and `candidate-3/`. After selection,
+copy the paired receipt into the selected candidate directory before governed
+sync so it contains the nine canonical pair/provenance artifacts.
+`cover-selection.json` appears only after the user chooses or requests a mix.
 
 The canonical transient build output stays under `.build/`. A public-safe
 package defaults to a durable iCloud Drive delivery copy under:
@@ -149,17 +249,9 @@ bright/high-key option unless three dark directions are truly warranted, and
 reject a generic template, slide icon, AI wallpaper, or recolour before the user
 sees it.
 
-Save each art file beside its validated specification. Assign `SLUG` from the run
-metadata, then render candidate 1:
-
-```bash
-RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
-/usr/local/bin/python3 skill/scripts/make_cover.py \
-  --spec "$RUN_ROOT/dist/cover-spec-1.json" \
-  --out "$RUN_ROOT/dist/cover-1.png"
-```
-
-Repeat for candidates 2 and 3. Human-review each full-size render, generated
+Save shared art and two schema-v2 specifications in each candidate directory,
+then use the complete `render_cover_pair(...)` call above for candidates 1
+through 3. Human-review each full-size portrait and square render, generated
 160-pixel thumbnail, art-and-type brief, font/palette note, and warning. The
 renderer never selects a candidate automatically. Ask the user to choose or
 request a mix; a mix becomes a new specification and render.

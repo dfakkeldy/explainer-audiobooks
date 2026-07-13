@@ -27,7 +27,7 @@ class SkillCoverContractTests(unittest.TestCase):
         for key in ("long", "custom"):
             text = FILES[key].read_text(encoding="utf-8")
             for required in (
-                "--spec",
+                "render_cover_pair(",
                 "cover-selection.json",
                 "explicit-user-choice",
                 "--cover-selection",
@@ -95,7 +95,6 @@ class SkillCoverContractTests(unittest.TestCase):
         for forbidden in (
             'cp "$DIST/$SLUG.epub"',
             'cp "$DIST/cover-$SELECTED.png"',
-            'cp "$DIST/cover-selection.json"',
         ):
             self.assertNotIn(forbidden, text)
 
@@ -122,12 +121,12 @@ class SkillCoverContractTests(unittest.TestCase):
         self.assert_in_order(
             text,
             (
-                "selected cover",
-                "governed EPUB",
-                "Echo",
-                "M4B",
-                "receipt verification",
-                "delivery",
+                "explicit pair selection",
+                "paired receipt",
+                "EPUB portrait",
+                "M4B square",
+                "post-embed verification",
+                "sync",
             ),
         )
 
@@ -180,6 +179,54 @@ class SkillCoverContractTests(unittest.TestCase):
         combined = "\n".join(FILES[key].read_text(encoding="utf-8") for key in ("long", "custom", "package", "public", "readme", "make"))
         self.assertIn("five-book migration", combined)
         self.assertIn("not a universal future rule", combined)
+
+    def test_active_new_work_uses_complete_paired_interfaces(self) -> None:
+        for key in ("long", "custom", "package", "cover"):
+            text = FILES[key].read_text(encoding="utf-8")
+            for marker in (
+                "render_cover_pair(",
+                "portrait_spec=",
+                "square_spec=",
+                "portrait_output=",
+                "square_output=",
+                "portrait_thumbnail=",
+                "square_thumbnail=",
+                "portrait_receipt=",
+                "square_receipt=",
+                "--portrait-render-receipt",
+                "--square-render-receipt",
+                "--privacy-classification",
+                "--selection-source user",
+                "--selection \"$DIST/cover-selection.json\"",
+                "--m4b-cover \"$PAIR/m4b-cover.png\"",
+                "--portrait-cover \"$PAIR/cover.png\"",
+                "--paired-artifact-dir \"$PAIR\"",
+                "--intent reuse",
+                "--apply",
+            ):
+                with self.subTest(file=key, marker=marker):
+                    self.assertIn(marker, text)
+
+    def test_active_new_work_does_not_run_single_cover_renderer(self) -> None:
+        for key in ("long", "custom", "package", "cover"):
+            text = FILES[key].read_text(encoding="utf-8")
+            self.assertNotIn("/make_cover.py \\\n  --spec", text)
+
+    def test_paired_chronology_is_literal_and_ordered(self) -> None:
+        markers = (
+            "research → three source directions",
+            "portrait/square render pairs",
+            "thumbnail review",
+            "explicit pair selection",
+            "paired receipt",
+            "EPUB portrait + M4B square embedding",
+            "post-embed verification",
+            "governed public/iCloud/site sync",
+        )
+        for key in ("long", "custom", "package", "cover", "public", "readme", "make"):
+            with self.subTest(file=key):
+                normalized = " ".join(FILES[key].read_text(encoding="utf-8").split())
+                self.assert_in_order(normalized, markers)
 
 
 if __name__ == "__main__":
