@@ -116,6 +116,11 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.cli.write_text(
             "#!/usr/bin/env bash\n"
             "set -euo pipefail\n"
+            "if [[ -n ${FAKE_ECHO_ENV_LOG:-} ]]; then\n"
+            "  printf 'CALL=%s:%s ECHO_RESOURCE_DIR=%s\\n' "
+            '"${1:-}" "${2:-}" "${ECHO_RESOURCE_DIR-<unset>}" '
+            '>>"$FAKE_ECHO_ENV_LOG"\n'
+            "fi\n"
             "if [[ ${1:-} == --version ]]; then\n"
             "  echo 'echo-cli fixture (Release)'\n"
             "elif [[ ${1:-} == narrate && ${2:-} == --help ]]; then\n"
@@ -434,6 +439,27 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.assertEqual(6, len(list(lease_root.glob("*.lock"))))
         self.assertFalse(
             (self.run_root / "research" / "echo-render-output.owner.env").exists()
+        )
+
+    def test_wrapper_clears_inherited_echo_resource_dir_for_every_cli_call(
+        self,
+    ) -> None:
+        environment_log = self.tmp / "echo-environment.log"
+        environment = self.environment()
+        environment["ECHO_RESOURCE_DIR"] = "/stale/debug/resources"
+        environment["FAKE_ECHO_ENV_LOG"] = str(environment_log)
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        calls = environment_log.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(
+            [
+                "CALL=--version: ECHO_RESOURCE_DIR=<unset>",
+                "CALL=narrate:--help ECHO_RESOURCE_DIR=<unset>",
+                "CALL=narrate:--epub ECHO_RESOURCE_DIR=<unset>",
+            ],
+            calls,
         )
 
     def test_concurrent_owner_fails_before_narrate_then_resume_is_allowed(self) -> None:

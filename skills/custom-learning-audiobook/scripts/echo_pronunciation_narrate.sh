@@ -373,6 +373,7 @@ verify_locked_inputs() {
 verify_locked_inputs
 
 narrate_command=(
+  /usr/bin/env -u ECHO_RESOURCE_DIR
   "$CLI" narrate
   --epub "$EPUB"
   --out "$OUTPUT"

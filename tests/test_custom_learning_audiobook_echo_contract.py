@@ -52,6 +52,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
         self.assertIn("echo_pronunciation_preflight.sh", self.narrate_wrapper)
         self.assertIn('"$CLI" narrate', self.narrate_wrapper)
+        self.assertIn("/usr/bin/env -u ECHO_RESOURCE_DIR", self.narrate_wrapper)
         self.assertNotIn('"$CLI" narrate', self.package)
         self.assertIn("Never invoke a DerivedData `Debug/echo-cli`", self.package)
         self.assertIn("Do not bypass the governed narration wrapper", self.skill)

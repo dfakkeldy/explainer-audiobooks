@@ -80,12 +80,12 @@ echo_pronunciation_preflight() {
     return 66
   fi
   local cli_version
-  cli_version=$("$CLI" --version)
+  cli_version=$(/usr/bin/env -u ECHO_RESOURCE_DIR "$CLI" --version)
   if [[ "$cli_version" != *"(Release)"* ]]; then
     printf 'stale/non-Release echo-cli: %s\n' "$cli_version" >&2
     return 65
   fi
-  if ! "$CLI" narrate --help \
+  if ! /usr/bin/env -u ECHO_RESOURCE_DIR "$CLI" narrate --help \
     | rg --fixed-strings -- '--no-pronunciation-review' >/dev/null; then
     printf 'stale echo-cli: pronunciation review is unavailable\n' >&2
     return 65
