@@ -90,6 +90,57 @@ def render_payload(cover: Path) -> dict[str, object]:
     }
 
 
+def paired_render_payload(
+    root: Path,
+    cover: Path,
+    variant: str,
+    *,
+    candidate_id: str = "open-machine",
+    source_hash: str = "2" * 64,
+    subtitle: str | None = None,
+) -> dict[str, object]:
+    dimensions = (1600, 2560) if variant == "portrait" else (2400, 2400)
+    thumbnail_dimensions = (160, 256) if variant == "portrait" else (160, 160)
+    metadata_subtitle = "The Exact Subtitle" if subtitle is None else subtitle
+    spec = {
+        "schema_version": 2,
+        "variant": variant,
+        "candidate": {"id": candidate_id, "direction_name": "The Open Machine"},
+        "metadata": {
+            "title": "Fixture Book",
+            "subtitle": metadata_subtitle,
+            "author": "Dan Fakkeldy",
+            "label": "AUDIOBOOK",
+        },
+    }
+    spec_path = root / f"{variant}.json"
+    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    thumbnail = root / f"{variant}-thumbnail.png"
+    make_cover(thumbnail, size=thumbnail_dimensions)
+    return {
+        "receipt_version": 1,
+        "renderer_version": 1,
+        "schema_version": 1,
+        "variant": variant,
+        "candidate": {"id": candidate_id, "direction_name": "The Open Machine"},
+        "spec": spec_path.name,
+        "spec_sha256": hashlib.sha256(spec_path.read_bytes()).hexdigest(),
+        "source_art": "cover-source.png",
+        "source_art_sha256": source_hash,
+        "font_manifest_version": 1,
+        "font_manifest_sha256": "3" * 64,
+        "fonts": {"display-condensed": "4" * 64},
+        "output": cover.name,
+        "output_sha256": hashlib.sha256(cover.read_bytes()).hexdigest(),
+        "thumbnail": thumbnail.name,
+        "thumbnail_sha256": hashlib.sha256(thumbnail.read_bytes()).hexdigest(),
+        "dimensions": list(dimensions),
+        "thumbnail_dimensions": list(thumbnail_dimensions),
+        "colour_mode": "RGB",
+        "warnings": [],
+    }
+
+
 def write_json(path: Path, payload: object) -> Path:
     path.write_text(json.dumps(payload), encoding="utf-8")
     return path
@@ -179,6 +230,229 @@ def create_valid_selection(root: Path, cover: Path) -> Path:
 
 
 class CoverReceiptTests(unittest.TestCase):
+    def create_pair_fixture(self, root: Path):
+        portrait = make_cover(root / "portrait.png")
+        square = make_cover(root / "square.png", size=(2400, 2400))
+        portrait_render = write_json(
+            root / "portrait.render.json",
+            paired_render_payload(root, portrait, "portrait"),
+        )
+        square_render = write_json(
+            root / "square.render.json",
+            paired_render_payload(root, square, "square", subtitle=""),
+        )
+        receipt = cover_receipts.create_paired_selection(
+            portrait_render,
+            square_render,
+            root / "selection.json",
+            book_slug="fixture-book",
+            edition_id="public-v1",
+            selection_source="user",
+            selected_at="2026-07-13T12:00:00-03:00",
+            privacy_classification="public-safe",
+            permission_to_publish=True,
+        )
+        return receipt, portrait, square, portrait_render, square_render
+
+    def test_creates_one_selection_binding_both_variants(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            receipt, *_ = self.create_pair_fixture(Path(raw))
+            self.assertEqual(set(receipt.variants), {"portrait", "square"})
+            self.assertEqual(receipt.candidate.id, "open-machine")
+            self.assertEqual(receipt.variants["portrait"].dimensions, (1600, 2560))
+            self.assertEqual(receipt.variants["square"].dimensions, (2400, 2400))
+
+    def test_rejects_mixed_candidate_ids_or_source_hashes(self) -> None:
+        for changed, pattern in (("candidate", "candidate"), ("source", "source")):
+            with self.subTest(changed=changed), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                portrait = make_cover(root / "portrait.png")
+                square = make_cover(root / "square.png", size=(2400, 2400))
+                portrait_render = write_json(
+                    root / "portrait.render.json",
+                    paired_render_payload(root, portrait, "portrait"),
+                )
+                square_payload = paired_render_payload(
+                    root,
+                    square,
+                    "square",
+                    subtitle="",
+                    candidate_id="other" if changed == "candidate" else "open-machine",
+                    source_hash="9" * 64 if changed == "source" else "2" * 64,
+                )
+                square_render = write_json(root / "square.render.json", square_payload)
+                with self.assertRaisesRegex(ValueError, pattern):
+                    cover_receipts.create_paired_selection(
+                        portrait_render,
+                        square_render,
+                        root / "selection.json",
+                        book_slug="fixture-book",
+                        edition_id="public-v1",
+                        selection_source="user",
+                        selected_at="2026-07-13T12:00:00-03:00",
+                        privacy_classification="public-safe",
+                        permission_to_publish=True,
+                    )
+
+    def test_rejects_automatic_paired_selection_source(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            portrait = make_cover(root / "portrait.png")
+            square = make_cover(root / "square.png", size=(2400, 2400))
+            portrait_render = write_json(
+                root / "portrait.render.json",
+                paired_render_payload(root, portrait, "portrait"),
+            )
+            square_render = write_json(
+                root / "square.render.json",
+                paired_render_payload(root, square, "square", subtitle=""),
+            )
+            with self.assertRaisesRegex(ValueError, "selection_source"):
+                cover_receipts.create_paired_selection(
+                    portrait_render,
+                    square_render,
+                    root / "selection.json",
+                    book_slug="fixture-book",
+                    edition_id="public-v1",
+                    selection_source="first-valid",
+                    selected_at="2026-07-13T12:00:00-03:00",
+                    privacy_classification="public-safe",
+                    permission_to_publish=True,
+                )
+
+    def test_rejects_duplicate_nested_variant_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self.create_pair_fixture(root)
+            path = root / "selection.json"
+            payload = path.read_text(encoding="utf-8").replace(
+                '"cover_sha256":',
+                '"cover_sha256": "' + "0" * 64 + '", "cover_sha256":',
+                1,
+            )
+            path.write_text(payload, encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "duplicate"):
+                cover_receipts.load_selection(path)
+
+    def test_rejects_stale_portrait_or_square_render(self) -> None:
+        for variant in ("portrait", "square"):
+            with self.subTest(variant=variant), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                _receipt, portrait, square, *_ = self.create_pair_fixture(root)
+                (portrait if variant == "portrait" else square).write_bytes(b"stale")
+                with self.assertRaisesRegex(ValueError, variant):
+                    cover_receipts.verify_package(
+                        root / "selection.json",
+                        portrait,
+                        m4b_cover_path=square,
+                    )
+
+    def test_rejects_rewritten_square_subtitle(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            portrait = make_cover(root / "portrait.png")
+            square = make_cover(root / "square.png", size=(2400, 2400))
+            portrait_render = write_json(
+                root / "portrait.render.json",
+                paired_render_payload(root, portrait, "portrait"),
+            )
+            square_render = write_json(
+                root / "square.render.json",
+                paired_render_payload(
+                    root, square, "square", subtitle="Shortened words"
+                ),
+            )
+            with self.assertRaisesRegex(ValueError, "subtitle"):
+                cover_receipts.create_paired_selection(
+                    portrait_render,
+                    square_render,
+                    root / "selection.json",
+                    book_slug="fixture-book",
+                    edition_id="public-v1",
+                    selection_source="user",
+                    selected_at="2026-07-13T12:00:00-03:00",
+                    privacy_classification="public-safe",
+                    permission_to_publish=True,
+                )
+
+    def test_rejects_render_identity_that_disagrees_with_spec(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            portrait = make_cover(root / "portrait.png")
+            square = make_cover(root / "square.png", size=(2400, 2400))
+            portrait_payload = paired_render_payload(root, portrait, "portrait")
+            square_payload = paired_render_payload(root, square, "square", subtitle="")
+            square_spec = root / str(square_payload["spec"])
+            spec = json.loads(square_spec.read_text(encoding="utf-8"))
+            spec["candidate"]["id"] = "different-in-spec"
+            square_spec.write_text(json.dumps(spec), encoding="utf-8")
+            square_payload["spec_sha256"] = hashlib.sha256(
+                square_spec.read_bytes()
+            ).hexdigest()
+            portrait_render = write_json(
+                root / "portrait.render.json", portrait_payload
+            )
+            square_render = write_json(root / "square.render.json", square_payload)
+
+            with self.assertRaisesRegex(ValueError, "candidate"):
+                cover_receipts.create_paired_selection(
+                    portrait_render,
+                    square_render,
+                    root / "selection.json",
+                    book_slug="fixture-book",
+                    edition_id="public-v1",
+                    selection_source="user",
+                    selected_at="2026-07-13T12:00:00-03:00",
+                    privacy_classification="public-safe",
+                    permission_to_publish=True,
+                )
+
+    def test_verifies_paired_epub_and_m4b_artwork(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            _receipt, portrait, square, *_ = self.create_pair_fixture(root)
+            epub = make_epub(root / "book.epub", portrait.read_bytes())
+            m4b = root / "book.m4b"
+            m4b.write_bytes(b"fixture")
+            with mock.patch.object(
+                cover_receipts, "normalized_m4b_art_sha256", return_value="a" * 64
+            ), mock.patch.object(
+                cover_receipts, "normalized_image_sha256", return_value="a" * 64
+            ):
+                result = cover_receipts.verify_package(
+                    root / "selection.json",
+                    portrait,
+                    m4b_cover_path=square,
+                    epub_path=epub,
+                    m4b_path=m4b,
+                    receipt_path=root / "selection.json",
+                )
+            self.assertEqual(
+                result.checks,
+                (
+                    "portrait-standalone-bytes",
+                    "square-standalone-bytes",
+                    "epub-portrait-bytes",
+                    "m4b-square-normalized-pixels",
+                    "paired-receipt-identity",
+                ),
+            )
+
+    def test_cli_select_pair_requires_both_render_receipts(self) -> None:
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(Path(cover_receipts.__file__)),
+                "select-pair",
+                "--portrait-render-receipt",
+                "portrait.render.json",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("--square-render-receipt", completed.stderr)
+
     def test_rejects_duplicate_top_level_key_in_selection_receipt(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -578,7 +852,9 @@ class CoverReceiptTests(unittest.TestCase):
             self.assertEqual(original_render, render.read_bytes())
             self.assertEqual(original_cover, cover.read_bytes())
 
-    def test_validation_failure_writes_nothing_and_atomic_failure_cleans_up(self) -> None:
+    def test_validation_failure_writes_nothing_and_atomic_failure_cleans_up(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             cover = make_cover(root / "cover.png")
@@ -679,7 +955,9 @@ class CoverReceiptTests(unittest.TestCase):
                 cover_receipts.subprocess,
                 "run",
                 side_effect=failure,
-            ), self.assertRaisesRegex(ValueError, "ImageMagick"):
+            ), self.assertRaisesRegex(
+                ValueError, "ImageMagick"
+            ):
                 cover_receipts.normalized_image_sha256(image)
 
             m4b = root / "book.m4b"
@@ -696,7 +974,9 @@ class CoverReceiptTests(unittest.TestCase):
                     ["ffmpeg"],
                     stderr=b"no artwork",
                 ),
-            ), self.assertRaisesRegex(ValueError, "ffmpeg"):
+            ), self.assertRaisesRegex(
+                ValueError, "ffmpeg"
+            ):
                 cover_receipts.normalized_m4b_art_sha256(m4b)
 
     def test_select_cli_prints_machine_readable_receipt(self) -> None:

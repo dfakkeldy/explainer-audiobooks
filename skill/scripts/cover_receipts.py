@@ -24,7 +24,9 @@ from refresh_epub_cover import (
 
 
 EXPECTED_DIMENSIONS = (1600, 2560)
+PAIRED_DIMENSIONS = {"portrait": (1600, 2560), "square": (2400, 2400)}
 SELECTION_SOURCES = frozenset({"explicit-user-choice", "requested-mix"})
+PAIRED_SELECTION_SOURCES = frozenset({"user", "requested-mix"})
 CLASSIFICATIONS = frozenset({"public-safe", "private", "sensitive"})
 PUBLICATION_PERMISSIONS = frozenset({"granted", "denied", "not-requested"})
 SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
@@ -50,6 +52,21 @@ RENDER_FIELDS = frozenset(
         "dimensions",
         "colour_mode",
         "warnings",
+    }
+)
+PAIRED_RENDER_FIELDS = RENDER_FIELDS | {"variant", "thumbnail_dimensions"}
+PAIRED_SELECTION_FIELDS = frozenset(
+    {
+        "schema_version",
+        "book_slug",
+        "edition_id",
+        "candidate",
+        "source_art_sha256",
+        "variants",
+        "font_manifest_sha256",
+        "selection_source",
+        "selected_at",
+        "privacy",
     }
 )
 SELECTION_FIELDS = frozenset(
@@ -92,6 +109,36 @@ class SelectionReceipt:
     selected_at: str
     selection_source: str
     privacy: dict[str, str]
+
+
+@dataclass(frozen=True)
+class SelectedCandidate:
+    id: str
+    direction_name: str
+
+
+@dataclass(frozen=True)
+class SelectedVariant:
+    specification_sha256: str
+    render_receipt_sha256: str
+    cover_sha256: str
+    dimensions: tuple[int, int]
+    thumbnail_sha256: str
+    subtitle_included: bool
+
+
+@dataclass(frozen=True)
+class PairedSelectionReceipt:
+    schema_version: int
+    book_slug: str
+    edition_id: str
+    candidate: SelectedCandidate
+    source_art_sha256: str
+    variants: dict[str, SelectedVariant]
+    font_manifest_sha256: str
+    selection_source: str
+    selected_at: str
+    privacy: dict[str, object]
 
 
 @dataclass(frozen=True)
@@ -263,9 +310,7 @@ def _validate_render_receipt(payload: dict[str, object]) -> dict[str, object]:
     _file_name(payload["thumbnail"], "render thumbnail")
     _hash(payload["thumbnail_sha256"], "render thumbnail_sha256")
     _dimensions(payload["dimensions"], "render cover")
-    if payload["colour_mode"] != "RGB" or not isinstance(
-        payload["colour_mode"], str
-    ):
+    if payload["colour_mode"] != "RGB" or not isinstance(payload["colour_mode"], str):
         raise ValueError("render cover must be 1600x2560 RGB")
     warnings = payload["warnings"]
     if not isinstance(warnings, list) or any(
@@ -302,8 +347,7 @@ def _resolved_output(path: Path) -> Path:
 def _aliases_any(path: Path, protected: tuple[Path, ...]) -> bool:
     try:
         return any(
-            path == source
-            or (path.exists() and os.path.samefile(path, source))
+            path == source or (path.exists() and os.path.samefile(path, source))
             for source in protected
         )
     except OSError as error:
@@ -331,7 +375,9 @@ def _write_json_atomic(path: Path, payload: dict[str, object]) -> None:
         os.replace(temporary, destination)
         temporary = None
     except (OSError, TypeError, ValueError) as error:
-        raise ValueError(f"selection receipt could not be written: {destination}") from error
+        raise ValueError(
+            f"selection receipt could not be written: {destination}"
+        ) from error
     finally:
         if descriptor is not None:
             os.close(descriptor)
@@ -339,8 +385,7 @@ def _write_json_atomic(path: Path, payload: dict[str, object]) -> None:
             temporary.unlink(missing_ok=True)
 
 
-def load_selection(path: Path) -> SelectionReceipt:
-    payload = _read_json(Path(path), "cover selection receipt")
+def _load_legacy_selection(payload: dict[str, object]) -> SelectionReceipt:
     _exact_fields(payload, SELECTION_FIELDS, "cover selection receipt")
     receipt_version = _version(payload["receipt_version"], "receipt_version")
     book_slug = _slug(payload["book_slug"], "book_slug")
@@ -360,9 +405,7 @@ def load_selection(path: Path) -> SelectionReceipt:
         payload["font_manifest_sha256"], "font_manifest_sha256"
     )
     dimensions = _dimensions(payload["dimensions"], "selection cover")
-    if payload["colour_mode"] != "RGB" or not isinstance(
-        payload["colour_mode"], str
-    ):
+    if payload["colour_mode"] != "RGB" or not isinstance(payload["colour_mode"], str):
         raise ValueError("selection cover must be 1600x2560 RGB")
     selected_at = _timestamp(payload["selected_at"])
     selection_source = _choice(
@@ -405,6 +448,109 @@ def load_selection(path: Path) -> SelectionReceipt:
     )
 
 
+def _paired_dimensions(value: object, variant: str) -> tuple[int, int]:
+    expected = PAIRED_DIMENSIONS[variant]
+    if (
+        not isinstance(value, list)
+        or len(value) != 2
+        or any(isinstance(item, bool) or not isinstance(item, int) for item in value)
+        or tuple(value) != expected
+    ):
+        raise ValueError(f"{variant} dimensions must be {expected[0]}x{expected[1]}")
+    return expected
+
+
+def _load_paired_selection(payload: dict[str, object]) -> PairedSelectionReceipt:
+    _exact_fields(payload, PAIRED_SELECTION_FIELDS, "paired selection receipt")
+    if payload["schema_version"] != 2 or isinstance(payload["schema_version"], bool):
+        raise ValueError("paired schema_version must be integer 2")
+    candidate = payload["candidate"]
+    if not isinstance(candidate, dict):
+        raise ValueError("paired candidate must be an object")
+    _exact_fields(candidate, frozenset({"id", "direction_name"}), "paired candidate")
+    variants = payload["variants"]
+    if not isinstance(variants, dict) or set(variants) != set(PAIRED_DIMENSIONS):
+        raise ValueError("paired variants must contain exactly portrait and square")
+    parsed_variants: dict[str, SelectedVariant] = {}
+    fields = frozenset(
+        {
+            "specification_sha256",
+            "render_receipt_sha256",
+            "cover_sha256",
+            "dimensions",
+            "thumbnail_sha256",
+            "subtitle_included",
+        }
+    )
+    for name in ("portrait", "square"):
+        variant = variants[name]
+        if not isinstance(variant, dict):
+            raise ValueError(f"{name} variant must be an object")
+        _exact_fields(variant, fields, f"{name} variant")
+        included = variant["subtitle_included"]
+        if not isinstance(included, bool):
+            raise ValueError(f"{name} subtitle_included must be boolean")
+        parsed_variants[name] = SelectedVariant(
+            specification_sha256=_hash(
+                variant["specification_sha256"], f"{name} specification_sha256"
+            ),
+            render_receipt_sha256=_hash(
+                variant["render_receipt_sha256"], f"{name} render_receipt_sha256"
+            ),
+            cover_sha256=_hash(variant["cover_sha256"], f"{name} cover_sha256"),
+            dimensions=_paired_dimensions(variant["dimensions"], name),
+            thumbnail_sha256=_hash(
+                variant["thumbnail_sha256"], f"{name} thumbnail_sha256"
+            ),
+            subtitle_included=included,
+        )
+    privacy = payload["privacy"]
+    if not isinstance(privacy, dict):
+        raise ValueError("paired privacy must be an object")
+    _exact_fields(
+        privacy,
+        frozenset({"classification", "permission_to_publish"}),
+        "paired privacy",
+    )
+    permission = privacy["permission_to_publish"]
+    if not isinstance(permission, bool):
+        raise ValueError("permission_to_publish must be boolean")
+    return PairedSelectionReceipt(
+        schema_version=2,
+        book_slug=_slug(payload["book_slug"], "book_slug"),
+        edition_id=_slug(payload["edition_id"], "edition_id"),
+        candidate=SelectedCandidate(
+            _slug(candidate["id"], "candidate id"),
+            _text(candidate["direction_name"], "direction_name"),
+        ),
+        source_art_sha256=_hash(payload["source_art_sha256"], "source_art_sha256"),
+        variants=parsed_variants,
+        font_manifest_sha256=_hash(
+            payload["font_manifest_sha256"], "font_manifest_sha256"
+        ),
+        selection_source=_choice(
+            payload["selection_source"], PAIRED_SELECTION_SOURCES, "selection_source"
+        ),
+        selected_at=_timestamp(payload["selected_at"]),
+        privacy={
+            "classification": _choice(
+                privacy["classification"], CLASSIFICATIONS, "privacy classification"
+            ),
+            "permission_to_publish": permission,
+        },
+    )
+
+
+def load_selection(path: Path) -> SelectionReceipt | PairedSelectionReceipt:
+    payload = _read_json(Path(path), "cover selection receipt")
+    version = payload.get("schema_version")
+    if version == 1 and not isinstance(version, bool):
+        return _load_legacy_selection(payload)
+    if version == 2 and not isinstance(version, bool):
+        return _load_paired_selection(payload)
+    raise ValueError("unsupported cover selection schema_version")
+
+
 def create_selection(
     render_receipt_path: Path,
     output_path: Path,
@@ -418,9 +564,7 @@ def create_selection(
 ) -> SelectionReceipt:
     validated_slug = _slug(book_slug, "book_slug")
     validated_edition = _slug(edition_id, "edition_id")
-    validated_source = _choice(
-        selection_source, SELECTION_SOURCES, "selection_source"
-    )
+    validated_source = _choice(selection_source, SELECTION_SOURCES, "selection_source")
     validated_time = _timestamp(selected_at)
     validated_classification = _choice(
         classification, CLASSIFICATIONS, "privacy classification"
@@ -436,9 +580,7 @@ def create_selection(
         render_path = raw_render_path.resolve(strict=True)
     except (OSError, RuntimeError, ValueError) as error:
         raise ValueError(f"invalid render receipt: {raw_render_path}") from error
-    render = _validate_render_receipt(
-        _read_json(render_path, "render receipt")
-    )
+    render = _validate_render_receipt(_read_json(render_path, "render receipt"))
     cover = _resolve_render_cover(render_path, render["output"])
     cover_payload = _read_bytes(cover, "rendered cover")
     cover_hash = hashlib.sha256(cover_payload).hexdigest()
@@ -475,6 +617,208 @@ def create_selection(
         },
     )
     _write_json_atomic(Path(output_path), asdict(receipt))
+    return receipt
+
+
+def _validated_paired_render(
+    path: Path, expected_variant: str
+) -> tuple[dict[str, object], Path, dict[str, str], str]:
+    try:
+        render_path = _path(path, f"{expected_variant} render receipt").resolve(
+            strict=True
+        )
+    except (OSError, RuntimeError, ValueError) as error:
+        raise ValueError(f"invalid {expected_variant} render receipt") from error
+    render = _read_json(render_path, f"{expected_variant} render receipt")
+    _exact_fields(render, PAIRED_RENDER_FIELDS, f"{expected_variant} render receipt")
+    for field in (
+        "receipt_version",
+        "renderer_version",
+        "schema_version",
+        "font_manifest_version",
+    ):
+        _version(render[field], f"{expected_variant} {field}")
+    if render["variant"] != expected_variant:
+        raise ValueError(f"{expected_variant} render receipt has wrong variant")
+    candidate = render["candidate"]
+    if not isinstance(candidate, dict):
+        raise ValueError(f"{expected_variant} candidate must be an object")
+    _exact_fields(
+        candidate, frozenset({"id", "direction_name"}), f"{expected_variant} candidate"
+    )
+    _slug(candidate["id"], f"{expected_variant} candidate id")
+    _text(candidate["direction_name"], f"{expected_variant} direction_name")
+    dimensions = _paired_dimensions(render["dimensions"], expected_variant)
+    expected_thumbnail = (160, 256) if expected_variant == "portrait" else (160, 160)
+    if render["thumbnail_dimensions"] != list(expected_thumbnail):
+        raise ValueError(f"{expected_variant} thumbnail dimensions are invalid")
+    for field in (
+        "spec_sha256",
+        "source_art_sha256",
+        "font_manifest_sha256",
+        "output_sha256",
+        "thumbnail_sha256",
+    ):
+        _hash(render[field], f"{expected_variant} {field}")
+    if render["colour_mode"] != "RGB":
+        raise ValueError(f"{expected_variant} cover must be RGB")
+    fonts = render["fonts"]
+    if not isinstance(fonts, dict) or not fonts:
+        raise ValueError(f"{expected_variant} fonts must be a non-empty object")
+    for font_id, digest in fonts.items():
+        _slug(font_id, f"{expected_variant} font id")
+        _hash(digest, f"{expected_variant} font hash")
+    warnings = render["warnings"]
+    if not isinstance(warnings, list) or any(
+        not isinstance(item, str) for item in warnings
+    ):
+        raise ValueError(f"{expected_variant} warnings must be strings")
+    cover = _resolve_render_cover(render_path, render["output"])
+    cover_bytes = _read_bytes(cover, f"{expected_variant} rendered cover")
+    if hashlib.sha256(cover_bytes).hexdigest() != render["output_sha256"]:
+        raise ValueError(f"{expected_variant} rendered cover hash mismatch")
+    try:
+        from PIL import Image
+
+        with Image.open(cover) as image:
+            if image.mode != "RGB" or image.size != dimensions:
+                raise ValueError
+    except Exception as error:
+        raise ValueError(
+            f"{expected_variant} rendered cover has invalid dimensions or colour mode"
+        ) from error
+    thumbnail = render_path.parent / _file_name(
+        render["thumbnail"], f"{expected_variant} thumbnail"
+    )
+    if (
+        hashlib.sha256(
+            _read_bytes(thumbnail, f"{expected_variant} thumbnail")
+        ).hexdigest()
+        != render["thumbnail_sha256"]
+    ):
+        raise ValueError(f"{expected_variant} thumbnail hash mismatch")
+    spec = render_path.parent / _file_name(render["spec"], f"{expected_variant} spec")
+    spec_bytes = _read_bytes(spec, f"{expected_variant} specification")
+    if hashlib.sha256(spec_bytes).hexdigest() != render["spec_sha256"]:
+        raise ValueError(f"{expected_variant} specification hash mismatch")
+    spec_payload = _read_json(spec, f"{expected_variant} specification")
+    if spec_payload.get("variant") != expected_variant:
+        raise ValueError(f"{expected_variant} specification has wrong variant")
+    if spec_payload.get("candidate") != candidate:
+        raise ValueError(
+            f"{expected_variant} render candidate does not match specification"
+        )
+    metadata = spec_payload.get("metadata")
+    if not isinstance(metadata, dict):
+        raise ValueError(f"{expected_variant} specification metadata is invalid")
+    parsed_metadata = {
+        field: _text(metadata.get(field), f"{expected_variant} {field}")
+        for field in ("title", "author")
+    }
+    subtitle = metadata.get("subtitle")
+    if not isinstance(subtitle, str):
+        raise ValueError(f"{expected_variant} subtitle must be a string")
+    parsed_metadata["subtitle"] = subtitle
+    return (
+        render,
+        cover,
+        parsed_metadata,
+        hashlib.sha256(
+            _read_bytes(render_path, f"{expected_variant} render receipt")
+        ).hexdigest(),
+    )
+
+
+def create_paired_selection(
+    portrait_render: Path,
+    square_render: Path,
+    output: Path,
+    book_slug: str,
+    edition_id: str,
+    selection_source: str,
+    selected_at: str,
+    privacy_classification: str,
+    permission_to_publish: bool,
+) -> PairedSelectionReceipt:
+    validated_slug = _slug(book_slug, "book_slug")
+    validated_edition = _slug(edition_id, "edition_id")
+    validated_source = _choice(
+        selection_source, PAIRED_SELECTION_SOURCES, "selection_source"
+    )
+    validated_time = _timestamp(selected_at)
+    classification = _choice(
+        privacy_classification, CLASSIFICATIONS, "privacy classification"
+    )
+    if not isinstance(permission_to_publish, bool):
+        raise ValueError("permission_to_publish must be boolean")
+    (
+        portrait,
+        portrait_cover,
+        portrait_metadata,
+        portrait_receipt_hash,
+    ) = _validated_paired_render(portrait_render, "portrait")
+    (
+        square,
+        square_cover,
+        square_metadata,
+        square_receipt_hash,
+    ) = _validated_paired_render(square_render, "square")
+    portrait_candidate = portrait["candidate"]
+    square_candidate = square["candidate"]
+    if portrait_candidate != square_candidate:
+        raise ValueError("portrait and square candidate identities must match")
+    if portrait["source_art_sha256"] != square["source_art_sha256"]:
+        raise ValueError("portrait and square source hashes must match")
+    if portrait["font_manifest_sha256"] != square["font_manifest_sha256"]:
+        raise ValueError("portrait and square font manifests must match")
+    for field in ("title", "author"):
+        if portrait_metadata[field] != square_metadata[field]:
+            raise ValueError(f"portrait and square {field} must match")
+    if square_metadata["subtitle"] not in ("", portrait_metadata["subtitle"]):
+        raise ValueError("square subtitle must match portrait or be omitted")
+    resolved_output = _resolved_output(output)
+    protected = tuple(
+        Path(path).resolve()
+        for path in (portrait_render, square_render, portrait_cover, square_cover)
+    )
+    if _aliases_any(resolved_output, protected):
+        raise ValueError("selection output aliases paired render input")
+    assert isinstance(portrait_candidate, dict)
+    receipt = PairedSelectionReceipt(
+        schema_version=2,
+        book_slug=validated_slug,
+        edition_id=validated_edition,
+        candidate=SelectedCandidate(
+            str(portrait_candidate["id"]), str(portrait_candidate["direction_name"])
+        ),
+        source_art_sha256=str(portrait["source_art_sha256"]),
+        variants={
+            "portrait": SelectedVariant(
+                str(portrait["spec_sha256"]),
+                portrait_receipt_hash,
+                str(portrait["output_sha256"]),
+                PAIRED_DIMENSIONS["portrait"],
+                str(portrait["thumbnail_sha256"]),
+                bool(portrait_metadata["subtitle"]),
+            ),
+            "square": SelectedVariant(
+                str(square["spec_sha256"]),
+                square_receipt_hash,
+                str(square["output_sha256"]),
+                PAIRED_DIMENSIONS["square"],
+                str(square["thumbnail_sha256"]),
+                bool(square_metadata["subtitle"]),
+            ),
+        },
+        font_manifest_sha256=str(portrait["font_manifest_sha256"]),
+        selection_source=validated_source,
+        selected_at=validated_time,
+        privacy={
+            "classification": classification,
+            "permission_to_publish": permission_to_publish,
+        },
+    )
+    _write_json_atomic(output, asdict(receipt))
     return receipt
 
 
@@ -549,9 +893,7 @@ def normalized_m4b_art_sha256(path: Path) -> str:
         try:
             subprocess.run(command, check=True, capture_output=True)
         except subprocess.CalledProcessError as error:
-            detail = (error.stderr or b"").decode(
-                "utf-8", errors="replace"
-            ).strip()
+            detail = (error.stderr or b"").decode("utf-8", errors="replace").strip()
             suffix = f": {detail}" if detail else ""
             raise ValueError(f"ffmpeg M4B artwork extraction failed{suffix}") from error
         except OSError as error:
@@ -565,11 +907,67 @@ def verify_package(
     selection_path: Path,
     cover_path: Path,
     *,
+    m4b_cover_path: Path | None = None,
     epub_path: Path | None = None,
     m4b_path: Path | None = None,
     receipt_path: Path | None = None,
 ) -> PackageVerification:
     selected = load_selection(selection_path)
+    if isinstance(selected, PairedSelectionReceipt):
+        portrait = _path(cover_path, "portrait standalone cover")
+        portrait_payload = _read_bytes(portrait, "portrait standalone cover")
+        if (
+            hashlib.sha256(portrait_payload).hexdigest()
+            != selected.variants["portrait"].cover_sha256
+        ):
+            raise ValueError("portrait standalone cover bytes do not match selection")
+        if m4b_cover_path is None:
+            raise ValueError("square standalone cover is required for paired selection")
+        square = _path(m4b_cover_path, "square standalone cover")
+        square_payload = _read_bytes(square, "square standalone cover")
+        if (
+            hashlib.sha256(square_payload).hexdigest()
+            != selected.variants["square"].cover_sha256
+        ):
+            raise ValueError("square standalone cover bytes do not match selection")
+        checks = ["portrait-standalone-bytes", "square-standalone-bytes"]
+        if epub_path is not None:
+            epub = _require_file(epub_path, "EPUB")
+            try:
+                with zipfile.ZipFile(epub, "r") as archive:
+                    member = discover_cover_member(
+                        archive, discover_opf_member(archive)
+                    )
+                    epub_cover = archive.read(member)
+            except ValueError:
+                raise
+            except (KeyError, OSError, RuntimeError, zipfile.BadZipFile) as error:
+                raise ValueError(f"invalid EPUB: {epub}") from error
+            if epub_cover != portrait_payload:
+                raise ValueError("EPUB portrait cover bytes do not match selection")
+            checks.append("epub-portrait-bytes")
+        if m4b_path is not None:
+            if normalized_m4b_art_sha256(
+                _require_file(m4b_path, "M4B")
+            ) != normalized_image_sha256(square):
+                raise ValueError(
+                    "M4B artwork pixels do not match square selected cover"
+                )
+            checks.append("m4b-square-normalized-pixels")
+        if receipt_path is not None:
+            delivered = load_selection(receipt_path)
+            if asdict(delivered) != asdict(selected):
+                raise ValueError(
+                    "destination paired selection receipt does not match source"
+                )
+            checks.append("paired-receipt-identity")
+        return PackageVerification(
+            selected.book_slug,
+            selected.edition_id,
+            selected.variants["portrait"].cover_sha256,
+            tuple(checks),
+        )
+
     cover = _path(cover_path, "standalone cover")
     cover_payload = _read_bytes(cover, "standalone cover")
     cover_hash = hashlib.sha256(cover_payload).hexdigest()
@@ -639,9 +1037,29 @@ def main() -> int:
         choices=tuple(sorted(PUBLICATION_PERMISSIONS)),
     )
 
+    select_pair = commands.add_parser("select-pair")
+    select_pair.add_argument("--portrait-render-receipt", required=True, type=Path)
+    select_pair.add_argument("--square-render-receipt", required=True, type=Path)
+    select_pair.add_argument("--out", required=True, type=Path)
+    select_pair.add_argument("--book-slug", required=True)
+    select_pair.add_argument("--edition-id", required=True)
+    select_pair.add_argument(
+        "--selection-source",
+        required=True,
+        choices=tuple(sorted(PAIRED_SELECTION_SOURCES)),
+    )
+    select_pair.add_argument("--selected-at", required=True)
+    select_pair.add_argument(
+        "--privacy-classification",
+        required=True,
+        choices=tuple(sorted(CLASSIFICATIONS)),
+    )
+    select_pair.add_argument("--permission-to-publish", action="store_true")
+
     verify = commands.add_parser("verify")
     verify.add_argument("--selection", required=True, type=Path)
     verify.add_argument("--cover", required=True, type=Path)
+    verify.add_argument("--m4b-cover", type=Path)
     verify.add_argument("--epub", type=Path)
     verify.add_argument("--m4b", type=Path)
     verify.add_argument("--receipt", type=Path)
@@ -658,10 +1076,23 @@ def main() -> int:
             classification=arguments.classification,
             permission_to_publish=arguments.permission_to_publish,
         )
+    elif arguments.command == "select-pair":
+        result = create_paired_selection(
+            arguments.portrait_render_receipt,
+            arguments.square_render_receipt,
+            arguments.out,
+            arguments.book_slug,
+            arguments.edition_id,
+            arguments.selection_source,
+            arguments.selected_at,
+            arguments.privacy_classification,
+            arguments.permission_to_publish,
+        )
     else:
         result = verify_package(
             arguments.selection,
             arguments.cover,
+            m4b_cover_path=arguments.m4b_cover,
             epub_path=arguments.epub,
             m4b_path=arguments.m4b,
             receipt_path=arguments.receipt,
