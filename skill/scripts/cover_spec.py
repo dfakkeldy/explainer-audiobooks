@@ -10,9 +10,14 @@ from typing import Any
 
 from cover_fonts import DEFAULT_MANIFEST, CoverFontError, FontManifest, FontRecord, load_font_manifest, read_ttf_codepoints
 
-WIDTH = 1600
-HEIGHT = 2560
-SAFE_MARGIN = 96
+VARIANT_CANVASES = {
+    "portrait": (1600, 2560, 96),
+    "square": (2400, 2400, 120),
+}
+
+# Portrait defaults remain exported for renderer compatibility while rendering
+# migrates to the per-spec dimensions exposed by ValidatedCoverSpec.
+WIDTH, HEIGHT, SAFE_MARGIN = VARIANT_CANVASES["portrait"]
 COLOUR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 BLENDS = {"normal", "multiply", "screen", "overlay", "soft-light"}
 ART_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"}
@@ -78,6 +83,9 @@ class ValidatedCoverSpec:
     path: Path
     data: dict[str, Any]
     metadata: dict[str, str]
+    variant: str
+    width: int
+    height: int
     dimensions: tuple[int, int]
     art_path: Path
     spec_sha256: str
@@ -123,22 +131,27 @@ def _number(value: object, low: float, high: float, label: str) -> float:
     return result
 
 
-def _box(value: object, label: str) -> tuple[float, float, float, float]:
+def _box(
+    value: object,
+    label: str,
+    canvas: tuple[int, int],
+) -> tuple[float, float, float, float]:
     if not isinstance(value, list) or len(value) != 4:
         raise CoverSpecError(f"{label} must contain x, y, width, height")
-    x = _number(value[0], -WIDTH, WIDTH * 2, f"{label} x")
-    y = _number(value[1], -HEIGHT, HEIGHT * 2, f"{label} y")
-    width = _number(value[2], 1, WIDTH * 2, f"{label} width")
-    height = _number(value[3], 1, HEIGHT * 2, f"{label} height")
+    canvas_width, canvas_height = canvas
+    x = _number(value[0], -canvas_width, canvas_width * 2, f"{label} x")
+    y = _number(value[1], -canvas_height, canvas_height * 2, f"{label} y")
+    width = _number(value[2], 1, canvas_width * 2, f"{label} width")
+    height = _number(value[3], 1, canvas_height * 2, f"{label} height")
     return x, y, width, height
 
 
-def _point(value: object, label: str) -> tuple[float, float]:
+def _point(value: object, label: str, canvas: tuple[int, int]) -> tuple[float, float]:
     if not isinstance(value, list) or len(value) != 2:
         raise CoverSpecError(f"{label} must contain x and y")
     return (
-        _number(value[0], -WIDTH, WIDTH * 2, f"{label} x"),
-        _number(value[1], -HEIGHT, HEIGHT * 2, f"{label} y"),
+        _number(value[0], -canvas[0], canvas[0] * 2, f"{label} x"),
+        _number(value[1], -canvas[1], canvas[1] * 2, f"{label} y"),
     )
 
 
@@ -202,7 +215,7 @@ def _contrast(first: str, second: str) -> float:
     return (high + 0.05) / (low + 0.05)
 
 
-def _validate_fill(fill: object, label: str) -> None:
+def _validate_fill(fill: object, label: str, canvas: tuple[int, int]) -> None:
     if not isinstance(fill, dict):
         raise CoverSpecError(f"{label} must be an object")
     if fill.get("kind") == "solid":
@@ -214,8 +227,8 @@ def _validate_fill(fill: object, label: str) -> None:
         raise CoverSpecError(f"{label} kind must be solid or linear-gradient")
     if set(fill) != {"kind", "start", "end", "stops"}:
         raise CoverSpecError(f"{label} gradient has unknown keys")
-    _point(fill.get("start"), f"{label} start")
-    _point(fill.get("end"), f"{label} end")
+    _point(fill.get("start"), f"{label} start", canvas)
+    _point(fill.get("end"), f"{label} end", canvas)
     stops = fill.get("stops")
     if not isinstance(stops, list) or len(stops) < 2:
         raise CoverSpecError(f"{label} requires at least two stops")
@@ -307,6 +320,8 @@ def _validate_text(
     index: int,
     manifest: FontManifest,
     warnings: list[str],
+    canvas: tuple[int, int],
+    safe_margin: int,
 ) -> FontRecord:
     unknown = set(layer) - TEXT_KEYS
     if unknown:
@@ -331,14 +346,14 @@ def _validate_text(
         raise CoverSpecError(f"layer {index} font_id must be a non-empty string")
     font = manifest.require(font_id, role=role)
     _validate_glyphs(text, font, f"layer {index}")
-    x, y, width, height = _box(layer.get("box"), f"layer {index} box")
+    x, y, width, height = _box(layer.get("box"), f"layer {index} box", canvas)
     if (
-        x < SAFE_MARGIN
-        or y < SAFE_MARGIN
-        or x + width > WIDTH - SAFE_MARGIN
-        or y + height > HEIGHT - SAFE_MARGIN
+        x < safe_margin
+        or y < safe_margin
+        or x + width > canvas[0] - safe_margin
+        or y + height > canvas[1] - safe_margin
     ):
-        raise CoverSpecError(f"layer {index} text is outside 96px safe margin")
+        raise CoverSpecError(f"layer {index} text is outside {safe_margin}px safe margin")
     minimum = {"title": 72, "subtitle": 36, "author": 28, "label": 28}[role]
     size = _number(layer.get("size"), minimum, 420, f"layer {index} size")
     line_height = _number(layer.get("line_height"), minimum, 500, f"layer {index} line_height")
@@ -376,11 +391,11 @@ def _validate_text(
     return font
 
 
-def _validate_field(layer: dict[str, Any], index: int, kind: str) -> None:
+def _validate_field(layer: dict[str, Any], index: int, kind: str, canvas: tuple[int, int]) -> None:
     if set(layer) - FIELD_KEYS:
         raise CoverSpecError(f"layer {index} has unknown keys")
-    _box(layer.get("box"), f"layer {index} box")
-    _validate_fill(layer.get("fill"), f"layer {index} fill")
+    _box(layer.get("box"), f"layer {index} box", canvas)
+    _validate_fill(layer.get("fill"), f"layer {index} fill", canvas)
     _number(layer.get("opacity"), 0, 1, f"layer {index} opacity")
     if not _is_choice(layer.get("blend_mode"), BLENDS):
         raise CoverSpecError(f"layer {index} has invalid blend_mode")
@@ -389,13 +404,13 @@ def _validate_field(layer: dict[str, Any], index: int, kind: str) -> None:
         raise CoverSpecError(f"{kind} layer requires compositional purpose")
 
 
-def _validate_shape(layer: dict[str, Any], index: int) -> None:
+def _validate_shape(layer: dict[str, Any], index: int, canvas: tuple[int, int]) -> None:
     if set(layer) - SHAPE_KEYS:
         raise CoverSpecError(f"layer {index} has unknown keys")
     if not _is_choice(layer.get("shape"), {"rect", "ellipse"}):
         raise CoverSpecError(f"layer {index} has invalid shape")
-    _box(layer.get("box"), f"layer {index} box")
-    _validate_fill(layer.get("fill"), f"layer {index} fill")
+    _box(layer.get("box"), f"layer {index} box", canvas)
+    _validate_fill(layer.get("fill"), f"layer {index} fill", canvas)
     _number(layer.get("opacity"), 0, 1, f"layer {index} opacity")
     _number(layer.get("rotation"), -180, 180, f"layer {index} rotation")
     _number(layer.get("stroke_width", 0), 0, 40, f"layer {index} stroke_width")
@@ -411,11 +426,11 @@ def _validate_shape(layer: dict[str, Any], index: int) -> None:
         raise CoverSpecError(f"layer {index} shape requires valid blend_mode and purpose")
 
 
-def _validate_line(layer: dict[str, Any], index: int) -> None:
+def _validate_line(layer: dict[str, Any], index: int, canvas: tuple[int, int]) -> None:
     if set(layer) - LINE_KEYS:
         raise CoverSpecError(f"layer {index} has unknown keys")
-    _point(layer.get("start"), f"layer {index} start")
-    _point(layer.get("end"), f"layer {index} end")
+    _point(layer.get("start"), f"layer {index} start", canvas)
+    _point(layer.get("end"), f"layer {index} end", canvas)
     _colour(layer.get("colour"), f"layer {index} colour")
     _number(layer.get("width"), 1, 40, f"layer {index} width")
     _number(layer.get("opacity"), 0, 1, f"layer {index} opacity")
@@ -433,7 +448,15 @@ def _load_manifest(path: Path) -> FontManifest:
         raise CoverFontError(f"invalid font manifest: {path}") from error
 
 
-def load_cover_spec(path: Path, font_manifest_path: Path = DEFAULT_MANIFEST) -> ValidatedCoverSpec:
+def load_cover_spec(
+    path: Path,
+    font_manifest_path: Path = DEFAULT_MANIFEST,
+    *,
+    canonical_title: str | None = None,
+    canonical_subtitle: str | None = None,
+    canonical_author: str | None = None,
+    canonical_label: str | None = None,
+) -> ValidatedCoverSpec:
     try:
         spec_path = Path(path).resolve()
     except (OSError, RuntimeError, TypeError, ValueError) as error:
@@ -448,11 +471,18 @@ def load_cover_spec(path: Path, font_manifest_path: Path = DEFAULT_MANIFEST) -> 
     if (
         isinstance(schema_version, bool)
         or not isinstance(schema_version, (int, float))
-        or schema_version != 1
+        or schema_version not in {1, 2}
     ):
-        raise CoverSpecError("schema_version must be 1")
-    if set(payload) != {"schema_version", "candidate", "metadata", "canvas", "art", "layers"}:
+        raise CoverSpecError("schema_version must be 1 or 2")
+    common_fields = {"schema_version", "candidate", "metadata", "canvas", "art", "layers"}
+    expected_fields = common_fields if schema_version == 1 else common_fields | {"variant"}
+    if set(payload) != expected_fields:
         raise CoverSpecError("cover specification has missing or unknown top-level fields")
+
+    variant = "portrait" if schema_version == 1 else payload.get("variant")
+    if not isinstance(variant, str) or variant not in VARIANT_CANVASES:
+        raise CoverSpecError("variant must be portrait or square")
+    width, height, safe_margin = VARIANT_CANVASES[variant]
 
     candidate = payload.get("candidate")
     if not isinstance(candidate, dict):
@@ -481,13 +511,16 @@ def load_cover_spec(path: Path, font_manifest_path: Path = DEFAULT_MANIFEST) -> 
         raise CoverSpecError("canonical metadata strings are invalid")
 
     canvas = payload.get("canvas")
-    if not isinstance(canvas, dict) or canvas.get("width") != WIDTH or canvas.get("height") != HEIGHT:
-        raise CoverSpecError("canvas must be 1600x2560")
+    if not isinstance(canvas, dict) or (
+        canvas.get("width"), canvas.get("height"), canvas.get("safe_margin")
+    ) != (width, height, safe_margin):
+        raise CoverSpecError(
+            f"{variant} canvas must be {width}x{height} with {safe_margin}px safe margin"
+        )
     if set(canvas) != {"width", "height", "background", "safe_margin"}:
         raise CoverSpecError("canvas has missing or unknown fields")
-    if canvas.get("safe_margin") != SAFE_MARGIN:
-        raise CoverSpecError("canvas safe_margin must be 96")
     _colour(canvas.get("background"), "canvas background")
+    canvas_dimensions = (width, height)
 
     art = payload.get("art")
     if not isinstance(art, dict):
@@ -505,7 +538,7 @@ def load_cover_spec(path: Path, font_manifest_path: Path = DEFAULT_MANIFEST) -> 
         {"center", "center-top", "center-bottom", "left", "right"},
     ):
         raise CoverSpecError("art mode or anchor is invalid")
-    _box(art.get("box"), "art box")
+    _box(art.get("box"), "art box", canvas_dimensions)
     _number(art.get("opacity"), 0, 1, "art opacity")
     if not _is_choice(art.get("blend_mode"), BLENDS):
         raise CoverSpecError("art blend_mode is invalid")
@@ -515,7 +548,7 @@ def load_cover_spec(path: Path, font_manifest_path: Path = DEFAULT_MANIFEST) -> 
             raise CoverSpecError("art mask must be rect or ellipse")
         if set(mask) - {"shape", "box", "radius"}:
             raise CoverSpecError("art mask has unknown fields")
-        _box(mask.get("box"), "art mask box")
+        _box(mask.get("box"), "art mask box", canvas_dimensions)
         _number(mask.get("radius", 0), 0, 300, "art mask radius")
 
     try:
@@ -533,14 +566,16 @@ def load_cover_spec(path: Path, font_manifest_path: Path = DEFAULT_MANIFEST) -> 
             raise CoverSpecError(f"layer {index} must be an object")
         kind = layer.get("kind")
         if kind == "text":
-            font = _validate_text(layer, index, manifest, warnings)
+            font = _validate_text(
+                layer, index, manifest, warnings, canvas_dimensions, safe_margin
+            )
             fonts[font.font_id] = font
         elif _is_choice(kind, {"field", "scrim"}):
-            _validate_field(layer, index, kind)
+            _validate_field(layer, index, kind, canvas_dimensions)
         elif kind == "shape":
-            _validate_shape(layer, index)
+            _validate_shape(layer, index, canvas_dimensions)
         elif kind == "line":
-            _validate_line(layer, index)
+            _validate_line(layer, index, canvas_dimensions)
         else:
             raise CoverSpecError(f"unknown layer kind: {kind}")
 
@@ -548,15 +583,29 @@ def load_cover_spec(path: Path, font_manifest_path: Path = DEFAULT_MANIFEST) -> 
         (layer for layer in layers if layer.get("kind") == "text" and layer.get("role") == "title"),
         key=lambda layer: layer["title_order"],
     )
-    if _tokens(" ".join(layer["text"] for layer in title_layers)) != _tokens(metadata["title"]):
+    expected_title = canonical_title if canonical_title is not None else metadata["title"]
+    if canonical_title is not None and metadata["title"] != canonical_title:
+        raise CoverSpecError("metadata title must match canonical title")
+    if _tokens(" ".join(layer["text"] for layer in title_layers)) != _tokens(expected_title):
         raise CoverSpecError("title layers must reproduce canonical title")
+    canonical_metadata = {
+        "subtitle": canonical_subtitle,
+        "author": canonical_author,
+        "label": canonical_label,
+    }
     for role in ("subtitle", "author", "label"):
+        expected = canonical_metadata[role]
+        if expected is not None:
+            if role == "subtitle" and variant == "square" and metadata[role] == "":
+                expected = ""
+            elif metadata[role] != expected:
+                raise CoverSpecError(f"metadata {role} must match canonical {role}")
         displayed = " ".join(
             layer["text"]
             for layer in layers
             if layer.get("kind") == "text" and layer.get("role") == role
         )
-        if _tokens(displayed) != _tokens(metadata[role]):
+        if _tokens(displayed) != _tokens(expected if expected is not None else metadata[role]):
             raise CoverSpecError(f"{role} layers must reproduce canonical metadata")
     try:
         art_sha256 = hashlib.sha256(art_path.read_bytes()).hexdigest()
@@ -567,7 +616,10 @@ def load_cover_spec(path: Path, font_manifest_path: Path = DEFAULT_MANIFEST) -> 
         path=spec_path,
         data=payload,
         metadata={key: value for key, value in metadata.items()},
-        dimensions=(WIDTH, HEIGHT),
+        variant=variant,
+        width=width,
+        height=height,
+        dimensions=canvas_dimensions,
         art_path=art_path,
         spec_sha256=spec_sha256,
         art_sha256=art_sha256,

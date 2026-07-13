@@ -34,19 +34,21 @@
 
 ## Cover
 
-Refreshed in July 2026 with original raster artwork generated through the
-built-in image-generation tool, then composed with the repository cover tool.
-The artwork follows the current collection policy: visual energy continues
-through the top and middle, with only the lower 25–35% reserved as a calmer
-title field. The previous public cover is preserved as `cover-legacy.png`;
-generation prompt and selection evidence are recorded in the collection
-[cover-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md).
+Refreshed in July 2026 with the approved **The Weight of the Mailbag** paired
+identity. `cover.png` is the 1600 × 2560 EPUB/library cover and
+`m4b-cover.png` is the independently composed 2400 × 2400 audiobook artwork.
+The governed `cover-selection.json` binds both to the same source and public
+edition. The immediately previous portrait is `cover-pre-paired.png`; the
+earlier historical cover remains `cover-legacy.png`. Full evidence is in the
+[paired rollout manifest](../../docs/cover-pilots/public-paired-cover-rollout-2026-07/manifest.md).
 
 ## Output Files
 
 - `the-new-deal.epub` — EPUB 3 with nav + NCX
 - `the-new-deal.md` — combined Markdown
-- `cover.png` — July 2026 generated-raster cover, 1600 × 2560
+- `cover.png` — paired portrait cover, 1600 × 2560
+- `m4b-cover.png` — paired square audiobook artwork, 2400 × 2400
+- `cover-selection.json` — governed paired selection receipt
 - `the-new-deal.m4b` — chaptered native Echo/Kokoro audiobook
 - `the-new-deal.alignment.json` — Echo read-along sidecar
 - `README.md` — this manifest

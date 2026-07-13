@@ -55,6 +55,57 @@ def main() -> int:
     validate_skill("skills/custom-learning-audiobook", "custom-learning-audiobook")
     validate_skill("skills/longform-book-development", "longform-book-development")
 
+    paired_contract = (
+        "exactly three", "1600×2560", "cover.png", "2400×2400",
+        "m4b-cover.png", "explicit pair selection", "paired receipt",
+        "EPUB portrait", "M4B square", "post-embed verification",
+    )
+    for path in (
+        "skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md",
+        "skill/references/cover-art.md",
+        "skills/custom-learning-audiobook/references/package-and-qc.md",
+        "README.md", "docs/how-these-were-made.md", "docs/make-your-own.md",
+    ):
+        contains(path, *paired_contract)
+
+    complete_paired = (
+        "render_cover_pair(", "portrait_spec=", "square_spec=",
+        "portrait_output=", "square_output=", "portrait_thumbnail=",
+        "square_thumbnail=", "portrait_receipt=", "square_receipt=",
+        "--portrait-render-receipt", "--square-render-receipt",
+        "--selection-source user", "--privacy-classification",
+        "--m4b-cover \"$PAIR/m4b-cover.png\"",
+        "--portrait-cover \"$PAIR/cover.png\"",
+        "--paired-artifact-dir \"$PAIR\"", "--intent reuse", "--apply",
+    )
+    for path in (
+        "skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md",
+        "skill/references/cover-art.md",
+        "skills/custom-learning-audiobook/references/package-and-qc.md",
+    ):
+        contains(path, *complete_paired)
+        require(
+            "/make_cover.py \\\n  --spec" not in read(path),
+            f"{path} teaches active single-cover rendering",
+        )
+
+    for path, legacy_marker in (
+        (
+            "skills/custom-learning-audiobook/SKILL.md",
+            "The older command below is verification-only compatibility",
+        ),
+        (
+            "skills/custom-learning-audiobook/references/package-and-qc.md",
+            "The following single-cover commands are verification-only compatibility",
+        ),
+    ):
+        active_text = read(path).split(legacy_marker, 1)[0]
+        require("selection_source=user" in active_text, f"{path} missing current paired selection source")
+        require(
+            "selection_source=explicit-user-choice" not in active_text,
+            f"{path} teaches legacy selection source for paired work",
+        )
+
     contains(
         "skill/SKILL.md",
         "am_michael",

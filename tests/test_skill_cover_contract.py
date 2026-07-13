@@ -10,6 +10,8 @@ FILES = {
     "custom": ROOT / "skills" / "custom-learning-audiobook" / "SKILL.md",
     "package": ROOT / "skills" / "custom-learning-audiobook" / "references" / "package-and-qc.md",
     "public": ROOT / "docs" / "how-these-were-made.md",
+    "readme": ROOT / "README.md",
+    "make": ROOT / "docs" / "make-your-own.md",
 }
 
 
@@ -25,9 +27,9 @@ class SkillCoverContractTests(unittest.TestCase):
         for key in ("long", "custom"):
             text = FILES[key].read_text(encoding="utf-8")
             for required in (
-                "--spec",
+                "render_cover_pair(",
                 "cover-selection.json",
-                "explicit-user-choice",
+                "--selection-source user",
                 "--cover-selection",
                 "Echo/Kokoro",
                 "cover_receipts.py verify",
@@ -93,7 +95,6 @@ class SkillCoverContractTests(unittest.TestCase):
         for forbidden in (
             'cp "$DIST/$SLUG.epub"',
             'cp "$DIST/cover-$SELECTED.png"',
-            'cp "$DIST/cover-selection.json"',
         ):
             self.assertNotIn(forbidden, text)
 
@@ -120,12 +121,12 @@ class SkillCoverContractTests(unittest.TestCase):
         self.assert_in_order(
             text,
             (
-                "selected cover",
-                "governed EPUB",
-                "Echo",
-                "M4B",
-                "receipt verification",
-                "delivery",
+                "explicit pair selection",
+                "paired receipt",
+                "EPUB portrait",
+                "M4B square",
+                "post-embed verification",
+                "sync",
             ),
         )
 
@@ -142,6 +143,101 @@ class SkillCoverContractTests(unittest.TestCase):
             self.assertNotIn("--layout bleed", text)
             self.assertNotIn("lower 25–35% reserved", text)
             self.assertNotIn("lower third carries the title", text)
+
+    def test_active_surfaces_teach_the_universal_paired_cover_contract(self) -> None:
+        required = (
+            "exactly three",
+            "1600×2560",
+            "cover.png",
+            "2400×2400",
+            "m4b-cover.png",
+            "explicit pair selection",
+            "paired receipt",
+            "EPUB portrait",
+            "M4B square",
+            "post-embed verification",
+        )
+        for key in ("cover", "long", "custom", "package", "public", "readme", "make"):
+            text = FILES[key].read_text(encoding="utf-8")
+            for marker in required:
+                with self.subTest(file=key, marker=marker):
+                    self.assertIn(marker, text)
+
+    def test_active_skills_teach_paired_commands_not_new_single_cover_selection(self) -> None:
+        for key in ("long", "custom", "package"):
+            text = FILES[key].read_text(encoding="utf-8")
+            for marker in ("cover_pairs.py", "select-pair", "--m4b-cover", "replace_m4b_cover.py", "--paired-artifact-dir"):
+                with self.subTest(file=key, marker=marker):
+                    self.assertIn(marker, text)
+            self.assertIn("verification-only compatibility", text)
+
+    def test_public_docs_state_governed_sync_boundaries_and_migration_scope(self) -> None:
+        for key in ("public", "readme", "make"):
+            text = FILES[key].read_text(encoding="utf-8")
+            self.assertIn("public/iCloud/site sync", text)
+            self.assertIn("private", text)
+        combined = "\n".join(FILES[key].read_text(encoding="utf-8") for key in ("long", "custom", "package", "public", "readme", "make"))
+        self.assertIn("five-book migration", combined)
+        self.assertIn("not a universal future rule", combined)
+
+    def test_active_new_work_uses_complete_paired_interfaces(self) -> None:
+        for key in ("long", "custom", "package", "cover"):
+            text = FILES[key].read_text(encoding="utf-8")
+            for marker in (
+                "render_cover_pair(",
+                "portrait_spec=",
+                "square_spec=",
+                "portrait_output=",
+                "square_output=",
+                "portrait_thumbnail=",
+                "square_thumbnail=",
+                "portrait_receipt=",
+                "square_receipt=",
+                "--portrait-render-receipt",
+                "--square-render-receipt",
+                "--privacy-classification",
+                "--selection-source user",
+                "--selection \"$DIST/cover-selection.json\"",
+                "--m4b-cover \"$PAIR/m4b-cover.png\"",
+                "--portrait-cover \"$PAIR/cover.png\"",
+                "--paired-artifact-dir \"$PAIR\"",
+                "--intent reuse",
+                "--apply",
+            ):
+                with self.subTest(file=key, marker=marker):
+                    self.assertIn(marker, text)
+
+    def test_active_new_work_does_not_run_single_cover_renderer(self) -> None:
+        for key in ("long", "custom", "package", "cover"):
+            text = FILES[key].read_text(encoding="utf-8")
+            self.assertNotIn("/make_cover.py \\\n  --spec", text)
+
+    def test_active_paired_selection_uses_current_cli_vocabulary(self) -> None:
+        legacy_markers = {
+            "custom": "The older command below is verification-only compatibility",
+            "package": "The following single-cover commands are verification-only compatibility",
+        }
+        for key, legacy_marker in legacy_markers.items():
+            text = FILES[key].read_text(encoding="utf-8")
+            active_text = text.split(legacy_marker, 1)[0]
+            self.assertIn("selection_source=user", active_text)
+            self.assertNotIn("selection_source=explicit-user-choice", active_text)
+
+    def test_paired_chronology_is_literal_and_ordered(self) -> None:
+        markers = (
+            "research → three source directions",
+            "portrait/square render pairs",
+            "thumbnail review",
+            "explicit pair selection",
+            "paired receipt",
+            "EPUB portrait + M4B square embedding",
+            "post-embed verification",
+            "governed public/iCloud/site sync",
+        )
+        for key in ("long", "custom", "package", "cover", "public", "readme", "make"):
+            with self.subTest(file=key):
+                normalized = " ".join(FILES[key].read_text(encoding="utf-8").split())
+                self.assert_in_order(normalized, markers)
 
 
 if __name__ == "__main__":

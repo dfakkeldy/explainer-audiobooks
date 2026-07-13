@@ -5,6 +5,119 @@ description: Use when making a custom, personalized, beta-test, Echo-ready, or t
 
 # Custom Learning Audiobook
 
+## Universal paired-cover publishing contract
+
+Every new run creates exactly three coordinated portrait/square candidates.
+Use `render_cover_pair` in `skill/scripts/cover_pairs.py` to produce `cover.png`
+at 1600×2560 and `m4b-cover.png` at 2400×2400 plus thumbnails and receipts.
+Require human review and explicit pair selection, then use `cover_receipts.py
+select-pair` for the paired receipt. Build with `build_book.py --cover ...
+--m4b-cover ... --cover-selection ...`; after narration use
+`replace_m4b_cover.py --cover ... --portrait-cover ... --cover-selection ...`
+to preserve audio. Run `cover_receipts.py verify --cover ... --m4b-cover ...
+--epub ... --m4b ...` for post-embed verification, then dry-run and apply
+`sync_selected_cover.py --paired-artifact-dir ...` for governed
+public/iCloud/site sync under the public/private rules below.
+
+Order: research → three source directions → portrait/square render pairs →
+thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
+M4B square embedding → post-embed verification → governed public/iCloud/site
+sync. Legacy single-cover selection is verification-only compatibility.
+
+
+### Complete paired command example
+
+Create exactly three directories, `candidate-1/`, `candidate-2/`, and
+`candidate-3/`. Each contains schema-v2 `cover-spec.json` and
+`m4b-cover-spec.json`, shared source art, and portrait/square outputs,
+thumbnails, and receipts. Repeat this call for candidates 1 through 3:
+
+```python
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path("skill/scripts").resolve()))
+from cover_pairs import render_cover_pair
+
+PAIR = Path(os.environ["PAIR"])
+render_cover_pair(
+    portrait_spec=PAIR / "cover-spec.json",
+    square_spec=PAIR / "m4b-cover-spec.json",
+    portrait_output=PAIR / "cover.png",
+    square_output=PAIR / "m4b-cover.png",
+    portrait_thumbnail=PAIR / "cover-thumbnail.png",
+    square_thumbnail=PAIR / "m4b-cover-thumbnail.png",
+    portrait_receipt=PAIR / "cover-render.json",
+    square_receipt=PAIR / "m4b-cover-render.json",
+)
+```
+
+After human review selects one pair, run the complete governed sequence:
+
+```bash
+PAIR="$DIST/candidate-$SELECTED"
+/usr/local/bin/python3 skill/scripts/cover_receipts.py select-pair \
+  --portrait-render-receipt "$PAIR/cover-render.json" \
+  --square-render-receipt "$PAIR/m4b-cover-render.json" \
+  --out "$DIST/cover-selection.json" \
+  --book-slug "$SLUG" \
+  --edition-id "$EDITION_ID" \
+  --selection-source user \
+  --selected-at "$SELECTED_AT" \
+  --privacy-classification "$CLASSIFICATION" \
+  --permission-to-publish
+cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir "$RUN_ROOT/chapters" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
+  --author "Dan Fakkeldy" \
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
+  --slug "$SLUG" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --cover-selection "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
+  --m4b "$DIST/$SLUG.m4b" \
+  --cover "$PAIR/m4b-cover.png" \
+  --out "$DIST/$SLUG.covered.m4b" \
+  --cover-selection "$DIST/cover-selection.json" \
+  --portrait-cover "$PAIR/cover.png"
+mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
+
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --receipt "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse
+
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse \
+  --apply
+```
+
+
 Make a listener-specific learning audiobook from a topic request. The requester
 should feel helped, not assigned homework: ask only useful questions, do the
 research, write one coherent manuscript, and package the result for Echo.
@@ -129,22 +242,13 @@ research, write one coherent manuscript, and package the result for Echo.
    bright/high-key candidate unless the subject truly requires three dark
    directions.
 
-   Save each art file beside its validated `cover-spec-N.json`, then render each
-   complete candidate with the specification-driven path:
-
-   ```bash
-   SLUG="<slug>"
-   RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
-   /usr/local/bin/python3 skill/scripts/make_cover.py \
-     --spec "$RUN_ROOT/dist/cover-spec-1.json" \
-     --out "$RUN_ROOT/dist/cover-1.png"
-   ```
-
-   Repeat for candidates 2 and 3. Human-review every full-size render and
+   Save the shared art and both schema-v2 specs in each candidate directory,
+   then use the complete `render_cover_pair(...)` call above for candidates 1
+   through 3. Human-review every full-size portrait and square render and
    generated 160-pixel thumbnail with its art-and-type brief, font/palette note,
    and warnings. The renderer never selects automatically; a requested mix
    becomes a new specification and render. Record the human choice with
-   `selection_source=explicit-user-choice` (or `requested-mix`), but defer the
+   `selection_source=user` (or `requested-mix`), but defer the
    `cover-selection.json` command and governed EPUB build until the canonical
    Markdown finishes humanization, prose QC, frontier-author acceptance, and
    every substantive repair.
@@ -170,10 +274,10 @@ research, write one coherent manuscript, and package the result for Echo.
     narration, sensitive-term, figure-provenance, and prose checks. The canonical
     Markdown must be final before Step 11 starts.
 
-11. **Build the governed EPUB.** Only now follow the selection and EPUB sections
-    in `references/package-and-qc.md`: create the explicit receipt with
-    `cover_receipts.py select`, then run the governed
-    `build_book.py --cover-selection` command. The required EPUB and combined
+11. **Build the governed EPUB.** Only now follow the paired selection and EPUB
+    sections in `references/package-and-qc.md`: create the paired receipt with
+    `cover_receipts.py select-pair`, then run the governed `build_book.py`
+    command with `--cover`, `--m4b-cover`, and `--cover-selection`. The EPUB and combined
     Markdown are downstream renderings of the accepted manuscript; standalone
     Markdown figures remain embedded and copied beside the combined Markdown.
 
@@ -193,7 +297,10 @@ research, write one coherent manuscript, and package the result for Echo.
    do not proceed to delivery sync.
 
 13. **Final-verify the governed package.** After native Echo narration succeeds,
-    verify that the explicit selection matches the selected cover, EPUB, and M4B:
+    verify that the paired receipt matches the portrait, square, EPUB, and M4B.
+    The older command below is verification-only compatibility for legacy
+    single-cover receipts; new packages use the paired verification command in
+    `references/package-and-qc.md`:
 
     ```bash
     SELECTED="<selected candidate number>"

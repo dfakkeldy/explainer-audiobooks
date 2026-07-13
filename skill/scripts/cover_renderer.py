@@ -15,7 +15,7 @@ from typing import Any
 from xml.sax.saxutils import escape
 
 from cover_fonts import DEFAULT_MANIFEST, FontRecord
-from cover_spec import HEIGHT, WIDTH, ValidatedCoverSpec, load_cover_spec
+from cover_spec import ValidatedCoverSpec, load_cover_spec
 
 RENDERER_VERSION = 1
 
@@ -31,6 +31,7 @@ class RenderResult:
     receipt_path: Path
     cover_sha256: str
     thumbnail_sha256: str
+    variant: str
 
 
 def _sha(path: Path) -> str:
@@ -197,7 +198,7 @@ def _text_markup(
 def build_svg(spec: ValidatedCoverSpec) -> str:
     definitions: list[str] = []
     body = [
-        f'<rect width="{WIDTH}" height="{HEIGHT}" '
+        f'<rect width="{spec.width}" height="{spec.height}" '
         f'fill="{spec.data["canvas"]["background"]}"/>'
     ]
     body.append(_art_markup(spec, definitions))
@@ -245,8 +246,8 @@ def build_svg(spec: ValidatedCoverSpec) -> str:
             body.append(_text_markup(layer, index, definitions, spec.fonts))
     defs = f'<defs><style>{_font_css(spec.fonts)}</style>{"".join(definitions)}</defs>'
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
-        f'viewBox="0 0 {WIDTH} {HEIGHT}">{defs}{"".join(body)}</svg>'
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{spec.width}" height="{spec.height}" '
+        f'viewBox="0 0 {spec.width} {spec.height}">{defs}{"".join(body)}</svg>'
     )
 
 
@@ -431,8 +432,15 @@ def _validate_artifact_paths(
 def render_cover_spec(
     spec_path: Path,
     output_path: Path,
+    thumbnail_path: Path | None = None,
+    receipt_path: Path | None = None,
     font_manifest_path: Path = DEFAULT_MANIFEST,
 ) -> RenderResult:
+    # Preserve the original three-argument API where the final argument was the
+    # font manifest while allowing pair orchestration to name every artifact.
+    if receipt_path is None and thumbnail_path is not None:
+        font_manifest_path = Path(thumbnail_path)
+        thumbnail_path = None
     spec = load_cover_spec(Path(spec_path), Path(font_manifest_path))
     output = Path(output_path).resolve()
     try:
@@ -440,8 +448,16 @@ def render_cover_spec(
     except ValueError as error:
         raise CoverRenderError("output path escapes specification run folder") from error
 
-    thumbnail = output.with_name(f"{output.stem}-thumbnail.png")
-    receipt = output.with_name(f"{output.stem}.render.json")
+    thumbnail = (
+        Path(thumbnail_path).resolve()
+        if thumbnail_path is not None
+        else output.with_name(f"{output.stem}-thumbnail.png")
+    )
+    receipt = (
+        Path(receipt_path).resolve()
+        if receipt_path is not None
+        else output.with_name(f"{output.stem}.render.json")
+    )
     _validate_artifact_paths(
         spec,
         {"output": output, "thumbnail": thumbnail, "receipt": receipt},
@@ -457,12 +473,14 @@ def render_cover_spec(
         staged_receipt = staging / receipt.name
         raw_svg.write_text(svg, encoding="utf-8")
         environment = _font_environment(spec.fonts, staging)
-        _render(raw_svg, staged_output, WIDTH, HEIGHT, environment)
-        _render(raw_svg, staged_thumbnail, 160, 256, environment)
+        thumbnail_dimensions = (160, 160) if spec.variant == "square" else (160, 256)
+        _render(raw_svg, staged_output, spec.width, spec.height, environment)
+        _render(raw_svg, staged_thumbnail, *thumbnail_dimensions, environment)
         payload = {
             "receipt_version": 1,
             "renderer_version": RENDERER_VERSION,
             "schema_version": 1,
+            "variant": spec.variant,
             "candidate": spec.data["candidate"],
             "spec": spec.path.name,
             "spec_sha256": spec.spec_sha256,
@@ -478,7 +496,8 @@ def render_cover_spec(
             "output_sha256": _sha(staged_output),
             "thumbnail": thumbnail.name,
             "thumbnail_sha256": _sha(staged_thumbnail),
-            "dimensions": [WIDTH, HEIGHT],
+            "dimensions": [spec.width, spec.height],
+            "thumbnail_dimensions": list(thumbnail_dimensions),
             "colour_mode": "RGB",
             "warnings": list(spec.warnings),
         }
@@ -504,4 +523,5 @@ def render_cover_spec(
         receipt,
         payload["output_sha256"],
         payload["thumbnail_sha256"],
+        spec.variant,
     )

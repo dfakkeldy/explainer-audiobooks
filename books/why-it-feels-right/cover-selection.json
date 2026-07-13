@@ -1,0 +1,41 @@
+{
+  "book_slug": "why-it-feels-right",
+  "candidate": {
+    "direction_name": "The Impossible Teapot",
+    "id": "impossible-teapot"
+  },
+  "edition_id": "034b950f-5024-4f58-bcaf-6d984d241b50",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-13T14:38:48-03:00",
+  "selection_source": "user",
+  "source_art_sha256": "ed258c0ed5a4083c3798cf7f4350b2fa997842663a550be002b965ee65808ffa",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "3fbc32510e611766c150c6280dc0059b634d1c6d4f0923beec84291fb0e819b3",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "cb8887528b0fef2c80f32d0aeff7a9976e4378895779e671b676931bb6c031df",
+      "specification_sha256": "61c356e384e430fc579e0ee002224110895db47d7b2249ae6b317942389aad63",
+      "subtitle_included": true,
+      "thumbnail_sha256": "6a3856b9e2ef226d0b59d3c7e9063c33bc84ba81c9a131b0ce5addcd797d3baa"
+    },
+    "square": {
+      "cover_sha256": "060252a5878ee62f05586c5583fd71862d58f35202dd7692c1a48942ccde84d4",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "e3d38c2f57983f09c6185f58f8fcd6cf77f90dfbddaeb2bcb12694e7e98cbf09",
+      "specification_sha256": "81457474f25eda8986b1584655dfb842daee7871d401e9f720eeb335b591787a",
+      "subtitle_included": false,
+      "thumbnail_sha256": "bdbca1cc55c0ff23bb5fc0325b9602d077c023b8ca98ce36ad9ffd0e9d8f69b5"
+    }
+  }
+}

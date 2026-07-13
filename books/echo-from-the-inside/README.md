@@ -3,6 +3,12 @@ _A Beginner's Guide to iOS Development, taught through one real app_
 
 ![Cover](cover.png)
 
+The July 2026 paired-cover release uses **Rooms Inside the App**. `cover.png`
+is the portrait EPUB and library cover; `m4b-cover.png` is the independently
+composed square audiobook artwork. `cover-selection.json` binds both variants
+to one approved source and public EPUB edition. The previous portrait is
+preserved as `cover-pre-paired.png`.
+
 > You built something real with AI and grit, and it works — but you can't quite explain why. This book is the bridge from grit to understanding.
 
 This is a guided tour of how a real iOS app gets built, using the genuine internals of **Echo** — an open-source, on-device audiobook study player — as the worked example. No toy weather app, no pretend to-do list: just the actual parts of an app that actually ships, taken apart gently, one piece at a time. And it's written for the ear, so you'll hear no code — not one line. When we point at a real part of Echo, we name it in plain English and explain the idea behind it, including the part most tutorials skip: *what each choice quietly traded away.*

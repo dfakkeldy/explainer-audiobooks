@@ -6,7 +6,8 @@
   "additionalProperties": false,
   "required": ["schema_version", "candidate", "metadata", "canvas", "art", "layers"],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"enum": [1, 2]},
+    "variant": {"enum": ["portrait", "square"]},
     "candidate": {
       "type": "object",
       "additionalProperties": false,
@@ -32,10 +33,10 @@
       "additionalProperties": false,
       "required": ["width", "height", "background", "safe_margin"],
       "properties": {
-        "width": {"const": 1600},
-        "height": {"const": 2560},
+        "width": {"type": "integer"},
+        "height": {"type": "integer"},
         "background": {"$ref": "#/$defs/colour"},
-        "safe_margin": {"const": 96}
+        "safe_margin": {"type": "integer"}
       }
     },
     "art": {
@@ -65,19 +66,43 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": 1}}, "required": ["schema_version"]},
+      "then": {
+        "not": {"required": ["variant"]},
+        "properties": {"canvas": {"properties": {
+          "width": {"const": 1600}, "height": {"const": 2560}, "safe_margin": {"const": 96}
+        }}}
+      },
+      "else": {"required": ["variant"]}
+    },
+    {
+      "if": {"properties": {"variant": {"const": "portrait"}}, "required": ["variant"]},
+      "then": {"properties": {"canvas": {"properties": {
+        "width": {"const": 1600}, "height": {"const": 2560}, "safe_margin": {"const": 96}
+      }}}}
+    },
+    {
+      "if": {"properties": {"variant": {"const": "square"}}, "required": ["variant"]},
+      "then": {"properties": {"canvas": {"properties": {
+        "width": {"const": 2400}, "height": {"const": 2400}, "safe_margin": {"const": 120}
+      }}}}
+    }
+  ],
   "$defs": {
     "colour": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
     "box": {
       "type": "array", "prefixItems": [
-        {"type": "number", "minimum": -1600, "maximum": 3200},
+        {"type": "number", "minimum": -2400, "maximum": 4800},
         {"type": "number", "minimum": -2560, "maximum": 5120},
-        {"type": "number", "minimum": 1, "maximum": 3200},
+        {"type": "number", "minimum": 1, "maximum": 4800},
         {"type": "number", "minimum": 1, "maximum": 5120}
       ], "minItems": 4, "maxItems": 4
     },
     "point": {
       "type": "array", "prefixItems": [
-        {"type": "number", "minimum": -1600, "maximum": 3200},
+        {"type": "number", "minimum": -2400, "maximum": 4800},
         {"type": "number", "minimum": -2560, "maximum": 5120}
       ],
       "minItems": 2, "maxItems": 2

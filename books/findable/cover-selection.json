@@ -1,0 +1,41 @@
+{
+  "book_slug": "findable",
+  "candidate": {
+    "direction_name": "The Exact Phrase",
+    "id": "exact-phrase"
+  },
+  "edition_id": "74d03cb1-c805-41ec-ac90-4f02277f6b9e",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-13T14:38:48-03:00",
+  "selection_source": "user",
+  "source_art_sha256": "ed0dcc4c664d1b20208a530403b89e2a9a7dd18219530d252857be93a71c1e2b",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "4b0ca55fb5e4f4edca32102c0fd3b49b67db1ed67399578ac8d241735501fe19",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "27bc2728fd71f280d74c1021c5b2b178619839426ef52172421b0796272dd11b",
+      "specification_sha256": "c251c17e74553aeb140103d4da6798d8c0cec84e814fbeea1872cbae12289fdf",
+      "subtitle_included": true,
+      "thumbnail_sha256": "b158ad131a29d0439e4c39c7a38544eda2b8f22297727c4c2d6fcf00f080fb4f"
+    },
+    "square": {
+      "cover_sha256": "b56aec2a60d6a609bf416935791f03d3a612d9eb2837fd568c7a61815720b3e4",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "19edee87bb07930b9db084a4109ad02ba724647ee79f6bc562528cf8b6745b28",
+      "specification_sha256": "f24070f6af4904bf7f14516d8b63787c267b61292ce7bf5f35eb4ad7723c92ee",
+      "subtitle_included": false,
+      "thumbnail_sha256": "d9c3acd1de0c0d81b768bcad93617fda5cb92d4b977d4b4e0a916b760baad67b"
+    }
+  }
+}

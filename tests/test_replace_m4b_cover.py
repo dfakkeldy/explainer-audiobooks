@@ -34,13 +34,38 @@ def completed(command: list[str], stdout: bytes = b"") -> subprocess.CompletedPr
 
 @unittest.skipUnless(all(shutil.which(tool) for tool in ("AtomicParsley", "ffmpeg", "ffprobe", "magick")), "media tools required")
 class ReplaceM4BCoverTests(unittest.TestCase):
+    def test_governed_post_embed_failure_preserves_output_and_cleans_temp(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            source = root / "source.m4b"; source.write_bytes(b"source")
+            portrait = root / "cover.png"; portrait.write_bytes(b"portrait")
+            square = root / "m4b-cover.png"; square.write_bytes(b"square")
+            selection = root / "selection.json"; selection.write_text("{}")
+            output = root / "output.m4b"; output.write_bytes(b"keep-me")
+
+            def write_output(command: list[str], **_: object) -> subprocess.CompletedProcess[bytes]:
+                Path(command[command.index("--output") + 1]).write_bytes(b"candidate")
+                return completed(command)
+
+            with mock.patch.object(subject, "media_signature", return_value=fixture_signature()), \
+                 mock.patch.object(subject, "normalized_image_sha256", return_value="b" * 64), \
+                 mock.patch.object(subject, "normalized_m4b_art_sha256", return_value="b" * 64), \
+                 mock.patch.object(subject.subprocess, "run", side_effect=write_output), \
+                 mock.patch.object(subject, "verify_package", side_effect=[mock.DEFAULT, ValueError("post M4B verification")]), \
+                 self.assertRaisesRegex(ValueError, "post M4B"):
+                replace_m4b_cover(
+                    source, square, output, selection_path=selection,
+                    portrait_cover_path=portrait,
+                )
+            self.assertEqual(b"keep-me", output.read_bytes())
+            self.assertEqual([], list(root.glob(".output.m4b.*")))
     def test_replaces_only_artwork_and_preserves_media_signature(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             old_art = root / "old.png"
             new_art = root / "new.png"
             Image.new("RGB", (1600, 2560), "#132238").save(old_art)
-            Image.new("RGB", (1600, 2560), "#EF5735").save(new_art)
+            Image.new("RGB", (2400, 2400), "#EF5735").save(new_art)
             audio = root / "audio.m4b"
             tagged = root / "tagged.m4b"
             output = root / "output.m4b"
@@ -50,6 +75,10 @@ class ReplaceM4BCoverTests(unittest.TestCase):
             result = replace_m4b_cover(tagged, new_art, output)
             self.assertEqual(before, media_signature(output))
             self.assertEqual(before.audio_packet_sha256, result.audio_packet_sha256)
+            self.assertEqual(before.duration, media_signature(output).duration)
+            self.assertEqual(before.streams, media_signature(output).streams)
+            self.assertEqual(before.chapters, media_signature(output).chapters)
+            self.assertEqual(before.format_tags, media_signature(output).format_tags)
             self.assertEqual(normalized_image_sha256(new_art), normalized_m4b_art_sha256(output))
 
     def test_failure_does_not_replace_existing_output(self) -> None:

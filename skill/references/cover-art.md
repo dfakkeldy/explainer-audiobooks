@@ -1,5 +1,115 @@
 # Award-Worthy Audiobook Covers
 
+## Universal paired-cover rule
+
+Every new book develops exactly three coordinated portrait/square candidates.
+Each direction shares one source-art identity but has two deliberately composed
+specifications: `cover.png` at 1600×2560 for the EPUB portrait and
+`m4b-cover.png` at 2400×2400 for the M4B square. Review both full-size images and
+both thumbnails together. The user makes an explicit pair selection; never mix
+variants or select automatically. That choice becomes a paired receipt before
+packaging, followed by post-embed verification.
+
+The chronological contract is: research → three source directions →
+portrait/square render pairs → thumbnail review → explicit pair selection →
+paired receipt → EPUB portrait + M4B square embedding → post-embed verification
+→ governed public/iCloud/site sync. Legacy single-cover receipts and renderer
+flags are verification-only compatibility; do not teach them for new work.
+
+
+### Complete paired command example
+
+Create exactly three directories, `candidate-1/`, `candidate-2/`, and
+`candidate-3/`. Each contains schema-v2 `cover-spec.json` and
+`m4b-cover-spec.json`, shared source art, and portrait/square outputs,
+thumbnails, and receipts. Repeat this call for candidates 1 through 3:
+
+```python
+import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path("skill/scripts").resolve()))
+from cover_pairs import render_cover_pair
+
+PAIR = Path(os.environ["PAIR"])
+render_cover_pair(
+    portrait_spec=PAIR / "cover-spec.json",
+    square_spec=PAIR / "m4b-cover-spec.json",
+    portrait_output=PAIR / "cover.png",
+    square_output=PAIR / "m4b-cover.png",
+    portrait_thumbnail=PAIR / "cover-thumbnail.png",
+    square_thumbnail=PAIR / "m4b-cover-thumbnail.png",
+    portrait_receipt=PAIR / "cover-render.json",
+    square_receipt=PAIR / "m4b-cover-render.json",
+)
+```
+
+After human review selects one pair, run the complete governed sequence:
+
+```bash
+PAIR="$DIST/candidate-$SELECTED"
+/usr/local/bin/python3 skill/scripts/cover_receipts.py select-pair \
+  --portrait-render-receipt "$PAIR/cover-render.json" \
+  --square-render-receipt "$PAIR/m4b-cover-render.json" \
+  --out "$DIST/cover-selection.json" \
+  --book-slug "$SLUG" \
+  --edition-id "$EDITION_ID" \
+  --selection-source user \
+  --selected-at "$SELECTED_AT" \
+  --privacy-classification "$CLASSIFICATION" \
+  --permission-to-publish
+cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir "$RUN_ROOT/chapters" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
+  --author "Dan Fakkeldy" \
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
+  --slug "$SLUG" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --cover-selection "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
+  --m4b "$DIST/$SLUG.m4b" \
+  --cover "$PAIR/m4b-cover.png" \
+  --out "$DIST/$SLUG.covered.m4b" \
+  --cover-selection "$DIST/cover-selection.json" \
+  --portrait-cover "$PAIR/cover.png"
+mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
+
+/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --receipt "$DIST/cover-selection.json"
+
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse
+
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$DIST/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$DIST/$SLUG.m4b" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse \
+  --apply
+```
+
+
 A cover is not a title placed on a coloured rectangle. It is a compact editorial
 argument for why a person should choose this book. The default is **three fully
 rendered, genuinely different, award-worthy cover candidates for every book**.
@@ -181,24 +291,17 @@ candidate specification.
 ## Render, Compare, and Select
 
 Assign `SLUG` from the approved run metadata. Keep generated artwork text-free.
-Save each art file beside its validated `cover-spec-N.json`, then render each
-complete composition:
-
-```bash
-RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
-/usr/local/bin/python3 skill/scripts/make_cover.py \
-  --spec "$RUN_ROOT/dist/cover-spec-1.json" \
-  --out "$RUN_ROOT/dist/cover-1.png"
-```
-
-Repeat for candidates 2 and 3. Review every full-size render, generated
+Save the shared art and both schema-v2 specs in each candidate directory. Use
+the complete `render_cover_pair(...)` call above for candidates 1 through 3.
+Review every full-size portrait and square render, generated
 160-pixel thumbnail, art-and-type brief, font/palette note, and warning. Ask the
 user to choose or request a mix. A mix becomes a new specification and render.
 
-Only after the user chooses, create `cover-selection.json` with
-`selection_source=explicit-user-choice` (or `requested-mix`). The renderer never
-selects a candidate automatically. New books use `--spec`; the old
-title/art/accent/tone/layout flags remain compatibility-only for existing calls.
+After the user chooses the pair, use `cover_receipts.py select-pair` as described
+by the universal rule. A paired user choice uses `selection_source=user`; a
+requested mix uses `requested-mix`. The renderer never selects automatically.
+The old single-render receipt and title/art/accent/tone/layout paths are
+verification-only compatibility for existing packages.
 
 ## Award-Worthy Acceptance Bar
 

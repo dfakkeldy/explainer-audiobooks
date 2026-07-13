@@ -1,0 +1,41 @@
+{
+  "book_slug": "echo-from-the-inside",
+  "candidate": {
+    "direction_name": "Rooms Inside the App",
+    "id": "rooms-inside-the-app"
+  },
+  "edition_id": "12fec874-b101-4129-b1c3-a7a4b5a4792f",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-13T14:38:48-03:00",
+  "selection_source": "user",
+  "source_art_sha256": "8ecd9cdc2d7b3af309632d0734e490b5ecd86f2438f825d3d780a071f3ad8fb0",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "0fe641954a1f20016613596afbaa8a95dc218611077c276bb13aa8cc191c40d1",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "e180af4ae60ca37e52de57a8db6a44b155e60755cad87696086c52c1e1dc034a",
+      "specification_sha256": "c222305af7fbce14a0705f37c3a74cd72f934632a3b6b7b2d4529a10f4ac5639",
+      "subtitle_included": true,
+      "thumbnail_sha256": "2ec106a69105632156e5c580dcebeeafcd9bd91157a696d40250445d8edc1052"
+    },
+    "square": {
+      "cover_sha256": "3fd3c6c167ba13f8080c67d2aeb315851f63a0e2955e970daab0cff77d435ff9",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "9de72195570dbec346e56fde936dfb094ec97e5dbeb69be02f15a8309f3c74c9",
+      "specification_sha256": "fd273d99771580fcd7d5457141c5206f14d18c22eae9a330bd699a3398b20cc3",
+      "subtitle_included": false,
+      "thumbnail_sha256": "5682a867a50ff9a6421bf340b77539da014f37caf1fdfae2462acd687d692edd"
+    }
+  }
+}

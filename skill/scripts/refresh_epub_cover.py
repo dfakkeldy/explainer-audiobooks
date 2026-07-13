@@ -21,6 +21,13 @@ from xml.etree import ElementTree
 from PIL import Image, UnidentifiedImageError
 
 
+def verify_package(*args: object, **kwargs: object) -> object:
+    """Import lazily because cover_receipts reuses EPUB discovery helpers here."""
+    from cover_receipts import verify_package as verify
+
+    return verify(*args, **kwargs)
+
+
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 EXPECTED_DIMENSIONS = (1600, 2560)
 
@@ -225,6 +232,8 @@ def _validate_rebuilt_epub(
         if name == cover_member:
             if actual != cover_data:
                 raise ValueError("rebuilt EPUB cover bytes do not match input")
+            if _zipinfo_metadata(rebuilt_info) != _zipinfo_metadata(source_info):
+                raise ValueError("rebuilt EPUB cover metadata changed")
         else:
             if actual != source.read(source_info):
                 raise ValueError(f"rebuilt EPUB non-cover payload changed: {name}")
@@ -235,11 +244,14 @@ def _validate_rebuilt_epub(
 
 
 def replace_epub_cover(
-    epub_path: Path, cover_path: Path, output_path: Path
+    epub_path: Path, cover_path: Path, output_path: Path, *,
+    selection_path: Path | None = None, m4b_cover_path: Path | None = None,
 ) -> CoverReplacement:
     epub_path = Path(epub_path)
     cover_path = Path(cover_path)
     output_path = Path(output_path)
+    if selection_path is not None:
+        verify_package(selection_path, cover_path, m4b_cover_path=m4b_cover_path)
     cover_data = cover_path.read_bytes()
     dimensions = png_dimensions(cover_data)
     if dimensions != EXPECTED_DIMENSIONS:
@@ -276,6 +288,12 @@ def replace_epub_cover(
         ) as rebuilt:
             _validate_rebuilt_epub(source, rebuilt, cover_member, cover_data)
 
+        if selection_path is not None:
+            verify_package(
+                selection_path, cover_path,
+                m4b_cover_path=m4b_cover_path, epub_path=temporary_path,
+            )
+
         os.replace(temporary_path, output_path)
         temporary_path = None
     finally:
@@ -296,8 +314,14 @@ def main() -> int:
     parser.add_argument("--epub", required=True, type=Path)
     parser.add_argument("--cover", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--cover-selection", type=Path)
+    parser.add_argument("--m4b-cover", type=Path)
     arguments = parser.parse_args()
-    result = replace_epub_cover(arguments.epub, arguments.cover, arguments.out)
+    result = replace_epub_cover(
+        arguments.epub, arguments.cover, arguments.out,
+        selection_path=arguments.cover_selection,
+        m4b_cover_path=arguments.m4b_cover,
+    )
     print(json.dumps(asdict(result), sort_keys=True))
     return 0
 

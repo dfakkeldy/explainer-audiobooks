@@ -31,7 +31,62 @@ def selection(path: Path, cover: Path, slug: str = "fixture-book") -> Path:
     return path
 
 
+def paired_selection(path: Path, cover: Path, square: Path) -> Path:
+    payload = {
+        "schema_version": 2, "book_slug": "fixture-book", "edition_id": "v2",
+        "candidate": {"id": "c1", "direction_name": "Fixture"},
+        "source_art_sha256": "2" * 64,
+        "variants": {
+            "portrait": {"specification_sha256": "1" * 64, "render_receipt_sha256": "3" * 64,
+                         "cover_sha256": hashlib.sha256(cover.read_bytes()).hexdigest(),
+                         "dimensions": [1600, 2560], "thumbnail_sha256": "4" * 64,
+                         "subtitle_included": False},
+            "square": {"specification_sha256": "5" * 64, "render_receipt_sha256": "6" * 64,
+                       "cover_sha256": hashlib.sha256(square.read_bytes()).hexdigest(),
+                       "dimensions": [2400, 2400], "thumbnail_sha256": "7" * 64,
+                       "subtitle_included": False},
+        },
+        "font_manifest_sha256": "8" * 64, "selection_source": "user",
+        "selected_at": "2026-07-13T13:00:00-03:00",
+        "privacy": {"classification": "public-safe", "permission_to_publish": True},
+    }
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    return path
+
+
 class BuildBookCoverReceiptTests(unittest.TestCase):
+    def test_paired_build_requires_fresh_square_before_outputs(self) -> None:
+        for state in ("missing", "stale"):
+            with self.subTest(state=state), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw); chapters = root / "chapters"; out = root / "dist"
+                chapters.mkdir(); (chapters / "ch01.md").write_text("# One\n\nText.", encoding="utf-8")
+                cover = root / "cover.png"; square = root / "m4b-cover.png"
+                Image.new("RGB", (1600, 2560), "#132238").save(cover)
+                Image.new("RGB", (2400, 2400), "#233248").save(square)
+                receipt = paired_selection(root / "selection.json", cover, square)
+                if state == "missing": square.unlink()
+                else: Image.new("RGB", (2400, 2400), "#334258").save(square)
+                with self.assertRaisesRegex(ValueError, "square"):
+                    build_book.build(chapters, out, "Fixture", "Dan", "", "fixture-book",
+                                     cover=cover, cover_selection=receipt, m4b_cover=square)
+                self.assertFalse(out.exists())
+
+    def test_paired_build_verifies_both_assets_before_and_epub_after_embedding(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); chapters = root / "chapters"; out = root / "dist"
+            chapters.mkdir(); (chapters / "ch01.md").write_text("# One\n\nText.", encoding="utf-8")
+            cover = root / "cover.png"; square = root / "m4b-cover.png"
+            Image.new("RGB", (1600, 2560), "#132238").save(cover)
+            Image.new("RGB", (2400, 2400), "#233248").save(square)
+            receipt = paired_selection(root / "selection.json", cover, square)
+            with mock.patch.object(build_book, "verify_package", wraps=build_book.verify_package) as verify:
+                build_book.build(chapters, out, "Fixture", "Dan", "", "fixture-book",
+                                 cover=cover, cover_selection=receipt, m4b_cover=square)
+            self.assertEqual(2, verify.call_count)
+            self.assertEqual(square, verify.call_args_list[0].kwargs["m4b_cover_path"])
+            self.assertNotIn("epub_path", verify.call_args_list[0].kwargs)
+            self.assertEqual(square, verify.call_args_list[1].kwargs["m4b_cover_path"])
+            self.assertIn("epub_path", verify.call_args_list[1].kwargs)
     def test_build_verifies_receipt_before_and_after_embedding(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw); chapters = root / "chapters"; out = root / "dist"

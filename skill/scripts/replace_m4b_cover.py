@@ -13,7 +13,7 @@ import tempfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from cover_receipts import normalized_image_sha256, normalized_m4b_art_sha256
+from cover_receipts import normalized_image_sha256, normalized_m4b_art_sha256, verify_package
 
 
 @dataclass(frozen=True)
@@ -181,12 +181,19 @@ def replace_m4b_cover(
     source: Path,
     cover: Path,
     output: Path,
+    *,
+    selection_path: Path | None = None,
+    portrait_cover_path: Path | None = None,
 ) -> M4BCoverReplacement:
     if not shutil.which("AtomicParsley"):
         raise ValueError("AtomicParsley is required")
     source_path = _file(source, "AtomicParsley source M4B")
     cover_path = _file(cover, "AtomicParsley cover")
     output_path = _validated_output(output, source_path, cover_path)
+    if selection_path is not None:
+        if portrait_cover_path is None:
+            raise ValueError("portrait cover is required with a cover selection")
+        verify_package(selection_path, portrait_cover_path, m4b_cover_path=cover_path)
     before = media_signature(source_path)
 
     temporary: Path | None = None
@@ -231,6 +238,11 @@ def replace_m4b_cover(
         normalized = normalized_image_sha256(cover_path)
         if normalized_m4b_art_sha256(temporary) != normalized:
             raise ValueError("M4B replacement artwork does not match source cover")
+        if selection_path is not None:
+            verify_package(
+                selection_path, portrait_cover_path,
+                m4b_cover_path=cover_path, m4b_path=temporary,
+            )
         try:
             artwork_sha256 = hashlib.sha256(cover_path.read_bytes()).hexdigest()
         except OSError as error:
@@ -267,10 +279,16 @@ def main() -> int:
     parser.add_argument("--m4b", required=True, type=Path)
     parser.add_argument("--cover", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--cover-selection", type=Path)
+    parser.add_argument("--portrait-cover", type=Path)
     arguments = parser.parse_args()
     print(
         json.dumps(
-            asdict(replace_m4b_cover(arguments.m4b, arguments.cover, arguments.out)),
+            asdict(replace_m4b_cover(
+                arguments.m4b, arguments.cover, arguments.out,
+                selection_path=arguments.cover_selection,
+                portrait_cover_path=arguments.portrait_cover,
+            )),
             sort_keys=True,
         )
     )
