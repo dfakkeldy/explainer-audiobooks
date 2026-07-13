@@ -16,6 +16,7 @@ SCHEMA = Path(__file__).parents[1] / "skill" / "schemas" / "cover-spec-v1.schema
 def valid_payload() -> dict[str, object]:
     return {
         "schema_version": 1,
+        "variant": "portrait",
         "candidate": {"id": "candidate-a", "direction_name": "Full Bleed Display"},
         "metadata": {
             "title": "Rodents in the Walls",
@@ -125,6 +126,19 @@ def valid_payload() -> dict[str, object]:
     }
 
 
+def valid_square_payload() -> dict[str, object]:
+    payload = valid_payload()
+    payload["variant"] = "square"
+    payload["canvas"].update(width=2400, height=2400, safe_margin=120)
+    payload["art"]["box"] = [0, 0, 2400, 2400]
+    for layer in payload["layers"]:
+        layer["box"][0] = 120
+    payload["layers"][0]["box"][1] = 120
+    payload["layers"][3]["box"] = [120, 1950, 1408, 130]
+    payload["layers"][4]["box"] = [120, 2150, 1408, 90]
+    return payload
+
+
 def write_fixture(root: Path, payload: object) -> Path:
     (root / "art.svg").write_text(
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2560"><rect width="1600" height="2560" fill="#132238"/></svg>',
@@ -157,20 +171,71 @@ class CoverSpecValidationTests(unittest.TestCase):
                 self.assertIn(role, role_rules)
                 self.assertEqual(expected, role_rules[role])
 
-        expected_x = {"type": "number", "minimum": -1600, "maximum": 3200}
+        expected_x = {"type": "number", "minimum": -2400, "maximum": 4800}
         expected_y = {"type": "number", "minimum": -2560, "maximum": 5120}
         with self.subTest(definition="box"):
             self.assertEqual(
                 [
                     expected_x,
                     expected_y,
-                    {"type": "number", "minimum": 1, "maximum": 3200},
+                    {"type": "number", "minimum": 1, "maximum": 4800},
                     {"type": "number", "minimum": 1, "maximum": 5120},
                 ],
                 schema["$defs"]["box"]["prefixItems"],
             )
         with self.subTest(definition="point"):
             self.assertEqual([expected_x, expected_y], schema["$defs"]["point"]["prefixItems"])
+
+    def test_accepts_exact_portrait_and_square_canvas(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            portrait = load_cover_spec(write_fixture(Path(raw), valid_payload()), FONT_MANIFEST)
+            self.assertEqual(
+                (portrait.variant, portrait.width, portrait.height),
+                ("portrait", 1600, 2560),
+            )
+
+        with tempfile.TemporaryDirectory() as raw:
+            square = load_cover_spec(write_fixture(Path(raw), valid_square_payload()), FONT_MANIFEST)
+            self.assertEqual(
+                (square.variant, square.width, square.height),
+                ("square", 2400, 2400),
+            )
+
+    def test_rejects_unknown_variant_and_crossed_dimensions(self) -> None:
+        for variant, width, height in [
+            ("album", 2400, 2400),
+            ("portrait", 2400, 2400),
+            ("square", 1600, 2560),
+        ]:
+            with self.subTest(variant=variant, width=width, height=height):
+                payload = valid_payload()
+                payload["variant"] = variant
+                payload["canvas"].update(width=width, height=height)
+                with tempfile.TemporaryDirectory() as raw, self.assertRaises(CoverSpecError):
+                    load_cover_spec(write_fixture(Path(raw), payload), FONT_MANIFEST)
+
+    def test_square_may_omit_but_not_rewrite_subtitle(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            square = valid_square_payload()
+            square["metadata"]["subtitle"] = ""
+            square["layers"] = [
+                layer for layer in square["layers"] if layer.get("role") != "subtitle"
+            ]
+            load_cover_spec(
+                write_fixture(Path(raw), square),
+                FONT_MANIFEST,
+                canonical_subtitle="The exact canonical subtitle",
+            )
+
+        with tempfile.TemporaryDirectory() as raw:
+            rewritten = valid_square_payload()
+            rewritten["metadata"]["subtitle"] = "Shortened words"
+            with self.assertRaisesRegex(CoverSpecError, "metadata subtitle"):
+                load_cover_spec(
+                    write_fixture(Path(raw), rewritten),
+                    FONT_MANIFEST,
+                    canonical_subtitle="The exact canonical subtitle",
+                )
 
     def test_rejects_distinct_unicode_title_tokens(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
