@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import shutil
 import stat
 import subprocess
@@ -17,9 +18,12 @@ LIVE_HERMES_IMPORT = (
     / "openclaw-imports"
     / "custom-learning-audiobook"
 )
+LIVE_HERMES_AGENT = Path.home() / ".hermes" / "hermes-agent"
+LIVE_HERMES_PYTHON = LIVE_HERMES_AGENT / "venv" / "bin" / "python"
+LIVE_CANONICAL_SKILL = Path.home() / ".hermes" / "skills" / "custom-learning-audiobook"
 DISABLED_MARKER = "DISABLED: canonical skill required"
 CANONICAL_ROUTE = "/Users/dfakkeldy/.hermes/skills/custom-learning-audiobook"
-EXTERNAL_SKILL_STUB = f"""---
+EXTERNAL_SKILL_TOMBSTONE = f"""---
 name: custom-learning-audiobook
 description: Disabled duplicate. Load the canonical shared custom-learning-audiobook skill.
 ---
@@ -44,10 +48,12 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.tmp = Path(self.temporary.name)
         self.candidate = self.tmp / "candidate"
-        self.canonical = self.tmp / "canonical"
+        self.canonical = self.tmp / "installed" / "custom-learning-audiobook"
         self.external = self.tmp / "external"
         self.links = [self.tmp / f"agent-{index}" for index in range(4)]
         self.hermes = self.tmp / "hermes"
+        self.hermes_agent = self.tmp / "hermes-agent"
+        self.hermes_python = self.tmp / "hermes-python"
         for root in (self.candidate, self.canonical, self.external):
             (root / "references").mkdir(parents=True)
             (root / "scripts").mkdir()
@@ -57,6 +63,8 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         self.write_skill(self.canonical, "old canonical")
         self.write_disabled_external()
         self.write_hermes_discovery("custom-learning-audiobook | local | enabled")
+        self.hermes_agent.mkdir()
+        self.write_hermes_view()
 
     @staticmethod
     def write_skill(root: Path, value: str) -> None:
@@ -73,10 +81,18 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
             value,
             encoding="utf-8",
         )
+        (root / "scripts" / "echo_pronunciation_narrate.sh").write_text(
+            value,
+            encoding="utf-8",
+        )
+        (root / "scripts" / "echo_pronunciation_lease.py").write_text(
+            value,
+            encoding="utf-8",
+        )
 
     def write_disabled_external(self) -> None:
-        (self.external / "SKILL.md").write_text(
-            EXTERNAL_SKILL_STUB,
+        (self.external / "SKILL.disabled.md").write_text(
+            EXTERNAL_SKILL_TOMBSTONE,
             encoding="utf-8",
         )
         (self.external / "references" / "package-and-qc.md").write_text(
@@ -95,6 +111,27 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         )
         self.hermes.chmod(self.hermes.stat().st_mode | stat.S_IXUSR)
 
+    def write_hermes_view(
+        self,
+        *,
+        skill_dir: Path | None = None,
+        success: bool = True,
+    ) -> None:
+        selected = skill_dir or self.canonical
+        self.hermes_python.write_text(
+            "#!/usr/local/bin/python3\n"
+            "import json\n"
+            "from pathlib import Path\n"
+            f"skill_dir = Path({str(selected)!r})\n"
+            "print(json.dumps({\n"
+            f"    'success': {success!r},\n"
+            "    'skill_dir': str(skill_dir),\n"
+            "    'content': (skill_dir / 'SKILL.md').read_text(encoding='utf-8'),\n"
+            "}))\n",
+            encoding="utf-8",
+        )
+        self.hermes_python.chmod(self.hermes_python.stat().st_mode | stat.S_IXUSR)
+
     def run_validator(self) -> subprocess.CompletedProcess[str]:
         command = [
             "/usr/local/bin/python3",
@@ -107,6 +144,10 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
             str(self.external),
             "--hermes-command",
             str(self.hermes),
+            "--hermes-python",
+            str(self.hermes_python),
+            "--hermes-source-root",
+            str(self.hermes_agent),
         ]
         for link in self.links:
             command.extend(("--link", str(link)))
@@ -123,6 +164,8 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
             "references/package-and-qc.md",
             "scripts/echo_pronunciation_preflight.sh",
             "scripts/validate_pronunciation_audit.py",
+            "scripts/echo_pronunciation_narrate.sh",
+            "scripts/echo_pronunciation_lease.py",
         ):
             shutil.copy2(
                 self.candidate / relative_path,
@@ -138,6 +181,8 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
             "references/package-and-qc.md",
             "scripts/echo_pronunciation_preflight.sh",
             "scripts/validate_pronunciation_audit.py",
+            "scripts/echo_pronunciation_narrate.sh",
+            "scripts/echo_pronunciation_lease.py",
         ):
             shutil.copy2(
                 self.candidate / relative_path,
@@ -156,7 +201,15 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         )
         result = self.run_validator()
         self.assertEqual(1, result.returncode)
-        self.assertIn("not the exact disabled stub", result.stderr)
+        self.assertIn("discoverable independent Hermes skill", result.stderr)
+
+    def test_rejects_nested_discoverable_alternate(self) -> None:
+        nested = self.external / "historical" / "copy"
+        nested.mkdir(parents=True)
+        (nested / "SKILL.md").write_text("nested alternate", encoding="utf-8")
+        result = self.run_validator()
+        self.assertEqual(1, result.returncode)
+        self.assertIn("discoverable independent Hermes skill", result.stderr)
 
     def test_rejects_when_hermes_discovers_openclaw_alternate(self) -> None:
         self.write_hermes_discovery(
@@ -168,12 +221,25 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
             "Hermes discovery did not select the canonical skill", result.stderr
         )
 
+    def test_rejects_bare_hermes_view_resolving_noncanonical_skill(self) -> None:
+        alternate = self.tmp / "alternate" / "custom-learning-audiobook"
+        alternate.mkdir(parents=True)
+        (alternate / "SKILL.md").write_text("alternate", encoding="utf-8")
+        self.write_hermes_view(skill_dir=alternate)
+        result = self.run_validator()
+        self.assertEqual(1, result.returncode)
+        self.assertIn("bare skill_view did not load canonical skill", result.stderr)
+
     @unittest.skipUnless(LIVE_HERMES_IMPORT.exists(), "live Hermes import is absent")
     def test_live_independent_hermes_import_is_disabled_and_canonical_routed(
         self,
     ) -> None:
+        self.assertFalse((LIVE_HERMES_IMPORT / "SKILL.md").exists())
         for path in (
-            (LIVE_HERMES_IMPORT / "SKILL.md", EXTERNAL_SKILL_STUB),
+            (
+                LIVE_HERMES_IMPORT / "SKILL.disabled.md",
+                EXTERNAL_SKILL_TOMBSTONE,
+            ),
             (
                 LIVE_HERMES_IMPORT / "references" / "package-and-qc.md",
                 EXTERNAL_PACKAGE_STUB,
@@ -181,6 +247,36 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         ):
             live_path, expected = path
             self.assertEqual(expected, live_path.read_text(encoding="utf-8"))
+
+    @unittest.skipUnless(
+        LIVE_HERMES_PYTHON.is_file() and LIVE_CANONICAL_SKILL.exists(),
+        "live Hermes agent or canonical skill is absent",
+    )
+    def test_live_bare_skill_view_loads_only_canonical_content(self) -> None:
+        code = (
+            "from tools.skills_tool import skill_view\n"
+            "print(skill_view('custom-learning-audiobook', preprocess=False))\n"
+        )
+        result = subprocess.run(
+            [str(LIVE_HERMES_PYTHON), "-c", code],
+            cwd=LIVE_HERMES_AGENT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertTrue(payload.get("success"), payload)
+        skill_dir = Path(payload["skill_dir"])
+        self.assertEqual(LIVE_CANONICAL_SKILL.resolve(), skill_dir.resolve())
+        skill_file = skill_dir / "SKILL.md"
+        self.assertEqual("custom-learning-audiobook", skill_file.parent.name)
+        self.assertEqual(
+            (LIVE_CANONICAL_SKILL / "SKILL.md").resolve(), skill_file.resolve()
+        )
+        self.assertEqual(
+            (LIVE_CANONICAL_SKILL / "SKILL.md").read_text(encoding="utf-8"),
+            payload["content"],
+        )
 
 
 if __name__ == "__main__":

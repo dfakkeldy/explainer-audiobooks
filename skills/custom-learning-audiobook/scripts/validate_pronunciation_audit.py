@@ -1,16 +1,39 @@
 #!/usr/bin/env python3
-"""Validate Echo's schema-v1 pronunciation acceptance manifest."""
+"""Validate Echo's media-bound schema-v2 pronunciation acceptance manifest."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
+import re
 import sys
 from collections import Counter
 from pathlib import Path
 
 
-WATCH_WORDS = ("startable", "filesystem", "verified", "live", "lives", "record")
+WATCH_WORDS = (
+    "arithmetic",
+    "campbell",
+    "content",
+    "fakkeldy",
+    "filesystem",
+    "live",
+    "lives",
+    "re",
+    "read",
+    "readme",
+    "record",
+    "resume",
+    "resumes",
+    "résumé",
+    "résumés",
+    "startable",
+    "timeframe",
+    "verified",
+    "xcassets",
+    "xcode",
+)
 REQUIRED_FIELDS = {
     "schemaVersion",
     "renderVersion",
@@ -21,6 +44,7 @@ REQUIRED_FIELDS = {
     "diagnostics",
     "legacyChapterIndexes",
     "audiobookFileName",
+    "audiobookSHA256",
 }
 DECISION_REQUIRED_FIELDS = {
     "blockID",
@@ -55,6 +79,7 @@ DECISION_SOURCES = {
 }
 TIMING_PRECISIONS = {"exactSynthesisWord", "blockAnchorFallback"}
 INT32_MAX = (2**31) - 1
+INT64_MAX = (2**63) - 1
 
 
 class AuditValidationError(ValueError):
@@ -75,8 +100,24 @@ def require_nonempty_string(value: object, field: str) -> str:
 
 
 def require_nonnegative_int(value: object, field: str) -> int:
-    require(type(value) is int and value >= 0, f"{field} must be a nonnegative integer")
+    require(
+        type(value) is int and 0 <= value <= INT64_MAX,
+        f"{field} must be a nonnegative signed 64-bit integer",
+    )
     return value
+
+
+def require_sha256(value: object, field: str) -> str:
+    require(
+        isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None,
+        f"{field} must be exactly 64 lowercase hexadecimal characters",
+    )
+    return value
+
+
+def file_sha256(path: Path) -> str:
+    with path.open("rb") as input_file:
+        return hashlib.file_digest(input_file, "sha256").hexdigest()
 
 
 def validate_audio_range(value: object, field: str) -> bool:
@@ -167,13 +208,11 @@ def validate(audit_path: Path) -> None:
     missing = sorted(REQUIRED_FIELDS - payload.keys())
     require(not missing, f"manifest missing fields: {missing}")
     require(
-        type(payload["schemaVersion"]) is int and payload["schemaVersion"] == 1,
-        "schemaVersion must be 1",
+        type(payload["schemaVersion"]) is int and payload["schemaVersion"] == 2,
+        "schemaVersion must be 2",
     )
-    require(
-        type(payload["renderVersion"]) is int and payload["renderVersion"] > 0,
-        "renderVersion must be a positive integer",
-    )
+    render_version = require_nonnegative_int(payload["renderVersion"], "renderVersion")
+    require(render_version > 0, "renderVersion must be a positive integer")
     require_nonempty_string(payload["voice"], "voice")
     require(payload["coverage"] == "complete", "coverage must be complete")
     require(isinstance(payload["decisions"], list), "decisions must be an array")
@@ -198,6 +237,16 @@ def validate(audit_path: Path) -> None:
         payload["audiobookFileName"] == f"{stem}.m4b",
         "audiobook filename is not relative or does not match the audit stem",
     )
+    audiobook_path = audit_path.parent / f"{stem}.m4b"
+    require(
+        audiobook_path.is_file() and not audiobook_path.is_symlink(),
+        "listed audiobook is missing, a symlink, or not a file",
+    )
+    audiobook_sha256 = require_sha256(payload["audiobookSHA256"], "audiobookSHA256")
+    require(
+        file_sha256(audiobook_path) == audiobook_sha256,
+        "audiobookSHA256 does not match exact sibling audiobook bytes",
+    )
 
     decisions = [
         validate_decision(decision, index)
@@ -220,6 +269,11 @@ def validate(audit_path: Path) -> None:
 
     expected_reel_name = f"{stem}.pronunciation-reel.m4b"
     reel_name = payload.get("listeningReelFileName")
+    reel_sha256 = payload.get("listeningReelSHA256")
+    require(
+        (reel_name is None) == (reel_sha256 is None),
+        "listeningReelFileName and listeningReelSHA256 must appear together",
+    )
     require(
         reel_name is None or reel_name == expected_reel_name,
         "listening reel filename is not relative or does not match the audit stem",
@@ -231,7 +285,24 @@ def validate(audit_path: Path) -> None:
             "unlisted listening reel is present",
         )
     else:
-        require(reel_path.is_file(), "listed listening reel is missing or not a file")
+        require(
+            reel_path.is_file() and not reel_path.is_symlink(),
+            "listed listening reel is missing, a symlink, or not a file",
+        )
+        expected_reel_sha256 = require_sha256(reel_sha256, "listeningReelSHA256")
+        require(
+            file_sha256(reel_path) == expected_reel_sha256,
+            "listeningReelSHA256 does not match exact sibling reel bytes",
+        )
+        require(
+            any(
+                decision.get("chapterRelativeAudioRange") is not None
+                and decision.get("bookRelativeAudioRange") is not None
+                and decision.get("timingPrecision") is not None
+                for decision in decisions
+            ),
+            "listed listening reel requires an eligible timed pronunciation decision",
+        )
 
 
 def main(arguments: list[str]) -> int:

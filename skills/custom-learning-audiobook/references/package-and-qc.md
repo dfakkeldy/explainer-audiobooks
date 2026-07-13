@@ -131,6 +131,7 @@ Use this run layout:
     editorial-review.md
     visuals.md
     echo-render-inputs-<run-id>.env
+    echo-render-output.owner.env  # present only while governed narration runs
   chapters/
     ch01.md
     ch02.md
@@ -320,6 +321,9 @@ the explainer-audiobooks repo root in Bash. The bundled preflight starts with
 `set -euo pipefail`, calls the memory gate and `make -C "$ECHO_REPO" echo-cli`
 without changing the caller's directory, and accepts only the deterministic
 `$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli` product.
+Never invoke a DerivedData `Debug/echo-cli`, a raw direct `echo-cli narrate`, or
+an older audiobook worktree command for a governed render; those paths bypass
+the wrapper's provenance, resource leases, and locked postchecks.
 
 Every governed render needs a nonempty approved source revision. Set
 `APPROVED_ECHO_PRONUNCIATION_SHA` to the reviewed Echo commit that established
@@ -333,9 +337,11 @@ A feature-worktree edit does not update installed agents merely because their
 paths are symlinks: those links resolve the canonical checkout at
 `/Users/dfakkeldy/Developer/explainer-audiobooks`. Run
 `tools/validate_custom_learning_skill_install.py` before claiming parity.
-The validator also requires the independent OpenClaw import to be the exact
-disabled stub and confirms that `hermes skills list --source local` discovers
-the canonical skill rather than the duplicate.
+The validator also requires the independent OpenClaw import to have no
+discoverable `SKILL.md`, preserves its exact `SKILL.disabled.md` tombstone, and
+confirms both that `hermes skills list --source local` reports one canonical
+skill and that Hermes' real bare `skill_view('custom-learning-audiobook')`
+loads the canonical `SKILL.md` content.
 `installed_skill_parity: pending-integration` means the branch is tested but the
 installed canonical checkout is still old; do not report installed parity until
 the tool says `current` after integration.
@@ -348,30 +354,28 @@ immutable-input receipt. The full approved revision is a component of `RUN_ID`,
 so two approved ancestor boundaries never share `WORK`, `DB`, or a receipt. An
 existing receipt for the same ID must match byte-for-byte, and pre-existing
 `WORK` or `DB` data without that matching receipt fails closed before resume.
-Stop immediately on any failure:
+The narration wrapper then acquires nonblocking kernel leases for every
+canonicalized shared resource: `WORK`, `DB`, M4B, sidecar, audit, and reel. Each
+resource identity is SHA-256-keyed independently, so different `RUN_ID` values
+still conflict if any output path overlaps. The lease file descriptors are
+inherited by the governed shell and Echo child, remain held through all of
+`echo-cli narrate`, and release automatically after process exit—even if the
+outer helper is killed. The wrapper revalidates Echo source, EPUB, Release CLI,
+and the immutable receipt both before and after narration while those leases are
+held. A mismatch exits nonzero; its artifacts are not accepted, validated, or
+published. Stop immediately on any failure:
 
 ```bash
 set -euo pipefail
 EXPLAINER_ROOT=$(git rev-parse --show-toplevel)
-RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
-DIST="$RUN_ROOT/dist"
-VOICE=am_michael
+export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
+export DIST="$RUN_ROOT/dist"
+export VOICE=am_michael
+export SLUG TITLE
 : "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
+export APPROVED_ECHO_PRONUNCIATION_SHA
 
-source "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_preflight.sh"
-echo_pronunciation_preflight
-
-"$CLI" narrate \
-  --epub "$DIST/$SLUG.epub" \
-  --out "$DIST/$SLUG.m4b" \
-  --sidecar "$DIST/$SLUG.alignment.json" \
-  --voice "$VOICE" \
-  --title "$TITLE" \
-  --author "Dan Fakkeldy" \
-  --work-dir "$WORK" \
-  --db "$DB" \
-  --jobs 1 \
-  --threads 2
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh"
 ```
 
 Pronunciation review is on by default; it applies approved rules before TTS and
@@ -385,20 +389,40 @@ reviewed render and `$DIST/$SLUG.pronunciation-reel.m4b` when review samples are
 available. The audit JSON is required even when there are zero decisions; an
 empty reel is not created.
 
-If `am_michael` fails because the voice resource is unavailable, retry with
-`VOICE=am_puck`, rerun `echo_pronunciation_preflight`, and then rerun narration
-with the newly exported `RUN_ID`, `WORK`, and `DB`. Record the fallback. Do not
-silently use `af_heart`.
+If `am_michael` fails because the voice resource is unavailable, set and export
+`VOICE=am_puck`, then rerun the wrapper. Its preflight derives a new `RUN_ID`,
+`WORK`, `DB`, receipt, and resource leases. Record the fallback. Do not silently use
+`af_heart`.
 
 Use a fresh `--work-dir` and `--db` whenever the source EPUB changes or the
 Release CLI binary or Echo source revision changes. Permit `--resume` only for
 the same immutable source EPUB, approved/source revisions, Release CLI binary,
 voice, and capture set. Re-read `ECHO_RENDER_INPUT_RECEIPT`, require every value
-and existing completed capture to match, then rerun the exact narration command
-with `--resume` and its original `WORK`/`DB`. Never copy old captures into a new
-run, edit a receipt, or resume after editing the EPUB or rebuilding Echo; the
-content-addressed `RUN_ID` selects fresh paths and the preflight rejects
-unreceipted or mismatched pre-existing paths.
+and existing completed capture to match, then rerun the wrapper with `--resume`;
+it must select the original `WORK`/`DB` and acquire all resource leases before it
+invokes Echo:
+
+```bash
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" --resume
+```
+
+Never copy old captures into a new run, edit a receipt, or resume after editing
+the EPUB or rebuilding Echo; the content-addressed `RUN_ID` selects fresh paths
+and the preflight rejects unreceipted or mismatched pre-existing paths.
+
+An active kernel lease fails closed before a second Echo process starts. Owner
+metadata is diagnostic, not the lock itself. After acquiring all kernel leases,
+the wrapper may remove exact local stale metadata only when its hostname, PID,
+process-start identity, run, and all resource paths prove that the old owner is
+gone. It never automatically removes remote-host or malformed metadata. For an
+operator-led check of an exact local stale record, use:
+
+```bash
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" --recover-stale-lock
+```
+
+Recovery does not narrate. Rerun the wrapper normally or with `--resume` after a
+successful recovery. Do not delete lease or owner files by hand.
 
 Do not add a self-imposed timeout around `echo-cli narrate`, kill a progressing
 render because it may take several hours, or replace it with Apple/macOS/system
@@ -424,6 +448,9 @@ Verify the final sidecar against the exact EPUB and audio, then validate the
 automatic pronunciation audit. These are release gates, not optional QA:
 
 ```bash
+source "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_preflight.sh"
+echo_pronunciation_preflight
+
 ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "$DIST/$SLUG.m4b"
 
@@ -443,13 +470,18 @@ test ! -f "$REEL" || ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "$REEL"
 ```
 
-Require `SIDECAR_OK` from `verify-sidecar`. The manifest schema version is `1`.
+Require `SIDECAR_OK` from `verify-sidecar`. The media-bound manifest schema
+version is `2`.
 Require `coverage=complete`, a positive integer render version, a nonempty
 voice, schema-valid decision objects and timing ranges, and watch counts that
 match decisions across the complete emitted watch vocabulary, including zero
-counts. Reconcile every diagnostic before delivery. A missing reel is valid
+counts. Require `audiobookSHA256` to match the exact raw sibling M4B bytes. When
+a reel is listed, require `listeningReelSHA256` to match the exact raw sibling
+reel bytes; reel filename and hash must be present or absent together. Reconcile
+every diagnostic before delivery. A missing reel is valid
 only when `listeningReelFileName` is absent or null and there are no review
-samples.
+samples. A listed reel must exist and have at least one eligible pronunciation
+decision with validated chapter- and book-relative timing.
 When a reel exists, inspect its chapter labels and listen to its samples (or the
 matching final-audiobook passages). Automated checks do not substitute for
 hearing the result: human listening remains explicitly pending until someone

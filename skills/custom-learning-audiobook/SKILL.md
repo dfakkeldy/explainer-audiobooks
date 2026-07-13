@@ -153,7 +153,7 @@ research, write one coherent manuscript, and package the result for Echo.
 | Sampler | 45-75 minutes when the topic is vague or commitment is light |
 | Audience | Curious beginner unless the request says otherwise |
 | Narrator | `am_michael`; fallback `am_puck`; do not default to `af_heart` |
-| Audio renderer | Native Echo/Kokoro through `echo-cli narrate`; no Apple/system-voice substitute |
+| Audio renderer | Native Echo/Kokoro through the governed narration wrapper; no raw Debug CLI or Apple/system-voice substitute |
 | Author metadata | `Dan Fakkeldy` |
 | Writing model metadata | Record the frontier author as contributor/source note |
 | Model routing | Frontier model: outline, Markdown prose, substantive revisions. Cheaper workers: research extraction, citation checks, diagnostics, package/render/QC only. |
@@ -295,9 +295,14 @@ research, write one coherent manuscript, and package the result for Echo.
     "$RUN_ROOT/research/prose-style-receipt.json"`; packaging stops if it is
     missing, failed, or stale.
 
-12. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
+12. **Render native Echo audio.** Use the governed Echo narration wrapper from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
-   only as an Echo voice fallback. Echo audio is part of the delivery contract:
+   only as an Echo voice fallback. The wrapper owns the Release preflight,
+   content-addressed paths, and FD-backed leases for the canonicalized
+   work/database and every emitted media path. Those leases remain held through
+   locked pre/post hash verification and the actual `echo-cli narrate` process;
+   do not bypass the wrapper with a direct CLI command. Echo
+   audio is part of the delivery contract:
    do not impose your own time limit, deadline, or "too slow" threshold just
    because synthesis may take hours. Let long renders run, resume partial
    renders, or report the exact live blocker. Do not replace Echo/Kokoro with
@@ -310,8 +315,9 @@ research, write one coherent manuscript, and package the result for Echo.
    render. Supply and record the reviewed
    `APPROVED_ECHO_PRONUNCIATION_SHA`; the package preflight fails closed unless
    it is an ancestor of or equal to the Echo source being built. Use the tested
-   Release preflight, immutable-input receipt, and bounded job/thread settings in
-   the package reference. If native Echo audio is blocked and the user has not
+   Release preflight, immutable-input receipt, resource leases, and bounded
+   job/thread settings in the package reference. If native Echo audio is blocked
+   and the user has not
    approved a non-Echo substitute, surface only the EPUB/Markdown from the run
    folder as clearly labelled interim files and report the blocker. Do not call
    that an Echo-ready or complete governed package, and do not proceed to
@@ -381,6 +387,8 @@ research, write one coherent manuscript, and package the result for Echo.
   is allowed work, not a reason to downgrade the package.
 - Do not use Apple/macOS/system narration as a fallback for Echo audio unless
   the user explicitly asks for a non-Echo preview or substitute.
+- Do not bypass the governed narration wrapper with a raw `echo-cli narrate` or
+  DerivedData `Debug/echo-cli` command.
 - Do not leave a public-safe finished package only in `~/Downloads/book-inbox`
   or the transient `.build/` folder; use the governed default iCloud delivery.
 - Private or sensitive packages stay in the agreed private project folder and
