@@ -1,0 +1,33 @@
+{
+  "candidate": {
+    "direction_name": "Compact Ribbon / Editorial Footer",
+    "id": "c2a-compact-ribbon-editorial-footer"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    1600,
+    2560
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "editorial-serif": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+    "technical-mono": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
+  },
+  "output": "cover.png",
+  "output_sha256": "e1afe1fbcbd440927c8d4d62de475af3230afe0d8edbbb6a886c498fc21af2a2",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "cover-source.png",
+  "source_art_sha256": "cced16a14a0aaced901af7ffd0b140c4d6e13fdf88bd3da22a9724fb7bad9812",
+  "spec": "cover-spec.json",
+  "spec_sha256": "917f7f7b6866e668c3da8b144609ecf093d111112c0177d2d92a179678fc53e3",
+  "thumbnail": "cover-thumbnail.png",
+  "thumbnail_sha256": "6c1767504d21fd3c1dd1f46a4e9b094aeb8936cb64b45f48a5d361f9d8552f45",
+  "warnings": [
+    "layer 6 advisory contrast ratio is 2.97:1"
+  ]
+}
