@@ -15,7 +15,25 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 
-from cover_receipts import SelectionReceipt, load_selection, verify_package
+from cover_receipts import (
+    PairedSelectionReceipt,
+    SelectionReceipt,
+    load_selection,
+    verify_package,
+)
+
+
+PAIRED_ARTIFACT_NAMES = (
+    "cover.png",
+    "m4b-cover.png",
+    "cover-thumbnail.png",
+    "m4b-cover-thumbnail.png",
+    "cover-spec.json",
+    "m4b-cover-spec.json",
+    "cover-render.json",
+    "m4b-cover-render.json",
+    "cover-selection.json",
+)
 
 
 @dataclass(frozen=True)
@@ -33,8 +51,8 @@ class _Snapshot:
 
 
 def classify_destination(
-    source: SelectionReceipt,
-    destination: SelectionReceipt | None,
+    source: SelectionReceipt | PairedSelectionReceipt,
+    destination: SelectionReceipt | PairedSelectionReceipt | None,
     intent: str,
     destination_has_artifacts: bool = False,
 ) -> str:
@@ -48,7 +66,7 @@ def classify_destination(
         if destination_has_artifacts:
             return "supersede-unreceipted"
         return "new"
-    if asdict(source) == asdict(destination):
+    if type(source) is type(destination) and asdict(source) == asdict(destination):
         return "reuse"
     if (
         source.book_slug != destination.book_slug
@@ -57,7 +75,7 @@ def classify_destination(
         raise ValueError("cover receipt conflict: book or edition differs")
     if intent != "supersede":
         raise ValueError("cover receipt conflict: explicit supersede intent required")
-    if source.selection_source not in {"explicit-user-choice", "requested-mix"}:
+    if source.selection_source not in {"explicit-user-choice", "requested-mix", "user", "mixed"}:
         raise ValueError("cover receipt conflict: source selection is not explicit")
     if datetime.fromisoformat(source.selected_at) <= datetime.fromisoformat(
         destination.selected_at
@@ -66,11 +84,12 @@ def classify_destination(
     return "supersede"
 
 
-def require_public_permission(selection: SelectionReceipt) -> None:
-    if selection.privacy != {
-        "classification": "public-safe",
-        "permission_to_publish": "granted",
-    }:
+def require_public_permission(
+    selection: SelectionReceipt | PairedSelectionReceipt,
+) -> None:
+    permission = selection.privacy.get("permission_to_publish")
+    permitted = permission is True if isinstance(selection, PairedSelectionReceipt) else permission == "granted"
+    if selection.privacy.get("classification") != "public-safe" or not permitted:
         raise ValueError(
             "public destination requires public-safe and permissioned selection"
         )
@@ -276,7 +295,7 @@ def sync_selected_cover(
     selection_path: Path,
     cover_path: Path,
     epub_path: Path,
-    m4b_path: Path,
+    m4b_path: Path | None,
     destination: Path,
     *,
     intent: str,
@@ -284,40 +303,70 @@ def sync_selected_cover(
     checksum_manifest: Path | None = None,
     public_destination: bool = False,
     fail_after: int | None = None,
+    artifact_map: dict[str, Path] | None = None,
 ) -> SyncResult:
     selection_path = Path(selection_path)
     cover_path = Path(cover_path)
     epub_path = Path(epub_path)
-    m4b_path = Path(m4b_path)
+    m4b_path = Path(m4b_path) if m4b_path is not None else None
     destination = Path(destination)
     checksum_path = Path(checksum_manifest) if checksum_manifest is not None else None
     if fail_after is not None and fail_after < 1:
         raise ValueError("fail_after must be positive")
 
-    artifact_names = (
-        "cover.png",
-        epub_path.name,
-        m4b_path.name,
-        "cover-selection.json",
-    )
+    paired = artifact_map is not None
+    if paired:
+        if tuple(artifact_map) != PAIRED_ARTIFACT_NAMES:
+            if set(artifact_map) != set(PAIRED_ARTIFACT_NAMES):
+                raise ValueError("paired artifact map must contain exactly the canonical artifact names")
+            artifact_map = {name: artifact_map[name] for name in PAIRED_ARTIFACT_NAMES}
+        artifact_names = PAIRED_ARTIFACT_NAMES + (epub_path.name,) + (() if m4b_path is None else (m4b_path.name,))
+    else:
+        if m4b_path is None:
+            raise ValueError("legacy sync requires an M4B")
+        artifact_names = ("cover.png", epub_path.name, m4b_path.name, "cover-selection.json")
     if len(artifact_names) != len(set(artifact_names)):
         raise ValueError("artifact names collide")
-    sources = {
-        "cover.png": cover_path,
-        epub_path.name: epub_path,
-        m4b_path.name: m4b_path,
-        "cover-selection.json": selection_path,
-    }
+    sources = (
+        {name: Path(artifact_map[name]) for name in PAIRED_ARTIFACT_NAMES}
+        if artifact_map is not None
+        else {"cover.png": cover_path, epub_path.name: epub_path, m4b_path.name: m4b_path, "cover-selection.json": selection_path}
+    )
+    sources[epub_path.name] = epub_path
+    if paired and m4b_path is not None:
+        sources[m4b_path.name] = m4b_path
+    if paired:
+        selection_path = sources["cover-selection.json"]
+        cover_path = sources["cover.png"]
     files, targets = _validate_paths(sources, destination, checksum_path)
 
     source = load_selection(selection_path)
-    verify_package(
-        selection_path,
-        cover_path,
-        epub_path=epub_path,
-        m4b_path=m4b_path,
-        receipt_path=selection_path,
-    )
+    if paired:
+        verify_package(
+            selection_path, cover_path, m4b_cover_path=sources["m4b-cover.png"],
+            epub_path=epub_path, m4b_path=m4b_path, receipt_path=selection_path,
+        )
+    else:
+        verify_package(
+            selection_path, cover_path, epub_path=epub_path,
+            m4b_path=m4b_path, receipt_path=selection_path,
+        )
+    if paired:
+        if not isinstance(source, PairedSelectionReceipt):
+            raise ValueError("paired artifact map requires a paired selection receipt")
+        governed_hashes = {
+            "cover.png": source.variants["portrait"].cover_sha256,
+            "m4b-cover.png": source.variants["square"].cover_sha256,
+            "cover-thumbnail.png": source.variants["portrait"].thumbnail_sha256,
+            "m4b-cover-thumbnail.png": source.variants["square"].thumbnail_sha256,
+            "cover-spec.json": source.variants["portrait"].specification_sha256,
+            "m4b-cover-spec.json": source.variants["square"].specification_sha256,
+            "cover-render.json": source.variants["portrait"].render_receipt_sha256,
+            "m4b-cover-render.json": source.variants["square"].render_receipt_sha256,
+        }
+        for name, expected in governed_hashes.items():
+            if hashlib.sha256(sources[name].read_bytes()).hexdigest() != expected:
+                raise ValueError(f"{name} does not match paired selection receipt")
     if public_destination:
         require_public_permission(source)
 
@@ -327,15 +376,18 @@ def sync_selected_cover(
         if _lexists(destination_receipt_path)
         else None
     )
-    destination_has_artifacts = any(_lexists(targets[name]) for name in files[:-1])
+    destination_has_artifacts = any(
+        _lexists(targets[name]) for name in files if name != "cover-selection.json"
+    )
     decision = classify_destination(
         source,
         destination_receipt,
         intent,
         destination_has_artifacts,
     )
+    governed_checksums = sources if not paired else {name: sources[name] for name in PAIRED_ARTIFACT_NAMES}
     checksum_bytes = (
-        _checksum_payload(checksum_path, sources)
+        _checksum_payload(checksum_path, governed_checksums)
         if checksum_path is not None
         else None
     )
@@ -354,6 +406,21 @@ def sync_selected_cover(
             prefix=".cover-sync-backup-", dir=destination
         ) as raw_backup:
             backup_dir = Path(raw_backup)
+            staging = backup_dir / "staging"
+            staging.mkdir()
+            staged_sources: dict[str, Path] = {}
+            for name in files:
+                staged = staging / name
+                shutil.copy2(sources[name], staged)
+                staged_sources[name] = staged
+            if paired:
+                verify_package(
+                    staged_sources["cover-selection.json"], staged_sources["cover.png"],
+                    m4b_cover_path=staged_sources["m4b-cover.png"],
+                    epub_path=staged_sources[epub_path.name],
+                    m4b_path=staged_sources.get(m4b_path.name) if m4b_path is not None else None,
+                    receipt_path=staged_sources["cover-selection.json"],
+                )
             ordered_targets = [targets[name] for name in files]
             if checksum_path is not None:
                 ordered_targets.append(checksum_path)
@@ -366,7 +433,7 @@ def sync_selected_cover(
                 for name in files:
                     target = targets[name]
                     attempted.append(target)
-                    _publish_copy(sources[name], target)
+                    _publish_copy(staged_sources[name], target)
                     if fail_after is not None and len(attempted) == fail_after:
                         raise RuntimeError("injected sync failure")
                 if checksum_path is not None:
@@ -374,13 +441,14 @@ def sync_selected_cover(
                         raise RuntimeError("missing checksum update payload")
                     attempted.append(checksum_path)
                     _publish_bytes(checksum_bytes, checksum_path)
-                verify_package(
-                    destination_receipt_path,
-                    targets["cover.png"],
-                    epub_path=targets[epub_path.name],
-                    m4b_path=targets[m4b_path.name],
-                    receipt_path=destination_receipt_path,
-                )
+                verification_kwargs = {
+                    "epub_path": targets[epub_path.name],
+                    "m4b_path": targets.get(m4b_path.name) if m4b_path is not None else None,
+                    "receipt_path": destination_receipt_path,
+                }
+                if paired:
+                    verification_kwargs["m4b_cover_path"] = targets["m4b-cover.png"]
+                verify_package(destination_receipt_path, targets["cover.png"], **verification_kwargs)
             except Exception as error:
                 apply_error = error
                 rollback_errors = _rollback(attempted, snapshots)
@@ -409,13 +477,23 @@ def main() -> int:
     parser.add_argument("--selection", required=True, type=Path)
     parser.add_argument("--cover", required=True, type=Path)
     parser.add_argument("--epub", required=True, type=Path)
-    parser.add_argument("--m4b", required=True, type=Path)
+    parser.add_argument("--m4b", type=Path)
+    parser.add_argument(
+        "--paired-artifact-dir", type=Path,
+        help="Directory containing the nine canonical paired cover/provenance artifacts",
+    )
     parser.add_argument("--destination", required=True, type=Path)
     parser.add_argument("--intent", required=True, choices=("reuse", "supersede"))
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--checksum-manifest", type=Path)
     parser.add_argument("--public-destination", action="store_true")
     arguments = parser.parse_args()
+    artifact_map = None
+    if arguments.paired_artifact_dir is not None:
+        artifact_map = {
+            name: arguments.paired_artifact_dir / name
+            for name in PAIRED_ARTIFACT_NAMES
+        }
     result = sync_selected_cover(
         arguments.selection,
         arguments.cover,
@@ -426,6 +504,7 @@ def main() -> int:
         apply=arguments.apply,
         checksum_manifest=arguments.checksum_manifest,
         public_destination=arguments.public_destination,
+        artifact_map=artifact_map,
     )
     print(json.dumps(asdict(result), sort_keys=True))
     return 0

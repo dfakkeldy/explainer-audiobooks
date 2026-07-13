@@ -11,7 +11,12 @@ from pathlib import Path
 from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).parents[1] / "skill" / "scripts"))
-from cover_receipts import SelectionReceipt
+from cover_receipts import (
+    PairedSelectionReceipt,
+    SelectedCandidate,
+    SelectedVariant,
+    SelectionReceipt,
+)
 import sync_selected_cover
 
 
@@ -38,6 +43,47 @@ def write_source_package(root: Path) -> tuple[Path, Path, Path, Path]:
         receipt(cover_hash=hashlib.sha256(cover.read_bytes()).hexdigest()),
     )
     return selection, cover, epub, m4b
+
+
+PAIRED_NAMES = (
+    "cover.png", "m4b-cover.png", "cover-thumbnail.png",
+    "m4b-cover-thumbnail.png", "cover-spec.json", "m4b-cover-spec.json",
+    "cover-render.json", "m4b-cover-render.json", "cover-selection.json",
+)
+
+
+def write_paired_package(root: Path, *, include_m4b: bool = True):
+    source = root / "paired-source"
+    source.mkdir()
+    artifacts: dict[str, Path] = {}
+    for name in PAIRED_NAMES[:-1]:
+        path = source / name
+        path.write_bytes(f"new-{name}".encode())
+        artifacts[name] = path
+    def variant(stem: str, dimensions: tuple[int, int]) -> SelectedVariant:
+        return SelectedVariant(
+            hashlib.sha256(artifacts[f"{stem}-spec.json"].read_bytes()).hexdigest(),
+            hashlib.sha256(artifacts[f"{stem}-render.json"].read_bytes()).hexdigest(),
+            hashlib.sha256(artifacts[f"{stem}.png"].read_bytes()).hexdigest(),
+            dimensions,
+            hashlib.sha256(artifacts[f"{stem}-thumbnail.png"].read_bytes()).hexdigest(),
+            stem == "cover",
+        )
+    selected = PairedSelectionReceipt(
+        2, "fixture-book", "public-v1", SelectedCandidate("c1", "Pair"),
+        "1" * 64, {
+            "portrait": variant("cover", (1600, 2560)),
+            "square": variant("m4b-cover", (2400, 2400)),
+        },
+        "2" * 64, "user", "2026-07-13T12:00:00-03:00",
+        {"classification": "public-safe", "permission_to_publish": True},
+    )
+    selection = source / "cover-selection.json"
+    selection.write_text(json.dumps(asdict(selected)), encoding="utf-8")
+    artifacts[selection.name] = selection
+    epub = source / "book.epub"; epub.write_bytes(b"new-epub")
+    m4b = source / "book.m4b"; m4b.write_bytes(b"new-m4b")
+    return selected, artifacts, epub, m4b if include_m4b else None
 
 
 class SyncSelectedCoverTests(unittest.TestCase):
@@ -311,6 +357,93 @@ class SyncSelectedCoverTests(unittest.TestCase):
                 self.assertEqual(payload, (destination / name).read_bytes())
             self.assertEqual(original_manifest, checksums.read_bytes())
             self.assertEqual([], list(destination.glob(".*.incoming")))
+
+    def test_paired_apply_has_exact_ordered_changed_set_and_preserves_unrelated_files(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            selected, artifacts, epub, m4b = write_paired_package(root)
+            destination = root / "destination"; destination.mkdir()
+            unrelated = destination / "alignment.json"; unrelated.write_bytes(b"unrelated")
+            rodents = destination / "rodents-legacy-fixture.epub"; rodents.write_bytes(b"rodents")
+            checksums = destination / "SHA256SUMS"
+            checksums.write_text(f"{'f' * 64}  alignment.json\n", encoding="utf-8")
+
+            with mock.patch.object(sync_selected_cover, "verify_package") as verify:
+                result = sync_selected_cover.sync_selected_cover(
+                    artifacts["cover-selection.json"], artifacts["cover.png"], epub,
+                    m4b, destination, intent="reuse", apply=True,
+                    checksum_manifest=checksums, public_destination=True,
+                    artifact_map=artifacts,
+                )
+
+            self.assertEqual(PAIRED_NAMES + ("book.epub", "book.m4b"), result.files)
+            self.assertEqual(b"unrelated", unrelated.read_bytes())
+            self.assertEqual(b"rodents", rodents.read_bytes())
+            self.assertEqual(set(PAIRED_NAMES + ("book.epub", "book.m4b", "SHA256SUMS", "alignment.json", "rodents-legacy-fixture.epub")), {p.name for p in destination.iterdir()})
+            manifest = checksums.read_text(encoding="utf-8")
+            self.assertIn(f"{'f' * 64}  alignment.json", manifest)
+            for name in PAIRED_NAMES:
+                self.assertIn(f"  {name}\n", manifest)
+            self.assertGreaterEqual(verify.call_count, 2)
+            self.assertEqual(selected, sync_selected_cover.load_selection(destination / "cover-selection.json"))
+
+    def test_paired_dry_run_is_immutable_and_optional_m4b_is_omitted(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            _selected, artifacts, epub, _m4b = write_paired_package(root, include_m4b=False)
+            destination = root / "destination"; destination.mkdir()
+            marker = destination / "marker"; marker.write_bytes(b"same")
+            before = {p.name: p.read_bytes() for p in destination.iterdir()}
+            with mock.patch.object(sync_selected_cover, "verify_package"):
+                result = sync_selected_cover.sync_selected_cover(
+                    artifacts["cover-selection.json"], artifacts["cover.png"], epub,
+                    None, destination, intent="reuse", apply=False,
+                    artifact_map=artifacts,
+                )
+            self.assertEqual(PAIRED_NAMES + ("book.epub",), result.files)
+            self.assertEqual(before, {p.name: p.read_bytes() for p in destination.iterdir()})
+
+    def test_paired_rejects_unknown_missing_and_aliased_sources_before_verification(self) -> None:
+        for mutation, message in (("unknown", "canonical"), ("missing", "exactly"), ("alias", "source artifacts alias")):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                _selected, artifacts, epub, m4b = write_paired_package(root)
+                if mutation == "unknown":
+                    artifacts["surprise.png"] = artifacts["cover.png"]
+                elif mutation == "missing":
+                    artifacts.pop("m4b-cover-spec.json")
+                else:
+                    artifacts["m4b-cover.png"].unlink()
+                    os.link(artifacts["cover.png"], artifacts["m4b-cover.png"])
+                with mock.patch.object(sync_selected_cover, "verify_package") as verify, self.assertRaisesRegex(ValueError, message):
+                    sync_selected_cover.sync_selected_cover(
+                        artifacts["cover-selection.json"], artifacts["cover.png"], epub,
+                        m4b, root / "destination", intent="reuse", apply=False,
+                        artifact_map=artifacts,
+                    )
+                verify.assert_not_called()
+
+    def test_paired_failure_after_each_cover_rolls_back_regular_absent_and_symlink_targets(self) -> None:
+        for fail_after in (1, 2):
+            with self.subTest(fail_after=fail_after), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                _selected, artifacts, epub, m4b = write_paired_package(root)
+                destination = root / "destination"; destination.mkdir()
+                (destination / "cover.png").write_bytes(b"old-portrait")
+                link_target = destination / "old-square.png"; link_target.write_bytes(b"old-square")
+                (destination / "m4b-cover.png").symlink_to(link_target.name)
+                unrelated = destination / "keep"; unrelated.write_bytes(b"keep")
+                with mock.patch.object(sync_selected_cover, "verify_package"), self.assertRaisesRegex(RuntimeError, "injected sync failure"):
+                    sync_selected_cover.sync_selected_cover(
+                        artifacts["cover-selection.json"], artifacts["cover.png"], epub,
+                        m4b, destination, intent="supersede", apply=True,
+                        artifact_map=artifacts, fail_after=fail_after,
+                    )
+                self.assertEqual(b"old-portrait", (destination / "cover.png").read_bytes())
+                self.assertTrue((destination / "m4b-cover.png").is_symlink())
+                self.assertEqual(link_target.name, os.readlink(destination / "m4b-cover.png"))
+                self.assertFalse((destination / "cover-thumbnail.png").exists())
+                self.assertEqual(b"keep", unrelated.read_bytes())
 
 
 if __name__ == "__main__":

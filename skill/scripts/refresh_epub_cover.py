@@ -232,6 +232,8 @@ def _validate_rebuilt_epub(
         if name == cover_member:
             if actual != cover_data:
                 raise ValueError("rebuilt EPUB cover bytes do not match input")
+            if _zipinfo_metadata(rebuilt_info) != _zipinfo_metadata(source_info):
+                raise ValueError("rebuilt EPUB cover metadata changed")
         else:
             if actual != source.read(source_info):
                 raise ValueError(f"rebuilt EPUB non-cover payload changed: {name}")
