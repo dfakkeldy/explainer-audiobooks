@@ -29,7 +29,7 @@ class SkillCoverContractTests(unittest.TestCase):
             for required in (
                 "render_cover_pair(",
                 "cover-selection.json",
-                "explicit-user-choice",
+                "--selection-source user",
                 "--cover-selection",
                 "Echo/Kokoro",
                 "cover_receipts.py verify",
@@ -211,6 +211,17 @@ class SkillCoverContractTests(unittest.TestCase):
         for key in ("long", "custom", "package", "cover"):
             text = FILES[key].read_text(encoding="utf-8")
             self.assertNotIn("/make_cover.py \\\n  --spec", text)
+
+    def test_active_paired_selection_uses_current_cli_vocabulary(self) -> None:
+        legacy_markers = {
+            "custom": "The older command below is verification-only compatibility",
+            "package": "The following single-cover commands are verification-only compatibility",
+        }
+        for key, legacy_marker in legacy_markers.items():
+            text = FILES[key].read_text(encoding="utf-8")
+            active_text = text.split(legacy_marker, 1)[0]
+            self.assertIn("selection_source=user", active_text)
+            self.assertNotIn("selection_source=explicit-user-choice", active_text)
 
     def test_paired_chronology_is_literal_and_ordered(self) -> None:
         markers = (

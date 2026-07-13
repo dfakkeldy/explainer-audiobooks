@@ -248,7 +248,7 @@ research, write one coherent manuscript, and package the result for Echo.
    generated 160-pixel thumbnail with its art-and-type brief, font/palette note,
    and warnings. The renderer never selects automatically; a requested mix
    becomes a new specification and render. Record the human choice with
-   `selection_source=explicit-user-choice` (or `requested-mix`), but defer the
+   `selection_source=user` (or `requested-mix`), but defer the
    `cover-selection.json` command and governed EPUB build until the canonical
    Markdown finishes humanization, prose QC, frontier-author acceptance, and
    every substantive repair.

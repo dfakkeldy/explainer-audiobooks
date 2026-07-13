@@ -89,6 +89,23 @@ def main() -> int:
             f"{path} teaches active single-cover rendering",
         )
 
+    for path, legacy_marker in (
+        (
+            "skills/custom-learning-audiobook/SKILL.md",
+            "The older command below is verification-only compatibility",
+        ),
+        (
+            "skills/custom-learning-audiobook/references/package-and-qc.md",
+            "The following single-cover commands are verification-only compatibility",
+        ),
+    ):
+        active_text = read(path).split(legacy_marker, 1)[0]
+        require("selection_source=user" in active_text, f"{path} missing current paired selection source")
+        require(
+            "selection_source=explicit-user-choice" not in active_text,
+            f"{path} teaches legacy selection source for paired work",
+        )
+
     contains(
         "skill/SKILL.md",
         "am_michael",

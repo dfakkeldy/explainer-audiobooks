@@ -261,7 +261,7 @@ Only after that choice, assign `SLUG`, `EDITION_ID`, `SELECTED_AT`,
 from the approved run metadata. `SELECTED_AT` is an ISO-8601 timestamp;
 classification is `private`, `public-safe`, or `sensitive`; publication
 permission is `denied`, `granted`, or `not-requested`. Use
-`selection_source=explicit-user-choice`; for a requested mix, substitute
+`selection_source=user`; for a requested mix, substitute
 `requested-mix` after rendering the new specification.
 
 The following single-cover commands are verification-only compatibility for an
