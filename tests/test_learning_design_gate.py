@@ -310,5 +310,99 @@ class LearningDesignGateTests(LearningDesignFixture):
             self.module().validate_run(self.root)
 
 
+class LearningDesignBuilderTests(LearningDesignFixture):
+    def modules(self):
+        learning = importlib.import_module("learning_design_qc")
+        builder = importlib.import_module("build_book")
+        return learning, builder
+
+    def cli_base(self, out_dir: Path) -> list[str]:
+        return [
+            sys.executable,
+            str(SCRIPTS / "build_book.py"),
+            "--chapters-dir",
+            str(self.chapters),
+            "--out-dir",
+            str(out_dir),
+            "--title",
+            "Learning Gate Fixture",
+            "--author",
+            "Dan Fakkeldy",
+            "--slug",
+            "learning-gate-fixture",
+        ]
+
+    def test_book_builder_accepts_and_verifies_a_learning_receipt(self) -> None:
+        learning, builder = self.modules()
+        self.assertIn("learning_receipt", inspect.signature(builder.build).parameters)
+        receipt = self.research / "learning-design-receipt.json"
+        learning.write_receipt(self.root, receipt)
+        output = self.root / "dist"
+
+        builder.build(
+            self.chapters,
+            output,
+            "Learning Gate Fixture",
+            "Dan Fakkeldy",
+            "",
+            "learning-gate-fixture",
+            learning_receipt=receipt,
+        )
+        self.assertTrue((output / "learning-gate-fixture.epub").is_file())
+
+    def test_stale_learning_receipt_fails_before_output(self) -> None:
+        learning, builder = self.modules()
+        receipt = self.research / "learning-design-receipt.json"
+        learning.write_receipt(self.root, receipt)
+        (self.chapters / "ch02.md").write_text("## Changed\n\nChanged.\n", encoding="utf-8")
+        output = self.root / "dist"
+
+        with self.assertRaisesRegex(ValueError, "chapter hash"):
+            builder.build(
+                self.chapters,
+                output,
+                "Learning Gate Fixture",
+                "Dan Fakkeldy",
+                "",
+                "learning-gate-fixture",
+                learning_receipt=receipt,
+            )
+        self.assertFalse(output.exists())
+
+    def test_cli_requires_receipt_or_explicit_legacy_reproduction(self) -> None:
+        no_gate_output = self.root / "no-gate"
+        missing = subprocess.run(
+            self.cli_base(no_gate_output), capture_output=True, text=True, check=False
+        )
+        self.assertNotEqual(0, missing.returncode)
+        self.assertIn("--learning-receipt", missing.stderr)
+        self.assertFalse(no_gate_output.exists())
+
+        legacy_output = self.root / "legacy"
+        legacy = subprocess.run(
+            self.cli_base(legacy_output) + ["--legacy-without-learning-receipt"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, legacy.returncode, legacy.stderr)
+        self.assertTrue((legacy_output / "learning-gate-fixture.epub").is_file())
+
+    def test_cli_accepts_current_learning_receipt(self) -> None:
+        learning, _ = self.modules()
+        receipt = self.research / "learning-design-receipt.json"
+        learning.write_receipt(self.root, receipt)
+        output = self.root / "current"
+        result = subprocess.run(
+            self.cli_base(output) + ["--learning-receipt", str(receipt)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertTrue((output / "learning-gate-fixture.epub").is_file())
+
+
 if __name__ == "__main__":
     unittest.main()
