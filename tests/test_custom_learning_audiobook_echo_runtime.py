@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import os
+import pwd
 import re
 import shlex
 import signal
@@ -86,6 +87,12 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
         )
         self.resources = self.cli.parent / "EchoNarrationResources"
+        self.lease_root = (
+            Path(pwd.getpwuid(os.geteuid()).pw_dir)
+            / ".cache"
+            / "explainer-audiobooks"
+            / "echo-pronunciation-leases"
+        )
 
         self.echo.mkdir(parents=True)
         self.explainer.mkdir()
@@ -201,6 +208,13 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "elif [[ ${1:-} == narrate && ${2:-} == --help ]]; then\n"
             f"  echo '{help_text}'\n"
             "elif [[ ${1:-} == verify-sidecar ]]; then\n"
+            "  if [[ -n ${FAKE_TAMPER_RESUME_STATE_ON_VERIFY:-} ]]; then\n"
+            "    tamper_marker=$RUN_ROOT/research/fake-resume-tamper-fired\n"
+            "    if [[ ! -e $tamper_marker ]]; then\n"
+            "      printf 'changed after state seal' >\"$RUN_ROOT\"/narration-*.sqlite\n"
+            "      touch \"$tamper_marker\"\n"
+            "    fi\n"
+            "  fi\n"
             "  exit 0\n"
             "elif [[ ${1:-} == narrate ]]; then\n"
             "  shift\n"
@@ -246,6 +260,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "RUN_ROOT": str(self.run_root),
                 "VOICE": "am_michael",
                 "TITLE": "Fixture Book",
+                "ECHO_PRONUNCIATION_LEASE_ROOT": str(self.lease_root),
             }
         )
         environment["PATH"] = f"{self.fake_bin}:{environment['PATH']}"
@@ -264,12 +279,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             [
                 str(LEASE_HELPER),
                 "--lock-root",
-                str(
-                    self.home
-                    / ".cache"
-                    / "explainer-audiobooks"
-                    / "echo-pronunciation-leases"
-                ),
+                str(self.lease_root),
                 "--resource",
                 str(self.echo / ".build" / "cli"),
                 "--",
@@ -365,12 +375,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         command = [
             str(LEASE_HELPER),
             "--lock-root",
-            str(
-                self.home
-                / ".cache"
-                / "explainer-audiobooks"
-                / "echo-pronunciation-leases"
-            ),
+            str(self.lease_root),
         ]
         for resource in (
             self.echo / ".build" / "cli",
@@ -688,10 +693,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(self.run_root, database.parent)
         run_id = work.name.removeprefix("audio-work-")
         self.assertEqual(f"narration-{run_id}.sqlite", database.name)
-        lease_root = (
-            self.home / ".cache" / "explainer-audiobooks" / "echo-pronunciation-leases"
-        )
-        self.assertGreaterEqual(len(list(lease_root.glob("*.lock"))), 7)
+        self.assertGreaterEqual(len(list(self.lease_root.glob("*.lock"))), 7)
         self.assertFalse(
             (self.run_root / "research" / "echo-render-output.owner.env").exists()
         )
@@ -787,6 +789,60 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         first_stdout, first_stderr = first.communicate(timeout=5)
         self.assertEqual(0, first.returncode, f"{first_stdout}\n{first_stderr}")
         self.assertFalse(owner.exists())
+
+    def test_alternate_lock_root_cannot_fork_the_build_lease_namespace(self) -> None:
+        log = self.tmp / "alternate-root.log"
+        ready = self.tmp / "alternate-root-ready"
+        release = self.tmp / "alternate-root-release"
+        first_environment = self.environment()
+        first_environment.update(
+            {
+                "ECHO_PRONUNCIATION_LEASE_ROOT": str(self.tmp / "attacker-a"),
+                "FAKE_NARRATE_LOG": str(log),
+                "FAKE_NARRATE_READY": str(ready),
+                "FAKE_NARRATE_RELEASE": str(release),
+            }
+        )
+        first = subprocess.Popen(
+            [str(NARRATE_WRAPPER)],
+            cwd=self.explainer,
+            env=first_environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.addCleanup(lambda: first.poll() is None and first.kill())
+        self.wait_for_path(ready, first)
+
+        second_slug = "fixture-two"
+        second_run_root = (
+            self.explainer
+            / ".build"
+            / "custom-learning-audiobooks"
+            / second_slug
+        )
+        (second_run_root / "dist").mkdir(parents=True)
+        (second_run_root / "dist" / f"{second_slug}.epub").write_bytes(
+            b"second fixture epub"
+        )
+        second_environment = self.environment()
+        second_environment.update(
+            {
+                "ECHO_PRONUNCIATION_LEASE_ROOT": str(self.tmp / "attacker-b"),
+                "FAKE_NARRATE_LOG": str(log),
+                "SLUG": second_slug,
+                "RUN_ROOT": str(second_run_root),
+                "TITLE": "Second Fixture Book",
+            }
+        )
+        contender = self.run_narrate(environment=second_environment)
+
+        release.touch()
+        first_stdout, first_stderr = first.communicate(timeout=5)
+        self.assertEqual(75, contender.returncode, contender.stderr)
+        self.assertIn("active narration lease", contender.stderr)
+        self.assertEqual(1, log.read_text(encoding="utf-8").count("BEGIN="))
+        self.assertEqual(0, first.returncode, f"{first_stdout}\n{first_stderr}")
 
         resumed_environment = self.environment()
         resumed_environment["FAKE_NARRATE_LOG"] = str(log)
@@ -1033,6 +1089,21 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertNotEqual(0, resumed.returncode)
         self.assertIn("sealed Echo identity", resumed.stderr)
 
+    def test_success_rechecks_live_resume_state_after_the_final_seal(self) -> None:
+        environment = self.environment()
+        environment["FAKE_TAMPER_RESUME_STATE_ON_VERIFY"] = "1"
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(65, result.returncode, result.stderr)
+        self.assertIn("resume state receipt does not match", result.stderr)
+        self.assertFalse(
+            list((self.run_root / "research").glob("echo-render-success-*.json"))
+        )
+        self.assertFalse(
+            (self.run_root / "research" / "echo-render-current-accepted.json").exists()
+        )
+
     def test_success_exit_without_complete_outputs_is_not_published(self) -> None:
         environment = self.environment()
         environment["FAKE_SKIP_AUDIT"] = "1"
@@ -1064,6 +1135,15 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(1, len(receipts))
         receipt = json.loads(receipts[0].read_text(encoding="utf-8"))
         self.assertEqual(2, receipt["schemaVersion"])
+        state_receipt = next(
+            (self.run_root / "research").glob("echo-resume-state-*.json")
+        )
+        self.assertIn("resumeStateFileName", receipt)
+        self.assertEqual(state_receipt.name, receipt["resumeStateFileName"])
+        self.assertEqual(
+            hashlib.sha256(state_receipt.read_bytes()).hexdigest(),
+            receipt["resumeStateSHA256"],
+        )
         for field in ("audiobookSHA256", "sidecarSHA256", "auditSHA256"):
             self.assertRegex(receipt[field], r"^[0-9a-f]{64}$")
 
@@ -1094,12 +1174,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "--input-receipt",
                 str(input_receipt),
                 "--lock-root",
-                str(
-                    self.home
-                    / ".cache"
-                    / "explainer-audiobooks"
-                    / "echo-pronunciation-leases"
-                ),
+                str(self.lease_root),
             ],
             capture_output=True,
             text=True,
@@ -1127,6 +1202,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             str(receipts[0]),
             "--input-receipt",
             str(input_receipt),
+            "--state-receipt",
+            str(state_receipt),
             "--epub",
             str(self.run_root / "dist" / "fixture.epub"),
             "--audiobook",
@@ -1140,6 +1217,18 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         ]
         verified = subprocess.run(command, capture_output=True, text=True)
         self.assertEqual(0, verified.returncode, verified.stderr)
+
+        original_state = state_receipt.read_bytes()
+        state_receipt.write_bytes(b"X" * len(original_state))
+        tampered_state = subprocess.run(command, capture_output=True, text=True)
+        self.assertNotEqual(0, tampered_state.returncode)
+        self.assertIn("resume-state receipt SHA-256 differs", tampered_state.stderr)
+        state_receipt.unlink()
+        missing_state = subprocess.run(command, capture_output=True, text=True)
+        self.assertNotEqual(0, missing_state.returncode)
+        self.assertIn("resume-state receipt is missing", missing_state.stderr)
+        state_receipt.write_bytes(original_state)
+
         (artifact_root / "fixture.alignment.json").write_text(
             '{"tampered":true}\n', encoding="utf-8"
         )
@@ -1185,6 +1274,11 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 str(first_success),
                 "--input-receipt",
                 str(research / first_selector["inputReceiptFileName"]),
+                "--state-receipt",
+                str(
+                    research
+                    / f"echo-resume-state-{first_selector['runID']}.json"
+                ),
                 "--epub",
                 str(epub),
                 "--audiobook",
@@ -1235,10 +1329,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             hashlib.sha256(str(path.resolve()).encode("utf-8")).hexdigest() + ".lock"
             for path in resources
         }
-        lease_root = (
-            self.home / ".cache" / "explainer-audiobooks" / "echo-pronunciation-leases"
-        )
-        self.assertEqual(expected, {path.name for path in lease_root.glob("*.lock")})
+        observed = {path.name for path in self.lease_root.glob("*.lock")}
+        self.assertTrue(expected.issubset(observed))
 
     def test_fd_lease_survives_guardian_sigkill_until_child_exits(self) -> None:
         log = self.tmp / "sigkill.log"
