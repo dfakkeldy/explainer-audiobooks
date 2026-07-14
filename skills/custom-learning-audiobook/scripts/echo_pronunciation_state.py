@@ -18,6 +18,7 @@ from echo_pronunciation_lease import load_capability, validate_capability
 
 
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
+CHAPTER_CONTENT_SIGNATURE_PATTERN = re.compile(r"[0-9a-f]{16}")
 MARKER_PATTERN = re.compile(r"\.anchors-ch([0-9]+)\.json")
 RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
@@ -268,7 +269,6 @@ def capture_snapshot(
             )
         for field in (
             "captureSetID",
-            "chapterContentSignature",
             "audioSHA256",
             "payloadSHA256",
         ):
@@ -277,6 +277,14 @@ def capture_snapshot(
                 and SHA256_PATTERN.fullmatch(identity[field]) is not None,
                 f"resume state identity has invalid {field}: {marker.name}",
             )
+        require(
+            isinstance(identity.get("chapterContentSignature"), str)
+            and CHAPTER_CONTENT_SIGNATURE_PATTERN.fullmatch(
+                identity["chapterContentSignature"]
+            )
+            is not None,
+            f"resume state identity has invalid chapterContentSignature: {marker.name}",
+        )
         if capture_set_id is None:
             capture_set_id = identity["captureSetID"]
         require(

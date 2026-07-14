@@ -174,7 +174,7 @@ identity = {
     "schemaVersion": 1, "captureSetID": "c" * 64, "sourceFingerprint": source,
     "voice": voice, "renderVersion": __RENDER_VERSION__, "rendererIdentity": "fixture-renderer",
     "normalizationMode": "spoken", "chapterIndex": 0,
-    "chapterContentSignature": "d" * 64, "audioFileName": audio.name,
+    "chapterContentSignature": "d" * 16, "audioFileName": audio.name,
     "audioFileByteCount": audio.stat().st_size,
     "audioSHA256": hashlib.sha256(audio.read_bytes()).hexdigest(),
     "payloadSHA256": hashlib.sha256(payload_bytes).hexdigest(),
