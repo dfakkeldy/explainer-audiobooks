@@ -42,6 +42,21 @@ require_git_commit_sha() {
   fi
 }
 
+echo_pronunciation_release_render_version() {
+  local cli_version=${1:-}
+  local render_version
+  if [[ "$cli_version" =~ (^|[[:space:]])rv([0-9]+)[[:space:]]+\(Release\)($|[[:space:]]) ]]; then
+    render_version=${BASH_REMATCH[2]}
+  else
+    return 1
+  fi
+  render_version=$((10#$render_version))
+  if (( render_version < 12 )); then
+    return 1
+  fi
+  printf '%s\n' "$render_version"
+}
+
 echo_pronunciation_preflight() {
   local original_pwd=$PWD
   local echo_repo=${ECHO_REPO:-/Users/dfakkeldy/Developer/Echo}
@@ -152,7 +167,9 @@ echo_pronunciation_preflight() {
   require_sha256 ECHO_RESOURCES_SHA256 "$ECHO_RESOURCES_SHA256"
   local cli_version
   cli_version=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" --version)
-  if [[ "$cli_version" != *"rv12 (Release)"* ]]; then
+  if ! ECHO_RENDER_VERSION=$(
+    echo_pronunciation_release_render_version "$cli_version"
+  ); then
     printf 'stale, pre-v12, or non-Release echo-cli: %s\n' "$cli_version" >&2
     return 65
   fi
@@ -195,6 +212,7 @@ echo_pronunciation_preflight() {
     "echo_cli_path=$CLI" \
     "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
     "echo_resource_dir=$ECHO_RESOURCE_DIR" \
+    "render_version=$ECHO_RENDER_VERSION" \
     "voice=$VOICE" \
     "run_id=$RUN_ID" \
     "work_dir=$WORK" \
@@ -237,7 +255,7 @@ echo_pronunciation_preflight() {
   export ECHO_REPO EXPLAINER_ROOT
   export APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA EPUB EPUB_SHA256
   export CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256
-  export VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
+  export ECHO_RENDER_VERSION VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
 }
 
 echo_pronunciation_attest_inputs() {
@@ -251,7 +269,8 @@ echo_pronunciation_attest_inputs() {
   for required in \
     ECHO_REPO EXPLAINER_ROOT SLUG RUN_ROOT APPROVED_ECHO_PRONUNCIATION_SHA \
     ECHO_SOURCE_SHA EPUB EPUB_SHA256 CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR \
-    ECHO_RESOURCES_SHA256 VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT; do
+    ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION VOICE RUN_ID WORK DB \
+    ECHO_RENDER_INPUT_RECEIPT; do
     if [[ -z ${!required:-} ]]; then
       printf 'sealed preflight state is missing: %s\n' "$required" >&2
       return 70
@@ -357,6 +376,7 @@ echo_pronunciation_attest_inputs() {
     return 65
   fi
   local current_epub_sha current_cli_sha current_resources_sha cli_version cli_help
+  local current_render_version
   current_epub_sha=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
   current_cli_sha=$(/usr/bin/shasum -a 256 "$CLI" | awk '{print $1}')
   current_resources_sha=$(/usr/local/bin/python3 "$state_helper" \
@@ -378,8 +398,15 @@ echo_pronunciation_attest_inputs() {
     return 65
   fi
   cli_version=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" --version)
-  if [[ "$cli_version" != *"rv12 (Release)"* ]]; then
+  if ! current_render_version=$(
+    echo_pronunciation_release_render_version "$cli_version"
+  ); then
     printf 'stale, pre-v12, or non-Release echo-cli: %s\n' "$cli_version" >&2
+    return 65
+  fi
+  if [[ "$current_render_version" != "$ECHO_RENDER_VERSION" ]]; then
+    printf 'Echo render version changed while narration lease was held: %s\n' \
+      "$cli_version" >&2
     return 65
   fi
   cli_help=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help)
@@ -419,6 +446,7 @@ echo_pronunciation_attest_inputs() {
     "echo_cli_path=$CLI" \
     "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
     "echo_resource_dir=$ECHO_RESOURCE_DIR" \
+    "render_version=$ECHO_RENDER_VERSION" \
     "voice=$VOICE" \
     "run_id=$RUN_ID" \
     "work_dir=$WORK" \

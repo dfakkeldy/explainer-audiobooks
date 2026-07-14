@@ -314,7 +314,12 @@ research, write one coherent manuscript, and package the result for Echo.
    render. Supply and record the reviewed
    `APPROVED_ECHO_PRONUNCIATION_SHA`; the package preflight fails closed unless
    it exactly equals the clean Echo source `HEAD` being built. Resume only with
-   the matching hash-bound DB and sealed Echo-v12 capture-state receipt. A render
+   the matching hash-bound DB and capture-state receipt sealed to the exact
+   Release render version in the immutable input receipt. For a governed
+   real-book pronunciation probe, use the wrapper's `--max-chapters 1`, listen
+   to the sealed chapter capture, and continue with
+   `--resume --max-chapters 1`; CLI exit 2 means the run is partial and has no
+   accepted M4B or deliverable sidecar yet. A render
    is complete only after the live DB/capture state is reverified under its
    leases, staged output validation, a schema-v2 success receipt that binds the
    exact resume-state filename and hash, and atomic publication of the

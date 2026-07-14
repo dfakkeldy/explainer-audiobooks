@@ -9,11 +9,13 @@ source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"
 
 usage() {
   printf '%s\n' \
-    'usage: echo_pronunciation_narrate.sh [--resume | --recover-stale-lock]' >&2
+    'usage: echo_pronunciation_narrate.sh [--resume] [--max-chapters N]' \
+    '       echo_pronunciation_narrate.sh --recover-stale-lock' >&2
 }
 
 RESUME=0
 RECOVER_STALE_LOCK=0
+MAX_CHAPTERS=
 INTERNAL_MODE=
 while (( $# )); do
   case "$1" in
@@ -22,6 +24,15 @@ while (( $# )); do
       ;;
     --recover-stale-lock)
       RECOVER_STALE_LOCK=1
+      ;;
+    --max-chapters)
+      if [[ -n "$MAX_CHAPTERS" || ! ${2:-} =~ ^[1-9][0-9]*$ ]]; then
+        printf '%s\n' '--max-chapters requires one positive integer' >&2
+        usage
+        exit 64
+      fi
+      MAX_CHAPTERS=$2
+      shift
       ;;
     --leased-run)
       INTERNAL_MODE=run
@@ -44,7 +55,8 @@ while (( $# )); do
   shift
 done
 if (( RESUME && RECOVER_STALE_LOCK )) \
-  || [[ "$INTERNAL_MODE" == recover && $RESUME == 1 ]]; then
+  || [[ "$INTERNAL_MODE" == recover && $RESUME == 1 ]] \
+  || (( RECOVER_STALE_LOCK && ${#MAX_CHAPTERS} > 0 )); then
   usage
   exit 64
 fi
@@ -85,6 +97,9 @@ if [[ -z "$INTERNAL_MODE" ]]; then
     lease_command+=(--recover-stale-lock)
   elif (( RESUME )); then
     lease_command+=(--resume)
+  fi
+  if [[ -n "$MAX_CHAPTERS" ]]; then
+    lease_command+=(--max-chapters "$MAX_CHAPTERS")
   fi
   exec "${lease_command[@]}"
 fi
@@ -136,6 +151,9 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     lease_command+=(--leased-run)
     if (( RESUME )); then
       lease_command+=(--resume)
+    fi
+    if [[ -n "$MAX_CHAPTERS" ]]; then
+      lease_command+=(--max-chapters "$MAX_CHAPTERS")
     fi
   fi
   exec "${lease_command[@]}"
@@ -487,6 +505,7 @@ state_command=(
   --epub "$EPUB"
   --source-sha "$ECHO_SOURCE_SHA"
   --voice "$VOICE"
+  --render-version "$ECHO_RENDER_VERSION"
   --input-receipt "$ECHO_RENDER_INPUT_RECEIPT"
   --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
 )
@@ -499,7 +518,7 @@ seal_resume_state() {
 if (( RESUME )); then
   if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
     verify-state "${state_command[@]}"; then
-    printf 'resume state is not bound to the current WORK, DB, and Echo v12 captures\n' >&2
+    printf 'resume state is not bound to the current WORK, DB, and version-bound Echo captures\n' >&2
     exit 65
   fi
 else
@@ -539,6 +558,9 @@ narrate_command=(
 if (( RESUME )); then
   narrate_command+=(--resume)
 fi
+if [[ -n "$MAX_CHAPTERS" ]]; then
+  narrate_command+=(--max-chapters "$MAX_CHAPTERS")
+fi
 
 "${narrate_command[@]}" &
 NARRATE_PID=$!
@@ -553,7 +575,7 @@ fi
 if [[ -d "$WORK" && -f "$DB" ]] \
   && compgen -G "$WORK/.anchors-ch*.json" >/dev/null; then
   if ! seal_resume_state; then
-    printf 'could not seal resumable Echo v12 capture state\n' >&2
+    printf 'could not seal resumable version-bound Echo capture state\n' >&2
     exit 65
   fi
 fi
@@ -561,7 +583,7 @@ if (( narrate_status != 0 )); then
   exit "$narrate_status"
 fi
 if [[ ! -f "$STATE_RECEIPT" || -L "$STATE_RECEIPT" ]]; then
-  printf 'successful narration did not produce sealed Echo v12 capture state\n' >&2
+  printf 'successful narration did not produce sealed version-bound Echo capture state\n' >&2
   exit 65
 fi
 
@@ -613,7 +635,7 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
 verify_locked_inputs
 if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   verify-state "${state_command[@]}"; then
-  printf 'resume state receipt does not match final WORK, DB, or Echo v12 captures\n' >&2
+  printf 'resume state receipt does not match final WORK, DB, or version-bound Echo captures\n' >&2
   exit 65
 fi
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
@@ -630,6 +652,7 @@ fi
   --db "$DB" \
   --source-sha "$ECHO_SOURCE_SHA" \
   --voice "$VOICE" \
+  --render-version "$ECHO_RENDER_VERSION" \
   --audiobook "$OUTPUT" \
   --sidecar "$SIDECAR" \
   --audit "$AUDIT" \
@@ -650,6 +673,7 @@ fi
   --db "$DB" \
   --source-sha "$ECHO_SOURCE_SHA" \
   --voice "$VOICE" \
+  --render-version "$ECHO_RENDER_VERSION" \
   --audiobook "$OUTPUT" \
   --sidecar "$SIDECAR" \
   --audit "$AUDIT" \

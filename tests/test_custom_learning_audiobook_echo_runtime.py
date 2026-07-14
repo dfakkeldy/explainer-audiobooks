@@ -147,11 +147,13 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             text=True,
         )
 
-    def write_cli(self, *, include_review_flag: bool) -> None:
+    def write_cli(self, *, include_review_flag: bool, render_version: int = 12) -> None:
         help_text = "--no-pronunciation-review" if include_review_flag else "--voice"
+        (self.resources / "pronunciations.json").write_text(
+            json.dumps({"renderVersion": render_version}) + "\n", encoding="utf-8"
+        )
         emitter = self.cli.parent / "fake_echo_emit.py"
-        emitter.write_text(
-            """#!/usr/bin/env python3
+        emitter_source = """#!/usr/bin/env python3
 import hashlib, json, os, pathlib, sys
 
 epub, out, sidecar, work, db = map(pathlib.Path, sys.argv[1:6])
@@ -170,9 +172,9 @@ payload = {"duration": 1.0, "anchors": [], "pronunciationEvidence": {"decisions"
 payload_bytes = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
 identity = {
     "schemaVersion": 1, "captureSetID": "c" * 64, "sourceFingerprint": source,
-    "voice": voice, "renderVersion": 12, "rendererIdentity": "fixture-renderer",
+    "voice": voice, "renderVersion": __RENDER_VERSION__, "rendererIdentity": "fixture-renderer",
     "normalizationMode": "spoken", "chapterIndex": 0,
-    "chapterContentSignature": "d" * 64, "audioFileName": audio.name,
+    "chapterContentSignature": "d" * 16, "audioFileName": audio.name,
     "audioFileByteCount": audio.stat().st_size,
     "audioSHA256": hashlib.sha256(audio.read_bytes()).hexdigest(),
     "payloadSHA256": hashlib.sha256(payload_bytes).hexdigest(),
@@ -184,14 +186,16 @@ out.write_bytes(b"fixture audiobook bytes")
 sidecar.write_text("{}\\n")
 words = ("arithmetic", "campbell", "content", "fakkeldy", "filesystem", "live", "lives", "re", "read", "readme", "record", "resume", "resumes", "résumé", "résumés", "startable", "timeframe", "verified", "xcassets", "xcode")
 audit = {
-    "schemaVersion": 2, "renderVersion": 12, "voice": voice, "coverage": "complete",
+    "schemaVersion": 2, "renderVersion": __RENDER_VERSION__, "voice": voice, "coverage": "complete",
     "watchCounts": {word: 0 for word in words}, "decisions": [], "diagnostics": [],
     "legacyChapterIndexes": [], "audiobookFileName": out.name,
     "audiobookSHA256": hashlib.sha256(out.read_bytes()).hexdigest(),
 }
 if not os.environ.get("FAKE_SKIP_AUDIT"):
     out.with_suffix(".pronunciation-audit.json").write_text(json.dumps(audit))
-""",
+"""
+        emitter.write_text(
+            emitter_source.replace("__RENDER_VERSION__", str(render_version)),
             encoding="utf-8",
         )
         emitter.chmod(emitter.stat().st_mode | stat.S_IXUSR)
@@ -204,7 +208,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             '>>"$FAKE_ECHO_ENV_LOG"\n'
             "fi\n"
             "if [[ ${1:-} == --version ]]; then\n"
-            "  echo 'echo-cli fixture rv12 (Release)'\n"
+            f"  echo 'echo-cli fixture rv{render_version} (Release)'\n"
             "elif [[ ${1:-} == narrate && ${2:-} == --help ]]; then\n"
             f"  echo '{help_text}'\n"
             "elif [[ ${1:-} == verify-sidecar ]]; then\n"
@@ -318,6 +322,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "ECHO_CLI_SHA256",
             "ECHO_RESOURCE_DIR",
             "ECHO_RESOURCES_SHA256",
+            "ECHO_RENDER_VERSION",
             "VOICE",
             "RUN_ID",
             "WORK",
@@ -438,6 +443,29 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertRegex(fields["echo_cli_sha256"], r"^[0-9a-f]{64}$")
         self.assertRegex(fields["echo_resources_sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(str(self.resources.resolve()), fields["echo_resource_dir"])
+        self.assertEqual("12", fields["render_version"])
+
+    def test_preflight_accepts_and_binds_newer_release_render_version(self) -> None:
+        self.write_cli(include_review_flag=True, render_version=13)
+
+        result = self.run_preflight(
+            body=(
+                "echo_pronunciation_preflight\n"
+                'printf "render_version=%s\\nreceipt=%s\\n" '
+                '"$ECHO_RENDER_VERSION" "$ECHO_RENDER_INPUT_RECEIPT"'
+            )
+        )
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("render_version=13", result.stdout)
+        receipt_match = re.search(r"receipt=(.+)", result.stdout)
+        self.assertIsNotNone(receipt_match)
+        receipt = Path(receipt_match.group(1))
+        fields = dict(
+            line.split("=", 1)
+            for line in receipt.read_text(encoding="utf-8").splitlines()
+        )
+        self.assertEqual("13", fields["render_version"])
 
     def test_standalone_preflight_rejects_make_without_build_lease(self) -> None:
         command = f"source {shlex.quote(str(PREFLIGHT))}; echo_pronunciation_preflight"
@@ -697,6 +725,55 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertFalse(
             (self.run_root / "research" / "echo-render-output.owner.env").exists()
         )
+
+    def test_bounded_partial_render_is_sealed_but_not_published(self) -> None:
+        log = self.tmp / "narrate-partial.log"
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_LOG": str(log),
+                "FAKE_NARRATE_EXIT": "2",
+            }
+        )
+
+        result = self.run_narrate(
+            "--max-chapters", "1", environment=environment
+        )
+
+        self.assertEqual(2, result.returncode, result.stderr)
+        arguments = [
+            line.removeprefix("ARG=")
+            for line in log.read_text(encoding="utf-8").splitlines()
+            if line.startswith("ARG=")
+        ]
+        self.assertIn("--max-chapters", arguments)
+        max_index = arguments.index("--max-chapters")
+        self.assertEqual("1", arguments[max_index + 1])
+        self.assertEqual(1, len(list(self.run_root.glob("audio-work-*/.anchors-ch0.json"))))
+        self.assertEqual(1, len(list(self.run_root.glob("narration-*.sqlite"))))
+        self.assertEqual(
+            1, len(list((self.run_root / "research").glob("echo-resume-state-*.json")))
+        )
+        self.assertTrue(
+            (self.run_root / "research" / "echo-render-current-attempt.json").is_file()
+        )
+        self.assertFalse(
+            (self.run_root / "research" / "echo-render-current-accepted.json").exists()
+        )
+        self.assertFalse(list((self.run_root / "dist").glob("echo-renders/**/*")))
+        self.assertFalse(list(self.run_root.glob(".echo-output-*")))
+
+    def test_max_chapters_requires_a_positive_integer(self) -> None:
+        for arguments in (
+            ("--max-chapters",),
+            ("--max-chapters", "0"),
+            ("--max-chapters", "-1"),
+            ("--max-chapters", "one"),
+        ):
+            with self.subTest(arguments=arguments):
+                result = self.run_narrate(*arguments)
+                self.assertEqual(64, result.returncode)
+                self.assertIn("positive integer", result.stderr)
 
     def test_success_publishes_run_scoped_media_and_current_selector(self) -> None:
         result = self.run_narrate()
@@ -1058,7 +1135,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("Echo resources changed while narration lease was held", stderr)
 
-    def test_resume_requires_hash_bound_current_v12_capture_state(self) -> None:
+    def test_resume_requires_hash_bound_current_render_version_capture_state(self) -> None:
         initial = self.run_narrate()
         self.assertEqual(0, initial.returncode, initial.stderr)
         marker = next(self.run_root.glob("audio-work-*/.anchors-ch0.json"))
@@ -1069,6 +1146,23 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         resumed = self.run_narrate("--resume")
         self.assertNotEqual(0, resumed.returncode)
         self.assertIn("resume state", resumed.stderr)
+
+    def test_resume_rejects_capture_from_a_different_release_render_version(
+        self,
+    ) -> None:
+        self.write_cli(include_review_flag=True, render_version=13)
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        marker = next(self.run_root.glob("audio-work-*/.anchors-ch0.json"))
+        marker_payload = json.loads(marker.read_text(encoding="utf-8"))
+        self.assertEqual(13, marker_payload["identity"]["renderVersion"])
+        marker_payload["identity"]["renderVersion"] = 12
+        marker.write_text(json.dumps(marker_payload), encoding="utf-8")
+
+        resumed = self.run_narrate("--resume")
+
+        self.assertNotEqual(0, resumed.returncode)
+        self.assertIn("render version 13", resumed.stderr)
 
     def test_resume_rejects_database_mutation(self) -> None:
         initial = self.run_narrate()
@@ -1172,6 +1266,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 self.second_sha,
                 "--voice",
                 "am_michael",
+                "--render-version",
+                input_fields["render_version"],
                 "--input-receipt",
                 str(input_receipt),
                 "--lock-root",
@@ -1236,6 +1332,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 self.second_sha,
                 "--voice",
                 "am_michael",
+                "--render-version",
+                input_fields["render_version"],
                 "--audiobook",
                 str(artifact_root / "fixture.m4b"),
                 "--sidecar",

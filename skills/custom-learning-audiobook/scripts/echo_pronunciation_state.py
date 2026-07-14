@@ -18,6 +18,7 @@ from echo_pronunciation_lease import load_capability, validate_capability
 
 
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
+CHAPTER_CONTENT_SIGNATURE_PATTERN = re.compile(r"[0-9a-f]{16}")
 MARKER_PATTERN = re.compile(r"\.anchors-ch([0-9]+)\.json")
 RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
@@ -177,6 +178,7 @@ def capture_snapshot(
     epub: Path,
     source_sha: str,
     voice: str,
+    render_version: int,
     input_receipt: Path,
 ) -> dict[str, object]:
     require(
@@ -186,11 +188,28 @@ def capture_snapshot(
     )
     require(voice in {"am_michael", "am_puck"}, "resume voice is invalid")
     require(
+        type(render_version) is int and render_version >= 12,
+        "resume render version must be an integer of at least 12",
+    )
+    require(
         not work.is_symlink() and work.is_dir(),
         f"resume work directory is unsafe: {work}",
     )
     regular_file(database, "resume database")
     regular_file(input_receipt, "render-input receipt")
+    try:
+        receipt_lines = read_regular_bytes(
+            input_receipt, "render-input receipt"
+        ).decode("utf-8").splitlines()
+    except UnicodeDecodeError as error:
+        raise StateError("render-input receipt is not UTF-8") from error
+    render_version_lines = [
+        line for line in receipt_lines if line.startswith("render_version=")
+    ]
+    require(
+        render_version_lines == [f"render_version={render_version}"],
+        "resume render version differs from render-input receipt",
+    )
     expected_source = epub_fingerprint(epub)
     captures: list[dict[str, object]] = []
     capture_set_id: str | None = None
@@ -228,8 +247,8 @@ def capture_snapshot(
         )
         require(
             type(identity.get("renderVersion")) is int
-            and identity["renderVersion"] == 12,
-            f"resume state requires Echo render version 12: {marker.name}",
+            and identity["renderVersion"] == render_version,
+            f"resume state requires Echo render version {render_version}: {marker.name}",
         )
         require(
             identity.get("sourceFingerprint") == expected_source,
@@ -250,7 +269,6 @@ def capture_snapshot(
             )
         for field in (
             "captureSetID",
-            "chapterContentSignature",
             "audioSHA256",
             "payloadSHA256",
         ):
@@ -259,6 +277,14 @@ def capture_snapshot(
                 and SHA256_PATTERN.fullmatch(identity[field]) is not None,
                 f"resume state identity has invalid {field}: {marker.name}",
             )
+        require(
+            isinstance(identity.get("chapterContentSignature"), str)
+            and CHAPTER_CONTENT_SIGNATURE_PATTERN.fullmatch(
+                identity["chapterContentSignature"]
+            )
+            is not None,
+            f"resume state identity has invalid chapterContentSignature: {marker.name}",
+        )
         if capture_set_id is None:
             capture_set_id = identity["captureSetID"]
         require(
@@ -304,6 +330,7 @@ def capture_snapshot(
         "echoSourceSHA": source_sha,
         "sourceFingerprint": expected_source,
         "voice": voice,
+        "renderVersion": render_version,
         "captureSetID": capture_set_id,
         "inputReceiptSHA256": sha256(input_receipt),
         "databaseSHA256": sha256(database),
@@ -324,6 +351,7 @@ def success_snapshot(
     database: Path,
     source_sha: str,
     voice: str,
+    render_version: int,
     audiobook: Path,
     sidecar: Path,
     audit: Path,
@@ -358,6 +386,7 @@ def success_snapshot(
             epub,
             source_sha,
             voice,
+            render_version,
             input_receipt,
         )
     )
@@ -697,6 +726,7 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--epub", type=Path, required=True)
         command.add_argument("--source-sha", required=True)
         command.add_argument("--voice", required=True)
+        command.add_argument("--render-version", type=int, required=True)
         command.add_argument("--input-receipt", type=Path, required=True)
         command.add_argument("--lock-root", type=Path)
     reset = commands.add_parser("reset-state")
@@ -728,6 +758,7 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--db", type=Path, required=True)
         command.add_argument("--source-sha", required=True)
         command.add_argument("--voice", required=True)
+        command.add_argument("--render-version", type=int, required=True)
         command.add_argument("--audiobook", type=Path, required=True)
         command.add_argument("--sidecar", type=Path, required=True)
         command.add_argument("--audit", type=Path, required=True)
@@ -768,6 +799,7 @@ def main(arguments: list[str]) -> int:
                 options.epub,
                 options.source_sha,
                 options.voice,
+                options.render_version,
                 options.input_receipt,
             )
             content = canonical_json(payload)
@@ -855,6 +887,7 @@ def main(arguments: list[str]) -> int:
                 options.db,
                 options.source_sha,
                 options.voice,
+                options.render_version,
                 options.audiobook,
                 options.sidecar,
                 options.audit,

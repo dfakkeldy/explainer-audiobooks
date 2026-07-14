@@ -360,17 +360,19 @@ lock descriptors and their exact lock-file inodes; an environment variable by
 itself is not a capability. A real inherited descriptor is necessary but not
 sufficient: the hidden render stage independently re-attests the exact clean
 Echo `HEAD` against the approved SHA, canonical Release CLI and resource paths,
-`rv12 (Release)` version/help surface, complete resource-tree and CLI hashes,
+the exact Release render version (`rv12` or newer) and help surface, complete
+resource-tree and CLI hashes,
 canonical source/run/voice coordinates, and byte-exact immutable-input receipt.
 A directly constructed hidden invocation therefore receives no trust from its
 caller and can proceed only when it independently satisfies the public
-preflight contract. The preflight also requires `--version` to contain
-`rv12 (Release)`, requires
+preflight contract. The preflight also requires `--version` to expose a
+parseable `rvN (Release)` value where `N` is at least 12, requires
 `narrate --help` to expose `--no-pronunciation-review`, validates EPUB and CLI
 SHA-256 values as exactly 64 lowercase hexadecimal characters, deterministically
 hashes the complete sibling `EchoNarrationResources` tree, and records the
 approved revision, source revision, `EPUB_SHA256`, `ECHO_CLI_SHA256`,
-`ECHO_RESOURCES_SHA256`, and exact resource path in an immutable-input receipt.
+`ECHO_RESOURCES_SHA256`, exact resource path, and exact Release render version
+in an immutable-input receipt.
 The full exact approved revision is a component of `RUN_ID`. An
 existing receipt for the same ID must match byte-for-byte, and pre-existing
 `WORK` or `DB` data without that matching receipt fails closed before resume.
@@ -405,6 +407,45 @@ emits review evidence automatically. Do not pass
 uses the custom-learning default `--voice am_michael` through `VOICE` and keeps
 synthesis bounded at one chapter job and two Kokoro threads.
 
+### Governed real-book pronunciation probes
+
+For a real-book pronunciation probe, the public wrapper may render one new
+chapter at a time while retaining the same source, approved renderer, resource
+tree, `WORK`, and database. On a multi-chapter book, the first command returns
+CLI **exit 2**, meaning that its chapter capture and resume state were sealed
+but the book is still partial:
+
+```bash
+set +e
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" \
+  --max-chapters 1
+status=$?
+set -e
+[[ "$status" == 2 ]]
+```
+
+Listen to and inspect the chapter-zero M4A named by
+`$WORK/.anchors-ch0.json`. To render exactly the next chapter, request one new
+chapter again—not two, because the option counts uncaptured chapters in the
+current process:
+
+```bash
+set +e
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" \
+  --resume --max-chapters 1
+status=$?
+set -e
+[[ "$status" == 2 ]]
+```
+
+This second probe adds `$WORK/.anchors-ch1.json` and its named chapter-one M4A.
+Each partial attempt updates `echo-render-current-attempt.json` and seals
+`echo-resume-state-$RUN_ID.json`, but it has **no accepted M4B**, sidecar,
+pronunciation audit, success receipt, or current-accepted selector. Partial
+capture audio is listening evidence, not a deliverable package. Resume later
+without `--max-chapters` to finish and publish the governed run, then perform
+the complete selector-bound QC below.
+
 Each attempt receives a cryptographically random `ATTEMPT_ID`. Its output stem
 is `$DIST/echo-renders/$RUN_ID/$ATTEMPT_ID/$SLUG`, with a pronunciation audit on
 every reviewed render and a pronunciation reel when review samples are
@@ -438,7 +479,8 @@ the same immutable source EPUB, exact approved/source revision, Release CLI and
 resource-tree hashes, voice, and capture set. The wrapper requires
 `research/echo-resume-state-$RUN_ID.json` to bind the current DB and every
 capture-marker/audio hash. Every capture must carry a sealed schema-v1 Echo
-identity for render version 12, the current EPUB fingerprint and voice, one
+identity for the exact Release render version recorded in the immutable input
+receipt, the current EPUB fingerprint and voice, one
 consistent capture-set ID, pronunciation evidence, and matching audio byte count
 and SHA-256. Legacy identity-free captures are never blessed by this workflow.
 State reset, capture receipt, and success receipt writes also require the live
