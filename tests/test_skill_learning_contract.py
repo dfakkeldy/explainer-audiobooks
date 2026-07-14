@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -94,6 +95,27 @@ class SkillLearningContractTests(unittest.TestCase):
         ):
             with self.subTest(relative=relative):
                 self.assertIn("curriculum-patterns.md", self.read(relative))
+
+    def test_learning_templates_cover_every_required_record(self) -> None:
+        root = ROOT / "skill" / "templates" / "learning-design"
+        expected = {
+            "learning-brief.json",
+            "learning-outline.json",
+            "chapter-plans.json",
+            "coverage-ledger.json",
+            "continuity.json",
+            "learning-review.json",
+        }
+        self.assertEqual(expected, {path.name for path in root.glob("*.json")})
+        for name in expected:
+            with self.subTest(name=name):
+                payload = json.loads((root / name).read_text(encoding="utf-8"))
+                self.assertEqual(1, payload["schemaVersion"])
+
+        review = json.loads((root / "learning-review.json").read_text(encoding="utf-8"))
+        self.assertEqual({}, review["reviewedChapterSHA256"])
+        self.assertEqual("pending", review["structure"]["verdict"])
+        self.assertEqual("pending", review["beginnerReader"]["verdict"])
 
     def test_longform_handoff_cannot_advance_without_learning_architecture(self) -> None:
         skill = self.read("skills/longform-book-development/SKILL.md")

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "authorization": {
+    "status": "pending",
+    "source": "user",
+    "evidence": "Record the approval source and exact evidence before drafting."
+  },
+  "curriculumPattern": {
+    "name": "mechanism-first-spiral",
+    "reason": "The learner needs a complete small mechanism before larger systems.",
+    "fitEvidence": "The outcome begins with a calculable email classifier."
+  },
+  "throughlines": [
+    "parameters store what training changes",
+    "training changes parameters while inference uses them"
+  ],
+  "chapters": [
+    {
+      "file": "ch01.md",
+      "purpose": "Establish the classifier as a calculable mapping.",
+      "prerequisites": ["ordinary arithmetic"]
+    },
+    {
+      "file": "ch02.md",
+      "purpose": "Separate training from inference.",
+      "prerequisites": ["neural network", "parameter"]
+    }
+  ]
+}

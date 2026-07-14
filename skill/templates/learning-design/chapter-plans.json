@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "chapters": [
+    {
+      "file": "ch01.md",
+      "purpose": "Build the first working network model.",
+      "prerequisites": ["ordinary arithmetic"],
+      "knowledgeDelta": "Calculate one classifier output by hand.",
+      "groundedExample": "An urgency score from sender and subject inputs.",
+      "concepts": ["neural network", "parameter"],
+      "beats": ["orient", "calculate", "test a boundary"]
+    },
+    {
+      "file": "ch02.md",
+      "purpose": "Distinguish learning from use.",
+      "prerequisites": ["neural network", "parameter"],
+      "knowledgeDelta": "Identify whether an operation is training or inference.",
+      "groundedExample": "Update the classifier, then score a new message.",
+      "concepts": ["training", "inference"],
+      "beats": ["retrieve", "compare", "correct a misconception"]
+    }
+  ]
+}
