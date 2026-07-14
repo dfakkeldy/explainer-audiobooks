@@ -361,13 +361,16 @@ itself is not a capability. A real inherited descriptor is necessary but not
 sufficient: the hidden render stage independently re-attests the exact clean
 Echo `HEAD` against the approved SHA, canonical Release CLI and resource paths,
 the exact Release render version (`rv12` or newer) and help surface, complete
-resource-tree and CLI hashes,
-canonical source/run/voice coordinates, and byte-exact immutable-input receipt.
+resource-tree and CLI hashes, selected portrait and square cover paths and
+hashes, `M4B_COVER_SHA256`, the paired selection-receipt hash, the combined
+package hash, canonical source/run/voice coordinates, and byte-exact
+immutable-input receipt.
 A directly constructed hidden invocation therefore receives no trust from its
 caller and can proceed only when it independently satisfies the public
 preflight contract. The preflight also requires `--version` to expose a
 parseable `rvN (Release)` value where `N` is at least 12, requires
-`narrate --help` to expose `--no-pronunciation-review`, validates EPUB and CLI
+`narrate --help` to expose `--no-pronunciation-review` and `--cover`, validates
+EPUB and CLI
 SHA-256 values as exactly 64 lowercase hexadecimal characters, deterministically
 hashes the complete sibling `EchoNarrationResources` tree, and records the
 approved revision, source revision, `EPUB_SHA256`, `ECHO_CLI_SHA256`,
@@ -395,6 +398,8 @@ export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
 export DIST="$RUN_ROOT/dist"
 export VOICE=am_michael
 export SLUG TITLE
+export COVER="$PAIR/cover.png"
+export M4B_COVER="$PAIR/m4b-cover.png"
 : "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
 export APPROVED_ECHO_PRONUNCIATION_SHA
 

@@ -550,6 +550,7 @@ narrate_command=(
   --voice "$VOICE"
   --title "$TITLE"
   --author "Dan Fakkeldy"
+  --cover "$M4B_COVER"
   --work-dir "$WORK"
   --db "$DB"
   --jobs 1

@@ -232,6 +232,25 @@ def _paired_governed_hashes(
     }
 
 
+def _paired_artifact_digest(name: str, path: Path) -> str:
+    if name not in {"cover-spec.json", "m4b-cover-spec.json"}:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError
+        encoded = json.dumps(
+            payload,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")
+    except (OSError, UnicodeError, json.JSONDecodeError, TypeError, ValueError) as error:
+        raise ValueError(f"{name} is not a valid cover specification") from error
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def _validate_paired_artifacts(
     sources: dict[str, Path],
     *,
@@ -245,7 +264,7 @@ def _validate_paired_artifacts(
     if not isinstance(selection, PairedSelectionReceipt):
         raise ValueError("paired artifact map requires a paired selection receipt")
     for name, expected in _paired_governed_hashes(selection).items():
-        if hashlib.sha256(sources[name].read_bytes()).hexdigest() != expected:
+        if _paired_artifact_digest(name, sources[name]) != expected:
             raise ValueError(f"{name} does not match paired selection receipt")
     return selection
 

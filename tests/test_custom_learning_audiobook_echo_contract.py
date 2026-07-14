@@ -16,6 +16,13 @@ NARRATE_WRAPPER = (
     / "scripts"
     / "echo_pronunciation_narrate.sh"
 )
+PREFLIGHT = (
+    ROOT
+    / "skills"
+    / "custom-learning-audiobook"
+    / "scripts"
+    / "echo_pronunciation_preflight.sh"
+)
 LEASE_HELPER = (
     ROOT
     / "skills"
@@ -30,6 +37,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         self.skill = SKILL.read_text(encoding="utf-8")
         self.package = PACKAGE.read_text(encoding="utf-8")
         self.narrate_wrapper = NARRATE_WRAPPER.read_text(encoding="utf-8")
+        self.preflight = PREFLIGHT.read_text(encoding="utf-8")
         self.lease_helper = LEASE_HELPER.read_text(encoding="utf-8")
 
     @staticmethod
@@ -74,6 +82,22 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
         self.assertIn("--jobs 1", self.narrate_wrapper)
         self.assertIn("--threads 2", self.narrate_wrapper)
+
+    def test_wrapper_binds_selected_square_cover_to_immutable_render(self) -> None:
+        for marker in (
+            "M4B_COVER",
+            "M4B_COVER_SHA256",
+            "cover_receipts.py",
+            "cover-selection.json",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.preflight)
+
+        self.assertIn('--cover "$M4B_COVER"', self.narrate_wrapper)
+        self.assertIn(
+            "stale echo-cli: explicit cover art is unavailable", self.preflight
+        )
+        self.assertIn("M4B_COVER_SHA256", self.normalized(self.package))
 
     def test_wrapper_holds_fd_backed_resource_leases_through_narration(self) -> None:
         for marker in (
