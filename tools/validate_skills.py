@@ -199,6 +199,7 @@ def main() -> int:
         "Character engine",
         "Knowledge and secrets",
         "Promises and payoffs",
+        "Research and representation ledger",
     )
     contains(
         "skills/fiction-book-development/references/style-and-scene-craft.md",
@@ -211,6 +212,7 @@ def main() -> int:
         "skills/fiction-book-development/references/revision-passes.md",
         "Pass 1: Premise and structure",
         "Pass 8: Read-aloud and final canon",
+        "Reader feedback triage",
     )
     contains(
         "skills/fiction-book-development/agents/openai.yaml",

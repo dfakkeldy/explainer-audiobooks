@@ -83,6 +83,7 @@ publication:
   scene-cards/
   chapters/
   continuity/
+  research/
   revisions/
 ```
 
@@ -164,6 +165,13 @@ continuity/world logic, pacing, dialogue/POV, then prose. Record findings before
 editing, and preserve intentional voice variation. A diagnostic worker reports;
 the lead writer accepts or rejects and performs substantive rewrites.
 
+Before structural revision, reverse-outline the manuscript actually written.
+When consequential real-world behaviour, institutions, geography, history,
+health, disability, trauma, or cultural practice appears, resolve the research
+and representation ledger rather than smoothing uncertainty into confident
+fiction. Use targeted readers when warranted; they inform rather than grant
+permission or replace author responsibility.
+
 **Done when:** each pass has an accepted/rejected findings record and no earlier
 pass remains invalidated by a later change.
 
@@ -212,5 +220,7 @@ listed rather than silently guessed.
 - [ ] Dialogue voices remain distinguishable without dialogue tags.
 - [ ] POV knowledge and world rules survive spot checks.
 - [ ] Planted promises and payoffs are reconciled.
+- [ ] Consequential factual uncertainties and representation risks have an
+      explicit disposition.
 - [ ] Final Markdown, bible, and ledgers agree.
 - [ ] No production work occurred without explicit authorization.

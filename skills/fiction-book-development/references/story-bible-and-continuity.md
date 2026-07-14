@@ -54,6 +54,22 @@ Record rules that affect choice and consequence:
 Do not draft decorative lore as a substitute for conflict. If a rule never
 constrains a scene or shapes meaning, it can remain undefined.
 
+## Research and representation ledger
+
+Separate invented story facts from checkable real-world claims. Track each
+consequential question with its narrative consequence, source or consultation,
+confidence, representation risk, targeted reader or expert needed, and final
+disposition. Research details that materially affect behaviour, causality,
+language, institutions, geography, history, disability, medicine, law, trauma,
+or cultural practice.
+
+Do not fabricate citations, lived experience, dialect, or community consensus.
+Do not use a marginalized identity only as plot machinery or exotic texture.
+Targeted readers identify effects and blind spots; they do not replace research,
+grant permission, or assume final author responsibility. Flag unresolved
+high-impact uncertainty instead of converting it into authoritative prose, and
+do not copy copyrighted source prose into project artifacts.
+
 ## Turn architecture
 
 For each major turn record:

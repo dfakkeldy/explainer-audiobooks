@@ -17,6 +17,11 @@ For each pass record:
 
 ## Pass 1: Premise and structure
 
+First reverse-outline the manuscript actually written: for every scene record
+viewpoint, purpose, turn, changed state, consequence, and current promise. Revise
+from this evidence rather than assuming the pre-draft outline still describes
+the book.
+
 Ask:
 
 - Does the opening activate the promised story soon enough?
@@ -101,6 +106,16 @@ Read the full manuscript without editing first. Mark only points of confusion,
 unintended drag, false emphasis, awkward sound, unclear speaker, broken promise,
 or emotional effect that arrives before its cause. Repair the smallest sufficient
 unit, then reconcile story bible and all ledgers to final canon.
+
+## Reader feedback triage
+
+Use readers for observable effects: where attention dropped, orientation failed,
+a motive felt unsupported, a reveal arrived too early or late, a voice blurred,
+or representation caused an unintended effect. Ask for locations and reactions,
+not replacement prose. Cluster independent reports, then let the lead writer
+accept, reject, defer, or supersede each finding against the story contract.
+Popularity does not outrank deliberate artistic choice, and one reader does not
+stand in for a community.
 
 ## Completion gate
 

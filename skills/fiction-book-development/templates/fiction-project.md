@@ -81,10 +81,20 @@ emotional/relationship consequence, and created promise.
 - Promises planted, advanced, paid, or left open:
 - Bible or outline updates:
 
+## Research and Representation Ledger
+
+| Question / claim | Narrative consequence | Source / consultation | Confidence | Representation risk | Targeted reader / expert needed | Disposition |
+|---|---|---|---|---|---|---|
+
 ## Revision Record
 
 | Pass | Finding | Location | Consequence | Decision | Downstream impact |
 |---|---|---|---|---|---|
+
+## Reader Feedback
+
+| Reader context | Exact location | Observed effect | Cluster | Lead-writer decision |
+|---|---|---|---|---|
 
 ## Open Decisions
 

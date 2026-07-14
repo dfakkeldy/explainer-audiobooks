@@ -48,6 +48,7 @@ class FictionBookDevelopmentContractTests(unittest.TestCase):
             "Character state",
             "Objects and world state",
             "Promises and payoffs",
+            "Research and representation ledger",
             "Chapter handoff",
         ):
             self.assertIn(phrase, text)
@@ -80,6 +81,15 @@ class FictionBookDevelopmentContractTests(unittest.TestCase):
         ]
         offsets = [text.index(heading) for heading in expected]
         self.assertEqual(offsets, sorted(offsets))
+        self.assertIn("reverse-outline the manuscript actually written", text)
+        self.assertIn("Reader feedback triage", text)
+
+    def test_project_template_tracks_research_risk_and_reader_effects(self) -> None:
+        text = self.read("templates/fiction-project.md")
+        self.assertIn("Research and Representation Ledger", text)
+        self.assertIn("Targeted reader / expert needed", text)
+        self.assertIn("Reader Feedback", text)
+        self.assertIn("Observed effect", text)
 
     def test_nonfiction_longform_routes_fiction_to_dedicated_skill(self) -> None:
         text = (ROOT / "skills" / "longform-book-development" / "SKILL.md").read_text(
