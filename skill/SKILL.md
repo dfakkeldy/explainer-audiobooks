@@ -138,7 +138,8 @@ listener's **AI-writing patterns to avoid**, prevent those phrase families in th
 lead-author prompt, and require the family-density gate plus hash-bound prose
 receipt before packaging.
 
-Read `references/learning-design.md` before intake or outlining. Its curriculum,
+Read `references/learning-design.md` and `references/curriculum-patterns.md`
+before intake or outlining. Their curriculum,
 chapter-teaching, structural/beginner-reader, prose, and packaging verdicts are
 independent. A passing style or media check cannot certify that the book teaches.
 
@@ -238,7 +239,8 @@ honest projected length and runtime.
 
 Record the approved progression in `research/learning-outline.json`, including
 the authorization evidence, two to four throughlines, every chapter's purpose,
-and its prerequisites. A terminology inventory is not an outline. Unless the
+its prerequisites, and the selected curriculum pattern with a non-empty reason
+and learner-and-subject fit evidence. A terminology inventory is not an outline. Unless the
 user explicitly authorized a full autonomous run, do not start canonical prose
 until the user approves this learning progression.
 

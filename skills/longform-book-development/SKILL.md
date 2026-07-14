@@ -25,6 +25,8 @@ and fiction-specific revision.
 - Read `references/handoff-packet.md` before preparing the final handoff.
 - Read `../../skill/references/learning-design.md` before shaping the curriculum
   or declaring a handoff production-ready.
+- Read `../../skill/references/curriculum-patterns.md` before proposing book
+  structures or recording the selected progression.
 - Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
   preparing the production handoff. The final prose pass is bounded: it removes
   AI tics without inventing personality, anecdotes, sources, or claims.
@@ -59,6 +61,8 @@ and fiction-specific revision.
    image moments. Add each chapter's prerequisites, knowledge delta, grounded
    example, and concepts with complete explanation paths. Get outline approval
    before final synthesis unless the user explicitly asks for an autonomous run.
+   Record the selected pattern, why it fits the learner and subject, and the
+   approval evidence. Preserve it through handoff unless the user changes it.
 
 5. **Gather and plan pictures deliberately.** Use pictures as teaching assets,
    evidence, examples, diagrams, mood references, or cover references. Track each

@@ -44,6 +44,13 @@ What to include, avoid, simplify, keep private, or treat as educational-only.
 
 ## Approved Learning Outline
 
+Read `../../skill/references/curriculum-patterns.md`, then record:
+
+- Curriculum pattern:
+- Selection reason:
+- Learner-and-subject fit evidence:
+- Pattern-change approval evidence, if changed after approval:
+
 | Ch | Working title | Purpose | Prerequisites | Knowledge delta | Grounded example | Core beats | Sources needed | Figures |
 |---|---|---|---|---|---|---|---|---|
 

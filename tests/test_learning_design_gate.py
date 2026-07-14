@@ -87,6 +87,11 @@ class LearningDesignFixture(unittest.TestCase):
                     "source": "user",
                     "evidence": "Dan approved the chapter progression on 2026-07-14.",
                 },
+                "curriculumPattern": {
+                    "name": "mechanism-first-spiral",
+                    "reason": "The learner needs one stable mechanism before larger systems.",
+                    "fitEvidence": "A beginner outcome centered on training and inference.",
+                },
                 "throughlines": ["parameters store learning", "training differs from use"],
                 "chapters": [
                     {
@@ -232,6 +237,14 @@ class LearningDesignGateTests(LearningDesignFixture):
         self.write_json("learning-outline.json", outline)
 
         with self.assertRaisesRegex(ValueError, "authorization"):
+            self.module().validate_run(self.root)
+
+    def test_outline_requires_a_supported_curriculum_pattern(self) -> None:
+        outline = self.read_json("learning-outline.json")
+        outline.pop("curriculumPattern")
+        self.write_json("learning-outline.json", outline)
+
+        with self.assertRaisesRegex(ValueError, "outline.curriculumPattern"):
             self.module().validate_run(self.root)
 
     def test_reduced_target_requires_user_approved_scope_history(self) -> None:

@@ -75,6 +75,26 @@ class SkillLearningContractTests(unittest.TestCase):
         ):
             self.assertIn(phrase, text)
 
+    def test_curriculum_pattern_is_selected_and_preserved(self) -> None:
+        reference = self.read("skill/references/curriculum-patterns.md").lower()
+        for phrase in (
+            "mechanism-first spiral",
+            "end-to-end trace",
+            "problem progression",
+            "terminology inventory",
+            "curriculumpattern",
+            "fitevidence",
+        ):
+            self.assertIn(phrase, reference)
+        for relative in (
+            "skill/SKILL.md",
+            "skills/custom-learning-audiobook/SKILL.md",
+            "skills/longform-book-development/SKILL.md",
+            "skills/longform-book-development/references/handoff-packet.md",
+        ):
+            with self.subTest(relative=relative):
+                self.assertIn("curriculum-patterns.md", self.read(relative))
+
     def test_longform_handoff_cannot_advance_without_learning_architecture(self) -> None:
         skill = self.read("skills/longform-book-development/SKILL.md")
         handoff = self.read("skills/longform-book-development/references/handoff-packet.md")

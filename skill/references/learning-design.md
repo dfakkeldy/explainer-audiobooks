@@ -64,6 +64,11 @@ Record an `authorization` object with `status: approved`, `source: user` or
 prerequisites. Approval applies to the learning progression, not merely a list
 of topics.
 
+Read `curriculum-patterns.md` and record `curriculumPattern.name`, `reason`, and
+`fitEvidence`. The allowed names are `mechanism-first-spiral`,
+`end-to-end-trace`, and `problem-progression`. The final receipt fails when the
+selection or its learner-and-subject rationale is missing.
+
 ### `chapter-plans.json`
 
 Create one entry per canonical chapter:
@@ -129,7 +134,8 @@ unresolved finding or stale hash fails the gate.
 
 1. Complete `learning-brief.json`, including priorKnowledge and
    openingOrientation.
-2. Complete and authorize `learning-outline.json` before canonical drafting.
+2. Select a pattern under `curriculum-patterns.md`, then complete and authorize
+   `learning-outline.json` before canonical drafting.
 3. Complete `chapter-plans.json` and `coverage-ledger.json` before each affected
    chapter is drafted.
 4. Draft in order and update `continuity.json` after each chapter.

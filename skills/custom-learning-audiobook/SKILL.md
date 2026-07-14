@@ -130,6 +130,8 @@ research, write one coherent manuscript, and package the result for Echo.
   - `../../skill/references/learning-design.md` for learner orientation,
     structured chapter teaching plans, explanation paths, final learning review,
     and the hash-bound learning receipt.
+  - `../../skill/references/curriculum-patterns.md` for choosing and recording a
+    mechanism-first spiral, end-to-end trace, or problem progression.
   - `../../skill/references/narration-style.md` for spoken style and QC sweeps.
   - `../../skill/references/frontier-manuscript-pipeline.md` for the frontier-author
     / cheaper-worker split, continuity ledger, and citation-first reader review.
@@ -198,7 +200,8 @@ research, write one coherent manuscript, and package the result for Echo.
    explicitly asked for a full autonomous run.
 
    Record the approved progression and evidence in
-   `research/learning-outline.json`. Create the complete structured
+   `research/learning-outline.json`, including the selection, reason, and fit
+   evidence required by `../../skill/references/curriculum-patterns.md`. Create the complete structured
    `research/chapter-plans.json` and `research/coverage-ledger.json` before
    canonical drafting. A topic or terminology inventory is not a learning arc.
    Every concept row needs its definition, reason, mechanism, concrete case,
