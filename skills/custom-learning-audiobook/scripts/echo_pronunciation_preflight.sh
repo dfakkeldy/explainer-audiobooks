@@ -64,6 +64,7 @@ echo_pronunciation_preflight() {
   script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
   local state_helper="$script_dir/echo_pronunciation_state.py"
   local lease_helper="$script_dir/echo_pronunciation_lease.py"
+  local cover_helper="$script_dir/../../../skill/scripts/cover_receipts.py"
   local explainer_root=${EXPLAINER_ROOT:-$(cd -- "$script_dir/../../.." && pwd -P)}
   local build_gate=${ECHO_BUILD_GATE:-$HOME/.claude/bin/xcode-build-gate.sh}
   local lease_root
@@ -165,7 +166,7 @@ echo_pronunciation_preflight() {
     /usr/local/bin/python3 "$state_helper" hash-tree "$ECHO_RESOURCE_DIR"
   )
   require_sha256 ECHO_RESOURCES_SHA256 "$ECHO_RESOURCES_SHA256"
-  local cli_version
+  local cli_version cli_help
   cli_version=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" --version)
   if ! ECHO_RENDER_VERSION=$(
     echo_pronunciation_release_render_version "$cli_version"
@@ -173,21 +174,67 @@ echo_pronunciation_preflight() {
     printf 'stale, pre-v12, or non-Release echo-cli: %s\n' "$cli_version" >&2
     return 65
   fi
-  if ! ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help \
-    | rg --fixed-strings -- '--no-pronunciation-review' >/dev/null; then
+  cli_help=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help)
+  if [[ "$cli_help" != *"--no-pronunciation-review"* ]]; then
     printf 'stale echo-cli: pronunciation review is unavailable\n' >&2
+    return 65
+  fi
+  if [[ "$cli_help" != *"--cover"* ]]; then
+    printf 'stale echo-cli: explicit cover art is unavailable\n' >&2
     return 65
   fi
 
   EPUB="$RUN_ROOT/dist/$SLUG.epub"
+  COVER_SELECTION="$RUN_ROOT/dist/cover-selection.json"
   if [[ -L "$EPUB" || ! -f "$EPUB" ]]; then
     printf 'source EPUB is missing: %s\n' "$EPUB" >&2
     return 66
   fi
+  if [[ -z ${COVER:-} || -z ${M4B_COVER:-} ]]; then
+    printf 'COVER and M4B_COVER are required for governed paired-cover narration\n' >&2
+    return 64
+  fi
+  local selected_pair_dir=${COVER%/*}
+  if [[ "$COVER" != /* || "$M4B_COVER" != /* \
+    || ! "$selected_pair_dir" =~ ^$RUN_ROOT/dist/candidate-[123]$ \
+    || "$COVER" != "$selected_pair_dir/cover.png" \
+    || "$M4B_COVER" != "$selected_pair_dir/m4b-cover.png" ]]; then
+    printf 'COVER and M4B_COVER must identify one canonical candidate pair\n' >&2
+    return 64
+  fi
+  for cover_input in "$COVER_SELECTION" "$COVER" "$M4B_COVER"; do
+    if [[ -L "$cover_input" || ! -f "$cover_input" ]]; then
+      printf 'governed paired-cover input is missing or unsafe: %s\n' \
+        "$cover_input" >&2
+      return 66
+    fi
+  done
+  if ! /usr/local/bin/python3 \
+    "$cover_helper" verify \
+    --selection "$COVER_SELECTION" \
+    --cover "$COVER" \
+    --m4b-cover "$M4B_COVER" \
+    --epub "$EPUB" >/dev/null; then
+    printf 'selected cover pair does not match its receipt or EPUB\n' >&2
+    return 65
+  fi
   EPUB_SHA256=$(shasum -a 256 "$EPUB" | awk '{print $1}')
+  COVER_SELECTION_SHA256=$(shasum -a 256 "$COVER_SELECTION" | awk '{print $1}')
+  COVER_SHA256=$(shasum -a 256 "$COVER" | awk '{print $1}')
+  M4B_COVER_SHA256=$(shasum -a 256 "$M4B_COVER" | awk '{print $1}')
   ECHO_CLI_SHA256=$(shasum -a 256 "$CLI" | awk '{print $1}')
-  require_sha256 EPUB_SHA256 "$EPUB_SHA256"
+  for hash_name in \
+    EPUB_SHA256 COVER_SELECTION_SHA256 COVER_SHA256 M4B_COVER_SHA256; do
+    require_sha256 "$hash_name" "${!hash_name}"
+  done
   require_sha256 ECHO_CLI_SHA256 "$ECHO_CLI_SHA256"
+  PACKAGE_SHA256=$(printf '%s\n' \
+    "epub=$EPUB_SHA256" \
+    "cover_selection=$COVER_SELECTION_SHA256" \
+    "portrait_cover=$COVER_SHA256" \
+    "square_cover=$M4B_COVER_SHA256" \
+    | shasum -a 256 | awk '{print $1}')
+  require_sha256 PACKAGE_SHA256 "$PACKAGE_SHA256"
 
   VOICE=${VOICE:-am_michael}
   case "$VOICE" in
@@ -198,7 +245,7 @@ echo_pronunciation_preflight() {
       ;;
   esac
 
-  RUN_ID="${EPUB_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
+  RUN_ID="${PACKAGE_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
@@ -208,6 +255,13 @@ echo_pronunciation_preflight() {
     "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
     "echo_source_sha=$ECHO_SOURCE_SHA" \
     "epub_sha256=$EPUB_SHA256" \
+    "cover_selection_path=$COVER_SELECTION" \
+    "cover_selection_sha256=$COVER_SELECTION_SHA256" \
+    "portrait_cover_path=$COVER" \
+    "portrait_cover_sha256=$COVER_SHA256" \
+    "m4b_cover_path=$M4B_COVER" \
+    "m4b_cover_sha256=$M4B_COVER_SHA256" \
+    "package_sha256=$PACKAGE_SHA256" \
     "echo_cli_sha256=$ECHO_CLI_SHA256" \
     "echo_cli_path=$CLI" \
     "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
@@ -254,21 +308,26 @@ echo_pronunciation_preflight() {
   EXPLAINER_ROOT=$explainer_root
   export ECHO_REPO EXPLAINER_ROOT
   export APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA EPUB EPUB_SHA256
+  export COVER_SELECTION COVER_SELECTION_SHA256 COVER COVER_SHA256
+  export M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256
   export CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256
   export ECHO_RENDER_VERSION VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
 }
 
 echo_pronunciation_attest_inputs() {
-  local script_dir state_helper lease_helper lease_root
+  local script_dir state_helper lease_helper cover_helper lease_root
   script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
   state_helper="$script_dir/echo_pronunciation_state.py"
   lease_helper="$script_dir/echo_pronunciation_lease.py"
+  cover_helper="$script_dir/../../../skill/scripts/cover_receipts.py"
   lease_root=$(echo_pronunciation_canonical_lease_root) || return $?
 
   local required
   for required in \
     ECHO_REPO EXPLAINER_ROOT SLUG RUN_ROOT APPROVED_ECHO_PRONUNCIATION_SHA \
-    ECHO_SOURCE_SHA EPUB EPUB_SHA256 CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR \
+    ECHO_SOURCE_SHA EPUB EPUB_SHA256 COVER_SELECTION COVER_SELECTION_SHA256 \
+    COVER COVER_SHA256 M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256 \
+    CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR \
     ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION VOICE RUN_ID WORK DB \
     ECHO_RENDER_INPUT_RECEIPT; do
     if [[ -z ${!required:-} ]]; then
@@ -344,10 +403,11 @@ echo_pronunciation_attest_inputs() {
     return 65
   fi
 
-  local expected_cli expected_resources expected_epub
+  local expected_cli expected_resources expected_epub expected_cover_selection
   expected_cli="$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli"
   expected_resources="$(dirname -- "$expected_cli")/EchoNarrationResources"
   expected_epub="$RUN_ROOT/dist/$SLUG.epub"
+  expected_cover_selection="$RUN_ROOT/dist/cover-selection.json"
   local release_component
   for release_component in \
     "$ECHO_REPO/.build" \
@@ -375,17 +435,61 @@ echo_pronunciation_attest_inputs() {
     printf 'EPUB is not the canonical governed source: %s\n' "$EPUB" >&2
     return 65
   fi
-  local current_epub_sha current_cli_sha current_resources_sha cli_version cli_help
+  local selected_pair_dir=${COVER%/*}
+  if [[ "$COVER_SELECTION" != "$expected_cover_selection" \
+    || "$COVER" != "$selected_pair_dir/cover.png" \
+    || "$M4B_COVER" != "$selected_pair_dir/m4b-cover.png" \
+    || ! "$selected_pair_dir" =~ ^$RUN_ROOT/dist/candidate-[123]$ ]]; then
+    printf 'selected cover paths changed while narration lease was held\n' >&2
+    return 65
+  fi
+  for cover_input in "$COVER_SELECTION" "$COVER" "$M4B_COVER"; do
+    if [[ -L "$cover_input" || ! -f "$cover_input" ]]; then
+      printf 'selected cover input changed while narration lease was held: %s\n' \
+        "$cover_input" >&2
+      return 65
+    fi
+  done
+  local current_epub_sha current_cover_selection_sha current_cover_sha
+  local current_m4b_cover_sha current_package_sha current_cli_sha
+  local current_resources_sha cli_version cli_help
   local current_render_version
   current_epub_sha=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
+  current_cover_selection_sha=$(/usr/bin/shasum -a 256 "$COVER_SELECTION" | awk '{print $1}')
+  current_cover_sha=$(/usr/bin/shasum -a 256 "$COVER" | awk '{print $1}')
+  current_m4b_cover_sha=$(/usr/bin/shasum -a 256 "$M4B_COVER" | awk '{print $1}')
+  current_package_sha=$(printf '%s\n' \
+    "epub=$current_epub_sha" \
+    "cover_selection=$current_cover_selection_sha" \
+    "portrait_cover=$current_cover_sha" \
+    "square_cover=$current_m4b_cover_sha" \
+    | shasum -a 256 | awk '{print $1}')
   current_cli_sha=$(/usr/bin/shasum -a 256 "$CLI" | awk '{print $1}')
   current_resources_sha=$(/usr/local/bin/python3 "$state_helper" \
     hash-tree "$ECHO_RESOURCE_DIR")
-  for required in EPUB_SHA256 ECHO_CLI_SHA256 ECHO_RESOURCES_SHA256; do
+  for required in \
+    EPUB_SHA256 COVER_SELECTION_SHA256 COVER_SHA256 M4B_COVER_SHA256 \
+    PACKAGE_SHA256 ECHO_CLI_SHA256 ECHO_RESOURCES_SHA256; do
     require_sha256 "$required" "${!required}"
   done
   if [[ "$current_epub_sha" != "$EPUB_SHA256" ]]; then
     printf 'EPUB changed while narration lease was held: %s\n' "$EPUB" >&2
+    return 65
+  fi
+  if [[ "$current_cover_selection_sha" != "$COVER_SELECTION_SHA256" \
+    || "$current_cover_sha" != "$COVER_SHA256" \
+    || "$current_m4b_cover_sha" != "$M4B_COVER_SHA256" \
+    || "$current_package_sha" != "$PACKAGE_SHA256" ]]; then
+    printf 'selected cover package changed while narration lease was held\n' >&2
+    return 65
+  fi
+  if ! /usr/local/bin/python3 \
+    "$cover_helper" verify \
+    --selection "$COVER_SELECTION" \
+    --cover "$COVER" \
+    --m4b-cover "$M4B_COVER" \
+    --epub "$EPUB" >/dev/null; then
+    printf 'selected cover pair changed while narration lease was held\n' >&2
     return 65
   fi
   if [[ "$current_cli_sha" != "$ECHO_CLI_SHA256" ]]; then
@@ -414,9 +518,13 @@ echo_pronunciation_attest_inputs() {
     printf 'stale echo-cli: pronunciation review is unavailable\n' >&2
     return 65
   fi
+  if [[ "$cli_help" != *"--cover"* ]]; then
+    printf 'stale echo-cli: explicit cover art is unavailable\n' >&2
+    return 65
+  fi
 
   local expected_run_id expected_work expected_db expected_receipt
-  expected_run_id="${EPUB_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
+  expected_run_id="${PACKAGE_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
   expected_work="$RUN_ROOT/audio-work-$expected_run_id"
   expected_db="$RUN_ROOT/narration-$expected_run_id.sqlite"
   expected_receipt="$RUN_ROOT/research/echo-render-inputs-$expected_run_id.env"
@@ -442,6 +550,13 @@ echo_pronunciation_attest_inputs() {
     "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
     "echo_source_sha=$ECHO_SOURCE_SHA" \
     "epub_sha256=$EPUB_SHA256" \
+    "cover_selection_path=$COVER_SELECTION" \
+    "cover_selection_sha256=$COVER_SELECTION_SHA256" \
+    "portrait_cover_path=$COVER" \
+    "portrait_cover_sha256=$COVER_SHA256" \
+    "m4b_cover_path=$M4B_COVER" \
+    "m4b_cover_sha256=$M4B_COVER_SHA256" \
+    "package_sha256=$PACKAGE_SHA256" \
     "echo_cli_sha256=$ECHO_CLI_SHA256" \
     "echo_cli_path=$CLI" \
     "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \

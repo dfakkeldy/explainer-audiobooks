@@ -15,6 +15,7 @@ import tempfile
 import time
 import unittest
 import importlib.util
+import zipfile
 from pathlib import Path
 
 
@@ -125,8 +126,64 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         )
         gate.chmod(gate.stat().st_mode | stat.S_IXUSR)
 
-        (self.run_root / "dist").mkdir(parents=True)
-        (self.run_root / "dist" / "fixture.epub").write_bytes(b"fixture epub")
+        dist = self.run_root / "dist"
+        pair = dist / "candidate-1"
+        pair.mkdir(parents=True)
+        portrait = pair / "cover.png"
+        square = pair / "m4b-cover.png"
+        portrait.write_bytes(b"fixture portrait cover")
+        square.write_bytes(b"fixture square cover")
+        sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+        filler = "a" * 64
+        selection = {
+            "schema_version": 2,
+            "book_slug": "fixture",
+            "edition_id": "fixture-private-v1",
+            "candidate": {"id": "fixture-pair", "direction_name": "Fixture Pair"},
+            "source_art_sha256": filler,
+            "variants": {
+                "portrait": {
+                    "specification_sha256": filler,
+                    "render_receipt_sha256": filler,
+                    "cover_sha256": sha(portrait),
+                    "dimensions": [1600, 2560],
+                    "thumbnail_sha256": filler,
+                    "subtitle_included": True,
+                },
+                "square": {
+                    "specification_sha256": filler,
+                    "render_receipt_sha256": filler,
+                    "cover_sha256": sha(square),
+                    "dimensions": [2400, 2400],
+                    "thumbnail_sha256": filler,
+                    "subtitle_included": False,
+                },
+            },
+            "font_manifest_sha256": filler,
+            "selection_source": "user",
+            "selected_at": "2026-07-14T00:00:00+00:00",
+            "privacy": {"classification": "private", "permission_to_publish": False},
+        }
+        (dist / "cover-selection.json").write_text(
+            json.dumps(selection), encoding="utf-8"
+        )
+        with zipfile.ZipFile(dist / "fixture.epub", "w") as archive:
+            archive.writestr(
+                "META-INF/container.xml",
+                """<?xml version="1.0"?>
+<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">
+  <rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles>
+</container>""",
+            )
+            archive.writestr(
+                "OEBPS/content.opf",
+                """<?xml version="1.0"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><meta name="cover" content="cover-image"/></metadata>
+  <manifest><item id="cover-image" href="cover.png" media-type="image/png" properties="cover-image"/></manifest>
+</package>""",
+            )
+            archive.writestr("OEBPS/cover.png", portrait.read_bytes())
 
         self.git("init", "-q")
         self.git("config", "user.email", "fixture@example.com")
@@ -148,7 +205,9 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         )
 
     def write_cli(self, *, include_review_flag: bool, render_version: int = 12) -> None:
-        help_text = "--no-pronunciation-review" if include_review_flag else "--voice"
+        help_text = (
+            "--no-pronunciation-review --cover" if include_review_flag else "--voice"
+        )
         (self.resources / "pronunciations.json").write_text(
             json.dumps({"renderVersion": render_version}) + "\n", encoding="utf-8"
         )
@@ -264,6 +323,10 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "RUN_ROOT": str(self.run_root),
                 "VOICE": "am_michael",
                 "TITLE": "Fixture Book",
+                "COVER": str(self.run_root / "dist" / "candidate-1" / "cover.png"),
+                "M4B_COVER": str(
+                    self.run_root / "dist" / "candidate-1" / "m4b-cover.png"
+                ),
                 "ECHO_PRONUNCIATION_LEASE_ROOT": str(self.lease_root),
             }
         )
@@ -318,6 +381,13 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "ECHO_SOURCE_SHA",
             "EPUB",
             "EPUB_SHA256",
+            "COVER_SELECTION",
+            "COVER_SELECTION_SHA256",
+            "COVER",
+            "COVER_SHA256",
+            "M4B_COVER",
+            "M4B_COVER_SHA256",
+            "PACKAGE_SHA256",
             "CLI",
             "ECHO_CLI_SHA256",
             "ECHO_RESOURCE_DIR",
@@ -696,6 +766,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "Fixture Book",
                 "--author",
                 "Dan Fakkeldy",
+                "--cover",
+                str(self.run_root / "dist" / "candidate-1" / "m4b-cover.png"),
                 "--work-dir",
                 next(
                     argument
@@ -1430,7 +1502,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         first_success = research / first_selector["successReceiptFileName"]
 
         epub = self.run_root / "dist" / "fixture.epub"
-        epub.write_bytes(b"newer source epub")
+        with zipfile.ZipFile(epub, "a") as archive:
+            archive.writestr("OEBPS/newer-source.txt", "newer source epub")
         failed_environment = self.environment()
         failed_environment["FAKE_NARRATE_EXIT"] = "42"
         failed = self.run_narrate(environment=failed_environment)
