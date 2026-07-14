@@ -22,6 +22,7 @@ CHAPTER_CONTENT_SIGNATURE_PATTERN = re.compile(r"[0-9a-f]{16}")
 MARKER_PATTERN = re.compile(r"\.anchors-ch([0-9]+)\.json")
 RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
+    r"(?:[0-9a-f]{12}-)?"
     r"(?:[0-9a-f]{40}|[0-9a-f]{64})-(?:am_michael|am_puck)"
 )
 

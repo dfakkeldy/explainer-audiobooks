@@ -11,6 +11,7 @@ import signal
 import socket
 import stat
 import subprocess
+import sys
 import tempfile
 import time
 import unittest
@@ -1629,6 +1630,32 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         resumed_environment["FAKE_NARRATE_LOG"] = str(log)
         resumed = self.run_narrate("--resume", environment=resumed_environment)
         self.assertEqual(0, resumed.returncode, resumed.stderr)
+
+
+class EchoPronunciationStateCompatibilityTests(unittest.TestCase):
+    def test_run_id_pattern_accepts_current_and_cover_hash_prototype_receipts(self) -> None:
+        script = """
+import runpy
+import sys
+from pathlib import Path
+
+helper = Path(sys.argv[1])
+sys.path.insert(0, str(helper.parent))
+pattern = runpy.run_path(str(helper))["RUN_ID_PATTERN"]
+commit = "d" * 40
+current = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-am_michael"
+prototype = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{commit}-am_michael"
+invalid = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{'f' * 12}-{commit}-am_michael"
+assert pattern.fullmatch(current)
+assert pattern.fullmatch(prototype)
+assert pattern.fullmatch(invalid) is None
+"""
+        result = subprocess.run(
+            [sys.executable, "-c", script, str(STATE_HELPER)],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
 
 
 class PronunciationAuditValidatorTests(unittest.TestCase):
