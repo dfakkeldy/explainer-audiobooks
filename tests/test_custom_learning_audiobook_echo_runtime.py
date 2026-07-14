@@ -168,6 +168,62 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         (dist / "cover-selection.json").write_text(
             json.dumps(selection), encoding="utf-8"
         )
+        chapters = self.run_root / "chapters"
+        research = self.run_root / "research"
+        chapters.mkdir()
+        research.mkdir()
+        (chapters / "ch01.md").write_text(
+            "# Fixture chapter\n\nThis fixture exercises the governed narration path.\n",
+            encoding="utf-8",
+        )
+        pronunciation_reel = research / "pronunciation-probe-reel.m4b"
+        pronunciation_reel.write_bytes(b"fixture approved pronunciation reel")
+        pronunciation_evidence = research / "pronunciation-probe-evidence.json"
+        pronunciation_evidence.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "reelFileName": pronunciation_reel.name,
+                    "reelSHA256": sha(pronunciation_reel),
+                    "clips": [
+                        {"term": "fixture", "variantHeard": "fixture"}
+                    ],
+                },
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        pronunciation_plan = research / "pronunciation-plan.json"
+        pronunciation_plan.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "terms": [
+                        {
+                            "term": "fixture",
+                            "variants": [],
+                            "source": "author",
+                            "reason": "Exercise the governed pronunciation gate.",
+                            "expectedChapters": ["ch01.md"],
+                            "required": True,
+                            "status": "accepted",
+                            "decision": {
+                                "acceptedBy": "Runtime fixture",
+                                "acceptedAt": "2026-07-14T00:00:00+00:00",
+                            },
+                            "evidence": {
+                                "path": "research/pronunciation-probe-evidence.json",
+                                "sha256": sha(pronunciation_evidence),
+                            },
+                        }
+                    ],
+                },
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
         with zipfile.ZipFile(dist / "fixture.epub", "w") as archive:
             archive.writestr(
                 "META-INF/container.xml",
@@ -327,6 +383,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "COVER": str(self.run_root / "dist" / "candidate-1" / "cover.png"),
                 "M4B_COVER": str(
                     self.run_root / "dist" / "candidate-1" / "m4b-cover.png"
+                ),
+                "PRONUNCIATION_PLAN": str(
+                    self.run_root / "research" / "pronunciation-plan.json"
                 ),
                 "ECHO_PRONUNCIATION_LEASE_ROOT": str(self.lease_root),
             }
