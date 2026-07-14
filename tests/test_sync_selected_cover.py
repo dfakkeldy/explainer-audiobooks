@@ -58,11 +58,33 @@ def write_paired_package(root: Path, *, include_m4b: bool = True):
     artifacts: dict[str, Path] = {}
     for name in PAIRED_NAMES[:-1]:
         path = source / name
-        path.write_bytes(f"new-{name}".encode())
+        if name.endswith("-spec.json"):
+            path.write_text(
+                json.dumps(
+                    {"variant": name.removesuffix("-spec.json"), "title": "Fixture"},
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+        else:
+            path.write_bytes(f"new-{name}".encode())
         artifacts[name] = path
+    def governed_digest(path: Path) -> str:
+        if path.name.endswith("-spec.json"):
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            encoded = json.dumps(
+                payload,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=False,
+                allow_nan=False,
+            ).encode("utf-8")
+            return hashlib.sha256(encoded).hexdigest()
+        return hashlib.sha256(path.read_bytes()).hexdigest()
     def variant(stem: str, dimensions: tuple[int, int]) -> SelectedVariant:
         return SelectedVariant(
-            hashlib.sha256(artifacts[f"{stem}-spec.json"].read_bytes()).hexdigest(),
+            governed_digest(artifacts[f"{stem}-spec.json"]),
             hashlib.sha256(artifacts[f"{stem}-render.json"].read_bytes()).hexdigest(),
             hashlib.sha256(artifacts[f"{stem}.png"].read_bytes()).hexdigest(),
             dimensions,

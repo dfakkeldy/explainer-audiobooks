@@ -76,7 +76,6 @@ def main() -> int:
         "--portrait-render-receipt", "--square-render-receipt",
         "--selection-source user", "--privacy-classification",
         "--m4b-cover \"$PAIR/m4b-cover.png\"",
-        "--portrait-cover \"$PAIR/cover.png\"",
         "--paired-artifact-dir \"$PAIR\"", "--intent reuse", "--apply",
     )
     for path in (
@@ -89,6 +88,9 @@ def main() -> int:
             "/make_cover.py \\\n  --spec" not in read(path),
             f"{path} teaches active single-cover rendering",
         )
+
+    for path in ("skill/SKILL.md", "skill/references/cover-art.md"):
+        contains(path, "--portrait-cover \"$PAIR/cover.png\"")
 
     for path, legacy_marker in (
         (
