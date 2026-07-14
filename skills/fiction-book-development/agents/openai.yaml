@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fiction Book Development"
+  short_description: "Plan, draft, and revise coherent fiction"
+  default_prompt: "Use $fiction-book-development to develop my fiction project from premise through an approved Markdown manuscript."

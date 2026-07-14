@@ -54,6 +54,7 @@ def main() -> int:
     validate_skill("skill", "explainer-audiobook")
     validate_skill("skills/custom-learning-audiobook", "custom-learning-audiobook")
     validate_skill("skills/longform-book-development", "longform-book-development")
+    validate_skill("skills/fiction-book-development", "fiction-book-development")
 
     paired_contract = (
         "exactly three", "1600×2560", "cover.png", "2400×2400",
@@ -182,6 +183,38 @@ def main() -> int:
     contains(
         "skills/longform-book-development/agents/openai.yaml",
         "$longform-book-development",
+    )
+    contains(
+        "skills/fiction-book-development/SKILL.md",
+        "One manuscript owner",
+        "Causality over chronology",
+        "Style by observable choices",
+        "Continuity is active",
+        "Revision is staged",
+        "Production is opt-in",
+        "templates/fiction-project.md",
+    )
+    contains(
+        "skills/fiction-book-development/references/story-bible-and-continuity.md",
+        "Character engine",
+        "Knowledge and secrets",
+        "Promises and payoffs",
+    )
+    contains(
+        "skills/fiction-book-development/references/style-and-scene-craft.md",
+        "Style control panel",
+        "Do not imitate a living author",
+        "Scene engine",
+        "Read-aloud test",
+    )
+    contains(
+        "skills/fiction-book-development/references/revision-passes.md",
+        "Pass 1: Premise and structure",
+        "Pass 8: Read-aloud and final canon",
+    )
+    contains(
+        "skills/fiction-book-development/agents/openai.yaml",
+        "$fiction-book-development",
     )
 
     print("validate_skills: clean")

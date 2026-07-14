@@ -16,6 +16,9 @@ source plan, picture plan, and handoff packet for `custom-learning-audiobook`.
 
 Do not use this skill for a simple "make me a book about X" request that is ready
 for one-pass production. Use `custom-learning-audiobook` directly for that.
+Do not use it for novels, novellas, or short-story collections; route fiction to
+`fiction-book-development`, which owns story bibles, canonical prose, continuity,
+and fiction-specific revision.
 
 ## Required Reference
 

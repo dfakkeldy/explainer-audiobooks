@@ -102,6 +102,12 @@ the slower front door for book ideas that need several rounds of shaping before
 production: rough concept, outline, source plan, picture gathering, visual
 provenance, and a final handoff packet for `custom-learning-audiobook`.
 
+The **[`fiction-book-development`](skills/fiction-book-development/)** skill is a
+dedicated manuscript workflow for novels, novellas, and story collections. It
+uses one lead writer, an approved story bible, explicit prose controls, scene-level
+causality, continuity ledgers, and staged revision. It stops at an approved
+Markdown manuscript unless production is separately requested.
+
 ## License
 
 This repo is dual-licensed, split by folder:
