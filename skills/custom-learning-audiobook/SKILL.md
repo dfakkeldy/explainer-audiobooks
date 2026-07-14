@@ -126,6 +126,11 @@ research, write one coherent manuscript, and package the result for Echo.
   research.
 - Read `references/package-and-qc.md` before building EPUB/Markdown, rendering
   M4B/alignment, copying packages, or reporting completion.
+- Before any Echo render, create `research/pronunciation-plan.json`. Include
+  listener-named risks such as `hyperparameter` and `hyperparameters`, plus
+  risks found in the coverage ledger and manuscript. Use the governed partial
+  probe and `build_pronunciation_probe_reel.py`; full narration requires
+  accepted, hash-bound human listening evidence.
 - Reuse the existing explainer tooling from this repo:
   - `../../skill/references/learning-design.md` for learner orientation,
     structured chapter teaching plans, explanation paths, final learning review,
@@ -214,6 +219,12 @@ research, write one coherent manuscript, and package the result for Echo.
    permissioned. Save them under `chapters/images/`, keep a provenance note in
    `research/visuals.md`, and plan chapter placement with alt text and captions.
    Treat unclear web images as visual references, not package assets.
+
+   Also create `research/pronunciation-plan.json` before narration. Record each
+   risky term and every spoken variant, its source (`listener`,
+   `coverage-ledger`, or `author`), why it matters, and the chapters where all
+   forms occur. A planned record permits only a bounded partial render. Promote
+   required terms to `accepted` only after human listening to the governed reel.
 
 7. **Write with one lead writer — a frontier model.** The frontier model owns the
    outline,

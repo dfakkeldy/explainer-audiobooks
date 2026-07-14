@@ -73,6 +73,16 @@ path.
 User-provided files, live research needs, Open Notebook corpora, primary sources,
 or source-quality constraints. Include retrieval dates for live web sources.
 
+## Pronunciation Plan
+
+List the terms the listener explicitly wants checked, plus technical names and
+variants the author expects to be risky. Production records these in
+`research/pronunciation-plan.json`, makes a governed partial-render reel, and
+requires the listener's accepted human listening evidence before full audio.
+
+| Term | Spoken variants | Source | Why it matters | Expected chapters |
+|---|---|---|---|---|
+
 ## Figure Plan
 
 | ID | File path | Placement | Alt text | Caption | Provenance/license | Public-safe? |

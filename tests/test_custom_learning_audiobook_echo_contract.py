@@ -165,6 +165,32 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         self.assertIn("real-book pronunciation probe", normalized_skill)
         self.assertIn("--max-chapters", self.narrate_wrapper)
 
+    def test_full_render_requires_hash_bound_listener_pronunciation_acceptance(
+        self,
+    ) -> None:
+        for marker in (
+            "PRONUNCIATION_PLAN",
+            "pronunciation-plan.json",
+            "pronunciation_plan_qc.py",
+            "--phase planning",
+            "--phase full-render",
+            "pronunciation-plan-receipt.json",
+        ):
+            with self.subTest(wrapper_marker=marker):
+                self.assertIn(marker, self.narrate_wrapper)
+
+        for text in (self.skill, self.package):
+            with self.subTest(document="skill" if text == self.skill else "package"):
+                normalized = self.normalized(text)
+                for marker in (
+                    "pronunciation-plan.json",
+                    "build_pronunciation_probe_reel.py",
+                    "accepted",
+                    "human listening",
+                    "hyperparameter",
+                ):
+                    self.assertIn(marker, normalized)
+
     def test_review_artifacts_are_automatic_and_part_of_package_qc(self) -> None:
         normalized = self.normalized(self.package)
         for marker in (

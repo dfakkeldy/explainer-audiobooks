@@ -430,6 +430,7 @@ export VOICE=am_michael
 export SLUG TITLE
 export COVER="$PAIR/cover.png"
 export M4B_COVER="$PAIR/m4b-cover.png"
+export PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
 : "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
 export APPROVED_ECHO_PRONUNCIATION_SHA
 
@@ -443,6 +444,20 @@ uses the custom-learning default `--voice am_michael` through `VOICE` and keeps
 synthesis bounded at one chapter job and two Kokoro threads.
 
 ### Governed real-book pronunciation probes
+
+Create `research/pronunciation-plan.json` before invoking Echo. It must include
+listener-named risks such as `hyperparameter` and `hyperparameters`, every
+spoken variant, the expected canonical chapters, and the reason each term needs
+review. The wrapper validates this plan in `planning` mode for a bounded partial
+render and refuses an unbounded full render until every required term has
+accepted, hash-bound human listening evidence. Export the canonical path:
+
+```bash
+export PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
+/usr/local/bin/python3 "$EXPLAINER_ROOT/skill/scripts/pronunciation_plan_qc.py" \
+  --run-root "$RUN_ROOT" \
+  --phase planning
+```
 
 For a real-book pronunciation probe, the public wrapper may render one new
 chapter at a time while retaining the same source, approved renderer, resource
@@ -478,8 +493,39 @@ Each partial attempt updates `echo-render-current-attempt.json` and seals
 `echo-resume-state-$RUN_ID.json`, but it has **no accepted M4B**, sidecar,
 pronunciation audit, success receipt, or current-accepted selector. Partial
 capture audio is listening evidence, not a deliverable package. Resume later
-without `--max-chapters` to finish and publish the governed run, then perform
-the complete selector-bound QC below.
+without `--max-chapters` only after completing the acceptance sequence below.
+
+Build one governed reel from the actual partial chapter captures and their Echo
+word timings. The builder writes a JSON evidence file binding the plan, source
+captures, extracted clips, and reel hashes:
+
+```bash
+/usr/local/bin/python3 \
+  "$EXPLAINER_ROOT/skill/scripts/build_pronunciation_probe_reel.py" \
+  --run-root "$RUN_ROOT" \
+  --work-dir "$WORK" \
+  --out "$RUN_ROOT/research/pronunciation-probe-reel.m4b" \
+  --evidence-out "$RUN_ROOT/research/pronunciation-probe-evidence.json"
+```
+
+Have the listener hear every required base form and variant. Human listening is
+the decision gate: automation may locate and extract the clips, but it may not
+mark them accepted. After the listener accepts the reel, update each required
+plan entry to `status: "accepted"`, record `acceptedBy` and `acceptedAt`, and
+point its evidence path and SHA-256 at the shared governed evidence JSON. Then
+validate and write the immutable full-render receipt:
+
+```bash
+/usr/local/bin/python3 "$EXPLAINER_ROOT/skill/scripts/pronunciation_plan_qc.py" \
+  --run-root "$RUN_ROOT" \
+  --phase full-render \
+  --receipt-out "$RUN_ROOT/research/pronunciation-plan-receipt.json"
+```
+
+Only then resume without `--max-chapters` to finish and publish the governed
+run, followed by the complete selector-bound QC below. The wrapper repeats the
+full-render validation itself, so a stale plan, changed chapter, changed reel,
+or missing acceptance fails before Echo starts.
 
 Each attempt receives a cryptographically random `ATTEMPT_ID`. Its output stem
 is `$DIST/echo-renders/$RUN_ID/$ATTEMPT_ID/$SLUG`, with a pronunciation audit on

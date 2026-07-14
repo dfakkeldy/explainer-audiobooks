@@ -78,7 +78,10 @@ and fiction-specific revision.
    unresolved choices. Include the desired humanizing level, voice sample or
    style notes, AI-writing patterns to avoid, and the instruction to preserve
    facts, citations, technical names, and intentional teaching repetition. The
-   handoff should be complete enough that a fresh agent can run
+   packet must name listener-requested and author-anticipated pronunciation
+   risks for `research/pronunciation-plan.json`; include every spoken variant
+   that needs to be heard before full narration.
+   Preserve these decisions so the handoff is complete enough that a fresh agent can run
    `custom-learning-audiobook` without re-litigating the concept.
 
    If opening orientation, prior knowledge, target history, chapter
@@ -111,6 +114,7 @@ them, or explicitly asks to proceed without another gate:
 - final brief and audience promise,
 - learner prior knowledge and opening orientation,
 - original target plus approved target history,
+- listener pronunciation risks for `pronunciation-plan.json`,
 - chapter outline with learning arc, prerequisites, knowledge delta, teaching
   beats, and grounded examples,
 - complete core-concept explanation paths,

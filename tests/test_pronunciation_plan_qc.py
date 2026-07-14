@@ -63,11 +63,15 @@ class PronunciationPlanTests(unittest.TestCase):
         )
 
     def accept_plan(self) -> Path:
+        reel_path = self.research / "pronunciation-probe-reel.m4b"
+        reel_path.write_bytes(b"governed pronunciation reel")
         evidence_path = self.research / "pronunciation-probe-evidence.json"
         evidence_path.write_text(
             json.dumps(
                 {
                     "schemaVersion": 1,
+                    "reelFileName": reel_path.name,
+                    "reelSHA256": sha256(reel_path),
                     "clips": [
                         {
                             "term": "hyperparameter",
@@ -146,6 +150,13 @@ class PronunciationPlanTests(unittest.TestCase):
         evidence_path.write_text("{}\n", encoding="utf-8")
 
         with self.assertRaisesRegex(ValueError, "evidence SHA-256"):
+            self.module().validate_plan(self.root, "full-render")
+
+    def test_full_render_rejects_a_replaced_pronunciation_reel(self) -> None:
+        self.accept_plan()
+        (self.research / "pronunciation-probe-reel.m4b").write_bytes(b"replacement")
+
+        with self.assertRaisesRegex(ValueError, "reel SHA-256"):
             self.module().validate_plan(self.root, "full-render")
 
     def test_receipt_binds_plan_evidence_and_chapters(self) -> None:

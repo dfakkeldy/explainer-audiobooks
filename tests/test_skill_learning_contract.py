@@ -59,6 +59,28 @@ class SkillLearningContractTests(unittest.TestCase):
                 self.assertIn("chapter-plans.json", text)
                 self.assertIn("learning-review.json", text)
 
+    def test_production_skills_plan_listener_pronunciation_before_full_audio(
+        self,
+    ) -> None:
+        for relative in (
+            "skill/SKILL.md",
+            "skills/custom-learning-audiobook/SKILL.md",
+            "skills/custom-learning-audiobook/references/intake-and-research.md",
+            "skills/custom-learning-audiobook/references/package-and-qc.md",
+            "skills/longform-book-development/SKILL.md",
+            "skills/longform-book-development/references/handoff-packet.md",
+        ):
+            with self.subTest(relative=relative):
+                text = self.read(relative)
+                self.assertIn("pronunciation-plan.json", text)
+                self.assertIn("listener", text.lower())
+
+        package = self.read(
+            "skills/custom-learning-audiobook/references/package-and-qc.md"
+        )
+        self.assertIn("build_pronunciation_probe_reel.py", package)
+        self.assertIn("pronunciation_plan_qc.py", package)
+
     def test_shared_contract_requires_orientation_and_complete_explanation_paths(self) -> None:
         text = self.read("skill/references/learning-design.md")
         for phrase in (

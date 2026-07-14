@@ -86,6 +86,7 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
     seen: set[str] = set()
     required_terms: list[str] = []
     evidence_paths: set[Path] = set()
+    evidence_reel_paths: set[Path] = set()
 
     for index, entry in enumerate(terms):
         label = f"terms[{index}]"
@@ -147,6 +148,26 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
                 raise ValueError(f"{label} evidence SHA-256 does not match {evidence_path}")
             evidence_paths.add(evidence_path)
             evidence_payload = load_json(evidence_path, f"{label} pronunciation evidence")
+            if evidence_payload.get("schemaVersion") != SCHEMA_VERSION:
+                raise ValueError(
+                    f"{label} pronunciation evidence schemaVersion must be {SCHEMA_VERSION}"
+                )
+            reel_name = require_string(
+                evidence_payload.get("reelFileName"),
+                f"{label} pronunciation evidence reelFileName",
+            )
+            if Path(reel_name).name != reel_name:
+                raise ValueError(f"{label} pronunciation evidence reelFileName must be a basename")
+            reel_path = (evidence_path.parent / reel_name).resolve()
+            if not reel_path.is_relative_to(run_root) or not reel_path.is_file():
+                raise ValueError(f"{label} pronunciation evidence reel is missing: {reel_path}")
+            expected_reel_sha = require_string(
+                evidence_payload.get("reelSHA256"),
+                f"{label} pronunciation evidence reelSHA256",
+            )
+            if sha256_file(reel_path) != expected_reel_sha:
+                raise ValueError(f"{label} pronunciation reel SHA-256 does not match {reel_path}")
+            evidence_reel_paths.add(reel_path)
             clips = evidence_payload.get("clips")
             if not isinstance(clips, list):
                 raise ValueError(f"{label} pronunciation evidence clips must be a list")
@@ -161,6 +182,8 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
 
     if phase == "full-render" and len(evidence_paths) != 1:
         raise ValueError("required pronunciation terms must share one governed reel evidence file")
+    if phase == "full-render" and len(evidence_reel_paths) != 1:
+        raise ValueError("required pronunciation terms must share one governed pronunciation reel")
 
     result: dict[str, object] = {
         "schemaVersion": SCHEMA_VERSION,
@@ -173,6 +196,9 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
         evidence_path = next(iter(evidence_paths))
         result["evidencePath"] = str(evidence_path.relative_to(run_root))
         result["evidenceSHA256"] = sha256_file(evidence_path)
+        reel_path = next(iter(evidence_reel_paths))
+        result["reelPath"] = str(reel_path.relative_to(run_root))
+        result["reelSHA256"] = sha256_file(reel_path)
     return result
 
 
