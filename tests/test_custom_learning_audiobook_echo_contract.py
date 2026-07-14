@@ -117,12 +117,29 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "source EPUB changes",
             "Release CLI binary or Echo source revision changes",
             "exact approved/source revision",
-            "render version 12",
+            "exact Release render version",
             "echo-resume-state-$RUN_ID.json",
             "SHA-256",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, normalized)
+
+    def test_governed_partial_probe_is_resumable_but_not_publishable(self) -> None:
+        normalized_skill = self.normalized(self.skill)
+        normalized_package = self.normalized(self.package)
+
+        for marker in (
+            "--max-chapters 1",
+            "exit 2",
+            "partial",
+            "--resume --max-chapters 1",
+            "no accepted M4B",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, normalized_package)
+
+        self.assertIn("real-book pronunciation probe", normalized_skill)
+        self.assertIn("--max-chapters", self.narrate_wrapper)
 
     def test_review_artifacts_are_automatic_and_part_of_package_qc(self) -> None:
         normalized = self.normalized(self.package)
