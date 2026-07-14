@@ -8,7 +8,11 @@ FILES = {
     "cover": ROOT / "skill" / "references" / "cover-art.md",
     "long": ROOT / "skill" / "SKILL.md",
     "custom": ROOT / "skills" / "custom-learning-audiobook" / "SKILL.md",
-    "package": ROOT / "skills" / "custom-learning-audiobook" / "references" / "package-and-qc.md",
+    "package": ROOT
+    / "skills"
+    / "custom-learning-audiobook"
+    / "references"
+    / "package-and-qc.md",
     "public": ROOT / "docs" / "how-these-were-made.md",
     "readme": ROOT / "README.md",
     "make": ROOT / "docs" / "make-your-own.md",
@@ -20,7 +24,9 @@ class SkillCoverContractTests(unittest.TestCase):
         cursor = 0
         for marker in markers:
             position = text.find(marker, cursor)
-            self.assertNotEqual(-1, position, f"missing or out-of-order marker: {marker}")
+            self.assertNotEqual(
+                -1, position, f"missing or out-of-order marker: {marker}"
+            )
             cursor = position + len(marker)
 
     def test_each_active_skill_uses_the_complete_governed_workflow(self) -> None:
@@ -163,20 +169,33 @@ class SkillCoverContractTests(unittest.TestCase):
                 with self.subTest(file=key, marker=marker):
                     self.assertIn(marker, text)
 
-    def test_active_skills_teach_paired_commands_not_new_single_cover_selection(self) -> None:
+    def test_active_skills_teach_paired_commands_not_new_single_cover_selection(
+        self,
+    ) -> None:
         for key in ("long", "custom", "package"):
             text = FILES[key].read_text(encoding="utf-8")
-            for marker in ("cover_pairs.py", "select-pair", "--m4b-cover", "replace_m4b_cover.py", "--paired-artifact-dir"):
+            for marker in (
+                "cover_pairs.py",
+                "select-pair",
+                "--m4b-cover",
+                "replace_m4b_cover.py",
+                "--paired-artifact-dir",
+            ):
                 with self.subTest(file=key, marker=marker):
                     self.assertIn(marker, text)
             self.assertIn("verification-only compatibility", text)
 
-    def test_public_docs_state_governed_sync_boundaries_and_migration_scope(self) -> None:
+    def test_public_docs_state_governed_sync_boundaries_and_migration_scope(
+        self,
+    ) -> None:
         for key in ("public", "readme", "make"):
             text = FILES[key].read_text(encoding="utf-8")
             self.assertIn("public/iCloud/site sync", text)
             self.assertIn("private", text)
-        combined = "\n".join(FILES[key].read_text(encoding="utf-8") for key in ("long", "custom", "package", "public", "readme", "make"))
+        combined = "\n".join(
+            FILES[key].read_text(encoding="utf-8")
+            for key in ("long", "custom", "package", "public", "readme", "make")
+        )
         self.assertIn("five-book migration", combined)
         self.assertIn("not a universal future rule", combined)
 
@@ -197,15 +216,19 @@ class SkillCoverContractTests(unittest.TestCase):
                 "--square-render-receipt",
                 "--privacy-classification",
                 "--selection-source user",
-                "--selection \"$DIST/cover-selection.json\"",
-                "--m4b-cover \"$PAIR/m4b-cover.png\"",
-                "--portrait-cover \"$PAIR/cover.png\"",
-                "--paired-artifact-dir \"$PAIR\"",
+                '--selection "$DIST/cover-selection.json"',
+                '--m4b-cover "$PAIR/m4b-cover.png"',
+                '--paired-artifact-dir "$PAIR"',
                 "--intent reuse",
                 "--apply",
             ):
                 with self.subTest(file=key, marker=marker):
                     self.assertIn(marker, text)
+            if key in {"long", "cover"}:
+                self.assertIn('--portrait-cover "$PAIR/cover.png"', text)
+            else:
+                self.assertIn("Never run `replace_m4b_cover.py`", text)
+                self.assertNotIn('--portrait-cover "$PAIR/cover.png"', text)
 
     def test_active_new_work_does_not_run_single_cover_renderer(self) -> None:
         for key in ("long", "custom", "package", "cover"):

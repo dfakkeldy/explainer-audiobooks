@@ -12,9 +12,10 @@ Use `render_cover_pair` in `skill/scripts/cover_pairs.py` to produce `cover.png`
 at 1600×2560 and `m4b-cover.png` at 2400×2400 plus thumbnails and receipts.
 Require human review and explicit pair selection, then use `cover_receipts.py
 select-pair` for the paired receipt. Build with `build_book.py --cover ...
---m4b-cover ... --cover-selection ...`; after narration use
-`replace_m4b_cover.py --cover ... --portrait-cover ... --cover-selection ...`
-to preserve audio. Run `cover_receipts.py verify --cover ... --m4b-cover ...
+--m4b-cover ... --cover-selection ...`. Echo resolves the OPF-declared cover
+before export and binds the exact resulting M4B bytes into the pronunciation
+audit. Never run `replace_m4b_cover.py` or otherwise mutate an audited Echo M4B
+after narration. Run `cover_receipts.py verify --cover ... --m4b-cover ...
 --epub ... --m4b ...` for post-embed verification, then dry-run and apply
 `sync_selected_cover.py --paired-artifact-dir ...` for governed
 public/iCloud/site sync under the public/private rules below.
@@ -81,27 +82,22 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --m4b-cover "$PAIR/m4b-cover.png" \
   --cover-selection "$DIST/cover-selection.json"
 
-/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
-  --m4b "$DIST/$SLUG.m4b" \
-  --cover "$PAIR/m4b-cover.png" \
-  --out "$DIST/$SLUG.covered.m4b" \
-  --cover-selection "$DIST/cover-selection.json" \
-  --portrait-cover "$PAIR/cover.png"
-mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
-
+# Run the governed Echo wrapper, then complete the selector-bound QC flow in
+# references/package-and-qc.md. It sets AUDIOBOOK to the accepted run-scoped M4B.
+: "${AUDIOBOOK:?set only from the verified current-accepted selector}"
 /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --receipt "$DIST/cover-selection.json"
 
 /usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse
@@ -110,7 +106,7 @@ mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse \
@@ -153,7 +149,7 @@ research, write one coherent manuscript, and package the result for Echo.
 | Sampler | 45-75 minutes when the topic is vague or commitment is light |
 | Audience | Curious beginner unless the request says otherwise |
 | Narrator | `am_michael`; fallback `am_puck`; do not default to `af_heart` |
-| Audio renderer | Native Echo/Kokoro through `echo-cli narrate`; no Apple/system-voice substitute |
+| Audio renderer | Native Echo/Kokoro through the governed narration wrapper; no raw Debug CLI or Apple/system-voice substitute |
 | Author metadata | `Dan Fakkeldy` |
 | Writing model metadata | Record the frontier author as contributor/source note |
 | Model routing | Frontier model: outline, Markdown prose, substantive revisions. Cheaper workers: research extraction, citation checks, diagnostics, package/render/QC only. |
@@ -295,23 +291,48 @@ research, write one coherent manuscript, and package the result for Echo.
     "$RUN_ROOT/research/prose-style-receipt.json"`; packaging stops if it is
     missing, failed, or stale.
 
-12. **Render native Echo audio.** Use Echo's `echo-cli narrate` path from
+12. **Render native Echo audio.** Use the governed Echo narration wrapper from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
-   only as an Echo voice fallback. Echo audio is part of the delivery contract:
+   only as an Echo voice fallback. The wrapper owns the Release preflight,
+   content-addressed paths, and FD-backed leases for the shared Release build,
+   canonicalized work/database, and every emitted media path. Those leases remain held through
+   locked pre/post CLI/resource-tree hash verification and the actual `echo-cli narrate` process;
+   the wrapper derives one effective-user lease namespace and ignores caller
+   attempts to substitute another lock root.
+   do not bypass the wrapper with a direct CLI command. Echo
+   audio is part of the delivery contract:
    do not impose your own time limit, deadline, or "too slow" threshold just
    because synthesis may take hours. Let long renders run, resume partial
    renders, or report the exact live blocker. Do not replace Echo/Kokoro with
    macOS `say`, Apple system voices, AVSpeechSynthesizer, audiobook-app TTS, or
    any other non-Echo renderer unless the user explicitly asks for that
-   non-Echo preview/fallback after you name the tradeoff. Produce `<slug>.m4b`
-   and `<slug>.alignment.json` whenever the CLI can run. If native Echo audio is
-   blocked and the user has not approved a non-Echo substitute, surface only the
-   EPUB/Markdown from the run folder as clearly labelled interim files and report
-   the blocker. Do not call that an Echo-ready or complete governed package, and
-   do not proceed to delivery sync.
+   non-Echo preview/fallback after you name the tradeoff. Produce the run-scoped
+   `<slug>.m4b` and `<slug>.alignment.json` whenever the CLI can run.
+   Pronunciation review is
+   on by default and produces a pronunciation audit plus an optional
+   pronunciation reel. Do not pass `--no-pronunciation-review` for a governed
+   render. Supply and record the reviewed
+   `APPROVED_ECHO_PRONUNCIATION_SHA`; the package preflight fails closed unless
+   it exactly equals the clean Echo source `HEAD` being built. Resume only with
+   the matching hash-bound DB and sealed Echo-v12 capture-state receipt. A render
+   is complete only after the live DB/capture state is reverified under its
+   leases, staged output validation, a schema-v2 success receipt that binds the
+   exact resume-state filename and hash, and atomic publication of the
+   current-accepted-run selector. Every
+   public attempt replaces the current-attempt receipt before rendering, so a
+   failed newer attempt cannot inherit an older success. Use the tested Release
+   preflight, immutable-input receipt, resource
+   leases, and bounded job/thread settings in the package reference. If native Echo audio is blocked
+   and the user has not
+   approved a non-Echo substitute, surface only the EPUB/Markdown from the run
+   folder as clearly labelled interim files and report the blocker. Do not call
+   that an Echo-ready or complete governed package, and do not proceed to
+   delivery sync.
 
 13. **Final-verify the governed package.** After native Echo narration succeeds,
     verify that the paired receipt matches the portrait, square, EPUB, and M4B.
+    Also verify the render-success receipt and pronunciation audit. Never replace
+    the cover or otherwise rewrite the audited M4B after Echo emits it.
     The older command below is verification-only compatibility for legacy
     single-cover receipts; new packages use the paired verification command in
     `references/package-and-qc.md`:
@@ -319,17 +340,22 @@ research, write one coherent manuscript, and package the result for Echo.
     ```bash
     SELECTED="<selected candidate number>"
     DIST=".build/custom-learning-audiobooks/$SLUG/dist"
+    : "${AUDIOBOOK:?set from the verified current selector as shown in package-and-qc.md}"
     /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
       --selection "$DIST/cover-selection.json" \
       --cover "$DIST/cover-$SELECTED.png" \
       --epub "$DIST/$SLUG.epub" \
-      --m4b "$DIST/$SLUG.m4b" \
+      --m4b "$AUDIOBOOK" \
       --receipt "$DIST/cover-selection.json"
     ```
 
-    Parse alignment JSON, inspect M4B duration with `ffprobe`, run any available
-    Echo QA, and verify EPUB figures before delivery. A failed receipt or media
-    check returns to the build/audio step; it never falls through to copying.
+    Parse alignment JSON, run `verify-sidecar`, inspect M4B duration with
+    `ffprobe`, validate pronunciation-audit schema/coverage/watch counts, inspect
+    the pronunciation reel when present, run any available Echo QA, and verify
+    EPUB figures before delivery. Keep human listening explicitly `pending` until
+    the reel or matching final-audiobook passages have actually been heard. A
+    failed receipt or media check returns to the build/audio step; it never falls
+    through to copying.
 
 14. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
     follow `references/package-and-qc.md`. Run `sync_selected_cover.py` first as
@@ -346,9 +372,12 @@ research, write one coherent manuscript, and package the result for Echo.
     source-confidence label, word count, runtime, narrator, frontier author
     model, lower-cost review/production roles used, output paths, the actual
     delivery folder, receipt/destination classifications, and which QC gates
-    passed or were skipped. Report an iCloud Books path only when a copy was
-    actually created. If the book includes pictures, report figure count and any
-    image rights/privacy caveats.
+    passed or were skipped. Include the pronunciation audit, optional
+    pronunciation reel, coverage/watch-count summary, human listening status,
+    approved/source Echo revisions, and EPUB/CLI hashes from the render-input
+    receipt. Report an iCloud Books path only when a copy was actually created.
+    If the book includes pictures, report figure count and any image rights/privacy
+    caveats.
 
 ## Hard Rules
 
@@ -367,6 +396,8 @@ research, write one coherent manuscript, and package the result for Echo.
   is allowed work, not a reason to downgrade the package.
 - Do not use Apple/macOS/system narration as a fallback for Echo audio unless
   the user explicitly asks for a non-Echo preview or substitute.
+- Do not bypass the governed narration wrapper with a raw `echo-cli narrate` or
+  DerivedData `Debug/echo-cli` command.
 - Do not leave a public-safe finished package only in `~/Downloads/book-inbox`
   or the transient `.build/` folder; use the governed default iCloud delivery.
 - Private or sensitive packages stay in the agreed private project folder and
