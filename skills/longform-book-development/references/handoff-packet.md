@@ -20,7 +20,10 @@ report any blockers honestly.
 - Privacy:
 - Permission to publish:
 - Length target:
+- Original target:
+- Target history and approval evidence:
 - Audience:
+- Prior knowledge:
 - Voice/tone:
 - Source-confidence target:
 - User approval status:
@@ -29,18 +32,34 @@ report any blockers honestly.
 
 What the listener should understand, feel, or be able to do after finishing.
 
+## Opening Orientation
+
+- Context: why the subject or problem exists.
+- Promise: what this book will make understandable or doable.
+- Route: the learning path the listener will follow.
+
 ## Boundaries
 
 What to include, avoid, simplify, keep private, or treat as educational-only.
 
-## Outline
+## Approved Learning Outline
 
-| Ch | Working title | Purpose | Core beats | Sources needed | Figures |
-|---|---|---|---|---|---|
+| Ch | Working title | Purpose | Prerequisites | Knowledge delta | Grounded example | Core beats | Sources needed | Figures |
+|---|---|---|---|---|---|---|---|---|
+
+Record who approved the progression, whether approval came from the user or an
+explicit autonomous-run request, and the evidence for that authorization.
 
 ## Throughlines
 
 Recurring ideas, metaphors, or tensions that should tie chapters together.
+
+## Concept Explanation Paths
+
+For every core concept, record its definition, reason, mechanism, concrete case,
+useful boundary or not-applicable reason, likely misconception, expected listener
+ability, and planned chapter uses. Exposure or reuse alone is not an explanation
+path.
 
 ## Source Plan
 
@@ -80,6 +99,11 @@ decision here:
 ## Open Questions
 
 Only questions that must be answered before production. If none, say so.
+
+If prior knowledge, opening orientation, target history, approval evidence,
+chapter prerequisites, knowledge delta, teaching beats, throughlines, or concept
+explanation paths are incomplete, mark this packet **development draft — not
+authorized for canonical production**.
 
 ## Acceptance Criteria
 

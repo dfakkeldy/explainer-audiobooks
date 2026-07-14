@@ -80,7 +80,9 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --slug "$SLUG" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
-  --cover-selection "$DIST/cover-selection.json"
+  --cover-selection "$DIST/cover-selection.json" \
+  --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
+  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
 # Run the governed Echo wrapper, then complete the selector-bound QC flow in
 # references/package-and-qc.md. It sets AUDIOBOOK to the accepted run-scoped M4B.
@@ -125,6 +127,9 @@ research, write one coherent manuscript, and package the result for Echo.
 - Read `references/package-and-qc.md` before building EPUB/Markdown, rendering
   M4B/alignment, copying packages, or reporting completion.
 - Reuse the existing explainer tooling from this repo:
+  - `../../skill/references/learning-design.md` for learner orientation,
+    structured chapter teaching plans, explanation paths, final learning review,
+    and the hash-bound learning receipt.
   - `../../skill/references/narration-style.md` for spoken style and QC sweeps.
   - `../../skill/references/frontier-manuscript-pipeline.md` for the frontier-author
     / cheaper-worker split, continuity ledger, and citation-first reader review.
@@ -166,6 +171,11 @@ research, write one coherent manuscript, and package the result for Echo.
 2. **Clarify only what matters.** If the request is broad, ask at most 3-5
    questions from `references/intake-and-research.md`. If the requester is not
    available, choose conservative defaults and state them in the manifest.
+   Create `research/learning-brief.json` with the learner outcome, actual prior
+   knowledge, opening orientation (context, promise, route), original/current
+   word targets, accepted range, drafting status, and scope history. Never lower
+   the target after drafting begins without explicit user approval recorded
+   under `../../skill/references/learning-design.md`.
 
 3. **Classify safety and public/private status before writing.** Decide whether
    the book is public-safe, private, or sensitive/high-stakes. Sensitive topics
@@ -187,6 +197,14 @@ research, write one coherent manuscript, and package the result for Echo.
    chapters. For Dan/internal runs, get outline approval unless the user
    explicitly asked for a full autonomous run.
 
+   Record the approved progression and evidence in
+   `research/learning-outline.json`. Create the complete structured
+   `research/chapter-plans.json` and `research/coverage-ledger.json` before
+   canonical drafting. A topic or terminology inventory is not a learning arc.
+   Every concept row needs its definition, reason, mechanism, concrete case,
+   useful boundary or explicit not-applicable reason, misconception, expected
+   ability, and named chapter uses.
+
 6. **Plan any interior pictures.** If the user wants pictures, or a handoff
    packet includes a figure plan, gather only usable images: user-supplied,
    generated, self-created, public-domain, permissively licensed, or explicitly
@@ -201,7 +219,8 @@ research, write one coherent manuscript, and package the result for Echo.
    context, write `ch01.md`, `ch02.md`, and so on sequentially with the same
    frontier author; before each chapter provide the approved TOC, the relevant
    fact pack, the coverage-ledger rows, and `research/continuity.md`. Update that
-   record after each chapter with terms already defined, examples/analogies used,
+   record after each chapter in both `research/continuity.md` and structured
+   `research/continuity.json`, with terms already defined, examples/analogies used,
    deliberate callbacks, and promises that later chapters must resolve.
    Also provide the listener's **AI-writing patterns to avoid** and the complete
    `declaudification.md` drafting rule. State facts directly instead of managing
@@ -264,6 +283,10 @@ research, write one coherent manuscript, and package the result for Echo.
     finding and makes every accepted substantive, factual, structural, depth, and
     voice repair in the canonical Markdown before any EPUB or audio build.
 
+    Before humanizing, run separate independent structure and beginner-reader
+    reviews using `../../skill/references/learning-design.md`. The frontier author
+    resolves accepted findings; reviewers do not supply replacement chapters.
+
     After those substantive repairs, load the `humanizer` skill and follow
     `../../skill/references/humanizer-pass.md`. Make only targeted voice edits:
     remove AI-isms, generic signposting, inflated claims, filler, and repetitive
@@ -281,6 +304,19 @@ research, write one coherent manuscript, and package the result for Echo.
     uses `--fail-on-style`, records accepted and rejected decisions, and writes
     `research/prose-style-receipt.json` bound to the final chapter hashes.
 
+    Rerun both learning reviews after every accepted voice edit. Record their
+    distinct reviewers, passing verdicts, citation-first decisions, and final
+    `reviewedChapterSHA256` map in `research/learning-review.json`. Generate the
+    separate learning receipt:
+
+    ```bash
+    python3 skill/scripts/learning_design_qc.py \
+      --run-root "$RUN_ROOT" \
+      --receipt-out "$RUN_ROOT/research/learning-design-receipt.json"
+    ```
+
+    The learning and prose receipts must bind the same canonical chapter hashes.
+
 11. **Build the governed EPUB.** Only now follow the paired selection and EPUB
     sections in `references/package-and-qc.md`: create the paired receipt with
     `cover_receipts.py select-pair`, then run the governed `build_book.py`
@@ -288,8 +324,9 @@ research, write one coherent manuscript, and package the result for Echo.
     Markdown are downstream renderings of the accepted manuscript; standalone
     Markdown figures remain embedded and copied beside the combined Markdown.
     New builds also pass `--prose-receipt
-    "$RUN_ROOT/research/prose-style-receipt.json"`; packaging stops if it is
-    missing, failed, or stale.
+    "$RUN_ROOT/research/prose-style-receipt.json"` and `--learning-receipt
+    "$RUN_ROOT/research/learning-design-receipt.json"`; packaging stops if
+    either is missing, failed, or stale.
 
 12. **Render native Echo audio.** Use the governed Echo narration wrapper from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
@@ -422,3 +459,6 @@ research, write one coherent manuscript, and package the result for Echo.
   full size and thumbnail size as part of each complete art-and-type candidate.
 - Do not select a cover automatically or build a new package without its
   explicit `cover-selection.json` receipt.
+- Do not use `--legacy-without-learning-receipt` for a new or revised
+  manuscript, edition, or current-workflow claim. It is old-artifact
+  reproduction only.

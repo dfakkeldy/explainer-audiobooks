@@ -6,6 +6,10 @@ point is not to make every task expensive. It is to protect the two things that
 make a book feel authored: the explanation choices and the continuity of its
 voice.
 
+Follow `learning-design.md`. The frontier author owns the learning architecture,
+but current packaging requires structured `chapter-plans.json`,
+`learning-review.json`, and the final hash-bound learning-design receipt.
+
 ## Role Contract
 
 | Role | Owns | Must not do |
@@ -31,6 +35,9 @@ Everything else goes back to the frontier author as a precise repair request.
    The ledger maps each core concept to its first explanation, later retrieval or
    deepening, a concrete example, a boundary/counterexample where useful, and a
    listener outcome. If a return to an idea has no named purpose, remove it.
+   Record the authorized progression in `learning-outline.json`, the full
+   teaching plan in `chapter-plans.json`, and complete concept explanation paths
+   in `coverage-ledger.json` before canonical drafting.
 
 3. **The frontier author writes the Markdown manuscript.** Write `chNN.md`
    files in chapter order. For a book too large for one context, use sequential
@@ -43,6 +50,8 @@ Everything else goes back to the frontier author as a precise repair request.
    examples, deliberate callbacks, active promises, and unresolved questions.
    This prevents repetitive re-introductions without forcing the author to reread
    an entire long manuscript on every call.
+   Maintain both the readable note and structured `continuity.json`; create the
+   checkpoint after each chapter, not retroactively after the draft.
 
 5. **Cheap workers inspect, never redraft.** Run `scripts/prose_qc.py`, source
    validation, narration lint, and a short reader review. Each report must point
@@ -51,6 +60,9 @@ Everything else goes back to the frontier author as a precise repair request.
 6. **The frontier author performs a targeted repair pass.** It accepts, rejects,
    or revises each substantive finding. A report with only local issues earns a
    local patch pass, not a costly full regeneration.
+   Require independent structure and beginner-reader findings before declaring
+   substantive acceptance, then rerun both reviews after final voice edits and
+   bind `learning-review.json` to the final chapter hashes.
 
 7. **Humanize without changing authorship.** After substantive repairs, load the
    `humanizer` skill and follow `references/humanizer-pass.md`. It may remove
@@ -108,7 +120,11 @@ real and writes all non-mechanical prose changes.
 
 - [ ] One named frontier model authored every substantive Markdown passage.
 - [ ] `coverage-ledger.md` gives every planned recurrence a learning purpose.
+- [ ] `chapter-plans.json` gives every chapter a purpose, prerequisites,
+      knowledge delta, grounded example, concepts, and varied beats.
 - [ ] `continuity.md` records prior terms, analogies, examples, and promises.
+- [ ] `learning-review.json` carries passing independent structure and
+      beginner-reader verdicts for the final chapter hashes.
 - [ ] Cheap review reports cite exact locations and recommend repairs rather than
   supplying a replacement voice.
 - [ ] The frontier author accepted/rejected substantive findings before packaging.

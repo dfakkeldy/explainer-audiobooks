@@ -71,7 +71,9 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --slug "$SLUG" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
-  --cover-selection "$DIST/cover-selection.json"
+  --cover-selection "$DIST/cover-selection.json" \
+  --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
+  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
 /usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
   --m4b "$DIST/$SLUG.m4b" \
