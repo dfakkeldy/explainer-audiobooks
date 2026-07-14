@@ -23,6 +23,8 @@ and fiction-specific revision.
 ## Required Reference
 
 - Read `references/handoff-packet.md` before preparing the final handoff.
+- Read `../../skill/references/learning-design.md` before shaping the curriculum
+  or declaring a handoff production-ready.
 - Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
   preparing the production handoff. The final prose pass is bounded: it removes
   AI tics without inventing personality, anecdotes, sources, or claims.
@@ -42,17 +44,21 @@ and fiction-specific revision.
    Favor useful prompts over interrogation: audience, outcome, tone, what to
    include or avoid, source material, privacy, and whether the final product is a
    book, audiobook, illustrated EPUB, or all of those.
+   Establish actual prior knowledge, the outcome the listener wants, and the
+   opening orientation: context, promise, and route through the subject.
 
 3. **Maintain the evolving brief.** After each meaningful turn, update the
    working brief with confirmed decisions, assumptions, open questions, title
    candidates, audience promise, length target, voice, privacy status, and
-   source-confidence needs.
+   source-confidence needs. Preserve the original target and a target history;
+   never reduce scope after drafting to make an undersized result appear planned.
 
 4. **Build the outline as a conversation.** Offer 2-3 plausible structures when
    the shape is still fuzzy. Once the direction settles, produce a chapter table
    with chapter purpose, core beats, source needs, and any planned figure or
-   image moments. Get outline approval before final synthesis unless the user
-   explicitly asks for an autonomous run.
+   image moments. Add each chapter's prerequisites, knowledge delta, grounded
+   example, and concepts with complete explanation paths. Get outline approval
+   before final synthesis unless the user explicitly asks for an autonomous run.
 
 5. **Gather and plan pictures deliberately.** Use pictures as teaching assets,
    evidence, examples, diagrams, mood references, or cover references. Track each
@@ -70,6 +76,11 @@ and fiction-specific revision.
    facts, citations, technical names, and intentional teaching repetition. The
    handoff should be complete enough that a fresh agent can run
    `custom-learning-audiobook` without re-litigating the concept.
+
+   If opening orientation, prior knowledge, target history, chapter
+   prerequisites, knowledge deltas, teaching beats, throughlines, explanation
+   paths, or approval evidence are missing, label the packet a **development
+   draft**. It cannot start canonical production.
 
 7. **Invoke the audiobook skill for production.** Hand the packet to
    `custom-learning-audiobook` for research finalization, manuscript writing,
@@ -94,7 +105,11 @@ them, or explicitly asks to proceed without another gate:
 
 - working title or title candidates,
 - final brief and audience promise,
-- chapter outline with learning arc,
+- learner prior knowledge and opening orientation,
+- original target plus approved target history,
+- chapter outline with learning arc, prerequisites, knowledge delta, teaching
+  beats, and grounded examples,
+- complete core-concept explanation paths,
 - source/research plan,
 - figure/image plan with provenance,
 - handoff packet ready for `custom-learning-audiobook`.

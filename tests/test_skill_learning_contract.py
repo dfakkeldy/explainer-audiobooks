@@ -75,6 +75,38 @@ class SkillLearningContractTests(unittest.TestCase):
         ):
             self.assertIn(phrase, text)
 
+    def test_longform_handoff_cannot_advance_without_learning_architecture(self) -> None:
+        skill = self.read("skills/longform-book-development/SKILL.md")
+        handoff = self.read("skills/longform-book-development/references/handoff-packet.md")
+        for phrase in (
+            "learning-design.md",
+            "opening orientation",
+            "prior knowledge",
+            "target history",
+            "prerequisites",
+            "knowledge delta",
+            "explanation path",
+            "development draft",
+            "canonical production",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill + "\n" + handoff)
+
+    def test_humanizer_reports_learning_defects_instead_of_smoothing_them(self) -> None:
+        text = self.read("skill/references/humanizer-pass.md")
+        for phrase in (
+            "cannot certify pedagogy",
+            "structural blocker",
+            "missing orientation",
+            "chapter-order",
+            "unexplained terms",
+            "shallow mechanisms",
+            "missing worked examples",
+            "return to learning review",
+            "whole-book acceptance",
+        ):
+            self.assertIn(phrase, text)
+
 
 if __name__ == "__main__":
     unittest.main()

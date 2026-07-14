@@ -11,6 +11,20 @@ independent inventory before edits, followed by frontier-author repairs and a
 final verified run. Review chapter by chapter and then across the whole manuscript
 so synonym-cycled habits are not hidden by chapter boundaries.
 
+## Learning-design precondition
+
+The humanizer cannot certify pedagogy or issue whole-book acceptance. Before
+suggesting voice edits, check for missing orientation, chapter-order problems,
+unexplained terms, shallow mechanisms, and missing worked examples. Each is a
+structural blocker: record the exact location and return to learning review and
+frontier-author repair.
+
+Do not smooth over a structural blocker with cleaner transitions, more polished
+definitions, or added motivational prose. The humanizer starts only after the
+learning architecture and substantive explanations are accepted. If a local
+voice edit changes chapter hashes, rerun final structure and beginner-reader
+review before generating the learning-design receipt.
+
 ## What the pass should do
 
 - Remove obvious AI tics: inflated significance, generic signposting, promotional
