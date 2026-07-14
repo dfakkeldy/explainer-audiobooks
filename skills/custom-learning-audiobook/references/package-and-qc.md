@@ -77,6 +77,7 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
   --cover-selection "$DIST/cover-selection.json" \
+  --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
   --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
 # Run the governed Echo wrapper, then complete "Audio And Alignment QC" below.
@@ -121,6 +122,13 @@ Use this run layout:
 ```text
 .build/custom-learning-audiobooks/<slug>/
   research/
+    learning-brief.json
+    learning-outline.json
+    chapter-plans.json
+    coverage-ledger.json
+    continuity.json
+    learning-review.json
+    learning-design-receipt.json
     coverage-ledger.md
     continuity.md
     prose-qc.md
@@ -133,6 +141,27 @@ Use this run layout:
     echo-render-success-<run-id>-<attempt-id>.json
     echo-render-output.owner.env  # present only while governed narration runs
   chapters/
+
+## Learning Design QC
+
+Read `../../skill/references/learning-design.md`. Complete learner orientation,
+the authorized outline, `chapter-plans.json`, complete concept explanation
+paths, per-chapter continuity checkpoints, and independent structure and
+beginner-reader review. After the humanizer and every accepted voice edit,
+rerun both learning reviews against the final chapter hashes and write
+`learning-review.json`.
+
+Generate the learning receipt before any EPUB build:
+
+```bash
+python3 skill/scripts/learning_design_qc.py \
+  --run-root "$RUN_ROOT" \
+  --receipt-out "$RUN_ROOT/research/learning-design-receipt.json"
+```
+
+Do not reconstruct missing plans after drafting or reduce the target to match an
+undersized manuscript. A prose-style pass cannot substitute for learning-design
+acceptance.
     ch01.md
     ch02.md
     images/
@@ -305,6 +334,7 @@ DIST=".build/custom-learning-audiobooks/$SLUG/dist"
   --slug "$SLUG" \
   --cover "$DIST/cover-$SELECTED.png" \
   --cover-selection "$DIST/cover-selection.json" \
+  --legacy-without-learning-receipt \
   --prose-receipt ".build/custom-learning-audiobooks/$SLUG/research/prose-style-receipt.json"
 ```
 

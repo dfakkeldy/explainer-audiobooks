@@ -198,6 +198,10 @@ plausible-sounding fiction.
 
 ## QC checklist (run after generation, before assembling)
 
+This craft checklist is one lane of the shared `learning-design.md` contract.
+It does not replace `chapter-plans.json`, complete concept explanation paths, or
+final `learning-review.json` structure and beginner-reader verdicts.
+
 Tool-backed checks and cheap editorial review catch the things that ruin a
 narration without letting a lower-cost model take over the author's voice. Run
 them over the chapter files:
@@ -233,6 +237,8 @@ them over the chapter files:
   the listener the promised definition, reason, mechanism, concrete case, and
   useful boundary/counterexample where applicable. Flag a shallow claim with its
   exact location rather than asking a cheaper model to expand it generically.
+  Record the machine-readable result in `coverage-ledger.json` and rerun the
+  final learning review after any accepted repair.
 - **Vocabulary check (codebase-grounded books):** for each chapter, confirm the real
   file/tool/command names from its fact pack actually appear *by name* in the prose
   (not paraphrased into "the settings file"). If the listener couldn't search for

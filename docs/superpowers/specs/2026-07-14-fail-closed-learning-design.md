@@ -127,10 +127,11 @@ development draft and cannot start canonical manuscript production.
    explanation paths.
 3. Obtain outline approval or record explicit autonomous authorization.
 4. Draft sequentially, updating continuity after each chapter.
-5. Run structural and beginner-reader review against final hashes; the frontier
-   author resolves accepted findings.
-6. Generate the learning-design receipt.
-7. Run the separate humanizer/de-Claudification gate and prose receipt.
+5. Run structural and beginner-reader review; the frontier author resolves
+   accepted findings.
+6. Run the bounded humanizer/de-Claudification pass.
+7. Rerun learning review on the final edited chapters, then generate the
+   learning-design and prose receipts from the same chapter hashes.
 8. Build only when both receipts match the canonical chapters.
 9. Continue with cover, Echo narration, package verification, and delivery.
 

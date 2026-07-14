@@ -54,14 +54,30 @@ sources and prefer primary/official references.
 Save notes under `research/`:
 
 - `brief.md` - request, assumptions, audience, length, public/private status.
+- `learning-brief.json` - learner outcome, actual prior knowledge, opening
+  orientation, original/current target and accepted range, drafting status, and
+  approved scope-change history.
 - `sources.md` - links/files used, source-quality labels, retrieval date.
 - `fact-pack.md` - facts the manuscript may rely on.
 - `outline.md` - chapter plan and learning throughlines.
+- `learning-outline.json` - approved progression, approval evidence, chapter
+  purposes/prerequisites, and two to four throughlines.
+- `chapter-plans.json` - chapter purpose, prerequisites, knowledge delta,
+  grounded example, concepts, and varied teaching beats.
 - `coverage-ledger.md` - each core concept's introduction, deliberate later use,
   example, explanation depth, expected listener ability, and reason for any
   repetition.
+- `coverage-ledger.json` - complete explanation paths required by the shared
+  learning-design gate.
 - `continuity.md` - terms, analogies, examples, callbacks, and open promises the
   frontier author must carry forward between Markdown chapters.
+- `continuity.json` - one structured checkpoint after every drafted chapter.
+- `learning-review.json` - independent structure and beginner-reader verdicts
+  bound to final chapter hashes.
+
+Follow `../../skill/references/learning-design.md`. Do not create these records
+retroactively to normalize a failed manuscript; maintain them during planning,
+sequential drafting, revision, and final learning review.
 
 Source-confidence labels:
 

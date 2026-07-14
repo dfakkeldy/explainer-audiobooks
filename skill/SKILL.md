@@ -86,6 +86,7 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
   --cover-selection "$DIST/cover-selection.json" \
+  --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
   --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
 /usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
@@ -136,6 +137,10 @@ Read `references/declaudification.md` before outlining or drafting. Record the
 listener's **AI-writing patterns to avoid**, prevent those phrase families in the
 lead-author prompt, and require the family-density gate plus hash-bound prose
 receipt before packaging.
+
+Read `references/learning-design.md` before intake or outlining. Its curriculum,
+chapter-teaching, structural/beginner-reader, prose, and packaging verdicts are
+independent. A passing style or media check cannot certify that the book teaches.
 
 The whole thing is *heard*, so it is written for the ear: warm second-person
 prose, every term defined in plain English, and **never more than one short line
@@ -200,6 +205,12 @@ defaults so it stays a quick yes/no, not an interrogation:
   `am_michael`, fall back to `am_puck`, and do not use `af_heart` as the default.
 - **Title / author** — for the EPUB metadata.
 
+Create `research/learning-brief.json` now. Record the learner outcome, actual
+prior knowledge, opening orientation (context, promise, and route), original and
+current word targets, accepted range, drafting status, and scope history. Do not
+lower a target after drafting begins without explicit user approval recorded as
+specified in `references/learning-design.md`.
+
 A key clarification worth surfacing early: "at most one spoken line of code at a
 time" is the rule, which is *not* the same as "don't read code for accuracy" —
 and *not* the same as "don't name real things." Read whatever docs and source you
@@ -225,6 +236,12 @@ Present the outline as a short table (chapter, concept taught, grounded-in) plus
 the throughlines, and ask the user to approve, reorder, or adjust. Tell them the
 honest projected length and runtime.
 
+Record the approved progression in `research/learning-outline.json`, including
+the authorization evidence, two to four throughlines, every chapter's purpose,
+and its prerequisites. A terminology inventory is not an outline. Unless the
+user explicitly authorized a full autonomous run, do not start canonical prose
+until the user approves this learning progression.
+
 ### 3. Write the fact packs and beat sheets
 
 For each chapter, assemble:
@@ -245,6 +262,12 @@ For each chapter, assemble:
   misconception), its real example, and the listener's expected new ability.
   Every chapter needs a clear *knowledge delta* — what the listener can explain
   or do afterward that they could not before. This is the anti-padding spec.
+
+Also maintain the machine-readable `research/chapter-plans.json` and
+`research/coverage-ledger.json` defined in `references/learning-design.md`.
+Every core concept needs a definition, reason, mechanism, concrete case, useful
+boundary or explicit not-applicable reason, misconception, expected ability, and
+named chapter uses. Mentions and reuses alone do not count as coverage.
 
 The fact-pack discipline is explained in `references/narration-style.md` — read
 that section before writing the packs.
@@ -284,10 +307,12 @@ models or independent chapter writers.
 Give the frontier author the approved TOC, throughlines, voice bible,
 concept-coverage ledger, the relevant fact pack and beat sheet, plus a compact
 continuity record after each chapter. Store that record in
-`research/continuity.md`: newly introduced terms, analogies already used,
+`research/continuity.md` and structured `research/continuity.json`: newly introduced terms, analogies already used,
 examples, deliberate callbacks, unresolved promises, and facts that must remain
-consistent. The chapter files are the canonical manuscript; EPUB, audio, and all
-other formats are downstream renderings.
+consistent. Update both after every chapter and before drafting the next; a
+static note written before the manuscript is not continuity evidence. The
+chapter files are the canonical manuscript; EPUB, audio, and all other formats
+are downstream renderings.
 
 Cheaper workers may extract sources, build fact packs, check citations, run
 diagnostics, simulate a beginner listener, assemble files, make covers, render
@@ -335,6 +360,13 @@ confirm voice and that nothing was hallucinated. Have the frontier author make
 one targeted editorial pass over accepted findings; do not pay for a wholesale
 second draft if the report only finds local polish.
 
+Before the humanizer, run independent structural and beginner-reader reviews in
+the citation-first format from `references/learning-design.md`. The structure
+review checks orientation, progression, prerequisites, throughlines, and
+resolved promises. The beginner review checks unexplained terms, leaps, shallow
+mechanisms, missing examples, misconceptions, boundaries, and expected
+abilities. The frontier author resolves accepted findings.
+
 Then load the `humanizer` skill and follow `references/humanizer-pass.md` for a
 light, bounded humanizing pass over the canonical Markdown. Remove AI tics,
 generic signposting, inflated claims, and repetitive rhythm, while preserving
@@ -344,6 +376,18 @@ opinions, first-person experience, sources, jokes, or new claims, and must not
 rewrite the book wholesale. The frontier author reviews and accepts every
 non-mechanical change before EPUB/audio packaging; rerun factual, ledger, and
 narration checks afterward.
+
+Rerun both learning reviews after every accepted voice edit and record their
+passing final-hash verdicts in `research/learning-review.json`. Then generate the
+separate learning receipt:
+
+```bash
+python3 skill/scripts/learning_design_qc.py \
+  --run-root "$RUN_ROOT" \
+  --receipt-out "$RUN_ROOT/research/learning-design-receipt.json"
+```
+
+The learning and prose receipts must bind the same canonical chapter hashes.
 
 ### 6. Make a cover, then assemble the EPUB + Markdown
 
@@ -427,6 +471,7 @@ DIST="$RUN_ROOT/dist"
   --slug "$SLUG" \
   --cover "$DIST/cover-$SELECTED.png" \
   --cover-selection "$DIST/cover-selection.json" \
+  --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
   --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 ```
 
@@ -526,6 +571,10 @@ If the user produced this from a real codebase that has living docs, consider
 whether anything is worth noting — but this skill creates a *deliverable*, not a
 code change, so it normally needs no repo-doc updates.
 
+Never use `--legacy-without-learning-receipt` for a new or revised manuscript,
+new edition, or current-workflow quality claim. It exists only to reproduce an
+older artifact that predates the learning gate.
+
 ## Bundled resources
 
 - `scripts/build_book.py` — assembles `chNN.md` chapter files into an EPUB +
@@ -559,3 +608,6 @@ code change, so it normally needs no repo-doc updates.
 - `references/declaudification.md` — drafting prohibitions, rhetorical phrase
   families, density limits, the two-pass humanizer inventory, and the
   hash-bound prose receipt required for new packages.
+- `references/learning-design.md` — the structured learner orientation, chapter
+  plans, complete explanation paths, continuity checkpoints, independent review,
+  scope-history rule, and hash-bound learning receipt required before packaging.
