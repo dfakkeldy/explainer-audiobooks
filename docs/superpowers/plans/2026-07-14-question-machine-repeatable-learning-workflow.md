@@ -24,11 +24,13 @@
 **Files:**
 - Create: `skill/references/curriculum-patterns.md`
 - Modify: `skill/references/learning-design.md`
+- Modify: `skill/scripts/learning_design_qc.py`
 - Modify: `skill/SKILL.md`
 - Modify: `skills/custom-learning-audiobook/SKILL.md`
 - Modify: `skills/longform-book-development/SKILL.md`
 - Modify: `skills/longform-book-development/references/handoff-packet.md`
 - Test: `tests/test_skill_learning_contract.py`
+- Test: `tests/test_learning_design_gate.py`
 
 **Interfaces:**
 - Produces: `learning-outline.json.curriculumPattern` containing non-empty `name`, `reason`, and `fitEvidence`.
@@ -52,6 +54,10 @@ def test_curriculum_pattern_is_selected_and_preserved(self) -> None:
         self.assertIn("curriculum-patterns.md", self.read(relative))
 ```
 
+Add a validator test that removes `learning-outline.json.curriculumPattern` and
+expects `learning_design_qc.validate_run(...)` to fail with
+`outline.curriculumPattern`.
+
 - [ ] **Step 2: Verify RED**
 
 Run: `/usr/local/bin/python3 -m unittest tests.test_skill_learning_contract -v`  
@@ -72,16 +78,19 @@ Define selection criteria, useful shapes, and failure modes for all three patter
 ```
 
 Longform handoffs preserve the selection unless the user approves a change.
+The shared validator requires all three fields before it can issue a final
+learning receipt.
 
 - [ ] **Step 4: Verify GREEN and commit**
 
 ```bash
-/usr/local/bin/python3 -m unittest tests.test_skill_learning_contract -v
+/usr/local/bin/python3 -m unittest discover -s tests -p 'test_*learning*gate.py' -v
 git add skill/references/curriculum-patterns.md skill/references/learning-design.md \
   skill/SKILL.md skills/custom-learning-audiobook/SKILL.md \
   skills/longform-book-development/SKILL.md \
   skills/longform-book-development/references/handoff-packet.md \
-  tests/test_skill_learning_contract.py
+  skill/scripts/learning_design_qc.py tests/test_skill_learning_contract.py \
+  tests/test_learning_design_gate.py
 git commit -m "feat: add reusable audiobook curriculum patterns"
 ```
 
@@ -89,7 +98,7 @@ git commit -m "feat: add reusable audiobook curriculum patterns"
 
 **Files:**
 - Create: `skill/templates/learning-design/{learning-brief,learning-outline,chapter-plans,coverage-ledger,continuity,learning-review}.json`
-- Create: `skill/templates/learning-design/README.md`
+- Create: `skill/templates/learning-design/instructions.md`
 - Modify: `tests/test_skill_learning_contract.py`
 
 **Interfaces:**
@@ -115,7 +124,7 @@ def test_learning_templates_cover_every_required_record(self) -> None:
 Run: `/usr/local/bin/python3 -m unittest tests.test_skill_learning_contract -v`  
 Expected: FAIL because the template directory is absent.
 
-- [ ] **Step 3: Add templates and README**
+- [ ] **Step 3: Add templates and instructions**
 
 Use a public-safe email-classifier example. Set the review template to `verdict: pending` with an empty hash map so it cannot be mistaken for acceptance. State that templates are copied and edited before drafting; they are never receipts.
 
