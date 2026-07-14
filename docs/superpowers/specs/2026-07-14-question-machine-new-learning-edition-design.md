@@ -236,6 +236,50 @@ After final learning and prose acceptance:
 7. Copy the verified private package to the user's iCloud Books folder for the
    approved first-listen delivery.
 
+## Repeatability and skill deliverables
+
+The book is also a governed real-world validation of the audiobook skills. The
+workflow is not complete if it produces one good private artifact while leaving
+the method dependent on this session's memory.
+
+Update the canonical shared skill source and every relevant entry point with
+reusable findings from the run:
+
+1. Add curriculum-pattern selection guidance that distinguishes a
+   mechanism-first spiral, an end-to-end trace, and a problem-progression
+   course. Require the planner to record why the chosen pattern fits the learner
+   and subject. Do not make this book's specific chapter list a universal
+   template.
+2. Add public-safe starter templates or examples for the six structured
+   learning records so later runs can create them prospectively rather than
+   reverse-engineering validator fixtures.
+3. Add `research/pronunciation-plan.json` to technical audiobook intake and
+   production. It records listener-named terms, source terms selected because
+   they recur or are acoustically risky, variants such as singular and plural,
+   expected chapter locations, probe status, human decision, and evidence.
+4. Make every listener-named pronunciation term mandatory in the pre-full-render
+   probe matrix. Packaging fails closed when a required term has no accepted
+   decision or recorded evidence.
+5. Update the shared Explainer workflow, Custom Learning workflow, and Longform
+   handoff so they preserve the selected curriculum pattern, structured learning
+   evidence, target history, pronunciation risks, and approval evidence across
+   handoffs.
+6. Update the Humanizer only if this real manuscript exposes a new reusable
+   boundary or rhetorical family. Do not add speculative bans or book-specific
+   wording merely to show that the skill changed.
+7. Add public-safe contract tests and synthetic fixtures for every new required
+   field and failure mode. Do not commit the private manuscript, private source
+   notes, narration captures, or delivery artifacts as test data.
+8. Run an after-action comparison between the design, the final evidence, and
+   the listener verdict. Any reusable gap becomes a reviewed skill change; a
+   book-specific editorial choice stays in the private run records.
+
+Skill changes are canonical only after tests pass and the repository change is
+committed, pushed, and represented by a ready pull request. The private book may
+be delivered before that pull request merges only if the run used the updated
+skill checkout and all governed receipts pass; completion reporting must state
+the exact skill revision used and whether it is merged.
+
 ## Failure conditions
 
 Stop and return to development if any of these occurs:
@@ -249,6 +293,8 @@ Stop and return to development if any of these occurs:
   teaches;
 - learning or prose reviews refer to hashes other than the packaged chapters;
 - a recurring technical pronunciation is known to be wrong before full render;
+- a listener-named pronunciation term lacks a planned probe, human decision, or
+  evidence;
 - private artifacts are proposed for the public repo or public KB.
 
 ## Completion criteria
@@ -259,4 +305,6 @@ prose and de-Claudification receipt passes those same hashes; a user-selected
 cover pair is bound; Echo pronunciation, render, media, alignment, and cover
 verification pass; and the private iCloud destination copy matches the governed
 package. Human first-listen acceptance is reported separately and is never
-inferred from automated QC.
+inferred from automated QC. The reusable workflow updates, public-safe tests,
+and ready skill pull request described above are also required deliverables;
+producing the private package alone does not complete the project.
