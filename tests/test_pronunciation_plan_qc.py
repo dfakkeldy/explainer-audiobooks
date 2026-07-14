@@ -31,6 +31,24 @@ class PronunciationPlanTests(unittest.TestCase):
             "Several hyperparameters shape the run.\n",
             encoding="utf-8",
         )
+        (self.research / "learning-outline.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "chapters": [
+                        {
+                            "file": "ch01.md",
+                            "purpose": "Introduce training choices.",
+                            "prerequisites": [],
+                        }
+                    ],
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
         self.write_plan(self.valid_plan())
 
     def tearDown(self) -> None:
@@ -106,6 +124,14 @@ class PronunciationPlanTests(unittest.TestCase):
     def test_planning_accepts_required_term_and_variants_in_named_chapter(self) -> None:
         result = self.module().validate_plan(self.root, "planning")
         self.assertEqual(["hyperparameter"], result["requiredTerms"])
+
+    def test_planning_is_prospective_and_does_not_require_drafted_chapters(self) -> None:
+        (self.chapters / "ch01.md").unlink()
+
+        result = self.module().validate_plan(self.root, "planning")
+
+        self.assertEqual(["ch01.md"], result["plannedChapters"])
+        self.assertEqual({}, result["chapterSHA256"])
 
     def test_listener_term_must_exist_in_each_expected_chapter(self) -> None:
         plan = self.valid_plan()

@@ -79,10 +79,29 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
         raise ValueError("pronunciation plan terms must be a non-empty list")
 
     chapters_dir = run_root / "chapters"
-    hashes = chapter_hashes(chapters_dir)
-    chapter_text = {
-        name: (chapters_dir / name).read_text(encoding="utf-8") for name in hashes
-    }
+    if phase == "planning":
+        outline = load_json(
+            run_root / "research" / "learning-outline.json", "learning outline"
+        )
+        outline_chapters = outline.get("chapters")
+        if not isinstance(outline_chapters, list) or not outline_chapters:
+            raise ValueError("learning outline chapters must be a non-empty list")
+        chapter_names: set[str] = set()
+        for index, chapter in enumerate(outline_chapters):
+            if not isinstance(chapter, dict):
+                raise ValueError(f"learning outline chapters[{index}] must be an object")
+            name = require_string(chapter.get("file"), f"learning outline chapters[{index}].file")
+            if name in chapter_names:
+                raise ValueError(f"duplicate learning outline chapter: {name}")
+            chapter_names.add(name)
+        hashes: dict[str, str] = {}
+        chapter_text: dict[str, str] = {}
+    else:
+        hashes = chapter_hashes(chapters_dir)
+        chapter_names = set(hashes)
+        chapter_text = {
+            name: (chapters_dir / name).read_text(encoding="utf-8") for name in hashes
+        }
     seen: set[str] = set()
     required_terms: list[str] = []
     evidence_paths: set[Path] = set()
@@ -117,14 +136,15 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
             for position, name in enumerate(expected)
         ]
         for name in expected_names:
-            if name not in chapter_text:
+            if name not in chapter_names:
                 raise ValueError(f"{label} names unknown expected chapter {name}")
-        combined = "\n".join(chapter_text[name] for name in expected_names)
-        missing_source_forms = [form for form in forms if not contains_form(combined, form)]
-        if missing_source_forms:
-            raise ValueError(
-                f"{label} forms are absent from expected chapters: {missing_source_forms}"
-            )
+        if phase == "full-render":
+            combined = "\n".join(chapter_text[name] for name in expected_names)
+            missing_source_forms = [form for form in forms if not contains_form(combined, form)]
+            if missing_source_forms:
+                raise ValueError(
+                    f"{label} forms are absent from expected chapters: {missing_source_forms}"
+                )
         if not isinstance(entry.get("required"), bool):
             raise ValueError(f"{label}.required must be a boolean")
         status = entry.get("status")
@@ -190,6 +210,7 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
         "phase": phase,
         "planSHA256": sha256_file(plan_path),
         "chapterSHA256": hashes,
+        "plannedChapters": sorted(chapter_names),
         "requiredTerms": required_terms,
     }
     if evidence_paths:

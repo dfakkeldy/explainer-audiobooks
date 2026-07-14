@@ -176,6 +176,23 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             "# Fixture chapter\n\nThis fixture exercises the governed narration path.\n",
             encoding="utf-8",
         )
+        (research / "learning-outline.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "chapters": [
+                        {
+                            "file": "ch01.md",
+                            "purpose": "Exercise the governed narration path.",
+                            "prerequisites": [],
+                        }
+                    ],
+                },
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
         pronunciation_reel = research / "pronunciation-probe-reel.m4b"
         pronunciation_reel.write_bytes(b"fixture approved pronunciation reel")
         pronunciation_evidence = research / "pronunciation-probe-evidence.json"
