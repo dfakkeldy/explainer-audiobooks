@@ -212,7 +212,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "    tamper_marker=$RUN_ROOT/research/fake-resume-tamper-fired\n"
             "    if [[ ! -e $tamper_marker ]]; then\n"
             "      printf 'changed after state seal' >\"$RUN_ROOT\"/narration-*.sqlite\n"
-            "      touch \"$tamper_marker\"\n"
+            '      touch "$tamper_marker"\n'
             "    fi\n"
             "  fi\n"
             "  exit 0\n"
@@ -745,6 +745,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
                 f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
                 f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
             ],
             calls,
         )
@@ -790,6 +792,15 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(0, first.returncode, f"{first_stdout}\n{first_stderr}")
         self.assertFalse(owner.exists())
 
+        resumed_environment = self.environment()
+        resumed_environment["FAKE_NARRATE_LOG"] = str(log)
+        resumed = self.run_narrate("--resume", environment=resumed_environment)
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        log_lines = log.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(2, sum(line.startswith("BEGIN=") for line in log_lines))
+        self.assertIn("ARG=--resume", log_lines)
+        self.assertFalse(owner.exists())
+
     def test_alternate_lock_root_cannot_fork_the_build_lease_namespace(self) -> None:
         log = self.tmp / "alternate-root.log"
         ready = self.tmp / "alternate-root-ready"
@@ -816,10 +827,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
         second_slug = "fixture-two"
         second_run_root = (
-            self.explainer
-            / ".build"
-            / "custom-learning-audiobooks"
-            / second_slug
+            self.explainer / ".build" / "custom-learning-audiobooks" / second_slug
         )
         (second_run_root / "dist").mkdir(parents=True)
         (second_run_root / "dist" / f"{second_slug}.epub").write_bytes(
@@ -843,15 +851,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertIn("active narration lease", contender.stderr)
         self.assertEqual(1, log.read_text(encoding="utf-8").count("BEGIN="))
         self.assertEqual(0, first.returncode, f"{first_stdout}\n{first_stderr}")
-
-        resumed_environment = self.environment()
-        resumed_environment["FAKE_NARRATE_LOG"] = str(log)
-        resumed = self.run_narrate("--resume", environment=resumed_environment)
-        self.assertEqual(0, resumed.returncode, resumed.stderr)
-        log_lines = log.read_text(encoding="utf-8").splitlines()
-        self.assertEqual(2, sum(line.startswith("BEGIN=") for line in log_lines))
-        self.assertIn("ARG=--resume", log_lines)
-        self.assertFalse(owner.exists())
+        self.assertFalse((self.tmp / "attacker-a").exists())
+        self.assertFalse((self.tmp / "attacker-b").exists())
 
     def test_stale_lock_recovery_is_local_explicit_and_exact(self) -> None:
         preflight = self.run_preflight(
@@ -1190,6 +1191,76 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         artifact_root = (
             self.run_root / "dist" / selector_payload["artifactRelativePath"]
         )
+        selection_resource = self.run_root / "research" / "echo-render-selection"
+        forged_success = self.run_root / "research" / "forged-success.json"
+        partially_leased_command = [
+            str(LEASE_HELPER),
+            "--lock-root",
+            str(self.lease_root),
+        ]
+        for resource in (
+            artifact_root / "fixture.m4b",
+            artifact_root / "fixture.alignment.json",
+            artifact_root / "fixture.pronunciation-audit.json",
+            artifact_root / "fixture.pronunciation-reel.m4b",
+            selection_resource,
+        ):
+            partially_leased_command.extend(("--resource", str(resource)))
+        partially_leased_command.extend(
+            (
+                "--",
+                "/usr/local/bin/python3",
+                str(STATE_HELPER),
+                "write-success",
+                "--attempt-id",
+                selector_payload["attemptID"],
+                "--run-id",
+                selector_payload["runID"],
+                "--receipt",
+                str(forged_success),
+                "--attempt-receipt",
+                str(attempt),
+                "--input-receipt",
+                str(input_receipt),
+                "--epub",
+                str(self.run_root / "dist" / "fixture.epub"),
+                "--artifact-relative-path",
+                selector_payload["artifactRelativePath"],
+                "--state-receipt",
+                str(state_receipt),
+                "--work",
+                input_fields["work_dir"],
+                "--db",
+                input_fields["narration_db"],
+                "--source-sha",
+                self.second_sha,
+                "--voice",
+                "am_michael",
+                "--audiobook",
+                str(artifact_root / "fixture.m4b"),
+                "--sidecar",
+                str(artifact_root / "fixture.alignment.json"),
+                "--audit",
+                str(artifact_root / "fixture.pronunciation-audit.json"),
+                "--reel",
+                str(artifact_root / "fixture.pronunciation-reel.m4b"),
+                "--selection-resource",
+                str(selection_resource),
+                "--lock-root",
+                str(self.lease_root),
+            )
+        )
+        partially_leased = subprocess.run(
+            partially_leased_command, capture_output=True, text=True
+        )
+        self.assertNotEqual(0, partially_leased.returncode)
+        self.assertIn("does not cover", partially_leased.stderr)
+        self.assertTrue(
+            input_fields["work_dir"] in partially_leased.stderr
+            or input_fields["narration_db"] in partially_leased.stderr
+        )
+        self.assertFalse(forged_success.exists())
+
         command = [
             "/usr/local/bin/python3",
             str(STATE_HELPER),
@@ -1227,6 +1298,15 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         missing_state = subprocess.run(command, capture_output=True, text=True)
         self.assertNotEqual(0, missing_state.returncode)
         self.assertIn("resume-state receipt is missing", missing_state.stderr)
+        saved_state = self.tmp / state_receipt.name
+        saved_state.write_bytes(original_state)
+        state_receipt.symlink_to(saved_state)
+        symlinked_state = subprocess.run(command, capture_output=True, text=True)
+        self.assertNotEqual(0, symlinked_state.returncode)
+        self.assertIn(
+            "resume-state receipt must not be a symlink", symlinked_state.stderr
+        )
+        state_receipt.unlink()
         state_receipt.write_bytes(original_state)
 
         (artifact_root / "fixture.alignment.json").write_text(
@@ -1275,10 +1355,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "--input-receipt",
                 str(research / first_selector["inputReceiptFileName"]),
                 "--state-receipt",
-                str(
-                    research
-                    / f"echo-resume-state-{first_selector['runID']}.json"
-                ),
+                str(research / f"echo-resume-state-{first_selector['runID']}.json"),
                 "--epub",
                 str(epub),
                 "--audiobook",

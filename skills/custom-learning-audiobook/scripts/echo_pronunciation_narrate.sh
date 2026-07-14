@@ -49,7 +49,8 @@ if (( RESUME && RECOVER_STALE_LOCK )) \
   exit 64
 fi
 
-ECHO_PRONUNCIATION_LEASE_ROOT=${ECHO_PRONUNCIATION_LEASE_ROOT:-$HOME/.cache/explainer-audiobooks/echo-pronunciation-leases}
+ECHO_PRONUNCIATION_LEASE_ROOT=$(echo_pronunciation_canonical_lease_root) \
+  || exit $?
 ECHO_REPO=${ECHO_REPO:-/Users/dfakkeldy/Developer/Echo}
 BUILD_RESOURCE="$ECHO_REPO/.build/cli"
 export ECHO_PRONUNCIATION_LEASE_ROOT ECHO_REPO BUILD_RESOURCE
@@ -609,6 +610,12 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --audio "$OUTPUT" \
   --sidecar "$SIDECAR"
 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
+verify_locked_inputs
+if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+  verify-state "${state_command[@]}"; then
+  printf 'resume state receipt does not match final WORK, DB, or Echo v12 captures\n' >&2
+  exit 65
+fi
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   write-success \
   --attempt-id "$ATTEMPT_ID" \
@@ -619,6 +626,10 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --epub "$EPUB" \
   --artifact-relative-path "$ARTIFACT_RELATIVE_PATH" \
   --state-receipt "$STATE_RECEIPT" \
+  --work "$WORK" \
+  --db "$DB" \
+  --source-sha "$ECHO_SOURCE_SHA" \
+  --voice "$VOICE" \
   --audiobook "$OUTPUT" \
   --sidecar "$SIDECAR" \
   --audit "$AUDIT" \
@@ -635,6 +646,10 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --epub "$EPUB" \
   --artifact-relative-path "$ARTIFACT_RELATIVE_PATH" \
   --state-receipt "$STATE_RECEIPT" \
+  --work "$WORK" \
+  --db "$DB" \
+  --source-sha "$ECHO_SOURCE_SHA" \
+  --voice "$VOICE" \
   --audiobook "$OUTPUT" \
   --sidecar "$SIDECAR" \
   --audit "$AUDIT" \

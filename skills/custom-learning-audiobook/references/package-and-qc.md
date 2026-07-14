@@ -350,9 +350,12 @@ loads the canonical `SKILL.md` content.
 installed canonical checkout is still old; do not report installed parity until
 the tool says `current` after integration.
 
-The public wrapper first takes a kernel lease on Echo's shared `.build/cli`
-root, so `make echo-cli`, the Release executable, and its resource bundle cannot
-race another governed render. Every hidden wrapper mode verifies the inherited
+The public wrapper first derives one canonical lease namespace from the
+effective operating-system user account, ignoring any caller-supplied
+`ECHO_PRONUNCIATION_LEASE_ROOT`, then takes a kernel lease on Echo's shared
+`.build/cli` root. That prevents `make echo-cli`, the Release executable, and
+its resource bundle from racing another governed render even when callers try
+different environment roots. Every hidden wrapper mode verifies the inherited
 lock descriptors and their exact lock-file inodes; an environment variable by
 itself is not a capability. A real inherited descriptor is necessary but not
 sufficient: the hidden render stage independently re-attests the exact clean
@@ -441,6 +444,11 @@ and SHA-256. Legacy identity-free captures are never blessed by this workflow.
 State reset, capture receipt, and success receipt writes also require the live
 inherited resource-lease descriptors; invoking the helper directly cannot bless
 unleased files.
+Immediately before success publication, while the `WORK` and `DB` leases are
+still held, the wrapper re-derives the resume snapshot from the live database,
+capture markers, and capture audio and requires it to match the sealed state
+receipt. The success receipt binds both that receipt's derived filename and its
+SHA-256 as `resumeStateFileName` and `resumeStateSHA256`.
 Only then rerun the wrapper with `--resume`;
 it must select the original `WORK`/`DB` and acquire all resource leases before it
 invokes Echo:
@@ -512,14 +520,17 @@ ATTEMPT_ID=$(selector_value attemptID)
 ARTIFACT_RELATIVE_PATH=$(selector_value artifactRelativePath)
 INPUT_RECEIPT_NAME=$(selector_value inputReceiptFileName)
 SUCCESS_RECEIPT_NAME=$(selector_value successReceiptFileName)
+STATE_RECEIPT_NAME="echo-resume-state-$RUN_ID.json"
 [[ "$RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck)$ ]]
 [[ "$ATTEMPT_ID" =~ ^[0-9a-f]{64}$ ]]
 [[ "$ARTIFACT_RELATIVE_PATH" == "echo-renders/$RUN_ID/$ATTEMPT_ID" ]]
 [[ "$INPUT_RECEIPT_NAME" == "echo-render-inputs-$RUN_ID.env" ]]
 [[ "$SUCCESS_RECEIPT_NAME" == "echo-render-success-$RUN_ID-$ATTEMPT_ID.json" ]]
+[[ "$STATE_RECEIPT_NAME" == "echo-resume-state-$RUN_ID.json" ]]
 
 ARTIFACT_ROOT="$DIST/$ARTIFACT_RELATIVE_PATH"
 INPUT_RECEIPT="$RUN_ROOT/research/$INPUT_RECEIPT_NAME"
+STATE_RECEIPT="$RUN_ROOT/research/$STATE_RECEIPT_NAME"
 SUCCESS_RECEIPT="$RUN_ROOT/research/$SUCCESS_RECEIPT_NAME"
 AUDIOBOOK="$ARTIFACT_ROOT/$SLUG.m4b"
 SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
@@ -532,6 +543,7 @@ REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
   --selector "$CURRENT_SELECTOR" \
   --receipt "$SUCCESS_RECEIPT" \
   --input-receipt "$INPUT_RECEIPT" \
+  --state-receipt "$STATE_RECEIPT" \
   --epub "$DIST/$SLUG.epub" \
   --audiobook "$AUDIOBOOK" \
   --sidecar "$SIDECAR" \
@@ -649,9 +661,9 @@ Record:
 
 The final cover receipt verification above must pass before any copy. The Audio
 And Alignment QC sequence must also pass `verify-delivery`; only the matching
-current-attempt, current-accepted, schema-v2 success, input, source, and media
-chain authorizes copying. A historical success receipt alone never authorizes a
-delivery. For a
+current-attempt, current-accepted, schema-v2 success, input, resume-state,
+source, and media chain authorizes copying. A historical success receipt alone
+never authorizes a delivery. For a
 public-safe package, the default delivery folder is iCloud Books:
 
 ```bash
@@ -712,6 +724,7 @@ test ! -f "$REEL" || \
 cp "$ATTEMPT_RECEIPT" "$DELIVERY_DIR/$(basename "$ATTEMPT_RECEIPT")"
 cp "$CURRENT_SELECTOR" "$DELIVERY_DIR/$(basename "$CURRENT_SELECTOR")"
 cp "$INPUT_RECEIPT" "$DELIVERY_DIR/$(basename "$INPUT_RECEIPT")"
+cp "$STATE_RECEIPT" "$DELIVERY_DIR/$(basename "$STATE_RECEIPT")"
 cp "$SUCCESS_RECEIPT" "$DELIVERY_DIR/$(basename "$SUCCESS_RECEIPT")"
 ```
 
@@ -744,6 +757,7 @@ test ! -f "$DELIVERY_DIR/$SLUG.pronunciation-reel.m4b" || \
   --selector "$DELIVERY_DIR/$(basename "$CURRENT_SELECTOR")" \
   --receipt "$DELIVERY_DIR/$(basename "$SUCCESS_RECEIPT")" \
   --input-receipt "$DELIVERY_DIR/$(basename "$INPUT_RECEIPT")" \
+  --state-receipt "$DELIVERY_DIR/$(basename "$STATE_RECEIPT")" \
   --epub "$DELIVERY_DIR/$SLUG.epub" \
   --audiobook "$DELIVERY_DIR/$SLUG.m4b" \
   --sidecar "$DELIVERY_DIR/$SLUG.alignment.json" \

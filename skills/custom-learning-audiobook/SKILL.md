@@ -297,6 +297,8 @@ research, write one coherent manuscript, and package the result for Echo.
    content-addressed paths, and FD-backed leases for the shared Release build,
    canonicalized work/database, and every emitted media path. Those leases remain held through
    locked pre/post CLI/resource-tree hash verification and the actual `echo-cli narrate` process;
+   the wrapper derives one effective-user lease namespace and ignores caller
+   attempts to substitute another lock root.
    do not bypass the wrapper with a direct CLI command. Echo
    audio is part of the delivery contract:
    do not impose your own time limit, deadline, or "too slow" threshold just
@@ -313,8 +315,10 @@ research, write one coherent manuscript, and package the result for Echo.
    `APPROVED_ECHO_PRONUNCIATION_SHA`; the package preflight fails closed unless
    it exactly equals the clean Echo source `HEAD` being built. Resume only with
    the matching hash-bound DB and sealed Echo-v12 capture-state receipt. A render
-   is complete only after staged output validation, the schema-v2 success
-   receipt, and atomic publication of the current-accepted-run selector. Every
+   is complete only after the live DB/capture state is reverified under its
+   leases, staged output validation, a schema-v2 success receipt that binds the
+   exact resume-state filename and hash, and atomic publication of the
+   current-accepted-run selector. Every
    public attempt replaces the current-attempt receipt before rendering, so a
    failed newer attempt cannot inherit an older success. Use the tested Release
    preflight, immutable-input receipt, resource

@@ -2,6 +2,28 @@
 
 set -euo pipefail
 
+echo_pronunciation_canonical_lease_root() {
+  local account_home
+  account_home=$(/usr/local/bin/python3 - <<'PY'
+import os
+import pwd
+from pathlib import Path
+
+print(Path(pwd.getpwuid(os.geteuid()).pw_dir).resolve(strict=True))
+PY
+  ) || {
+    printf 'cannot resolve the effective user account home for narration leases\n' >&2
+    return 70
+  }
+  if [[ -z "$account_home" || "$account_home" != /* \
+    || "$account_home" == *$'\n'* || "$account_home" == *$'\r'* ]]; then
+    printf 'effective user account home is unsafe for narration leases\n' >&2
+    return 70
+  fi
+  printf '%s/.cache/explainer-audiobooks/echo-pronunciation-leases\n' \
+    "$account_home"
+}
+
 require_sha256() {
   local name=${1:?hash name is required}
   local value=${2:-}
@@ -29,7 +51,8 @@ echo_pronunciation_preflight() {
   local lease_helper="$script_dir/echo_pronunciation_lease.py"
   local explainer_root=${EXPLAINER_ROOT:-$(cd -- "$script_dir/../../.." && pwd -P)}
   local build_gate=${ECHO_BUILD_GATE:-$HOME/.claude/bin/xcode-build-gate.sh}
-  local lease_root=${ECHO_PRONUNCIATION_LEASE_ROOT:-$HOME/.cache/explainer-audiobooks/echo-pronunciation-leases}
+  local lease_root
+  lease_root=$(echo_pronunciation_canonical_lease_root) || return $?
   echo_repo=$(cd -- "$echo_repo" 2>/dev/null && pwd -P) || {
     printf 'cannot resolve Echo repository: %s\n' "$echo_repo" >&2
     return 66
@@ -222,7 +245,7 @@ echo_pronunciation_attest_inputs() {
   script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
   state_helper="$script_dir/echo_pronunciation_state.py"
   lease_helper="$script_dir/echo_pronunciation_lease.py"
-  lease_root=${ECHO_PRONUNCIATION_LEASE_ROOT:-$HOME/.cache/explainer-audiobooks/echo-pronunciation-leases}
+  lease_root=$(echo_pronunciation_canonical_lease_root) || return $?
 
   local required
   for required in \

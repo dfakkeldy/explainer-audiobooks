@@ -78,6 +78,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
     def test_wrapper_holds_fd_backed_resource_leases_through_narration(self) -> None:
         for marker in (
             "ECHO_PRONUNCIATION_LEASE_ROOT",
+            "echo_pronunciation_canonical_lease_root",
             "echo_pronunciation_lease.py",
             "trap release_owner_metadata EXIT",
             "--recover-stale-lock",
@@ -143,12 +144,16 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "echo-render-current-accepted.json",
             "echo-renders/$RUN_ID/$ATTEMPT_ID",
             "verify-delivery",
+            "--state-receipt",
+            "resumeStateFileName",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, normalized)
 
         self.assertNotIn('mv "$DIST/$SLUG.covered.m4b"', self.skill)
         self.assertNotIn('mv "$DIST/$SLUG.covered.m4b"', self.package)
+        self.assertIn('cp "$STATE_RECEIPT"', self.package)
+        self.assertGreaterEqual(self.package.count("--state-receipt"), 2)
 
         for marker in (
             "pronunciation audit",

@@ -320,6 +320,10 @@ def success_snapshot(
     epub: Path,
     artifact_relative_path: str,
     state_receipt: Path,
+    work: Path,
+    database: Path,
+    source_sha: str,
+    voice: str,
     audiobook: Path,
     sidecar: Path,
     audit: Path,
@@ -343,6 +347,24 @@ def success_snapshot(
         epub,
         artifact_relative_path,
     )
+    require(
+        state_receipt.name == f"echo-resume-state-{run_id}.json",
+        "resume-state receipt filename is not derived from the run ID",
+    )
+    expected_state = canonical_json(
+        capture_snapshot(
+            work,
+            database,
+            epub,
+            source_sha,
+            voice,
+            input_receipt,
+        )
+    )
+    require(
+        read_regular_bytes(state_receipt, "resume-state receipt") == expected_state,
+        "resume state receipt does not match final WORK, DB, or captures",
+    )
     require(audiobook.stat().st_size > 0, "audiobook is empty")
     payload: dict[str, object] = {
         "schemaVersion": 2,
@@ -354,6 +376,7 @@ def success_snapshot(
         "sourceEPUBFileName": epub.name,
         "sourceEPUBSHA256": sha256(epub),
         "artifactRelativePath": artifact_relative_path,
+        "resumeStateFileName": state_receipt.name,
         "resumeStateSHA256": sha256(state_receipt),
         "audiobookFileName": audiobook.name,
         "audiobookSHA256": sha256(audiobook),
@@ -534,6 +557,7 @@ def verify_delivery_receipt(
     selector: Path,
     receipt: Path,
     input_receipt: Path,
+    state_receipt: Path,
     epub: Path,
     audiobook: Path,
     sidecar: Path,
@@ -603,10 +627,28 @@ def verify_delivery_receipt(
             payload.get(hash_field) == attempt.get(hash_field),
             f"{label} differs between current attempt and render success",
         )
+    resume_state_name = required_string(
+        payload, "resumeStateFileName", "render-success receipt"
+    )
+    resume_state_hash = required_string(
+        payload, "resumeStateSHA256", "render-success receipt"
+    )
     require(
-        isinstance(payload.get("resumeStateSHA256"), str)
-        and SHA256_PATTERN.fullmatch(payload["resumeStateSHA256"]) is not None,
+        resume_state_name == f"echo-resume-state-{run_id}.json",
+        "render-success receipt has an invalid resume-state filename",
+    )
+    require(
+        SHA256_PATTERN.fullmatch(resume_state_hash) is not None,
         "render-success receipt has invalid resume-state SHA-256",
+    )
+    regular_file(state_receipt, "resume-state receipt")
+    require(
+        state_receipt.name == resume_state_name,
+        "resume-state receipt filename differs from render-success receipt",
+    )
+    require(
+        sha256(state_receipt) == resume_state_hash,
+        "resume-state receipt SHA-256 differs from render-success receipt",
     )
     for path, name_field, hash_field, label in (
         (audiobook, "audiobookFileName", "audiobookSHA256", "audiobook"),
@@ -682,6 +724,10 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--epub", type=Path, required=True)
         command.add_argument("--artifact-relative-path", required=True)
         command.add_argument("--state-receipt", type=Path, required=True)
+        command.add_argument("--work", type=Path, required=True)
+        command.add_argument("--db", type=Path, required=True)
+        command.add_argument("--source-sha", required=True)
+        command.add_argument("--voice", required=True)
         command.add_argument("--audiobook", type=Path, required=True)
         command.add_argument("--sidecar", type=Path, required=True)
         command.add_argument("--audit", type=Path, required=True)
@@ -699,6 +745,7 @@ def parser() -> argparse.ArgumentParser:
     delivery.add_argument("--selector", type=Path, required=True)
     delivery.add_argument("--receipt", type=Path, required=True)
     delivery.add_argument("--input-receipt", type=Path, required=True)
+    delivery.add_argument("--state-receipt", type=Path, required=True)
     delivery.add_argument("--epub", type=Path, required=True)
     delivery.add_argument("--audiobook", type=Path, required=True)
     delivery.add_argument("--sidecar", type=Path, required=True)
@@ -778,6 +825,24 @@ def main(arguments: list[str]) -> int:
                     "current-attempt receipt does not match current inputs",
                 )
         elif options.command in {"write-success", "verify-success"}:
+            if options.command == "write-success":
+                require(
+                    options.lock_root is not None
+                    and options.selection_resource is not None,
+                    "write-success requires WORK, DB, output, and selection leases",
+                )
+                require_mutation_leases(
+                    options.lock_root,
+                    (
+                        options.work,
+                        options.db,
+                        options.audiobook,
+                        options.sidecar,
+                        options.audit,
+                        options.reel,
+                        options.selection_resource,
+                    ),
+                )
             payload = success_snapshot(
                 options.attempt_id,
                 options.run_id,
@@ -786,6 +851,10 @@ def main(arguments: list[str]) -> int:
                 options.epub,
                 options.artifact_relative_path,
                 options.state_receipt,
+                options.work,
+                options.db,
+                options.source_sha,
+                options.voice,
                 options.audiobook,
                 options.sidecar,
                 options.audit,
@@ -793,21 +862,6 @@ def main(arguments: list[str]) -> int:
             )
             content = canonical_json(payload)
             if options.command == "write-success":
-                require(
-                    options.lock_root is not None
-                    and options.selection_resource is not None,
-                    "write-success requires output and selection leases",
-                )
-                require_mutation_leases(
-                    options.lock_root,
-                    (
-                        options.audiobook,
-                        options.sidecar,
-                        options.audit,
-                        options.reel,
-                        options.selection_resource,
-                    ),
-                )
                 safe_atomic_write(options.receipt, content, immutable=False)
             else:
                 regular_file(options.receipt, "render-success receipt")
@@ -828,6 +882,7 @@ def main(arguments: list[str]) -> int:
                 options.selector,
                 options.receipt,
                 options.input_receipt,
+                options.state_receipt,
                 options.epub,
                 options.audiobook,
                 options.sidecar,
