@@ -197,7 +197,9 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         missing_reference = self.run_validator()
         self.assertEqual(2, missing_reference.returncode, missing_reference.stderr)
 
-    def test_declared_manifest_rejects_missing_unexpected_and_wrong_mode_candidate(self) -> None:
+    def test_declared_manifest_rejects_missing_unexpected_and_wrong_mode_candidate(
+        self,
+    ) -> None:
         missing = self.candidate / "agents" / "openai.yaml"
         original = missing.read_bytes()
         missing.unlink()

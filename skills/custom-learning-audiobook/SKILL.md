@@ -82,19 +82,22 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --m4b-cover "$PAIR/m4b-cover.png" \
   --cover-selection "$DIST/cover-selection.json"
 
+# Run the governed Echo wrapper, then complete the selector-bound QC flow in
+# references/package-and-qc.md. It sets AUDIOBOOK to the accepted run-scoped M4B.
+: "${AUDIOBOOK:?set only from the verified current-accepted selector}"
 /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --receipt "$DIST/cover-selection.json"
 
 /usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse
@@ -103,7 +106,7 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse \
@@ -301,16 +304,20 @@ research, write one coherent manuscript, and package the result for Echo.
    renders, or report the exact live blocker. Do not replace Echo/Kokoro with
    macOS `say`, Apple system voices, AVSpeechSynthesizer, audiobook-app TTS, or
    any other non-Echo renderer unless the user explicitly asks for that
-   non-Echo preview/fallback after you name the tradeoff. Produce `<slug>.m4b`
-   and `<slug>.alignment.json` whenever the CLI can run. Pronunciation review is
+   non-Echo preview/fallback after you name the tradeoff. Produce the run-scoped
+   `<slug>.m4b` and `<slug>.alignment.json` whenever the CLI can run.
+   Pronunciation review is
    on by default and produces a pronunciation audit plus an optional
    pronunciation reel. Do not pass `--no-pronunciation-review` for a governed
    render. Supply and record the reviewed
    `APPROVED_ECHO_PRONUNCIATION_SHA`; the package preflight fails closed unless
    it exactly equals the clean Echo source `HEAD` being built. Resume only with
    the matching hash-bound DB and sealed Echo-v12 capture-state receipt. A render
-   is complete only after staged output validation and the schema-v1 success
-   receipt. Use the tested Release preflight, immutable-input receipt, resource
+   is complete only after staged output validation, the schema-v2 success
+   receipt, and atomic publication of the current-accepted-run selector. Every
+   public attempt replaces the current-attempt receipt before rendering, so a
+   failed newer attempt cannot inherit an older success. Use the tested Release
+   preflight, immutable-input receipt, resource
    leases, and bounded job/thread settings in the package reference. If native Echo audio is blocked
    and the user has not
    approved a non-Echo substitute, surface only the EPUB/Markdown from the run
@@ -329,11 +336,12 @@ research, write one coherent manuscript, and package the result for Echo.
     ```bash
     SELECTED="<selected candidate number>"
     DIST=".build/custom-learning-audiobooks/$SLUG/dist"
+    : "${AUDIOBOOK:?set from the verified current selector as shown in package-and-qc.md}"
     /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
       --selection "$DIST/cover-selection.json" \
       --cover "$DIST/cover-$SELECTED.png" \
       --epub "$DIST/$SLUG.epub" \
-      --m4b "$DIST/$SLUG.m4b" \
+      --m4b "$AUDIOBOOK" \
       --receipt "$DIST/cover-selection.json"
     ```
 

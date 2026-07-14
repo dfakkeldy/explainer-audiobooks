@@ -93,17 +93,24 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
   echo_pronunciation_preflight
 
   DIST="$RUN_ROOT/dist"
-  OUTPUT="$DIST/$SLUG.m4b"
-  SIDECAR="$DIST/$SLUG.alignment.json"
-  AUDIT="$DIST/$SLUG.pronunciation-audit.json"
-  REEL="$DIST/$SLUG.pronunciation-reel.m4b"
+  ATTEMPT_ID=$(/usr/local/bin/python3 -c 'import secrets; print(secrets.token_hex(32))')
+  ARTIFACT_RELATIVE_PATH="echo-renders/$RUN_ID/$ATTEMPT_ID"
+  ARTIFACT_ROOT="$DIST/$ARTIFACT_RELATIVE_PATH"
+  OUTPUT="$ARTIFACT_ROOT/$SLUG.m4b"
+  SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
+  AUDIT="$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json"
+  REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
   OWNER_FILE="$RUN_ROOT/research/echo-render-output.owner.env"
   STATE_RECEIPT="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
-  SUCCESS_RECEIPT="$RUN_ROOT/research/echo-render-success-$RUN_ID.json"
-  STAGE="$RUN_ROOT/.echo-output-$RUN_ID"
+  ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
+  CURRENT_SELECTOR="$RUN_ROOT/research/echo-render-current-accepted.json"
+  SELECTION_RESOURCE="$RUN_ROOT/research/echo-render-selection"
+  SUCCESS_RECEIPT="$RUN_ROOT/research/echo-render-success-$RUN_ID-$ATTEMPT_ID.json"
+  STAGE="$RUN_ROOT/.echo-output-$RUN_ID-$ATTEMPT_ID"
   TITLE=${TITLE:-}
-  export RUN_ROOT SLUG TITLE DIST OUTPUT SIDECAR AUDIT REEL OWNER_FILE
-  export STATE_RECEIPT SUCCESS_RECEIPT STAGE
+  export RUN_ROOT SLUG TITLE DIST ATTEMPT_ID ARTIFACT_RELATIVE_PATH ARTIFACT_ROOT
+  export OUTPUT SIDECAR AUDIT REEL OWNER_FILE STATE_RECEIPT ATTEMPT_RECEIPT
+  export CURRENT_SELECTOR SELECTION_RESOURCE SUCCESS_RECEIPT STAGE
 
   lease_command=(
     "$SCRIPT_DIR/echo_pronunciation_lease.py"
@@ -114,6 +121,7 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     --resource "$REEL"
     --resource "$WORK"
     --resource "$DB"
+    --resource "$SELECTION_RESOURCE"
     --
     "$0"
   )
@@ -133,7 +141,11 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
 fi
 
 assert_leases "$BUILD_RESOURCE"
-for required_internal_variable in OUTPUT SIDECAR AUDIT REEL WORK DB; do
+echo_pronunciation_attest_inputs
+for required_internal_variable in \
+  ATTEMPT_ID ARTIFACT_RELATIVE_PATH ARTIFACT_ROOT OUTPUT SIDECAR AUDIT REEL \
+  WORK DB OWNER_FILE STATE_RECEIPT ATTEMPT_RECEIPT CURRENT_SELECTOR \
+  SELECTION_RESOURCE SUCCESS_RECEIPT; do
   if [[ -z ${!required_internal_variable:-} ]]; then
     printf 'internal narration mode lacks sealed preflight state: %s\n' \
       "$required_internal_variable" >&2
@@ -141,7 +153,50 @@ for required_internal_variable in OUTPUT SIDECAR AUDIT REEL WORK DB; do
   fi
 done
 assert_leases \
-  "$BUILD_RESOURCE" "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL" "$WORK" "$DB"
+  "$BUILD_RESOURCE" "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL" "$WORK" "$DB" \
+  "$SELECTION_RESOURCE"
+
+if [[ ! "$ATTEMPT_ID" =~ ^[0-9a-f]{64}$ ]]; then
+  printf 'internal narration mode has an invalid attempt ID\n' >&2
+  exit 70
+fi
+expected_artifact_relative_path="echo-renders/$RUN_ID/$ATTEMPT_ID"
+expected_artifact_root="$DIST/$expected_artifact_relative_path"
+if [[ "$ARTIFACT_RELATIVE_PATH" != "$expected_artifact_relative_path" \
+  || "$ARTIFACT_ROOT" != "$expected_artifact_root" \
+  || "$OUTPUT" != "$ARTIFACT_ROOT/$SLUG.m4b" \
+  || "$SIDECAR" != "$ARTIFACT_ROOT/$SLUG.alignment.json" \
+  || "$AUDIT" != "$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json" \
+  || "$REEL" != "$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b" \
+  || "$OWNER_FILE" != "$RUN_ROOT/research/echo-render-output.owner.env" \
+  || "$STATE_RECEIPT" != "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json" \
+  || "$ATTEMPT_RECEIPT" != "$RUN_ROOT/research/echo-render-current-attempt.json" \
+  || "$CURRENT_SELECTOR" != "$RUN_ROOT/research/echo-render-current-accepted.json" \
+  || "$SELECTION_RESOURCE" != "$RUN_ROOT/research/echo-render-selection" \
+  || "$SUCCESS_RECEIPT" != "$RUN_ROOT/research/echo-render-success-$RUN_ID-$ATTEMPT_ID.json" ]]; then
+  printf 'internal narration paths are not derived from the attested attempt\n' >&2
+  exit 70
+fi
+if [[ "$INTERNAL_MODE" == run \
+  && ( -z ${TITLE:-} || "$TITLE" == *$'\n'* || "$TITLE" == *$'\r'* ) ]]; then
+  printf 'TITLE must be nonempty and single-line\n' >&2
+  exit 64
+fi
+
+if [[ "$INTERNAL_MODE" == run ]]; then
+  attempt_command=(
+    --attempt-id "$ATTEMPT_ID"
+    --run-id "$RUN_ID"
+    --receipt "$ATTEMPT_RECEIPT"
+    --input-receipt "$ECHO_RENDER_INPUT_RECEIPT"
+    --epub "$EPUB"
+    --artifact-relative-path "$ARTIFACT_RELATIVE_PATH"
+    --selection-resource "$SELECTION_RESOURCE"
+    --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
+  )
+  /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+    write-attempt "${attempt_command[@]}"
+fi
 
 LOCAL_HOST=$(/bin/hostname)
 OWNER_CREATED=0
@@ -175,19 +230,19 @@ load_owner_metadata() {
 
   local line_count
   line_count=$(wc -l <"$OWNER_FILE" | tr -d ' ')
-  if [[ "$line_count" != 12 ]]; then
+  if [[ "$line_count" != 13 ]]; then
     return 1
   fi
 
   local key _value
   while IFS='=' read -r key _value; do
     case "$key" in
-      lock_schema | owner_token | owner_pid | owner_host | owner_start | run_id | work_dir | narration_db | output_m4b | output_sidecar | output_audit | output_reel) ;;
+      lock_schema | owner_token | owner_pid | owner_host | owner_start | run_id | attempt_id | work_dir | narration_db | output_m4b | output_sidecar | output_audit | output_reel) ;;
       *) return 1 ;;
     esac
   done <"$OWNER_FILE"
 
-  for key in lock_schema owner_token owner_pid owner_host owner_start run_id work_dir narration_db output_m4b output_sidecar output_audit output_reel; do
+  for key in lock_schema owner_token owner_pid owner_host owner_start run_id attempt_id work_dir narration_db output_m4b output_sidecar output_audit output_reel; do
     if [[ $(awk -F= -v key="$key" '$1 == key { count += 1 } END { print count + 0 }' "$OWNER_FILE") != 1 ]]; then
       return 1
     fi
@@ -199,6 +254,7 @@ load_owner_metadata() {
   LOCK_OWNER_HOST=$(owner_field owner_host)
   LOCK_OWNER_START=$(owner_field owner_start)
   LOCK_RUN_ID=$(owner_field run_id)
+  LOCK_ATTEMPT_ID=$(owner_field attempt_id)
   LOCK_WORK=$(owner_field work_dir)
   LOCK_DB=$(owner_field narration_db)
   LOCK_OUTPUT=$(owner_field output_m4b)
@@ -211,13 +267,14 @@ load_owner_metadata() {
     || ! "$LOCK_OWNER_PID" =~ ^[1-9][0-9]*$ \
     || -z "$LOCK_OWNER_HOST" \
     || -z "$LOCK_OWNER_START" \
-    || ! "$LOCK_RUN_ID" =~ ^[0-9a-f-]+-(am_michael|am_puck)$ \
+    || ! "$LOCK_RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck)$ \
+    || ! "$LOCK_ATTEMPT_ID" =~ ^[0-9a-f]{64}$ \
     || "$LOCK_WORK" != "$RUN_ROOT/audio-work-$LOCK_RUN_ID" \
     || "$LOCK_DB" != "$RUN_ROOT/narration-$LOCK_RUN_ID.sqlite" \
-    || "$LOCK_OUTPUT" != "$OUTPUT" \
-    || "$LOCK_SIDECAR" != "$SIDECAR" \
-    || "$LOCK_AUDIT" != "$AUDIT" \
-    || "$LOCK_REEL" != "$REEL" ]]; then
+    || "$LOCK_OUTPUT" != "$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.m4b" \
+    || "$LOCK_SIDECAR" != "$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.alignment.json" \
+    || "$LOCK_AUDIT" != "$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.pronunciation-audit.json" \
+    || "$LOCK_REEL" != "$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.pronunciation-reel.m4b" ]]; then
     return 1
   fi
   LOCK_OWNER_FILE_SHA=$(shasum -a 256 "$OWNER_FILE" | awk '{print $1}')
@@ -365,6 +422,7 @@ owner_text=$(printf '%s\n' \
   "owner_host=$LOCAL_HOST" \
   "owner_start=$OWNER_START" \
   "run_id=$RUN_ID" \
+  "attempt_id=$ATTEMPT_ID" \
   "work_dir=$WORK" \
   "narration_db=$DB" \
   "output_m4b=$OUTPUT" \
@@ -381,56 +439,43 @@ fi
 OWNER_CREATED=1
 
 verify_locked_inputs() {
-  local current_epub_sha current_cli_sha current_resources_sha current_source_sha source_status
-  if ! current_epub_sha=$(shasum -a 256 "$EPUB" | awk '{print $1}') \
-    || [[ "$current_epub_sha" != "$EPUB_SHA256" ]]; then
-    printf 'EPUB changed while narration lease was held: %s\n' "$EPUB" >&2
-    return 65
-  fi
-  if ! current_cli_sha=$(shasum -a 256 "$CLI" | awk '{print $1}') \
-    || [[ "$current_cli_sha" != "$ECHO_CLI_SHA256" ]]; then
-    printf 'Echo CLI changed while narration lease was held: %s\n' "$CLI" >&2
-    return 65
-  fi
-  if ! current_resources_sha=$(
-    /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
-      hash-tree "$ECHO_RESOURCE_DIR"
-  ) || [[ "$current_resources_sha" != "$ECHO_RESOURCES_SHA256" ]]; then
-    printf 'Echo resources changed while narration lease was held: %s\n' \
-      "$ECHO_RESOURCE_DIR" >&2
-    return 65
-  fi
-  current_source_sha=$(git -C "${ECHO_REPO:-/Users/dfakkeldy/Developer/Echo}" rev-parse HEAD)
-  source_status=$(git -C "${ECHO_REPO:-/Users/dfakkeldy/Developer/Echo}" status --porcelain --untracked-files=all)
-  if [[ "$current_source_sha" != "$ECHO_SOURCE_SHA" || -n "$source_status" ]]; then
-    printf 'Echo source changed while narration lease was held\n' >&2
-    return 65
-  fi
-  if [[ -L "$ECHO_RENDER_INPUT_RECEIPT" || ! -f "$ECHO_RENDER_INPUT_RECEIPT" ]]; then
-    printf 'receipt changed while narration lease was held: %s\n' \
-      "$ECHO_RENDER_INPUT_RECEIPT" >&2
-    return 65
-  fi
-  local expected_receipt actual_receipt
-  expected_receipt=$(printf '%s\n' \
-    "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
-    "echo_source_sha=$ECHO_SOURCE_SHA" \
-    "epub_sha256=$EPUB_SHA256" \
-    "echo_cli_sha256=$ECHO_CLI_SHA256" \
-    "echo_cli_path=$CLI" \
-    "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
-    "echo_resource_dir=$ECHO_RESOURCE_DIR" \
-    "voice=$VOICE" \
-    "run_id=$RUN_ID" \
-    "work_dir=$WORK" \
-    "narration_db=$DB")
-  actual_receipt=$(<"$ECHO_RENDER_INPUT_RECEIPT")
-  if [[ "$actual_receipt" != "$expected_receipt" ]]; then
-    printf 'receipt changed while narration lease was held: %s\n' \
-      "$ECHO_RENDER_INPUT_RECEIPT" >&2
-    return 65
-  fi
+  echo_pronunciation_attest_inputs || return $?
+  /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+    verify-attempt \
+    --attempt-id "$ATTEMPT_ID" \
+    --run-id "$RUN_ID" \
+    --receipt "$ATTEMPT_RECEIPT" \
+    --input-receipt "$ECHO_RENDER_INPUT_RECEIPT" \
+    --epub "$EPUB" \
+    --artifact-relative-path "$ARTIFACT_RELATIVE_PATH"
 }
+
+for governed_artifact_dir in \
+  "$DIST/echo-renders" "$DIST/echo-renders/$RUN_ID" "$ARTIFACT_ROOT"; do
+  if [[ -L "$governed_artifact_dir" \
+    || ( -e "$governed_artifact_dir" && ! -d "$governed_artifact_dir" ) ]]; then
+    printf 'governed artifact directory is unsafe: %s\n' \
+      "$governed_artifact_dir" >&2
+    exit 65
+  fi
+done
+if [[ -e "$ARTIFACT_ROOT" ]]; then
+  printf 'attempt artifact directory already exists: %s\n' "$ARTIFACT_ROOT" >&2
+  exit 65
+fi
+for governed_receipt in \
+  "$ATTEMPT_RECEIPT" "$CURRENT_SELECTOR" "$SUCCESS_RECEIPT"; do
+  if [[ -L "$governed_receipt" ]]; then
+    printf 'governed narration receipt must not be a symlink: %s\n' \
+      "$governed_receipt" >&2
+    exit 65
+  fi
+done
+if [[ -e "$SUCCESS_RECEIPT" ]]; then
+  printf 'attempt render-success receipt already exists: %s\n' \
+    "$SUCCESS_RECEIPT" >&2
+  exit 65
+fi
 
 verify_locked_inputs
 
@@ -462,11 +507,6 @@ else
     --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
 fi
 
-if [[ -L "$SUCCESS_RECEIPT" ]]; then
-  printf 'render-success receipt must not be a symlink: %s\n' "$SUCCESS_RECEIPT" >&2
-  exit 65
-fi
-rm -f -- "$SUCCESS_RECEIPT"
 for final_output in "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL"; do
   if [[ -L "$final_output" ]]; then
     printf 'final narration output must not be a symlink: %s\n' "$final_output" >&2
@@ -474,7 +514,7 @@ for final_output in "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL"; do
   fi
 done
 
-STAGE=$(mktemp -d "$RUN_ROOT/.echo-output-$RUN_ID.XXXXXX")
+STAGE=$(mktemp -d "$RUN_ROOT/.echo-output-$RUN_ID-$ATTEMPT_ID.XXXXXX")
 STAGE_CREATED=1
 STAGE_OUTPUT="$STAGE/$SLUG.m4b"
 STAGE_SIDECAR="$STAGE/$SLUG.alignment.json"
@@ -540,6 +580,7 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --audio "$STAGE_OUTPUT" \
   --sidecar "$STAGE_SIDECAR"
 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$STAGE_AUDIT"
+verify_locked_inputs
 
 for final_output in "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL"; do
   if [[ -L "$final_output" ]]; then
@@ -547,13 +588,18 @@ for final_output in "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL"; do
     exit 65
   fi
 done
-mv -f -- "$STAGE_OUTPUT" "$OUTPUT"
-mv -f -- "$STAGE_SIDECAR" "$SIDECAR"
-mv -f -- "$STAGE_AUDIT" "$AUDIT"
+mkdir -p -- "$DIST/echo-renders/$RUN_ID"
+if [[ -e "$ARTIFACT_ROOT" || -L "$ARTIFACT_ROOT" ]]; then
+  printf 'attempt artifact directory appeared before publish: %s\n' \
+    "$ARTIFACT_ROOT" >&2
+  exit 65
+fi
+mkdir -- "$ARTIFACT_ROOT"
+mv -- "$STAGE_OUTPUT" "$OUTPUT"
+mv -- "$STAGE_SIDECAR" "$SIDECAR"
+mv -- "$STAGE_AUDIT" "$AUDIT"
 if [[ -f "$STAGE_REEL" && ! -L "$STAGE_REEL" ]]; then
-  mv -f -- "$STAGE_REEL" "$REEL"
-else
-  rm -f -- "$REEL"
+  mv -- "$STAGE_REEL" "$REEL"
 fi
 rmdir -- "$STAGE"
 STAGE_CREATED=0
@@ -565,22 +611,38 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   write-success \
+  --attempt-id "$ATTEMPT_ID" \
   --run-id "$RUN_ID" \
   --receipt "$SUCCESS_RECEIPT" \
+  --attempt-receipt "$ATTEMPT_RECEIPT" \
   --input-receipt "$ECHO_RENDER_INPUT_RECEIPT" \
+  --epub "$EPUB" \
+  --artifact-relative-path "$ARTIFACT_RELATIVE_PATH" \
   --state-receipt "$STATE_RECEIPT" \
   --audiobook "$OUTPUT" \
   --sidecar "$SIDECAR" \
   --audit "$AUDIT" \
   --reel "$REEL" \
+  --selection-resource "$SELECTION_RESOURCE" \
   --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   verify-success \
+  --attempt-id "$ATTEMPT_ID" \
   --run-id "$RUN_ID" \
   --receipt "$SUCCESS_RECEIPT" \
+  --attempt-receipt "$ATTEMPT_RECEIPT" \
   --input-receipt "$ECHO_RENDER_INPUT_RECEIPT" \
+  --epub "$EPUB" \
+  --artifact-relative-path "$ARTIFACT_RELATIVE_PATH" \
   --state-receipt "$STATE_RECEIPT" \
   --audiobook "$OUTPUT" \
   --sidecar "$SIDECAR" \
   --audit "$AUDIT" \
   --reel "$REEL"
+/usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+  accept-attempt \
+  --attempt "$ATTEMPT_RECEIPT" \
+  --success "$SUCCESS_RECEIPT" \
+  --selector "$CURRENT_SELECTOR" \
+  --selection-resource "$SELECTION_RESOURCE" \
+  --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"

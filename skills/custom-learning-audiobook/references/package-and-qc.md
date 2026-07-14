@@ -79,19 +79,22 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --cover-selection "$DIST/cover-selection.json" \
   --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
+# Run the governed Echo wrapper, then complete "Audio And Alignment QC" below.
+# That verified selector flow sets AUDIOBOOK to the accepted run-scoped M4B.
+: "${AUDIOBOOK:?set only from the verified current-accepted selector}"
 /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --receipt "$DIST/cover-selection.json"
 
 /usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse
@@ -100,7 +103,7 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse \
@@ -125,7 +128,9 @@ Use this run layout:
     visuals.md
     echo-render-inputs-<run-id>.env
     echo-resume-state-<run-id>.json
-    echo-render-success-<run-id>.json
+    echo-render-current-attempt.json
+    echo-render-current-accepted.json
+    echo-render-success-<run-id>-<attempt-id>.json
     echo-render-output.owner.env  # present only while governed narration runs
   chapters/
     ch01.md
@@ -147,10 +152,13 @@ Use this run layout:
     <slug>.epub
     <slug>.md
     images/
-    <slug>.m4b
-    <slug>.alignment.json
-    <slug>.pronunciation-audit.json
-    <slug>.pronunciation-reel.m4b  # present when review samples exist
+    echo-renders/
+      <run-id>/
+        <attempt-id>/
+          <slug>.m4b
+          <slug>.alignment.json
+          <slug>.pronunciation-audit.json
+          <slug>.pronunciation-reel.m4b  # when review samples exist
     README.md or manifest.json
 ```
 
@@ -346,7 +354,14 @@ The public wrapper first takes a kernel lease on Echo's shared `.build/cli`
 root, so `make echo-cli`, the Release executable, and its resource bundle cannot
 race another governed render. Every hidden wrapper mode verifies the inherited
 lock descriptors and their exact lock-file inodes; an environment variable by
-itself is not a capability. The preflight also requires `--version` to contain
+itself is not a capability. A real inherited descriptor is necessary but not
+sufficient: the hidden render stage independently re-attests the exact clean
+Echo `HEAD` against the approved SHA, canonical Release CLI and resource paths,
+`rv12 (Release)` version/help surface, complete resource-tree and CLI hashes,
+canonical source/run/voice coordinates, and byte-exact immutable-input receipt.
+A directly constructed hidden invocation therefore receives no trust from its
+caller and can proceed only when it independently satisfies the public
+preflight contract. The preflight also requires `--version` to contain
 `rv12 (Release)`, requires
 `narrate --help` to expose `--no-pronunciation-review`, validates EPUB and CLI
 SHA-256 values as exactly 64 lowercase hexadecimal characters, deterministically
@@ -357,7 +372,8 @@ The full exact approved revision is a component of `RUN_ID`. An
 existing receipt for the same ID must match byte-for-byte, and pre-existing
 `WORK` or `DB` data without that matching receipt fails closed before resume.
 The narration wrapper then acquires nonblocking kernel leases for every
-canonicalized shared resource: `WORK`, `DB`, M4B, sidecar, audit, and reel. Each
+canonicalized shared resource: `WORK`, `DB`, the current-attempt selector state,
+M4B, sidecar, audit, and reel. Each
 resource identity is SHA-256-keyed independently, so different `RUN_ID` values
 still conflict if any output path overlaps. The build and render lease file descriptors are
 inherited by the governed shell and Echo child, remain held through all of
@@ -386,17 +402,26 @@ emits review evidence automatically. Do not pass
 uses the custom-learning default `--voice am_michael` through `VOICE` and keeps
 synthesis bounded at one chapter job and two Kokoro threads.
 
-The output stem also produces `$DIST/$SLUG.pronunciation-audit.json` on every
-reviewed render and `$DIST/$SLUG.pronunciation-reel.m4b` when review samples are
+Each attempt receives a cryptographically random `ATTEMPT_ID`. Its output stem
+is `$DIST/echo-renders/$RUN_ID/$ATTEMPT_ID/$SLUG`, with a pronunciation audit on
+every reviewed render and a pronunciation reel when review samples are
 available. The audit JSON is required even when there are zero decisions; an
 empty reel is not created.
 
 Echo renders into a run-scoped staging directory. A zero CLI exit is not enough:
 the wrapper requires a nonempty M4B, validates the sidecar and schema-v2 audit,
-then publishes the staged files. It writes
-`research/echo-render-success-$RUN_ID.json` last, binding the exact input receipt,
-resume-state receipt, M4B, sidecar, audit, and optional reel hashes. Absence or
-mismatch of that schema-v1 success receipt means the render is not deliverable.
+then publishes the staged files into the run/attempt-scoped directory. Under the
+shared selector lease, it atomically writes
+`research/echo-render-current-attempt.json` before rendering. A failure leaves
+that newest attempt current, so an older success can no longer verify as the
+current delivery. On success it writes the schema-v2
+`research/echo-render-success-$RUN_ID-$ATTEMPT_ID.json`, binding the exact
+attempt, source EPUB, input receipt, resume-state receipt, M4B, sidecar, audit,
+and optional reel hashes. Only after that receipt verifies does it atomically
+replace `research/echo-render-current-accepted.json`. Absence or mismatch of
+the attempt, success, or accepted-selector chain means the render is not
+deliverable. Old run-scoped artifacts may remain as history but are never
+selected implicitly.
 Do not edit, retag, replace the cover of, or otherwise mutate the published M4B.
 
 If `am_michael` fails because the voice resource is unavailable, set and export
@@ -468,7 +493,51 @@ Verify the final sidecar against the exact EPUB and audio, then validate the
 automatic pronunciation audit. These are release gates, not optional QA:
 
 ```bash
-INPUT_RECEIPT="$RUN_ROOT/research/echo-render-inputs-$RUN_ID.env"
+ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
+CURRENT_SELECTOR="$RUN_ROOT/research/echo-render-current-accepted.json"
+selector_value() {
+  /usr/local/bin/python3 - "$CURRENT_SELECTOR" "$1" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as source:
+    value = json.load(source).get(sys.argv[2])
+if not isinstance(value, str) or not value:
+    raise SystemExit(f"missing selector string: {sys.argv[2]}")
+print(value)
+PY
+}
+RUN_ID=$(selector_value runID)
+ATTEMPT_ID=$(selector_value attemptID)
+ARTIFACT_RELATIVE_PATH=$(selector_value artifactRelativePath)
+INPUT_RECEIPT_NAME=$(selector_value inputReceiptFileName)
+SUCCESS_RECEIPT_NAME=$(selector_value successReceiptFileName)
+[[ "$RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck)$ ]]
+[[ "$ATTEMPT_ID" =~ ^[0-9a-f]{64}$ ]]
+[[ "$ARTIFACT_RELATIVE_PATH" == "echo-renders/$RUN_ID/$ATTEMPT_ID" ]]
+[[ "$INPUT_RECEIPT_NAME" == "echo-render-inputs-$RUN_ID.env" ]]
+[[ "$SUCCESS_RECEIPT_NAME" == "echo-render-success-$RUN_ID-$ATTEMPT_ID.json" ]]
+
+ARTIFACT_ROOT="$DIST/$ARTIFACT_RELATIVE_PATH"
+INPUT_RECEIPT="$RUN_ROOT/research/$INPUT_RECEIPT_NAME"
+SUCCESS_RECEIPT="$RUN_ROOT/research/$SUCCESS_RECEIPT_NAME"
+AUDIOBOOK="$ARTIFACT_ROOT/$SLUG.m4b"
+SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
+AUDIT="$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json"
+REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
+
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_state.py" \
+  verify-delivery \
+  --attempt "$ATTEMPT_RECEIPT" \
+  --selector "$CURRENT_SELECTOR" \
+  --receipt "$SUCCESS_RECEIPT" \
+  --input-receipt "$INPUT_RECEIPT" \
+  --epub "$DIST/$SLUG.epub" \
+  --audiobook "$AUDIOBOOK" \
+  --sidecar "$SIDECAR" \
+  --audit "$AUDIT" \
+  --reel "$REEL"
+
 CLI=$(awk -F= '$1 == "echo_cli_path" { print substr($0, index($0, "=") + 1) }' \
   "$INPUT_RECEIPT")
 ECHO_RESOURCE_DIR=$(awk -F= '$1 == "echo_resource_dir" { print substr($0, index($0, "=") + 1) }' \
@@ -476,20 +545,18 @@ ECHO_RESOURCE_DIR=$(awk -F= '$1 == "echo_resource_dir" { print substr($0, index(
 export ECHO_RESOURCE_DIR
 
 ffprobe -v error -show_entries format=duration \
-  -of default=noprint_wrappers=1:nokey=1 "$DIST/$SLUG.m4b"
+  -of default=noprint_wrappers=1:nokey=1 "$AUDIOBOOK"
 
-python3 -m json.tool "$DIST/$SLUG.alignment.json" >/dev/null
+python3 -m json.tool "$SIDECAR" >/dev/null
 
 "$CLI" verify-sidecar \
   --epub "$DIST/$SLUG.epub" \
-  --audio "$DIST/$SLUG.m4b" \
-  --sidecar "$DIST/$SLUG.alignment.json"
+  --audio "$AUDIOBOOK" \
+  --sidecar "$SIDECAR"
 
-AUDIT="$DIST/$SLUG.pronunciation-audit.json"
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/validate_pronunciation_audit.py" \
   "$AUDIT"
 
-REEL="$DIST/$SLUG.pronunciation-reel.m4b"
 test ! -f "$REEL" || ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "$REEL"
 ```
@@ -521,7 +588,7 @@ AUDIOBOOK_ID=$(sqlite3 "$DB" "select id from audiobook order by rowid desc limit
   --db "$DB" \
   --audiobook-id "$AUDIOBOOK_ID" \
   --work-dir "$WORK" \
-  --report "$DIST/<slug>.narration-qa.json"
+  --report "$ARTIFACT_ROOT/$SLUG.narration-qa.json"
 ```
 
 If the database schema differs, skip this optional QA and report why.
@@ -536,7 +603,7 @@ cover, governed EPUB, and M4B before any delivery or public publishing step:
   --selection "$DIST/cover-selection.json" \
   --cover "$DIST/cover-$SELECTED.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --receipt "$DIST/cover-selection.json"
 ```
 
@@ -574,16 +641,17 @@ Record:
 - pronunciation reel path or the reason no reel was emitted,
 - pronunciation human-listening status (`pending` until actually heard),
 - approved Echo pronunciation SHA, actual Echo source SHA, EPUB SHA-256, CLI
-  SHA-256, resource-tree SHA-256, and the input, resume-state, and schema-v1
-  render-success receipt paths,
+  SHA-256, resource-tree SHA-256, and the current-attempt, current-accepted,
+  input, resume-state, and schema-v2 render-success receipt paths,
 - QC gates passed/skipped.
 
 ## Copy Rules
 
-The final cover receipt verification above must pass before any copy. Also run
-`echo_pronunciation_state.py verify-success` with the same paths used by the
-wrapper; only the matching `research/echo-render-success-$RUN_ID.json` authorizes
-copying. For a
+The final cover receipt verification above must pass before any copy. The Audio
+And Alignment QC sequence must also pass `verify-delivery`; only the matching
+current-attempt, current-accepted, schema-v2 success, input, source, and media
+chain authorizes copying. A historical success receipt alone never authorizes a
+delivery. For a
 public-safe package, the default delivery folder is iCloud Books:
 
 ```bash
@@ -604,7 +672,7 @@ classification before applying or copying anything:
   --selection "$DIST/cover-selection.json" \
   --cover "$DIST/cover-$SELECTED.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --destination "$DELIVERY_DIR" \
   --intent reuse
 ```
@@ -619,7 +687,7 @@ rerun the same chosen intent with explicit apply:
   --selection "$DIST/cover-selection.json" \
   --cover "$DIST/cover-$SELECTED.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --destination "$DELIVERY_DIR" \
   --intent reuse \
   --apply
@@ -630,14 +698,21 @@ the governed files:
 
 ```bash
 rsync -a \
+  --exclude "echo-renders/" \
   --exclude "cover.png" \
   --exclude "cover-selection.json" \
   --exclude "$SLUG.epub" \
   --exclude "$SLUG.m4b" \
   "$DIST/" "$DELIVERY_DIR/"
 
-cp "$RUN_ROOT/research/echo-render-success-$RUN_ID.json" \
-  "$DELIVERY_DIR/$SLUG.echo-render-success.json"
+cp "$SIDECAR" "$DELIVERY_DIR/$SLUG.alignment.json"
+cp "$AUDIT" "$DELIVERY_DIR/$SLUG.pronunciation-audit.json"
+test ! -f "$REEL" || \
+  cp "$REEL" "$DELIVERY_DIR/$SLUG.pronunciation-reel.m4b"
+cp "$ATTEMPT_RECEIPT" "$DELIVERY_DIR/$(basename "$ATTEMPT_RECEIPT")"
+cp "$CURRENT_SELECTOR" "$DELIVERY_DIR/$(basename "$CURRENT_SELECTOR")"
+cp "$INPUT_RECEIPT" "$DELIVERY_DIR/$(basename "$INPUT_RECEIPT")"
+cp "$SUCCESS_RECEIPT" "$DELIVERY_DIR/$(basename "$SUCCESS_RECEIPT")"
 ```
 
 After copying, verify the copied package from the delivery path, not only from
@@ -665,7 +740,11 @@ test ! -f "$DELIVERY_DIR/$SLUG.pronunciation-reel.m4b" || \
 
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_state.py" \
   verify-delivery \
-  --receipt "$DELIVERY_DIR/$SLUG.echo-render-success.json" \
+  --attempt "$DELIVERY_DIR/$(basename "$ATTEMPT_RECEIPT")" \
+  --selector "$DELIVERY_DIR/$(basename "$CURRENT_SELECTOR")" \
+  --receipt "$DELIVERY_DIR/$(basename "$SUCCESS_RECEIPT")" \
+  --input-receipt "$DELIVERY_DIR/$(basename "$INPUT_RECEIPT")" \
+  --epub "$DELIVERY_DIR/$SLUG.epub" \
   --audiobook "$DELIVERY_DIR/$SLUG.m4b" \
   --sidecar "$DELIVERY_DIR/$SLUG.alignment.json" \
   --audit "$DELIVERY_DIR/$SLUG.pronunciation-audit.json" \
@@ -682,7 +761,7 @@ PUBLIC_DIR="books/$SLUG"
   --selection "$DIST/cover-selection.json" \
   --cover "$DIST/cover-$SELECTED.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --destination "$PUBLIC_DIR" \
   --intent reuse \
   --public-destination
@@ -699,7 +778,7 @@ expected, rerun with explicit apply:
   --selection "$DIST/cover-selection.json" \
   --cover "$DIST/cover-$SELECTED.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --destination "$PUBLIC_DIR" \
   --intent reuse \
   --public-destination \

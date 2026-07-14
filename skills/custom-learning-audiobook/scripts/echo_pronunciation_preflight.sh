@@ -30,6 +30,15 @@ echo_pronunciation_preflight() {
   local explainer_root=${EXPLAINER_ROOT:-$(cd -- "$script_dir/../../.." && pwd -P)}
   local build_gate=${ECHO_BUILD_GATE:-$HOME/.claude/bin/xcode-build-gate.sh}
   local lease_root=${ECHO_PRONUNCIATION_LEASE_ROOT:-$HOME/.cache/explainer-audiobooks/echo-pronunciation-leases}
+  echo_repo=$(cd -- "$echo_repo" 2>/dev/null && pwd -P) || {
+    printf 'cannot resolve Echo repository: %s\n' "$echo_repo" >&2
+    return 66
+  }
+  explainer_root=$(cd -- "$explainer_root" 2>/dev/null && pwd -P) || {
+    printf 'cannot resolve explainer-audiobooks repository: %s\n' \
+      "$explainer_root" >&2
+    return 66
+  }
   local build_resource="$echo_repo/.build/cli"
   local approved_input=${APPROVED_ECHO_PRONUNCIATION_SHA:-}
 
@@ -54,7 +63,7 @@ echo_pronunciation_preflight() {
     return 64
   fi
   local canonical_explainer_root expected_run_root
-  canonical_explainer_root=$(cd -- "$explainer_root" && pwd -P)
+  canonical_explainer_root=$explainer_root
   expected_run_root="$canonical_explainer_root/.build/custom-learning-audiobooks/$SLUG"
   local canonical_run_root
   canonical_run_root=$(cd -- "$RUN_ROOT" 2>/dev/null && pwd -P) || canonical_run_root=
@@ -200,9 +209,203 @@ echo_pronunciation_preflight() {
     return 70
   fi
 
+  ECHO_REPO=$echo_repo
+  EXPLAINER_ROOT=$explainer_root
+  export ECHO_REPO EXPLAINER_ROOT
   export APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA EPUB EPUB_SHA256
   export CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256
   export VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
+}
+
+echo_pronunciation_attest_inputs() {
+  local script_dir state_helper lease_helper lease_root
+  script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+  state_helper="$script_dir/echo_pronunciation_state.py"
+  lease_helper="$script_dir/echo_pronunciation_lease.py"
+  lease_root=${ECHO_PRONUNCIATION_LEASE_ROOT:-$HOME/.cache/explainer-audiobooks/echo-pronunciation-leases}
+
+  local required
+  for required in \
+    ECHO_REPO EXPLAINER_ROOT SLUG RUN_ROOT APPROVED_ECHO_PRONUNCIATION_SHA \
+    ECHO_SOURCE_SHA EPUB EPUB_SHA256 CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR \
+    ECHO_RESOURCES_SHA256 VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT; do
+    if [[ -z ${!required:-} ]]; then
+      printf 'sealed preflight state is missing: %s\n' "$required" >&2
+      return 70
+    fi
+    if [[ ${!required} == *$'\n'* || ${!required} == *$'\r'* ]]; then
+      printf 'sealed preflight state contains a line break: %s\n' "$required" >&2
+      return 64
+    fi
+  done
+
+  if [[ "$ECHO_REPO" != /* || "$EXPLAINER_ROOT" != /* || "$RUN_ROOT" != /* ]]; then
+    printf 'governed repository and run paths must be absolute\n' >&2
+    return 64
+  fi
+  local canonical_echo_repo canonical_explainer_root canonical_run_root
+  canonical_echo_repo=$(cd -- "$ECHO_REPO" 2>/dev/null && pwd -P) \
+    || canonical_echo_repo=
+  canonical_explainer_root=$(cd -- "$EXPLAINER_ROOT" 2>/dev/null && pwd -P) \
+    || canonical_explainer_root=
+  canonical_run_root=$(cd -- "$RUN_ROOT" 2>/dev/null && pwd -P) \
+    || canonical_run_root=
+  if [[ "$canonical_echo_repo" != "$ECHO_REPO" ]]; then
+    printf 'ECHO_REPO must be a canonical real directory: %s\n' "$ECHO_REPO" >&2
+    return 64
+  fi
+  if [[ "$canonical_explainer_root" != "$EXPLAINER_ROOT" ]]; then
+    printf 'EXPLAINER_ROOT must be a canonical real directory: %s\n' \
+      "$EXPLAINER_ROOT" >&2
+    return 64
+  fi
+  if [[ ! "$SLUG" =~ ^[a-z0-9][a-z0-9-]*$ \
+    || "$canonical_run_root" != "$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG" ]]; then
+    printf 'RUN_ROOT and SLUG do not identify the canonical governed run\n' >&2
+    return 64
+  fi
+  case "$VOICE" in
+    am_michael | am_puck) ;;
+    *)
+      printf 'VOICE must be am_michael or am_puck, got: %s\n' "$VOICE" >&2
+      return 64
+      ;;
+  esac
+
+  local build_resource="$ECHO_REPO/.build/cli"
+  if ! "$lease_helper" --assert-held --lock-root "$lease_root" \
+    --resource "$build_resource" >/dev/null 2>&1; then
+    printf 'Echo input attestation requires the inherited build lease\n' >&2
+    return 70
+  fi
+  require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
+    "$APPROVED_ECHO_PRONUNCIATION_SHA"
+  require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
+  local resolved_approved current_source source_status
+  resolved_approved=$(/usr/bin/git -C "$ECHO_REPO" rev-parse --verify \
+    "${APPROVED_ECHO_PRONUNCIATION_SHA}^{commit}") || {
+    printf 'approved Echo pronunciation revision is not a commit\n' >&2
+    return 65
+  }
+  current_source=$(/usr/bin/git -C "$ECHO_REPO" rev-parse HEAD) || return 65
+  source_status=$(/usr/bin/git -C "$ECHO_REPO" status --porcelain \
+    --untracked-files=all)
+  if [[ -n "$source_status" ]]; then
+    printf 'Echo working tree is not clean; renderer attestation failed\n' >&2
+    return 65
+  fi
+  if [[ "$resolved_approved" != "$APPROVED_ECHO_PRONUNCIATION_SHA" \
+    || "$current_source" != "$ECHO_SOURCE_SHA" \
+    || "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$current_source" ]]; then
+    printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
+      "$APPROVED_ECHO_PRONUNCIATION_SHA" "$current_source" >&2
+    return 65
+  fi
+
+  local expected_cli expected_resources expected_epub
+  expected_cli="$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli"
+  expected_resources="$(dirname -- "$expected_cli")/EchoNarrationResources"
+  expected_epub="$RUN_ROOT/dist/$SLUG.epub"
+  local release_component
+  for release_component in \
+    "$ECHO_REPO/.build" \
+    "$ECHO_REPO/.build/cli" \
+    "$ECHO_REPO/.build/cli/Build" \
+    "$ECHO_REPO/.build/cli/Build/Products" \
+    "$ECHO_REPO/.build/cli/Build/Products/Release"; do
+    if [[ -L "$release_component" ]]; then
+      printf 'canonical Release path contains a symlink: %s\n' \
+        "$release_component" >&2
+      return 65
+    fi
+  done
+  if [[ "$CLI" != "$expected_cli" || -L "$CLI" || ! -x "$CLI" ]]; then
+    printf 'CLI is not the canonical Release echo-cli: %s\n' "$CLI" >&2
+    return 65
+  fi
+  if [[ "$ECHO_RESOURCE_DIR" != "$expected_resources" \
+    || -L "$ECHO_RESOURCE_DIR" || ! -d "$ECHO_RESOURCE_DIR" ]]; then
+    printf 'Echo resources are not the canonical Release resource tree: %s\n' \
+      "$ECHO_RESOURCE_DIR" >&2
+    return 65
+  fi
+  if [[ "$EPUB" != "$expected_epub" || -L "$EPUB" || ! -f "$EPUB" ]]; then
+    printf 'EPUB is not the canonical governed source: %s\n' "$EPUB" >&2
+    return 65
+  fi
+  local current_epub_sha current_cli_sha current_resources_sha cli_version cli_help
+  current_epub_sha=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
+  current_cli_sha=$(/usr/bin/shasum -a 256 "$CLI" | awk '{print $1}')
+  current_resources_sha=$(/usr/local/bin/python3 "$state_helper" \
+    hash-tree "$ECHO_RESOURCE_DIR")
+  for required in EPUB_SHA256 ECHO_CLI_SHA256 ECHO_RESOURCES_SHA256; do
+    require_sha256 "$required" "${!required}"
+  done
+  if [[ "$current_epub_sha" != "$EPUB_SHA256" ]]; then
+    printf 'EPUB changed while narration lease was held: %s\n' "$EPUB" >&2
+    return 65
+  fi
+  if [[ "$current_cli_sha" != "$ECHO_CLI_SHA256" ]]; then
+    printf 'Echo CLI changed while narration lease was held: %s\n' "$CLI" >&2
+    return 65
+  fi
+  if [[ "$current_resources_sha" != "$ECHO_RESOURCES_SHA256" ]]; then
+    printf 'Echo resources changed while narration lease was held: %s\n' \
+      "$ECHO_RESOURCE_DIR" >&2
+    return 65
+  fi
+  cli_version=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" --version)
+  if [[ "$cli_version" != *"rv12 (Release)"* ]]; then
+    printf 'stale, pre-v12, or non-Release echo-cli: %s\n' "$cli_version" >&2
+    return 65
+  fi
+  cli_help=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help)
+  if [[ "$cli_help" != *"--no-pronunciation-review"* ]]; then
+    printf 'stale echo-cli: pronunciation review is unavailable\n' >&2
+    return 65
+  fi
+
+  local expected_run_id expected_work expected_db expected_receipt
+  expected_run_id="${EPUB_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
+  expected_work="$RUN_ROOT/audio-work-$expected_run_id"
+  expected_db="$RUN_ROOT/narration-$expected_run_id.sqlite"
+  expected_receipt="$RUN_ROOT/research/echo-render-inputs-$expected_run_id.env"
+  if [[ "$RUN_ID" != "$expected_run_id" || "$WORK" != "$expected_work" \
+    || "$DB" != "$expected_db" \
+    || "$ECHO_RENDER_INPUT_RECEIPT" != "$expected_receipt" ]]; then
+    printf 'sealed run paths are not derived from the attested inputs\n' >&2
+    return 65
+  fi
+  if [[ -L "$ECHO_RENDER_INPUT_RECEIPT" \
+    || ! -f "$ECHO_RENDER_INPUT_RECEIPT" ]]; then
+    printf 'receipt changed while narration lease was held: %s\n' \
+      "$ECHO_RENDER_INPUT_RECEIPT" >&2
+    return 65
+  fi
+  if [[ $(/usr/bin/stat -f '%Lp' "$ECHO_RENDER_INPUT_RECEIPT") != 600 ]]; then
+    printf 'canonical render-input receipt must have mode 600: %s\n' \
+      "$ECHO_RENDER_INPUT_RECEIPT" >&2
+    return 65
+  fi
+  local expected_receipt_text actual_receipt_text
+  expected_receipt_text=$(printf '%s\n' \
+    "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
+    "echo_source_sha=$ECHO_SOURCE_SHA" \
+    "epub_sha256=$EPUB_SHA256" \
+    "echo_cli_sha256=$ECHO_CLI_SHA256" \
+    "echo_cli_path=$CLI" \
+    "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
+    "echo_resource_dir=$ECHO_RESOURCE_DIR" \
+    "voice=$VOICE" \
+    "run_id=$RUN_ID" \
+    "work_dir=$WORK" \
+    "narration_db=$DB")
+  actual_receipt_text=$(<"$ECHO_RENDER_INPUT_RECEIPT")
+  if [[ "$actual_receipt_text" != "$expected_receipt_text" ]]; then
+    printf 'receipt changed while narration lease was held: %s\n' \
+      "$ECHO_RENDER_INPUT_RECEIPT" >&2
+    return 65
+  fi
 }
 
 if [[ ${BASH_SOURCE[0]} == "$0" ]]; then

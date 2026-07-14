@@ -19,6 +19,10 @@ from echo_pronunciation_lease import load_capability, validate_capability
 
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 MARKER_PATTERN = re.compile(r"\.anchors-ch([0-9]+)\.json")
+RUN_ID_PATTERN = re.compile(
+    r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
+    r"(?:[0-9a-f]{40}|[0-9a-f]{64})-(?:am_michael|am_puck)"
+)
 
 
 class StateError(ValueError):
@@ -309,8 +313,12 @@ def capture_snapshot(
 
 
 def success_snapshot(
+    attempt_id: str,
     run_id: str,
+    attempt_receipt: Path,
     input_receipt: Path,
+    epub: Path,
+    artifact_relative_path: str,
     state_receipt: Path,
     audiobook: Path,
     sidecar: Path,
@@ -319,17 +327,33 @@ def success_snapshot(
 ) -> dict[str, object]:
     for path, label in (
         (input_receipt, "render-input receipt"),
+        (attempt_receipt, "current-attempt receipt"),
+        (epub, "source EPUB"),
         (state_receipt, "resume-state receipt"),
         (audiobook, "audiobook"),
         (sidecar, "alignment sidecar"),
         (audit, "pronunciation audit"),
     ):
         regular_file(path, label)
+    validate_attempt(
+        attempt_receipt,
+        attempt_id,
+        run_id,
+        input_receipt,
+        epub,
+        artifact_relative_path,
+    )
     require(audiobook.stat().st_size > 0, "audiobook is empty")
     payload: dict[str, object] = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
+        "attemptID": attempt_id,
         "runID": run_id,
+        "attemptReceiptSHA256": sha256(attempt_receipt),
+        "inputReceiptFileName": input_receipt.name,
         "inputReceiptSHA256": sha256(input_receipt),
+        "sourceEPUBFileName": epub.name,
+        "sourceEPUBSHA256": sha256(epub),
+        "artifactRelativePath": artifact_relative_path,
         "resumeStateSHA256": sha256(state_receipt),
         "audiobookFileName": audiobook.name,
         "audiobookSHA256": sha256(audiobook),
@@ -352,23 +376,237 @@ def canonical_json(payload: dict[str, object]) -> bytes:
     ).encode("utf-8")
 
 
+def json_object(path: Path, label: str) -> dict[str, object]:
+    regular_file(path, label)
+    try:
+        payload = json.loads(read_regular_bytes(path, label).decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError) as error:
+        raise StateError(f"{label} is not valid JSON") from error
+    require(isinstance(payload, dict), f"{label} root must be an object")
+    return payload
+
+
+def required_string(payload: dict[str, object], field: str, label: str) -> str:
+    value = payload.get(field)
+    require(isinstance(value, str) and bool(value), f"{label} has invalid {field}")
+    return value
+
+
+def attempt_snapshot(
+    attempt_id: str,
+    run_id: str,
+    input_receipt: Path,
+    epub: Path,
+    artifact_relative_path: str,
+) -> dict[str, object]:
+    require(
+        SHA256_PATTERN.fullmatch(attempt_id) is not None,
+        "attempt ID must be exactly 64 lowercase hexadecimal characters",
+    )
+    require(RUN_ID_PATTERN.fullmatch(run_id) is not None, "run ID is invalid")
+    regular_file(input_receipt, "render-input receipt")
+    regular_file(epub, "source EPUB")
+    expected_artifact_path = f"echo-renders/{run_id}/{attempt_id}"
+    require(
+        artifact_relative_path == expected_artifact_path,
+        "attempt artifact path is not derived from the run and attempt IDs",
+    )
+    return {
+        "schemaVersion": 1,
+        "attemptID": attempt_id,
+        "runID": run_id,
+        "inputReceiptFileName": input_receipt.name,
+        "inputReceiptSHA256": sha256(input_receipt),
+        "sourceEPUBFileName": epub.name,
+        "sourceEPUBSHA256": sha256(epub),
+        "artifactRelativePath": artifact_relative_path,
+    }
+
+
+def validate_attempt(
+    attempt_receipt: Path,
+    attempt_id: str,
+    run_id: str,
+    input_receipt: Path,
+    epub: Path,
+    artifact_relative_path: str,
+) -> dict[str, object]:
+    expected = attempt_snapshot(
+        attempt_id,
+        run_id,
+        input_receipt,
+        epub,
+        artifact_relative_path,
+    )
+    actual = json_object(attempt_receipt, "current-attempt receipt")
+    require(
+        canonical_json(actual) == canonical_json(expected),
+        "current-attempt receipt does not match current inputs",
+    )
+    return expected
+
+
+def accepted_selector_snapshot(
+    attempt_receipt: Path,
+    success_receipt: Path,
+) -> dict[str, object]:
+    attempt = json_object(attempt_receipt, "current-attempt receipt")
+    success = json_object(success_receipt, "render-success receipt")
+    require(
+        attempt.get("schemaVersion") == 1,
+        "current-attempt receipt schema must be 1",
+    )
+    require(success.get("schemaVersion") == 2, "render-success schema must be 2")
+    attempt_id = required_string(attempt, "attemptID", "current-attempt receipt")
+    run_id = required_string(attempt, "runID", "current-attempt receipt")
+    artifact_relative_path = required_string(
+        attempt, "artifactRelativePath", "current-attempt receipt"
+    )
+    input_receipt_name = required_string(
+        attempt, "inputReceiptFileName", "current-attempt receipt"
+    )
+    input_receipt_sha = required_string(
+        attempt, "inputReceiptSHA256", "current-attempt receipt"
+    )
+    source_epub_name = required_string(
+        attempt, "sourceEPUBFileName", "current-attempt receipt"
+    )
+    source_epub_sha = required_string(
+        attempt, "sourceEPUBSHA256", "current-attempt receipt"
+    )
+    require(
+        SHA256_PATTERN.fullmatch(attempt_id) is not None
+        and RUN_ID_PATTERN.fullmatch(run_id) is not None,
+        "current-attempt receipt has invalid run or attempt ID",
+    )
+    require(
+        SHA256_PATTERN.fullmatch(input_receipt_sha) is not None
+        and SHA256_PATTERN.fullmatch(source_epub_sha) is not None,
+        "current-attempt receipt has invalid input hashes",
+    )
+    require(
+        input_receipt_name == f"echo-render-inputs-{run_id}.env",
+        "current-attempt receipt has an invalid input receipt filename",
+    )
+    require(
+        artifact_relative_path == f"echo-renders/{run_id}/{attempt_id}",
+        "current-attempt receipt has an invalid artifact path",
+    )
+    require(
+        success_receipt.name == f"echo-render-success-{run_id}-{attempt_id}.json",
+        "render-success receipt filename is not derived from the current attempt",
+    )
+    for field in ("attemptID", "runID", "inputReceiptSHA256", "sourceEPUBSHA256"):
+        require(
+            success.get(field) == attempt.get(field),
+            f"render-success receipt {field} differs from current attempt",
+        )
+    require(
+        success.get("attemptReceiptSHA256") == sha256(attempt_receipt),
+        "render-success receipt is not bound to the current attempt",
+    )
+    require(
+        success.get("artifactRelativePath") == attempt.get("artifactRelativePath"),
+        "render-success artifact path differs from current attempt",
+    )
+    for field in ("inputReceiptFileName", "sourceEPUBFileName"):
+        require(
+            success.get(field) == attempt.get(field),
+            f"render-success receipt {field} differs from current attempt",
+        )
+    return {
+        "schemaVersion": 1,
+        "attemptID": attempt_id,
+        "runID": run_id,
+        "attemptReceiptSHA256": sha256(attempt_receipt),
+        "successReceiptFileName": success_receipt.name,
+        "successReceiptSHA256": sha256(success_receipt),
+        "inputReceiptFileName": input_receipt_name,
+        "inputReceiptSHA256": input_receipt_sha,
+        "sourceEPUBFileName": source_epub_name,
+        "sourceEPUBSHA256": source_epub_sha,
+        "artifactRelativePath": artifact_relative_path,
+    }
+
+
 def verify_delivery_receipt(
+    attempt_receipt: Path,
+    selector: Path,
     receipt: Path,
+    input_receipt: Path,
+    epub: Path,
     audiobook: Path,
     sidecar: Path,
     audit: Path,
     reel: Path,
 ) -> None:
-    regular_file(receipt, "render-success receipt")
-    try:
-        payload = json.loads(
-            read_regular_bytes(receipt, "render-success receipt").decode("utf-8")
-        )
-    except (json.JSONDecodeError, UnicodeDecodeError) as error:
-        raise StateError("render-success receipt is not valid JSON") from error
+    attempt = json_object(attempt_receipt, "current-attempt receipt")
+    accepted = json_object(selector, "current-accepted selector")
+    payload = json_object(receipt, "render-success receipt")
     require(
-        isinstance(payload, dict) and payload.get("schemaVersion") == 1,
-        "render-success receipt schema must be 1",
+        attempt.get("schemaVersion") == 1,
+        "current-attempt receipt schema must be 1",
+    )
+    require(
+        accepted.get("schemaVersion") == 1,
+        "current-accepted selector schema must be 1",
+    )
+    require(
+        payload.get("schemaVersion") == 2,
+        "render-success receipt schema must be 2",
+    )
+    attempt_id = required_string(attempt, "attemptID", "current-attempt receipt")
+    run_id = required_string(attempt, "runID", "current-attempt receipt")
+    artifact_relative_path = required_string(
+        attempt, "artifactRelativePath", "current-attempt receipt"
+    )
+    expected_attempt = attempt_snapshot(
+        attempt_id,
+        run_id,
+        input_receipt,
+        epub,
+        artifact_relative_path,
+    )
+    require(
+        canonical_json(attempt) == canonical_json(expected_attempt),
+        "current attempt receipt does not match the supplied source and input receipt",
+    )
+    require(
+        accepted.get("attemptID") == attempt.get("attemptID")
+        and accepted.get("attemptReceiptSHA256") == sha256(attempt_receipt),
+        "current-accepted selector does not match the current attempt",
+    )
+    expected_selector = accepted_selector_snapshot(attempt_receipt, receipt)
+    require(
+        canonical_json(accepted) == canonical_json(expected_selector),
+        "current-accepted selector does not match current attempt and success receipt",
+    )
+    for path, name_field, hash_field, label in (
+        (
+            input_receipt,
+            "inputReceiptFileName",
+            "inputReceiptSHA256",
+            "render-input receipt",
+        ),
+        (epub, "sourceEPUBFileName", "sourceEPUBSHA256", "source EPUB"),
+    ):
+        regular_file(path, label)
+        require(
+            attempt.get(name_field) == path.name,
+            f"{label} filename differs from current-attempt receipt",
+        )
+        require(
+            attempt.get(hash_field) == sha256(path),
+            f"{label} SHA-256 differs from current-attempt receipt",
+        )
+        require(
+            payload.get(hash_field) == attempt.get(hash_field),
+            f"{label} differs between current attempt and render success",
+        )
+    require(
+        isinstance(payload.get("resumeStateSHA256"), str)
+        and SHA256_PATTERN.fullmatch(payload["resumeStateSHA256"]) is not None,
+        "render-success receipt has invalid resume-state SHA-256",
     )
     for path, name_field, hash_field, label in (
         (audiobook, "audiobookFileName", "audiobookSHA256", "audiobook"),
@@ -424,19 +662,44 @@ def parser() -> argparse.ArgumentParser:
     reset.add_argument("--db", type=Path, required=True)
     reset.add_argument("--receipt", type=Path, required=True)
     reset.add_argument("--lock-root", type=Path, required=True)
-    for name in ("write-success", "verify-success"):
+    for name in ("write-attempt", "verify-attempt"):
         command = commands.add_parser(name)
+        command.add_argument("--attempt-id", required=True)
         command.add_argument("--run-id", required=True)
         command.add_argument("--receipt", type=Path, required=True)
         command.add_argument("--input-receipt", type=Path, required=True)
+        command.add_argument("--epub", type=Path, required=True)
+        command.add_argument("--artifact-relative-path", required=True)
+        command.add_argument("--selection-resource", type=Path)
+        command.add_argument("--lock-root", type=Path)
+    for name in ("write-success", "verify-success"):
+        command = commands.add_parser(name)
+        command.add_argument("--attempt-id", required=True)
+        command.add_argument("--run-id", required=True)
+        command.add_argument("--receipt", type=Path, required=True)
+        command.add_argument("--attempt-receipt", type=Path, required=True)
+        command.add_argument("--input-receipt", type=Path, required=True)
+        command.add_argument("--epub", type=Path, required=True)
+        command.add_argument("--artifact-relative-path", required=True)
         command.add_argument("--state-receipt", type=Path, required=True)
         command.add_argument("--audiobook", type=Path, required=True)
         command.add_argument("--sidecar", type=Path, required=True)
         command.add_argument("--audit", type=Path, required=True)
         command.add_argument("--reel", type=Path, required=True)
+        command.add_argument("--selection-resource", type=Path)
         command.add_argument("--lock-root", type=Path)
+    accepted = commands.add_parser("accept-attempt")
+    accepted.add_argument("--attempt", type=Path, required=True)
+    accepted.add_argument("--success", type=Path, required=True)
+    accepted.add_argument("--selector", type=Path, required=True)
+    accepted.add_argument("--selection-resource", type=Path, required=True)
+    accepted.add_argument("--lock-root", type=Path, required=True)
     delivery = commands.add_parser("verify-delivery")
+    delivery.add_argument("--attempt", type=Path, required=True)
+    delivery.add_argument("--selector", type=Path, required=True)
     delivery.add_argument("--receipt", type=Path, required=True)
+    delivery.add_argument("--input-receipt", type=Path, required=True)
+    delivery.add_argument("--epub", type=Path, required=True)
     delivery.add_argument("--audiobook", type=Path, required=True)
     delivery.add_argument("--sidecar", type=Path, required=True)
     delivery.add_argument("--audit", type=Path, required=True)
@@ -488,10 +751,40 @@ def main(arguments: list[str]) -> int:
                 shutil.rmtree(options.work)
             options.db.unlink(missing_ok=True)
             options.receipt.unlink(missing_ok=True)
-        elif options.command in {"write-success", "verify-success"}:
-            payload = success_snapshot(
+        elif options.command in {"write-attempt", "verify-attempt"}:
+            payload = attempt_snapshot(
+                options.attempt_id,
                 options.run_id,
                 options.input_receipt,
+                options.epub,
+                options.artifact_relative_path,
+            )
+            content = canonical_json(payload)
+            if options.command == "write-attempt":
+                require(
+                    options.lock_root is not None
+                    and options.selection_resource is not None,
+                    "write-attempt requires the selection lease",
+                )
+                require_mutation_leases(
+                    options.lock_root, (options.selection_resource,)
+                )
+                safe_atomic_write(options.receipt, content, immutable=False)
+            else:
+                regular_file(options.receipt, "current-attempt receipt")
+                require(
+                    read_regular_bytes(options.receipt, "current-attempt receipt")
+                    == content,
+                    "current-attempt receipt does not match current inputs",
+                )
+        elif options.command in {"write-success", "verify-success"}:
+            payload = success_snapshot(
+                options.attempt_id,
+                options.run_id,
+                options.attempt_receipt,
+                options.input_receipt,
+                options.epub,
+                options.artifact_relative_path,
                 options.state_receipt,
                 options.audiobook,
                 options.sidecar,
@@ -501,11 +794,19 @@ def main(arguments: list[str]) -> int:
             content = canonical_json(payload)
             if options.command == "write-success":
                 require(
-                    options.lock_root is not None, "write-success requires a lease root"
+                    options.lock_root is not None
+                    and options.selection_resource is not None,
+                    "write-success requires output and selection leases",
                 )
                 require_mutation_leases(
                     options.lock_root,
-                    (options.audiobook, options.sidecar, options.audit, options.reel),
+                    (
+                        options.audiobook,
+                        options.sidecar,
+                        options.audit,
+                        options.reel,
+                        options.selection_resource,
+                    ),
                 )
                 safe_atomic_write(options.receipt, content, immutable=False)
             else:
@@ -515,9 +816,19 @@ def main(arguments: list[str]) -> int:
                     == content,
                     "render-success receipt does not match delivered media",
                 )
+        elif options.command == "accept-attempt":
+            require_mutation_leases(options.lock_root, (options.selection_resource,))
+            content = canonical_json(
+                accepted_selector_snapshot(options.attempt, options.success)
+            )
+            safe_atomic_write(options.selector, content, immutable=False)
         elif options.command == "verify-delivery":
             verify_delivery_receipt(
+                options.attempt,
+                options.selector,
                 options.receipt,
+                options.input_receipt,
+                options.epub,
                 options.audiobook,
                 options.sidecar,
                 options.audit,

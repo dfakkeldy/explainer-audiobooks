@@ -298,6 +298,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
     def preflight_fields(self) -> dict[str, str]:
         names = (
+            "ECHO_REPO",
+            "EXPLAINER_ROOT",
             "APPROVED_ECHO_PRONUNCIATION_SHA",
             "ECHO_SOURCE_SHA",
             "EPUB",
@@ -430,7 +432,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertRegex(fields["epub_sha256"], r"^[0-9a-f]{64}$")
         self.assertRegex(fields["echo_cli_sha256"], r"^[0-9a-f]{64}$")
         self.assertRegex(fields["echo_resources_sha256"], r"^[0-9a-f]{64}$")
-        self.assertEqual(str(self.resources), fields["echo_resource_dir"])
+        self.assertEqual(str(self.resources.resolve()), fields["echo_resource_dir"])
 
     def test_standalone_preflight_rejects_make_without_build_lease(self) -> None:
         command = f"source {shlex.quote(str(PREFLIGHT))}; echo_pronunciation_preflight"
@@ -541,7 +543,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertNotEqual(0, forged_fd.returncode)
         self.assertIn("inherited FD-backed lease capability", forged_fd.stderr)
 
-    def test_direct_leased_run_rechecks_exact_approval_and_release_version(self) -> None:
+    def test_direct_leased_run_rechecks_exact_approval_and_release_version(
+        self,
+    ) -> None:
         fields = self.preflight_fields()
         receipt = Path(fields["ECHO_RENDER_INPUT_RECEIPT"])
         receipt_text = receipt.read_text(encoding="utf-8")
@@ -697,16 +701,16 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(0, result.returncode, result.stderr)
 
         attempt_path = self.run_root / "research" / "echo-render-current-attempt.json"
-        selector_path = (
-            self.run_root / "research" / "echo-render-current-accepted.json"
-        )
+        selector_path = self.run_root / "research" / "echo-render-current-accepted.json"
         self.assertTrue(attempt_path.is_file())
         self.assertTrue(selector_path.is_file())
         attempt = json.loads(attempt_path.read_text(encoding="utf-8"))
         selector = json.loads(selector_path.read_text(encoding="utf-8"))
         self.assertEqual(attempt["attemptID"], selector["attemptID"])
-        artifact_root = Path(selector["artifactRoot"])
-        self.assertTrue(artifact_root.is_relative_to(self.run_root / "dist" / "echo-renders"))
+        artifact_root = self.run_root / "dist" / selector["artifactRelativePath"]
+        self.assertTrue(
+            artifact_root.is_relative_to(self.run_root / "dist" / "echo-renders")
+        )
         self.assertEqual(selector["runID"], artifact_root.parent.name)
         self.assertEqual(selector["attemptID"], artifact_root.name)
         self.assertTrue((artifact_root / "fixture.m4b").is_file())
@@ -726,11 +730,19 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         calls = environment_log.read_text(encoding="utf-8").splitlines()
         self.assertEqual(
             [
-                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources}",
-                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources}",
-                f"CALL=narrate:--epub ECHO_RESOURCE_DIR={self.resources}",
-                f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources}",
-                f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources}",
+                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=narrate:--epub ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
+                f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources.resolve()}",
             ],
             calls,
         )
@@ -804,6 +816,10 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             hostname: str = socket.gethostname(),
             run_id: str = fields["run_id"],
         ) -> None:
+            attempt_id = "e" * 64
+            artifact_root = (
+                self.run_root / "dist" / "echo-renders" / run_id / attempt_id
+            )
             owner.write_text(
                 "\n".join(
                     (
@@ -813,12 +829,13 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                         f"owner_host={hostname}",
                         "owner_start=Mon Jan  1 00:00:00 2001",
                         f"run_id={run_id}",
+                        f"attempt_id={attempt_id}",
                         f"work_dir={self.run_root / f'audio-work-{run_id}'}",
                         f"narration_db={self.run_root / f'narration-{run_id}.sqlite'}",
-                        f"output_m4b={self.run_root / 'dist' / 'fixture.m4b'}",
-                        f"output_sidecar={self.run_root / 'dist' / 'fixture.alignment.json'}",
-                        f"output_audit={self.run_root / 'dist' / 'fixture.pronunciation-audit.json'}",
-                        f"output_reel={self.run_root / 'dist' / 'fixture.pronunciation-reel.m4b'}",
+                        f"output_m4b={artifact_root / 'fixture.m4b'}",
+                        f"output_sidecar={artifact_root / 'fixture.alignment.json'}",
+                        f"output_audit={artifact_root / 'fixture.pronunciation-audit.json'}",
+                        f"output_reel={artifact_root / 'fixture.pronunciation-reel.m4b'}",
                     )
                 )
                 + "\n",
@@ -1029,14 +1046,16 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
     def test_output_symlink_is_rejected_without_clobbering_its_target(self) -> None:
         target = self.tmp / "outside-output"
-        target.write_bytes(b"do not replace")
-        output = self.run_root / "dist" / "fixture.m4b"
-        output.symlink_to(target)
+        target.mkdir()
+        marker = target / "marker"
+        marker.write_bytes(b"do not replace")
+        output_root = self.run_root / "dist" / "echo-renders"
+        output_root.symlink_to(target, target_is_directory=True)
         result = self.run_narrate()
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("final narration output must not be a symlink", result.stderr)
-        self.assertEqual(b"do not replace", target.read_bytes())
-        self.assertTrue(output.is_symlink())
+        self.assertIn("governed artifact directory is unsafe", result.stderr)
+        self.assertEqual(b"do not replace", marker.read_bytes())
+        self.assertTrue(output_root.is_symlink())
 
     def test_success_receipt_binds_final_media_and_audit(self) -> None:
         result = self.run_narrate()
@@ -1044,7 +1063,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         receipts = list((self.run_root / "research").glob("echo-render-success-*.json"))
         self.assertEqual(1, len(receipts))
         receipt = json.loads(receipts[0].read_text(encoding="utf-8"))
-        self.assertEqual(1, receipt["schemaVersion"])
+        self.assertEqual(2, receipt["schemaVersion"])
         for field in ("audiobookSHA256", "sidecarSHA256", "auditSHA256"):
             self.assertRegex(receipt[field], r"^[0-9a-f]{64}$")
 
@@ -1090,31 +1109,47 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "missing inherited FD-backed lease capability", unleased_record.stderr
         )
 
+        attempt = self.run_root / "research" / "echo-render-current-attempt.json"
+        selector = self.run_root / "research" / "echo-render-current-accepted.json"
+        selector_payload = json.loads(selector.read_text(encoding="utf-8"))
+        artifact_root = (
+            self.run_root / "dist" / selector_payload["artifactRelativePath"]
+        )
         command = [
             "/usr/local/bin/python3",
             str(STATE_HELPER),
             "verify-delivery",
+            "--attempt",
+            str(attempt),
+            "--selector",
+            str(selector),
             "--receipt",
             str(receipts[0]),
+            "--input-receipt",
+            str(input_receipt),
+            "--epub",
+            str(self.run_root / "dist" / "fixture.epub"),
             "--audiobook",
-            str(self.run_root / "dist" / "fixture.m4b"),
+            str(artifact_root / "fixture.m4b"),
             "--sidecar",
-            str(self.run_root / "dist" / "fixture.alignment.json"),
+            str(artifact_root / "fixture.alignment.json"),
             "--audit",
-            str(self.run_root / "dist" / "fixture.pronunciation-audit.json"),
+            str(artifact_root / "fixture.pronunciation-audit.json"),
             "--reel",
-            str(self.run_root / "dist" / "fixture.pronunciation-reel.m4b"),
+            str(artifact_root / "fixture.pronunciation-reel.m4b"),
         ]
         verified = subprocess.run(command, capture_output=True, text=True)
         self.assertEqual(0, verified.returncode, verified.stderr)
-        (self.run_root / "dist" / "fixture.alignment.json").write_text(
+        (artifact_root / "fixture.alignment.json").write_text(
             '{"tampered":true}\n', encoding="utf-8"
         )
         tampered = subprocess.run(command, capture_output=True, text=True)
         self.assertNotEqual(0, tampered.returncode)
         self.assertIn("SHA-256 differs", tampered.stderr)
 
-    def test_failed_newer_source_attempt_invalidates_old_delivery_acceptance(self) -> None:
+    def test_failed_newer_source_attempt_invalidates_old_delivery_acceptance(
+        self,
+    ) -> None:
         initial = self.run_narrate()
         self.assertEqual(0, initial.returncode, initial.stderr)
         research = self.run_root / "research"
@@ -1122,8 +1157,10 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         selector_path = research / "echo-render-current-accepted.json"
         first_attempt = json.loads(attempt_path.read_text(encoding="utf-8"))
         first_selector = json.loads(selector_path.read_text(encoding="utf-8"))
-        first_artifacts = Path(first_selector["artifactRoot"])
-        first_success = Path(first_selector["successReceipt"])
+        first_artifacts = (
+            self.run_root / "dist" / first_selector["artifactRelativePath"]
+        )
+        first_success = research / first_selector["successReceiptFileName"]
 
         epub = self.run_root / "dist" / "fixture.epub"
         epub.write_bytes(b"newer source epub")
@@ -1147,7 +1184,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "--receipt",
                 str(first_success),
                 "--input-receipt",
-                str(first_selector["inputReceipt"]),
+                str(research / first_selector["inputReceiptFileName"]),
                 "--epub",
                 str(epub),
                 "--audiobook",
@@ -1178,12 +1215,21 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         ]
         resources = (
             self.echo / ".build" / "cli",
-            self.run_root / "dist" / "fixture.m4b",
-            self.run_root / "dist" / "fixture.alignment.json",
-            self.run_root / "dist" / "fixture.pronunciation-audit.json",
-            self.run_root / "dist" / "fixture.pronunciation-reel.m4b",
             Path(arguments[arguments.index("--work-dir") + 1]),
             Path(arguments[arguments.index("--db") + 1]),
+        )
+        selector = json.loads(
+            (
+                self.run_root / "research" / "echo-render-current-accepted.json"
+            ).read_text(encoding="utf-8")
+        )
+        artifact_root = self.run_root / "dist" / selector["artifactRelativePath"]
+        resources += (
+            artifact_root / "fixture.m4b",
+            artifact_root / "fixture.alignment.json",
+            artifact_root / "fixture.pronunciation-audit.json",
+            artifact_root / "fixture.pronunciation-reel.m4b",
+            self.run_root / "research" / "echo-render-selection",
         )
         expected = {
             hashlib.sha256(str(path.resolve()).encode("utf-8")).hexdigest() + ".lock"

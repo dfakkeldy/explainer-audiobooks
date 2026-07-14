@@ -8,6 +8,7 @@ import json
 import stat
 import subprocess
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 
@@ -24,15 +25,29 @@ DEFAULT_LINKS = tuple(
     Path.home() / base / "skills/custom-learning-audiobook"
     for base in (".codex", ".agents", ".claude", ".hermes")
 )
-CONTRACT_FILES = (
-    Path("SKILL.md"),
-    Path("references/package-and-qc.md"),
-    Path("scripts/echo_pronunciation_preflight.sh"),
-    Path("scripts/echo_pronunciation_narrate.sh"),
-    Path("scripts/echo_pronunciation_lease.py"),
-    Path("scripts/echo_pronunciation_state.py"),
-    Path("scripts/validate_pronunciation_audit.py"),
-)
+
+
+@dataclass(frozen=True)
+class ManifestEntry:
+    kind: str
+    mode: int
+
+
+SKILL_MANIFEST = {
+    Path("SKILL.md"): ManifestEntry("file", 0o644),
+    Path("agents"): ManifestEntry("directory", 0o755),
+    Path("agents/openai.yaml"): ManifestEntry("file", 0o644),
+    Path("references"): ManifestEntry("directory", 0o755),
+    Path("references/intake-and-research.md"): ManifestEntry("file", 0o644),
+    Path("references/package-and-qc.md"): ManifestEntry("file", 0o644),
+    Path("scripts"): ManifestEntry("directory", 0o755),
+    Path("scripts/echo_pronunciation_preflight.sh"): ManifestEntry("file", 0o755),
+    Path("scripts/echo_pronunciation_narrate.sh"): ManifestEntry("file", 0o755),
+    Path("scripts/echo_pronunciation_lease.py"): ManifestEntry("file", 0o755),
+    Path("scripts/echo_pronunciation_state.py"): ManifestEntry("file", 0o755),
+    Path("scripts/validate_pronunciation_audit.py"): ManifestEntry("file", 0o755),
+}
+IGNORED_TRANSIENT_NAMES = frozenset({".DS_Store", "__pycache__"})
 EXTERNAL_DISCOVERABLE_SKILL = Path("SKILL.md")
 EXTERNAL_TOMBSTONE = Path("SKILL.disabled.md")
 EXTERNAL_GUARD_FILES = (EXTERNAL_TOMBSTONE, Path("references/package-and-qc.md"))
@@ -73,6 +88,77 @@ def pending(candidate_root: Path, canonical_root: Path) -> int:
     return 2
 
 
+def is_ignored_transient(relative_path: Path) -> bool:
+    return any(part in IGNORED_TRANSIENT_NAMES for part in relative_path.parts)
+
+
+def skill_inventory(root: Path) -> dict[Path, ManifestEntry]:
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError(f"skill root is not a real directory: {root}")
+    inventory: dict[Path, ManifestEntry] = {}
+    for path in sorted(root.rglob("*")):
+        relative_path = path.relative_to(root)
+        if is_ignored_transient(relative_path):
+            continue
+        mode = path.lstat().st_mode
+        if stat.S_ISREG(mode):
+            kind = "file"
+        elif stat.S_ISDIR(mode):
+            kind = "directory"
+        elif stat.S_ISLNK(mode):
+            kind = "symlink"
+        else:
+            kind = "other"
+        inventory[relative_path] = ManifestEntry(kind, stat.S_IMODE(mode))
+    return inventory
+
+
+def candidate_manifest_error(candidate_root: Path) -> str | None:
+    try:
+        actual = skill_inventory(candidate_root)
+    except (OSError, ValueError) as error:
+        return str(error)
+    missing = sorted(set(SKILL_MANIFEST) - set(actual))
+    unexpected = sorted(set(actual) - set(SKILL_MANIFEST))
+    if missing:
+        return "candidate manifest is missing: " + ", ".join(map(str, missing))
+    if unexpected:
+        return "candidate manifest has unexpected entries: " + ", ".join(
+            map(str, unexpected)
+        )
+    for relative_path, expected in SKILL_MANIFEST.items():
+        observed = actual[relative_path]
+        if observed.kind != expected.kind:
+            return (
+                f"candidate manifest type differs for {relative_path}: "
+                f"{observed.kind} != {expected.kind}"
+            )
+        if observed.mode != expected.mode:
+            return (
+                f"candidate manifest mode differs for {relative_path}: "
+                f"{observed.mode:o} != {expected.mode:o}"
+            )
+    return None
+
+
+def installed_manifest_matches(candidate_root: Path, canonical_root: Path) -> bool:
+    try:
+        candidate = skill_inventory(candidate_root)
+        canonical = skill_inventory(canonical_root)
+    except (OSError, ValueError):
+        return False
+    if candidate != canonical or candidate != SKILL_MANIFEST:
+        return False
+    for relative_path, entry in SKILL_MANIFEST.items():
+        if entry.kind != "file":
+            continue
+        if (candidate_root / relative_path).read_bytes() != (
+            canonical_root / relative_path
+        ).read_bytes():
+            return False
+    return True
+
+
 def parse_arguments(arguments: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -95,6 +181,10 @@ def main(arguments: list[str]) -> int:
     options = parse_arguments(arguments)
     links = tuple(options.link or DEFAULT_LINKS)
     canonical = options.canonical_root.resolve()
+
+    manifest_error = candidate_manifest_error(options.candidate_root)
+    if manifest_error is not None:
+        return fail(manifest_error)
 
     for link in links:
         if not link.is_symlink():
@@ -187,19 +277,8 @@ def main(arguments: list[str]) -> int:
     if view_payload.get("content") != canonical_content:
         return fail("Hermes bare skill_view content does not equal canonical SKILL.md")
 
-    for relative_path in CONTRACT_FILES:
-        candidate_path = options.candidate_root / relative_path
-        canonical_path = options.canonical_root / relative_path
-        if not candidate_path.is_file():
-            return fail(f"candidate is missing contract file: {relative_path}")
-        if not canonical_path.is_file():
-            return pending(options.candidate_root, options.canonical_root)
-        if candidate_path.read_bytes() != canonical_path.read_bytes():
-            return pending(options.candidate_root, options.canonical_root)
-        if stat.S_IMODE(candidate_path.stat().st_mode) != stat.S_IMODE(
-            canonical_path.stat().st_mode
-        ):
-            return pending(options.candidate_root, options.canonical_root)
+    if not installed_manifest_matches(options.candidate_root, options.canonical_root):
+        return pending(options.candidate_root, options.canonical_root)
 
     print("installed_skill_parity: current")
     print(f"installed_canonical={options.canonical_root}")
