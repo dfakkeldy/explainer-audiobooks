@@ -83,7 +83,13 @@ class PronunciationProbeReelTests(unittest.TestCase):
             encoding="utf-8",
         )
 
-    def write_anchor(self, *, audio_hash: str | None = None, words: list[dict] | None = None) -> None:
+    def write_anchor(
+        self,
+        *,
+        audio_hash: str | None = None,
+        words: list[dict] | None = None,
+        decisions: list[dict] | None = None,
+    ) -> None:
         if words is None:
             words = [
                 {"word": "hyperparameter", "start": 0.75, "end": 1.25},
@@ -100,7 +106,10 @@ class PronunciationProbeReelTests(unittest.TestCase):
                         "audioFileName": self.audio.name,
                         "audioSHA256": audio_hash or sha256(self.audio),
                     },
-                    "pronunciationEvidence": {"decisions": [], "diagnostics": []},
+                    "pronunciationEvidence": {
+                        "decisions": decisions or [],
+                        "diagnostics": [],
+                    },
                 },
                 indent=2,
                 sort_keys=True,
@@ -144,6 +153,30 @@ class PronunciationProbeReelTests(unittest.TestCase):
         self.write_anchor(words=[{"word": "hyperparameter", "start": 0.75, "end": 1.25}])
         with self.assertRaisesRegex(ValueError, "missing timed pronunciation form"):
             self.module().build_reel(self.root, self.work, self.out, self.evidence)
+
+    def test_uses_pronunciation_decision_range_when_exact_word_timing_is_missing(self) -> None:
+        self.write_anchor(
+            words=[{"word": "hyperparameters", "start": 2.25, "end": 2.9}],
+            decisions=[
+                {
+                    "sourceWord": "hyperparameter",
+                    "normalizedWord": "hyperparameter",
+                    "timingPrecision": "blockAnchorFallback",
+                    "chapterRelativeAudioRange": {"start": 0.5, "end": 1.5},
+                    "selectedIPA": "h-test",
+                    "ruleID": "g2p.fallback.hyperparameter",
+                }
+            ],
+        )
+
+        result = self.module().build_reel(self.root, self.work, self.out, self.evidence)
+
+        singular = result["clips"][0]
+        self.assertEqual("pronunciationDecision", singular["timingSource"])
+        self.assertEqual("blockAnchorFallback", singular["timingPrecision"])
+        self.assertEqual("g2p.fallback.hyperparameter", singular["ruleID"])
+        self.assertEqual(0.0, singular["sourceStart"])
+        self.assertEqual(2.75, singular["sourceEnd"])
 
     def test_rejects_invalid_word_range(self) -> None:
         self.write_anchor(
