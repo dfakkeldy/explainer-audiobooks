@@ -18,7 +18,7 @@
 - Never narrate more than one short line of code at a time or place two code lines back to back.
 - Treat official Anthropic documentation as primary; date all volatile claims with a source snapshot.
 - Treat Managed Agents beta headers, sessions and events, permissions, sandboxes, retention/ZDR eligibility, preview features, multiagent work, scheduled deployments, and migration as volatile until reverified for the active source snapshot.
-- Series target is 315,000 to 405,000 words; do not reduce a target after drafting without explicit user approval.
+- Series target and aggregate audit gate remain 315,000 to 405,000 words; every volume must also pass its unchanged accepted range. Both gates apply: the aggregate lower bound is independently stricter, the jointly feasible accepted interval is 315,000-402,000, and 405,000 remains the approved outer planning/audit ceiling. Do not reduce a target after drafting without explicit user approval.
 - Every volume requires final-hash structural, beginner-reader, learning-design, and prose-style acceptance.
 - Every volume requires exactly three coordinated portrait/square raster cover candidates and an explicit user selection.
 - Portrait covers are 1600 by 2560; square M4B covers are 2400 by 2400.
@@ -76,7 +76,7 @@ Each exact slug listed in the table uses its own directory under `.build/custom-
 }
 ```
 
-Allowed `documentationFamily` values are `build`, `evaluate-and-ship`, and `operate`. Allowed `stability` values are `durable`, `volatile`, `beta`, `preview`, `deprecated`, and `contractual`. Excluded Get started pages do not enter the inventory.
+Allowed `documentationFamily` values are `build`, `evaluate-and-ship`, `operate`, and `managed-agents`. The 26 approved Volume 9 pages, including the navigation-only migration page, use `managed-agents`. Allowed `stability` values are `durable`, `volatile`, `beta`, `preview`, `deprecated`, and `contractual`. Excluded Get started pages do not enter the inventory.
 
 ### Source coverage record
 
@@ -149,21 +149,30 @@ Create at least one coverage record for every URL using the approved chapter tit
 ```bash
 python3 - <<'PY'
 import json
+import re
 from pathlib import Path
 root = Path('.build/custom-learning-audiobooks/claude-platform-series/research')
 inventory = json.loads((root / 'source-inventory.json').read_text())
 coverage = json.loads((root / 'source-coverage.json').read_text())
 urls = [item['url'] for item in inventory]
+chapter_counts = {1: 12, 2: 13, 3: 14, 4: 15, 5: 16, 6: 15, 7: 15, 8: 19, 9: 14}
 assert inventory and len(urls) == len(set(urls))
-assert all(item['documentationFamily'] in {'build', 'evaluate-and-ship', 'operate'} for item in inventory)
+assert all(item['documentationFamily'] in {'build', 'evaluate-and-ship', 'operate', 'managed-agents'} for item in inventory)
 assert all(item['stability'] in {'durable', 'volatile', 'beta', 'preview', 'deprecated', 'contractual'} for item in inventory)
 assert all(item['status'] == 'included' for item in inventory)
 covered = {item['url'] for item in coverage}
 assert set(urls) == covered, (set(urls) - covered, covered - set(urls))
 assert all(1 <= item['volume'] <= 9 for item in coverage)
-assert all(item['chapter'].startswith('ch') and item['chapter'].endswith('.md') for item in coverage)
+for item in coverage:
+    match = re.fullmatch(r'ch(\d{2})\.md', item['chapter'])
+    assert match, item
+    assert 1 <= int(match.group(1)) <= chapter_counts[item['volume']], item
 assert all(item['disposition'] in {'primary', 'supporting', 'consolidated'} for item in coverage)
 assert all(item['reason'].strip() for item in coverage)
+managed_agent_urls = {item['url'] for item in inventory if item['documentationFamily'] == 'managed-agents'}
+volume9_urls = {item['url'] for item in coverage if item['volume'] == 9}
+assert len(managed_agent_urls) == 26, len(managed_agent_urls)
+assert volume9_urls == managed_agent_urls, (volume9_urls - managed_agent_urls, managed_agent_urls - volume9_urls)
 print(f'SOURCE_COVERAGE_OK pages={len(urls)} mappings={len(coverage)}')
 PY
 ```
@@ -183,7 +192,7 @@ Expected: `SOURCE_COVERAGE_OK` with nonzero counts. Record both JSON SHA-256 val
 
 - [ ] **Step 1: Write the shared brief**
 
-Record the approved learner, Python anchor, Project Desk, four throughlines, original/current target 315,000, minimum 315,000, maximum 405,000, and `draftingStarted: false`. In authorization and scope history, preserve the previously approved 280,000-360,000 range and record that Dan's 2026-07-14 approval of Managed Agents as Volume 9 changed the current range; do not erase the earlier range.
+Record the approved learner, Python anchor, Project Desk, four throughlines, original/current target 315,000, minimum 315,000, maximum 405,000, and `draftingStarted: false`. Record that per-volume and aggregate gates both apply, the aggregate minimum is independently stricter, and their jointly feasible interval is 315,000-402,000 while 405,000 remains the approved outer planning/audit ceiling. In authorization and scope history, preserve the previously approved 280,000-360,000 range and record that Dan's 2026-07-14 approval of Managed Agents as Volume 9 changed the current range; do not erase the earlier range.
 
 - [ ] **Step 2: Seed cross-volume continuity**
 
@@ -374,19 +383,22 @@ slugs = [
     'claude-platform-09-the-managed-agent',
 ]
 expected = [12, 13, 14, 15, 16, 15, 15, 19, 14]
+accepted = [(31000, 41000), (34000, 44000), (34000, 44000), (36000, 46000), (38000, 48000), (32000, 42000), (32000, 42000), (40000, 50000), (35000, 45000)]
 words = chapters = 0
-for slug, count in zip(slugs, expected):
+for slug, count, (minimum, maximum) in zip(slugs, expected, accepted):
     paths = sorted(Path('.build/custom-learning-audiobooks', slug, 'chapters').glob('ch*.md'))
     assert len(paths) == count, (slug, len(paths), count)
     chapters += len(paths)
-    words += sum(len(path.read_text().split()) for path in paths)
+    volume_words = sum(len(path.read_text().split()) for path in paths)
+    assert minimum <= volume_words <= maximum, (slug, volume_words, minimum, maximum)
+    words += volume_words
 assert chapters == 133
 assert 315000 <= words <= 405000, words
 print(f'SERIES_LENGTH_OK chapters={chapters} words={words}')
 PY
 ```
 
-Expected: `SERIES_LENGTH_OK chapters=133` with words inside the approved range.
+Expected: `SERIES_LENGTH_OK chapters=133` with every volume inside its unchanged accepted range and aggregate words inside the approved 315,000-405,000 audit range. Because both gates apply, the jointly feasible aggregate interval is 315,000-402,000; the 405,000 outer cap remains the approved planning/audit ceiling.
 
 - [ ] **Step 3: Verify every iCloud package**
 

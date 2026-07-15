@@ -78,8 +78,11 @@ fourteen-chapter Volume 9 brings the current approved total to 133 chapters.
 ### Included
 
 The research inventory begins at the live documentation homepage and follows
-the substantive pages behind Build, Evaluate and ship, Operate, and Managed
-Agents, including the navigation-only Managed Agents migration page and:
+four distinct documentation families: Build (`build`), Evaluate and ship
+(`evaluate-and-ship`), Operate (`operate`), and Managed Agents
+(`managed-agents`). All 26 approved Managed Agents pages, including the
+navigation-only migration page, belong to the `managed-agents` family. The
+inventory covers:
 
 - Messages API behavior, content blocks, stop reasons, refusals, fallback, model
   identities, and usage;
@@ -386,9 +389,15 @@ application-owned policy.
 
 ## Length and Packaging Units
 
-The approved planning range is approximately 315,000 to 405,000 words across
-nine volumes. This is a series range, not a target divided evenly among 133
-chapters.
+The approved aggregate planning and audit range is 315,000 to 405,000 words
+across nine volumes. Every volume must also pass its own accepted range; the
+per-volume gates and aggregate gate both apply. The aggregate lower bound is
+independently stricter than the 312,000-word sum of the per-volume minima, while
+the 402,000-word sum of the per-volume maxima is stricter than the aggregate
+ceiling. The jointly feasible accepted interval is therefore 315,000 to 402,000
+words. The approved 405,000-word outer cap remains the planning and audit
+ceiling rather than changing any per-volume range. This is a series range, not
+a target divided evenly among 133 chapters.
 
 Each volume receives its own:
 
