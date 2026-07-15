@@ -13,6 +13,12 @@ chapters directory. Produces:
                           NCX both work)
   <out-dir>/<slug>.md     a single combined Markdown copy
 
+An optional Markdown file passed with ``--non-narrated-appendix`` is included
+in both reading formats and their tables of contents, but its EPUB spine item
+is marked ``linear="no"`` so Echo excludes it from narration. Its words are not
+included in the narrated word count. The appendix filename must not start with
+``ch``; that prefix is reserved for narrated chapters.
+
 Standard library only. Designed for the explainer-audiobook skill.
 
 Example:
@@ -88,7 +94,7 @@ def parse_chapter(path):
 
 def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover=None,
           contributor="", cover_selection=None, m4b_cover=None, prose_receipt=None,
-          learning_receipt=None):
+          learning_receipt=None, non_narrated_appendix=None):
     if learning_receipt is not None:
         verify_learning_receipt(Path(chapters_dir), Path(learning_receipt))
     if prose_receipt is not None:
@@ -119,13 +125,14 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
                 ".gif": "image/gif", ".svg": "image/svg+xml", ".webp": "image/webp"}
     chapters = []
     figures = {}  # zip filename -> source path
-    for path in files:
+
+    def load_document(path, image_base):
         t, raw_items = parse_chapter(path)
         items = []
         for it in raw_items:
             if it[0] == "img":
                 src = it[2]
-                p = src if os.path.isabs(src) else os.path.join(chapters_dir, src)
+                p = src if os.path.isabs(src) else os.path.join(image_base, src)
                 ext = os.path.splitext(p)[1].lower()
                 if not os.path.exists(p) or ext not in img_exts:
                     print("WARNING: dropping figure (missing or unsupported): " + src)
@@ -137,8 +144,20 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
                 items.append(("img", it[1], name, it[3]))
             else:
                 items.append(it)
-        chapters.append({"title": t, "items": items,
-                         "words": sum(len(it[1].split()) for it in items if it[0] == "p")})
+        return {"title": t, "items": items,
+                "words": sum(len(it[1].split()) for it in items if it[0] == "p")}
+
+    for path in files:
+        chapters.append(load_document(path, chapters_dir))
+
+    appendix = None
+    if non_narrated_appendix is not None:
+        appendix_path = Path(non_narrated_appendix)
+        if not appendix_path.is_file():
+            raise ValueError("--non-narrated-appendix must name an existing Markdown file")
+        if appendix_path.name.startswith("ch"):
+            raise ValueError("non-narrated appendix filename must not start with 'ch'")
+        appendix = load_document(str(appendix_path), str(appendix_path.parent))
     total_words = sum(c["words"] for c in chapters)
 
     # ---- combined Markdown ----
@@ -155,6 +174,13 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
             else:
                 md += [it[1], ""]
         md += ["---", ""]
+    if appendix is not None:
+        md += ["## " + appendix["title"], ""]
+        for it in appendix["items"]:
+            if it[0] == "img":
+                md += ["![" + it[1] + "](images/" + it[2] + ")", ""]
+            else:
+                md += [it[1], ""]
     md_path = os.path.join(out_dir, slug + ".md")
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("\n".join(md))
@@ -210,8 +236,25 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
         inner = '<h1>' + html.escape(c["title"]) + '</h1>\n' + ps
         chapter_docs.append(("chap%02d.xhtml" % i, c["title"], xhtml(c["title"], inner, "chapter")))
 
+    appendix_doc = None
+    if appendix is not None:
+        parts = []
+        for it in appendix["items"]:
+            if it[0] == "img":
+                cap = ('<figcaption>' + inline_md_to_html(it[3]) + '</figcaption>') if it[3] else ''
+                parts.append('<figure><img src="images/' + it[2] + '" alt="'
+                             + html.escape(it[1], quote=True) + '"/>' + cap + '</figure>')
+            else:
+                parts.append("<p>" + inline_md_to_html(it[1]) + "</p>")
+        inner = '<h1>' + html.escape(appendix["title"]) + '</h1>\n' + "\n".join(parts)
+        appendix_doc = xhtml(appendix["title"], inner, "bibliography")
+
     nav_items = "\n".join('<li><a href="%s">%s</a></li>' % (fn, html.escape(t))
                           for fn, t, _ in chapter_docs)
+    if appendix is not None:
+        nav_items += '\n<li><a href="appendix.xhtml">%s</a></li>' % html.escape(
+            appendix["title"]
+        )
     nav = (
         '<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE html>\n'
         '<html xmlns="http://www.w3.org/1999/xhtml" '
@@ -226,6 +269,12 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
         ('<navPoint id="np%d" playOrder="%d"><navLabel><text>%s</text></navLabel>'
          '<content src="%s"/></navPoint>') % (i, i + 1, html.escape(t), fn)
         for i, (fn, t, _) in enumerate(chapter_docs))
+    if appendix is not None:
+        appendix_index = len(chapter_docs)
+        navpoints += (
+            '\n<navPoint id="np%d" playOrder="%d"><navLabel><text>%s</text></navLabel>'
+            '<content src="appendix.xhtml"/></navPoint>'
+        ) % (appendix_index, appendix_index + 1, html.escape(appendix["title"]))
     ncx = (
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">\n'
@@ -270,6 +319,11 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
         iid = "chap%02d" % i
         manifest.append('<item id="%s" href="%s" media-type="application/xhtml+xml"/>' % (iid, fn))
         spine.append('<itemref idref="%s"/>' % iid)
+    if appendix is not None:
+        manifest.append(
+            '<item id="appendix" href="appendix.xhtml" media-type="application/xhtml+xml"/>'
+        )
+        spine.append('<itemref idref="appendix" linear="no"/>')
     for j, name in enumerate(sorted(figures)):
         manifest.append('<item id="fig%03d" href="images/%s" media-type="%s"/>'
                         % (j, name, img_exts[os.path.splitext(name)[1].lower()]))
@@ -322,6 +376,8 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
                 z.writestr("OEBPS/cover.xhtml", cover_doc)
             for fn, _, doc in chapter_docs:
                 z.writestr("OEBPS/" + fn, doc)
+            if appendix_doc is not None:
+                z.writestr("OEBPS/appendix.xhtml", appendix_doc)
             for name, p in figures.items():
                 with open(p, "rb") as imf:
                     z.writestr("OEBPS/images/" + name, imf.read())
@@ -369,6 +425,11 @@ def main():
                     help="Square cover required by paired selection receipts")
     ap.add_argument("--prose-receipt", default=None,
                     help="Passed prose receipt that must match the canonical chapters")
+    ap.add_argument(
+        "--non-narrated-appendix",
+        default=None,
+        help="Optional Markdown appendix included for reading with EPUB spine linear=no",
+    )
     learning_gate = ap.add_mutually_exclusive_group()
     learning_gate.add_argument(
         "--learning-receipt",
@@ -388,7 +449,7 @@ def main():
         )
     build(a.chapters_dir, a.out_dir, a.title, a.author, a.subtitle, a.slug, a.lang, a.cover,
           a.contributor, a.cover_selection, a.m4b_cover, a.prose_receipt,
-          a.learning_receipt)
+          a.learning_receipt, a.non_narrated_appendix)
 
 
 if __name__ == "__main__":

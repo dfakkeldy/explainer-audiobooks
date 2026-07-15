@@ -87,7 +87,8 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --m4b-cover "$PAIR/m4b-cover.png" \
   --cover-selection "$DIST/cover-selection.json" \
   --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
-  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
+  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json" \
+  --non-narrated-appendix "$RUN_ROOT/research/sources.md"
 
 /usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
   --m4b "$DIST/$SLUG.m4b" \
@@ -485,6 +486,9 @@ cover embedded as both the library thumbnail and a full-bleed first page) plus a
 combined Markdown file, and prints per-chapter word counts and an estimated
 runtime. The EPUB author (`dc:creator`) is the human; the generating model is
 recorded as a `dc:contributor`. `--cover` and `--contributor` are optional.
+`--non-narrated-appendix` is optional; use it for a readable sources document
+that should remain outside Echo narration and narrated word counts. Its filename
+must not start with `ch`.
 Verify the EPUB is valid (the `mimetype` check in `references/narration-style.md`).
 
 ### 7. Native Echo/Kokoro M4B and alignment

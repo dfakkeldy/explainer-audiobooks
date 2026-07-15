@@ -157,6 +157,18 @@ python3 skill/scripts/learning_design_qc.py \
    hashes.
 10. Pass both receipts to `build_book.py`.
 
+For a readable sources appendix that must not be narrated, keep it outside the
+canonical `chapters/` directory (for example, `research/sources.md`) and pass:
+
+```bash
+--non-narrated-appendix "$RUN_ROOT/research/sources.md"
+```
+
+The builder includes it in the EPUB and Markdown tables of contents, marks its
+EPUB spine item `linear="no"` for Echo, and excludes its words from the narrated
+word total. Never name a non-narrated appendix `ch*.md`; that namespace is the
+canonical narrated manuscript and is governed by the learning and prose hashes.
+
 Any canonical chapter edit makes both hash-bound reviews stale. Rerun the
 affected learning and prose reviews; never edit a receipt by hand.
 
