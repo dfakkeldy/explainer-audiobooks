@@ -1,7 +1,7 @@
 # Claude Platform Audiobook Series Design
 
 Date: 2026-07-14
-Status: approved curriculum; specification awaiting final user review
+Status: approved by Dan on 2026-07-14
 Source: [Claude Platform documentation](https://platform.claude.com/docs/en/home)
 
 ## Purpose
