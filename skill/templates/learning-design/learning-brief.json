@@ -1,7 +1,27 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "learnerOutcome": "Explain how a small email classifier is trained and used.",
   "priorKnowledge": "Curious beginner who knows ordinary arithmetic.",
+  "audienceLevel": "beginner",
+  "listeningMode": {
+    "name": "road-book",
+    "primaryContext": "Driving and delivering mail",
+    "attentionConstraints": [
+      "eyes unavailable",
+      "single-pass listening",
+      "real interruptions"
+    ]
+  },
+  "revisionMode": {
+    "name": "new-book",
+    "sourceEdition": "",
+    "preserve": {
+      "governingQuestion": "",
+      "narrativeSpine": "",
+      "successfulExamples": [],
+      "chapterJobs": []
+    }
+  },
   "openingOrientation": {
     "context": "A program must decide whether a new email is urgent.",
     "promise": "Build one mental model from inputs through inference.",
@@ -9,8 +29,8 @@
   },
   "originalTargetWords": 20000,
   "currentTargetWords": 20000,
-  "minimumAcceptedWords": 18000,
-  "maximumAcceptedWords": 22000,
+  "estimatedMinimumWords": 18000,
+  "estimatedMaximumWords": 22000,
   "draftingStarted": false,
   "scopeHistory": []
 }

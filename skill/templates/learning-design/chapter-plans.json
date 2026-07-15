@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "chapters": [
     {
       "file": "ch01.md",
@@ -8,7 +8,28 @@
       "knowledgeDelta": "Calculate one classifier output by hand.",
       "groundedExample": "An urgency score from sender and subject inputs.",
       "concepts": ["neural network", "parameter"],
-      "beats": ["orient", "calculate", "test a boundary"]
+      "beats": ["orient", "calculate", "test a boundary"],
+      "newCoreTerms": [
+        {
+          "term": "neural network",
+          "problemBeforeName": "A postal system must recognize many handwritten forms of one digit."
+        },
+        {
+          "term": "parameter",
+          "problemBeforeName": "The recognizer needs an adjustable setting that examples can improve."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "brief-spoken",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to one handwritten seven."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "A postal worker meets an unusually written seven.",
+        "realWorldApplication": "Automated ZIP-code recognition"
+      }
     },
     {
       "file": "ch02.md",
@@ -17,7 +38,28 @@
       "knowledgeDelta": "Identify whether an operation is training or inference.",
       "groundedExample": "Update the classifier, then score a new message.",
       "concepts": ["training", "inference"],
-      "beats": ["retrieve", "compare", "correct a misconception"]
+      "beats": ["retrieve", "compare", "correct a misconception"],
+      "newCoreTerms": [
+        {
+          "term": "training",
+          "problemBeforeName": "The system must improve after seeing labelled examples."
+        },
+        {
+          "term": "inference",
+          "problemBeforeName": "A finished recognizer must handle tomorrow's envelope without relearning."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Compare teaching yesterday with sorting one envelope today."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The trained sorter encounters tomorrow's mail.",
+        "realWorldApplication": "Postal recognition after training"
+      }
     }
   ]
 }

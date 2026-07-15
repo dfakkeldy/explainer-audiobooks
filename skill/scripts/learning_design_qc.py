@@ -6,26 +6,53 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 REQUIRED_RECORDS = {
+    "evidence": "evidence-notes.json",
     "brief": "learning-brief.json",
     "outline": "learning-outline.json",
     "plans": "chapter-plans.json",
     "coverage": "coverage-ledger.json",
     "continuity": "continuity.json",
     "review": "learning-review.json",
+    "pilot": "comprehension-pilot.json",
+    "revisions": "revision-passes.json",
 }
 AUTHORIZATION_SOURCES = {"user", "explicit-autonomous-run"}
 CURRICULUM_PATTERNS = {
     "mechanism-first-spiral",
     "end-to-end-trace",
     "problem-progression",
+    "question-led-narrative",
+}
+AUDIENCE_LEVELS = {"beginner", "intermediate", "advanced"}
+LISTENING_MODES = {"road-book", "focused-study"}
+REVISION_MODES = {"new-book", "first-edition-plus"}
+CALCULATION_TREATMENTS = {
+    "none",
+    "brief-spoken",
+    "optional-study",
+    "focused-lesson",
 }
 FINAL_FINDING_DECISIONS = {"accepted", "rejected", "resolved"}
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+VOICE_SOURCE_MODES = {
+    "private-source-craft-analysis",
+    "project-brief",
+    "user-supplied-exemplar",
+}
+REQUIRED_REVISION_PASSES = {
+    "claim-traceability",
+    "tightening",
+    "de-listification",
+    "sentence-rhythm",
+    "ear-pass",
+}
 
 
 def sha256_file(path: Path) -> str:
@@ -65,6 +92,12 @@ def require_bool(value: Any, field: str) -> bool:
 def require_positive_int(value: Any, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
         raise ValueError(f"{field} must be a positive integer")
+    return value
+
+
+def require_nonnegative_int(value: Any, field: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"{field} must be a non-negative integer")
     return value
 
 
@@ -109,25 +142,107 @@ def unique_records(items: Any, key: str, field: str) -> dict[str, dict[str, Any]
     return records
 
 
-def validate_orientation(brief: dict[str, Any]) -> None:
+def validate_bound_artifact(
+    run_root: Path,
+    path_value: Any,
+    hash_value: Any,
+    field: str,
+) -> Path:
+    relative = Path(require_string(path_value, f"{field}Path"))
+    if relative.is_absolute():
+        raise ValueError(f"{field}Path must be relative to the run root")
+    root = run_root.resolve()
+    artifact = (root / relative).resolve()
+    try:
+        artifact.relative_to(root)
+    except ValueError as error:
+        raise ValueError(f"{field}Path must stay inside the run root") from error
+    if not artifact.is_file():
+        raise ValueError(f"missing {field} artifact: {artifact}")
+    expected = require_string(hash_value, f"{field}SHA256")
+    if not SHA256_RE.fullmatch(expected):
+        raise ValueError(f"{field}SHA256 must be a lowercase SHA-256 digest")
+    if sha256_file(artifact) != expected:
+        raise ValueError(f"{field}SHA256 does not match {artifact}")
+    return artifact
+
+
+def validate_evidence(evidence: dict[str, Any], run_root: Path) -> set[str]:
+    validate_bound_artifact(
+        run_root,
+        evidence.get("notesPath"),
+        evidence.get("notesSHA256"),
+        "evidence.notes",
+    )
+    if evidence.get("claimPolicy") != "traceable-only":
+        raise ValueError("evidence.claimPolicy must be traceable-only")
+    claims = unique_records(evidence.get("claims"), "id", "evidence.claims")
+    for claim_id, claim in claims.items():
+        prefix = f"evidence.claims[{claim_id}]"
+        for field in ("claim", "source", "locator"):
+            require_string(claim.get(field), f"{prefix}.{field}")
+        if claim.get("verificationStatus") != "verified":
+            raise ValueError(f"{prefix}.verificationStatus must be verified")
+    require_string_list(
+        evidence.get("unresolvedConflicts"),
+        "evidence.unresolvedConflicts",
+        allow_empty=True,
+    )
+    return set(claims)
+
+
+def validate_brief(brief: dict[str, Any]) -> dict[str, str]:
     require_string(brief.get("learnerOutcome"), "brief.learnerOutcome")
     require_string(brief.get("priorKnowledge"), "brief.priorKnowledge")
+    audience_level = require_string(brief.get("audienceLevel"), "brief.audienceLevel")
+    if audience_level not in AUDIENCE_LEVELS:
+        raise ValueError("brief.audienceLevel must be beginner, intermediate, or advanced")
+
+    listening = brief.get("listeningMode")
+    if not isinstance(listening, dict):
+        raise ValueError("brief.listeningMode must be an object")
+    listening_mode = require_string(listening.get("name"), "brief.listeningMode.name")
+    if listening_mode not in LISTENING_MODES:
+        raise ValueError("brief.listeningMode.name must be road-book or focused-study")
+    require_string(listening.get("primaryContext"), "brief.listeningMode.primaryContext")
+    require_string_list(
+        listening.get("attentionConstraints"),
+        "brief.listeningMode.attentionConstraints",
+    )
+
+    revision = brief.get("revisionMode")
+    if not isinstance(revision, dict):
+        raise ValueError("brief.revisionMode must be an object")
+    revision_mode = require_string(revision.get("name"), "brief.revisionMode.name")
+    if revision_mode not in REVISION_MODES:
+        raise ValueError("brief.revisionMode.name must be new-book or first-edition-plus")
+    preserve = revision.get("preserve")
+    if not isinstance(preserve, dict):
+        raise ValueError("brief.revisionMode.preserve must be an object")
+    if revision_mode == "first-edition-plus":
+        require_string(revision.get("sourceEdition"), "brief.revisionMode.sourceEdition")
+        for field in ("governingQuestion", "narrativeSpine"):
+            require_string(preserve.get(field), f"brief.revisionMode.preserve.{field}")
+        for field in ("successfulExamples", "chapterJobs"):
+            require_string_list(preserve.get(field), f"brief.revisionMode.preserve.{field}")
+
     orientation = brief.get("openingOrientation")
     if not isinstance(orientation, dict):
         raise ValueError("brief.openingOrientation must be an object")
     for field in ("context", "promise", "route"):
         require_string(orientation.get(field), f"brief.openingOrientation.{field}")
+    return {"audienceLevel": audience_level, "listeningMode": listening_mode}
 
 
 def validate_target(brief: dict[str, Any], actual_words: int) -> dict[str, int]:
     original = require_positive_int(brief.get("originalTargetWords"), "brief.originalTargetWords")
     current = require_positive_int(brief.get("currentTargetWords"), "brief.currentTargetWords")
-    minimum = require_positive_int(brief.get("minimumAcceptedWords"), "brief.minimumAcceptedWords")
-    maximum = require_positive_int(brief.get("maximumAcceptedWords"), "brief.maximumAcceptedWords")
-    if not minimum <= current <= maximum:
-        raise ValueError("brief current target must fall inside its accepted word range")
+    minimum = require_positive_int(brief.get("estimatedMinimumWords"), "brief.estimatedMinimumWords")
+    maximum = require_positive_int(brief.get("estimatedMaximumWords"), "brief.estimatedMaximumWords")
     if minimum > maximum:
-        raise ValueError("brief minimumAcceptedWords exceeds maximumAcceptedWords")
+        raise ValueError("brief estimatedMinimumWords exceeds estimatedMaximumWords")
+    if not minimum <= current <= maximum:
+        raise ValueError("brief current target must fall inside its estimated word range")
 
     drafting_started = require_bool(brief.get("draftingStarted"), "brief.draftingStarted")
     history = require_list(brief.get("scopeHistory"), "brief.scopeHistory", allow_empty=True)
@@ -150,27 +265,32 @@ def validate_target(brief: dict[str, Any], actual_words: int) -> dict[str, int]:
             raise ValueError(
                 "target reduction after drafting requires explicit user approval and evidence"
             )
-    if not minimum <= actual_words <= maximum:
-        raise ValueError(
-            f"manuscript word count {actual_words} is outside accepted range {minimum}-{maximum}"
-        )
     return {
         "originalTargetWords": original,
         "currentTargetWords": current,
-        "minimumAcceptedWords": minimum,
-        "maximumAcceptedWords": maximum,
+        "estimatedMinimumWords": minimum,
+        "estimatedMaximumWords": maximum,
         "actualWords": actual_words,
+        "withinEstimatedRange": minimum <= actual_words <= maximum,
     }
 
 
-def validate_outline(outline: dict[str, Any], chapter_names: set[str]) -> None:
+def validate_outline(
+    outline: dict[str, Any],
+    chapter_names: set[str],
+    listening_mode: str,
+    evidence_claim_ids: set[str],
+) -> tuple[set[str], set[str]]:
     authorization = outline.get("authorization")
     if not isinstance(authorization, dict):
         raise ValueError("outline.authorization must be an object")
     if authorization.get("status") != "approved":
         raise ValueError("outline.authorization.status must be approved")
-    if authorization.get("source") not in AUTHORIZATION_SOURCES:
+    authorization_source = authorization.get("source")
+    if authorization_source not in AUTHORIZATION_SOURCES:
         raise ValueError("outline.authorization.source must be user or explicit-autonomous-run")
+    if listening_mode == "road-book" and authorization_source != "user":
+        raise ValueError("road-book human outline approval requires authorization.source user")
     require_string(authorization.get("evidence"), "outline.authorization.evidence")
 
     curriculum_pattern = outline.get("curriculumPattern")
@@ -182,7 +302,7 @@ def validate_outline(outline: dict[str, Any], chapter_names: set[str]) -> None:
     if pattern_name not in CURRICULUM_PATTERNS:
         raise ValueError(
             "outline.curriculumPattern.name must be mechanism-first-spiral, "
-            "end-to-end-trace, or problem-progression"
+            "end-to-end-trace, problem-progression, or question-led-narrative"
         )
     require_string(
         curriculum_pattern.get("reason"), "outline.curriculumPattern.reason"
@@ -195,9 +315,46 @@ def validate_outline(outline: dict[str, Any], chapter_names: set[str]) -> None:
     throughlines = require_string_list(outline.get("throughlines"), "outline.throughlines")
     if not 2 <= len(throughlines) <= 4:
         raise ValueError("outline.throughlines must contain two to four genuine throughlines")
+    durable_outcomes = require_string_list(
+        outline.get("durableOutcomes"), "outline.durableOutcomes"
+    )
+    if listening_mode == "road-book" and not 6 <= len(durable_outcomes) <= 10:
+        raise ValueError("outline.durableOutcomes must contain six to ten road-book outcomes")
+
+    if listening_mode == "road-book":
+        road_book = outline.get("roadBookDesign")
+        if not isinstance(road_book, dict):
+            raise ValueError("outline.roadBookDesign must be an object for road-book mode")
+        for field in ("governingQuestion", "narrativeSpine", "optionalStudyBoundary"):
+            require_string(road_book.get(field), f"outline.roadBookDesign.{field}")
+        people = require_string_list(
+            road_book.get("peopleAndHistory"), "outline.roadBookDesign.peopleAndHistory"
+        )
+        if len(people) < 2:
+            raise ValueError("outline.roadBookDesign.peopleAndHistory needs at least two anchors")
+        jobs = require_string_list(
+            road_book.get("chapterJobVariety"), "outline.roadBookDesign.chapterJobVariety"
+        )
+        if len(set(jobs)) < 4:
+            raise ValueError("outline.roadBookDesign.chapterJobVariety needs four distinct jobs")
+        applications = require_string_list(
+            road_book.get("realWorldApplications"),
+            "outline.roadBookDesign.realWorldApplications",
+        )
+        if len(applications) < 2:
+            raise ValueError(
+                "outline.roadBookDesign.realWorldApplications needs at least two varied applications"
+            )
+        reference_layer = outline.get("referenceLayer")
+        if not isinstance(reference_layer, dict):
+            raise ValueError("outline.referenceLayer must be an object for road-book mode")
+        require_string_list(reference_layer.get("items"), "outline.referenceLayer.items")
+        require_string_list(reference_layer.get("formats"), "outline.referenceLayer.formats")
+
     chapters = unique_records(outline.get("chapters"), "file", "outline.chapters")
     if set(chapters) != chapter_names:
         raise ValueError("outline chapters must match canonical chapter files exactly")
+    section_ids: set[str] = set()
     for filename, chapter in chapters.items():
         require_string(chapter.get("purpose"), f"outline.chapters[{filename}].purpose")
         require_string_list(
@@ -205,9 +362,44 @@ def validate_outline(outline: dict[str, Any], chapter_names: set[str]) -> None:
             f"outline.chapters[{filename}].prerequisites",
             allow_empty=True,
         )
+        sections = unique_records(
+            chapter.get("sections"),
+            "id",
+            f"outline.chapters[{filename}].sections",
+        )
+        overlap = section_ids.intersection(sections)
+        if overlap:
+            raise ValueError(f"duplicate outline section id: {sorted(overlap)[0]}")
+        section_ids.update(sections)
+        for section_id, section in sections.items():
+            prefix = f"outline.sections[{section_id}]"
+            for field in (
+                "job",
+                "argument",
+                "throughlineAdvance",
+                "payoff",
+                "landingBeat",
+            ):
+                require_string(section.get(field), f"{prefix}.{field}")
+            claims = set(
+                require_string_list(section.get("specificClaims"), f"{prefix}.specificClaims")
+            )
+            unknown_claims = claims - evidence_claim_ids
+            if unknown_claims:
+                raise ValueError(
+                    f"{prefix}.specificClaims names unknown evidence id {sorted(unknown_claims)[0]}"
+                )
+            require_string_list(
+                section.get("mustNotRepeat"),
+                f"{prefix}.mustNotRepeat",
+                allow_empty=True,
+            )
+    return set(durable_outcomes), section_ids
 
 
-def validate_chapter_plans(plans: dict[str, Any], chapter_names: set[str]) -> None:
+def validate_chapter_plans(
+    plans: dict[str, Any], chapter_names: set[str], listening_mode: str
+) -> None:
     records = unique_records(plans.get("chapters"), "file", "chapter-plans.chapters")
     if set(records) != chapter_names:
         raise ValueError("one chapter plan is required for every canonical chapter")
@@ -221,11 +413,94 @@ def validate_chapter_plans(plans: dict[str, Any], chapter_names: set[str]) -> No
         if len(beats) < 3:
             raise ValueError(f"{prefix}.beats must contain at least three teaching jobs")
 
+        terms = require_list(plan.get("newCoreTerms"), f"{prefix}.newCoreTerms", allow_empty=True)
+        if listening_mode == "road-book" and len(terms) > 3:
+            raise ValueError(f"{prefix}.newCoreTerms may contain at most three road-book terms")
+        for index, term in enumerate(terms):
+            if not isinstance(term, dict):
+                raise ValueError(f"{prefix}.newCoreTerms[{index}] must be an object")
+            require_string(term.get("term"), f"{prefix}.newCoreTerms[{index}].term")
+            require_string(
+                term.get("problemBeforeName"),
+                f"{prefix}.newCoreTerms[{index}].problemBeforeName",
+            )
 
-def validate_coverage(coverage: dict[str, Any], chapter_names: set[str]) -> None:
+        audio = plan.get("audioLoad")
+        if not isinstance(audio, dict):
+            raise ValueError(f"{prefix}.audioLoad must be an object")
+        temporary_values = require_nonnegative_int(
+            audio.get("temporaryValues"), f"{prefix}.audioLoad.temporaryValues"
+        )
+        symbolic_steps = require_nonnegative_int(
+            audio.get("symbolicChainSteps"), f"{prefix}.audioLoad.symbolicChainSteps"
+        )
+        treatment = require_string(
+            audio.get("calculationTreatment"), f"{prefix}.audioLoad.calculationTreatment"
+        )
+        if treatment not in CALCULATION_TREATMENTS:
+            raise ValueError(f"{prefix}.audioLoad.calculationTreatment is unsupported")
+        minutes = require_nonnegative_int(
+            audio.get("focusedLessonMinutes"), f"{prefix}.audioLoad.focusedLessonMinutes"
+        )
+        require_string(audio.get("concreteReset"), f"{prefix}.audioLoad.concreteReset")
+
+        if treatment in {"none", "optional-study"}:
+            if temporary_values:
+                raise ValueError(
+                    f"{prefix}.audioLoad.temporaryValues must be zero when calculations are not in the main listen"
+                )
+            if symbolic_steps:
+                raise ValueError(
+                    f"{prefix}.audioLoad.symbolicChainSteps must be zero when calculations are not in the main listen"
+                )
+            if minutes:
+                raise ValueError(f"{prefix}.audioLoad.focusedLessonMinutes must be zero")
+        elif treatment == "brief-spoken":
+            if temporary_values > 3:
+                raise ValueError(
+                    f"{prefix}.audioLoad.temporaryValues exceeds the road-book limit of three"
+                )
+            if symbolic_steps > 3:
+                raise ValueError(
+                    f"{prefix}.audioLoad.symbolicChainSteps exceeds the road-book limit of three"
+                )
+            if minutes:
+                raise ValueError(f"{prefix}.audioLoad.focusedLessonMinutes must be zero")
+        else:
+            if not 1 <= minutes <= 5:
+                raise ValueError(
+                    f"{prefix}.audioLoad.focusedLessonMinutes must be one to five"
+                )
+            if temporary_values > 5:
+                raise ValueError(f"{prefix}.audioLoad.temporaryValues exceeds focused-lesson limit")
+            if symbolic_steps > 5:
+                raise ValueError(f"{prefix}.audioLoad.symbolicChainSteps exceeds focused-lesson limit")
+
+        if listening_mode == "road-book":
+            infrastructure = plan.get("teachingInfrastructure")
+            if not isinstance(infrastructure, dict):
+                raise ValueError(f"{prefix}.teachingInfrastructure must be an object")
+            require_string(
+                infrastructure.get("narrativeConnection"),
+                f"{prefix}.teachingInfrastructure.narrativeConnection",
+            )
+            require_string(
+                infrastructure.get("realWorldApplication"),
+                f"{prefix}.teachingInfrastructure.realWorldApplication",
+            )
+
+
+def validate_coverage(
+    coverage: dict[str, Any], chapter_names: set[str], durable_outcomes: set[str]
+) -> None:
     concepts = unique_records(coverage.get("concepts"), "name", "coverage-ledger.concepts")
     for name, concept in concepts.items():
         prefix = f"coverage-ledger[{name}]"
+        durable_outcome = require_string(
+            concept.get("durableOutcome"), f"{prefix}.durableOutcome"
+        )
+        if durable_outcome not in durable_outcomes:
+            raise ValueError(f"{prefix}.durableOutcome must name an outline outcome")
         for field in (
             "definition",
             "reason",
@@ -235,6 +510,23 @@ def validate_coverage(coverage: dict[str, Any], chapter_names: set[str]) -> None
             "expectedAbility",
         ):
             require_string(concept.get(field), f"{prefix}.{field}")
+        require_string(concept.get("problemBeforeName"), f"{prefix}.problemBeforeName")
+        require_string_list(
+            concept.get("realWorldApplications"), f"{prefix}.realWorldApplications"
+        )
+
+        analogy = concept.get("analogy")
+        analogy_reason = concept.get("analogyNotApplicableReason")
+        if isinstance(analogy, dict) and analogy:
+            for field in ("name", "relationship", "limit"):
+                require_string(analogy.get(field), f"{prefix}.analogy.{field}")
+            correspondence = require_string_list(
+                analogy.get("correspondence"), f"{prefix}.analogy.correspondence"
+            )
+            if len(correspondence) < 2:
+                raise ValueError(f"{prefix}.analogy.correspondence needs at least two mappings")
+        elif not isinstance(analogy_reason, str) or not analogy_reason.strip():
+            raise ValueError(f"{prefix} requires an analogy contract or analogyNotApplicableReason")
         boundary = concept.get("boundary")
         not_applicable = concept.get("boundaryNotApplicableReason")
         if not (
@@ -253,8 +545,51 @@ def validate_coverage(coverage: dict[str, Any], chapter_names: set[str]) -> None
                 raise ValueError(f"{prefix}.chapterUses[{index}] names unknown chapter {chapter}")
             require_string(use.get("function"), f"{prefix}.chapterUses[{index}].function")
 
+        retrievals = require_list(concept.get("retrievals"), f"{prefix}.retrievals")
+        for index, retrieval in enumerate(retrievals):
+            if not isinstance(retrieval, dict):
+                raise ValueError(f"{prefix}.retrievals[{index}] must be an object")
+            chapter = require_string(
+                retrieval.get("chapter"), f"{prefix}.retrievals[{index}].chapter"
+            )
+            after_gap = require_string(
+                retrieval.get("afterGapFrom"),
+                f"{prefix}.retrievals[{index}].afterGapFrom",
+            )
+            if chapter not in chapter_names or after_gap not in chapter_names:
+                raise ValueError(f"{prefix}.retrievals[{index}] names an unknown chapter")
+            if chapter == after_gap:
+                raise ValueError(f"{prefix}.retrievals[{index}] must occur after a chapter gap")
+            for field in ("freshSituation", "listenerTask", "answerPlacement"):
+                require_string(
+                    retrieval.get(field), f"{prefix}.retrievals[{index}].{field}"
+                )
 
-def validate_continuity(continuity: dict[str, Any], chapter_names: set[str]) -> None:
+
+def validate_continuity(
+    continuity: dict[str, Any], chapter_names: set[str], section_ids: set[str]
+) -> None:
+    draft_contexts = unique_records(
+        continuity.get("draftContexts"), "section", "continuity.draftContexts"
+    )
+    if set(draft_contexts) != section_ids:
+        raise ValueError(
+            "continuity.draftContexts must cover every argument-outline section exactly"
+        )
+    for section_id, context in draft_contexts.items():
+        prefix = f"continuity.draftContexts[{section_id}]"
+        for field in (
+            "fullOutlinePath",
+            "evidenceNotesPath",
+            "styleGuidePath",
+            "previousSectionTextOrSummary",
+            "sectionJob",
+        ):
+            require_string(context.get(field), f"{prefix}.{field}")
+        require_string_list(
+            context.get("mustNotRepeat"), f"{prefix}.mustNotRepeat", allow_empty=True
+        )
+
     checkpoints = unique_records(
         continuity.get("checkpoints"), "afterChapter", "continuity.checkpoints"
     )
@@ -268,8 +603,14 @@ def validate_continuity(continuity: dict[str, Any], chapter_names: set[str]) -> 
             "callbacks",
             "promises",
             "unresolvedQuestions",
+            "retrievalsCompleted",
         ):
             require_string_list(checkpoint.get(field), f"{prefix}.{field}", allow_empty=True)
+        require_string(checkpoint.get("listenerLoadNotes"), f"{prefix}.listenerLoadNotes")
+        require_string(checkpoint.get("priorSectionSummary"), f"{prefix}.priorSectionSummary")
+        require_string_list(
+            checkpoint.get("doNotRepeat"), f"{prefix}.doNotRepeat", allow_empty=True
+        )
 
 
 def validate_findings(findings: Any, field: str) -> None:
@@ -289,7 +630,7 @@ def validate_review(review: dict[str, Any], hashes: dict[str, str]) -> None:
     if review.get("reviewedChapterSHA256") != hashes:
         raise ValueError("review.reviewedChapterSHA256 does not match final canonical chapters")
     reviewers: list[str] = []
-    for name in ("structure", "beginnerReader"):
+    for name in ("structure", "blindSequentialBeginner"):
         lane = review.get(name)
         if not isinstance(lane, dict):
             raise ValueError(f"review.{name} must be an object")
@@ -297,8 +638,167 @@ def validate_review(review: dict[str, Any], hashes: dict[str, str]) -> None:
         if lane.get("verdict") != "pass":
             raise ValueError(f"review.{name}.verdict must be pass")
         validate_findings(lane.get("findings"), f"review.{name}.findings")
+        if name == "blindSequentialBeginner":
+            if lane.get("reviewMode") != "manuscript-only-sequential":
+                raise ValueError(
+                    "review.blindSequentialBeginner.reviewMode must be manuscript-only-sequential"
+                )
+            if lane.get("intentionMaterialsWithheld") is not True:
+                raise ValueError(
+                    "review.blindSequentialBeginner.intentionMaterialsWithheld must be true"
+                )
+            assessments = unique_records(
+                lane.get("chapterAssessments"),
+                "afterChapter",
+                "review.blindSequentialBeginner.chapterAssessments",
+            )
+            if set(assessments) != set(hashes):
+                raise ValueError(
+                    "review.blindSequentialBeginner.chapterAssessments must cover every chapter"
+                )
+            for filename, assessment in assessments.items():
+                prefix = f"review.blindSequentialBeginner.chapterAssessments[{filename}]"
+                require_string(
+                    assessment.get("plausibleMentalModel"),
+                    f"{prefix}.plausibleMentalModel",
+                )
+                for field in ("confusions", "unstableTerms", "lostAt"):
+                    require_string_list(
+                        assessment.get(field), f"{prefix}.{field}", allow_empty=True
+                    )
     if len(set(reviewers)) != len(reviewers):
-        raise ValueError("structure and beginnerReader reviews require independent reviewers")
+        raise ValueError(
+            "structure and blindSequentialBeginner reviews require independent reviewers"
+        )
+
+
+def validate_revision_passes(revisions: dict[str, Any], hashes: dict[str, str]) -> None:
+    if revisions.get("reviewedChapterSHA256") != hashes:
+        raise ValueError(
+            "revision-passes.reviewedChapterSHA256 does not match final canonical chapters"
+        )
+    passes = unique_records(revisions.get("passes"), "name", "revision-passes.passes")
+    missing = REQUIRED_REVISION_PASSES - set(passes)
+    if missing:
+        raise ValueError(
+            f"revision-passes.passes is missing required pass: {sorted(missing)[0]}"
+        )
+    for name, revision_pass in passes.items():
+        prefix = f"revision-passes[{name}]"
+        require_string(revision_pass.get("job"), f"{prefix}.job")
+        if revision_pass.get("scope") != "single-job":
+            raise ValueError(f"{prefix}.scope must be single-job")
+        require_string(revision_pass.get("reviewer"), f"{prefix}.reviewer")
+        if revision_pass.get("status") != "pass":
+            raise ValueError(f"{prefix}.status must be pass")
+        validate_findings(revision_pass.get("findings"), f"{prefix}.findings")
+
+    ear_pass = passes["ear-pass"]
+    require_string(ear_pass.get("renderer"), "revision-passes[ear-pass].renderer")
+    require_string(
+        ear_pass.get("listeningContext"),
+        "revision-passes[ear-pass].listeningContext",
+    )
+    require_string_list(
+        ear_pass.get("stumbles"), "revision-passes[ear-pass].stumbles", allow_empty=True
+    )
+    require_string_list(
+        ear_pass.get("lostThreadAt"),
+        "revision-passes[ear-pass].lostThreadAt",
+        allow_empty=True,
+    )
+
+
+def validate_pilot(pilot: dict[str, Any], run_root: Path) -> None:
+    if pilot.get("status") != "accepted":
+        raise ValueError("pilot.status must be accepted before full drafting")
+    require_string(pilot.get("listener"), "pilot.listener")
+    require_string(pilot.get("listeningContext"), "pilot.listeningContext")
+    minutes = require_positive_int(
+        pilot.get("representativeMinutes"), "pilot.representativeMinutes"
+    )
+    if not 10 <= minutes <= 15:
+        raise ValueError("pilot.representativeMinutes must be between 10 and 15")
+    if pilot.get("includesFirstTechnicalPassage") is not True:
+        raise ValueError("pilot.includesFirstTechnicalPassage must be true")
+    require_string(pilot.get("audioPath"), "pilot.audioPath")
+    audio_hash = require_string(pilot.get("audioSHA256"), "pilot.audioSHA256")
+    if not SHA256_RE.fullmatch(audio_hash):
+        raise ValueError("pilot.audioSHA256 must be a lowercase SHA-256 digest")
+    require_string(pilot.get("centralIdeaInOwnWords"), "pilot.centralIdeaInOwnWords")
+    require_string(pilot.get("freshExampleResponse"), "pilot.freshExampleResponse")
+    require_string_list(pilot.get("lostAt"), "pilot.lostAt", allow_empty=True)
+    checkpoints = pilot.get("humanCheckpoints")
+    if not isinstance(checkpoints, dict):
+        raise ValueError("pilot.humanCheckpoints must be an object")
+
+    voice_source = checkpoints.get("voiceSource")
+    if not isinstance(voice_source, dict):
+        raise ValueError("pilot.humanCheckpoints.voiceSource must be an object")
+    mode = require_string(
+        voice_source.get("mode"), "pilot.humanCheckpoints.voiceSource.mode"
+    )
+    if mode not in VOICE_SOURCE_MODES:
+        raise ValueError("pilot.humanCheckpoints.voiceSource.mode is unsupported")
+    validate_bound_artifact(
+        run_root,
+        voice_source.get("profilePath"),
+        voice_source.get("profileSHA256"),
+        "pilot.humanCheckpoints.voiceSource.profile",
+    )
+    if voice_source.get("useBoundary") != "craft-features-not-pastiche":
+        raise ValueError(
+            "pilot.humanCheckpoints.voiceSource.useBoundary must be craft-features-not-pastiche"
+        )
+    if voice_source.get("rawSourceExcerptsCommitted") is not False:
+        raise ValueError(
+            "pilot.humanCheckpoints.voiceSource.rawSourceExcerptsCommitted must be false"
+        )
+
+    outline_checkpoint = checkpoints.get("outline")
+    if not isinstance(outline_checkpoint, dict):
+        raise ValueError("pilot.humanCheckpoints.outline must be an object")
+    if outline_checkpoint.get("status") != "approved":
+        raise ValueError("pilot.humanCheckpoints.outline.status must be approved")
+    for field in ("reviewer", "evidence"):
+        require_string(
+            outline_checkpoint.get(field), f"pilot.humanCheckpoints.outline.{field}"
+        )
+    if outline_checkpoint.get("recordedBeforePilotDraft") is not True:
+        raise ValueError(
+            "pilot.humanCheckpoints.outline.recordedBeforePilotDraft must be true"
+        )
+
+    first_section = checkpoints.get("firstSection")
+    if not isinstance(first_section, dict):
+        raise ValueError("pilot.humanCheckpoints.firstSection must be an object")
+    if first_section.get("status") != "accepted":
+        raise ValueError("pilot.humanCheckpoints.firstSection.status must be accepted")
+    for field in ("reviewer", "evidence"):
+        require_string(
+            first_section.get(field), f"pilot.humanCheckpoints.firstSection.{field}"
+        )
+    if first_section.get("recordedBeforeRemainingDraft") is not True:
+        raise ValueError(
+            "pilot.humanCheckpoints.firstSection.recordedBeforeRemainingDraft must be true"
+        )
+    validate_bound_artifact(
+        run_root,
+        first_section.get("voiceExemplarPath"),
+        first_section.get("voiceExemplarSHA256"),
+        "pilot.humanCheckpoints.firstSection.voiceExemplar",
+    )
+
+    decision = pilot.get("decision")
+    if not isinstance(decision, dict):
+        raise ValueError("pilot.decision must be an object")
+    if decision.get("verdict") != "continue":
+        raise ValueError("pilot.decision.verdict must be continue")
+    if decision.get("authority") != "listener":
+        raise ValueError("pilot.decision.authority must be listener")
+    require_string(decision.get("evidence"), "pilot.decision.evidence")
+    if decision.get("recordedBeforeFullDraft") is not True:
+        raise ValueError("pilot.decision.recordedBeforeFullDraft must be true")
 
 
 def validate_run(run_root: Path) -> dict[str, Any]:
@@ -311,12 +811,17 @@ def validate_run(run_root: Path) -> dict[str, Any]:
     names = set(hashes)
     actual_words = manuscript_word_count(chapters_dir)
 
-    validate_orientation(records["brief"])
+    evidence_claim_ids = validate_evidence(records["evidence"], run_root)
+    brief = validate_brief(records["brief"])
     word_count = validate_target(records["brief"], actual_words)
-    validate_outline(records["outline"], names)
-    validate_chapter_plans(records["plans"], names)
-    validate_coverage(records["coverage"], names)
-    validate_continuity(records["continuity"], names)
+    durable_outcomes, section_ids = validate_outline(
+        records["outline"], names, brief["listeningMode"], evidence_claim_ids
+    )
+    validate_chapter_plans(records["plans"], names, brief["listeningMode"])
+    validate_coverage(records["coverage"], names, durable_outcomes)
+    validate_continuity(records["continuity"], names, section_ids)
+    validate_pilot(records["pilot"], run_root)
+    validate_revision_passes(records["revisions"], hashes)
     validate_review(records["review"], hashes)
 
     return {
@@ -327,12 +832,30 @@ def validate_run(run_root: Path) -> dict[str, Any]:
         "wordCount": word_count,
         "gates": {
             "learnerOrientation": "pass",
+            "groundedEvidence": "pass",
             "outlineAuthorization": "pass",
+            "argumentLevelOutline": "pass",
             "chapterTeachingPlans": "pass",
+            "conceptBudget": "pass",
+            "audioWorkingMemory": "pass",
+            "problemBeforeName": "pass",
+            "realWorldGrounding": "pass",
+            "analogyContract": "pass",
+            "retrieval": "pass",
             "explanationPaths": "pass",
             "continuity": "pass",
+            "sectionDraftContexts": "pass",
+            "voiceCalibration": "pass",
+            "narrowRevisionPasses": "pass",
+            "earPass": "pass",
             "structuralReview": "pass",
-            "beginnerReaderReview": "pass",
+            "blindSequentialBeginnerReview": "pass",
+            "humanComprehensionPilot": "pass",
+        },
+        "learningAuthority": {
+            "holder": "human-listener",
+            "negativeVerdictOverridesReceipt": True,
+            "receiptDoesNotCertifyTransfer": True,
         },
     }
 
@@ -356,6 +879,15 @@ def verify_learning_receipt(chapters_dir: Path, receipt_path: Path) -> dict[str,
     gates = receipt.get("gates")
     if not isinstance(gates, dict) or not gates or any(value != "pass" for value in gates.values()):
         raise ValueError("learning-design receipt contains a non-passing gate")
+    authority = receipt.get("learningAuthority")
+    if not isinstance(authority, dict):
+        raise ValueError("learning-design receipt is missing learningAuthority")
+    if authority.get("holder") != "human-listener":
+        raise ValueError("learning-design receipt holder must be human-listener")
+    if authority.get("negativeVerdictOverridesReceipt") is not True:
+        raise ValueError("learning-design receipt must preserve negative listener authority")
+    if authority.get("receiptDoesNotCertifyTransfer") is not True:
+        raise ValueError("learning-design receipt must not claim to certify learning transfer")
     return receipt
 
 
@@ -367,7 +899,7 @@ def main() -> None:
     parser.add_argument("--receipt-out", required=True, type=Path)
     args = parser.parse_args()
     receipt = write_receipt(args.run_root, args.receipt_out)
-    print(f"learning design: {receipt['status']}")
+    print(f"learning design process: {receipt['status']}")
     print(f"receipt: {args.receipt_out}")
 
 

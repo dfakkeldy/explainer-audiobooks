@@ -58,8 +58,17 @@ STYLE_FAMILIES = {
         r"\bnot because\b.{0,180}?\bbut because\b|\bthis is not\b.{0,120}?\bthis is\b",
         re.IGNORECASE,
     ),
+    "honesty_announcement": re.compile(
+        r"\b(?:honestly|candidly|frankly|truthfully"
+        r"|to be (?:perfectly |completely |entirely )?honest"
+        r"|in all honesty|let(?:'s| us) be honest|truth be told"
+        r"|to tell (?:you )?the truth"
+        r"|if (?:i am|i'm|we are|we're)(?: being)? honest"
+        r"|the (?:only |most |plain )?honest (?:answer|truth|assessment|view|thing)(?: is)?)\b",
+        re.IGNORECASE,
+    ),
     "faux_gravity": re.compile(
-        r"\b(?:the whole point|the heart of|the real (?:magic|secret|power)|it changes everything|the honest thing|the kind thing)\b",
+        r"\b(?:the whole point|the heart of|the real (?:magic|secret|power)|it changes everything|the kind thing)\b",
         re.IGNORECASE,
     ),
 }
@@ -69,6 +78,7 @@ DEFAULT_DENSITY_LIMITS = {
     "author_intervention": 4.0,
     "announced_transition": 2.0,
     "contrast_frame": 4.0,
+    "honesty_announcement": 0.5,
     "faux_gravity": 1.0,
 }
 

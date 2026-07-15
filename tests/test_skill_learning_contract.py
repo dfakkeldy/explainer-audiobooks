@@ -23,13 +23,19 @@ class SkillLearningContractTests(unittest.TestCase):
             "coverage-ledger.json",
             "continuity.json",
             "learning-review.json",
+            "comprehension-pilot.json",
+            "evidence-notes.json",
+            "revision-passes.json",
             "curriculum and orientation",
             "chapter teaching",
-            "structural and beginner-reader",
+            "blind sequential beginner",
             "prose style",
             "packaging and acoustic",
             "cannot substitute",
             "retroactive",
+            "road-book",
+            "human listening",
+            "does not certify",
             "learning_design_qc.py",
             "learning-design-receipt.json",
         ):
@@ -40,6 +46,7 @@ class SkillLearningContractTests(unittest.TestCase):
             with self.subTest(relative=relative):
                 text = self.read(relative)
                 self.assertIn("references/learning-design.md", text)
+                self.assertIn("references/road-book-mode.md", text)
                 self.assertIn("learning_design_qc.py", text)
                 self.assertIn("--learning-receipt", text)
                 self.assertIn("--prose-receipt", text)
@@ -58,6 +65,97 @@ class SkillLearningContractTests(unittest.TestCase):
                 self.assertIn("learning-design", text)
                 self.assertIn("chapter-plans.json", text)
                 self.assertIn("learning-review.json", text)
+
+    def test_frontier_pipeline_uses_separate_artifacts_and_narrow_calls(self) -> None:
+        text = self.read("skill/references/frontier-manuscript-pipeline.md").lower()
+        for phrase in (
+            "pipeline problem",
+            "evidence-notes.md",
+            "traceable-only",
+            "argument-level outline",
+            "specific claims",
+            "throughline advance",
+            "landing beat",
+            "section by section",
+            "previous section",
+            "must not repeat",
+            "voice exemplar",
+            "human checkpoint",
+            "single-job pass",
+            "claim-traceability",
+            "tightening",
+            "de-listification",
+            "sentence-rhythm",
+            "ear-pass",
+            "kokoro",
+            "private source",
+            "craft profile",
+            "craft features, not pastiche",
+            "raw source excerpts",
+        ):
+            self.assertIn(phrase, text)
+
+    def test_orchestrators_preserve_pipeline_phase_boundaries(self) -> None:
+        for relative in (
+            "skill/SKILL.md",
+            "skills/custom-learning-audiobook/SKILL.md",
+            "skills/longform-book-development/SKILL.md",
+        ):
+            with self.subTest(relative=relative):
+                text = self.read(relative).lower()
+                for phrase in (
+                    "evidence-notes.json",
+                    "argument-level outline",
+                    "section by section",
+                    "voice exemplar",
+                    "revision-passes.json",
+                    "single-job",
+                    "ear-pass",
+                    "voice-source profile",
+                ):
+                    self.assertIn(phrase, text)
+
+    def test_every_learning_entry_point_defaults_and_handoffs_road_book_mode(self) -> None:
+        for relative in (
+            "skill/SKILL.md",
+            "skills/custom-learning-audiobook/SKILL.md",
+            "skills/longform-book-development/SKILL.md",
+            "skills/custom-learning-audiobook/references/intake-and-research.md",
+            "skills/longform-book-development/references/handoff-packet.md",
+        ):
+            with self.subTest(relative=relative):
+                text = self.read(relative).lower()
+                for phrase in (
+                    "road-book",
+                    "driving",
+                    "delivering mail",
+                    "comprehension-pilot.json",
+                ):
+                    self.assertIn(phrase, text)
+
+    def test_road_book_contract_defines_the_learning_infrastructure_and_limits(self) -> None:
+        text = self.read("skill/references/road-book-mode.md").lower()
+        for phrase in (
+            "first-edition-plus",
+            "governing question",
+            "history",
+            "people",
+            "narrative",
+            "real-world applications",
+            "analogy contract",
+            "six to ten",
+            "two or three",
+            "problem before name",
+            "three temporary values",
+            "symbolic chain",
+            "optional study",
+            "blind sequential",
+            "10 to 15",
+            "human comprehension",
+            "overrides",
+            "word count",
+        ):
+            self.assertIn(phrase, text)
 
     def test_production_skills_plan_listener_pronunciation_before_full_audio(
         self,
@@ -86,7 +184,15 @@ class SkillLearningContractTests(unittest.TestCase):
         for phrase in (
             "openingOrientation",
             "priorKnowledge",
+            "listeningMode",
+            "revisionMode",
+            "durableOutcomes",
             "knowledgeDelta",
+            "newCoreTerms",
+            "audioLoad",
+            "problemBeforeName",
+            "realWorldApplications",
+            "retrievals",
             "definition",
             "reason",
             "mechanism",
@@ -104,6 +210,7 @@ class SkillLearningContractTests(unittest.TestCase):
             "mechanism-first spiral",
             "end-to-end trace",
             "problem progression",
+            "question-led narrative",
             "terminology inventory",
             "curriculumpattern",
             "fitevidence",
@@ -121,23 +228,39 @@ class SkillLearningContractTests(unittest.TestCase):
     def test_learning_templates_cover_every_required_record(self) -> None:
         root = ROOT / "skill" / "templates" / "learning-design"
         expected = {
+            "evidence-notes.json",
             "learning-brief.json",
             "learning-outline.json",
             "chapter-plans.json",
             "coverage-ledger.json",
             "continuity.json",
             "learning-review.json",
+            "comprehension-pilot.json",
+            "revision-passes.json",
         }
         self.assertEqual(expected, {path.name for path in root.glob("*.json")})
         for name in expected:
             with self.subTest(name=name):
                 payload = json.loads((root / name).read_text(encoding="utf-8"))
-                self.assertEqual(1, payload["schemaVersion"])
+                self.assertEqual(2, payload["schemaVersion"])
 
         review = json.loads((root / "learning-review.json").read_text(encoding="utf-8"))
         self.assertEqual({}, review["reviewedChapterSHA256"])
         self.assertEqual("pending", review["structure"]["verdict"])
-        self.assertEqual("pending", review["beginnerReader"]["verdict"])
+        self.assertEqual("pending", review["blindSequentialBeginner"]["verdict"])
+
+        pilot = json.loads((root / "comprehension-pilot.json").read_text(encoding="utf-8"))
+        self.assertEqual("pending", pilot["status"])
+        self.assertEqual("listener", pilot["decision"]["authority"])
+
+        evidence = json.loads((root / "evidence-notes.json").read_text(encoding="utf-8"))
+        self.assertEqual("traceable-only", evidence["claimPolicy"])
+
+        revisions = json.loads((root / "revision-passes.json").read_text(encoding="utf-8"))
+        self.assertEqual({}, revisions["reviewedChapterSHA256"])
+
+        self.assertTrue((root / "evidence-notes.md").is_file())
+        self.assertTrue((root / "voice-source-profile.md").is_file())
 
     def test_longform_handoff_cannot_advance_without_learning_architecture(self) -> None:
         skill = self.read("skills/longform-book-development/SKILL.md")
@@ -150,6 +273,12 @@ class SkillLearningContractTests(unittest.TestCase):
             "prerequisites",
             "knowledge delta",
             "explanation path",
+            "concept budget",
+            "working-memory",
+            "problem before name",
+            "blind sequential",
+            "narrated pilot",
+            "human comprehension",
             "development draft",
             "canonical production",
         ):

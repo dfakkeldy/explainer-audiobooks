@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "notesPath": "research/evidence-notes.md",
+  "notesSHA256": "",
+  "claimPolicy": "traceable-only",
+  "claims": [
+    {
+      "id": "EV-001",
+      "claim": "Replace with one claim the manuscript is allowed to make.",
+      "source": "Replace with a verified source citation.",
+      "locator": "Replace with a page, section, timestamp, or stable locator.",
+      "verificationStatus": "pending"
+    }
+  ],
+  "unresolvedConflicts": []
+}

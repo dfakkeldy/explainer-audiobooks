@@ -132,13 +132,19 @@ research, write one coherent manuscript, and package the result for Echo.
   probe and `build_pronunciation_probe_reel.py`; full narration requires
   accepted, hash-bound human listening evidence.
 - Reuse the existing explainer tooling from this repo:
+  - `../../skill/references/road-book-mode.md` for the default driving/delivery
+    listening context, narrative teaching infrastructure, cognitive-load
+    limits, optional-study boundary, and human comprehension authority.
   - `../../skill/references/learning-design.md` for learner orientation,
-    structured chapter teaching plans, explanation paths, final learning review,
+    grounded evidence notes, argument-level outlines, structured chapter teaching
+    plans, section draft contexts, narrow revision passes, final learning review,
     and the hash-bound learning receipt.
   - `../../skill/references/curriculum-patterns.md` for choosing and recording a
-    mechanism-first spiral, end-to-end trace, or problem progression.
+    question-led narrative, mechanism-first spiral, end-to-end trace, or problem
+    progression.
   - `../../skill/references/narration-style.md` for spoken style and QC sweeps.
-  - `../../skill/references/frontier-manuscript-pipeline.md` for the frontier-author
+  - `../../skill/references/frontier-manuscript-pipeline.md` for the artifactized
+    research-outline-draft-revision pipeline, voice calibration, frontier-author
     / cheaper-worker split, continuity ledger, and citation-first reader review.
   - `../../skill/references/humanizer-pass.md` for the bounded `humanizer` pass
     that removes AI tics without replacing the frontier author's voice.
@@ -160,11 +166,12 @@ research, write one coherent manuscript, and package the result for Echo.
 | Deep mode | About 4 hours, roughly 40,000-45,000 words |
 | Sampler | 45-75 minutes when the topic is vague or commitment is light |
 | Audience | Curious beginner unless the request says otherwise |
+| Listening mode | `road-book`, for driving and delivering mail; use `focused-study` only when the listener explicitly expects pause/rewind/visual work |
 | Narrator | `am_michael`; fallback `am_puck`; do not default to `af_heart` |
 | Audio renderer | Native Echo/Kokoro through the governed narration wrapper; no raw Debug CLI or Apple/system-voice substitute |
 | Author metadata | `Dan Fakkeldy` |
 | Writing model metadata | Record the frontier author as contributor/source note |
-| Model routing | Frontier model: outline, Markdown prose, substantive revisions. Cheaper workers: research extraction, citation checks, diagnostics, package/render/QC only. |
+| Model routing | Separate calls and artifacts: cheaper workers prepare grounded evidence; the frontier model owns the argument-level outline, section-by-section Markdown prose, and substantive single-job revisions; cheaper workers handle citation checks, diagnostics, package/render/QC only. |
 | Build folder | `.build/custom-learning-audiobooks/<slug>/` |
 | Delivery copy | Public-safe: iCloud Drive `Books/<Title>/` by default. Private/sensitive: agreed private project folder; iCloud Books reading copy only on explicit user request. |
 
@@ -179,10 +186,14 @@ research, write one coherent manuscript, and package the result for Echo.
    questions from `references/intake-and-research.md`. If the requester is not
    available, choose conservative defaults and state them in the manifest.
    Create `research/learning-brief.json` with the learner outcome, actual prior
-   knowledge, opening orientation (context, promise, route), original/current
-   word targets, accepted range, drafting status, and scope history. Never lower
-   the target after drafting begins without explicit user approval recorded
-   under `../../skill/references/learning-design.md`.
+   knowledge, audience level, `road-book` listening context (driving and
+   delivering mail by default), revision mode, opening orientation (context,
+   promise, route), original/current word estimates, estimated range, drafting
+   status, and scope history. Use `first-edition-plus` when an earlier book
+   taught successfully. Never lower the target after drafting begins without
+   explicit user approval recorded under
+   `../../skill/references/learning-design.md`; word count is not a packaging
+   floor.
 
 3. **Classify safety and public/private status before writing.** Decide whether
    the book is public-safe, private, or sensitive/high-stakes. Sensitive topics
@@ -192,28 +203,67 @@ research, write one coherent manuscript, and package the result for Echo.
 4. **Research for the listener.** Use quick, deep, Open Notebook, user-supplied,
    or mixed research mode. Label source confidence. The requester does not have
    to provide sources. Browse current or high-stakes topics when needed. Cheaper
-   workers may extract and reconcile evidence, but their deliverable is a cited
-   fact pack and uncertainty list — never a substitute manuscript.
+   workers may extract and reconcile evidence, but their deliverable is
+   `research/evidence-notes.md` plus hash-bound
+   `research/evidence-notes.json`, stable claim IDs, citations, precise locators,
+   contradictions, and uncertainty — never a substitute manuscript. Set
+   `claimPolicy: traceable-only`; later phases may make only claims traceable to
+   this artifact.
 
-5. **Outline the book and build the learning ledger.** Build a short table of
-   contents around what the listener wants to understand or do. For every core
-   concept, record in `research/coverage-ledger.md`: its first explanation,
-   planned later retrieval/deepening/application, a real example, an expected
-   listener ability, and why any repeated mention earns its place. Vary chapter
-   jobs and target ranges; do not divide the total word count into identical
-   chapters. For Dan/internal runs, get outline approval unless the user
-   explicitly asked for a full autonomous run.
+   If the user names private books or audio as an enjoyable technical-writing
+   reference, create a private `research/voice-source-profile.md`. Extract only
+   high-level craft: opening move, evidence-to-example movement, plain-language
+   mechanism, direct address, humor boundary, uncertainty, rhythm, practical
+   landing, and visual-to-audio adaptations. Bind the voice-source profile in
+   `comprehension-pilot.json`; do not commit source files or raw excerpts, and do
+   not request a pastiche. The accepted first section becomes the actual voice
+   exemplar.
+
+5. **Build and approve the argument-level outline.** Build a short table of
+   contents around a governing question and what the listener wants to
+   understand or do. A beginner road-book chooses six to ten durable outcomes,
+   no more than two or three new core terms per chapter, people/history anchors,
+   varied real-world applications, a narrative spine, at least four chapter
+   jobs, analogy contracts, and an optional-study layer for derivations and
+   specialist terminology. For every core concept, record its problem before
+   name, real applications, expected ability, and retrieval after a gap. Vary
+   chapter jobs and target estimates; do not divide the total word count into
+   identical chapters. A full autonomous run may prepare the outline, but it
+   pauses for human road-book approval before pilot prose.
 
    Record the approved progression and evidence in
    `research/learning-outline.json`, including the selection, reason, and fit
-   evidence required by `../../skill/references/curriculum-patterns.md`. Create the complete structured
+   evidence required by `../../skill/references/curriculum-patterns.md`. Every
+   planned section records its job, argument, specific evidence-note claim IDs,
+   throughline advance, narrative or metaphor payoff, intellectual or emotional
+   landing beat, and what it must not repeat. Obtain human approval for this
+   argument-level outline before pilot prose. Create the complete structured
    `research/chapter-plans.json` and `research/coverage-ledger.json` before
    canonical drafting. A topic or terminology inventory is not a learning arc.
-   Every concept row needs its definition, reason, mechanism, concrete case,
-   useful boundary or explicit not-applicable reason, misconception, expected
-   ability, and named chapter uses.
+   Every concept row needs its durable outcome, definition, reason, mechanism,
+   concrete case, problem before name, real-world applications, useful boundary
+   or explicit not-applicable reason, misconception, expected ability, analogy
+   contract or omission reason, named chapter uses, and planned retrieval.
 
-6. **Plan any interior pictures.** If the user wants pictures, or a handoff
+6. **Calibrate the first section and accept the narrated comprehension pilot.**
+   Give the frontier author the full outline, grounded notes, voice-source
+   profile, section job, and no-repeat list. Revise only that first section until
+   the human accepts its teaching and voice, then preserve the project-authored
+   `research/voice-exemplar.md`. Record the outline and first-section human
+   checkpoints in `research/comprehension-pilot.json` before remaining drafting.
+
+   Use only enough frontier-authored material for 10 to 15 representative minutes, including
+   the opening and first technical passage. Build it with
+   `build_book.py --learning-pilot` and a mandatory `-pilot` slug, then render it
+   through the governed Echo wrapper. The intended listener hears it in a
+   representative context and records the central idea in their own words, a
+   fresh-example distinction, where they became lost, the exact audio hash, and
+   `verdict: continue` in `research/comprehension-pilot.json`. Do not start the
+   full manuscript without both the first-section checkpoint and that listener
+   decision. An autonomous-run request does not waive human comprehension
+   authority.
+
+7. **Plan any interior pictures.** If the user wants pictures, or a handoff
    packet includes a figure plan, gather only usable images: user-supplied,
    generated, self-created, public-domain, permissively licensed, or explicitly
    permissioned. Save them under `chapters/images/`, keep a provenance note in
@@ -226,32 +276,34 @@ research, write one coherent manuscript, and package the result for Echo.
    forms occur. A planned record permits only a bounded partial render. Promote
    required terms to `accepted` only after human listening to the governed reel.
 
-7. **Write with one lead writer — a frontier model.** The frontier model owns the
+8. **Write section by section with one lead writer — a frontier model.** The frontier model owns the
    outline,
    explanation choices, voice, canonical Markdown chapters, and every substantive
-   revision. Do not fan out chapter writing. If the book is too long for one
-   context, write `ch01.md`, `ch02.md`, and so on sequentially with the same
-   frontier author; before each chapter provide the approved TOC, the relevant
-   fact pack, the coverage-ledger rows, and `research/continuity.md`. Update that
-   record after each chapter in both `research/continuity.md` and structured
-   `research/continuity.json`, with terms already defined, examples/analogies used,
-   deliberate callbacks, and promises that later chapters must resolve.
+   revision. Do not fan out chapter writing or generate the book in one call.
+   Before each section, complete its `research/continuity.json.draftContexts`
+   entry and provide the full argument-level outline, relevant claim IDs and fact
+   pack, coverage-ledger rows, accepted voice exemplar, previous section text or
+   faithful running summary, the current section job, and what it must not repeat.
+   Update `research/continuity.md` and structured `research/continuity.json` after
+   each section with terms already defined, examples/analogies used, deliberate
+   callbacks, unresolved promises, retrievals, listener load, and no-repeat
+   constraints.
    Also provide the listener's **AI-writing patterns to avoid** and the complete
    `declaudification.md` drafting rule. State facts directly instead of managing
    the listener's reaction with `hold`, `sit with`, `notice`, or synonym-cycled
    commands.
 
-8. **Keep Markdown canonical; use cheap workers as evidence and production
+9. **Keep Markdown canonical; use cheap workers as evidence and production
    sidecars.** Save the frontier author's chapter files under `chapters/`. Cheap
    workers may produce cited research, a beginner-reader report, prose-lint
    findings, cover candidates, and manifest templates, but not a competing prose
-   draft. EPUB/M4B assembly waits until the accepted manuscript clears Step 10.
+   draft. EPUB/M4B assembly waits until the accepted manuscript clears Step 11.
    A cheap model may make only meaning-preserving mechanical fixes; send all
    depth, factual, structural, and voice repairs back to the frontier author. Add
    approved figures as standalone Markdown image paragraphs, for example
    `![Alt text](images/example.png "Caption")`.
 
-9. **Design and render the cover candidates.** Create **exactly three award-worthy,
+10. **Design and render the cover candidates.** Create **exactly three award-worthy,
    complete art-and-type cover candidates by default**, then ask the user to
    choose or request a mix.
    Follow `../../skill/references/cover-art.md` for the research-derived visual
@@ -288,7 +340,16 @@ research, write one coherent manuscript, and package the result for Echo.
    Markdown finishes humanization, prose QC, frontier-author acceptance, and
    every substantive repair.
 
-10. **Humanize and complete prose QC before packaging.** Run
+11. **Humanize and complete prose QC before packaging.** Start with the narrow
+    revision ledger; humanization remains a later bounded voice pass.
+    Do not issue one vague "make it better" request. Complete
+    `research/revision-passes.json` as separate single-job calls:
+    `claim-traceability`, `tightening`, `de-listification`, `sentence-rhythm`,
+    and a rendered `ear-pass`. Use Echo or Kokoro for the ear-pass and record
+    each narration stumble and each point where the listener loses the thread.
+    Bind the revision ledger to the final canonical chapter hashes.
+
+    Then run
     `python3 skill/scripts/prose_qc.py --chapters-dir <build>/chapters --out
     <build>/research/prose-qc.md`, then have a cheaper reviewer produce only
     citation-first findings for redundancy, unexplained leaps, shallow concepts,
@@ -297,9 +358,12 @@ research, write one coherent manuscript, and package the result for Echo.
     finding and makes every accepted substantive, factual, structural, depth, and
     voice repair in the canonical Markdown before any EPUB or audio build.
 
-    Before humanizing, run separate independent structure and beginner-reader
-    reviews using `../../skill/references/learning-design.md`. The frontier author
-    resolves accepted findings; reviewers do not supply replacement chapters.
+    Before humanizing, run the independent structure review and a blind
+    sequential beginner review using
+    `../../skill/references/learning-design.md`. Give the blind reviewer only the
+    manuscript heard so far, not the outline, ledger, expected abilities, or
+    author rationale. The frontier author resolves accepted findings; reviewers
+    do not supply replacement chapters.
 
     After those substantive repairs, load the `humanizer` skill and follow
     `../../skill/references/humanizer-pass.md`. Make only targeted voice edits:
@@ -311,7 +375,7 @@ research, write one coherent manuscript, and package the result for Echo.
     reviews and accepts every non-mechanical suggestion. Record touched chapters
     and rejected/skipped suggestions, then rerun factual, coverage-ledger,
     narration, sensitive-term, figure-provenance, and prose checks. The canonical
-    Markdown must be final before Step 11 starts.
+    Markdown must be final before Step 12 starts.
 
     Run the independent inventory and final family-density gate exactly as
     specified in `../../skill/references/declaudification.md`. The final command
@@ -330,8 +394,10 @@ research, write one coherent manuscript, and package the result for Echo.
     ```
 
     The learning and prose receipts must bind the same canonical chapter hashes.
+    The learning receipt proves process evidence and an accepted pilot, not
+    learning transfer; later negative human listening evidence overrides it.
 
-11. **Build the governed EPUB.** Only now follow the paired selection and EPUB
+12. **Build the governed EPUB.** Only now follow the paired selection and EPUB
     sections in `references/package-and-qc.md`: create the paired receipt with
     `cover_receipts.py select-pair`, then run the governed `build_book.py`
     command with `--cover`, `--m4b-cover`, and `--cover-selection`. The EPUB and combined
@@ -342,7 +408,7 @@ research, write one coherent manuscript, and package the result for Echo.
     "$RUN_ROOT/research/learning-design-receipt.json"`; packaging stops if
     either is missing, failed, or stale.
 
-12. **Render native Echo audio.** Use the governed Echo narration wrapper from
+13. **Render native Echo audio.** Use the governed Echo narration wrapper from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
    only as an Echo voice fallback. The wrapper owns the Release preflight,
    content-addressed paths, and FD-backed leases for the shared Release build,
@@ -385,7 +451,7 @@ research, write one coherent manuscript, and package the result for Echo.
    that an Echo-ready or complete governed package, and do not proceed to
    delivery sync.
 
-13. **Final-verify the governed package.** After native Echo narration succeeds,
+14. **Final-verify the governed package.** After native Echo narration succeeds,
     verify that the paired receipt matches the portrait, square, EPUB, and M4B.
     Also verify the render-success receipt and pronunciation audit. Never replace
     the cover or otherwise rewrite the audited M4B after Echo emits it.
@@ -413,7 +479,7 @@ research, write one coherent manuscript, and package the result for Echo.
     failed receipt or media check returns to the build/audio step; it never falls
     through to copying.
 
-14. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
+15. **Package and copy.** Write `README.md` or `manifest.json` in `dist/`, then
     follow `references/package-and-qc.md`. Run `sync_selected_cover.py` first as
     a dry run, read its destination classification, and add `--apply` only after
     the result and chosen `reuse`/`supersede` intent are expected. Public-safe
@@ -424,7 +490,7 @@ research, write one coherent manuscript, and package the result for Echo.
     user request. Private/sensitive artifacts never enter the public repo or
     public KB. Use `~/Downloads/book-inbox` only as optional import staging.
 
-15. **Report plainly.** Include title, slug, privacy status, research mode,
+16. **Report plainly.** Include title, slug, privacy status, research mode,
     source-confidence label, word count, runtime, narrator, frontier author
     model, lower-cost review/production roles used, output paths, the actual
     delivery folder, receipt/destination classifications, and which QC gates
@@ -438,6 +504,19 @@ research, write one coherent manuscript, and package the result for Echo.
 ## Hard Rules
 
 - Do not make the requester look up sources.
+- Do not collapse research, argument outlining, section drafting, and revision
+  into one call. Each phase produces the artifact required by the next.
+- Do not commit raw passages from a private voice source or ask for a close
+  pastiche; preserve the bounded craft profile and project-authored exemplar.
+- Do not replace road-book mode with a terminology syllabus. Driving and
+  delivering mail is the default listening context; derivations, symbolic
+  chains, and specialist catalogs belong in optional study material or a short
+  focused lesson.
+- Do not draft the full manuscript before the intended listener accepts the
+  first-section voice exemplar and hash-bound 10-to-15-minute narrated
+  comprehension pilot.
+- Do not treat an autonomous-run request, learning receipt, prose receipt, or
+  valid package as authority over a negative human comprehension verdict.
 - Do not fan out substantive chapter prose or let a cheaper model replace a
   frontier-authored chapter. Cheaper workers may report evidence and apply only
   meaning-preserving mechanical corrections; the frontier author decides and
@@ -475,4 +554,5 @@ research, write one coherent manuscript, and package the result for Echo.
   explicit `cover-selection.json` receipt.
 - Do not use `--legacy-without-learning-receipt` for a new or revised
   manuscript, edition, or current-workflow claim. It is old-artifact
-  reproduction only.
+  reproduction only. `--learning-pilot` is for the explicitly named nonpackage
+  comprehension pilot and cannot support a completion or delivery claim.

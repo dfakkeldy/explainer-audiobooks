@@ -3,6 +3,15 @@
 Choose and record a learning shape before writing the canonical outline. The
 pattern is a reasoned curriculum decision, not a decorative label.
 
+## Question-led narrative
+
+Use when a governing curiosity, human story, or historical problem gives the
+listener a reason to want the mechanism. Move among people, history, real-world
+applications, mechanisms, failures, and retrieval while preserving a cumulative
+mental model. This is often the strongest road-book shape. Guard against letting
+history become atmosphere without technical consequence, or letting the
+technical syllabus displace the governing question.
+
 ## Mechanism-first spiral
 
 Use when the listener needs one stable mechanism before larger systems make
@@ -37,9 +46,10 @@ Add this object to `learning-outline.json`:
 }
 ```
 
-Allowed names are `mechanism-first-spiral`, `end-to-end-trace`, and
-`problem-progression`. Record why the pattern fits this learner and subject.
-Preserve it across handoffs unless the user approves a new progression.
+Allowed names are `question-led-narrative`, `mechanism-first-spiral`,
+`end-to-end-trace`, and `problem-progression`. Record why the pattern fits this
+learner, listening context, and subject. Preserve it across handoffs unless the
+user approves a new progression.
 
 A terminology inventory is not a curriculum pattern. Terms belong in complete
 explanation paths inside an authorized learning progression.

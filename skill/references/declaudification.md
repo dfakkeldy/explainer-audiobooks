@@ -13,6 +13,10 @@ explanation, remove reader-management instructions such as telling the listener
 to hold, carry, keep, notice, pause over, sit with, stay with, resist, or let an
 idea land. Explain why the idea matters instead of commanding attention.
 
+Epistemic honesty appears through precise claims, stated evidence, named
+uncertainty, and clear boundaries. Do not repeatedly announce the narrator's
+honesty as a substitute for doing that work.
+
 Avoid these phrase families:
 
 - reader-management imperatives: `hold on to this`, `sit with that`, `carry it
@@ -24,6 +28,11 @@ Avoid these phrase families:
   on`, and chapter endings that advertise the next chapter instead of ending;
 - reflexive contrast frames: repeated `not X but Y`, `not because X but because
   Y`, and miniature reversals used only to make a sentence sound polished;
+- honesty announcement language: repeated `honestly`, `the honest answer`, `to
+  be honest`, `if I'm being honest`, `in all honesty`, `the honest truth`,
+  `let's be honest`, `truth be told`, `to tell you the truth`, `frankly`,
+  `candidly`, and nearby variants. Put the qualification or uncertainty in the
+  claim itself;
 - faux gravity: `the heart of`, `the whole point`, `the real magic`, universal
   superlatives, moralizing symmetry, and tidy three-part conclusions that add no
   information.
@@ -40,6 +49,11 @@ can survive, but synonym cycling does not evade the gate.
 - Replace `Let me explain inference` with `Inference is what happens when...`.
 - Replace `Notice that the weights did not change` with `The weights did not
   change.`
+- Replace `The honest answer is that researchers do not know` with `Researchers
+  do not know.` Add the evidence boundary or competing interpretations when they
+  matter.
+- Replace `Honestly, this result is uncertain` with the precise uncertainty:
+  `The result comes from one small study and has not yet been replicated.`
 - Keep an imperative only when the listener must actually picture, calculate,
   compare, recall, or do something for the lesson to work.
 - Let paragraphs end when their explanatory job is complete. Do not add a

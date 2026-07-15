@@ -1,5 +1,16 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "draftContexts": [
+    {
+      "section": "ch01-s01",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "previousSectionTextOrSummary": "Opening section; there is no previous section.",
+      "sectionJob": "Make the recognition problem concrete before naming the mechanism.",
+      "mustNotRepeat": []
+    }
+  ],
   "checkpoints": [
     {
       "afterChapter": "ch01.md",
@@ -7,7 +18,11 @@
       "examplesUsed": ["email urgency score"],
       "callbacks": [],
       "promises": ["show how parameters change"],
-      "unresolvedQuestions": ["how training changes a parameter"]
+      "unresolvedQuestions": ["how training changes a parameter"],
+      "retrievalsCompleted": [],
+      "listenerLoadNotes": "Two new terms and one brief two-step calculation.",
+      "priorSectionSummary": "The listener treats parameters as adjustable settings learned from examples.",
+      "doNotRepeat": ["Do not replay the whole postal opening in the next chapter."]
     }
   ]
 }

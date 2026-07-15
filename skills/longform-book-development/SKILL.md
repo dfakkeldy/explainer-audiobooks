@@ -23,8 +23,13 @@ and fiction-specific revision.
 ## Required Reference
 
 - Read `references/handoff-packet.md` before preparing the final handoff.
+- Read `../../skill/references/road-book-mode.md` before shaping an audiobook.
+  Default to road-book mode for driving and delivering mail unless the listener
+  explicitly wants focused study.
 - Read `../../skill/references/learning-design.md` before shaping the curriculum
   or declaring a handoff production-ready.
+- Read `../../skill/references/frontier-manuscript-pipeline.md` before defining
+  research, outline, voice-calibration, section-drafting, or revision handoffs.
 - Read `../../skill/references/curriculum-patterns.md` before proposing book
   structures or recording the selected progression.
 - Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
@@ -47,24 +52,52 @@ and fiction-specific revision.
    include or avoid, source material, privacy, and whether the final product is a
    book, audiobook, illustrated EPUB, or all of those.
    Establish actual prior knowledge, the outcome the listener wants, and the
-   opening orientation: context, promise, and route through the subject.
+   opening orientation: context, promise, and route through the subject. For an
+   audiobook, confirm whether the listener expects the usual road-book context:
+   driving and delivering mail, with eyes unavailable and interruptions likely.
 
 3. **Maintain the evolving brief.** After each meaningful turn, update the
    working brief with confirmed decisions, assumptions, open questions, title
    candidates, audience promise, length target, voice, privacy status, and
-   source-confidence needs. Preserve the original target and a target history;
-   never reduce scope after drafting to make an undersized result appear planned.
+   source-confidence needs. Record `new-book` or `first-edition-plus`; when an
+   earlier edition taught successfully, preserve its governing question,
+   narrative spine, examples, and chapter jobs. Preserve the original word-count
+   estimate and target history; never reduce scope after drafting to make an
+   undersized result appear planned, and never add material merely to reach the
+   estimate.
 
-4. **Build the outline as a conversation.** Offer 2-3 plausible structures when
+4. **Separate grounded research from voice analysis.** Plan
+   `research/evidence-notes.md` and hash-bound `research/evidence-notes.json`
+   before the outline. Every usable claim needs a stable ID, verified source,
+   precise locator, uncertainty, and `traceable-only` status. The research phase
+   does not decide the learning arc or draft prose.
+
+   When the user names private books or audio as a writing reference, plan a
+   private `research/voice-source-profile.md`. Capture high-level craft—opening
+   move, evidence-to-example movement, plain-language mechanism, humor boundary,
+   uncertainty, rhythm, practical landing, and visual-to-audio adaptations.
+   Preserve craft features, not copied passages or pastiche. The eventual
+   project-authored first section becomes the voice exemplar.
+
+5. **Build the argument-level outline as a conversation.** Offer 2-3 plausible structures when
    the shape is still fuzzy. Once the direction settles, produce a chapter table
    with chapter purpose, core beats, source needs, and any planned figure or
    image moments. Add each chapter's prerequisites, knowledge delta, grounded
-   example, and concepts with complete explanation paths. Get outline approval
-   before final synthesis unless the user explicitly asks for an autonomous run.
-   Record the selected pattern, why it fits the learner and subject, and the
-   approval evidence. Preserve it through handoff unless the user changes it.
+   example, and concepts with complete explanation paths. For a beginner
+   road-book, enforce a six-to-ten outcome concept budget, two or three new core
+   terms per chapter, problem before name, an audio working-memory budget,
+   people/history and narrative anchors, varied real-world applications,
+   analogy contracts, retrieval after a gap, and an optional-study layer for
+   derivations and specialist terminology. An autonomous run may prepare the
+   outline, but it pauses for human road-book approval before pilot synthesis. Record the
+   selected pattern, why it fits the learner and subject, and the approval
+   evidence. Every planned section records its job, argument, specific
+   evidence-note claim IDs, throughline advance, narrative or metaphor payoff,
+   intellectual or emotional landing beat, and what it must not repeat. Obtain a
+   human checkpoint on this argument-level outline and preserve it through
+   handoff unless the user changes it.
 
-5. **Gather and plan pictures deliberately.** Use pictures as teaching assets,
+6. **Gather and plan pictures deliberately.** Use pictures as teaching assets,
    evidence, examples, diagrams, mood references, or cover references. Track each
    image in `visuals/manifest.md` with file path, intended use, alt text,
    caption, source/provenance, license/permission status, and whether it is safe
@@ -72,7 +105,7 @@ and fiction-specific revision.
    clearly allows inclusion. Prefer user-owned, generated, public-domain,
    permissively licensed, or self-created images for packaged books.
 
-6. **Prepare the synthesis handoff.** When the user approves the direction, write
+7. **Prepare the synthesis handoff.** When the user approves the direction, write
    `handoff/handoff-packet.md` using `references/handoff-packet.md`. Include the
    final brief, outline, throughlines, source plan, figure plan, asset paths, and
    unresolved choices. Include the desired humanizing level, voice sample or
@@ -81,19 +114,39 @@ and fiction-specific revision.
    packet must name listener-requested and author-anticipated pronunciation
    risks for `research/pronunciation-plan.json`; include every spoken variant
    that needs to be heard before full narration.
+   Add a narrated-pilot plan for `research/comprehension-pilot.json`: 10 to 15
+   minutes containing the opening and first technical passage, followed by the
+   intended listener's own-words explanation, fresh-example distinction, lost
+   points, exact audio hash, and human comprehension decision. The packet can
+   authorize pilot production, but never full canonical drafting before the
+   listener accepts the first section as `research/voice-exemplar.md` and
+   records `verdict: continue`.
+   Define the later production loop explicitly: draft section by section with
+   the full outline, grounded evidence, voice exemplar, previous-section text or
+   running summary, section job, and must-not-repeat list. Require
+   `research/revision-passes.json` with separate single-job
+   claim-traceability, tightening, de-listification, sentence-rhythm, and
+   rendered ear-pass lanes.
    Preserve these decisions so the handoff is complete enough that a fresh agent can run
    `custom-learning-audiobook` without re-litigating the concept.
 
-   If opening orientation, prior knowledge, target history, chapter
-   prerequisites, knowledge deltas, teaching beats, throughlines, explanation
-   paths, or approval evidence are missing, label the packet a **development
-   draft**. It cannot start canonical production.
+   If listening mode, revision mode, opening orientation, prior knowledge,
+   target history, grounded evidence artifact, argument-level section jobs,
+   concept budget, chapter prerequisites, knowledge deltas,
+   working-memory limits, problem-before-name evidence, teaching beats,
+   throughlines, explanation paths, blind sequential review instructions,
+   voice-source profile, voice-exemplar checkpoint, section forward-context
+   inputs, revision-pass plan, narrated pilot plan, or approval evidence are missing, label the packet a
+   **development draft**. It cannot start pilot or canonical production.
 
-7. **Invoke the audiobook skill for production.** Hand the packet to
+8. **Invoke the audiobook skill for production.** Hand the packet to
    `custom-learning-audiobook` for research finalization, manuscript writing,
    cover generation, EPUB/Markdown building, Echo M4B/alignment rendering, QC,
    and delivery. This skill may draft sample passages or chapter beats, but it
    should not own the final manuscript build unless the user explicitly asks.
+   An autonomous-run request may authorize planning and preparation up to a
+   named gate; it does not waive human outline approval, first-section
+   acceptance, or the intended listener's comprehension authority.
 
 ## Picture Rules
 
@@ -113,11 +166,24 @@ them, or explicitly asks to proceed without another gate:
 - working title or title candidates,
 - final brief and audience promise,
 - learner prior knowledge and opening orientation,
+- road-book or focused-study listening context, including driving and delivering
+  mail when road-book is selected,
+- revision mode and first-edition-plus preservation evidence when applicable,
 - original target plus approved target history,
+- grounded `evidence-notes.json` plan with traceable-only claim IDs,
+- bounded voice-source profile when private exemplars were named,
+- six-to-ten durable outcomes and per-chapter concept/working-memory budgets,
 - listener pronunciation risks for `pronunciation-plan.json`,
-- chapter outline with learning arc, prerequisites, knowledge delta, teaching
-  beats, and grounded examples,
+- argument-level chapter and section outline with learning arc, prerequisites,
+  knowledge delta, teaching beats, grounded examples, specific claims,
+  throughline advance, payoff, landing beat, and must-not-repeat constraints,
 - complete core-concept explanation paths,
+- problem-before-name, real-world application, analogy, and retrieval plans,
+- narrated-pilot design for `comprehension-pilot.json`, with full drafting still
+  blocked until human outline approval, first-section voice-exemplar acceptance,
+  and human listening acceptance,
+- section-by-section forward-context contract and a final
+  `revision-passes.json` plan of separate single-job passes including ear-pass,
 - source/research plan,
 - figure/image plan with provenance,
 - handoff packet ready for `custom-learning-audiobook`.
