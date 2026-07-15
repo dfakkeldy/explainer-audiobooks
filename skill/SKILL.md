@@ -87,7 +87,8 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --m4b-cover "$PAIR/m4b-cover.png" \
   --cover-selection "$DIST/cover-selection.json" \
   --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
-  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
+  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json" \
+  --non-narrated-appendix "$RUN_ROOT/research/sources.md"
 
 /usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
   --m4b "$DIST/$SLUG.m4b" \
@@ -138,7 +139,8 @@ listener's **AI-writing patterns to avoid**, prevent those phrase families in th
 lead-author prompt, and require the family-density gate plus hash-bound prose
 receipt before packaging.
 
-Read `references/learning-design.md` before intake or outlining. Its curriculum,
+Read `references/learning-design.md` and `references/curriculum-patterns.md`
+before intake or outlining. Their curriculum,
 chapter-teaching, structural/beginner-reader, prose, and packaging verdicts are
 independent. A passing style or media check cannot certify that the book teaches.
 
@@ -203,6 +205,9 @@ defaults so it stays a quick yes/no, not an interrogation:
   drier/funnier/more formal.)
 - **Narrator** — if the user also asks for rendered audio, default to
   `am_michael`, fall back to `am_puck`, and do not use `af_heart` as the default.
+- **Pronunciation risks** — ask for any terms the listener already knows need
+  special attention. Record them and manuscript-derived risks in
+  `research/pronunciation-plan.json`; listener-named forms take priority.
 - **Title / author** — for the EPUB metadata.
 
 Create `research/learning-brief.json` now. Record the learner outcome, actual
@@ -238,7 +243,8 @@ honest projected length and runtime.
 
 Record the approved progression in `research/learning-outline.json`, including
 the authorization evidence, two to four throughlines, every chapter's purpose,
-and its prerequisites. A terminology inventory is not an outline. Unless the
+its prerequisites, and the selected curriculum pattern with a non-empty reason
+and learner-and-subject fit evidence. A terminology inventory is not an outline. Unless the
 user explicitly authorized a full autonomous run, do not start canonical prose
 until the user approves this learning progression.
 
@@ -480,35 +486,31 @@ cover embedded as both the library thumbnail and a full-bleed first page) plus a
 combined Markdown file, and prints per-chapter word counts and an estimated
 runtime. The EPUB author (`dc:creator`) is the human; the generating model is
 recorded as a `dc:contributor`. `--cover` and `--contributor` are optional.
+`--non-narrated-appendix` is optional; use it for a readable sources document
+that should remain outside Echo narration and narrated word counts. Its filename
+must not start with `ch`.
 Verify the EPUB is valid (the `mimetype` check in `references/narration-style.md`).
 
 ### 7. Native Echo/Kokoro M4B and alignment
 
 For a complete governed package, render native Echo/Kokoro audio only after the
-governed EPUB exists. Follow the Echo build and CLI-discovery procedure in
-`skills/custom-learning-audiobook/references/package-and-qc.md`, set `CLI` to the
-built `echo-cli`, and keep the same work directory/database across resumes:
+governed EPUB exists. Follow the complete wrapper and receipt procedure in
+`skills/custom-learning-audiobook/references/package-and-qc.md`. Create
+`research/pronunciation-plan.json`, including listener-named risks and every
+spoken variant. Render bounded partial chapters first, use
+`build_pronunciation_probe_reel.py`, and require accepted, hash-bound human
+listening evidence before an unbounded render. Export the canonical plan path:
 
 ```bash
-CLI="<path to the built echo-cli>"
-WORK="$RUN_ROOT/audio-work"
-DB="$RUN_ROOT/narration.sqlite"
-
-"$CLI" narrate \
-  --epub "$DIST/$SLUG.epub" \
-  --out "$DIST/$SLUG.m4b" \
-  --sidecar "$DIST/$SLUG.alignment.json" \
-  --voice am_michael \
-  --title "$TITLE" \
-  --author "Dan Fakkeldy" \
-  --work-dir "$WORK" \
-  --db "$DB"
+export PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" \
+  --max-chapters 1
 ```
 
 If `am_michael` is unavailable, retry with the Echo voice `am_puck` and record
 the fallback. Do not impose a timeout on a progressing render, and do not silently
 replace Echo/Kokoro with Apple/macOS/system narration. Resume a partial render
-with the same command plus `--resume`.
+through the governed wrapper. Never bypass its pronunciation-plan gate.
 
 After Echo writes the M4B and alignment sidecar, run the final receipt check
 across the selected cover, governed EPUB, and M4B:

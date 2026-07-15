@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -58,6 +59,28 @@ class SkillLearningContractTests(unittest.TestCase):
                 self.assertIn("chapter-plans.json", text)
                 self.assertIn("learning-review.json", text)
 
+    def test_production_skills_plan_listener_pronunciation_before_full_audio(
+        self,
+    ) -> None:
+        for relative in (
+            "skill/SKILL.md",
+            "skills/custom-learning-audiobook/SKILL.md",
+            "skills/custom-learning-audiobook/references/intake-and-research.md",
+            "skills/custom-learning-audiobook/references/package-and-qc.md",
+            "skills/longform-book-development/SKILL.md",
+            "skills/longform-book-development/references/handoff-packet.md",
+        ):
+            with self.subTest(relative=relative):
+                text = self.read(relative)
+                self.assertIn("pronunciation-plan.json", text)
+                self.assertIn("listener", text.lower())
+
+        package = self.read(
+            "skills/custom-learning-audiobook/references/package-and-qc.md"
+        )
+        self.assertIn("build_pronunciation_probe_reel.py", package)
+        self.assertIn("pronunciation_plan_qc.py", package)
+
     def test_shared_contract_requires_orientation_and_complete_explanation_paths(self) -> None:
         text = self.read("skill/references/learning-design.md")
         for phrase in (
@@ -74,6 +97,47 @@ class SkillLearningContractTests(unittest.TestCase):
             "reviewedChapterSHA256",
         ):
             self.assertIn(phrase, text)
+
+    def test_curriculum_pattern_is_selected_and_preserved(self) -> None:
+        reference = self.read("skill/references/curriculum-patterns.md").lower()
+        for phrase in (
+            "mechanism-first spiral",
+            "end-to-end trace",
+            "problem progression",
+            "terminology inventory",
+            "curriculumpattern",
+            "fitevidence",
+        ):
+            self.assertIn(phrase, reference)
+        for relative in (
+            "skill/SKILL.md",
+            "skills/custom-learning-audiobook/SKILL.md",
+            "skills/longform-book-development/SKILL.md",
+            "skills/longform-book-development/references/handoff-packet.md",
+        ):
+            with self.subTest(relative=relative):
+                self.assertIn("curriculum-patterns.md", self.read(relative))
+
+    def test_learning_templates_cover_every_required_record(self) -> None:
+        root = ROOT / "skill" / "templates" / "learning-design"
+        expected = {
+            "learning-brief.json",
+            "learning-outline.json",
+            "chapter-plans.json",
+            "coverage-ledger.json",
+            "continuity.json",
+            "learning-review.json",
+        }
+        self.assertEqual(expected, {path.name for path in root.glob("*.json")})
+        for name in expected:
+            with self.subTest(name=name):
+                payload = json.loads((root / name).read_text(encoding="utf-8"))
+                self.assertEqual(1, payload["schemaVersion"])
+
+        review = json.loads((root / "learning-review.json").read_text(encoding="utf-8"))
+        self.assertEqual({}, review["reviewedChapterSHA256"])
+        self.assertEqual("pending", review["structure"]["verdict"])
+        self.assertEqual("pending", review["beginnerReader"]["verdict"])
 
     def test_longform_handoff_cannot_advance_without_learning_architecture(self) -> None:
         skill = self.read("skills/longform-book-development/SKILL.md")

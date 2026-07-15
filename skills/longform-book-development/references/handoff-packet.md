@@ -44,6 +44,13 @@ What to include, avoid, simplify, keep private, or treat as educational-only.
 
 ## Approved Learning Outline
 
+Read `../../skill/references/curriculum-patterns.md`, then record:
+
+- Curriculum pattern:
+- Selection reason:
+- Learner-and-subject fit evidence:
+- Pattern-change approval evidence, if changed after approval:
+
 | Ch | Working title | Purpose | Prerequisites | Knowledge delta | Grounded example | Core beats | Sources needed | Figures |
 |---|---|---|---|---|---|---|---|---|
 
@@ -65,6 +72,16 @@ path.
 
 User-provided files, live research needs, Open Notebook corpora, primary sources,
 or source-quality constraints. Include retrieval dates for live web sources.
+
+## Pronunciation Plan
+
+List the terms the listener explicitly wants checked, plus technical names and
+variants the author expects to be risky. Production records these in
+`research/pronunciation-plan.json`, makes a governed partial-render reel, and
+requires the listener's accepted human listening evidence before full audio.
+
+| Term | Spoken variants | Source | Why it matters | Expected chapters |
+|---|---|---|---|---|
 
 ## Figure Plan
 

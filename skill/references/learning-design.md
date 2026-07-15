@@ -64,6 +64,11 @@ Record an `authorization` object with `status: approved`, `source: user` or
 prerequisites. Approval applies to the learning progression, not merely a list
 of topics.
 
+Read `curriculum-patterns.md` and record `curriculumPattern.name`, `reason`, and
+`fitEvidence`. The allowed names are `mechanism-first-spiral`,
+`end-to-end-trace`, and `problem-progression`. The final receipt fails when the
+selection or its learner-and-subject rationale is missing.
+
 ### `chapter-plans.json`
 
 Create one entry per canonical chapter:
@@ -129,7 +134,8 @@ unresolved finding or stale hash fails the gate.
 
 1. Complete `learning-brief.json`, including priorKnowledge and
    openingOrientation.
-2. Complete and authorize `learning-outline.json` before canonical drafting.
+2. Select a pattern under `curriculum-patterns.md`, then complete and authorize
+   `learning-outline.json` before canonical drafting.
 3. Complete `chapter-plans.json` and `coverage-ledger.json` before each affected
    chapter is drafted.
 4. Draft in order and update `continuity.json` after each chapter.
@@ -150,6 +156,18 @@ python3 skill/scripts/learning_design_qc.py \
 9. Generate the separate final `prose-style-receipt.json` from the same chapter
    hashes.
 10. Pass both receipts to `build_book.py`.
+
+For a readable sources appendix that must not be narrated, keep it outside the
+canonical `chapters/` directory (for example, `research/sources.md`) and pass:
+
+```bash
+--non-narrated-appendix "$RUN_ROOT/research/sources.md"
+```
+
+The builder includes it in the EPUB and Markdown tables of contents, marks its
+EPUB spine item `linear="no"` for Echo, and excludes its words from the narrated
+word total. Never name a non-narrated appendix `ch*.md`; that namespace is the
+canonical narrated manuscript and is governed by the learning and prose hashes.
 
 Any canonical chapter edit makes both hash-bound reviews stale. Rerun the
 affected learning and prose reviews; never edit a receipt by hand.

@@ -20,6 +20,11 @@ REQUIRED_RECORDS = {
     "review": "learning-review.json",
 }
 AUTHORIZATION_SOURCES = {"user", "explicit-autonomous-run"}
+CURRICULUM_PATTERNS = {
+    "mechanism-first-spiral",
+    "end-to-end-trace",
+    "problem-progression",
+}
 FINAL_FINDING_DECISIONS = {"accepted", "rejected", "resolved"}
 
 
@@ -167,6 +172,25 @@ def validate_outline(outline: dict[str, Any], chapter_names: set[str]) -> None:
     if authorization.get("source") not in AUTHORIZATION_SOURCES:
         raise ValueError("outline.authorization.source must be user or explicit-autonomous-run")
     require_string(authorization.get("evidence"), "outline.authorization.evidence")
+
+    curriculum_pattern = outline.get("curriculumPattern")
+    if not isinstance(curriculum_pattern, dict):
+        raise ValueError("outline.curriculumPattern must be an object")
+    pattern_name = require_string(
+        curriculum_pattern.get("name"), "outline.curriculumPattern.name"
+    )
+    if pattern_name not in CURRICULUM_PATTERNS:
+        raise ValueError(
+            "outline.curriculumPattern.name must be mechanism-first-spiral, "
+            "end-to-end-trace, or problem-progression"
+        )
+    require_string(
+        curriculum_pattern.get("reason"), "outline.curriculumPattern.reason"
+    )
+    require_string(
+        curriculum_pattern.get("fitEvidence"),
+        "outline.curriculumPattern.fitEvidence",
+    )
 
     throughlines = require_string_list(outline.get("throughlines"), "outline.throughlines")
     if not 2 <= len(throughlines) <= 4:

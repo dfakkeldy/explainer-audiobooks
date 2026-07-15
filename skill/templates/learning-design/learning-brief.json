@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "learnerOutcome": "Explain how a small email classifier is trained and used.",
+  "priorKnowledge": "Curious beginner who knows ordinary arithmetic.",
+  "openingOrientation": {
+    "context": "A program must decide whether a new email is urgent.",
+    "promise": "Build one mental model from inputs through inference.",
+    "route": "Calculate a network, train it, then use it on a new email."
+  },
+  "originalTargetWords": 20000,
+  "currentTargetWords": 20000,
+  "minimumAcceptedWords": 18000,
+  "maximumAcceptedWords": 22000,
+  "draftingStarted": false,
+  "scopeHistory": []
+}

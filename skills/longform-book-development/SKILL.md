@@ -25,6 +25,8 @@ and fiction-specific revision.
 - Read `references/handoff-packet.md` before preparing the final handoff.
 - Read `../../skill/references/learning-design.md` before shaping the curriculum
   or declaring a handoff production-ready.
+- Read `../../skill/references/curriculum-patterns.md` before proposing book
+  structures or recording the selected progression.
 - Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
   preparing the production handoff. The final prose pass is bounded: it removes
   AI tics without inventing personality, anecdotes, sources, or claims.
@@ -59,6 +61,8 @@ and fiction-specific revision.
    image moments. Add each chapter's prerequisites, knowledge delta, grounded
    example, and concepts with complete explanation paths. Get outline approval
    before final synthesis unless the user explicitly asks for an autonomous run.
+   Record the selected pattern, why it fits the learner and subject, and the
+   approval evidence. Preserve it through handoff unless the user changes it.
 
 5. **Gather and plan pictures deliberately.** Use pictures as teaching assets,
    evidence, examples, diagrams, mood references, or cover references. Track each
@@ -74,7 +78,10 @@ and fiction-specific revision.
    unresolved choices. Include the desired humanizing level, voice sample or
    style notes, AI-writing patterns to avoid, and the instruction to preserve
    facts, citations, technical names, and intentional teaching repetition. The
-   handoff should be complete enough that a fresh agent can run
+   packet must name listener-requested and author-anticipated pronunciation
+   risks for `research/pronunciation-plan.json`; include every spoken variant
+   that needs to be heard before full narration.
+   Preserve these decisions so the handoff is complete enough that a fresh agent can run
    `custom-learning-audiobook` without re-litigating the concept.
 
    If opening orientation, prior knowledge, target history, chapter
@@ -107,6 +114,7 @@ them, or explicitly asks to proceed without another gate:
 - final brief and audience promise,
 - learner prior knowledge and opening orientation,
 - original target plus approved target history,
+- listener pronunciation risks for `pronunciation-plan.json`,
 - chapter outline with learning arc, prerequisites, knowledge delta, teaching
   beats, and grounded examples,
 - complete core-concept explanation paths,

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "checkpoints": [
+    {
+      "afterChapter": "ch01.md",
+      "termsDefined": ["neural network", "parameter"],
+      "examplesUsed": ["email urgency score"],
+      "callbacks": [],
+      "promises": ["show how parameters change"],
+      "unresolvedQuestions": ["how training changes a parameter"]
+    }
+  ]
+}

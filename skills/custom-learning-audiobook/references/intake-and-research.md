@@ -74,6 +74,11 @@ Save notes under `research/`:
 - `continuity.json` - one structured checkpoint after every drafted chapter.
 - `learning-review.json` - independent structure and beginner-reader verdicts
   bound to final chapter hashes.
+- `pronunciation-plan.json` - listener-named, coverage-ledger, and author-found
+  terms requiring an early spoken probe. Record singular/plural or other
+  variants separately; for example, include both `hyperparameter` and
+  `hyperparameters` when they occur. The plan starts pending and becomes
+  accepted only through hash-bound human listening evidence.
 
 Follow `../../skill/references/learning-design.md`. Do not create these records
 retroactively to normalize a failed manuscript; maintain them during planning,

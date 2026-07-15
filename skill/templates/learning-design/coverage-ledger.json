@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "concepts": [
+    {
+      "name": "inference",
+      "definition": "Using learned parameters to calculate an output for new input.",
+      "reason": "A trained classifier is useful only when it can process a new case.",
+      "mechanism": "Run the new inputs through the fixed weighted calculation.",
+      "concreteCase": "Score a newly arrived email.",
+      "boundary": "Inference normally uses parameters without updating them.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "Inference is not another name for training.",
+      "expectedAbility": "Classify an operation as training or inference.",
+      "chapterUses": [
+        {"chapter": "ch02.md", "function": "introduce"},
+        {"chapter": "ch02.md", "function": "apply"}
+      ]
+    }
+  ]
+}

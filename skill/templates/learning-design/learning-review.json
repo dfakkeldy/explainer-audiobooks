@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "reviewedChapterSHA256": {},
+  "structure": {
+    "reviewer": "unassigned-structure-reviewer",
+    "verdict": "pending",
+    "findings": []
+  },
+  "beginnerReader": {
+    "reviewer": "unassigned-beginner-reader",
+    "verdict": "pending",
+    "findings": []
+  }
+}
