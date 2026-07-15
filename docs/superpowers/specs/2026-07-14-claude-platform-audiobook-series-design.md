@@ -8,9 +8,10 @@ Source: [Claude Platform documentation](https://platform.claude.com/docs/en/home
 
 Create a complete, narration-ready learning series from the Claude Platform
 documentation, beginning with section 2, **Build**, and continuing through
-**Evaluate and ship** and **Operate**. Omit the homepage's **Get started**
-section. The result is an eight-volume audiobook curriculum rather than a
-spoken copy of the documentation website.
+**Evaluate and ship** and **Operate**, plus the approved Managed Agents
+curriculum and its navigation-only migration page. Omit the homepage's **Get
+started** section. The result is a nine-volume audiobook curriculum rather than
+a spoken copy of the documentation website.
 
 The series teaches a technically capable listener who already works alongside
 AI tools but wants APIs, agents, tool use, prompting, evaluation, deployment,
@@ -29,10 +30,14 @@ Dan approved these design decisions in conversation on 2026-07-14:
 - use Python as the primary code anchor;
 - use the progressive Project Desk case study;
 - approve the volume architecture and all chapter progressions presented below.
+- add **The Managed Agent** as Volume 9, including the navigation-only migration
+  page, with the approved subtitle, fourteen-chapter progression, and delivery
+  scope recorded below.
 
 The displayed curriculum was described as 121 chapters, but the approved
-chapter lists contain 119. This specification uses the actual approved lists;
-the earlier total was an arithmetic error, not a curriculum change.
+chapter lists for the original eight volumes contain 119. That earlier total
+was an arithmetic error, not a curriculum change. Dan's subsequently approved
+fourteen-chapter Volume 9 brings the current approved total to 133 chapters.
 
 ## Goals
 
@@ -50,6 +55,9 @@ the earlier total was an arithmetic error, not a curriculum change.
   prose, and delivery receipts for each volume.
 - Date volatile claims and make the source snapshot visible so model names,
   beta behavior, limits, prices, and deprecations are not presented as timeless.
+- Explain when Managed Agents is a better fit than an application-owned
+  Messages loop while keeping policy, credentials, monitoring, and retention
+  ownership explicit.
 
 ## Non-Goals
 
@@ -70,7 +78,8 @@ the earlier total was an arithmetic error, not a curriculum change.
 ### Included
 
 The research inventory begins at the live documentation homepage and follows
-the substantive pages behind Build, Evaluate and ship, and Operate, including:
+the substantive pages behind Build, Evaluate and ship, Operate, and Managed
+Agents, including the navigation-only Managed Agents migration page and:
 
 - Messages API behavior, content blocks, stop reasons, refusals, fallback, model
   identities, and usage;
@@ -89,6 +98,11 @@ the substantive pages behind Build, Evaluate and ship, and Operate, including:
 - workspaces, users, roles, keys, workload identity federation, monitoring,
   analytics, spend limits, data residency, retention, access transparency,
   compliance APIs, model migration, and deprecation planning.
+- Managed Agents definitions, tools and permission boundaries, MCP and Skills,
+  Anthropic-hosted and self-hosted sandboxes, sessions, steering, state, event
+  streams, webhooks, outcomes, vaults, GitHub and file context, persistent
+  memory and dreams, multiagent work, scheduled deployments, limits, and the
+  navigation-only migration guidance.
 
 API reference pages are included when their semantics affect the listener's
 mental model. Repeated language-specific samples are consolidated rather than
@@ -114,6 +128,12 @@ and deprecation dates are treated as volatile. The narration explains the
 durable mechanism first and dates the current example. The accompanying
 Markdown source map points listeners to the live page.
 
+Managed Agents receives the same treatment at feature granularity: beta
+headers, session and event lifecycle, sandbox availability, permissions,
+retention and Zero Data Retention ineligibility, memory and dreams preview
+status, multiagent orchestration, scheduled deployments, and migration behavior
+must be checked against the source snapshot rather than generalized.
+
 ## Teaching Architecture
 
 ### Recurring worked example
@@ -132,6 +152,9 @@ Project Desk grows with the curriculum:
 6. build evaluation datasets and graders;
 7. harden safety, reliability, limits, and economics;
 8. add organizational identity, monitoring, compliance, and migration.
+9. move an appropriate long-running or scheduled workload into Managed Agents
+   while preserving explicit policy, credential, monitoring, and retention
+   ownership.
 
 Project Desk is a narrative and architectural case study, not a required
 companion application. Short boundary cases cover ticket routing, customer
@@ -334,11 +357,38 @@ application instead of relying on prompt wording as the control plane.
 Outcome: the listener can explain and design the organizational controls needed
 to operate Claude as a governed, monitored, versioned platform dependency.
 
+### Volume 9: The Managed Agent
+
+Subtitle: **Sessions, Sandboxes, State, and Autonomous Work**
+
+1. The Managed Harness
+2. From Console Prototype to First Session
+3. Defining an Agent
+4. Tools and Permission Boundaries
+5. MCP and Skills
+6. Where Agents Run
+7. Self-Hosted Sandboxes
+8. Sessions, Steering, and State
+9. Events, Streams, and Webhooks
+10. Outcomes and Vaults
+11. GitHub and Files as Working Context
+12. Persistent Memory and Dreams
+13. Multiagent and Scheduled Work
+14. Limits, Events, and Production Reference
+
+Target: 40,000 words, with an accepted range of 35,000 to 45,000 words.
+
+Outcome: the listener can decide when Managed Agents fits better than a custom
+Messages loop, define an agent and its execution environment, operate stateful
+sessions and event streams, govern tools and credentials, and design persistent
+or scheduled work without confusing Anthropic-managed state with
+application-owned policy.
+
 ## Length and Packaging Units
 
-The approved planning range is approximately 280,000 to 360,000 words across
-eight volumes, roughly 25 to 32 hours at 1.25-times playback. This is a series
-range, not a target divided evenly among 119 chapters.
+The approved planning range is approximately 315,000 to 405,000 words across
+nine volumes. This is a series range, not a target divided evenly among 133
+chapters.
 
 Each volume receives its own:
 
@@ -417,6 +467,10 @@ and a copyright-safe review of the finished derivative prose and figures.
   until it receives a disposition.
 - If a feature is beta, preview, deprecated, unavailable on some models, or
   cloud-specific, say so at first substantive use and record the snapshot date.
+- If Managed Agents documentation changes, re-check beta headers, permissions,
+  sandbox ownership, session and event lifecycle, retention/ZDR eligibility,
+  preview features, multiagent and scheduled behavior, and migration before
+  revising or packaging Volume 9.
 - If sources conflict, prefer the most specific current official page and record
   the conflict rather than smoothing it away.
 - If a manuscript edit changes canonical hashes, rerun both learning and prose
@@ -461,7 +515,7 @@ and a copyright-safe review of the finished derivative prose and figures.
 
 ## Durable Deliverables
 
-- Eight source-grounded audiobook volumes.
+- Nine source-grounded audiobook volumes.
 - A series index and source-coverage map.
 - Per-volume fact packs, learning records, continuity, review decisions, and
   receipts.
@@ -485,10 +539,17 @@ spoken code, and consolidation of repeated SDK syntax.
 Mitigation: deterministic page-to-chapter coverage mapping before prose and
 again before packaging.
 
-### Repetition across eight volumes
+### Repetition across nine volumes
 
 Mitigation: per-volume and series-level coverage ledgers, explicit retrieval
 jobs, and continuity records. Standalone refreshers remain brief and deliberate.
+
+### Managed-service ownership confusion
+
+Mitigation: Volume 9 separates Anthropic-managed sessions, sandboxes, events,
+and state from application-owned policy, credential governance, monitoring,
+retention decisions, and acceptance of outcomes. Beta and preview behavior is
+dated and revalidated before delivery.
 
 ### Copyright overreach
 
@@ -502,7 +563,7 @@ allow a later volume to resume without weakening the completed volumes.
 
 ## Completion Definition
 
-The project is complete only when all eight volumes have passing learning and
+The project is complete only when all nine volumes have passing learning and
 prose receipts, selected and verified cover pairs, valid EPUB and Markdown
 derivatives, native Echo/Kokoro M4Bs, verified alignment sidecars, governed
 delivery receipts, and a complete series index. A plan, source inventory,

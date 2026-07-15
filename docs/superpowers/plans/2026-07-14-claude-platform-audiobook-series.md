@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Produce and deliver eight thoroughly sourced Claude Platform learning audiobooks covering Build, Evaluate and ship, and Operate from the official documentation.
+**Goal:** Produce and deliver nine thoroughly sourced Claude Platform learning audiobooks covering Build, Evaluate and ship, Operate, and the approved Managed Agents curriculum from the official documentation.
 
-**Architecture:** A shared source inventory maps every in-scope official page to one of eight independently governed volume runs. Each volume uses the existing fail-closed learning, frontier-author, paired-cover, Echo pronunciation, and delivery pipeline; a final series audit proves source coverage and cross-volume continuity.
+**Architecture:** A shared source inventory maps every in-scope official page to one of nine independently governed volume runs. Each volume uses the existing fail-closed learning, frontier-author, paired-cover, Echo pronunciation, and delivery pipeline; a final series audit proves source coverage and cross-volume continuity.
 
 **Tech Stack:** Official Claude Platform documentation, Markdown, JSON, Python 3, existing `skill/scripts` validators and builders, image generation plus schema-v2 paired-cover rendering, native Echo/Kokoro narration, EPUB 3, M4B, and alignment JSON.
 
@@ -12,12 +12,13 @@
 
 - Omit the homepage's Get started section; begin with Build and continue through Evaluate and ship and Operate.
 - Use Python as the primary spoken code anchor; explain HTTP behavior independently of SDK syntax.
-- Use Project Desk as the progressive worked example across all eight volumes.
+- Use Project Desk as the progressive worked example across all nine volumes.
 - Author metadata is `Dan Fakkeldy`; model attribution belongs in contributor metadata.
 - Use one frontier lead author for all substantive canonical prose and sequential continuity updates.
 - Never narrate more than one short line of code at a time or place two code lines back to back.
 - Treat official Anthropic documentation as primary; date all volatile claims with a source snapshot.
-- Series target is 280,000 to 360,000 words; do not reduce a target after drafting without explicit user approval.
+- Treat Managed Agents beta headers, sessions and events, permissions, sandboxes, retention/ZDR eligibility, preview features, multiagent work, scheduled deployments, and migration as volatile until reverified for the active source snapshot.
+- Series target is 315,000 to 405,000 words; do not reduce a target after drafting without explicit user approval.
 - Every volume requires final-hash structural, beginner-reader, learning-design, and prose-style acceptance.
 - Every volume requires exactly three coordinated portrait/square raster cover candidates and an explicit user selection.
 - Portrait covers are 1600 by 2560; square M4B covers are 2400 by 2400.
@@ -56,6 +57,7 @@
 | 6 | `claude-platform-06-prompt-evaluate-improve` | 37,000 | 32,000-42,000 |
 | 7 | `claude-platform-07-reliability-safety-economics` | 37,000 | 32,000-42,000 |
 | 8 | `claude-platform-08-operating-the-platform` | 45,000 | 40,000-50,000 |
+| 9 | `claude-platform-09-the-managed-agent` | 40,000 | 35,000-45,000 |
 
 Each exact slug listed in the table uses its own directory under `.build/custom-learning-audiobooks/`, with the `research/`, `chapters/`, `dist/`, candidate, and governed Echo layout required by `skills/custom-learning-audiobook/references/package-and-qc.md`.
 
@@ -132,11 +134,11 @@ Run `git status --short --branch`, `git rev-parse --show-toplevel`, and `git log
 
 - [ ] **Step 2: Re-open the official lifecycle root**
 
-Open `https://platform.claude.com/docs/en/home`. Record the retrieval date and current Build, Evaluate and ship, and Operate navigation in `source-notes.md`. Do not include Get started links.
+Open `https://platform.claude.com/docs/en/home`. Record the retrieval date and current Build, Evaluate and ship, Operate, and Managed Agents navigation in `source-notes.md`. Include the navigation-only Managed Agents migration page. Do not include Get started links.
 
 - [ ] **Step 3: Enumerate the official pages**
 
-Follow the Build, evaluation, administration, and model-migration navigation. Add one canonical URL record per substantive page. Resolve redirects. Mark pricing, model, limit, beta/preview, availability, data-handling, and deprecation pages as non-durable.
+Follow the Build, evaluation, administration, model-migration, and Managed Agents navigation. Add one canonical URL record per substantive page plus the navigation-only Managed Agents migration page. Resolve redirects. Mark pricing, model, limit, beta/preview, availability, data-handling, deprecation, Managed Agents session/event lifecycle, permissions, sandbox, retention/ZDR, memory/dreams preview, multiagent, scheduled deployment, and migration pages as non-durable where applicable.
 
 - [ ] **Step 4: Map each URL to the approved curriculum**
 
@@ -158,7 +160,7 @@ assert all(item['stability'] in {'durable', 'volatile', 'beta', 'preview', 'depr
 assert all(item['status'] == 'included' for item in inventory)
 covered = {item['url'] for item in coverage}
 assert set(urls) == covered, (set(urls) - covered, covered - set(urls))
-assert all(1 <= item['volume'] <= 8 for item in coverage)
+assert all(1 <= item['volume'] <= 9 for item in coverage)
 assert all(item['chapter'].startswith('ch') and item['chapter'].endswith('.md') for item in coverage)
 assert all(item['disposition'] in {'primary', 'supporting', 'consolidated'} for item in coverage)
 assert all(item['reason'].strip() for item in coverage)
@@ -181,7 +183,7 @@ Expected: `SOURCE_COVERAGE_OK` with nonzero counts. Record both JSON SHA-256 val
 
 - [ ] **Step 1: Write the shared brief**
 
-Record the approved learner, Python anchor, Project Desk, four throughlines, original/current target 280,000, minimum 280,000, maximum 360,000, `draftingStarted: false`, and empty scope history.
+Record the approved learner, Python anchor, Project Desk, four throughlines, original/current target 315,000, minimum 315,000, maximum 405,000, and `draftingStarted: false`. In authorization and scope history, preserve the previously approved 280,000-360,000 range and record that Dan's 2026-07-14 approval of Managed Agents as Volume 9 changed the current range; do not erase the earlier range.
 
 - [ ] **Step 2: Seed cross-volume continuity**
 
@@ -194,9 +196,10 @@ python3 - <<'PY'
 import json
 from pathlib import Path
 brief = json.loads(Path('.build/custom-learning-audiobooks/claude-platform-series/research/series-brief.json').read_text())
-assert brief['originalTargetWords'] == brief['currentTargetWords'] == 280000
-assert brief['minimumAcceptedWords'] == 280000
-assert brief['maximumAcceptedWords'] == 360000
+assert brief['originalTargetWords'] == brief['currentTargetWords'] == 315000
+assert brief['minimumAcceptedWords'] == 315000
+assert brief['maximumAcceptedWords'] == 405000
+assert any(item['minimumAcceptedWords'] == 280000 and item['maximumAcceptedWords'] == 360000 for item in brief['scopeHistory'])
 assert brief['primaryCodeLanguage'] == 'Python'
 assert brief['workedExample'] == 'Project Desk'
 assert len(brief['throughlines']) == 4
@@ -316,16 +319,30 @@ Every volume task below executes these actions in order:
 
 **Files:** `.build/custom-learning-audiobooks/claude-platform-08-operating-the-platform/{research,chapters,dist}` with `ch01.md` through `ch19.md`.
 
-**Interfaces:** Consumes Volume 8 mappings and full continuity; produces the governed operations volume and resolved series promises.
+**Interfaces:** Consumes Volume 8 mappings and full continuity; produces the governed operations volume and advances the series promises into the managed-agent capstone.
 
 - [ ] Execute the Per-Volume Contract with target 45,000 and range 40,000-50,000.
 - [ ] Keep contractual data-handling claims dated and separate application observability from platform administration.
 - [ ] Use title `Operating the Claude Platform` and subtitle `Identity, Monitoring, Compliance, and Migration`.
 - [ ] Probe workload identity federation, Admin API, Usage and Cost API, Analytics API, data residency, zero data retention, Access Transparency, Compliance API, deprecation, and migration.
-- [ ] Resolve all four series throughlines; reject skyline, handshake, and generic server-rack cover concepts.
-- [ ] Deliver to `/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/Building with Claude 08 - Operating the Claude Platform` and record final continuity.
+- [ ] Advance all four series throughlines into Volume 9; reject skyline, handshake, and generic server-rack cover concepts.
+- [ ] Deliver to `/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/Building with Claude 08 - Operating the Claude Platform` and checkpoint continuity for Volume 9.
 
-## Task 11: Audit and deliver the complete series
+## Task 11: Produce Volume 9, The Managed Agent
+
+**Files:** `.build/custom-learning-audiobooks/claude-platform-09-the-managed-agent/{research,chapters,dist}` with `ch01.md` through `ch14.md`.
+
+**Interfaces:** Consumes Volume 9 mappings and Volumes 1-8 continuity; produces the governed Managed Agents volume and resolves the series promises.
+
+- [ ] Execute the Per-Volume Contract with target 40,000 and accepted range 35,000-45,000.
+- [ ] Use all fourteen approved chapters: The Managed Harness; From Console Prototype to First Session; Defining an Agent; Tools and Permission Boundaries; MCP and Skills; Where Agents Run; Self-Hosted Sandboxes; Sessions, Steering, and State; Events, Streams, and Webhooks; Outcomes and Vaults; GitHub and Files as Working Context; Persistent Memory and Dreams; Multiagent and Scheduled Work; Limits, Events, and Production Reference.
+- [ ] Use title `The Managed Agent` and subtitle `Sessions, Sandboxes, State, and Autonomous Work`.
+- [ ] Probe beta headers, session and event lifecycle, permissions, Anthropic-hosted and self-hosted sandboxes, retention and Zero Data Retention ineligibility, memory and dreams preview, multiagent orchestration, scheduled deployments, and migration, including the navigation-only migration page.
+- [ ] Probe the official terminology `MCP`, `webhooks`, `GitHub`, `multiagent`, `vaults`, and `server-sent events`/`SSE`; do not invent product terminology.
+- [ ] Keep Anthropic-managed state distinct from application-owned policy, credential, monitoring, and retention ownership; resolve all four series throughlines.
+- [ ] Deliver to `/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/Building with Claude 09 - The Managed Agent` and record final continuity.
+
+## Task 12: Audit and deliver the complete series
 
 **Files:**
 - Create: `.build/custom-learning-audiobooks/claude-platform-series/dist/series-index.json`
@@ -334,7 +351,7 @@ Every volume task below executes these actions in order:
 - Modify: `/Users/dfakkeldy/Developer/knowledge-base/bundle/projects/index.md` only if the existing entry is insufficient
 - Modify: `/Users/dfakkeldy/Developer/knowledge-base/bundle/log.md`
 
-**Interfaces:** Consumes all eight verified deliveries; produces the complete-series receipt and durable KB status.
+**Interfaces:** Consumes all nine verified deliveries; produces the complete-series receipt and durable KB status.
 
 - [ ] **Step 1: Re-run source coverage validation**
 
@@ -354,21 +371,22 @@ slugs = [
     'claude-platform-06-prompt-evaluate-improve',
     'claude-platform-07-reliability-safety-economics',
     'claude-platform-08-operating-the-platform',
+    'claude-platform-09-the-managed-agent',
 ]
-expected = [12, 13, 14, 15, 16, 15, 15, 19]
+expected = [12, 13, 14, 15, 16, 15, 15, 19, 14]
 words = chapters = 0
 for slug, count in zip(slugs, expected):
     paths = sorted(Path('.build/custom-learning-audiobooks', slug, 'chapters').glob('ch*.md'))
     assert len(paths) == count, (slug, len(paths), count)
     chapters += len(paths)
     words += sum(len(path.read_text().split()) for path in paths)
-assert chapters == 119
-assert 280000 <= words <= 360000, words
+assert chapters == 133
+assert 315000 <= words <= 405000, words
 print(f'SERIES_LENGTH_OK chapters={chapters} words={words}')
 PY
 ```
 
-Expected: `SERIES_LENGTH_OK chapters=119` with words inside the approved range.
+Expected: `SERIES_LENGTH_OK chapters=133` with words inside the approved range.
 
 - [ ] **Step 3: Verify every iCloud package**
 
