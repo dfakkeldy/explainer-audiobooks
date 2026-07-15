@@ -178,6 +178,36 @@ class PronunciationProbeReelTests(unittest.TestCase):
         self.assertEqual(0.0, singular["sourceStart"])
         self.assertEqual(2.75, singular["sourceEnd"])
 
+    def test_builds_one_clip_for_multi_word_form_from_adjacent_timings(self) -> None:
+        (self.research / "pronunciation-plan.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "terms": [
+                        {
+                            "term": "Messages API",
+                            "variants": [],
+                            "required": True,
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.write_anchor(
+            words=[
+                {"word": "Messages", "start": 0.75, "end": 1.25},
+                {"word": "API", "start": 1.4, "end": 1.9},
+            ]
+        )
+
+        result = self.module().build_reel(self.root, self.work, self.out, self.evidence)
+
+        self.assertEqual(1, len(result["clips"]))
+        self.assertEqual("Messages API", result["clips"][0]["variantHeard"])
+        self.assertEqual(0.0, result["clips"][0]["sourceStart"])
+        self.assertEqual(3.15, result["clips"][0]["sourceEnd"])
+
     def test_rejects_invalid_word_range(self) -> None:
         self.write_anchor(
             words=[
