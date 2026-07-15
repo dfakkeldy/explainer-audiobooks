@@ -6,9 +6,16 @@ point is not to make every task expensive. It is to protect the two things that
 make a book feel authored: the explanation choices and the continuity of its
 voice.
 
+Long-form quality is a pipeline problem, not a prompt problem. Research,
+argument design, prose drafting, and revision are different jobs whose
+instructions compete when they share one long generation. Run them as separate
+calls with explicit artifacts. Each phase consumes the accepted artifact from
+the phase before it.
+
 Follow `learning-design.md`. The frontier author owns the learning architecture,
-but current packaging requires structured `chapter-plans.json`,
-`learning-review.json`, and the final hash-bound learning-design receipt.
+but current packaging requires grounded `evidence-notes.json`, structured
+`chapter-plans.json`, `revision-passes.json`, `learning-review.json`, and the
+final hash-bound learning-design receipt.
 
 ## Role Contract
 
@@ -26,45 +33,74 @@ Everything else goes back to the frontier author as a precise repair request.
 
 ## Canonical Markdown Flow
 
-1. **Cheap workers prepare evidence.** Create source notes and chapter fact packs
-   with citations, terminology, contradictions, and uncertainty labels. Give the
-   frontier author the evidence, not a cheaper worker's prose draft to imitate.
+1. **Cheap workers prepare grounded evidence.** Build `evidence-notes.md` and
+   `evidence-notes.json` with stable claim IDs, citations, precise locators,
+   contradictions, and uncertainty labels. Set the claim policy to
+   `traceable-only`. Give the frontier author the evidence, not a cheaper
+   worker's prose draft to imitate. A claim absent from the notes is unavailable
+   to the outline and manuscript.
 
-2. **The frontier author creates the book bible.** It approves the table of
-   contents, the 2-4 genuine throughlines, and `research/coverage-ledger.md`.
-   The ledger maps each core concept to its first explanation, later retrieval or
-   deepening, a concrete example, a boundary/counterexample where useful, and a
-   listener outcome. If a return to an idea has no named purpose, remove it.
-   Record the authorized progression in `learning-outline.json`, the full
-   teaching plan in `chapter-plans.json`, and complete concept explanation paths
-   in `coverage-ledger.json` before canonical drafting.
+2. **Turn an approved private source into a craft profile.** When the user names
+   a local book or audiobook as a voice source, analyze its high-level craft:
+   opening moves, evidence-to-example movement, plain-language explanations,
+   direct address, humor boundary, uncertainty, rhythm, and practical landings.
+   Save those observations in `voice-source-profile.md`. Persist the rule
+   "craft features, not pastiche." Do not commit raw source excerpts or source
+   files. A later
+   project-authored first section becomes the actual voice exemplar.
 
-3. **The frontier author writes the Markdown manuscript.** Write `chNN.md`
-   files in chapter order. For a book too large for one context, use sequential
-   runs rather than parallel chapter drafting. Each run receives the book bible,
-   relevant fact pack, coverage-ledger rows, and the latest continuity record.
-   The prose in `chapters/` is canonical; EPUB, audio, and covers are derivatives.
+3. **The frontier author builds an argument-level outline.** Approve the table of
+   contents, the two to four genuine throughlines, and
+   `research/coverage-ledger.md`. For every section, record its job, argument,
+   specific claims by evidence ID, throughline advance, narrative or metaphor
+   payoff, landing beat, and what it must not repeat. The ledger maps each core
+   concept to its first explanation, later retrieval or deepening, a concrete
+   example, a boundary/counterexample where useful, and a listener outcome.
+   Record the result in `learning-outline.json`, `chapter-plans.json`, and
+   `coverage-ledger.json` before prose.
 
-4. **Update continuity after each chapter.** Record only the facts the next
-   chapter needs: terms already fully defined, analogies and scenes already used,
-   examples, deliberate callbacks, active promises, and unresolved questions.
-   This prevents repetitive re-introductions without forcing the author to reread
-   an entire long manuscript on every call.
-   Maintain both the readable note and structured `continuity.json`; create the
-   checkpoint after each chapter, not retroactively after the draft.
+4. **Stop at the outline human checkpoint.** The intended human reviews the
+   argument, progression, promised payoffs, road-book teaching infrastructure,
+   and exclusions. Topic-list approval is insufficient. Record approval before
+   the first section is drafted.
 
-5. **Cheap workers inspect, never redraft.** Run `scripts/prose_qc.py`, source
-   validation, narration lint, and a short reader review. Each report must point
-   to the source paragraph and explain why a change would improve learning.
+5. **Draft and curate the first section.** Give the frontier author the full
+   outline, grounded evidence, voice-source craft profile, the section job, and
+   its must-not-repeat list. Revise this section until the human accepts both its
+   teaching and voice. Preserve it as `voice-exemplar.md`, then use it in the
+   narrated comprehension pilot. Do not draft the remaining book before this
+   human checkpoint and pilot pass.
 
-6. **The frontier author performs a targeted repair pass.** It accepts, rejects,
-   or revises each substantive finding. A report with only local issues earns a
-   local patch pass, not a costly full regeneration.
-   Require independent structure and beginner-reader findings before declaring
-   substantive acceptance, then rerun both reviews after final voice edits and
-   bind `learning-review.json` to the final chapter hashes.
+6. **Draft section by section with forward context.** Each call receives the
+   full outline, relevant evidence IDs, coverage rows, approved voice exemplar,
+   the previous section's actual text or a faithful running summary, the current
+   section job, and what it must not repeat. Write sections in order; never
+   generate the whole book in one call or distribute adjacent prose to
+   independent voices. The prose in `chapters/` is canonical; EPUB, audio, and
+   covers are derivatives.
 
-7. **Humanize without changing authorship.** After substantive repairs, load the
+7. **Update continuity after every section.** Write the corresponding
+   `continuity.json` draft context and checkpoint before the next call. Record
+   terms already defined, analogies and scenes already used, examples,
+   deliberate callbacks, active promises, unresolved questions, retrievals,
+   listener load, the running summary, and the no-repeat list. This prevents
+   drift and repetitive re-introductions without asking one generation to hold
+   the entire manuscript.
+
+8. **Cheap workers inspect, never redraft.** Run `scripts/prose_qc.py`, source
+   validation, narration lint, and independent learning reviews. Each report
+   must cite the source paragraph and explain why a change would improve learning.
+
+9. **Run narrow revision calls.** "Make it better" is not a revision job. Record
+   each required single-job pass in `revision-passes.json`: claim-traceability,
+   tightening, de-listification, sentence-rhythm, and ear-pass. The frontier
+   author accepts, rejects, or repairs each substantive finding. Render the
+   ear-pass through Echo, Kokoro, or the governed narrator and record every
+   stumble or lost thread. Local findings earn local patches, not regeneration.
+   Rerun structure and blind beginner review after final voice edits and bind all
+   final records to the canonical chapter hashes.
+
+10. **Humanize without changing authorship.** After substantive repairs, load the
    `humanizer` skill and follow `references/humanizer-pass.md`. It may remove
    AI-writing tics and improve spoken rhythm, but it must not invent anecdotes,
    claims, sources, first-person experience, or a competing voice. The frontier
@@ -76,7 +112,7 @@ Everything else goes back to the frontier author as a precise repair request.
    density gate, and create a receipt containing before/after counts, accepted
    and rejected decisions, rerun checks, and chapter hashes.
 
-8. **Cheap workers package and validate.** Render EPUB/M4B, build covers, check
+11. **Cheap workers package and validate.** Render EPUB/M4B, build covers, check
    files and metadata, and write the manifest. They must not “improve” the prose
    while packaging.
 
@@ -119,10 +155,20 @@ real and writes all non-mechanical prose changes.
 ## Completion Gates
 
 - [ ] One named frontier model authored every substantive Markdown passage.
+- [ ] `evidence-notes.md` and `evidence-notes.json` bind every manuscript claim
+      to a verified source and locator.
+- [ ] A private source, when used, produced a bounded craft profile without raw
+      excerpts or a pastiche request.
+- [ ] The argument-level outline gives every section a job, claim IDs,
+      throughline advance, payoff, landing beat, and no-repeat list.
+- [ ] The human accepted the outline and first-section voice exemplar before the
+      remaining section-by-section draft.
 - [ ] `coverage-ledger.md` gives every planned recurrence a learning purpose.
 - [ ] `chapter-plans.json` gives every chapter a purpose, prerequisites,
       knowledge delta, grounded example, concepts, and varied beats.
 - [ ] `continuity.md` records prior terms, analogies, examples, and promises.
+- [ ] `revision-passes.json` records separate passing single-job passes and a
+      rendered ear-pass for the final chapter hashes.
 - [ ] `learning-review.json` carries passing independent structure and
       beginner-reader verdicts for the final chapter hashes.
 - [ ] Cheap review reports cite exact locations and recommend repairs rather than

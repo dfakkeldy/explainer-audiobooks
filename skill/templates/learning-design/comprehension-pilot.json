@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 2,
+  "status": "pending",
+  "listener": "",
+  "listeningContext": "Driving and delivering mail",
+  "representativeMinutes": 12,
+  "includesFirstTechnicalPassage": true,
+  "audioPath": "",
+  "audioSHA256": "",
+  "centralIdeaInOwnWords": "",
+  "freshExampleResponse": "",
+  "lostAt": [],
+  "humanCheckpoints": {
+    "voiceSource": {
+      "mode": "project-brief",
+      "profilePath": "research/voice-source-profile.md",
+      "profileSHA256": "",
+      "useBoundary": "craft-features-not-pastiche",
+      "rawSourceExcerptsCommitted": false
+    },
+    "outline": {
+      "status": "pending",
+      "reviewer": "",
+      "evidence": "",
+      "recordedBeforePilotDraft": false
+    },
+    "firstSection": {
+      "status": "pending",
+      "reviewer": "",
+      "evidence": "",
+      "recordedBeforeRemainingDraft": false,
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": ""
+    }
+  },
+  "decision": {
+    "verdict": "pending",
+    "authority": "listener",
+    "evidence": "",
+    "recordedBeforeFullDraft": false
+  }
+}

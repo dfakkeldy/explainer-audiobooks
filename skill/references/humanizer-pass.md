@@ -19,6 +19,12 @@ unexplained terms, shallow mechanisms, and missing worked examples. Each is a
 structural blocker: record the exact location and return to learning review and
 frontier-author repair.
 
+The humanizer also cannot replace the artifactized revision pipeline. Complete
+claim-traceability, tightening, de-listification, sentence-rhythm, and rendered
+ear-pass work as separate single-job passes in `revision-passes.json`. "Make it
+better" is not a valid pass, and combining all five jobs in the humanizer hides
+which defect was actually tested.
+
 Do not smooth over a structural blocker with cleaner transitions, more polished
 definitions, or added motivational prose. The humanizer starts only after the
 learning architecture and substantive explanations are accepted. If a local
@@ -29,7 +35,8 @@ review before generating the learning-design receipt.
 
 - Remove obvious AI tics: inflated significance, generic signposting, promotional
   adjectives, vague attributions, filler, synonym cycling, tidy rule-of-three
-  lists, repetitive paragraph openings, and empty conclusions.
+  lists, repetitive paragraph openings, empty conclusions, and repeated honesty
+  announcements such as `honestly`, `the honest answer`, and `to be honest`.
 - Vary sentence length and paragraph rhythm so narration does not sound assembled.
 - Prefer concrete scenes, objects, decisions, constraints, and consequences that
   already exist in the fact pack or manuscript.
@@ -38,6 +45,9 @@ review before generating the learning-design receipt.
   is supported by the brief and the existing evidence.
 - Keep the writing easy to hear: clear subjects, natural punctuation, short enough
   sentences, and no new code or visual dependence.
+- Preserve road-book teaching infrastructure: history, people, narrative,
+  real-world applications, useful analogies, and retrieval after a gap are not
+  decorative material to cut for smoothness.
 
 ## What it must not do
 
@@ -50,6 +60,8 @@ review before generating the learning-design receipt.
   persona. Preserve the approved voice and the frontier author's choices.
 - Do not add jokes, confessional language, fake uncertainty, or motivational
   endings just to make the prose seem human.
+- Do not announce epistemic honesty. State the evidence, limitation, confidence,
+  or uncertainty precisely in the claim itself.
 - Do not touch Markdown image paths, captions, headings, metadata, or code samples
   except for a verified mechanical correction.
 

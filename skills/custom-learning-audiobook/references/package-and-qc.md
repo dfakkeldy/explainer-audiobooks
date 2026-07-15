@@ -122,12 +122,18 @@ Use this run layout:
 ```text
 .build/custom-learning-audiobooks/<slug>/
   research/
+    evidence-notes.md
+    evidence-notes.json
+    voice-source-profile.md
+    voice-exemplar.md
     learning-brief.json
     learning-outline.json
     chapter-plans.json
     coverage-ledger.json
     continuity.json
     learning-review.json
+    comprehension-pilot.json
+    revision-passes.json
     learning-design-receipt.json
     coverage-ledger.md
     continuity.md
@@ -140,28 +146,15 @@ Use this run layout:
     echo-render-current-accepted.json
     echo-render-success-<run-id>-<attempt-id>.json
     echo-render-output.owner.env  # present only while governed narration runs
+  pilot/
+    chapters/
+      ch01.md
+    dist/
+      <slug>-pilot.epub
+      <slug>-pilot.md
+      <slug>-pilot.m4b
+      <slug>-pilot.alignment.json
   chapters/
-
-## Learning Design QC
-
-Read `../../skill/references/learning-design.md`. Complete learner orientation,
-the authorized outline, `chapter-plans.json`, complete concept explanation
-paths, per-chapter continuity checkpoints, and independent structure and
-beginner-reader review. After the humanizer and every accepted voice edit,
-rerun both learning reviews against the final chapter hashes and write
-`learning-review.json`.
-
-Generate the learning receipt before any EPUB build:
-
-```bash
-python3 skill/scripts/learning_design_qc.py \
-  --run-root "$RUN_ROOT" \
-  --receipt-out "$RUN_ROOT/research/learning-design-receipt.json"
-```
-
-Do not reconstruct missing plans after drafting or reduce the target to match an
-undersized manuscript. A prose-style pass cannot substitute for learning-design
-acceptance.
     ch01.md
     ch02.md
     images/
@@ -190,6 +183,63 @@ acceptance.
           <slug>.pronunciation-reel.m4b  # when review samples exist
     README.md or manifest.json
 ```
+
+## Learning Design QC
+
+Read `../../skill/references/road-book-mode.md` and
+`../../skill/references/learning-design.md`. Complete the listening/revision
+brief, authorized outcome-limited outline, `chapter-plans.json`, problem-before-
+name and auditory-load budgets, complete concept/analogy/application/retrieval
+paths, per-chapter continuity checkpoints, and independent structure plus blind
+sequential beginner review.
+
+Research, outline, drafting, and revision are separate artifact handoffs. Require
+hash-bound `evidence-notes.json` and the traceable-only grounded notes before the
+argument-level outline. Require the human-approved outline and first section
+bound as `voice-exemplar.md`; a private style source is represented only by the
+bounded `voice-source-profile.md`, with no raw excerpts committed. Draft section
+by section with the full outline, prior text or running summary, section job, and
+must-not-repeat list in `continuity.json.draftContexts`.
+
+Before full drafting, build only the 10-to-15-minute comprehension pilot:
+
+```bash
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir "$RUN_ROOT/pilot/chapters" \
+  --out-dir "$RUN_ROOT/pilot/dist" \
+  --title "$TITLE — Learning Pilot" \
+  --author "Dan Fakkeldy" \
+  --slug "$SLUG-pilot" \
+  --learning-pilot
+```
+
+Render this explicitly nonpackage pilot with native Echo/Kokoro, using isolated
+pilot work/database/output paths. It is the only pre-receipt narration path and
+cannot be synced, delivered, or called a governed package. Do not use an Apple
+or system voice. Record the exact accepted audio hash and listener evidence in
+`comprehension-pilot.json`; stop before full drafting unless the human decision
+is `continue` and the first-section checkpoint is accepted.
+
+Before the final receipt, complete hash-bound `revision-passes.json` as separate
+single-job claim-traceability, tightening, de-listification, sentence-rhythm,
+and rendered ear-pass lanes. Echo or Kokoro must actually render the ear-pass;
+record every stumble and lost-thread location rather than inferring listenability
+from text.
+
+After the humanizer and every accepted voice edit, rerun both learning reviews
+against the final chapter hashes and write `learning-review.json`. Generate the
+learning receipt before the governed final EPUB build:
+
+```bash
+python3 skill/scripts/learning_design_qc.py \
+  --run-root "$RUN_ROOT" \
+  --receipt-out "$RUN_ROOT/research/learning-design-receipt.json"
+```
+
+Do not reconstruct missing plans after drafting, reduce the target to match an
+undersized manuscript, or add material to meet a word-count floor. A prose-style
+pass cannot substitute for learning-design evidence, and the learning receipt
+does not certify comprehension. Negative human listening evidence overrides it.
 
 Repeat that directory for `candidate-2/` and `candidate-3/`. After selection,
 copy the paired receipt into the selected candidate directory before governed
@@ -245,6 +295,8 @@ Markdown remains canonical throughout this step.
 
 At minimum:
 
+- verify `evidence-notes.json`, the argument-level outline, every section draft
+  context, the accepted voice exemplar, and final `revision-passes.json`,
 - word count matches the ledger's **chapter-specific** ranges or has a written
   reason to be outside them; do not pad a short chapter automatically,
 - no raw code/symbol narration leaks,

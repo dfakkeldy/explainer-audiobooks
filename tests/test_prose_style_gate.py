@@ -73,6 +73,38 @@ class ProseStyleAnalysisTests(unittest.TestCase):
         self.assertEqual("pass", analysis.get("status"))
         self.assertEqual(0, analysis.get("hard_banned_count"))
 
+    def test_groups_repetitive_honesty_announcements(self) -> None:
+        text = (
+            "Honestly, the mechanism is simpler than it first appears. "
+            "The honest answer is that the evidence remains incomplete. "
+            "To be honest, nobody yet knows which interpretation is correct. "
+            "In all honesty, the uncertainty belongs in the claim itself. "
+            "The remaining words provide enough ordinary narration for a stable density result."
+        )
+
+        analysis = prose_qc.analyse_style([self.paragraph(text)])
+
+        family = analysis.get("families", {}).get("honesty_announcement", {})
+        self.assertEqual(4, family.get("count"))
+        self.assertTrue(family.get("over_budget"))
+        self.assertEqual("fail", analysis.get("status"))
+
+    def test_groups_related_candor_announcements(self) -> None:
+        text = (
+            "Let's be honest: the evidence is incomplete. "
+            "Truth be told, the trial was small. "
+            "To tell you the truth, the result may not replicate. "
+            "Candidly, the estimate is unstable. "
+            "Frankly, nobody knows yet. "
+            "If we're being honest, the mechanism still needs testing. "
+            "The only honest assessment is that two explanations remain."
+        )
+
+        analysis = prose_qc.analyse_style([self.paragraph(text)])
+
+        family = analysis.get("families", {}).get("honesty_announcement", {})
+        self.assertEqual(7, family.get("count"))
+
     def test_markdown_report_surfaces_family_counts_and_locations(self) -> None:
         text = (
             "Hold on to this. The remaining sentence explains a trained network using its "

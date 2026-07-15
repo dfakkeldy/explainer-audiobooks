@@ -441,12 +441,26 @@ def main():
         action="store_true",
         help="Reproduce a legacy artifact only; forbidden for new or revised books",
     )
+    learning_gate.add_argument(
+        "--learning-pilot",
+        action="store_true",
+        help="Build a nonpackage narrated-comprehension pilot before full drafting",
+    )
     a = ap.parse_args()
-    if a.learning_receipt is None and not a.legacy_without_learning_receipt:
+    if a.learning_pilot and not a.slug.endswith("-pilot"):
+        ap.error("pilot builds require --slug ending in -pilot")
+    if (
+        a.learning_receipt is None
+        and not a.legacy_without_learning_receipt
+        and not a.learning_pilot
+    ):
         ap.error(
             "current builds require --learning-receipt; use "
+            "--learning-pilot for a nonpackage pilot or "
             "--legacy-without-learning-receipt only to reproduce an old artifact"
         )
+    if a.learning_pilot:
+        print("PILOT ONLY: not a governed book package or learning-completion claim")
     build(a.chapters_dir, a.out_dir, a.title, a.author, a.subtitle, a.slug, a.lang, a.cover,
           a.contributor, a.cover_selection, a.m4b_cover, a.prose_receipt,
           a.learning_receipt, a.non_narrated_appendix)

@@ -21,6 +21,13 @@ class SkillProseContractTests(unittest.TestCase):
             "density",
             "hard failure",
             "state the fact directly",
+            "honesty announcement",
+            "`honestly`",
+            "`the honest answer`",
+            "`let's be honest`",
+            "`truth be told`",
+            "precise claims",
+            "uncertainty",
             "--fail-on-style",
             "--style-receipt-out",
         ):

@@ -15,7 +15,14 @@ Ask only questions that materially improve the book:
 - What has been confusing, too shallow, or too repetitive in other explanations?
 - Is this practical, curiosity-driven, work-related, or hobby-related?
 - Is there a specific situation the book should prepare them for?
+- Will they usually hear it while driving and delivering mail, or can they stop,
+  rewind, and inspect study material? Default to `road-book` for Dan/internal
+  listening when no different context is given.
 - Anything to include, avoid, simplify, or keep private?
+- Has the listener named a private book or audiobook whose enjoyable technical
+  craft should inform the project? If so, analyze it locally into high-level
+  craft features; do not copy source passages into the repository or ask for a
+  close pastiche.
 
 For workplace/flyer beta requests, keep the tone casual and low-pressure. The
 offer is a limited beta test, not an unlimited custom-book service.
@@ -54,35 +61,65 @@ sources and prefer primary/official references.
 Save notes under `research/`:
 
 - `brief.md` - request, assumptions, audience, length, public/private status.
-- `learning-brief.json` - learner outcome, actual prior knowledge, opening
-  orientation, original/current target and accepted range, drafting status, and
-  approved scope-change history.
+- `learning-brief.json` - learner outcome, actual prior knowledge, audience
+  level, road-book/focused-study context, first-edition-plus/new-book revision
+  mode, opening orientation, original/current word estimate and estimated range,
+  drafting status, and approved scope-change history.
 - `sources.md` - links/files used, source-quality labels, retrieval date.
-- `fact-pack.md` - facts the manuscript may rely on.
+- `evidence-notes.md` - stable claim IDs, verified source and precise locator,
+  supported wording, uncertainty, and conflicts. This is the grounded research
+  artifact the outline and writer consume.
+- `evidence-notes.json` - hash binding for the notes, `traceable-only` claim
+  policy, verified claim records, and unresolved conflicts.
+- `fact-pack.md` - chapter-specific selection from the grounded evidence notes.
+- `voice-source-profile.md` - high-level craft analysis of a user-approved brief
+  or private source. Record opening, evidence-to-example movement,
+  plain-language mechanism, direct address, humor boundary, uncertainty,
+  rhythm, practical landing, and visual-to-audio adaptations. Keep raw excerpts
+  and source files out of Git.
 - `outline.md` - chapter plan and learning throughlines.
-- `learning-outline.json` - approved progression, approval evidence, chapter
-  purposes/prerequisites, and two to four throughlines.
+- `learning-outline.json` - approved progression, durable outcomes, road-book
+  governing question/narrative/people/history/real-world applications,
+  optional-study boundary, approval evidence, chapter purposes/prerequisites,
+  two to four throughlines, and an argument-level section map with jobs,
+  arguments, specific claim IDs, throughline advances, payoffs, landing beats,
+  and must-not-repeat constraints.
 - `chapter-plans.json` - chapter purpose, prerequisites, knowledge delta,
-  grounded example, concepts, and varied teaching beats.
+  grounded example, concepts, problem-before-name terms, audio working-memory
+  budget, narrative/real-world infrastructure, and varied teaching beats.
 - `coverage-ledger.md` - each core concept's introduction, deliberate later use,
   example, explanation depth, expected listener ability, and reason for any
   repetition.
-- `coverage-ledger.json` - complete explanation paths required by the shared
-  learning-design gate.
-- `continuity.md` - terms, analogies, examples, callbacks, and open promises the
-  frontier author must carry forward between Markdown chapters.
-- `continuity.json` - one structured checkpoint after every drafted chapter.
-- `learning-review.json` - independent structure and beginner-reader verdicts
-  bound to final chapter hashes.
+- `coverage-ledger.json` - complete explanation, analogy, application, and
+  retrieval paths required by the shared learning-design gate.
+- `continuity.md` - terms, analogies, examples, callbacks, open promises, and a
+  faithful running summary the frontier author carries between sections.
+- `continuity.json` - one forward-context input per planned section and one
+  structured learning checkpoint after every drafted chapter. Every section
+  input includes the full outline, evidence, style profile, previous section,
+  job, and must-not-repeat list.
+- `learning-review.json` - independent structure and blind sequential beginner
+  verdicts bound to final chapter hashes.
+- `comprehension-pilot.json` - the intended listener's accepted 10-to-15-minute
+  narrated pilot, exact audio hash, representative context (normally driving and
+  delivering mail), own-words explanation, fresh-example response, lost points,
+  pre-full-draft decision, bound voice-source profile, human outline approval,
+  and accepted first-section `voice-exemplar.md`.
+- `revision-passes.json` - final-hash, separate single-job passes for claim
+  traceability, tightening, de-listification, sentence rhythm, and a rendered
+  ear-pass with stumbles and lost-thread locations.
 - `pronunciation-plan.json` - listener-named, coverage-ledger, and author-found
   terms requiring an early spoken probe. Record singular/plural or other
   variants separately; for example, include both `hyperparameter` and
   `hyperparameters` when they occur. The plan starts pending and becomes
   accepted only through hash-bound human listening evidence.
 
-Follow `../../skill/references/learning-design.md`. Do not create these records
+Follow `../../skill/references/road-book-mode.md` and
+`../../skill/references/learning-design.md`. Do not create these records
 retroactively to normalize a failed manuscript; maintain them during planning,
-sequential drafting, revision, and final learning review.
+pilot listening, section-by-section drafting, narrow revision, and final learning
+review. Full drafting stops until the human accepts the outline, first-section
+voice exemplar, and comprehension pilot.
 
 Source-confidence labels:
 

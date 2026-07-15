@@ -4,10 +4,24 @@ This is the craft layer of the explainer-audiobook skill. The whole product is
 *heard*, never read on a page, so every rule below exists to serve the ear. Give
 the "Voice & rules" block to the frontier lead author verbatim. Cheap workers may
 review against it, but they must not replace its prose with a different voice.
+Read `road-book-mode.md` first. Unless the brief explicitly selects
+`focused-study`, assume the listener is driving and delivering mail, with eyes
+unavailable and attention shared with safe work.
 
 ## Voice & rules (give this block to the frontier lead author verbatim)
 
 THIS WILL BE NARRATED ALOUD as an audiobook. Write 100% for the EAR.
+
+ROAD-BOOK LOAD — protect a one-pass listener:
+- Let a governing question, human situation, history, people, and varied
+  real-world applications create the need for each mechanism. These are teaching
+  infrastructure, not decorative interludes.
+- Introduce no more than two or three genuinely new core terms in a chapter.
+  Give the listener-visible problem before the name.
+- A brief spoken calculation carries at most three temporary values and three
+  symbolic steps, then returns to a concrete case. Move anything that needs
+  visual persistence, replay, or a longer chain into optional study material or
+  an explicitly short focused lesson.
 
 CODE ALOUD — at most ONE short line at a time:
 - Never a code block, multi-line snippet, or two code lines back to back. Code the
@@ -60,6 +74,9 @@ NOVELTY AND DEPTH — every paragraph earns its place:
 - Prefer a specific observation, decision, failure, or worked example to a
   generic claim about what "matters." Use analogies sparingly and never recycle
   the same one as if it were new.
+- When using an analogy, make its working relationship and correspondences
+  clear, then name where it stops matching. A comparison that supplies only
+  atmosphere does not teach.
 - Do not inflate a chapter to hit a uniform word count. End a chapter when its
   promised knowledge delta is complete; deeper concepts may need more space,
   while orientation and transition chapters may be shorter.
@@ -98,11 +115,27 @@ VOICE: second person ("you"), patient, encouraging, a little wry — a smart fri
 explaining over coffee, not a motivational speaker. Short, varied sentences.
 Concrete analogies used sparingly. Trust the listener; never oversell.
 
+VOICE SOURCE: when the user supplies private books or audio as an enjoyable
+technical-writing reference, analyze them into `voice-source-profile.md`. Carry
+forward high-level craft—question or ordinary-situation openings,
+evidence-to-example movement, plain-language mechanisms, restrained humor,
+precise uncertainty, varied rhythm, and practical landings. Do not copy source
+passages or request a pastiche. Once the human accepts the project-authored first
+section, use `voice-exemplar.md` as the concrete style input for every later
+section call.
+
+SECTION INPUT: draft section by section. Every call receives the full
+argument-level outline, grounded claim IDs, the approved voice exemplar, the
+previous section text or running summary, this section's job, and what it must
+not repeat. A prose prompt without those artifacts is incomplete.
+
 DE-CLAUDIFICATION — follow `declaudification.md` during drafting. State the fact
 directly instead of managing the listener's reaction. The listener's named
 AI-writing patterns to avoid are hard bans. Do not synonym-cycle through hold,
 carry, keep, sit with, notice, pause, resist, or let-that-land instructions; do
-not use repeated `let me`, `not X but Y`, or announced transitions as a voice.
+not use repeated `let me`, `not X but Y`, announced transitions, or honesty
+announcements such as `honestly` and `the honest answer` as a voice. Put
+epistemic precision and uncertainty in the claim itself.
 
 SHAPE of each chapter: give the chapter a distinct job in the book — perhaps a
 scene, a mechanism, a guided walkthrough, a comparison, a failure analysis, or
@@ -164,7 +197,8 @@ chapters. A natural narration runs roughly 150 words per minute at 1.0x, ~187 at
 1.25x. Let a chapter be as short as the listener's knowledge delta allows and as
 long as a worked explanation needs; uniform three-thousand-word chapters are a
 reliable way to manufacture filler. Set a range per chapter in the coverage ledger
-and report the real final total.
+and report the real final total. Falling outside the estimate is a planning
+signal, not a reason to add or remove material after the learning job is complete.
 
 | Target listen | ~Words | Suggested chapters |
 |---|---|---|
@@ -225,6 +259,11 @@ them over the chapter files:
   - dead phrases: `grep -rniE 'tattoo|burn (this\|it) into|sear (this\|it)|etch (this\|it)|carve (this\|it)|the one rule, if you|if you remember nothing else' chapters/ch*.md` — should return nothing; rewrite any hit. (Bare `sear`/`etch` are deliberately avoided — they match "search" and "sketch".)
   - emphasis-inflation density: `grep -ronE 'the (single )?most important|the heart of|the whole point|the real (magic|secret|power)|matters more than anything' chapters/ch*.md | cut -d: -f1 | sort | uniq -c | sort -rn` — a chapter with many hits is overselling; send it back to flatten the register.
   - tradeoff drone: `grep -roniE 'trade[- ]?off|the cost of|every (choice|decision)|comes at a (cost|price)|nothing is free' chapters/ch*.md | cut -d: -f1 | sort | uniq -c | sort -rn` — more than two or three in one chapter usually means the tradeoff throughline has become a tic; thin it to the moments that are real.
+  - honesty-announcement density: the governed `prose_qc.py` family catches
+    `honestly`, `the honest answer`, `to be honest`, `in all honesty`, and close
+    variants such as `let's be honest`, `truth be told`, `frankly`, and
+    `candidly`. Replace announcements with the exact evidence, uncertainty, or
+    boundary.
 - **Repetition and depth review:** run
   `python3 scripts/prose_qc.py --chapters-dir chapters --out research/prose-qc.md`.
   Inspect its repeated-phrase, similar-paragraph, and opening/closing candidates
