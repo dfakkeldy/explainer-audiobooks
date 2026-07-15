@@ -168,8 +168,11 @@ feature more honestly than Project Desk can.
 
 The complete series uses four recurring ideas:
 
-1. **The model proposes; the surrounding system owns.** The application owns
-   state, execution, permissions, validation, retries, monitoring, and policy.
+1. **The model proposes; the surrounding system remains accountable.** In a
+   custom Messages loop, the application directly owns state and execution. In
+   Managed Agents, Anthropic can operate delegated session state and execution,
+   while the surrounding system still owns policy, credential boundaries,
+   validation, monitoring, retention decisions, and acceptance of outcomes.
 2. **Context is a budgeted working set.** More information is not automatically
    better; selection, caching, compaction, and retrieval are design decisions.
 3. **Quality must become evidence.** A persuasive demonstration becomes a
