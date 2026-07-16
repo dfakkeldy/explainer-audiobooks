@@ -60,7 +60,8 @@ than retyping it from memory.
   listener-named risks such as `hyperparameter` and `hyperparameters`, plus
   risks found in the coverage ledger and manuscript. Use the governed partial
   probe and `build_pronunciation_probe_reel.py`; full narration requires
-  accepted, hash-bound human listening evidence.
+  accepted, hash-bound human listening evidence or an explicit listener waiver
+  that preserves the governed reel and states that listening was not collected.
 - Reuse the existing explainer tooling from this repo:
   - `../../skill/references/road-book-mode.md` for the default driving/delivery
     listening context, narrative teaching infrastructure, cognitive-load
@@ -213,6 +214,14 @@ than retyping it from memory.
    comprehension authority: it preserves that authority as pending. Follow
    `../../skill/references/unattended-production.md` before drafting the rest.
 
+   If the intended listener explicitly says to stop asking and continue, the
+   governed-final lane may record `status: "waived-by-listener"` instead
+   of pretending that the pilot was heard or accepted. Bind the waiver to the
+   exact pilot audio, including `waivedBy`, `waivedAt`, `reason`, and a
+   `validationBoundary` that says comprehension was not collected. This permits
+   continued production but yields `pass-with-listener-waiver`; it never
+   certifies comprehension, and later negative listening evidence overrides it.
+
 7. **Plan any interior pictures.** If the user wants pictures, or a handoff
    packet includes a figure plan, gather only usable images: user-supplied,
    generated, self-created, public-domain, permissively licensed, or explicitly
@@ -232,6 +241,12 @@ than retyping it from memory.
    each section with terms already defined, examples/analogies used, deliberate
    callbacks, unresolved promises, retrievals, listener load, and no-repeat
    constraints.
+   A frontier call may draft a small, explicitly authorized batch of sections
+   from one chapter when the section jobs are already complete. Record a
+   `-batch` draft-context ID, the exact `batchSections`, a one-to-one
+   `sectionJobs` list, and an in-run `fastTrackAuthorizationPath`. Never batch
+   across chapters, duplicate a separately drafted section, or use batching to
+   skip continuity updates and section-level provenance.
    Also provide the listener's **AI-writing patterns to avoid** and the complete
    `declaudification.md` drafting rule. State facts directly instead of managing
    the listener's reaction with `hold`, `sit with`, `notice`, or synonym-cycled
@@ -358,9 +373,11 @@ than retyping it from memory.
    `research/pronunciation-plan.json` if it does not already exist: record each
    risky term and every spoken variant, its source (`listener`,
    `coverage-ledger`, or `author`), why it matters, and the chapters where all
-   forms occur. A planned record permits only a bounded partial render; promote
-   required terms to `accepted` only after human listening to the governed
-   reel.
+   forms occur. A planned record permits only a bounded partial render. Promote
+   required terms to `accepted` only after human listening to the governed reel,
+   or record an explicit `waived-by-listener` decision with `waivedBy`,
+   `waivedAt`, `reason`, and a `validationBoundary` saying listening was not
+   collected. A waiver permits rendering but is never pronunciation acceptance.
 
    Narrate through the governed Echo narration wrapper from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`

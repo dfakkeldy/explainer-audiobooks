@@ -59,8 +59,11 @@ claims traceable to these notes. Unresolved conflicts remain visible rather than
 being silently averaged away.
 
 The JSON record carries `notesPath`, `notesSHA256`, `claims`, and
-`unresolvedConflicts`. Source gathering does not decide the curriculum and must
-not produce prose for the author to polish.
+`unresolvedConflicts`. A conflict may be a concise non-empty string. Prefer a
+structured record when traceability matters: give it a unique `id`, the
+`question`, one or more known `claimIds`, the competing readings in `conflict`,
+and a `status` that preserves the safe wording boundary. Source gathering does
+not decide the curriculum and must not produce prose for the author to polish.
 
 ### `learning-brief.json`
 
@@ -197,11 +200,20 @@ varied real-world grounding.
 
 ### `continuity.json`
 
-Draft section by section, never as one whole-book generation. Before each section
-call, write one `draftContexts` entry. It must supply the full outline path,
+Draft section by section by default, never as one whole-book generation. Before
+each call, write one `draftContexts` entry. It must supply the full outline path,
 grounded evidence-notes path, style-guide path, the previous section's actual
-text or a faithful running summary, this section's job, and its `mustNotRepeat`
+text or a faithful running summary, the current job, and its `mustNotRepeat`
 list. The draft call consumes those artifacts; it does not recreate them.
+
+If the listener explicitly authorizes a faster workflow, the same frontier
+author may cover the remaining sections of one chapter in a single call. Record
+a `section` ID ending in `-batch`, every covered outline ID in `batchSections`,
+a one-for-one `sectionJobs` list, and an in-run
+`fastTrackAuthorizationPath`. A batch may not cross chapters, duplicate a
+section already covered by the calibrated first-section call, or expand into a
+whole-book generation. The authorization changes call granularity; it does not
+waive any section job, evidence boundary, or continuity input.
 
 After every chapter, append `afterChapter`, `termsDefined`, `examplesUsed`,
 `callbacks`, `promises`, `unresolvedQuestions`, `retrievalsCompleted`, and
@@ -228,8 +240,16 @@ The `humanCheckpoints` object freezes three earlier decisions:
   the accepted `voice-exemplar.md`. This project-authored section, not copied
   source prose, becomes the concrete voice exemplar for later calls.
 
-In governed-final, `status` is `accepted`, the object uses `humanCheckpoints`,
-and the decision carries `authority: listener`. In unattended-first-listen,
+In governed-final, the normal `status` is `accepted`, the object uses
+`humanCheckpoints`, and the decision carries `authority: listener`. If the
+listener explicitly declines even the lightweight pilot listening checkpoint
+and directs production to continue, `status` may instead be
+`waived-by-listener`. Record `comprehensionEvidence.status` as
+`not-collected-listener-waived`, with `waivedBy`, `waivedAt`, and `reason`, plus
+a plain-language `validationBoundary`. The waiver authorizes production; it is
+not evidence of comprehension or learning transfer.
+
+In unattended-first-listen,
 `status` is `first-listen`, the object uses `editorialCheckpoints`, outline and
 first-section statuses are `editorially-approved` and
 `editorially-accepted`, and the decision carries `authority: editorial-review`.
@@ -279,9 +299,12 @@ Each blind assessment records `plausibleMentalModel`, `confusions`,
    unattended-first-listen.
 5. Complete chapter plans and coverage paths before the affected pilot prose.
 6. Draft the first section, curate it into the voice exemplar, render the
-   narrated pilot, and obtain the lane's human or editorial evidence.
-7. Only after both first-section and pilot checkpoints, draft section by section
+   narrated pilot, and obtain the lane's human or editorial evidence or an
+   explicit governed-final listener waiver.
+7. Only after the first-section and pilot checkpoints, draft section by section
    with a complete `draftContexts` input and update continuity after each call.
+   An explicitly authorized fast-track may use one chapter-sized batch at a time
+   under the bounded contract above.
 8. Run structure and blind sequential beginner review; the frontier author
    resolves accepted findings.
 9. Run each required single-job revision and complete `revision-passes.json`.
@@ -304,11 +327,16 @@ For a readable, non-narrated study appendix, keep it outside `chapters/` and use
 ## Packaging rule and proof boundary
 
 Every new or revised learning book passes both `--learning-receipt` and
-`--prose-receipt`. `--legacy-without-learning-receipt` is old-artifact
+`--prose-receipt`. A `pass-with-listener-waiver` learning receipt is valid only
+because it records that comprehension evidence was not collected; it does not
+convert the waiver into learning evidence. `--legacy-without-learning-receipt` is old-artifact
 reproduction only.
 
 The governed-final schema-v2 receipt records `status: pass` and
-`learningAuthority.holder: human-listener`. The unattended receipt records
+`learningAuthority.holder: human-listener`. A governed listener waiver records
+`status: pass-with-listener-waiver`,
+`humanComprehensionPilot: waived-by-listener`, and
+`comprehensionEvidenceStatus: not-collected-listener-waived`. The unattended receipt records
 `status: first-listen`, `humanComprehensionPilot: pending`, and
 `learningAuthority.holder: human-listener-pending`. Both record
 `negativeVerdictOverridesReceipt: true` and

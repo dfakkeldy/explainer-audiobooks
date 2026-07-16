@@ -14,7 +14,7 @@ from typing import Any
 SCHEMA_VERSION = 1
 PHASES = {"planning", "full-render"}
 SOURCES = {"listener", "coverage-ledger", "author"}
-STATUSES = {"planned", "probed", "accepted"}
+STATUSES = {"planned", "probed", "accepted", "waived-by-listener"}
 ASSURANCE_LEVELS = {"governed-final", "unattended-first-listen"}
 
 
@@ -111,6 +111,7 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
         }
     seen: set[str] = set()
     required_terms: list[str] = []
+    waived_terms: list[str] = []
     evidence_paths: set[Path] = set()
     evidence_reel_paths: set[Path] = set()
 
@@ -156,7 +157,10 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
             raise ValueError(f"{label}.required must be a boolean")
         status = entry.get("status")
         if status not in STATUSES:
-            raise ValueError(f"{label}.status must be planned, probed, or accepted")
+            raise ValueError(
+                f"{label}.status must be planned, probed, accepted, "
+                "or waived-by-listener"
+            )
         if entry["required"]:
             required_terms.append(term)
 
@@ -164,20 +168,24 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
             decision = entry.get("decision")
             evidence = entry.get("evidence")
             if assurance_level == "governed-final":
-                if (
-                    status != "accepted"
-                    or not isinstance(decision, dict)
-                    or not isinstance(evidence, dict)
-                ):
+                if status not in {"accepted", "waived-by-listener"} \
+                    or not isinstance(decision, dict) \
+                    or not isinstance(evidence, dict):
                     raise ValueError(
-                        f"{label} requires accepted human evidence before full render"
+                        f"{label} requires accepted human evidence or an explicit "
+                        "listener waiver before full render"
                     )
-                require_string(
-                    decision.get("acceptedBy"), f"{label}.decision.acceptedBy"
-                )
-                require_string(
-                    decision.get("acceptedAt"), f"{label}.decision.acceptedAt"
-                )
+                if status == "accepted":
+                    require_string(
+                        decision.get("acceptedBy"), f"{label}.decision.acceptedBy"
+                    )
+                    require_string(
+                        decision.get("acceptedAt"), f"{label}.decision.acceptedAt"
+                    )
+                else:
+                    for field in ("waivedBy", "waivedAt", "reason", "validationBoundary"):
+                        require_string(decision.get(field), f"{label}.decision.{field}")
+                    waived_terms.append(term)
             else:
                 if status != "probed" or decision is not None or not isinstance(evidence, dict):
                     raise ValueError(
@@ -234,13 +242,23 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
         "phase": phase,
         "assuranceLevel": assurance_level,
         "humanListening": (
-            "pending" if assurance_level == "unattended-first-listen" else "accepted"
+            "pending"
+            if assurance_level == "unattended-first-listen"
+            else "not-collected-listener-waived" if waived_terms else "accepted"
         ),
         "planSHA256": sha256_file(plan_path),
         "chapterSHA256": hashes,
         "plannedChapters": sorted(chapter_names),
         "requiredTerms": required_terms,
     }
+    if waived_terms:
+        result["waivedTerms"] = waived_terms
+        result["listeningAuthority"] = {
+            "holder": "human-listener",
+            "evidenceStatus": "not-collected-listener-waived",
+            "waiverDoesNotCertifyPronunciation": True,
+            "negativeVerdictOverridesReceipt": True,
+        }
     if evidence_paths:
         evidence_path = next(iter(evidence_paths))
         result["evidencePath"] = str(evidence_path.relative_to(run_root))
@@ -258,7 +276,7 @@ def write_receipt(run_root: Path, out: Path) -> dict[str, object]:
         "status": (
             "first-listen"
             if result["assuranceLevel"] == "unattended-first-listen"
-            else "pass"
+            else "pass-with-listener-waiver" if result.get("waivedTerms") else "pass"
         ),
     }
     out.parent.mkdir(parents=True, exist_ok=True)

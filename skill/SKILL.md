@@ -322,12 +322,25 @@ listener records `verdict: continue`. The first-section checkpoint and listening
 pilot are both required. Outline approval, text review, or agent confidence
 cannot substitute for this gate.
 
+If the listener explicitly declines even this lightweight listening checkpoint
+and directs production to continue, use the narrow `waived-by-listener` status
+defined in `references/learning-design.md`. Keep the real rendered pilot and
+accepted first-section checkpoint, record that comprehension evidence was not
+collected, and never describe the waiver as learning evidence or acceptance.
+
 ### 6. Draft section by section with a frontier lead author
 
 Pre-create a build directory with a `chapters/` subfolder. One frontier model
 owns every section's narration and all substantive revisions. Write in order to
 `chNN.md`; do **not** fan out prose drafting to cheaper models or independent
 chapter writers and never generate the whole book in one call.
+
+If the listener explicitly authorizes a faster workflow, the same frontier
+author may draft the remaining sections of one chapter in a single bounded
+batch. Record `batchSections`, a one-for-one `sectionJobs` list, and the in-run
+`fastTrackAuthorizationPath` defined in `references/learning-design.md`. The
+batch may not cross chapters or duplicate the separately calibrated first
+section.
 
 Before every section call, write its entry in
 `research/continuity.json.draftContexts`. Give the frontier author the full
@@ -430,8 +443,10 @@ python3 skill/scripts/learning_design_qc.py \
 ```
 
 The learning and prose receipts must bind the same canonical chapter hashes.
-The learning receipt proves the schema-v2 process and accepted pilot; it does
-not certify learning transfer. Any later negative human listening verdict
+The learning receipt proves the schema-v2 process and records an accepted pilot
+or an explicit listener waiver. A waiver receipt states that comprehension
+evidence was not collected; neither receipt certifies learning transfer. Any
+later negative human listening verdict
 overrides both receipts and stops production.
 
 ### 8. Make a cover, then assemble the EPUB + Markdown
@@ -508,8 +523,12 @@ governed EPUB exists. Follow the complete wrapper and receipt procedure in
 `skills/custom-learning-audiobook/references/package-and-qc.md`. Create
 `research/pronunciation-plan.json`, including listener-named risks and every
 spoken variant. Render bounded partial chapters first, use
-`build_pronunciation_probe_reel.py`, and require accepted, hash-bound human
-listening evidence before an unbounded render. Export the canonical plan path:
+`build_pronunciation_probe_reel.py`, and normally require accepted, hash-bound
+human listening evidence before an unbounded render. If the listener explicitly
+declines that check and directs production to continue, preserve the governed
+reel and use the narrow `waived-by-listener` decision contract in the packaging
+reference. A waiver never becomes pronunciation acceptance. Export the canonical
+plan path:
 
 ```bash
 EXPLAINER_ROOT=$(git rev-parse --show-toplevel)

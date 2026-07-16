@@ -190,11 +190,33 @@ def validate_evidence(evidence: dict[str, Any], run_root: Path) -> set[str]:
             require_string(claim.get(field), f"{prefix}.{field}")
         if claim.get("verificationStatus") != "verified":
             raise ValueError(f"{prefix}.verificationStatus must be verified")
-    require_string_list(
+    conflicts = require_list(
         evidence.get("unresolvedConflicts"),
         "evidence.unresolvedConflicts",
         allow_empty=True,
     )
+    conflict_ids: set[str] = set()
+    for index, conflict in enumerate(conflicts):
+        prefix = f"evidence.unresolvedConflicts[{index}]"
+        if isinstance(conflict, str):
+            require_string(conflict, prefix)
+            continue
+        if not isinstance(conflict, dict):
+            raise ValueError(f"{prefix} must be a non-empty string or an object")
+        conflict_id = require_string(conflict.get("id"), f"{prefix}.id")
+        if conflict_id in conflict_ids:
+            raise ValueError(f"duplicate evidence.unresolvedConflicts entry for {conflict_id}")
+        conflict_ids.add(conflict_id)
+        for field in ("question", "conflict", "status"):
+            require_string(conflict.get(field), f"{prefix}.{field}")
+        related_claims = require_string_list(
+            conflict.get("claimIds"), f"{prefix}.claimIds"
+        )
+        unknown_claims = sorted(set(related_claims) - set(claims))
+        if unknown_claims:
+            raise ValueError(
+                f"{prefix}.claimIds names unknown claim {unknown_claims[0]}"
+            )
     return set(claims)
 
 
@@ -650,27 +672,83 @@ def validate_coverage(
 
 
 def validate_continuity(
-    continuity: dict[str, Any], chapter_names: set[str], section_ids: set[str]
+    continuity: dict[str, Any],
+    chapter_names: set[str],
+    section_ids: set[str],
+    run_root: Path,
 ) -> None:
     draft_contexts = unique_records(
         continuity.get("draftContexts"), "section", "continuity.draftContexts"
     )
-    if set(draft_contexts) != section_ids:
-        raise ValueError(
-            "continuity.draftContexts must cover every argument-outline section exactly"
-        )
-    for section_id, context in draft_contexts.items():
-        prefix = f"continuity.draftContexts[{section_id}]"
+    covered_sections: set[str] = set()
+    for context_id, context in draft_contexts.items():
+        prefix = f"continuity.draftContexts[{context_id}]"
         for field in (
             "fullOutlinePath",
             "evidenceNotesPath",
             "styleGuidePath",
             "previousSectionTextOrSummary",
-            "sectionJob",
         ):
             require_string(context.get(field), f"{prefix}.{field}")
         require_string_list(
             context.get("mustNotRepeat"), f"{prefix}.mustNotRepeat", allow_empty=True
+        )
+        batch_sections = context.get("batchSections")
+        if batch_sections is None:
+            if context_id not in section_ids:
+                raise ValueError(f"{prefix}.section names an unknown outline section")
+            if context_id in covered_sections:
+                raise ValueError(
+                    f"{prefix}.section covers outline section {context_id} more than once"
+                )
+            require_string(context.get("sectionJob"), f"{prefix}.sectionJob")
+            covered_sections.add(context_id)
+            continue
+
+        if not context_id.endswith("-batch"):
+            raise ValueError(f"{prefix}.section must end in -batch")
+        batch = require_string_list(batch_sections, f"{prefix}.batchSections")
+        unknown_sections = sorted(set(batch) - section_ids)
+        if unknown_sections:
+            raise ValueError(
+                f"{prefix}.batchSections names unknown outline section {unknown_sections[0]}"
+            )
+        if len(set(batch)) != len(batch):
+            raise ValueError(f"{prefix}.batchSections covers a section more than once")
+        already_covered = sorted(set(batch) & covered_sections)
+        if already_covered:
+            raise ValueError(
+                f"{prefix}.batchSections covers outline section "
+                f"{already_covered[0]} more than once"
+            )
+        chapter_prefix = context_id.removesuffix("-batch") + "-s"
+        if any(not section.startswith(chapter_prefix) for section in batch):
+            raise ValueError(f"{prefix}.batchSections must stay within one chapter")
+        jobs = require_string_list(context.get("sectionJobs"), f"{prefix}.sectionJobs")
+        if len(jobs) != len(batch):
+            raise ValueError(f"{prefix}.sectionJobs must match batchSections one for one")
+        authorization_value = require_string(
+            context.get("fastTrackAuthorizationPath"),
+            f"{prefix}.fastTrackAuthorizationPath",
+        )
+        authorization_relative = Path(authorization_value)
+        if authorization_relative.is_absolute():
+            raise ValueError(f"{prefix}.fastTrackAuthorizationPath must be relative")
+        root = run_root.resolve()
+        authorization = (root / authorization_relative).resolve()
+        try:
+            authorization.relative_to(root)
+        except ValueError as error:
+            raise ValueError(
+                f"{prefix}.fastTrackAuthorizationPath must stay inside the run root"
+            ) from error
+        if not authorization.is_file():
+            raise ValueError(f"{prefix}.fastTrackAuthorizationPath does not exist")
+        covered_sections.update(batch)
+
+    if covered_sections != section_ids:
+        raise ValueError(
+            "continuity.draftContexts must cover every argument-outline section"
         )
 
     checkpoints = unique_records(
@@ -794,11 +872,16 @@ def validate_revision_passes(revisions: dict[str, Any], hashes: dict[str, str]) 
 
 def validate_pilot(
     pilot: dict[str, Any], run_root: Path, production_mode: str
-) -> None:
+) -> str:
     unattended = production_mode == "unattended-first-listen"
-    expected_status = "first-listen" if unattended else "accepted"
-    if pilot.get("status") != expected_status:
-        raise ValueError(f"pilot.status must be {expected_status} before full drafting")
+    status = pilot.get("status")
+    if unattended:
+        if status != "first-listen":
+            raise ValueError("pilot.status must be first-listen before full drafting")
+    elif status not in {"accepted", "waived-by-listener"}:
+        raise ValueError(
+            "pilot.status must be accepted or waived-by-listener before full drafting"
+        )
     require_string(pilot.get("listener"), "pilot.listener")
     require_string(pilot.get("listeningContext"), "pilot.listeningContext")
     minutes = require_positive_int(
@@ -815,6 +898,20 @@ def validate_pilot(
     listener_notes = pilot.get("listenerNotes")
     if listener_notes is not None and not isinstance(listener_notes, str):
         raise ValueError("pilot.listenerNotes must be a string when present")
+    if status == "waived-by-listener":
+        evidence = pilot.get("comprehensionEvidence")
+        if not isinstance(evidence, dict):
+            raise ValueError(
+                "pilot.comprehensionEvidence must be an object for a listener waiver"
+            )
+        if evidence.get("status") != "not-collected-listener-waived":
+            raise ValueError(
+                "pilot.comprehensionEvidence.status must be "
+                "not-collected-listener-waived"
+            )
+        for field in ("waivedBy", "waivedAt", "reason"):
+            require_string(evidence.get(field), f"pilot.comprehensionEvidence.{field}")
+        require_string(pilot.get("validationBoundary"), "pilot.validationBoundary")
     checkpoint_key = "editorialCheckpoints" if unattended else "humanCheckpoints"
     checkpoint_label = f"pilot.{checkpoint_key}"
     checkpoints = pilot.get(checkpoint_key)
@@ -891,6 +988,7 @@ def validate_pilot(
     require_string(decision.get("evidence"), "pilot.decision.evidence")
     if decision.get("recordedBeforeFullDraft") is not True:
         raise ValueError("pilot.decision.recordedBeforeFullDraft must be true")
+    return status
 
 
 def validate_run(run_root: Path) -> dict[str, Any]:
@@ -915,18 +1013,23 @@ def validate_run(run_root: Path) -> dict[str, Any]:
     )
     validate_chapter_plans(records["plans"], names, brief["listeningMode"])
     validate_coverage(records["coverage"], names, durable_outcomes)
-    validate_continuity(records["continuity"], names, section_ids)
-    validate_pilot(records["pilot"], run_root, brief["productionMode"])
+    validate_continuity(records["continuity"], names, section_ids, run_root)
+    pilot_status = validate_pilot(records["pilot"], run_root, brief["productionMode"])
     validate_revision_passes(records["revisions"], hashes)
     validate_review(records["review"], hashes)
 
     unattended = brief["productionMode"] == "unattended-first-listen"
+    listener_waiver = pilot_status == "waived-by-listener"
     record_paths = dict(paths)
     if brief["decisionsPath"] is not None:
         record_paths["unattendedDecisions"] = brief["decisionsPath"]
     return {
         "schemaVersion": SCHEMA_VERSION,
-        "status": "first-listen" if unattended else "pass",
+        "status": (
+            "first-listen"
+            if unattended
+            else "pass-with-listener-waiver" if listener_waiver else "pass"
+        ),
         "productionMode": brief["productionMode"],
         "chapterSHA256": hashes,
         "recordSHA256": {
@@ -953,12 +1056,24 @@ def validate_run(run_root: Path) -> dict[str, Any]:
             "earPass": "pass",
             "structuralReview": "pass",
             "blindSequentialBeginnerReview": "pass",
-            "humanComprehensionPilot": "pending" if unattended else "pass",
+            "humanComprehensionPilot": (
+                "pending"
+                if unattended
+                else "waived-by-listener" if listener_waiver else "pass"
+            ),
         },
         "learningAuthority": {
             "holder": "human-listener-pending" if unattended else "human-listener",
             "negativeVerdictOverridesReceipt": True,
             "receiptDoesNotCertifyTransfer": True,
+            **(
+                {
+                    "comprehensionEvidenceStatus": "not-collected-listener-waived",
+                    "listenerWaiverDoesNotCertifyComprehension": True,
+                }
+                if listener_waiver
+                else {}
+            ),
         },
     }
 
@@ -975,8 +1090,11 @@ def verify_learning_receipt(chapters_dir: Path, receipt_path: Path) -> dict[str,
     receipt_path = Path(receipt_path)
     receipt = load_record(receipt_path, "learning-design receipt")
     status = receipt.get("status")
-    if status not in {"pass", "first-listen"}:
-        raise ValueError("learning-design receipt status must be pass or first-listen")
+    if status not in {"pass", "pass-with-listener-waiver", "first-listen"}:
+        raise ValueError(
+            "learning-design receipt status must be pass, "
+            "pass-with-listener-waiver, or first-listen"
+        )
     expected = chapter_hashes(Path(chapters_dir))
     if receipt.get("chapterSHA256") != expected:
         raise ValueError("learning-design receipt chapter hash mismatch")
@@ -989,6 +1107,16 @@ def verify_learning_receipt(chapters_dir: Path, receipt_path: Path) -> dict[str,
             value != "pass" for value in gates.values()
         ):
             raise ValueError("governed-final learning receipt contains a non-passing gate")
+        expected_holder = "human-listener"
+    elif status == "pass-with-listener-waiver":
+        if production_mode != "governed-final":
+            raise ValueError("listener-waiver receipt requires governed-final mode")
+        for name, value in gates.items():
+            expected = "waived-by-listener" if name == "humanComprehensionPilot" else "pass"
+            if value != expected:
+                raise ValueError(f"listener-waiver {name} gate must be {expected}")
+        if "humanComprehensionPilot" not in gates:
+            raise ValueError("listener-waiver receipt is missing humanComprehensionPilot")
         expected_holder = "human-listener"
     else:
         if production_mode != "unattended-first-listen":
@@ -1011,6 +1139,18 @@ def verify_learning_receipt(chapters_dir: Path, receipt_path: Path) -> dict[str,
         raise ValueError("learning-design receipt must preserve negative listener authority")
     if authority.get("receiptDoesNotCertifyTransfer") is not True:
         raise ValueError("learning-design receipt must not claim to certify learning transfer")
+    if status == "pass-with-listener-waiver":
+        if (
+            authority.get("comprehensionEvidenceStatus")
+            != "not-collected-listener-waived"
+        ):
+            raise ValueError(
+                "listener-waiver receipt must record uncollected comprehension evidence"
+            )
+        if authority.get("listenerWaiverDoesNotCertifyComprehension") is not True:
+            raise ValueError(
+                "listener-waiver receipt must not claim to certify comprehension"
+            )
     return receipt
 
 

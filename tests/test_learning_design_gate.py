@@ -612,6 +612,59 @@ class LearningDesignGateTests(LearningDesignFixture):
         self.assertTrue(receipt["learningAuthority"]["receiptDoesNotCertifyTransfer"])
         self.assertEqual(receipt, module.verify_learning_receipt(self.chapters, receipt_path))
 
+    def test_listener_can_waive_pilot_listening_without_creating_evidence(self) -> None:
+        pilot = self.read_json("comprehension-pilot.json")
+        pilot["status"] = "waived-by-listener"
+        pilot.pop("centralIdeaInOwnWords", None)
+        pilot.pop("freshExampleResponse", None)
+        pilot["comprehensionEvidence"] = {
+            "status": "not-collected-listener-waived",
+            "waivedBy": "Dan Fakkeldy",
+            "waivedAt": "2026-07-16T09:30:00-03:00",
+            "reason": "The listener asked production to continue without another gate.",
+        }
+        pilot["validationBoundary"] = (
+            "Production may continue, but this record does not claim that pilot "
+            "comprehension or learning transfer was demonstrated."
+        )
+        pilot["decision"]["evidence"] = (
+            "Dan explicitly declined another structured checkpoint and said continue."
+        )
+        self.write_json("comprehension-pilot.json", pilot)
+        receipt_path = self.research / "learning-design-receipt.json"
+
+        receipt = self.module().write_receipt(self.root, receipt_path)
+
+        self.assertEqual("pass-with-listener-waiver", receipt["status"])
+        self.assertEqual(
+            "waived-by-listener", receipt["gates"]["humanComprehensionPilot"]
+        )
+        self.assertEqual(
+            "not-collected-listener-waived",
+            receipt["learningAuthority"]["comprehensionEvidenceStatus"],
+        )
+        self.assertTrue(
+            receipt["learningAuthority"]["listenerWaiverDoesNotCertifyComprehension"]
+        )
+        self.assertEqual(
+            receipt,
+            self.module().verify_learning_receipt(self.chapters, receipt_path),
+        )
+
+    def test_listener_pilot_waiver_requires_an_explicit_validation_boundary(self) -> None:
+        pilot = self.read_json("comprehension-pilot.json")
+        pilot["status"] = "waived-by-listener"
+        pilot["comprehensionEvidence"] = {
+            "status": "not-collected-listener-waived",
+            "waivedBy": "Dan Fakkeldy",
+            "waivedAt": "2026-07-16T09:30:00-03:00",
+            "reason": "The listener asked production to continue.",
+        }
+        self.write_json("comprehension-pilot.json", pilot)
+
+        with self.assertRaisesRegex(ValueError, "validationBoundary"):
+            self.module().validate_run(self.root)
+
     def test_unattended_first_listen_preserves_pending_human_authority(self) -> None:
         self.enable_unattended_first_listen()
         module = self.module()
@@ -693,6 +746,42 @@ class LearningDesignGateTests(LearningDesignFixture):
         evidence["claims"][0]["verificationStatus"] = "unverified"
         self.write_json("evidence-notes.json", evidence)
         with self.assertRaisesRegex(ValueError, "verificationStatus"):
+            self.module().validate_run(self.root)
+
+    def test_structured_unresolved_conflict_preserves_claim_traceability(self) -> None:
+        evidence = self.read_json("evidence-notes.json")
+        evidence["unresolvedConflicts"] = [
+            {
+                "id": "CF-01",
+                "question": "Does access evidence establish experience?",
+                "claimIds": ["EV-001"],
+                "conflict": (
+                    "The evidence supports access while competing theories "
+                    "disagree about phenomenality."
+                ),
+                "status": "Unresolved; preserve the distinction in prose.",
+            }
+        ]
+        self.write_json("evidence-notes.json", evidence)
+
+        receipt = self.module().validate_run(self.root)
+
+        self.assertEqual("pass", receipt["status"])
+
+    def test_structured_unresolved_conflict_rejects_unknown_claim(self) -> None:
+        evidence = self.read_json("evidence-notes.json")
+        evidence["unresolvedConflicts"] = [
+            {
+                "id": "CF-01",
+                "question": "Does access evidence establish experience?",
+                "claimIds": ["EV-999"],
+                "conflict": "The competing readings depend on an unverified claim.",
+                "status": "Unresolved.",
+            }
+        ]
+        self.write_json("evidence-notes.json", evidence)
+
+        with self.assertRaisesRegex(ValueError, "unknown claim"):
             self.module().validate_run(self.root)
 
     def test_argument_outline_requires_section_jobs_claims_payoffs_and_no_repeat(self) -> None:
@@ -948,6 +1037,93 @@ class LearningDesignGateTests(LearningDesignFixture):
         continuity["draftContexts"] = continuity["draftContexts"][:1]
         self.write_json("continuity.json", continuity)
         with self.assertRaisesRegex(ValueError, "draftContexts"):
+            self.module().validate_run(self.root)
+
+    def test_listener_authorized_chapter_batch_can_cover_outline_sections(self) -> None:
+        authorization = self.research / "fast-track-authorization.md"
+        authorization.write_text(
+            "# Fast-track authorization\n\n"
+            "The listener explicitly authorized chapter-sized drafting batches.\n",
+            encoding="utf-8",
+        )
+        continuity = self.read_json("continuity.json")
+        continuity["draftContexts"] = [
+            {
+                "section": "ch01-batch",
+                "batchSections": ["ch01-s01"],
+                "fullOutlinePath": "research/learning-outline.json",
+                "evidenceNotesPath": "research/evidence-notes.md",
+                "styleGuidePath": "research/voice-source-profile.md",
+                "previousSectionTextOrSummary": (
+                    "Opening section; there is no previous section."
+                ),
+                "sectionJobs": [
+                    "Make the recognition problem concrete before naming the mechanism."
+                ],
+                "mustNotRepeat": [],
+                "fastTrackAuthorizationPath": "research/fast-track-authorization.md",
+            },
+            {
+                "section": "ch02-batch",
+                "batchSections": ["ch02-s01"],
+                "fullOutlinePath": "research/learning-outline.json",
+                "evidenceNotesPath": "research/evidence-notes.md",
+                "styleGuidePath": "research/voice-source-profile.md",
+                "previousSectionTextOrSummary": (
+                    "Parameters are adjustable settings learned from varied handwriting."
+                ),
+                "sectionJobs": [
+                    "Contrast changing the sorter with using the finished sorter."
+                ],
+                "mustNotRepeat": ["Do not redefine parameters from scratch."],
+                "fastTrackAuthorizationPath": "research/fast-track-authorization.md",
+            },
+        ]
+        self.write_json("continuity.json", continuity)
+
+        receipt = self.module().validate_run(self.root)
+
+        self.assertEqual("pass", receipt["status"])
+
+    def test_chapter_batch_requires_an_in_run_authorization_artifact(self) -> None:
+        continuity = self.read_json("continuity.json")
+        first = continuity["draftContexts"][0]
+        first["section"] = "ch01-batch"
+        first["batchSections"] = ["ch01-s01"]
+        first["sectionJobs"] = [first.pop("sectionJob")]
+        first["fastTrackAuthorizationPath"] = "research/missing-authorization.md"
+        self.write_json("continuity.json", continuity)
+
+        with self.assertRaisesRegex(ValueError, "fastTrackAuthorizationPath"):
+            self.module().validate_run(self.root)
+
+    def test_chapter_batch_cannot_cross_chapter_boundaries(self) -> None:
+        authorization = self.research / "fast-track-authorization.md"
+        authorization.write_text(
+            "# Fast-track authorization\n\n"
+            "The listener authorized one chapter-sized batch at a time.\n",
+            encoding="utf-8",
+        )
+        continuity = self.read_json("continuity.json")
+        continuity["draftContexts"] = [
+            {
+                "section": "ch01-batch",
+                "batchSections": ["ch01-s01", "ch02-s01"],
+                "fullOutlinePath": "research/learning-outline.json",
+                "evidenceNotesPath": "research/evidence-notes.md",
+                "styleGuidePath": "research/voice-source-profile.md",
+                "previousSectionTextOrSummary": "Opening batch.",
+                "sectionJobs": [
+                    "Introduce the recognition problem.",
+                    "Separate training from inference.",
+                ],
+                "mustNotRepeat": [],
+                "fastTrackAuthorizationPath": "research/fast-track-authorization.md",
+            }
+        ]
+        self.write_json("continuity.json", continuity)
+
+        with self.assertRaisesRegex(ValueError, "within one chapter"):
             self.module().validate_run(self.root)
 
     def test_core_concept_requires_a_complete_explanation_path(self) -> None:
