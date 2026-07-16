@@ -164,12 +164,22 @@ def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> 
     clips: list[dict[str, Any]] = []
     reel_cursor = 0.0
     for term, form in forms:
-        wanted = normalized_word(form)
-        match: tuple[dict[str, Any], dict[str, Any], str] | None = None
+        wanted = [normalized_word(part) for part in form.split()]
+        match: tuple[dict[str, Any], dict[str, Any], dict[str, Any], str] | None = None
         for capture in captures:
-            for word in capture["words"]:
-                if normalized_word(str(word.get("word", ""))) == wanted:
-                    match = (capture, word, "exactWord")
+            words = capture["words"]
+            for index in range(len(words) - len(wanted) + 1):
+                actual = [
+                    normalized_word(str(word.get("word", "")))
+                    for word in words[index : index + len(wanted)]
+                ]
+                if actual == wanted:
+                    match = (
+                        capture,
+                        words[index],
+                        words[index + len(wanted) - 1],
+                        "exactWord",
+                    )
                     break
             if match is not None:
                 break
@@ -177,19 +187,19 @@ def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> 
             for capture in captures:
                 for decision in capture["pronunciationDecisions"]:
                     decision_word = decision.get("normalizedWord") or decision.get("sourceWord")
-                    if normalized_word(str(decision_word or "")) == wanted:
-                        match = (capture, decision, "pronunciationDecision")
+                    if normalized_word(str(decision_word or "")) == normalized_word(form):
+                        match = (capture, decision, decision, "pronunciationDecision")
                         break
                 if match is not None:
                     break
         if match is None:
             raise ValueError(f"missing timed pronunciation form: {form}")
-        capture, timing, timing_source = match
+        capture, first_timing, last_timing, timing_source = match
         if timing_source == "exactWord":
-            start = require_time(timing.get("start"), f"{form}.start")
-            end = require_time(timing.get("end"), f"{form}.end")
+            start = require_time(first_timing.get("start"), f"{form}.start")
+            end = require_time(last_timing.get("end"), f"{form}.end")
         else:
-            audio_range = timing.get("chapterRelativeAudioRange")
+            audio_range = first_timing.get("chapterRelativeAudioRange")
             if not isinstance(audio_range, dict):
                 raise ValueError(f"invalid pronunciation decision timing for {form}")
             start = require_time(audio_range.get("start"), f"{form}.start")
@@ -215,8 +225,8 @@ def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> 
             }
         )
         if timing_source == "pronunciationDecision":
-            clips[-1]["timingPrecision"] = timing.get("timingPrecision")
-            clips[-1]["ruleID"] = timing.get("ruleID")
+            clips[-1]["timingPrecision"] = first_timing.get("timingPrecision")
+            clips[-1]["ruleID"] = first_timing.get("ruleID")
         reel_cursor += clip_duration
     return clips
 
