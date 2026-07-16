@@ -115,12 +115,13 @@ and fiction-specific revision.
    risks for `research/pronunciation-plan.json`; include every spoken variant
    that needs to be heard before full narration.
    Add a narrated-pilot plan for `research/comprehension-pilot.json`: 10 to 15
-   minutes containing the opening and first technical passage, followed by the
-   intended listener's own-words explanation, fresh-example distinction, lost
-   points, exact audio hash, and human comprehension decision. The packet can
+   minutes containing the opening and first technical passage, followed by one
+   lightweight `continue` or `revise` decision against the exact audio hash and
+   optional listener notes. Do not require comprehension questions. The packet can
    authorize pilot production, but never full canonical drafting before the
    listener accepts the first section as `research/voice-exemplar.md` and
-   records `verdict: continue`.
+   records `verdict: continue`. This lightweight verdict preserves human comprehension
+   authority without turning listening into homework.
    Define the later production loop explicitly: draft section by section with
    the full outline, grounded evidence, voice exemplar, previous-section text or
    running summary, section job, and must-not-repeat list. Require

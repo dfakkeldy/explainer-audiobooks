@@ -196,9 +196,9 @@ rediscovered after a full draft.
 
 Before full drafting, render 10 to 15 representative minutes including the first
 technical passage. Record the listener, representative listening context, audio
-path and SHA-256, whether the technical passage is included, the listener's
-central idea in their own words, their response to a fresh example, and every
-point where they became lost.
+path and SHA-256, whether the technical passage is included, and one lightweight
+human verdict: `continue` or `revise`. Record optional listener notes when the
+listener volunteers them; do not require a comprehension questionnaire.
 
 The `humanCheckpoints` object freezes three earlier decisions:
 
@@ -210,8 +210,8 @@ The `humanCheckpoints` object freezes three earlier decisions:
   the accepted `voice-exemplar.md`. This project-authored section, not copied
   source prose, becomes the concrete voice exemplar for later calls.
 
-`status` must be `accepted`. The `decision` must carry `verdict: continue`,
-`authority: listener`, non-empty evidence, and
+`status` must be `accepted`. To authorize full drafting, the `decision` must
+carry `verdict: continue`, `authority: listener`, non-empty evidence, and
 `recordedBeforeFullDraft: true`. Outline approval, text review, or an agent's
 assessment cannot stand in for this record.
 

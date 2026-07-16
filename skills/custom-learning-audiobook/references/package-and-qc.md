@@ -217,6 +217,10 @@ Render this explicitly nonpackage pilot with native Echo/Kokoro, using isolated
 pilot work/database/output paths. It is the only pre-receipt narration path and
 cannot be synced, delivered, or called a governed package. Do not use an Apple
 or system voice. Record the exact accepted audio hash and listener evidence in
+`comprehension-pilot.json`; request only a lightweight `continue` or `revise`
+verdict, with optional listener notes and no comprehension questionnaire. Stop
+before full drafting unless the human decision is `continue` and the
+first-section checkpoint is accepted.
 `comprehension-pilot.json`; stop before full drafting unless the human decision
 is `continue` and the first-section checkpoint is accepted. Invoke the dedicated
 governed pilot entry point after the build:

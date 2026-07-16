@@ -106,9 +106,9 @@ explanation path.
   retrieval.
 - Pilot listening context: driving and delivering mail when safe and
   representative, or the listener's stated equivalent.
-- `research/comprehension-pilot.json`: exact audio path/hash, central idea in the
-  listener's own words, fresh-example response, lost points, evidence, and human
-  `verdict: continue` recorded before full drafting.
+- `research/comprehension-pilot.json`: exact audio path/hash, one lightweight
+  human `continue` or `revise` verdict, optional listener notes, and decision
+  evidence recorded before full drafting; do not require comprehension questions.
 - Human checkpoint: approve the argument-level outline before pilot drafting.
 - First-section checkpoint: accept the project-authored first section as
   `research/voice-exemplar.md` before drafting the remainder.

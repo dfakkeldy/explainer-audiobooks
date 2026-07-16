@@ -255,6 +255,12 @@ research, write one coherent manuscript, and package the result for Echo.
    Use only enough frontier-authored material for 10 to 15 representative minutes, including
    the opening and first technical passage. Build it with
    `build_book.py --learning-pilot` and a mandatory `-pilot` slug, then render it
+   through the governed Echo wrapper. The intended listener hears it in a
+   representative context and records one lightweight `continue` or `revise`
+   verdict against the exact audio hash. Accept optional listener notes, but do
+   not ask comprehension questions or require a written explanation. Record the
+   verdict in `research/comprehension-pilot.json`. Do not start the full
+   manuscript without both the first-section checkpoint and that listener
    through the dedicated governed
    `scripts/echo_learning_pilot_narrate.sh` wrapper. The intended listener
    hears it in a representative context and records the central idea in their own words, a

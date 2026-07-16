@@ -102,9 +102,9 @@ Save notes under `research/`:
   verdicts bound to final chapter hashes.
 - `comprehension-pilot.json` - the intended listener's accepted 10-to-15-minute
   narrated pilot, exact audio hash, representative context (normally driving and
-  delivering mail), own-words explanation, fresh-example response, lost points,
-  pre-full-draft decision, bound voice-source profile, human outline approval,
-  and accepted first-section `voice-exemplar.md`.
+  delivering mail), lightweight `continue` or `revise` decision, optional
+  listener notes, bound voice-source profile, human outline approval, and
+  accepted first-section `voice-exemplar.md`.
 - `revision-passes.json` - final-hash, separate single-job passes for claim
   traceability, tightening, de-listification, sentence rhythm, and a rendered
   ear-pass with stumbles and lost-thread locations.
