@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import difflib
 import hashlib
 import json
 import math
@@ -16,6 +17,9 @@ from typing import Any
 
 SCHEMA_VERSION = 1
 CONTEXT_SECONDS = 1.25
+SOURCE_NEIGHBOR_WORDS = 2
+MAX_INFERRED_GAP_SECONDS = 5.0
+MAX_UNALIGNED_SPAN_SECONDS = 60.0
 
 
 def sha256_file(path: Path) -> str:
@@ -37,6 +41,13 @@ def load_json(path: Path, label: str) -> dict[str, Any]:
 
 def normalized_word(value: str) -> str:
     return re.sub(r"^[^\w]+|[^\w]+$", "", value, flags=re.UNICODE).casefold()
+
+
+def source_words(value: str) -> list[str]:
+    return [
+        normalized_word(word)
+        for word in re.findall(r"\w+(?:[-’'][\w]+)*", value, flags=re.UNICODE)
+    ]
 
 
 def require_string(value: Any, field: str) -> str:
@@ -102,6 +113,139 @@ def planned_forms(plan: dict[str, Any]) -> list[tuple[str, str]]:
     if not result:
         raise ValueError("pronunciation plan contains no required terms")
     return result
+
+
+def expected_chapter_indexes(plan: dict[str, Any]) -> dict[str, set[int]]:
+    result: dict[str, set[int]] = {}
+    for entry in plan.get("terms", []):
+        if not isinstance(entry, dict) or entry.get("required") is not True:
+            continue
+        term = require_string(entry.get("term"), "term")
+        indexes: set[int] = set()
+        for chapter in entry.get("expectedChapters", []):
+            if not isinstance(chapter, str):
+                continue
+            match = re.fullmatch(r"ch(\d+)\.md", chapter)
+            if match is not None:
+                indexes.add(int(match.group(1)) - 1)
+        result[normalized_word(term)] = indexes
+    return result
+
+
+def load_chapter_sources(run_root: Path) -> dict[int, list[str]]:
+    result: dict[int, list[str]] = {}
+    for chapter in sorted((run_root / "chapters").glob("ch*.md")):
+        match = re.fullmatch(r"ch(\d+)\.md", chapter.name)
+        if match is not None:
+            result[int(match.group(1)) - 1] = source_words(
+                chapter.read_text(encoding="utf-8")
+            )
+    return result
+
+
+def source_neighbor_timing(
+    form: str,
+    capture: dict[str, Any],
+    chapter_source: list[str],
+) -> dict[str, Any] | None:
+    wanted = source_words(form)
+    if not wanted:
+        return None
+    timed_words = capture["words"]
+    timed = [normalized_word(str(word.get("word", ""))) for word in timed_words]
+    candidates: list[tuple[float, dict[str, Any]]] = []
+    for source_index in range(len(chapter_source) - len(wanted) + 1):
+        if chapter_source[source_index : source_index + len(wanted)] != wanted:
+            continue
+        left = chapter_source[max(0, source_index - SOURCE_NEIGHBOR_WORDS) : source_index]
+        right_start = source_index + len(wanted)
+        right = chapter_source[right_start : right_start + SOURCE_NEIGHBOR_WORDS]
+        if not left or not right:
+            continue
+        for timed_index in range(len(timed) - len(left) - len(right) + 1):
+            left_end = timed_index + len(left)
+            right_end = left_end + len(right)
+            if timed[timed_index:left_end] != left or timed[left_end:right_end] != right:
+                continue
+            left_word = timed_words[left_end - 1]
+            right_word = timed_words[left_end]
+            start = require_time(left_word.get("end"), f"{form}.neighborStart")
+            end = require_time(right_word.get("start"), f"{form}.neighborEnd")
+            gap = end - start
+            if gap <= 0 or gap > MAX_INFERRED_GAP_SECONDS:
+                continue
+            candidates.append(
+                (
+                    gap,
+                    {
+                        "start": start,
+                        "end": end,
+                        "leftContextWords": left,
+                        "rightContextWords": right,
+                    },
+                )
+            )
+    if not candidates:
+        return None
+    return min(candidates, key=lambda candidate: candidate[0])[1]
+
+
+def source_span_timing(
+    form: str,
+    capture: dict[str, Any],
+    chapter_source: list[str],
+) -> dict[str, Any] | None:
+    wanted = source_words(form)
+    if not wanted:
+        return None
+    timed_words = capture["words"]
+    timed = [normalized_word(str(word.get("word", ""))) for word in timed_words]
+    candidates: list[tuple[float, dict[str, Any]]] = []
+    opcodes = difflib.SequenceMatcher(
+        None,
+        chapter_source,
+        timed,
+        autojunk=False,
+    ).get_opcodes()
+    for tag, source_start, source_end, timed_start, timed_end in opcodes:
+        if tag != "delete" or timed_start != timed_end:
+            continue
+        if source_start == 0 or source_end >= len(chapter_source):
+            continue
+        if timed_start == 0 or timed_start >= len(timed_words):
+            continue
+        deleted = chapter_source[source_start:source_end]
+        if not any(
+            deleted[index : index + len(wanted)] == wanted
+            for index in range(len(deleted) - len(wanted) + 1)
+        ):
+            continue
+        left_source = chapter_source[source_start - 1]
+        right_source = chapter_source[source_end]
+        if timed[timed_start - 1] != left_source or timed[timed_start] != right_source:
+            continue
+        left_word = timed_words[timed_start - 1]
+        right_word = timed_words[timed_start]
+        start = require_time(left_word.get("end"), f"{form}.spanStart")
+        end = require_time(right_word.get("start"), f"{form}.spanEnd")
+        gap = end - start
+        if gap <= 0 or gap > MAX_UNALIGNED_SPAN_SECONDS:
+            continue
+        candidates.append(
+            (
+                gap,
+                {
+                    "start": start,
+                    "end": end,
+                    "leftContextWords": [left_source],
+                    "rightContextWords": [right_source],
+                    "unalignedSourceWordCount": source_end - source_start,
+                },
+            )
+        )
+    if not candidates:
+        return None
+    return min(candidates, key=lambda candidate: candidate[0])[1]
 
 
 def load_captures(work_dir: Path) -> list[dict[str, Any]]:
@@ -221,7 +365,12 @@ def add_database_words(captures: list[dict[str, Any]], timing_db: Path) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def find_clips(
+    forms: list[tuple[str, str]],
+    captures: list[dict[str, Any]],
+    chapter_sources: dict[int, list[str]],
+    expected_indexes: dict[str, set[int]],
+) -> list[dict[str, Any]]:
     clips: list[dict[str, Any]] = []
     reel_cursor = 0.0
     for term, form in forms:
@@ -260,9 +409,52 @@ def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> 
                 if match is not None:
                     break
         if match is None:
+            allowed = expected_indexes.get(normalized_word(term), set())
+            for capture in captures:
+                chapter_index = capture["chapterIndex"]
+                if chapter_index not in allowed or chapter_index not in chapter_sources:
+                    continue
+                inferred = source_neighbor_timing(
+                    form,
+                    capture,
+                    chapter_sources[chapter_index],
+                )
+                if inferred is not None:
+                    match = (
+                        capture,
+                        inferred,
+                        inferred,
+                        "sourceNeighborInference",
+                    )
+                    break
+        if match is None:
+            allowed = expected_indexes.get(normalized_word(term), set())
+            for capture in captures:
+                chapter_index = capture["chapterIndex"]
+                if chapter_index not in allowed or chapter_index not in chapter_sources:
+                    continue
+                inferred = source_span_timing(
+                    form,
+                    capture,
+                    chapter_sources[chapter_index],
+                )
+                if inferred is not None:
+                    match = (
+                        capture,
+                        inferred,
+                        inferred,
+                        "sourceSpanInference",
+                    )
+                    break
+        if match is None:
             raise ValueError(f"missing timed pronunciation form: {form}")
         capture, first_timing, last_timing, timing_source = match
-        if timing_source in {"exactWord", "narrationDatabaseWord"}:
+        if timing_source in {
+            "exactWord",
+            "narrationDatabaseWord",
+            "sourceNeighborInference",
+            "sourceSpanInference",
+        }:
             start = require_time(first_timing.get("start"), f"{form}.start")
             end = require_time(last_timing.get("end"), f"{form}.end")
         else:
@@ -294,6 +486,17 @@ def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> 
         if timing_source == "pronunciationDecision":
             clips[-1]["timingPrecision"] = first_timing.get("timingPrecision")
             clips[-1]["ruleID"] = first_timing.get("ruleID")
+        elif timing_source == "sourceNeighborInference":
+            clips[-1]["timingPrecision"] = "adjacentSourceNeighbors"
+            clips[-1]["leftContextWords"] = first_timing["leftContextWords"]
+            clips[-1]["rightContextWords"] = first_timing["rightContextWords"]
+        elif timing_source == "sourceSpanInference":
+            clips[-1]["timingPrecision"] = "unalignedSourceSpan"
+            clips[-1]["leftContextWords"] = first_timing["leftContextWords"]
+            clips[-1]["rightContextWords"] = first_timing["rightContextWords"]
+            clips[-1]["unalignedSourceWordCount"] = first_timing[
+                "unalignedSourceWordCount"
+            ]
         reel_cursor += clip_duration
     return clips
 
@@ -347,9 +550,11 @@ def build_reel(
     plan_path = run_root / "research" / "pronunciation-plan.json"
     plan = load_json(plan_path, "pronunciation plan")
     forms = planned_forms(plan)
+    expected_indexes = expected_chapter_indexes(plan)
+    chapter_sources = load_chapter_sources(run_root)
     captures = load_captures(work_dir)
     timing_snapshot_sha256 = add_database_words(captures, timing_db) if timing_db else None
-    clips = find_clips(forms, captures)
+    clips = find_clips(forms, captures, chapter_sources, expected_indexes)
     render_reel(clips, out)
     public_clips = [{key: value for key, value in clip.items() if not key.startswith("_")} for clip in clips]
     unique_captures = {
