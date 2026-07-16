@@ -1,11 +1,19 @@
 # Package And QC
 
+Read `../../skill/references/unattended-production.md` before applying human-only
+gates. Governed-final uses explicit outline, pilot, pronunciation, and cover
+acceptance. Unattended-first-listen uses hash-bound editorial decisions, labels
+human listening pending, permits only private editorial cover auto-selection,
+and still completes every non-human package and media check. A request to have a
+book ready to listen to may authorize the recorded private reading-copy delivery
+intent; it never authorizes publication.
+
 ## Universal paired-cover gate
 
 New packages require exactly three paired candidates. Each has a 1600×2560
 `cover.png` EPUB portrait and a 2400×2400 `m4b-cover.png` M4B square, generated
 with `render_cover_pair` from `skill/scripts/cover_pairs.py`. After thumbnail
-review and explicit pair selection, create a paired receipt with
+review and explicit pair selection under the selected production mode, create a paired receipt with
 `cover_receipts.py select-pair`. Pass both files to `build_book.py` using
 `--cover`, `--m4b-cover`, and `--cover-selection`. Echo resolves the EPUB's
 OPF-declared cover before export and hashes the exact resulting M4B into its
@@ -240,22 +248,16 @@ export APPROVED_ECHO_PRONUNCIATION_SHA
 ```
 
 The wrapper leaves `listener_acceptance=pending` in its immutable success
-receipt. Record the exact accepted audio hash and listener evidence in
-`comprehension-pilot.json`; request only a lightweight `continue` or `revise`
-verdict, with optional listener notes and no comprehension questionnaire. Stop
-before full drafting unless the human decision is `continue` and the
-first-section checkpoint is accepted.
-`comprehension-pilot.json`; stop before full drafting unless the human decision
-is `continue` and the first-section checkpoint is accepted. Invoke the dedicated
-governed pilot entry point after the build:
-
-```bash
-export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
-export SLUG TITLE
-: "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
-export APPROVED_ECHO_PRONUNCIATION_SHA
-"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_learning_pilot_narrate.sh"
-```
+receipt. In `governed-final`, record the exact accepted audio hash and listener
+evidence in `comprehension-pilot.json`; request only a lightweight `continue` or
+`revise` verdict, with optional listener notes and no comprehension
+questionnaire. Stop before full drafting unless the human decision is
+`continue` and the first-section checkpoint is accepted. In
+`unattended-first-listen`, record the shared editorial pilot decision and
+`humanComprehensionPilot: pending`; continue only after the editorial
+first-section checkpoint and pilot decision are recorded. The unattended lane
+never rewrites the wrapper's pending listener acceptance or fabricates human
+evidence.
 
 Before the final receipt, complete hash-bound `revision-passes.json` as separate
 single-job claim-traceability, tightening, de-listification, sentence-rhythm,
@@ -281,7 +283,10 @@ does not certify comprehension. Negative human listening evidence overrides it.
 Repeat that directory for `candidate-2/` and `candidate-3/`. After selection,
 copy the paired receipt into the selected candidate directory before governed
 sync so it contains the nine canonical pair/provenance artifacts.
-`cover-selection.json` appears only after the user chooses or requests a mix.
+In governed-final, `cover-selection.json` appears only after the user chooses or
+requests a mix. In unattended-first-listen, an independent editorial review may
+select a private pair with `selection_source=editorial-autoselection` and
+`permission_to_publish=false`.
 
 The canonical transient build output stays under `.build/`. A public-safe
 package defaults to a durable iCloud Drive delivery copy under:
@@ -538,8 +543,12 @@ Create `research/pronunciation-plan.json` before invoking Echo. It must include
 listener-named risks such as `hyperparameter` and `hyperparameters`, every
 spoken variant, the expected canonical chapters, and the reason each term needs
 review. The wrapper validates this plan in `planning` mode for a bounded partial
-render and refuses an unbounded full render until every required term has
-accepted, hash-bound human listening evidence. Export the canonical path:
+render. When `assuranceLevel` is absent or `governed-final`, it refuses an
+unbounded full render until every required term has accepted, hash-bound human
+listening evidence. When `assuranceLevel` is `unattended-first-listen`, it
+requires every term to be `probed`, complete governed reel evidence for every
+spoken variant, no fabricated human decision, and records `humanListening:
+pending`. Export the canonical path:
 
 ```bash
 export PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
@@ -597,12 +606,19 @@ captures, extracted clips, and reel hashes:
   --evidence-out "$RUN_ROOT/research/pronunciation-probe-evidence.json"
 ```
 
-Have the listener hear every required base form and variant. Human listening is
-the decision gate: automation may locate and extract the clips, but it may not
-mark them accepted. After the listener accepts the reel, update each required
-plan entry to `status: "accepted"`, record `acceptedBy` and `acceptedAt`, and
-point its evidence path and SHA-256 at the shared governed evidence JSON. Then
-validate and write the immutable full-render receipt:
+For governed-final, have the listener hear every required base form and variant.
+Human listening is the decision gate: automation may locate and extract the
+clips, but it may not mark them accepted. After the listener accepts the reel,
+update each required plan entry to `status: "accepted"`, record `acceptedBy` and
+`acceptedAt`, and point its evidence path and SHA-256 at the shared governed
+evidence JSON.
+
+For unattended-first-listen, set the plan-level `assuranceLevel`, update each
+required entry to `status: "probed"`, keep `decision: null`, and point the
+evidence path and SHA-256 at that same governed evidence JSON. The validator
+checks every form and variant but writes `status: first-listen` and
+`humanListening: pending`; it never invents acceptance. Then validate and write
+the immutable full-render receipt:
 
 ```bash
 /usr/local/bin/python3 "$EXPLAINER_ROOT/skill/scripts/pronunciation_plan_qc.py" \

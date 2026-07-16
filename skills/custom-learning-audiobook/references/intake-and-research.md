@@ -1,12 +1,15 @@
 # Intake And Research
 
 Use this reference before asking the requester questions or collecting sources.
+Read `../../skill/references/unattended-production.md` first. Its production mode
+decides whether a missing preference becomes a question or a recorded default.
 
 ## Intake Contract
 
 The minimum viable request is a plain topic: "I want to learn small engine
 repair." Do not require sources. If the topic is usable, proceed with sensible
-defaults.
+defaults. In unattended-first-listen, do not ask about routine preferences; add
+each assumption to `research/unattended-decisions.json`.
 
 Ask only questions that materially improve the book:
 

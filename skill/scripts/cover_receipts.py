@@ -28,7 +28,9 @@ from refresh_epub_cover import (
 EXPECTED_DIMENSIONS = (1600, 2560)
 PAIRED_DIMENSIONS = {"portrait": (1600, 2560), "square": (2400, 2400)}
 SELECTION_SOURCES = frozenset({"explicit-user-choice", "requested-mix"})
-PAIRED_SELECTION_SOURCES = frozenset({"user", "requested-mix"})
+PAIRED_SELECTION_SOURCES = frozenset(
+    {"user", "requested-mix", "editorial-autoselection"}
+)
 CLASSIFICATIONS = frozenset({"public-safe", "private", "sensitive"})
 PUBLICATION_PERMISSIONS = frozenset({"granted", "denied", "not-requested"})
 SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
@@ -224,6 +226,20 @@ def _choice(value: object, choices: frozenset[str], label: str) -> str:
     if not isinstance(value, str) or value not in choices:
         raise ValueError(f"invalid {label}")
     return value
+
+
+def _validate_paired_selection_policy(
+    selection_source: str,
+    classification: str,
+    permission_to_publish: bool,
+) -> None:
+    if selection_source == "editorial-autoselection" and (
+        classification != "private" or permission_to_publish
+    ):
+        raise ValueError(
+            "editorial-autoselection requires private classification and "
+            "permission_to_publish false"
+        )
 
 
 def _timestamp(value: object, label: str = "selected_at") -> str:
@@ -517,6 +533,13 @@ def _load_paired_selection(payload: dict[str, object]) -> PairedSelectionReceipt
     permission = privacy["permission_to_publish"]
     if not isinstance(permission, bool):
         raise ValueError("permission_to_publish must be boolean")
+    selection_source = _choice(
+        payload["selection_source"], PAIRED_SELECTION_SOURCES, "selection_source"
+    )
+    classification = _choice(
+        privacy["classification"], CLASSIFICATIONS, "privacy classification"
+    )
+    _validate_paired_selection_policy(selection_source, classification, permission)
     return PairedSelectionReceipt(
         schema_version=2,
         book_slug=_slug(payload["book_slug"], "book_slug"),
@@ -530,14 +553,10 @@ def _load_paired_selection(payload: dict[str, object]) -> PairedSelectionReceipt
         font_manifest_sha256=_hash(
             payload["font_manifest_sha256"], "font_manifest_sha256"
         ),
-        selection_source=_choice(
-            payload["selection_source"], PAIRED_SELECTION_SOURCES, "selection_source"
-        ),
+        selection_source=selection_source,
         selected_at=_timestamp(payload["selected_at"]),
         privacy={
-            "classification": _choice(
-                privacy["classification"], CLASSIFICATIONS, "privacy classification"
-            ),
+            "classification": classification,
             "permission_to_publish": permission,
         },
     )
@@ -763,6 +782,9 @@ def create_paired_selection(
     )
     if not isinstance(permission_to_publish, bool):
         raise ValueError("permission_to_publish must be boolean")
+    _validate_paired_selection_policy(
+        validated_source, classification, permission_to_publish
+    )
     (
         portrait,
         portrait_cover,

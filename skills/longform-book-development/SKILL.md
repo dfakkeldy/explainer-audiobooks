@@ -10,6 +10,17 @@ description: >-
 
 # Longform Book Development
 
+## Production mode comes first
+
+Read `../../skill/references/unattended-production.md` before asking development
+questions. This skill remains conversational for an explicitly exploratory
+request. An overnight, ready-to-listen, delegated, or multi-book request selects
+`unattended-first-listen`: make reversible editorial decisions, record them in
+`research/unattended-decisions.json`, complete the handoff, and invoke
+`custom-learning-audiobook` without another approval pause. Human checkpoint
+language below applies to `governed-final`; unattended mode follows the shared
+editorial checkpoint and package-or-blocker contract.
+
 Shape a durable book project before synthesis. This skill owns the messy
 creative conversation: turning scattered ideas into an approved brief, outline,
 source plan, picture plan, and handoff packet for `custom-learning-audiobook`.
@@ -23,6 +34,8 @@ and fiction-specific revision.
 ## Required Reference
 
 - Read `references/handoff-packet.md` before preparing the final handoff.
+- Read `../../skill/references/unattended-production.md` before intake and mode
+  selection.
 - Read `../../skill/references/road-book-mode.md` before shaping an audiobook.
   Default to road-book mode for driving and delivering mail unless the listener
   explicitly wants focused study.
@@ -47,7 +60,9 @@ and fiction-specific revision.
    `visuals/manifest.md`, and `handoff/handoff-packet.md` as the project
    matures. Keep private or speculative material out of public book folders.
 
-2. **Clarify in small batches.** Ask no more than 2-3 questions at a time.
+2. **Clarify in small batches.** In governed-final, ask no more than 2-3
+   questions at a time. In unattended-first-listen, use and record documented
+   defaults rather than asking about routine preferences.
    Favor useful prompts over interrogation: audience, outcome, tone, what to
    include or avoid, source material, privacy, and whether the final product is a
    book, audiobook, illustrated EPUB, or all of those.
@@ -88,8 +103,9 @@ and fiction-specific revision.
    terms per chapter, problem before name, an audio working-memory budget,
    people/history and narrative anchors, varied real-world applications,
    analogy contracts, retrieval after a gap, and an optional-study layer for
-   derivations and specialist terminology. An autonomous run may prepare the
-   outline, but it pauses for human road-book approval before pilot synthesis. Record the
+   derivations and specialist terminology. Governed-final pauses for human
+   road-book approval before pilot synthesis; unattended-first-listen records
+   editorial authorization and continues. Record the
    selected pattern, why it fits the learner and subject, and the approval
    evidence. Every planned section records its job, argument, specific
    evidence-note claim IDs, throughline advance, narrative or metaphor payoff,
@@ -105,7 +121,8 @@ and fiction-specific revision.
    clearly allows inclusion. Prefer user-owned, generated, public-domain,
    permissively licensed, or self-created images for packaged books.
 
-7. **Prepare the synthesis handoff.** When the user approves the direction, write
+7. **Prepare the synthesis handoff.** When governed-final approval exists, or
+   when unattended-first-listen editorial acceptance passes, write
    `handoff/handoff-packet.md` using `references/handoff-packet.md`. Include the
    final brief, outline, throughlines, source plan, figure plan, asset paths, and
    unresolved choices. Include the desired humanizing level, voice sample or
@@ -145,9 +162,9 @@ and fiction-specific revision.
    cover generation, EPUB/Markdown building, Echo M4B/alignment rendering, QC,
    and delivery. This skill may draft sample passages or chapter beats, but it
    should not own the final manuscript build unless the user explicitly asks.
-   An autonomous-run request may authorize planning and preparation up to a
-   named gate; it does not waive human outline approval, first-section
-   acceptance, or the intended listener's comprehension authority.
+   Governed-final retains human outline, first-section, and comprehension gates.
+   Unattended-first-listen follows the shared editorial checkpoints, completes a
+   private first-listen package, and keeps human comprehension pending.
 
 ## Picture Rules
 

@@ -295,13 +295,18 @@ candidate specification.
 Assign `SLUG` from the approved run metadata. Keep generated artwork text-free.
 Save the shared art and both schema-v2 specs in each candidate directory. Use
 the complete `render_cover_pair(...)` call above for candidates 1 through 3.
-Review every full-size portrait and square render, generated
-160-pixel thumbnail, art-and-type brief, font/palette note, and warning. Ask the
-user to choose or request a mix. A mix becomes a new specification and render.
+Review every full-size portrait and square render, generated 160-pixel
+thumbnail, art-and-type brief, font/palette note, and warning. In governed-final,
+ask the user to choose or request a mix. In unattended-first-listen, apply the
+rubric in `unattended-production.md` and record the editorial choice and reason.
+A mix becomes a new specification and render.
 
-After the user chooses the pair, use `cover_receipts.py select-pair` as described
-by the universal rule. A paired user choice uses `selection_source=user`; a
-requested mix uses `requested-mix`. The renderer never selects automatically.
+Use `cover_receipts.py select-pair` as described by the universal rule. A paired
+user choice uses `selection_source=user`; a requested mix uses `requested-mix`;
+and a private, non-publishing unattended choice uses
+`editorial-autoselection`. The receipt validator rejects editorial
+auto-selection unless classification is private and publication permission is
+false. The renderer itself never selects automatically.
 The old single-render receipt and title/art/accent/tone/layout paths are
 verification-only compatibility for existing packages.
 

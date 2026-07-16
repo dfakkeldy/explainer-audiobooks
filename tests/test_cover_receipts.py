@@ -404,6 +404,72 @@ class CoverReceiptTests(unittest.TestCase):
                     permission_to_publish=True,
                 )
 
+    def test_private_editorial_autoselection_is_receipted(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            portrait = make_cover(root / "portrait.png")
+            square = make_cover(root / "square.png", size=(2400, 2400))
+            portrait_render = write_json(
+                root / "portrait.render.json",
+                paired_render_payload(root, portrait, "portrait"),
+            )
+            square_render = write_json(
+                root / "square.render.json",
+                paired_render_payload(root, square, "square", subtitle=""),
+            )
+
+            receipt = cover_receipts.create_paired_selection(
+                portrait_render,
+                square_render,
+                root / "selection.json",
+                book_slug="fixture-book",
+                edition_id="private-first-listen",
+                selection_source="editorial-autoselection",
+                selected_at="2026-07-16T12:00:00-03:00",
+                privacy_classification="private",
+                permission_to_publish=False,
+            )
+
+            self.assertEqual("editorial-autoselection", receipt.selection_source)
+            self.assertEqual("private", receipt.privacy["classification"])
+            self.assertFalse(receipt.privacy["permission_to_publish"])
+
+    def test_editorial_autoselection_cannot_escape_private_nonpublishing_lane(self) -> None:
+        for classification, permission in (
+            ("public-safe", False),
+            ("sensitive", False),
+            ("private", True),
+        ):
+            with self.subTest(
+                classification=classification, permission=permission
+            ), tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                portrait = make_cover(root / "portrait.png")
+                square = make_cover(root / "square.png", size=(2400, 2400))
+                portrait_render = write_json(
+                    root / "portrait.render.json",
+                    paired_render_payload(root, portrait, "portrait"),
+                )
+                square_render = write_json(
+                    root / "square.render.json",
+                    paired_render_payload(root, square, "square", subtitle=""),
+                )
+
+                with self.assertRaisesRegex(
+                    ValueError, "editorial-autoselection.*private.*permission"
+                ):
+                    cover_receipts.create_paired_selection(
+                        portrait_render,
+                        square_render,
+                        root / "selection.json",
+                        book_slug="fixture-book",
+                        edition_id="private-first-listen",
+                        selection_source="editorial-autoselection",
+                        selected_at="2026-07-16T12:00:00-03:00",
+                        privacy_classification=classification,
+                        permission_to_publish=permission,
+                    )
+
     def test_rejects_duplicate_nested_variant_fields(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

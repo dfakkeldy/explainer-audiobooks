@@ -33,6 +33,13 @@ CURRICULUM_PATTERNS = {
 AUDIENCE_LEVELS = {"beginner", "intermediate", "advanced"}
 LISTENING_MODES = {"road-book", "focused-study"}
 REVISION_MODES = {"new-book", "first-edition-plus"}
+PRODUCTION_MODES = {"governed-final", "unattended-first-listen"}
+UNATTENDED_DECISION_SOURCES = {
+    "user-request",
+    "project-context",
+    "documented-default",
+    "editorial-judgment",
+}
 CALCULATION_TREATMENTS = {
     "none",
     "brief-spoken",
@@ -191,7 +198,65 @@ def validate_evidence(evidence: dict[str, Any], run_root: Path) -> set[str]:
     return set(claims)
 
 
-def validate_brief(brief: dict[str, Any]) -> dict[str, str]:
+def validate_production_mode(
+    brief: dict[str, Any], run_root: Path
+) -> tuple[str, Path | None]:
+    production = brief.get("productionMode")
+    if production is None:
+        return "governed-final", None
+    if not isinstance(production, dict):
+        raise ValueError("brief.productionMode must be an object")
+    name = require_string(production.get("name"), "brief.productionMode.name")
+    if name not in PRODUCTION_MODES:
+        raise ValueError(
+            "brief.productionMode.name must be governed-final or unattended-first-listen"
+        )
+    if name == "governed-final":
+        return name, None
+
+    request_evidence = require_string(
+        production.get("requestEvidence"), "brief.productionMode.requestEvidence"
+    )
+    decisions_path = validate_bound_artifact(
+        run_root,
+        production.get("decisionsPath"),
+        production.get("decisionsSHA256"),
+        "brief.productionMode.decisions",
+    )
+    try:
+        decisions = json.loads(decisions_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"invalid unattended decisions receipt: {decisions_path}") from error
+    if not isinstance(decisions, dict):
+        raise ValueError("unattended decisions receipt must be a JSON object")
+    if decisions.get("schemaVersion") != 1:
+        raise ValueError("unattended decisions schemaVersion must be 1")
+    if decisions.get("productionMode") != "unattended-first-listen":
+        raise ValueError("unattended decisions productionMode must be unattended-first-listen")
+    if decisions.get("requestEvidence") != request_evidence:
+        raise ValueError("unattended decisions requestEvidence must match the learning brief")
+    if decisions.get("privacy") != "private":
+        raise ValueError("unattended decisions privacy must be private")
+    if decisions.get("permissionToPublish") is not False:
+        raise ValueError("unattended decisions permissionToPublish must be false")
+    require_string(decisions.get("deliveryIntent"), "unattended decisions deliveryIntent")
+    if decisions.get("humanListeningStatus") != "pending":
+        raise ValueError("unattended decisions humanListeningStatus must be pending")
+    entries = require_list(decisions.get("decisions"), "unattended decisions")
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise ValueError(f"unattended decisions[{index}] must be an object")
+        for field in ("field", "choice", "reason"):
+            require_string(entry.get(field), f"unattended decisions[{index}].{field}")
+        source = require_string(
+            entry.get("source"), f"unattended decisions[{index}].source"
+        )
+        if source not in UNATTENDED_DECISION_SOURCES:
+            raise ValueError(f"unattended decisions[{index}].source is unsupported")
+    return name, decisions_path
+
+
+def validate_brief(brief: dict[str, Any], run_root: Path) -> dict[str, Any]:
     require_string(brief.get("learnerOutcome"), "brief.learnerOutcome")
     require_string(brief.get("priorKnowledge"), "brief.priorKnowledge")
     audience_level = require_string(brief.get("audienceLevel"), "brief.audienceLevel")
@@ -231,7 +296,13 @@ def validate_brief(brief: dict[str, Any]) -> dict[str, str]:
         raise ValueError("brief.openingOrientation must be an object")
     for field in ("context", "promise", "route"):
         require_string(orientation.get(field), f"brief.openingOrientation.{field}")
-    return {"audienceLevel": audience_level, "listeningMode": listening_mode}
+    production_mode, decisions_path = validate_production_mode(brief, run_root)
+    return {
+        "audienceLevel": audience_level,
+        "listeningMode": listening_mode,
+        "productionMode": production_mode,
+        "decisionsPath": decisions_path,
+    }
 
 
 def validate_target(brief: dict[str, Any], actual_words: int) -> dict[str, int]:
@@ -280,6 +351,7 @@ def validate_outline(
     chapter_names: set[str],
     listening_mode: str,
     evidence_claim_ids: set[str],
+    production_mode: str,
 ) -> tuple[set[str], set[str]]:
     authorization = outline.get("authorization")
     if not isinstance(authorization, dict):
@@ -289,8 +361,19 @@ def validate_outline(
     authorization_source = authorization.get("source")
     if authorization_source not in AUTHORIZATION_SOURCES:
         raise ValueError("outline.authorization.source must be user or explicit-autonomous-run")
-    if listening_mode == "road-book" and authorization_source != "user":
+    if (
+        listening_mode == "road-book"
+        and authorization_source != "user"
+        and production_mode != "unattended-first-listen"
+    ):
         raise ValueError("road-book human outline approval requires authorization.source user")
+    if (
+        production_mode == "unattended-first-listen"
+        and authorization_source != "explicit-autonomous-run"
+    ):
+        raise ValueError(
+            "unattended first-listen outline requires explicit-autonomous-run authorization"
+        )
     require_string(authorization.get("evidence"), "outline.authorization.evidence")
 
     curriculum_pattern = outline.get("curriculumPattern")
@@ -709,9 +792,13 @@ def validate_revision_passes(revisions: dict[str, Any], hashes: dict[str, str]) 
     )
 
 
-def validate_pilot(pilot: dict[str, Any], run_root: Path) -> None:
-    if pilot.get("status") != "accepted":
-        raise ValueError("pilot.status must be accepted before full drafting")
+def validate_pilot(
+    pilot: dict[str, Any], run_root: Path, production_mode: str
+) -> None:
+    unattended = production_mode == "unattended-first-listen"
+    expected_status = "first-listen" if unattended else "accepted"
+    if pilot.get("status") != expected_status:
+        raise ValueError(f"pilot.status must be {expected_status} before full drafting")
     require_string(pilot.get("listener"), "pilot.listener")
     require_string(pilot.get("listeningContext"), "pilot.listeningContext")
     minutes = require_positive_int(
@@ -728,65 +815,69 @@ def validate_pilot(pilot: dict[str, Any], run_root: Path) -> None:
     listener_notes = pilot.get("listenerNotes")
     if listener_notes is not None and not isinstance(listener_notes, str):
         raise ValueError("pilot.listenerNotes must be a string when present")
-    checkpoints = pilot.get("humanCheckpoints")
+    checkpoint_key = "editorialCheckpoints" if unattended else "humanCheckpoints"
+    checkpoint_label = f"pilot.{checkpoint_key}"
+    checkpoints = pilot.get(checkpoint_key)
     if not isinstance(checkpoints, dict):
-        raise ValueError("pilot.humanCheckpoints must be an object")
+        raise ValueError(f"{checkpoint_label} must be an object")
 
     voice_source = checkpoints.get("voiceSource")
     if not isinstance(voice_source, dict):
-        raise ValueError("pilot.humanCheckpoints.voiceSource must be an object")
+        raise ValueError(f"{checkpoint_label}.voiceSource must be an object")
     mode = require_string(
-        voice_source.get("mode"), "pilot.humanCheckpoints.voiceSource.mode"
+        voice_source.get("mode"), f"{checkpoint_label}.voiceSource.mode"
     )
     if mode not in VOICE_SOURCE_MODES:
-        raise ValueError("pilot.humanCheckpoints.voiceSource.mode is unsupported")
+        raise ValueError(f"{checkpoint_label}.voiceSource.mode is unsupported")
     validate_bound_artifact(
         run_root,
         voice_source.get("profilePath"),
         voice_source.get("profileSHA256"),
-        "pilot.humanCheckpoints.voiceSource.profile",
+        f"{checkpoint_label}.voiceSource.profile",
     )
     if voice_source.get("useBoundary") != "craft-features-not-pastiche":
         raise ValueError(
-            "pilot.humanCheckpoints.voiceSource.useBoundary must be craft-features-not-pastiche"
+            f"{checkpoint_label}.voiceSource.useBoundary must be craft-features-not-pastiche"
         )
     if voice_source.get("rawSourceExcerptsCommitted") is not False:
         raise ValueError(
-            "pilot.humanCheckpoints.voiceSource.rawSourceExcerptsCommitted must be false"
+            f"{checkpoint_label}.voiceSource.rawSourceExcerptsCommitted must be false"
         )
 
     outline_checkpoint = checkpoints.get("outline")
     if not isinstance(outline_checkpoint, dict):
-        raise ValueError("pilot.humanCheckpoints.outline must be an object")
-    if outline_checkpoint.get("status") != "approved":
-        raise ValueError("pilot.humanCheckpoints.outline.status must be approved")
+        raise ValueError(f"{checkpoint_label}.outline must be an object")
+    outline_status = "editorially-approved" if unattended else "approved"
+    if outline_checkpoint.get("status") != outline_status:
+        raise ValueError(f"{checkpoint_label}.outline.status must be {outline_status}")
     for field in ("reviewer", "evidence"):
         require_string(
-            outline_checkpoint.get(field), f"pilot.humanCheckpoints.outline.{field}"
+            outline_checkpoint.get(field), f"{checkpoint_label}.outline.{field}"
         )
     if outline_checkpoint.get("recordedBeforePilotDraft") is not True:
         raise ValueError(
-            "pilot.humanCheckpoints.outline.recordedBeforePilotDraft must be true"
+            f"{checkpoint_label}.outline.recordedBeforePilotDraft must be true"
         )
 
     first_section = checkpoints.get("firstSection")
     if not isinstance(first_section, dict):
-        raise ValueError("pilot.humanCheckpoints.firstSection must be an object")
-    if first_section.get("status") != "accepted":
-        raise ValueError("pilot.humanCheckpoints.firstSection.status must be accepted")
+        raise ValueError(f"{checkpoint_label}.firstSection must be an object")
+    section_status = "editorially-accepted" if unattended else "accepted"
+    if first_section.get("status") != section_status:
+        raise ValueError(f"{checkpoint_label}.firstSection.status must be {section_status}")
     for field in ("reviewer", "evidence"):
         require_string(
-            first_section.get(field), f"pilot.humanCheckpoints.firstSection.{field}"
+            first_section.get(field), f"{checkpoint_label}.firstSection.{field}"
         )
     if first_section.get("recordedBeforeRemainingDraft") is not True:
         raise ValueError(
-            "pilot.humanCheckpoints.firstSection.recordedBeforeRemainingDraft must be true"
+            f"{checkpoint_label}.firstSection.recordedBeforeRemainingDraft must be true"
         )
     validate_bound_artifact(
         run_root,
         first_section.get("voiceExemplarPath"),
         first_section.get("voiceExemplarSHA256"),
-        "pilot.humanCheckpoints.firstSection.voiceExemplar",
+        f"{checkpoint_label}.firstSection.voiceExemplar",
     )
 
     decision = pilot.get("decision")
@@ -794,8 +885,9 @@ def validate_pilot(pilot: dict[str, Any], run_root: Path) -> None:
         raise ValueError("pilot.decision must be an object")
     if decision.get("verdict") != "continue":
         raise ValueError("pilot.decision.verdict must be continue")
-    if decision.get("authority") != "listener":
-        raise ValueError("pilot.decision.authority must be listener")
+    decision_authority = "editorial-review" if unattended else "listener"
+    if decision.get("authority") != decision_authority:
+        raise ValueError(f"pilot.decision.authority must be {decision_authority}")
     require_string(decision.get("evidence"), "pilot.decision.evidence")
     if decision.get("recordedBeforeFullDraft") is not True:
         raise ValueError("pilot.decision.recordedBeforeFullDraft must be true")
@@ -812,23 +904,34 @@ def validate_run(run_root: Path) -> dict[str, Any]:
     actual_words = manuscript_word_count(chapters_dir)
 
     evidence_claim_ids = validate_evidence(records["evidence"], run_root)
-    brief = validate_brief(records["brief"])
+    brief = validate_brief(records["brief"], run_root)
     word_count = validate_target(records["brief"], actual_words)
     durable_outcomes, section_ids = validate_outline(
-        records["outline"], names, brief["listeningMode"], evidence_claim_ids
+        records["outline"],
+        names,
+        brief["listeningMode"],
+        evidence_claim_ids,
+        brief["productionMode"],
     )
     validate_chapter_plans(records["plans"], names, brief["listeningMode"])
     validate_coverage(records["coverage"], names, durable_outcomes)
     validate_continuity(records["continuity"], names, section_ids)
-    validate_pilot(records["pilot"], run_root)
+    validate_pilot(records["pilot"], run_root, brief["productionMode"])
     validate_revision_passes(records["revisions"], hashes)
     validate_review(records["review"], hashes)
 
+    unattended = brief["productionMode"] == "unattended-first-listen"
+    record_paths = dict(paths)
+    if brief["decisionsPath"] is not None:
+        record_paths["unattendedDecisions"] = brief["decisionsPath"]
     return {
         "schemaVersion": SCHEMA_VERSION,
-        "status": "pass",
+        "status": "first-listen" if unattended else "pass",
+        "productionMode": brief["productionMode"],
         "chapterSHA256": hashes,
-        "recordSHA256": {name: sha256_file(path) for name, path in paths.items()},
+        "recordSHA256": {
+            name: sha256_file(path) for name, path in record_paths.items()
+        },
         "wordCount": word_count,
         "gates": {
             "learnerOrientation": "pass",
@@ -850,10 +953,10 @@ def validate_run(run_root: Path) -> dict[str, Any]:
             "earPass": "pass",
             "structuralReview": "pass",
             "blindSequentialBeginnerReview": "pass",
-            "humanComprehensionPilot": "pass",
+            "humanComprehensionPilot": "pending" if unattended else "pass",
         },
         "learningAuthority": {
-            "holder": "human-listener",
+            "holder": "human-listener-pending" if unattended else "human-listener",
             "negativeVerdictOverridesReceipt": True,
             "receiptDoesNotCertifyTransfer": True,
         },
@@ -871,19 +974,39 @@ def write_receipt(run_root: Path, output: Path) -> dict[str, Any]:
 def verify_learning_receipt(chapters_dir: Path, receipt_path: Path) -> dict[str, Any]:
     receipt_path = Path(receipt_path)
     receipt = load_record(receipt_path, "learning-design receipt")
-    if receipt.get("status") != "pass":
-        raise ValueError("learning-design receipt status must be pass")
+    status = receipt.get("status")
+    if status not in {"pass", "first-listen"}:
+        raise ValueError("learning-design receipt status must be pass or first-listen")
     expected = chapter_hashes(Path(chapters_dir))
     if receipt.get("chapterSHA256") != expected:
         raise ValueError("learning-design receipt chapter hash mismatch")
     gates = receipt.get("gates")
-    if not isinstance(gates, dict) or not gates or any(value != "pass" for value in gates.values()):
-        raise ValueError("learning-design receipt contains a non-passing gate")
+    if not isinstance(gates, dict) or not gates:
+        raise ValueError("learning-design receipt contains invalid gates")
+    production_mode = receipt.get("productionMode", "governed-final")
+    if status == "pass":
+        if production_mode != "governed-final" or any(
+            value != "pass" for value in gates.values()
+        ):
+            raise ValueError("governed-final learning receipt contains a non-passing gate")
+        expected_holder = "human-listener"
+    else:
+        if production_mode != "unattended-first-listen":
+            raise ValueError("first-listen receipt requires unattended-first-listen mode")
+        for name, value in gates.items():
+            expected = "pending" if name == "humanComprehensionPilot" else "pass"
+            if value != expected:
+                raise ValueError(
+                    f"first-listen {name} gate must be {expected}"
+                )
+        if "humanComprehensionPilot" not in gates:
+            raise ValueError("first-listen receipt is missing humanComprehensionPilot")
+        expected_holder = "human-listener-pending"
     authority = receipt.get("learningAuthority")
     if not isinstance(authority, dict):
         raise ValueError("learning-design receipt is missing learningAuthority")
-    if authority.get("holder") != "human-listener":
-        raise ValueError("learning-design receipt holder must be human-listener")
+    if authority.get("holder") != expected_holder:
+        raise ValueError(f"learning-design receipt holder must be {expected_holder}")
     if authority.get("negativeVerdictOverridesReceipt") is not True:
         raise ValueError("learning-design receipt must preserve negative listener authority")
     if authority.get("receiptDoesNotCertifyTransfer") is not True:
