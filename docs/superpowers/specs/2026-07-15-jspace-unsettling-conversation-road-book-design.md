@@ -7,7 +7,7 @@ Date: 2026-07-15
 - Direction: approved in conversation
 - Selected approach: mystery-first spiral, described during development as
   `The Unsettling Conversation`
-- Written-spec review: pending
+- Written-spec review: approved by Dan on 2026-07-15
 - Research: not started
 - Argument-level chapter outline: not started and not authorized
 - Pilot prose: not started and not authorized
