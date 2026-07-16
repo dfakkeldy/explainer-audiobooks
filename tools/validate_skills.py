@@ -69,6 +69,9 @@ def main() -> int:
     ):
         contains(path, *paired_contract)
 
+    # The full paired command sequence lives in exactly one normative
+    # reference per skill; the skill bodies keep a summary plus a pointer so
+    # duplicated command blocks cannot drift.
     complete_paired = (
         "render_cover_pair(", "portrait_spec=", "square_spec=",
         "portrait_output=", "square_output=", "portrait_thumbnail=",
@@ -79,18 +82,34 @@ def main() -> int:
         "--paired-artifact-dir \"$PAIR\"", "--intent reuse", "--apply",
     )
     for path in (
-        "skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md",
         "skill/references/cover-art.md",
         "skills/custom-learning-audiobook/references/package-and-qc.md",
     ):
         contains(path, *complete_paired)
+
+    contains("skill/SKILL.md", "Complete paired command example", "references/cover-art.md")
+    contains(
+        "skills/custom-learning-audiobook/SKILL.md",
+        "Complete paired command example",
+        "references/package-and-qc.md",
+    )
+
+    for path in (
+        "skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md",
+        "skill/references/cover-art.md",
+        "skills/custom-learning-audiobook/references/package-and-qc.md",
+    ):
+        # The narration wrapper embeds the square cover itself; mutating a
+        # narrated M4B invalidates the pronunciation audit.
+        contains(path, "Never run `replace_m4b_cover.py`")
         require(
             "/make_cover.py \\\n  --spec" not in read(path),
             f"{path} teaches active single-cover rendering",
         )
-
-    for path in ("skill/SKILL.md", "skill/references/cover-art.md"):
-        contains(path, "--portrait-cover \"$PAIR/cover.png\"")
+        require(
+            "--portrait-cover \"$PAIR/cover.png\"" not in read(path),
+            f"{path} teaches the retired post-narration cover mutation flow",
+        )
 
     for path, legacy_marker in (
         (

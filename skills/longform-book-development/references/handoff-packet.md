@@ -51,7 +51,8 @@ What to include, avoid, simplify, keep private, or treat as educational-only.
 
 ## Approved Learning Outline
 
-Read `../../skill/references/curriculum-patterns.md`, then record:
+Read `../../../skill/references/curriculum-patterns.md` (path relative to this
+file; from the skill root it is `../../skill/references/`), then record:
 
 - Curriculum pattern:
 - Selection reason:
@@ -199,11 +200,15 @@ decision here:
 
 Only questions that must be answered before production. If none, say so.
 
-If prior knowledge, listening/revision mode, opening orientation, target history,
+This is the authoritative required-field checklist for the packet (the skill
+body deliberately keeps no second copy). If prior knowledge, listening/revision
+mode, opening orientation, target history,
 approval evidence, grounded evidence notes, voice-source profile, argument-level
 section map, durable outcomes, concept/working-memory budgets, chapter
-prerequisites, knowledge delta, problem-before-name evidence, teaching beats,
-throughlines, analogy/retrieval paths, section draft contexts, narrow revision
+prerequisites, knowledge delta, complete concept explanation paths,
+problem-before-name evidence, teaching beats,
+throughlines, analogy/retrieval paths, listener pronunciation risks, section
+draft contexts, narrow revision
 passes, blind review instructions, or first-section/narrated pilot design are
 incomplete, mark this packet **development draft — not
 authorized for pilot or canonical production**.

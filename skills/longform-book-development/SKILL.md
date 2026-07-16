@@ -1,19 +1,22 @@
 ---
 name: longform-book-development
 description: >-
-  Use when developing a long-term book or audiobook project over multiple turns:
-  rough ideas, back-and-forth concept shaping, outline approval, source and
-  picture gathering, visual/figure planning, and final handoff to
-  custom-learning-audiobook for manuscript synthesis, EPUB building, and
-  narration.
+  Use when a nonfiction book or learning-audiobook idea needs multi-turn,
+  multi-session development before production — rough ideas, back-and-forth
+  concept shaping, outline shaping, source and picture gathering — or when
+  resuming an in-progress book project ("let's keep working on my book").
+  Nonfiction only; route novels, novellas, and short stories to
+  fiction-book-development. Hands the finished concept to
+  custom-learning-audiobook for production.
 ---
 
 # Longform Book Development
 
 ## Production mode comes first
 
-Read `../../skill/references/unattended-production.md` before asking development
-questions. This skill remains conversational for an explicitly exploratory
+Read `../../skill/references/unattended-production.md` (also listed under
+Required Reference below) before asking development questions. This skill
+remains conversational for an explicitly exploratory
 request. An overnight, ready-to-listen, delegated, or multi-book request selects
 `unattended-first-listen`: make reversible editorial decisions, record them in
 `research/unattended-decisions.json`, complete the handoff, and invoke
@@ -52,13 +55,37 @@ and fiction-specific revision.
   **AI-writing patterns to avoid**, disliked phrase families, and any positive
   voice sample before preparing the production handoff.
 
+## Resuming an in-progress project
+
+When the user returns to an existing book ("let's keep working on my book",
+"pick up the outline again"), do not restart intake. First scan
+`.build/longform-book-development/*/` for the project workspace, then read, in
+order: `brief.md` (settled decisions, open questions), `outline.md`,
+`conversation-log.md` (most recent session entry), and
+`handoff/handoff-packet.md` if it exists. Decisions recorded in `brief.md` with
+approval evidence are settled — ask only about the recorded open questions and
+anything the user newly raises, and never re-litigate an approved outline
+unless the user changes it. If no workspace matches, ask which project the
+user means before creating a new one.
+
 ## Workflow
 
 1. **Create a project workspace.** Use
    `.build/longform-book-development/<slug>/` unless the user gives another
-   path. Create `brief.md`, `outline.md`, `conversation-log.md`,
+   path. Create `brief.md`, `outline.md`, `conversation-log.md`, `research/`,
    `visuals/manifest.md`, and `handoff/handoff-packet.md` as the project
    matures. Keep private or speculative material out of public book folders.
+   These workspaces are durable project state, not disposable scratch: a book
+   develops over weeks, so never bulk-clean them with other `.build/` output.
+   End every session by appending a dated entry to `conversation-log.md` with
+   the decisions made, the approvals obtained (quoted), and the open questions
+   — it is the resume anchor for the next session.
+
+   Two `research/` roots exist in this pipeline: `research/*` paths in steps
+   2-6 live in this workspace, while `research/*` paths inside the handoff
+   packet refer to the production run folder that `custom-learning-audiobook`
+   will create at `.build/custom-learning-audiobooks/<slug>/` (keep the same
+   `<slug>` so the workspaces cross-reference).
 
 2. **Clarify in small batches.** In governed-final, ask no more than 2-3
    questions at a time. In unattended-first-listen, use and record documented
@@ -148,13 +175,11 @@ and fiction-specific revision.
    Preserve these decisions so the handoff is complete enough that a fresh agent can run
    `custom-learning-audiobook` without re-litigating the concept.
 
-   If listening mode, revision mode, opening orientation, prior knowledge,
-   target history, grounded evidence artifact, argument-level section jobs,
-   concept budget, chapter prerequisites, knowledge deltas,
-   working-memory limits, problem-before-name evidence, teaching beats,
-   throughlines, explanation paths, blind sequential review instructions,
-   voice-source profile, voice-exemplar checkpoint, section forward-context
-   inputs, revision-pass plan, narrated pilot plan, or approval evidence are missing, label the packet a
+   `references/handoff-packet.md` closes with the authoritative required-field
+   checklist for this packet; that single copy is the gate, so do not maintain
+   a second list here. If any required item is missing or incomplete — from the
+   learning brief and grounded evidence through the blind sequential review
+   instructions and the narrated pilot plan — label the packet a
    **development draft**. It cannot start pilot or canonical production.
 
 8. **Invoke the audiobook skill for production.** Hand the packet to
@@ -178,8 +203,15 @@ and fiction-specific revision.
 
 ## Completion Criteria
 
+Approval evidence, wherever these criteria require it, is a dated verbatim
+quote of the user's approving message, recorded in `brief.md` and carried into
+the packet — an agent's paraphrase of assent is not evidence.
+
 The book-development phase is complete when these exist and the user approves
-them, or explicitly asks to proceed without another gate:
+them, or explicitly asks to proceed without another development gate. That
+waiver reaches only this skill's development gates: outline approval,
+first-section voice-exemplar acceptance, and narrated-pilot comprehension stay
+governed by the production skill's lanes and cannot be waived here:
 
 - working title or title candidates,
 - final brief and audience promise,

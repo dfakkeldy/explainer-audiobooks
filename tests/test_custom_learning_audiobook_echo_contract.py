@@ -159,7 +159,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
         for marker in (
             "governed Echo narration wrapper",
-            "do not bypass the wrapper with a direct CLI command",
+            "Do not bypass the wrapper with a direct CLI command",
         ):
             self.assertIn(marker, self.skill)
 

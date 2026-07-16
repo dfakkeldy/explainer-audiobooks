@@ -52,18 +52,13 @@ class SkillCoverContractTests(unittest.TestCase):
         self.assert_in_order(
             text,
             (
-                "cover_receipts.py select",
-                "/usr/local/bin/python3 skill/scripts/build_book.py",
+                "select-pair",
+                "build_book.py --cover ... --m4b-cover ... --cover-selection ...",
                 "Native Echo/Kokoro M4B",
-                "/usr/local/bin/python3 skill/scripts/cover_receipts.py verify",
-                "--m4b",
-                "/usr/local/bin/python3 skill/scripts/sync_selected_cover.py",
+                "cover_receipts.py verify",
+                "sync_selected_cover.py",
                 "--apply",
             ),
-        )
-        self.assertGreaterEqual(
-            text.count("/usr/local/bin/python3 skill/scripts/sync_selected_cover.py"),
-            2,
         )
         self.assertNotIn("cp <build>/dist/<Output-Filename-Base>.epub", text)
 
@@ -200,7 +195,11 @@ class SkillCoverContractTests(unittest.TestCase):
         self.assertIn("not a universal future rule", combined)
 
     def test_active_new_work_uses_complete_paired_interfaces(self) -> None:
-        for key in ("long", "custom", "package", "cover"):
+        # The full copy-paste command sequence lives in exactly one normative
+        # reference per skill ("cover" for explainer-audiobook, "package" for
+        # custom-learning-audiobook). The skill bodies carry only the contract
+        # summary plus a pointer — duplicated command blocks drift.
+        for key in ("package", "cover"):
             text = FILES[key].read_text(encoding="utf-8")
             for marker in (
                 "render_cover_pair(",
@@ -224,11 +223,22 @@ class SkillCoverContractTests(unittest.TestCase):
             ):
                 with self.subTest(file=key, marker=marker):
                     self.assertIn(marker, text)
-            if key in {"long", "cover"}:
-                self.assertIn('--portrait-cover "$PAIR/cover.png"', text)
-            else:
-                self.assertIn("Never run `replace_m4b_cover.py`", text)
-                self.assertNotIn('--portrait-cover "$PAIR/cover.png"', text)
+
+        for key, pointer in (
+            ("long", "references/cover-art.md"),
+            ("custom", "references/package-and-qc.md"),
+        ):
+            text = FILES[key].read_text(encoding="utf-8")
+            self.assertIn("Complete paired command example", text)
+            self.assertIn(pointer, text)
+
+        # The narration wrapper embeds the square cover itself; mutating a
+        # narrated M4B invalidates the pronunciation audit. Every active
+        # surface states the rule and none teaches the old mutation flow.
+        for key in ("long", "custom", "package", "cover"):
+            text = FILES[key].read_text(encoding="utf-8")
+            self.assertIn("Never run `replace_m4b_cover.py`", text)
+            self.assertNotIn('--portrait-cover "$PAIR/cover.png"', text)
 
     def test_active_new_work_does_not_run_single_cover_renderer(self) -> None:
         for key in ("long", "custom", "package", "cover"):

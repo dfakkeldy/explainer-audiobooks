@@ -1,5 +1,12 @@
 # Award-Worthy Audiobook Covers
 
+Contents: Universal paired-cover rule (with the complete paired command
+example) · Research Lens · Non-Negotiable Default: Three Distinct Directions ·
+Genre Calibration · Candidate Brief Before Making Art · Making the Art ·
+Copy-ready image-generation prompt · Render, Compare, and Select ·
+Award-Worthy Acceptance Bar · Technical Contract · Legacy single-cover
+compatibility.
+
 ## Universal paired-cover rule
 
 Every new book develops exactly three coordinated portrait/square candidates.
@@ -15,6 +22,13 @@ portrait/square render pairs → thumbnail review → explicit pair selection �
 paired receipt → EPUB portrait + M4B square embedding → post-embed verification
 → governed public/iCloud/site sync. Legacy single-cover receipts and renderer
 flags are verification-only compatibility; do not teach them for new work.
+
+The governed Echo narration wrapper embeds the selected square cover itself
+(it passes `M4B_COVER` to `echo-cli narrate`) and hashes the exact resulting
+M4B bytes into the pronunciation audit. Never run `replace_m4b_cover.py` or
+otherwise mutate a narrated M4B after Echo emits it — a byte change invalidates
+the audit and every downstream receipt. That script exists only to verify or
+reproduce pre-paired legacy artifacts.
 
 
 ### Complete paired command example
@@ -57,8 +71,7 @@ PAIR="$DIST/candidate-$SELECTED"
   --edition-id "$EDITION_ID" \
   --selection-source user \
   --selected-at "$SELECTED_AT" \
-  --privacy-classification "$CLASSIFICATION" \
-  --permission-to-publish
+  --privacy-classification "$CLASSIFICATION"
 cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
 
 /usr/local/bin/python3 skill/scripts/build_book.py \
@@ -75,27 +88,24 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
   --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
 
-/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
-  --m4b "$DIST/$SLUG.m4b" \
-  --cover "$PAIR/m4b-cover.png" \
-  --out "$DIST/$SLUG.covered.m4b" \
-  --cover-selection "$DIST/cover-selection.json" \
-  --portrait-cover "$PAIR/cover.png"
-mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
-
+# Run the governed Echo narration wrapper next (it embeds the square cover
+# itself), then complete the selector-bound QC flow in
+# skills/custom-learning-audiobook/references/package-and-qc.md. That flow
+# sets AUDIOBOOK to the accepted run-scoped M4B.
+: "${AUDIOBOOK:?set only from the verified current-accepted selector}"
 /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --receipt "$DIST/cover-selection.json"
 
 /usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse
@@ -104,12 +114,20 @@ mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
   --selection "$DIST/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
+  --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse \
   --apply
 ```
+
+Publication permission is never implied by this sequence: append
+`--permission-to-publish` to the `select-pair` call **only when the user has
+explicitly granted publication for this book**. Omitting it records
+`permission_to_publish: false`, the correct state for private, unattended, and
+not-yet-approved books (and the state the unattended editorial-autoselection
+validator requires). For an EPUB-only book with no Echo audio requested, omit
+the `--m4b` lines from `verify` and `sync_selected_cover.py`.
 
 
 A cover is not a title placed on a coloured rectangle. It is a compact editorial
@@ -207,9 +225,9 @@ Write one complete art-and-type brief per candidate before image generation:
 9. Intended relationship between title and art.
 10. Subtitle, author, and AUDIOBOOK placement.
 
-The three candidates must differ in metaphor, composition, palette, material
-language, and title strategy. Font, line breaks, scale, placement, and effects
-are part of the candidate—not a shared footer applied afterward.
+The differentiation rule from Non-Negotiable Default above applies to every
+brief: differ in metaphor, composition, palette, material language, and title
+strategy, with typography designed per candidate.
 
 A candidate is not ready to render if its central idea could fit any book, if
 its anti-brief is empty, or if a text model produced vector art without first
@@ -331,6 +349,8 @@ Reject and replace any candidate that:
 
 - Each validated JSON specification owns its candidate metadata, 1600×2560
   canvas, art placement, ordered fields/shapes/type, and bundled font IDs.
+  Validate specs against `skill/schemas/cover-spec-v1.schema.json` (it accepts
+  schema versions 1 and 2; new specs use version 2).
 - Raster art may be PNG, JPEG, WebP, or GIF. Self-contained SVG remains an
   explicit-request or approved-unavailable-image-tool fallback. Use
   high-resolution portrait art and no external image URLs.
@@ -344,3 +364,15 @@ Reject and replace any candidate that:
 - A complete SVG example remains available at
   `references/cover-art-example.svg`; use it only as a structural reference for
   an approved vector fallback, not a visual template.
+- `skill/scripts/make_cover_contact_sheet.py` builds a side-by-side contact
+  sheet of all candidate renders and thumbnails for review.
+
+## Legacy single-cover compatibility (verification only)
+
+Pre-paired packages carry a single-cover receipt created with
+`cover_receipts.py select` and `--selection-source explicit-user-choice`, and
+some had square art embedded after the fact with `replace_m4b_cover.py`. Verify
+those receipts with `cover_receipts.py verify`; the full legacy command shapes
+are preserved in the compatibility section of
+`skills/custom-learning-audiobook/references/package-and-qc.md`. Never use any
+of them for a new or revised package.

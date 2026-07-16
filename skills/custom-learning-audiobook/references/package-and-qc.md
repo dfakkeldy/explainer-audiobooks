@@ -1,5 +1,11 @@
 # Package And QC
 
+Contents: Universal paired-cover gate (with the complete paired command
+example) · Build Layout · Learning Design QC · Interior Figures · Prose QC ·
+EPUB And Markdown (with legacy single-cover compatibility) · Echo M4B And
+Alignment (with governed real-book pronunciation probes) · Audio And Alignment
+QC · Final Cover Receipt Verification · README Or Manifest Fields · Copy Rules.
+
 Read `../../skill/references/unattended-production.md` before applying human-only
 gates. Governed-final uses explicit outline, pilot, pronunciation, and cover
 acceptance. Unattended-first-listen uses hash-bound editorial decisions, labels
@@ -70,8 +76,7 @@ PAIR="$DIST/candidate-$SELECTED"
   --edition-id "$EDITION_ID" \
   --selection-source user \
   --selected-at "$SELECTED_AT" \
-  --privacy-classification "$CLASSIFICATION" \
-  --permission-to-publish
+  --privacy-classification "$CLASSIFICATION"
 cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
 
 /usr/local/bin/python3 skill/scripts/build_book.py \
@@ -119,6 +124,12 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
   --apply
 ```
 
+Publication permission is never implied by this sequence: append
+`--permission-to-publish` to the `select-pair` call **only when the user has
+explicitly granted publication for this book**. Omitting it records
+`permission_to_publish: false`, the correct state for private, unattended, and
+not-yet-approved books (and the state the unattended editorial-autoselection
+validator requires).
 
 Use this reference before building, narrating, copying, or reporting a custom
 learning audiobook package.
@@ -130,6 +141,10 @@ Use this run layout:
 ```text
 .build/custom-learning-audiobooks/<slug>/
   research/
+    brief.md
+    sources.md
+    fact-pack.md
+    outline.md
     evidence-notes.md
     evidence-notes.json
     voice-source-profile.md
@@ -145,9 +160,16 @@ Use this run layout:
     learning-design-receipt.json
     coverage-ledger.md
     continuity.md
+    prose-qc-before.md
     prose-qc.md
+    prose-style-receipt.json
     editorial-review.md
     visuals.md
+    pronunciation-plan.json
+    pronunciation-plan-receipt.json
+    pronunciation-probe-reel.m4b        # after a governed partial probe
+    pronunciation-probe-evidence.json   # after a governed partial probe
+    unattended-decisions.json           # unattended-first-listen runs only
     echo-render-inputs-<run-id>.env
     echo-resume-state-<run-id>.json
     echo-render-current-attempt.json
@@ -196,6 +218,26 @@ Use this run layout:
           <slug>.pronunciation-reel.m4b  # when review samples exist
     README.md or manifest.json
 ```
+
+Repeat the `candidate-1/` directory shape for `candidate-2/` and
+`candidate-3/`. After selection, copy the paired receipt into the selected
+candidate directory before governed sync so it contains the nine canonical
+pair/provenance artifacts. In governed-final, `cover-selection.json` appears
+only after the user chooses or requests a mix. In unattended-first-listen, an
+independent editorial review may select a private pair with
+`selection_source=editorial-autoselection` and `permission_to_publish=false`.
+
+The canonical transient build output stays under `.build/`. A public-safe
+package defaults to a durable iCloud Drive delivery copy under:
+
+```text
+/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/
+```
+
+Private or sensitive packages stay in the agreed private project folder and
+receive an iCloud Books reading copy only on an explicit user request. Public-safe
+final packages may also publish to `books/<slug>/` only through the governed
+public sync described below.
 
 ## Learning Design QC
 
@@ -280,26 +322,6 @@ undersized manuscript, or add material to meet a word-count floor. A prose-style
 pass cannot substitute for learning-design evidence, and the learning receipt
 does not certify comprehension. Negative human listening evidence overrides it.
 
-Repeat that directory for `candidate-2/` and `candidate-3/`. After selection,
-copy the paired receipt into the selected candidate directory before governed
-sync so it contains the nine canonical pair/provenance artifacts.
-In governed-final, `cover-selection.json` appears only after the user chooses or
-requests a mix. In unattended-first-listen, an independent editorial review may
-select a private pair with `selection_source=editorial-autoselection` and
-`permission_to_publish=false`.
-
-The canonical transient build output stays under `.build/`. A public-safe
-package defaults to a durable iCloud Drive delivery copy under:
-
-```text
-/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/
-```
-
-Private or sensitive packages stay in the agreed private project folder and
-receive an iCloud Books reading copy only on an explicit user request. Public-safe
-final packages may also publish to `books/<slug>/` only through the governed
-public sync described below.
-
 ## Interior Figures
 
 `skill/scripts/build_book.py` can embed pictures in the EPUB and copy them beside
@@ -350,7 +372,8 @@ At minimum:
   exact locations for redundant ideas, formulaic openings/closings, unexplained
   leaps, shallow concepts, jargon without a concrete case, or missing
   boundaries/counterexamples; it recommends a repair **type**, not replacement
-  prose,
+  prose, and saves its citation-first findings as
+  `research/editorial-review.md`,
 - the frontier author accepts/rejects findings and makes every substantive
   content edit in canonical Markdown,
 - run the bounded humanizer pass, have the frontier author accept or reject each
@@ -570,6 +593,21 @@ set +e
 status=$?
 set -e
 [[ "$status" == 2 ]]
+```
+
+The wrapper derives its own work directory and narration database; recover
+their canonical paths from the attempt's immutable input receipt before using
+`$WORK` or `$DB` below:
+
+```bash
+ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
+INPUT_RECEIPT="$RUN_ROOT/research/$(/usr/local/bin/python3 -c \
+  'import json,sys; print(json.load(open(sys.argv[1]))["inputReceiptFileName"])' \
+  "$ATTEMPT_RECEIPT")"
+WORK=$(awk -F= '$1 == "work_dir" { print substr($0, index($0, "=") + 1) }' \
+  "$INPUT_RECEIPT")
+DB=$(awk -F= '$1 == "narration_db" { print substr($0, index($0, "=") + 1) }' \
+  "$INPUT_RECEIPT")
 ```
 
 Listen to and inspect the chapter-zero M4A named by
