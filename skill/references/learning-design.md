@@ -6,9 +6,12 @@ mode assumes the book is heard while driving and delivering mail; select
 `focused-study` explicitly when pause, rewind, or visual inspection is part of
 the lesson.
 
-The receipt is deliberately narrow. It proves process evidence and an accepted
-human pilot. It does not certify learning transfer, and a negative human
-listening verdict overrides it.
+The receipt is deliberately narrow. In `governed-final`, it proves process
+evidence and an accepted human pilot. In `unattended-first-listen`, it proves the
+same non-human process evidence while recording the human pilot as pending.
+Either receipt status does not certify learning transfer, and a negative human
+listening verdict overrides both. Read `unattended-production.md` before
+choosing the lane.
 
 ## Independent verdicts
 
@@ -21,8 +24,9 @@ listening verdict overrides it.
 3. **Blind sequential beginner review:** an independent reviewer hears or reads
    only the manuscript in order, without the outline, ledger, expected
    abilities, or author rationale.
-4. **Human comprehension pilot:** the intended listener accepts a hash-bound
-   10-to-15-minute narrated pilot before full drafting.
+4. **Comprehension pilot:** governed-final requires the intended listener to
+   accept a hash-bound narrated pilot. Unattended-first-listen requires a
+   hash-bound editorial pilot decision and keeps human comprehension pending.
 5. **Prose style:** the separate humanizer and de-Claudification pass checks
    voice, rhythm, and model tics without changing the learning architecture.
 6. **Packaging and acoustic verification:** EPUB, covers, M4B, sidecar,
@@ -89,6 +93,13 @@ not produce prose for the author to polish.
 }
 ```
 
+For unattended production, also add `productionMode` with
+`name: unattended-first-listen`, the request evidence, and the relative path and
+SHA-256 of `research/unattended-decisions.json`. The decisions receipt must keep
+the run private, set publication permission false, record delivery intent and
+every inferred choice, and set `humanListeningStatus: pending`. If
+`productionMode` is absent, validation defaults to `governed-final`.
+
 Use `first-edition-plus` when an earlier edition taught successfully. Record the
 source edition and the governing question, narrative spine, successful examples,
 and varied chapter jobs to preserve.
@@ -107,9 +118,10 @@ record `curriculumPattern.name`, `reason`, and `fitEvidence`. Allowed patterns
 are `question-led-narrative`, `mechanism-first-spiral`, `end-to-end-trace`, and
 `problem-progression`.
 
-For road-book mode, `authorization.source` is `user`. An
-`explicit-autonomous-run` may prepare evidence and a proposed outline, but it
-cannot stand in for the human outline checkpoint before pilot drafting.
+For governed-final road-book mode, `authorization.source` is `user`. For a
+hash-bound unattended-first-listen run, use `explicit-autonomous-run` and record
+the editorial evidence. This authorization permits a private first-listen
+candidate, not a human learning-acceptance or publication claim.
 
 For road-book mode, add `roadBookDesign` with a governing question, narrative
 spine, at least two people/history anchors, at least four distinct chapter jobs,
@@ -210,10 +222,13 @@ The `humanCheckpoints` object freezes three earlier decisions:
   the accepted `voice-exemplar.md`. This project-authored section, not copied
   source prose, becomes the concrete voice exemplar for later calls.
 
-`status` must be `accepted`. To authorize full drafting, the `decision` must
-carry `verdict: continue`, `authority: listener`, non-empty evidence, and
-`recordedBeforeFullDraft: true`. Outline approval, text review, or an agent's
-assessment cannot stand in for this record.
+In governed-final, `status` is `accepted`, the object uses `humanCheckpoints`,
+and the decision carries `authority: listener`. In unattended-first-listen,
+`status` is `first-listen`, the object uses `editorialCheckpoints`, outline and
+first-section statuses are `editorially-approved` and
+`editorially-accepted`, and the decision carries `authority: editorial-review`.
+Both lanes require non-empty evidence and `recordedBeforeFullDraft: true`.
+Editorial review never stands in for a later human acceptance claim.
 
 ### `revision-passes.json`
 
@@ -253,12 +268,13 @@ Each blind assessment records `plausibleMentalModel`, `confusions`,
 2. Produce hash-bound grounded evidence notes with a traceable-only claim policy.
 3. Preserve a successful earlier edition through first-edition-plus when
    applicable.
-4. Build and obtain human approval for the argument-level outline and
-   road-book/reference-layer design.
+4. Build the argument-level outline and road-book/reference-layer design. Obtain
+   human approval in governed-final or hash-bound editorial authorization in
+   unattended-first-listen.
 5. Complete chapter plans and coverage paths before the affected pilot prose.
 6. Draft the first section, curate it into the voice exemplar, render the
-   narrated pilot, and obtain listener comprehension evidence.
-7. Only after both first-section and pilot acceptance, draft section by section
+   narrated pilot, and obtain the lane's human or editorial evidence.
+7. Only after both first-section and pilot checkpoints, draft section by section
    with a complete `draftContexts` input and update continuity after each call.
 8. Run structure and blind sequential beginner review; the frontier author
    resolves accepted findings.
@@ -285,8 +301,11 @@ Every new or revised learning book passes both `--learning-receipt` and
 `--prose-receipt`. `--legacy-without-learning-receipt` is old-artifact
 reproduction only.
 
-The schema-v2 receipt records `learningAuthority.holder: human-listener`,
-`negativeVerdictOverridesReceipt: true`, and
+The governed-final schema-v2 receipt records `status: pass` and
+`learningAuthority.holder: human-listener`. The unattended receipt records
+`status: first-listen`, `humanComprehensionPilot: pending`, and
+`learningAuthority.holder: human-listener-pending`. Both record
+`negativeVerdictOverridesReceipt: true` and
 `receiptDoesNotCertifyTransfer: true`. Any later negative listening evidence
 invalidates the learning acceptance claim even when hashes and artifacts remain
 technically valid.

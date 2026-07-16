@@ -15,6 +15,7 @@ SCHEMA_VERSION = 1
 PHASES = {"planning", "full-render"}
 SOURCES = {"listener", "coverage-ledger", "author"}
 STATUSES = {"planned", "probed", "accepted"}
+ASSURANCE_LEVELS = {"governed-final", "unattended-first-listen"}
 
 
 def sha256_file(path: Path) -> str:
@@ -74,6 +75,12 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
     plan = load_json(plan_path, "pronunciation plan")
     if plan.get("schemaVersion") != SCHEMA_VERSION:
         raise ValueError(f"pronunciation plan schemaVersion must be {SCHEMA_VERSION}")
+    assurance_level = plan.get("assuranceLevel", "governed-final")
+    if assurance_level not in ASSURANCE_LEVELS:
+        raise ValueError(
+            "pronunciation plan assuranceLevel must be governed-final or "
+            "unattended-first-listen"
+        )
     terms = plan.get("terms")
     if not isinstance(terms, list) or not terms:
         raise ValueError("pronunciation plan terms must be a non-empty list")
@@ -156,10 +163,27 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
         if phase == "full-render" and entry["required"]:
             decision = entry.get("decision")
             evidence = entry.get("evidence")
-            if status != "accepted" or not isinstance(decision, dict) or not isinstance(evidence, dict):
-                raise ValueError(f"{label} requires accepted human evidence before full render")
-            require_string(decision.get("acceptedBy"), f"{label}.decision.acceptedBy")
-            require_string(decision.get("acceptedAt"), f"{label}.decision.acceptedAt")
+            if assurance_level == "governed-final":
+                if (
+                    status != "accepted"
+                    or not isinstance(decision, dict)
+                    or not isinstance(evidence, dict)
+                ):
+                    raise ValueError(
+                        f"{label} requires accepted human evidence before full render"
+                    )
+                require_string(
+                    decision.get("acceptedBy"), f"{label}.decision.acceptedBy"
+                )
+                require_string(
+                    decision.get("acceptedAt"), f"{label}.decision.acceptedAt"
+                )
+            else:
+                if status != "probed" or decision is not None or not isinstance(evidence, dict):
+                    raise ValueError(
+                        f"{label} requires probed evidence without a fabricated human "
+                        "decision for unattended first-listen"
+                    )
             relative_path = require_string(evidence.get("path"), f"{label}.evidence.path")
             evidence_path = resolved_run_file(run_root, relative_path, f"{label}.evidence.path")
             expected_sha = require_string(evidence.get("sha256"), f"{label}.evidence.sha256")
@@ -208,6 +232,10 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
     result: dict[str, object] = {
         "schemaVersion": SCHEMA_VERSION,
         "phase": phase,
+        "assuranceLevel": assurance_level,
+        "humanListening": (
+            "pending" if assurance_level == "unattended-first-listen" else "accepted"
+        ),
         "planSHA256": sha256_file(plan_path),
         "chapterSHA256": hashes,
         "plannedChapters": sorted(chapter_names),
@@ -225,7 +253,14 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
 
 def write_receipt(run_root: Path, out: Path) -> dict[str, object]:
     result = validate_plan(run_root, "full-render")
-    receipt = {**result, "status": "pass"}
+    receipt = {
+        **result,
+        "status": (
+            "first-listen"
+            if result["assuranceLevel"] == "unattended-first-listen"
+            else "pass"
+        ),
+    }
     out.parent.mkdir(parents=True, exist_ok=True)
     temporary = out.with_suffix(out.suffix + ".tmp")
     temporary.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")

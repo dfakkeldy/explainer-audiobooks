@@ -68,6 +68,76 @@ class LearningDesignFixture(unittest.TestCase):
     def read_json(self, name: str) -> dict[str, object]:
         return json.loads((self.research / name).read_text(encoding="utf-8"))
 
+    def enable_unattended_first_listen(self) -> None:
+        decisions_path = self.research / "unattended-decisions.json"
+        self.write_json(
+            "unattended-decisions.json",
+            {
+                "schemaVersion": 1,
+                "productionMode": "unattended-first-listen",
+                "requestEvidence": "User requested a private book ready to listen to overnight.",
+                "privacy": "private",
+                "permissionToPublish": False,
+                "deliveryIntent": "private-project-only",
+                "humanListeningStatus": "pending",
+                "decisions": [
+                    {
+                        "field": "audience",
+                        "choice": "curious beginner",
+                        "reason": "The request did not name a narrower audience.",
+                        "source": "documented-default",
+                    }
+                ],
+            },
+        )
+        brief = self.read_json("learning-brief.json")
+        brief["productionMode"] = {
+            "name": "unattended-first-listen",
+            "requestEvidence": "User requested a private book ready to listen to overnight.",
+            "decisionsPath": "research/unattended-decisions.json",
+            "decisionsSHA256": sha256(decisions_path),
+        }
+        self.write_json("learning-brief.json", brief)
+
+        outline = self.read_json("learning-outline.json")
+        outline["authorization"] = {
+            "status": "approved",
+            "source": "explicit-autonomous-run",
+            "evidence": "The overnight request delegated reversible outline decisions.",
+        }
+        self.write_json("learning-outline.json", outline)
+
+        pilot = self.read_json("comprehension-pilot.json")
+        voice_source = pilot["humanCheckpoints"]["voiceSource"]
+        pilot.pop("humanCheckpoints")
+        pilot["status"] = "first-listen"
+        pilot["listener"] = "human-listener-pending"
+        pilot["listeningContext"] = "Editorial pilot review; representative road listening pending"
+        pilot["editorialCheckpoints"] = {
+            "voiceSource": voice_source,
+            "outline": {
+                "status": "editorially-approved",
+                "reviewer": "independent-outline-reviewer",
+                "evidence": "The outline passed the road-book and evidence checks.",
+                "recordedBeforePilotDraft": True,
+            },
+            "firstSection": {
+                "status": "editorially-accepted",
+                "reviewer": "independent-voice-reviewer",
+                "evidence": "The first section passed voice and teaching diagnostics.",
+                "recordedBeforeRemainingDraft": True,
+                "voiceExemplarPath": "research/voice-exemplar.md",
+                "voiceExemplarSHA256": sha256(self.research / "voice-exemplar.md"),
+            },
+        }
+        pilot["decision"] = {
+            "verdict": "continue",
+            "authority": "editorial-review",
+            "evidence": "The rendered pilot passed transcript, structure, and ear-pass review.",
+            "recordedBeforeFullDraft": True,
+        }
+        self.write_json("comprehension-pilot.json", pilot)
+
     def chapter_hashes(self) -> dict[str, str]:
         return {path.name: sha256(path) for path in sorted(self.chapters.glob("ch*.md"))}
 
@@ -541,6 +611,43 @@ class LearningDesignGateTests(LearningDesignFixture):
         self.assertTrue(receipt["learningAuthority"]["negativeVerdictOverridesReceipt"])
         self.assertTrue(receipt["learningAuthority"]["receiptDoesNotCertifyTransfer"])
         self.assertEqual(receipt, module.verify_learning_receipt(self.chapters, receipt_path))
+
+    def test_unattended_first_listen_preserves_pending_human_authority(self) -> None:
+        self.enable_unattended_first_listen()
+        module = self.module()
+        receipt_path = self.research / "learning-design-receipt.json"
+
+        receipt = module.write_receipt(self.root, receipt_path)
+
+        self.assertEqual("first-listen", receipt["status"])
+        self.assertEqual("unattended-first-listen", receipt["productionMode"])
+        self.assertEqual("pending", receipt["gates"]["humanComprehensionPilot"])
+        self.assertEqual("human-listener-pending", receipt["learningAuthority"]["holder"])
+        self.assertTrue(receipt["learningAuthority"]["negativeVerdictOverridesReceipt"])
+        self.assertTrue(receipt["learningAuthority"]["receiptDoesNotCertifyTransfer"])
+        self.assertEqual(receipt, module.verify_learning_receipt(self.chapters, receipt_path))
+
+    def test_unattended_first_listen_requires_bound_decisions_receipt(self) -> None:
+        self.enable_unattended_first_listen()
+        brief = self.read_json("learning-brief.json")
+        brief["productionMode"]["decisionsSHA256"] = "0" * 64
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "decisionsSHA256"):
+            self.module().validate_run(self.root)
+
+    def test_unattended_receipt_cannot_claim_human_pilot_passed(self) -> None:
+        self.enable_unattended_first_listen()
+        module = self.module()
+        receipt_path = self.research / "learning-design-receipt.json"
+        receipt = module.write_receipt(self.root, receipt_path)
+        receipt["gates"]["humanComprehensionPilot"] = "pass"
+        receipt_path.write_text(
+            json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+
+        with self.assertRaisesRegex(ValueError, "humanComprehensionPilot"):
+            module.verify_learning_receipt(self.chapters, receipt_path)
 
     def test_missing_opening_orientation_fails(self) -> None:
         brief = self.read_json("learning-brief.json")

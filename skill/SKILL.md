@@ -9,13 +9,25 @@ description: >-
 
 # Explainer Audiobook
 
+## Production mode comes first
+
+Read `references/unattended-production.md` before intake. Requests such as
+“overnight,” “wake up to a book,” “ready to listen,” or “start a few books” use
+`unattended-first-listen`: apply documented defaults, record them in
+`research/unattended-decisions.json`, and continue through a private verified
+package without routine approval pauses. Treat the human approval language below
+as `governed-final` behavior. Unattended mode follows the shared contract's
+editorial outline, pilot, pronunciation, cover-selection, delivery, and
+package-or-blocker rules. Never infer publication permission.
+
 ## Universal paired-cover publishing contract
 
 Every new book creates exactly three source directions and renders each as a
 coordinated pair: `cover.png` at 1600×2560 for the EPUB portrait and
 `m4b-cover.png` at 2400×2400 for the M4B square. Use `render_cover_pair` from
 `skill/scripts/cover_pairs.py`, review both thumbnails, and require explicit
-pair selection. Create the paired receipt with `cover_receipts.py select-pair`.
+pair selection (human in governed-final, editorial in private
+unattended-first-listen). Create the paired receipt with `cover_receipts.py select-pair`.
 Embed with `build_book.py --cover ... --m4b-cover ... --cover-selection ...`,
 then use `replace_m4b_cover.py --cover ... --portrait-cover ...
 --cover-selection ...` to embed square art while preserving M4B media. Run
@@ -181,9 +193,10 @@ Work through these steps in order. Use a TodoWrite list to track them.
 
 ### 1. Pin down the brief
 
-Confirm these before writing anything. If the user hasn't specified them, ask
-(an `AskUserQuestion` with a few options works well) — but offer sensible
-defaults so it stays a quick yes/no, not an interrogation:
+Record these before writing anything. In `governed-final`, ask about a missing
+decision when it materially improves the book. In `unattended-first-listen`, use
+the defaults in `references/unattended-production.md`, record the assumption,
+and continue unless the shared contract identifies a real blocker:
 
 - **Subject** — what the book teaches (e.g. "iOS development", "GitHub & version
   control", "App Store Optimization").
@@ -261,8 +274,9 @@ write draft prose. Finish and hash these artifacts before the outline call.
 
 ### 3. Design the argument-level outline, and get approval before generating
 
-This is the spec. Generating 45,000 words against the wrong outline is the
-expensive mistake, so present the outline and get a yes first.
+This is the spec. In `governed-final`, present the outline and get a yes first.
+In `unattended-first-listen`, require independent editorial authorization bound
+to the unattended decisions receipt, then continue.
 
 Build a question-led learning progression rather than a terminology syllabus.
 For a beginner road-book, choose six to ten durable outcomes, a governing
@@ -283,9 +297,10 @@ its prerequisites, and the selected curriculum pattern with a non-empty reason
 and learner-and-subject fit evidence. For every section, record its job,
 argument, specific evidence-note claim IDs, throughline advance, narrative or
 metaphor payoff, intellectual or emotional landing beat, and what it must not
-repeat. A terminology inventory is not an outline. A full autonomous run may
-prepare the research and proposal, but a road-book pauses until the user approves
-this argument-level outline at the human checkpoint.
+repeat. A terminology inventory is not an outline. A governed-final road-book
+pauses until the user approves this argument-level outline. An unattended
+first-listen run records editorial authorization and continues under
+`references/unattended-production.md`.
 
 ### 4. Write the chapter fact packs and teaching plans
 

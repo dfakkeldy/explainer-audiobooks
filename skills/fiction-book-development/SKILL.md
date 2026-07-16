@@ -6,6 +6,17 @@ description: >-
 
 # Fiction Book Development
 
+## Production mode comes first
+
+Read `../../skill/references/unattended-production.md` before scope questions.
+Exploratory fiction remains collaborative. An explicit autonomous full-draft,
+overnight, ready-to-listen, delegated, or multi-book request selects
+`unattended-first-listen`: choose reversible premise and craft details against a
+written editorial rubric, record them in `research/unattended-decisions.json`,
+and continue without routine approval pauses. Ready-to-listen language is also
+explicit authorization to hand the private manuscript to the audiobook
+production skill; it never authorizes publication.
+
 Develop original fiction from premise to an approved Markdown manuscript. This
 skill owns story architecture, characters, scenes, continuity, prose voice, and
 revision. It does **not** own covers, EPUB/M4B rendering, narration, alignment,
@@ -33,6 +44,8 @@ audiobook skill.
   drafting scenes.
 - Read `references/revision-passes.md` before revising a chapter or manuscript.
 - Start a new project from `templates/fiction-project.md`.
+- Read `../../skill/references/unattended-production.md` before selecting
+  collaborative or unattended behavior.
 
 ## Scope Gate
 
@@ -64,9 +77,10 @@ request.
 7. **Markdown is canonical.** Keep planning artifacts separate from manuscript
    chapters. Do not let notes, diagnostics, or alternate drafts silently replace
    accepted prose.
-8. **Production is opt-in.** Completion here is an approved manuscript plus its
-   current bible and ledgers. Hand off to a production skill only when the user
-   explicitly asks.
+8. **Production is opt-in.** Completion here is an accepted manuscript plus its
+   current bible and ledgers. A ready-to-listen or overnight request is explicit
+   private-production authorization; other fiction requests require a separate
+   production request.
 
 ## Workflow
 
@@ -108,7 +122,9 @@ choices. Establish POV/tense rules, timeline, major turns, ending direction, and
 content boundaries. Follow `story-bible-and-continuity.md`.
 
 **Done when:** every major turn is supported by character motive and world rules,
-and no unresolved foundational question blocks the opening chapters.
+and no unresolved foundational question blocks the opening chapters. In
+unattended-first-listen, resolve non-blocking creative choices editorially and
+record them rather than asking.
 
 ### 4. Validate a vertical slice
 

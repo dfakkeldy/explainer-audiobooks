@@ -5,13 +5,25 @@ description: Use when making a custom, personalized, beta-test, Echo-ready, or t
 
 # Custom Learning Audiobook
 
+## Production mode comes first
+
+Read `../../skill/references/unattended-production.md` before intake. A request
+for an overnight, ready-to-listen, delegated, or multi-book result selects
+`unattended-first-listen`: use documented defaults, record
+`research/unattended-decisions.json`, and finish a private package without
+routine questions. Treat unconditional human approval language below as the
+`governed-final` lane. In unattended mode, use the shared editorial outline,
+pilot, pronunciation, cover, delivery, and package-or-blocker rules. Never infer
+permission to publish.
+
 ## Universal paired-cover publishing contract
 
 Every new run creates exactly three coordinated portrait/square candidates.
 Use `render_cover_pair` in `skill/scripts/cover_pairs.py` to produce `cover.png`
 at 1600×2560 and `m4b-cover.png` at 2400×2400 plus thumbnails and receipts.
-Require human review and explicit pair selection, then use `cover_receipts.py
-select-pair` for the paired receipt. Build with `build_book.py --cover ...
+Require review and explicit pair selection: human review in governed-final or
+editorial rubric review for a private unattended-first-listen package. Then use
+`cover_receipts.py select-pair` for the paired receipt. Build with `build_book.py --cover ...
 --m4b-cover ... --cover-selection ...`. Echo resolves the OPF-declared cover
 before export and binds the exact resulting M4B bytes into the pronunciation
 audit. Never run `replace_m4b_cover.py` or otherwise mutate an audited Echo M4B
@@ -124,6 +136,8 @@ research, write one coherent manuscript, and package the result for Echo.
 
 - Read `references/intake-and-research.md` before intake, safety checks, or
   research.
+- Read `../../skill/references/unattended-production.md` before choosing whether
+  the run is unattended-first-listen or governed-final.
 - Read `references/package-and-qc.md` before building EPUB/Markdown, rendering
   M4B/alignment, copying packages, or reporting completion.
 - Before any Echo render, create `research/pronunciation-plan.json`. Include
@@ -182,9 +196,10 @@ research, write one coherent manuscript, and package the result for Echo.
    and `dist/` subfolders. Keep source notes and scratch artifacts out of
    public book folders.
 
-2. **Clarify only what matters.** If the request is broad, ask at most 3-5
-   questions from `references/intake-and-research.md`. If the requester is not
-   available, choose conservative defaults and state them in the manifest.
+2. **Clarify only what matters.** In governed-final, ask at most 3-5 useful
+   questions from `references/intake-and-research.md`. In unattended-first-listen,
+   do not ask about routine preferences: choose conservative defaults and bind
+   them in `research/unattended-decisions.json`.
    Create `research/learning-brief.json` with the learner outcome, actual prior
    knowledge, audience level, `road-book` listening context (driving and
    delivering mail by default), revision mode, opening orientation (context,
@@ -219,7 +234,7 @@ research, write one coherent manuscript, and package the result for Echo.
    not request a pastiche. The accepted first section becomes the actual voice
    exemplar.
 
-5. **Build and approve the argument-level outline.** Build a short table of
+5. **Build and authorize the argument-level outline.** Build a short table of
    contents around a governing question and what the listener wants to
    understand or do. A beginner road-book chooses six to ten durable outcomes,
    no more than two or three new core terms per chapter, people/history anchors,
@@ -228,8 +243,9 @@ research, write one coherent manuscript, and package the result for Echo.
    specialist terminology. For every core concept, record its problem before
    name, real applications, expected ability, and retrieval after a gap. Vary
    chapter jobs and target estimates; do not divide the total word count into
-   identical chapters. A full autonomous run may prepare the outline, but it
-   pauses for human road-book approval before pilot prose.
+   identical chapters. Governed-final pauses for human road-book approval before
+   pilot prose. Unattended-first-listen records independent editorial
+   authorization and continues under the shared contract.
 
    Record the approved progression and evidence in
    `research/learning-outline.json`, including the selection, reason, and fit
@@ -255,17 +271,21 @@ research, write one coherent manuscript, and package the result for Echo.
    Use only enough frontier-authored material for 10 to 15 representative minutes, including
    the opening and first technical passage. Build it with
    `build_book.py --learning-pilot` and a mandatory `-pilot` slug, then render it
-   through the governed `scripts/echo_learning_pilot_narrate.sh` wrapper. This
+   through the dedicated governed `scripts/echo_learning_pilot_narrate.sh`
+   wrapper. This
    isolated pre-receipt path does not require final cover selection or accepted
    full-book pronunciation evidence, and it must not be replaced with the final
-   package wrapper or a raw `echo-cli narrate` call. The intended listener hears
-   it in a representative context and records one lightweight `continue` or
-   `revise` verdict against the exact audio hash. Accept optional listener notes,
-   but do not ask comprehension questions or require a written explanation.
-   Record the verdict in `research/comprehension-pilot.json`. Do not start the
-   full manuscript without both the first-section checkpoint and that listener
-   decision. An autonomous-run request does not waive human comprehension
-   authority.
+   package wrapper or a raw `echo-cli narrate` call. In `governed-final`, the
+   intended listener hears it in a representative context and records one
+   lightweight `continue` or `revise` verdict against the exact audio hash.
+   Accept optional listener notes, but do not ask comprehension questions or
+   require a written explanation. In `unattended-first-listen`, an independent
+   editorial reviewer records the pilot verdict and human comprehension remains
+   pending; never fabricate a listener decision. Do not start the remaining
+   manuscript without the first-section checkpoint and the decision required by
+   the selected lane. An autonomous-run request does not waive human
+   comprehension authority: it preserves that authority as pending. Follow
+   `../../skill/references/unattended-production.md` before drafting the rest.
 
 7. **Plan any interior pictures.** If the user wants pictures, or a handoff
    packet includes a figure plan, gather only usable images: user-supplied,
@@ -516,9 +536,10 @@ research, write one coherent manuscript, and package the result for Echo.
   delivering mail is the default listening context; derivations, symbolic
   chains, and specialist catalogs belong in optional study material or a short
   focused lesson.
-- Do not draft the full manuscript before the intended listener accepts the
-  first-section voice exemplar and hash-bound 10-to-15-minute narrated
-  comprehension pilot.
+- In governed-final, do not draft the full manuscript before the intended
+  listener accepts the first-section voice exemplar and hash-bound narrated
+  comprehension pilot. In unattended-first-listen, require the shared
+  hash-bound editorial checkpoints and preserve human comprehension as pending.
 - Do not treat an autonomous-run request, learning receipt, prose receipt, or
   valid package as authority over a negative human comprehension verdict.
 - Do not fan out substantive chapter prose or let a cheaper model replace a

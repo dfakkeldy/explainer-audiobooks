@@ -121,6 +121,45 @@ class PronunciationPlanTests(unittest.TestCase):
         self.write_plan(plan)
         return evidence_path
 
+    def probe_unattended_plan(self) -> Path:
+        reel_path = self.research / "pronunciation-probe-reel.m4b"
+        reel_path.write_bytes(b"governed unattended pronunciation reel")
+        evidence_path = self.research / "pronunciation-probe-evidence.json"
+        evidence_path.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "reelFileName": reel_path.name,
+                    "reelSHA256": sha256(reel_path),
+                    "clips": [
+                        {
+                            "term": "hyperparameter",
+                            "variantHeard": "hyperparameter",
+                        },
+                        {
+                            "term": "hyperparameter",
+                            "variantHeard": "hyperparameters",
+                        },
+                    ],
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        plan = self.valid_plan()
+        plan["assuranceLevel"] = "unattended-first-listen"
+        entry = plan["terms"][0]
+        entry["status"] = "probed"
+        entry["decision"] = None
+        entry["evidence"] = {
+            "path": "research/pronunciation-probe-evidence.json",
+            "sha256": sha256(evidence_path),
+        }
+        self.write_plan(plan)
+        return evidence_path
+
     def test_planning_accepts_required_term_and_variants_in_named_chapter(self) -> None:
         result = self.module().validate_plan(self.root, "planning")
         self.assertEqual(["hyperparameter"], result["requiredTerms"])
@@ -153,6 +192,37 @@ class PronunciationPlanTests(unittest.TestCase):
 
     def test_full_render_requires_accepted_human_evidence(self) -> None:
         with self.assertRaisesRegex(ValueError, "accepted human evidence"):
+            self.module().validate_plan(self.root, "full-render")
+
+    def test_unattended_full_render_uses_probe_without_fabricating_acceptance(self) -> None:
+        evidence_path = self.probe_unattended_plan()
+        receipt_path = self.research / "pronunciation-plan-receipt.json"
+
+        receipt = self.module().write_receipt(self.root, receipt_path)
+
+        self.assertEqual("first-listen", receipt["status"])
+        self.assertEqual("unattended-first-listen", receipt["assuranceLevel"])
+        self.assertEqual("pending", receipt["humanListening"])
+        self.assertEqual(sha256(evidence_path), receipt["evidenceSHA256"])
+        plan = json.loads(
+            (self.research / "pronunciation-plan.json").read_text(encoding="utf-8")
+        )
+        self.assertIsNone(plan["terms"][0]["decision"])
+
+    def test_unattended_probe_still_requires_every_variant(self) -> None:
+        evidence_path = self.probe_unattended_plan()
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        evidence["clips"].pop()
+        evidence_path.write_text(
+            json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        plan = json.loads(
+            (self.research / "pronunciation-plan.json").read_text(encoding="utf-8")
+        )
+        plan["terms"][0]["evidence"]["sha256"] = sha256(evidence_path)
+        self.write_plan(plan)
+
+        with self.assertRaisesRegex(ValueError, "missing heard variants"):
             self.module().validate_plan(self.root, "full-render")
 
     def test_full_render_requires_a_clip_for_every_variant(self) -> None:
