@@ -1,5 +1,11 @@
 # Fail-Closed Learning Design
 
+Contents: Independent verdicts · Structured evidence (per-record contracts for
+`evidence-notes.json`, `learning-brief.json`, `learning-outline.json`,
+`chapter-plans.json`, `coverage-ledger.json`, `continuity.json`,
+`comprehension-pilot.json`, `revision-passes.json`, `learning-review.json`) ·
+Gate order · Packaging rule and proof boundary · Red flags.
+
 Use this schema-v2 contract before canonical drafting and again before packaging
 a nonfiction learning audiobook. Read `road-book-mode.md` first. The default
 mode assumes the book is heard while driving and delivering mail; select

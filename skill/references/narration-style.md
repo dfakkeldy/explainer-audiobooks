@@ -1,5 +1,9 @@
 # Narration style bible
 
+Contents: Voice & rules (verbatim block for the frontier lead author) · Why
+these rules matter · Length and runtime math · The fact-pack discipline · QC
+checklist · EPUB validity.
+
 This is the craft layer of the explainer-audiobook skill. The whole product is
 *heard*, never read on a page, so every rule below exists to serve the ear. Give
 the "Voice & rules" block to the frontier lead author verbatim. Cheap workers may
@@ -265,7 +269,7 @@ them over the chapter files:
     `candidly`. Replace announcements with the exact evidence, uncertainty, or
     boundary.
 - **Repetition and depth review:** run
-  `python3 scripts/prose_qc.py --chapters-dir chapters --out research/prose-qc.md`.
+  `python3 skill/scripts/prose_qc.py --chapters-dir chapters --out research/prose-qc.md`.
   Inspect its repeated-phrase, similar-paragraph, and opening/closing candidates
   against `coverage-ledger.md`: retain a repeat only when it retrieves, deepens,
   applies, compares, or corrects a concept. Give a cheap reviewer the report and
@@ -297,7 +301,7 @@ them over the chapter files:
 
 ## EPUB validity (the builder handles this, but know why)
 
-`scripts/build_book.py` writes a valid EPUB 3 with both a nav document and an
+`skill/scripts/build_book.py` writes a valid EPUB 3 with both a nav document and an
 NCX table of contents. The one fragile rule: the `mimetype` entry must be the
 first thing in the zip and stored uncompressed. Verify after building:
 `python3 -c "import zipfile;z=zipfile.ZipFile('OUT.epub');i=z.infolist()[0];print(i.filename, i.compress_type)"`

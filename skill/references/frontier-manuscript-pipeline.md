@@ -87,7 +87,7 @@ Everything else goes back to the frontier author as a precise repair request.
    drift and repetitive re-introductions without asking one generation to hold
    the entire manuscript.
 
-8. **Cheap workers inspect, never redraft.** Run `scripts/prose_qc.py`, source
+8. **Cheap workers inspect, never redraft.** Run `skill/scripts/prose_qc.py`, source
    validation, narration lint, and independent learning reviews. Each report
    must cite the source paragraph and explain why a change would improve learning.
 

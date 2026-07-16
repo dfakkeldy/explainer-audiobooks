@@ -2,12 +2,22 @@
 name: explainer-audiobook
 description: >-
   Use when the user wants a long, narration-ready audiobook, spoken course,
-  beginner guide, or listenable explainer on a technical or specialized topic,
-  especially when it should be grounded in a real codebase, product, app, or
-  system and delivered as a chaptered EPUB plus combined Markdown.
+  beginner guide, or listenable explainer on a technical or specialized topic —
+  "turn this repo/app into an audiobook", "a book I can listen to while
+  driving", "explain X as a spoken course" — especially when it should be
+  grounded in a real codebase, product, app, or system and delivered as a
+  chaptered EPUB plus combined Markdown, optionally with native Echo M4B audio.
 ---
 
 # Explainer Audiobook
+
+Produce a book-length, *listenable* explainer that teaches a subject by touring
+a real worked example — the actual app, codebase, product, or system the user
+points you at — and explaining each part: what it does, how it works, why it
+was chosen, and what was traded away. The output is a chaptered EPUB
+(importable into any audiobook/reader app, including on-device text-to-speech
+narration) plus a combined Markdown copy. Run all commands from the
+explainer-audiobooks repo root.
 
 ## Production mode comes first
 
@@ -24,15 +34,19 @@ package-or-blocker rules. Never infer publication permission.
 
 Every new book creates exactly three source directions and renders each as a
 coordinated pair: `cover.png` at 1600×2560 for the EPUB portrait and
-`m4b-cover.png` at 2400×2400 for the M4B square. Use `render_cover_pair` from
-`skill/scripts/cover_pairs.py`, review both thumbnails, and require explicit
-pair selection (human in governed-final, editorial in private
-unattended-first-listen). Create the paired receipt with `cover_receipts.py select-pair`.
-Embed with `build_book.py --cover ... --m4b-cover ... --cover-selection ...`,
-then use `replace_m4b_cover.py --cover ... --portrait-cover ...
---cover-selection ...` to embed square art while preserving M4B media. Run
-`cover_receipts.py verify --cover ... --m4b-cover ... --epub ... --m4b ...` for
-post-embed verification. Finally dry-run and apply `sync_selected_cover.py
+`m4b-cover.png` at 2400×2400 for the M4B square. Use `render_cover_pair(...)`
+from `skill/scripts/cover_pairs.py`, review both thumbnails, and require
+explicit pair selection (human in governed-final, editorial in private
+unattended-first-listen). Create the paired receipt (`cover-selection.json`)
+with `cover_receipts.py select-pair --selection-source user` (or
+`requested-mix`). Embed with
+`build_book.py --cover ... --m4b-cover ... --cover-selection ...`. The governed
+Echo narration wrapper embeds the square cover itself and binds the exact
+resulting M4B bytes into the pronunciation audit.
+Never run `replace_m4b_cover.py` or otherwise mutate a narrated M4B after Echo
+emits it.
+Run `cover_receipts.py verify --cover ... --m4b-cover ... --epub ... --m4b ...`
+for post-embed verification. Finally dry-run and apply `sync_selected_cover.py
 --paired-artifact-dir ...` for governed public/iCloud/site sync under the
 public/private rules below.
 
@@ -42,109 +56,15 @@ M4B square embedding → post-embed verification → governed public/iCloud/site
 sync. Legacy single-cover selection commands are verification-only compatibility
 and must not be used for new work.
 
-
-### Complete paired command example
-
-Create exactly three directories, `candidate-1/`, `candidate-2/`, and
-`candidate-3/`. Each contains schema-v2 `cover-spec.json` and
-`m4b-cover-spec.json`, shared source art, and portrait/square outputs,
-thumbnails, and receipts. Repeat this call for candidates 1 through 3:
-
-```python
-import os
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path("skill/scripts").resolve()))
-from cover_pairs import render_cover_pair
-
-PAIR = Path(os.environ["PAIR"])
-render_cover_pair(
-    portrait_spec=PAIR / "cover-spec.json",
-    square_spec=PAIR / "m4b-cover-spec.json",
-    portrait_output=PAIR / "cover.png",
-    square_output=PAIR / "m4b-cover.png",
-    portrait_thumbnail=PAIR / "cover-thumbnail.png",
-    square_thumbnail=PAIR / "m4b-cover-thumbnail.png",
-    portrait_receipt=PAIR / "cover-render.json",
-    square_receipt=PAIR / "m4b-cover-render.json",
-)
-```
-
-After human review selects one pair, run the complete governed sequence:
-
-```bash
-PAIR="$DIST/candidate-$SELECTED"
-/usr/local/bin/python3 skill/scripts/cover_receipts.py select-pair \
-  --portrait-render-receipt "$PAIR/cover-render.json" \
-  --square-render-receipt "$PAIR/m4b-cover-render.json" \
-  --out "$DIST/cover-selection.json" \
-  --book-slug "$SLUG" \
-  --edition-id "$EDITION_ID" \
-  --selection-source user \
-  --selected-at "$SELECTED_AT" \
-  --privacy-classification "$CLASSIFICATION" \
-  --permission-to-publish
-cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
-
-/usr/local/bin/python3 skill/scripts/build_book.py \
-  --chapters-dir "$RUN_ROOT/chapters" \
-  --out-dir "$DIST" \
-  --title "$TITLE" \
-  --author "Dan Fakkeldy" \
-  --contributor "$CONTRIBUTOR" \
-  --subtitle "$SUBTITLE" \
-  --slug "$SLUG" \
-  --cover "$PAIR/cover.png" \
-  --m4b-cover "$PAIR/m4b-cover.png" \
-  --cover-selection "$DIST/cover-selection.json" \
-  --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
-  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json" \
-  --non-narrated-appendix "$RUN_ROOT/research/sources.md"
-
-/usr/local/bin/python3 skill/scripts/replace_m4b_cover.py \
-  --m4b "$DIST/$SLUG.m4b" \
-  --cover "$PAIR/m4b-cover.png" \
-  --out "$DIST/$SLUG.covered.m4b" \
-  --cover-selection "$DIST/cover-selection.json" \
-  --portrait-cover "$PAIR/cover.png"
-mv "$DIST/$SLUG.covered.m4b" "$DIST/$SLUG.m4b"
-
-/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$PAIR/cover.png" \
-  --m4b-cover "$PAIR/m4b-cover.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
-  --receipt "$DIST/cover-selection.json"
-
-/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$PAIR/cover.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
-  --paired-artifact-dir "$PAIR" \
-  --destination "$DELIVERY_DIR" \
-  --intent reuse
-
-/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$PAIR/cover.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
-  --paired-artifact-dir "$PAIR" \
-  --destination "$DELIVERY_DIR" \
-  --intent reuse \
-  --apply
-```
+Run the complete paired command sequence from the
+"Complete paired command example" in `references/cover-art.md` — including its
+rule for when `--permission-to-publish` may be passed — rather than retyping
+it from memory.
 
 
-Produce a book-length, *listenable* explainer that teaches a subject by touring a
-real worked example — the actual app, codebase, product, or system the user
-points you at — and explaining each part: what it does, how it works, why it was
-chosen, and what was traded away. The output is a chaptered EPUB (importable into
-any audiobook/reader app, including on-device text-to-speech narration) plus a
-combined Markdown copy.
+For an explainer book, `build_book.py` additionally takes
+`--non-narrated-appendix "$RUN_ROOT/research/sources.md"` for a readable
+sources document that stays outside Echo narration and narrated word counts.
 
 Read `references/declaudification.md` before outlining or drafting. Record the
 listener's **AI-writing patterns to avoid**, prevent those phrase families in the
@@ -235,6 +155,13 @@ and continue unless the shared contract identifies a real blocker:
   special attention. Record them and manuscript-derived risks in
   `research/pronunciation-plan.json`; listener-named forms take priority.
 - **Title / author** — for the EPUB metadata.
+
+Create the run folder now: `.build/custom-learning-audiobooks/<slug>/` with
+`research/`, `chapters/`, and `dist/` subfolders (the governed Echo tooling
+expects this shared run-root convention). Seed `research/` by copying the
+starter records from `skill/templates/learning-design/` and reading its
+`instructions.md` — fill in the schema-v2 starters rather than hand-building
+each JSON record from the reference prose.
 
 Create `research/learning-brief.json` now. Record the learner outcome, actual
 prior knowledge, audience level, listening and revision modes, opening
@@ -450,7 +377,7 @@ Run the checklist in `references/narration-style.md`:
   and tradeoff drone this voice is prone to; flatten anything that oversells;
 - a vocabulary check — the real file/tool names from each fact pack actually get
   named in the prose, not paraphrased into "the settings file";
-- `python3 scripts/prose_qc.py --chapters-dir <build>/chapters` to surface
+- `python3 skill/scripts/prose_qc.py --chapters-dir <build>/chapters` to surface
   repeated phrases, similar paragraphs, and formulaic openings/closings. Treat
   it as a candidate list, not a blind rewrite instruction: intentional
   vocabulary retrieval is allowed only when the coverage ledger explains it;
@@ -552,48 +479,19 @@ three complete candidates to the user and ask them to choose or request a mix;
 a mix becomes a new specification and render. The renderer never selects a
 candidate automatically.
 
-The following single-cover command block is verification-only compatibility for
-an existing legacy receipt. Do not run or teach it for new work; new work uses
-the paired commands in the universal contract above:
+Legacy single-cover receipts (created with `cover_receipts.py select` and
+`--selection-source explicit-user-choice`) are verification-only compatibility
+for pre-paired packages; the preserved legacy command shapes live in the
+compatibility sections of `references/cover-art.md` and
+`skills/custom-learning-audiobook/references/package-and-qc.md`. Never use
+them for new work.
 
-```bash
-SELECTED=1
-SLUG="<Output-Filename-Base>"
-TITLE="<Book Title>"
-SUBTITLE="<one-line subtitle>"
-CONTRIBUTOR="<your model name, e.g. Opus 4.8>"
-EDITION_ID="<edition identifier>"
-SELECTED_AT="<ISO-8601 timestamp with UTC offset>"
-CLASSIFICATION="<private|public-safe|sensitive>"
-PERMISSION_TO_PUBLISH="<denied|granted|not-requested>"
-RUN_ROOT=".build/custom-learning-audiobooks/$SLUG"
-DIST="$RUN_ROOT/dist"
-
-/usr/local/bin/python3 skill/scripts/cover_receipts.py select \
-  --render-receipt "$DIST/cover-$SELECTED.render.json" \
-  --out "$DIST/cover-selection.json" \
-  --book-slug "$SLUG" \
-  --edition-id "$EDITION_ID" \
-  --selection-source explicit-user-choice \
-  --selected-at "$SELECTED_AT" \
-  --classification "$CLASSIFICATION" \
-  --permission-to-publish "$PERMISSION_TO_PUBLISH"
-
-/usr/local/bin/python3 skill/scripts/build_book.py \
-  --chapters-dir "$RUN_ROOT/chapters" \
-  --out-dir "$DIST" \
-  --title "$TITLE" \
-  --author "Dan Fakkeldy" \
-  --contributor "$CONTRIBUTOR" \
-  --subtitle "$SUBTITLE" \
-  --slug "$SLUG" \
-  --cover "$DIST/cover-$SELECTED.png" \
-  --cover-selection "$DIST/cover-selection.json" \
-  --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
-  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
-```
-
-It writes a valid EPUB 3 (with both a nav and an NCX table of contents, and the
+Assign `SLUG`, `TITLE`, `SUBTITLE`, `EDITION_ID`, `SELECTED_AT`,
+`CLASSIFICATION`, and `CONTRIBUTOR` from the approved run metadata, then run
+the paired `select-pair` and `build_book.py` commands from
+`references/cover-art.md`. New builds pass `--learning-receipt` and
+`--prose-receipt`; packaging stops if either receipt is missing, failed, or
+stale. `build_book.py` writes a valid EPUB 3 (with both a nav and an NCX table of contents, and the
 cover embedded as both the library thumbnail and a full-bleed first page) plus a
 combined Markdown file, and prints per-chapter word counts and an estimated
 runtime. The EPUB author (`dc:creator`) is the human; the generating model is
@@ -614,6 +512,9 @@ spoken variant. Render bounded partial chapters first, use
 listening evidence before an unbounded render. Export the canonical plan path:
 
 ```bash
+EXPLAINER_ROOT=$(git rev-parse --show-toplevel)
+export EXPLAINER_ROOT
+export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
 export PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" \
   --max-chapters 1
@@ -624,17 +525,12 @@ the fallback. Do not impose a timeout on a progressing render, and do not silent
 replace Echo/Kokoro with Apple/macOS/system narration. Resume a partial render
 through the governed wrapper. Never bypass its pronunciation-plan gate.
 
-After Echo writes the M4B and alignment sidecar, run the final receipt check
-across the selected cover, governed EPUB, and M4B:
-
-```bash
-/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$DIST/cover-$SELECTED.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
-  --receipt "$DIST/cover-selection.json"
-```
+After Echo writes the M4B and alignment sidecar, complete the selector-bound
+"Audio And Alignment QC" flow in
+`skills/custom-learning-audiobook/references/package-and-qc.md` (it sets
+`AUDIOBOOK` from the verified current-accepted selector), then run the paired
+`cover_receipts.py verify` command from `references/cover-art.md` across the
+selected pair, governed EPUB, and `$AUDIOBOOK`.
 
 If native Echo audio is blocked, the EPUB and Markdown may be surfaced directly
 from `dist/` as clearly labelled **interim** files. They are not a complete
@@ -643,35 +539,13 @@ Echo audio and the final M4B receipt verification succeed.
 
 ### 10. Governed delivery
 
-Set `DELIVERY_DIR` to the approved delivery folder. Run the sync as a dry run
-first; it reports `new`, `reuse`, `supersede`, or a conflict without writing:
-
-```bash
-DELIVERY_DIR="<approved delivery folder>"
-/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$DIST/cover-$SELECTED.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
-  --destination "$DELIVERY_DIR" \
-  --intent reuse
-```
-
-Use `--intent supersede` only for a newer explicit choice. A cover-bearing
-destination without a receipt is an `unreceipted` conflict unless the operation
-is an explicit supersession. Only after the reported classification is expected,
-rerun the same sync with explicit apply (and the same chosen intent):
-
-```bash
-/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$DIST/cover-$SELECTED.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$DIST/$SLUG.m4b" \
-  --destination "$DELIVERY_DIR" \
-  --intent reuse \
-  --apply
-```
+Set `DELIVERY_DIR` to the approved delivery folder, then run the paired
+`sync_selected_cover.py` commands from `references/cover-art.md`: first as a
+dry run — it reports `new`, `reuse`, `supersede`, or a conflict without
+writing — and only after the reported classification is expected, rerun the
+same command and intent with `--apply`. Use `--intent supersede` only for a
+newer explicit choice. A cover-bearing destination without a receipt is an
+`unreceipted` conflict unless the operation is an explicit supersession.
 
 After governed apply, copy only non-governed Markdown, alignment, manifest, and
 image files as needed; never raw-copy the selected cover, EPUB, M4B, or selection
@@ -710,6 +584,24 @@ completion or delivery claim.
 - `scripts/sync_selected_cover.py` — classifies a delivery destination in a dry
   run and applies the selected cover-bearing artifacts only after explicit
   approval.
+- `scripts/cover_pairs.py` — renders one candidate's coordinated portrait and
+  square covers plus thumbnails and render receipts (`render_cover_pair(...)`).
+- `scripts/make_cover_contact_sheet.py` — builds a review contact sheet from
+  the rendered candidates.
+- `scripts/prose_qc.py` — repeated-phrase/formula sweep plus the
+  `--fail-on-style` de-Claudification gate and hash-bound prose receipt.
+- `scripts/learning_design_qc.py` — validates the schema-v2 learning records
+  and writes the hash-bound learning receipt.
+- `scripts/pronunciation_plan_qc.py` — validates `pronunciation-plan.json` in
+  `planning` and `full-render` phases and writes its receipt.
+- `scripts/build_pronunciation_probe_reel.py` — builds the governed listening
+  reel from partial chapter captures.
+- `scripts/replace_m4b_cover.py` — legacy-artifact compatibility only; never
+  run it on a narrated Echo M4B.
+- `templates/learning-design/` — schema-v2 starter records to copy into a run's
+  `research/` before pilot work; read its `instructions.md`.
+- `schemas/cover-spec-v1.schema.json` — validates cover specs (schema versions
+  1 and 2).
 - `references/narration-style.md` — the voice & rules block to give the frontier
   author verbatim, the reasoning behind them, the length/runtime table, the
   fact-pack discipline, and the QC checklist. Read before writing fact packs.
@@ -734,3 +626,8 @@ completion or delivery claim.
   explanation paths, section forward-context checkpoints, revision-pass ledger,
   blind sequential review, comprehension-pilot record, scope-history rule, and hash-bound process
   receipt required before packaging.
+- `references/curriculum-patterns.md` — the selectable learning progressions
+  and the selection/fit evidence the outline must record.
+- `references/unattended-production.md` — the shared
+  governed-final/unattended-first-listen contract: mode triggers, documented
+  defaults, editorial checkpoints, and package-or-blocker rules.
