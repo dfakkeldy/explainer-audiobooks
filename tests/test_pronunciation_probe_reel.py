@@ -303,6 +303,107 @@ class PronunciationProbeReelTests(unittest.TestCase):
         self.assertEqual(0.0, clip["sourceStart"])
         self.assertEqual(4.0, clip["sourceEnd"])
 
+    def test_uses_proven_block_range_when_a_required_form_has_no_word_timing(self) -> None:
+        (self.research / "pronunciation-plan.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "terms": [
+                        {
+                            "term": "stop reason",
+                            "variants": ["stop reasons"],
+                            "required": True,
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.write_anchor(
+            words=[
+                {"word": "stop", "start": 0.25, "end": 0.55},
+                {"word": "reason", "start": 0.6, "end": 1.0},
+            ]
+        )
+        anchor_path = self.work / ".anchors-ch0.json"
+        anchor = json.loads(anchor_path.read_text(encoding="utf-8"))
+        anchor["anchors"] = [
+            {"suffix": "s4-b21", "time": 0.0, "words": anchor["anchors"][0]["words"]},
+            {"suffix": "s4-b22", "time": 1.5},
+            {"suffix": "s4-b23", "time": 3.5},
+        ]
+        anchor_path.write_text(json.dumps(anchor), encoding="utf-8")
+        database = self.root / "narration-probe.sqlite"
+        with sqlite3.connect(database) as connection:
+            connection.execute(
+                "CREATE TABLE epub_block (id TEXT, text TEXT, chapter_index INTEGER)"
+            )
+            connection.execute(
+                "INSERT INTO epub_block VALUES (?, ?, ?)",
+                (
+                    "book-s4-b22",
+                    "Chapter 8 will turn stop reasons into application branches.",
+                    0,
+                ),
+            )
+
+        result = self.module().build_reel(self.root, self.work, self.out, self.evidence)
+
+        plural = result["clips"][1]
+        self.assertEqual("blockAnchorRange", plural["timingSource"])
+        self.assertEqual("s4-b22", plural["anchorSuffix"])
+        self.assertEqual(0.25, plural["sourceStart"])
+        self.assertEqual(4.0, plural["sourceEnd"])
+        self.assertEqual(
+            hashlib.sha256(
+                b"Chapter 8 will turn stop reasons into application branches."
+            ).hexdigest(),
+            plural["sourceTextSHA256"],
+        )
+
+    def test_uses_earliest_proven_block_when_form_occurs_in_multiple_blocks(self) -> None:
+        (self.research / "pronunciation-plan.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "terms": [
+                        {"term": "fallback credit", "variants": [], "required": True}
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        self.write_anchor(words=[])
+        anchor_path = self.work / ".anchors-ch0.json"
+        anchor = json.loads(anchor_path.read_text(encoding="utf-8"))
+        anchor["anchors"] = [
+            {"suffix": "s10-b13", "time": 0.25},
+            {"suffix": "s10-b14", "time": 1.5},
+            {"suffix": "s10-b18", "time": 2.0},
+            {"suffix": "s10-b19", "time": 3.5},
+        ]
+        anchor_path.write_text(json.dumps(anchor), encoding="utf-8")
+        database = self.root / "narration-probe.sqlite"
+        with sqlite3.connect(database) as connection:
+            connection.execute(
+                "CREATE TABLE epub_block (id TEXT, text TEXT, chapter_index INTEGER)"
+            )
+            connection.executemany(
+                "INSERT INTO epub_block VALUES (?, ?, ?)",
+                [
+                    ("book-s10-b13", "The fallback credit applies.", 0),
+                    ("book-s10-b18", "Missing fallback credit changes billing.", 0),
+                ],
+            )
+
+        result = self.module().build_reel(self.root, self.work, self.out, self.evidence)
+
+        clip = result["clips"][0]
+        self.assertEqual("blockAnchorRange", clip["timingSource"])
+        self.assertEqual("s10-b13", clip["anchorSuffix"])
+        self.assertEqual(0.0, clip["sourceStart"])
+        self.assertEqual(2.75, clip["sourceEnd"])
+
     def test_builds_one_clip_for_multi_word_form_from_adjacent_timings(self) -> None:
         (self.research / "pronunciation-plan.json").write_text(
             json.dumps(
