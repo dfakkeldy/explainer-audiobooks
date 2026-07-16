@@ -302,6 +302,7 @@ def load_captures(work_dir: Path) -> list[dict[str, Any]]:
                 "audioSHA256": actual_sha,
                 "chapterIndex": chapter_index,
                 "duration": duration,
+                "anchors": anchors,
                 "words": words,
                 "anchorSuffixes": anchor_suffixes,
                 "pronunciationDecisions": decisions,
@@ -365,11 +366,77 @@ def add_database_words(captures: list[dict[str, Any]], timing_db: Path) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def proven_block_range(
+    run_root: Path, form: str, captures: list[dict[str, Any]]
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    databases = [
+        path
+        for path in run_root.glob("narration-*.sqlite")
+        if path.is_file() and not path.is_symlink()
+    ]
+    if len(databases) != 1:
+        return None
+    with sqlite3.connect(databases[0]) as connection:
+        try:
+            rows = connection.execute(
+                "SELECT id, text, chapter_index FROM epub_block WHERE text IS NOT NULL"
+            ).fetchall()
+        except sqlite3.DatabaseError:
+            return None
+    pattern = re.compile(rf"(?<![\w]){re.escape(form)}(?![\w])", re.IGNORECASE)
+    matches: list[tuple[dict[str, Any], dict[str, Any]]] = []
+    for capture in captures:
+        anchors = capture["anchors"]
+        for index, anchor in enumerate(anchors):
+            if not isinstance(anchor, dict):
+                continue
+            suffix = anchor.get("suffix")
+            if not isinstance(suffix, str) or not suffix:
+                continue
+            block_rows = [
+                row
+                for row in rows
+                if isinstance(row[0], str)
+                and row[0].endswith(f"-{suffix}")
+                and row[2] == capture["chapterIndex"]
+                and isinstance(row[1], str)
+                and pattern.search(row[1]) is not None
+            ]
+            if len(block_rows) != 1:
+                continue
+            start = require_time(anchor.get("time"), f"{form}.blockStart")
+            next_time = (
+                anchors[index + 1].get("time")
+                if index + 1 < len(anchors)
+                else capture["duration"]
+            )
+            end = require_time(next_time, f"{form}.blockEnd")
+            if end <= start or end > capture["duration"]:
+                continue
+            block_id, source_text, _ = block_rows[0]
+            matches.append(
+                (
+                    capture,
+                    {
+                        "start": start,
+                        "end": end,
+                        "anchorSuffix": suffix,
+                        "sourceBlockID": block_id,
+                        "sourceTextSHA256": hashlib.sha256(
+                            source_text.encode("utf-8")
+                        ).hexdigest(),
+                    },
+                )
+            )
+    return matches[0] if matches else None
+
+
 def find_clips(
     forms: list[tuple[str, str]],
     captures: list[dict[str, Any]],
     chapter_sources: dict[int, list[str]],
     expected_indexes: dict[str, set[int]],
+    run_root: Path,
 ) -> list[dict[str, Any]]:
     clips: list[dict[str, Any]] = []
     reel_cursor = 0.0
@@ -447,6 +514,11 @@ def find_clips(
                     )
                     break
         if match is None:
+            block_match = proven_block_range(run_root, form, captures)
+            if block_match is not None:
+                capture, block_range = block_match
+                match = (capture, block_range, block_range, "blockAnchorRange")
+        if match is None:
             raise ValueError(f"missing timed pronunciation form: {form}")
         capture, first_timing, last_timing, timing_source = match
         if timing_source in {
@@ -454,6 +526,7 @@ def find_clips(
             "narrationDatabaseWord",
             "sourceNeighborInference",
             "sourceSpanInference",
+            "blockAnchorRange",
         }:
             start = require_time(first_timing.get("start"), f"{form}.start")
             end = require_time(last_timing.get("end"), f"{form}.end")
@@ -497,6 +570,10 @@ def find_clips(
             clips[-1]["unalignedSourceWordCount"] = first_timing[
                 "unalignedSourceWordCount"
             ]
+        elif timing_source == "blockAnchorRange":
+            clips[-1]["anchorSuffix"] = first_timing["anchorSuffix"]
+            clips[-1]["sourceBlockID"] = first_timing["sourceBlockID"]
+            clips[-1]["sourceTextSHA256"] = first_timing["sourceTextSHA256"]
         reel_cursor += clip_duration
     return clips
 
@@ -554,7 +631,13 @@ def build_reel(
     chapter_sources = load_chapter_sources(run_root)
     captures = load_captures(work_dir)
     timing_snapshot_sha256 = add_database_words(captures, timing_db) if timing_db else None
-    clips = find_clips(forms, captures, chapter_sources, expected_indexes)
+    clips = find_clips(
+        forms,
+        captures,
+        chapter_sources,
+        expected_indexes,
+        run_root,
+    )
     render_reel(clips, out)
     public_clips = [{key: value for key, value in clip.items() if not key.startswith("_")} for clip in clips]
     unique_captures = {
