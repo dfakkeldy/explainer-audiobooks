@@ -42,6 +42,7 @@ SKILL_MANIFEST = {
     Path("references/package-and-qc.md"): ManifestEntry("file", 0o644),
     Path("scripts"): ManifestEntry("directory", 0o755),
     Path("scripts/echo_pronunciation_preflight.sh"): ManifestEntry("file", 0o755),
+    Path("scripts/echo_learning_pilot_narrate.sh"): ManifestEntry("file", 0o755),
     Path("scripts/echo_pronunciation_narrate.sh"): ManifestEntry("file", 0o755),
     Path("scripts/echo_pronunciation_lease.py"): ManifestEntry("file", 0o755),
     Path("scripts/echo_pronunciation_state.py"): ManifestEntry("file", 0o755),

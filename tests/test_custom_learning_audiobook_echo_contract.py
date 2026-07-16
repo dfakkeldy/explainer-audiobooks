@@ -44,10 +44,8 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         self.skill = SKILL.read_text(encoding="utf-8")
         self.package = PACKAGE.read_text(encoding="utf-8")
         self.narrate_wrapper = NARRATE_WRAPPER.read_text(encoding="utf-8")
-        self.pilot_narrate_wrapper = (
-            PILOT_NARRATE_WRAPPER.read_text(encoding="utf-8")
-            if PILOT_NARRATE_WRAPPER.is_file()
-            else ""
+        self.pilot_narrate_wrapper = PILOT_NARRATE_WRAPPER.read_text(
+            encoding="utf-8"
         )
         self.preflight = PREFLIGHT.read_text(encoding="utf-8")
         self.lease_helper = LEASE_HELPER.read_text(encoding="utf-8")
@@ -95,28 +93,24 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         self.assertIn("--jobs 1", self.narrate_wrapper)
         self.assertIn("--threads 2", self.narrate_wrapper)
 
-    def test_learning_pilot_has_a_dedicated_governed_echo_entry_point(self) -> None:
-        self.assertTrue(
-            PILOT_NARRATE_WRAPPER.is_file(),
-            "the documented learning-pilot build has no Echo narration entry point",
-        )
-        for text in (self.skill, self.package):
-            with self.subTest(document="skill" if text == self.skill else "package"):
-                self.assertIn("echo_learning_pilot_narrate.sh", text)
-
+    def test_learning_pilot_has_a_governed_isolated_nonpackage_wrapper(self) -> None:
+        normalized_package = self.normalized(self.package)
+        self.assertIn("echo_learning_pilot_narrate.sh", normalized_package)
+        self.assertIn("isolated pilot work", normalized_package)
         for marker in (
-            "PILOT ONLY",
-            'PILOT_DIST="$PILOT_ROOT/dist"',
-            'EPUB="$PILOT_DIST/$SLUG-pilot.epub"',
-            'OUTPUT="$PILOT_DIST/$SLUG-pilot.m4b"',
+            "learning-pilot-nonpackage",
             "APPROVED_ECHO_PRONUNCIATION_SHA",
-            "echo_pronunciation_lease.py",
-            '"$CLI" narrate',
+            "PILOT_ROOT",
+            "verify-sidecar",
+            "validate_pronunciation_audit.py",
+            "REEL",
             "--jobs 1",
             "--threads 2",
+            "listener_acceptance=pending",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.pilot_narrate_wrapper)
+        self.assertNotIn("--cover", self.pilot_narrate_wrapper)
 
     def test_wrapper_binds_selected_square_cover_to_immutable_render(self) -> None:
         for marker in (
