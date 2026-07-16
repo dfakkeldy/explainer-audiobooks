@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-15
 
-**Status:** Approved in conversation; awaiting written-spec review
+**Status:** Approved; coordinated implementation plans published
 
 **Scope:** `longform-book-development`, `custom-learning-audiobook`,
 `explainer-audiobook`, shared Explainer Audiobooks tooling, and the narrow Echo
@@ -181,8 +181,12 @@ that layout applies. The feature adds:
   retrieval targets, chapter expectations, and visual opportunities.
 - `research/echo-source-blocks.json` — exact `export-blocks` v2 output from the
   approved Echo CLI.
+- `research/echo-source-export-receipt.json` — exact Echo revision, CLI hash,
+  EPUB hash, export hash, and copied source signature for the governed export.
 - `research/flashcard-draft.json` — unshipped candidate cards with reviewer
   stable IDs and source anchors.
+- `research/echo-deck-candidate.json` — deterministic portable deck bytes
+  inspected by both reviewers before finalization.
 - `research/flashcard-review.json` — both review verdicts, citation-first
   findings, decisions, and reviewed artifact hashes.
 - `research/echo-flashcard-receipt.json` — final hash-bound acceptance receipt.
@@ -208,7 +212,7 @@ The deck extends the existing JSON shape additively:
   "targetBinding": "selectedBook",
   "targetMediaID": "echo-portable:example:2026-07",
   "sourceSignature": {
-    "algorithm": "echo-visible-blocks-v1",
+    "algorithm": "echo-canonical-blocks-v1",
     "value": "sha256:<lowercase-hex>"
   },
   "cards": [
@@ -239,13 +243,14 @@ The deck extends the existing JSON shape additively:
 - `targetMediaID` remains present for backward decoding but contains a portable
   sentinel, never a local path. Echo v2 must not persist the sentinel.
 - `sourceSignature` comes byte-for-byte from Echo's block export.
-- `frontText` is non-empty and at most 160 characters.
-- `backText` is non-empty and at most 240 characters.
-- `sourceAnchor` is required and must name an exported visible text block.
+- `frontText` is non-empty and at most 160 Unicode scalar values.
+- `backText` is non-empty and at most 240 Unicode scalar values.
+- `sourceAnchor` is required and must name an exported canonical,
+  non-front-matter text block.
 - `startTime` and `endTime` are omitted. Source placement is authoritative.
 - `triggerTiming` is exactly `manualOnly`.
 - A card has at most one of `imageAnchor` and `imageFile`.
-- `imageAnchor` names an exported image block in the same source.
+- `imageAnchor` names an exported canonical image block in the same source.
 - `imageFile` is a normalized relative path under `deck-images/`; absolute
   paths, `..`, symlinks escaping the bundle, and missing files fail validation.
 - Portable v2 initially produces basic question/answer cards only.
@@ -266,25 +271,30 @@ similar anchors in another.
 Echo adds one shared, deterministic `EchoSourceSignature` implementation used
 by both `export-blocks` and deck import.
 
-`echo-visible-blocks-v1` is calculated from visible blocks sorted by
-`sequenceIndex`. Its canonical input contains:
+`echo-canonical-blocks-v1` is calculated from Echo's immutable canonical parser
+blocks, regardless of current user visibility, sorted by `sequenceIndex` with
+portable block ID as the deterministic tie-breaker. Its canonical input
+contains:
 
 - signature algorithm/version;
 - total block count; and
 - for each block, length-prefixed values for portable block ID, block kind,
-  exact text, chapter index including an explicit null representation, sequence
-  index, and word count including an explicit null representation.
+  exact text, front-matter status, sequence index, and word count including an
+  explicit null representation.
 
 The input excludes audiobook ID, filesystem paths, extraction directories,
-timestamps, and other device-local values. It uses the exact stored UTF-8 text
-without locale-dependent normalization. The result is a full SHA-256 digest
-encoded as lowercase hexadecimal with the `sha256:` prefix.
+timestamps, persisted chapter index, mutable hidden state, and other
+device-local or user-configurable values. Persisted chapter indices can change
+when the same EPUB is paired with different audiobook chapter metadata, so they
+remain export metadata rather than source identity. The signature uses exact
+stored UTF-8 text without locale-dependent normalization. The result is a full
+SHA-256 digest encoded as lowercase hexadecimal with the `sha256:` prefix.
 
 `BlockExportDocument` advances to version 2 and includes the signature object.
 Deck tooling copies the signature; it does not reimplement the algorithm.
 
 The signature protects the textual/structural source identity. Image anchors
-are additionally required to resolve to visible `image` blocks. Generated
+are additionally required to resolve to canonical `image` blocks. Generated
 mnemonic image bytes are governed separately by the flashcard receipt.
 
 ## Card Generation
@@ -367,10 +377,12 @@ Generated mnemonic images:
 - use speakable, safe filenames under `deck-images/`; and
 - inherit the book's privacy and publication classification.
 
-If optional image generation or import validation fails, the card may fall back
-to text-only only when the learning reviewer confirms that the card remains
-complete. An image that is required to understand the answer is not optional
-and blocks acceptance.
+If optional image generation or authoring validation fails, the card may fall
+back to text-only only when the learning reviewer confirms that the card
+remains complete and the image reference is removed before final review. Every
+image reference present in a reviewed final deck is required at import. An
+image that is required to understand the answer blocks acceptance when it
+fails.
 
 ## Independent Reviews
 
@@ -405,9 +417,12 @@ The second reviewer verifies:
 - package manifest and checksum coverage; and
 - receipt freshness against the final EPUB and review artifacts.
 
-Both reviews must pass. Their reviewer identities, input hashes, findings,
-accepted/rejected decisions, and final verdicts are recorded in
-`flashcard-review.json`. They do not require routine user approval.
+Both reviews inspect the same deterministic `echo-deck-candidate.json` bytes,
+final EPUB, source export and provenance receipt, plan, draft, and ordered
+mnemonic-image hashes. Both reviews must pass. Their reviewer identities, input
+hashes, findings, accepted/rejected decisions, and final verdicts are recorded
+in `flashcard-review.json`. Final deck bytes are copied unchanged from the
+reviewed candidate. The reviews do not require routine user approval.
 
 ## Hash-Bound Flashcard Receipt
 
@@ -419,7 +434,7 @@ accepted/rejected decisions, and final verdicts are recorded in
 - learning- and prose-receipt SHA-256 values;
 - Echo source revision and Echo CLI binary SHA-256;
 - source-block export SHA-256 and source signature;
-- flashcard plan and draft SHA-256 values;
+- flashcard plan, draft, and deterministic deck-candidate SHA-256 values;
 - final deck SHA-256;
 - ordered mnemonic image paths and SHA-256 values;
 - card count, per-chapter counts, image-anchor count, and image-file count;
@@ -465,12 +480,12 @@ Before deleting or inserting any deck/card rows, Echo:
 
 1. decodes and validates the deck;
 2. requires the selected-book context for portable v2;
-3. loads that book's visible persisted blocks;
+3. loads that book's canonical persisted parser blocks regardless of mutable
+   visibility state;
 4. recomputes the Echo-owned source signature;
 5. requires an exact signature match;
 6. resolves every required source anchor;
-7. resolves or safely degrades optional image references under existing image
-   rules; and
+7. resolves every declared image reference or fails before mutation; and
 8. constructs the complete write set.
 
 A mismatch or unresolved required anchor returns an actionable error with zero
@@ -489,11 +504,16 @@ legacy decks.
 - macOS adds the equivalent active-book action.
 - The existing global deck importer recognizes a portable v2 deck. If no book
   context is active, it asks the user to choose a library book before preflight.
+- A deck with bundled `imageFile` assets is selected through its containing
+  bundle directory on iOS, giving Echo one security-scoped resource for the
+  JSON and sibling `deck-images/`. Text-only and `imageAnchor`-only decks may
+  still be selected directly as JSON.
 - The result reports imported card count, anchored card count, image count, and
   warnings.
 
-Selecting the file and, when necessary, the target book are the only routine
-user steps. There is no per-card confirmation gate.
+Selecting the JSON or its containing image bundle and, when necessary, the
+target book are the only routine user steps. There is no per-card confirmation
+gate.
 
 ### Review behavior
 
