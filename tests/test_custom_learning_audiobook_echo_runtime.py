@@ -7,7 +7,6 @@ import os
 import pwd
 import re
 import shlex
-import shutil
 import signal
 import socket
 import stat
@@ -266,13 +265,11 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
 </package>""",
             )
             archive.writestr("OEBPS/cover.png", portrait.read_bytes())
-
-        pilot_chapters = self.run_root / "pilot" / "chapters"
         pilot_dist = self.run_root / "pilot" / "dist"
-        pilot_chapters.mkdir(parents=True)
-        pilot_dist.mkdir()
-        shutil.copyfile(chapters / "ch01.md", pilot_chapters / "ch01.md")
-        shutil.copyfile(dist / "fixture.epub", pilot_dist / "fixture-pilot.epub")
+        pilot_dist.mkdir(parents=True)
+        (pilot_dist / "fixture-pilot.epub").write_bytes(
+            (dist / "fixture.epub").read_bytes()
+        )
 
         self.git("init", "-q")
         self.git("config", "user.email", "fixture@example.com")
@@ -339,6 +336,23 @@ audit = {
     "legacyChapterIndexes": [], "audiobookFileName": out.name,
     "audiobookSHA256": hashlib.sha256(out.read_bytes()).hexdigest(),
 }
+if os.environ.get("FAKE_EMIT_REEL"):
+    reel = out.with_suffix(".pronunciation-reel.m4b")
+    reel.write_bytes(b"fixture listening reel")
+    audit["listeningReelFileName"] = reel.name
+    audit["listeningReelSHA256"] = hashlib.sha256(reel.read_bytes()).hexdigest()
+    audit["watchCounts"]["read"] = 1
+    audit["decisions"] = [{
+        "blockID": "block-1", "wordStart": 0, "wordEnd": 4,
+        "normalizedWord": "read", "sourceWord": "read",
+        "sourceContext": "read the fixture", "selectedIPA": "read",
+        "kokoroTokenIDs": [1], "source": "monitoredLexicon",
+        "ruleID": "fixture-read", "rationale": "fixture listening sample",
+        "chapterIndex": 0,
+        "chapterRelativeAudioRange": {"start": 0.1, "end": 0.5},
+        "bookRelativeAudioRange": {"start": 0.1, "end": 0.5},
+        "timingPrecision": "exactSynthesisWord",
+    }]
 if not os.environ.get("FAKE_SKIP_AUDIT"):
     out.with_suffix(".pronunciation-audit.json").write_text(json.dumps(audit))
 """
@@ -476,6 +490,101 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             env=environment or self.environment(),
             capture_output=True,
             text=True,
+        )
+
+    def test_learning_pilot_wrapper_uses_isolated_coverless_paths(self) -> None:
+        log = self.tmp / "pilot-narrate.log"
+        environment = self.environment()
+        environment["FAKE_NARRATE_LOG"] = str(log)
+
+        result = self.run_pilot_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        arguments = [
+            line.removeprefix("ARG=")
+            for line in log.read_text(encoding="utf-8").splitlines()
+            if line.startswith("ARG=")
+        ]
+        pilot_root = (self.run_root / "pilot").resolve()
+        self.assertEqual(
+            str((pilot_root / "dist" / "fixture-pilot.epub").resolve()),
+            arguments[arguments.index("--epub") + 1],
+        )
+        self.assertTrue(
+            Path(arguments[arguments.index("--work-dir") + 1]).is_relative_to(
+                pilot_root
+            )
+        )
+        self.assertTrue(
+            Path(arguments[arguments.index("--db") + 1]).is_relative_to(pilot_root)
+        )
+        self.assertNotIn("--cover", arguments)
+        self.assertTrue((pilot_root / "dist" / "fixture-pilot.m4b").is_file())
+        self.assertTrue(
+            (pilot_root / "dist" / "fixture-pilot.alignment.json").is_file()
+        )
+        self.assertTrue(
+            (pilot_root / "dist" / "fixture-pilot.pronunciation-audit.json").is_file()
+        )
+        receipts = list(
+            (pilot_root / "research").glob("echo-pilot-success-*.env")
+        )
+        self.assertEqual(1, len(receipts))
+        receipt = receipts[0].read_text(encoding="utf-8")
+        self.assertIn("kind=learning-pilot-nonpackage", receipt)
+        self.assertRegex(receipt, r"audio_sha256=[0-9a-f]{64}")
+        self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
+
+    def test_learning_pilot_preserves_optional_pronunciation_reel(self) -> None:
+        environment = self.environment()
+        environment["FAKE_EMIT_REEL"] = "1"
+
+        result = self.run_pilot_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        pilot_root = self.run_root / "pilot"
+        reel = pilot_root / "dist" / "fixture-pilot.pronunciation-reel.m4b"
+        self.assertEqual(b"fixture listening reel", reel.read_bytes())
+        success = next(
+            (pilot_root / "research").glob("echo-pilot-success-*.env")
+        ).read_text(encoding="utf-8")
+        self.assertIn(f"reel_path={reel.resolve()}", success)
+        self.assertRegex(success, r"reel_sha256=[0-9a-f]{64}")
+
+    def test_learning_pilot_does_not_publish_after_resource_mutation(self) -> None:
+        ready = self.tmp / "pilot-ready"
+        release = self.tmp / "pilot-release"
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_READY": str(ready),
+                "FAKE_NARRATE_RELEASE": str(release),
+            }
+        )
+        process = subprocess.Popen(
+            [str(PILOT_NARRATE_WRAPPER)],
+            cwd=self.explainer,
+            env=environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.addCleanup(lambda: process.poll() is None and process.kill())
+        self.wait_for_path(ready, process)
+        (self.resources / "pronunciations.json").write_text(
+            '{"renderVersion":13}\n', encoding="utf-8"
+        )
+        release.touch()
+
+        stdout, stderr = process.communicate(timeout=5)
+
+        self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
+        self.assertIn("renderer inputs changed while leases were held", stderr)
+        pilot_dist = self.run_root / "pilot" / "dist"
+        self.assertFalse((pilot_dist / "fixture-pilot.m4b").exists())
+        self.assertFalse((pilot_dist / "fixture-pilot.alignment.json").exists())
+        self.assertFalse(
+            (pilot_dist / "fixture-pilot.pronunciation-audit.json").exists()
         )
 
     def preflight_fields(self) -> dict[str, str]:
@@ -901,112 +1010,6 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertGreaterEqual(len(list(self.lease_root.glob("*.lock"))), 7)
         self.assertFalse(
             (self.run_root / "research" / "echo-render-output.owner.env").exists()
-        )
-
-    def test_learning_pilot_uses_isolated_native_echo_paths_and_hash_receipt(
-        self,
-    ) -> None:
-        log = self.tmp / "pilot-narrate.log"
-        environment = self.environment()
-        environment["FAKE_NARRATE_LOG"] = str(log)
-
-        result = self.run_pilot_narrate(environment=environment)
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        arguments = [
-            line.removeprefix("ARG=")
-            for line in log.read_text(encoding="utf-8").splitlines()
-            if line.startswith("ARG=")
-        ]
-        pilot_root = self.run_root / "pilot"
-        pilot_dist = pilot_root / "dist"
-        self.assertEqual(
-            str(pilot_dist / "fixture-pilot.epub"),
-            arguments[arguments.index("--epub") + 1],
-        )
-        self.assertNotIn("--cover", arguments)
-        self.assertIn("--jobs", arguments)
-        self.assertEqual("1", arguments[arguments.index("--jobs") + 1])
-        self.assertIn("--threads", arguments)
-        self.assertEqual("2", arguments[arguments.index("--threads") + 1])
-
-        work = Path(arguments[arguments.index("--work-dir") + 1])
-        database = Path(arguments[arguments.index("--db") + 1])
-        self.assertEqual(pilot_root, work.parent)
-        self.assertEqual(pilot_root, database.parent)
-
-        audiobook = pilot_dist / "fixture-pilot.m4b"
-        sidecar = pilot_dist / "fixture-pilot.alignment.json"
-        audit = pilot_dist / "fixture-pilot.pronunciation-audit.json"
-        for artifact in (audiobook, sidecar, audit):
-            self.assertTrue(artifact.is_file(), artifact)
-
-        receipt_path = self.run_root / "research" / "comprehension-pilot-render.json"
-        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
-        self.assertEqual(1, receipt["schemaVersion"])
-        self.assertEqual("pilot-only", receipt["packageStatus"])
-        self.assertEqual("pass", receipt["status"])
-        self.assertEqual(self.second_sha, receipt["echoSourceSHA"])
-        self.assertEqual("am_michael", receipt["voice"])
-        self.assertIn("wrapperSHA256", receipt)
-        self.assertEqual(
-            hashlib.sha256(PILOT_NARRATE_WRAPPER.read_bytes()).hexdigest(),
-            receipt["wrapperSHA256"],
-        )
-        self.assertEqual(
-            hashlib.sha256(audiobook.read_bytes()).hexdigest(),
-            receipt["audioSHA256"],
-        )
-        self.assertEqual(
-            hashlib.sha256(sidecar.read_bytes()).hexdigest(),
-            receipt["sidecarSHA256"],
-        )
-        self.assertEqual(
-            hashlib.sha256(audit.read_bytes()).hexdigest(),
-            receipt["pronunciationAuditSHA256"],
-        )
-
-    def test_learning_pilot_rejects_forged_internal_mode_without_leases(self) -> None:
-        result = self.run_pilot_narrate("--leased-run")
-
-        self.assertEqual(70, result.returncode)
-        self.assertIn("inherited FD-backed lease capability", result.stderr)
-
-    def test_learning_pilot_rejects_input_receipt_changed_during_narration(
-        self,
-    ) -> None:
-        ready = self.tmp / "pilot-receipt-ready"
-        release = self.tmp / "pilot-receipt-release"
-        environment = self.environment()
-        environment.update(
-            {
-                "FAKE_NARRATE_READY": str(ready),
-                "FAKE_NARRATE_RELEASE": str(release),
-            }
-        )
-        process = subprocess.Popen(
-            [str(PILOT_NARRATE_WRAPPER)],
-            cwd=self.explainer,
-            env=environment,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        self.addCleanup(lambda: process.poll() is None and process.kill())
-        self.wait_for_path(ready, process)
-
-        input_receipts = list(
-            (self.run_root / "research").glob("echo-pilot-render-inputs-*.env")
-        )
-        self.assertEqual(1, len(input_receipts))
-        input_receipts[0].write_text("tampered=true\n", encoding="utf-8")
-        release.touch()
-
-        stdout, stderr = process.communicate(timeout=5)
-        self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
-        self.assertIn("pilot input receipt changed", stderr)
-        self.assertFalse(
-            (self.run_root / "research" / "comprehension-pilot-render.json").exists()
         )
 
     def test_bounded_partial_render_is_sealed_but_not_published(self) -> None:

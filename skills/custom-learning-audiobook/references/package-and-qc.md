@@ -147,6 +147,9 @@ Use this run layout:
     echo-render-success-<run-id>-<attempt-id>.json
     echo-render-output.owner.env  # present only while governed narration runs
   pilot/
+    research/
+      echo-pilot-inputs-<attempt-id>.env
+      echo-pilot-success-<attempt-id>.env
     chapters/
       ch01.md
     dist/
@@ -154,6 +157,8 @@ Use this run layout:
       <slug>-pilot.md
       <slug>-pilot.m4b
       <slug>-pilot.alignment.json
+      <slug>-pilot.pronunciation-audit.json
+      <slug>-pilot.pronunciation-reel.m4b  # when review samples exist
   chapters/
     ch01.md
     ch02.md
@@ -216,7 +221,26 @@ Before full drafting, build only the 10-to-15-minute comprehension pilot:
 Render this explicitly nonpackage pilot with native Echo/Kokoro, using isolated
 pilot work/database/output paths. It is the only pre-receipt narration path and
 cannot be synced, delivered, or called a governed package. Do not use an Apple
-or system voice. Record the exact accepted audio hash and listener evidence in
+or system voice. The dedicated wrapper derives the mandatory `-pilot` EPUB and
+all isolated paths from the canonical base-book run. It preserves the approved
+Echo source, Release binary, resource-tree, lease, sidecar, and pronunciation-
+audit checks without requiring the later paired-cover or accepted full-book
+pronunciation-plan receipts:
+
+```bash
+EXPLAINER_ROOT=$(git rev-parse --show-toplevel)
+export EXPLAINER_ROOT
+export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
+export SLUG TITLE
+export VOICE=am_michael
+: "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
+export APPROVED_ECHO_PRONUNCIATION_SHA
+
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_learning_pilot_narrate.sh"
+```
+
+The wrapper leaves `listener_acceptance=pending` in its immutable success
+receipt. Record the exact accepted audio hash and listener evidence in
 `comprehension-pilot.json`; request only a lightweight `continue` or `revise`
 verdict, with optional listener notes and no comprehension questionnaire. Stop
 before full drafting unless the human decision is `continue` and the
