@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import re
+import sqlite3
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -131,8 +132,14 @@ def load_captures(work_dir: Path) -> list[dict[str, Any]]:
         anchors = payload.get("anchors")
         if not isinstance(anchors, list):
             raise ValueError(f"anchors must be a list: {anchor_path}")
+        anchor_suffixes: list[str] = []
         for anchor in anchors:
-            if isinstance(anchor, dict) and isinstance(anchor.get("words"), list):
+            if not isinstance(anchor, dict):
+                continue
+            suffix = anchor.get("suffix")
+            if isinstance(suffix, str) and suffix:
+                anchor_suffixes.append(suffix)
+            if isinstance(anchor.get("words"), list):
                 words.extend(word for word in anchor["words"] if isinstance(word, dict))
         pronunciation_evidence = payload.get("pronunciationEvidence")
         decisions: list[dict[str, Any]] = []
@@ -152,12 +159,66 @@ def load_captures(work_dir: Path) -> list[dict[str, Any]]:
                 "chapterIndex": chapter_index,
                 "duration": duration,
                 "words": words,
+                "anchorSuffixes": anchor_suffixes,
                 "pronunciationDecisions": decisions,
             }
         )
     if not captures:
         raise ValueError(f"no governed partial chapter captures found in {work_dir}")
     return sorted(captures, key=lambda capture: capture["chapterIndex"])
+
+
+def add_database_words(captures: list[dict[str, Any]], timing_db: Path) -> str:
+    if not timing_db.is_file():
+        raise ValueError(f"missing narration timing database: {timing_db}")
+    suffix_to_capture = {
+        suffix: capture
+        for capture in captures
+        for suffix in capture["anchorSuffixes"]
+    }
+    snapshot: list[dict[str, Any]] = []
+    try:
+        with sqlite3.connect(f"file:{timing_db.resolve()}?mode=ro", uri=True) as database:
+            rows = database.execute(
+                """
+                SELECT e.id, w.word_index, w.word, w.audio_start_time,
+                       w.audio_end_time, w.source
+                FROM word_timing AS w
+                JOIN epub_block AS e ON e.id = w.epub_block_id
+                WHERE w.source IN ('synthesis', 'synthesized')
+                ORDER BY e.spine_index, e.block_index, w.word_index
+                """
+            )
+            for block_id, word_index, word, start, end, source in rows:
+                match = re.search(r"(s[0-9]+-b[0-9]+)$", str(block_id))
+                if match is None:
+                    continue
+                capture = suffix_to_capture.get(match.group(1))
+                if capture is None:
+                    continue
+                timing = {
+                    "word": word,
+                    "start": start,
+                    "end": end,
+                    "_timingSource": "narrationDatabaseWord",
+                }
+                capture["words"].append(timing)
+                snapshot.append(
+                    {
+                        "suffix": match.group(1),
+                        "wordIndex": word_index,
+                        "word": word,
+                        "start": start,
+                        "end": end,
+                        "source": source,
+                    }
+                )
+    except sqlite3.Error as error:
+        raise ValueError(f"invalid narration timing database: {timing_db}: {error}") from error
+    if not snapshot:
+        raise ValueError(f"narration timing database has no words for captured blocks: {timing_db}")
+    encoded = json.dumps(snapshot, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -174,11 +235,17 @@ def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> 
                     for word in words[index : index + len(wanted)]
                 ]
                 if actual == wanted:
+                    timing_source = str(words[index].get("_timingSource", "exactWord"))
+                    if any(
+                        str(word.get("_timingSource", "exactWord")) != timing_source
+                        for word in words[index : index + len(wanted)]
+                    ):
+                        timing_source = "exactWord"
                     match = (
                         capture,
                         words[index],
                         words[index + len(wanted) - 1],
-                        "exactWord",
+                        timing_source,
                     )
                     break
             if match is not None:
@@ -195,7 +262,7 @@ def find_clips(forms: list[tuple[str, str]], captures: list[dict[str, Any]]) -> 
         if match is None:
             raise ValueError(f"missing timed pronunciation form: {form}")
         capture, first_timing, last_timing, timing_source = match
-        if timing_source == "exactWord":
+        if timing_source in {"exactWord", "narrationDatabaseWord"}:
             start = require_time(first_timing.get("start"), f"{form}.start")
             end = require_time(last_timing.get("end"), f"{form}.end")
         else:
@@ -267,13 +334,21 @@ def render_reel(clips: list[dict[str, Any]], out: Path) -> None:
     media_duration(out)
 
 
-def build_reel(run_root: Path, work_dir: Path, out: Path, evidence_out: Path) -> dict[str, Any]:
+def build_reel(
+    run_root: Path,
+    work_dir: Path,
+    out: Path,
+    evidence_out: Path,
+    *,
+    timing_db: Path | None = None,
+) -> dict[str, Any]:
     run_root = run_root.resolve()
     work_dir = work_dir.resolve()
     plan_path = run_root / "research" / "pronunciation-plan.json"
     plan = load_json(plan_path, "pronunciation plan")
     forms = planned_forms(plan)
     captures = load_captures(work_dir)
+    timing_snapshot_sha256 = add_database_words(captures, timing_db) if timing_db else None
     clips = find_clips(forms, captures)
     render_reel(clips, out)
     public_clips = [{key: value for key, value in clip.items() if not key.startswith("_")} for clip in clips]
@@ -288,6 +363,8 @@ def build_reel(run_root: Path, work_dir: Path, out: Path, evidence_out: Path) ->
         "captures": unique_captures,
         "clips": public_clips,
     }
+    if timing_snapshot_sha256 is not None:
+        evidence["timingSnapshotSHA256"] = timing_snapshot_sha256
     evidence_out.parent.mkdir(parents=True, exist_ok=True)
     temporary = evidence_out.with_suffix(evidence_out.suffix + ".tmp")
     temporary.write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -301,8 +378,19 @@ def main() -> int:
     parser.add_argument("--work-dir", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--evidence-out", type=Path, required=True)
+    parser.add_argument(
+        "--timing-db",
+        type=Path,
+        help="Fallback Echo narration database when captures omit word arrays.",
+    )
     args = parser.parse_args()
-    evidence = build_reel(args.run_root, args.work_dir, args.out, args.evidence_out)
+    evidence = build_reel(
+        args.run_root,
+        args.work_dir,
+        args.out,
+        args.evidence_out,
+        timing_db=args.timing_db,
+    )
     print(json.dumps(evidence, indent=2, sort_keys=True))
     return 0
 

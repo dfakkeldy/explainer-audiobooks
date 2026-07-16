@@ -4,6 +4,7 @@ import hashlib
 import importlib
 import json
 import shutil
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -29,6 +30,7 @@ class PronunciationProbeReelTests(unittest.TestCase):
         self.work = self.root / "work"
         self.out = self.root / "dist" / "probe.m4b"
         self.evidence = self.research / "pronunciation-probe-evidence.json"
+        self.timing_db = self.root / "narration.sqlite"
         self.research.mkdir()
         self.work.mkdir()
         self.audio = self.work / "chapter-0.m4a"
@@ -177,6 +179,45 @@ class PronunciationProbeReelTests(unittest.TestCase):
         self.assertEqual("g2p.fallback.hyperparameter", singular["ruleID"])
         self.assertEqual(0.0, singular["sourceStart"])
         self.assertEqual(2.75, singular["sourceEnd"])
+
+    def test_uses_narration_database_words_when_capture_omits_them(self) -> None:
+        self.write_anchor(words=[])
+        with sqlite3.connect(self.timing_db) as database:
+            database.executescript(
+                """
+                CREATE TABLE epub_block (
+                    id TEXT PRIMARY KEY,
+                    spine_index INTEGER NOT NULL,
+                    block_index INTEGER NOT NULL
+                );
+                CREATE TABLE word_timing (
+                    epub_block_id TEXT NOT NULL,
+                    word_index INTEGER NOT NULL,
+                    word TEXT NOT NULL,
+                    audio_start_time REAL NOT NULL,
+                    audio_end_time REAL NOT NULL,
+                    source TEXT NOT NULL
+                );
+                INSERT INTO epub_block VALUES ('book-s0-b0', 0, 0);
+                INSERT INTO word_timing VALUES
+                    ('book-s0-b0', 0, 'hyperparameter', 0.75, 1.25, 'synthesized'),
+                    ('book-s0-b0', 1, 'hyperparameters', 2.25, 2.9, 'synthesis');
+                """
+            )
+
+        result = self.module().build_reel(
+            self.root,
+            self.work,
+            self.out,
+            self.evidence,
+            timing_db=self.timing_db,
+        )
+
+        self.assertEqual(
+            ["narrationDatabaseWord", "narrationDatabaseWord"],
+            [clip["timingSource"] for clip in result["clips"]],
+        )
+        self.assertRegex(result["timingSnapshotSHA256"], r"^[0-9a-f]{64}$")
 
     def test_builds_one_clip_for_multi_word_form_from_adjacent_timings(self) -> None:
         (self.research / "pronunciation-plan.json").write_text(

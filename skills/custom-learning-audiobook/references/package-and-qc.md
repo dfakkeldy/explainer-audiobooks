@@ -602,9 +602,15 @@ captures, extracted clips, and reel hashes:
   "$EXPLAINER_ROOT/skill/scripts/build_pronunciation_probe_reel.py" \
   --run-root "$RUN_ROOT" \
   --work-dir "$WORK" \
+  --timing-db "$DB" \
   --out "$RUN_ROOT/research/pronunciation-probe-reel.m4b" \
   --evidence-out "$RUN_ROOT/research/pronunciation-probe-evidence.json"
 ```
+
+`--timing-db` is a governed fallback for Echo captures whose marker omits word
+arrays even though the same narration database contains synthesis timing rows.
+The reel evidence records a deterministic hash of the timing snapshot used;
+the source chapter audio remains bound by its sealed capture hash.
 
 For governed-final, have the listener hear every required base form and variant.
 Human listening is the decision gate: automation may locate and extract the
