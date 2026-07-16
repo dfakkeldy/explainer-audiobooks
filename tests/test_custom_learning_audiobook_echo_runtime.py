@@ -64,6 +64,13 @@ STATE_HELPER = (
     / "echo_pronunciation_state.py"
 )
 
+# Backstop against a hang, never an assertion about speed: every wait below returns
+# as soon as its condition holds, so this only costs wall time when something is
+# genuinely stuck. It must clear the narration pipeline's spawn-and-hash work on a
+# loaded machine -- at load average ~30 the median time-to-ready measured 5.8s and
+# the peak 14s, so the former 5s budget failed about half the time.
+WAIT_TIMEOUT = float(os.environ.get("ECHO_TEST_WAIT_TIMEOUT", "60"))
+
 
 def load_audit_validator_module():
     specification = importlib.util.spec_from_file_location(
@@ -576,7 +583,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         release.touch()
 
-        stdout, stderr = process.communicate(timeout=5)
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
 
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("renderer inputs changed while leases were held", stderr)
@@ -687,7 +694,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
     @staticmethod
     def wait_for_path(path: Path, process: subprocess.Popen[str]) -> None:
-        deadline = time.monotonic() + 5
+        deadline = time.monotonic() + WAIT_TIMEOUT
         while time.monotonic() < deadline:
             if path.exists():
                 return
@@ -697,7 +704,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                     f"process exited before {path} appeared: {stdout=} {stderr=}"
                 )
             time.sleep(0.05)
-        raise AssertionError(f"timed out waiting for {path}")
+        raise AssertionError(f"timed out waiting for {path} after {WAIT_TIMEOUT}s")
 
     def test_valid_preflight_preserves_cwd_and_records_provenance(self) -> None:
         result = self.run_preflight(
@@ -1151,7 +1158,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
 
         release.touch()
-        first_stdout, first_stderr = first.communicate(timeout=5)
+        first_stdout, first_stderr = first.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(0, first.returncode, f"{first_stdout}\n{first_stderr}")
         self.assertFalse(owner.exists())
 
@@ -1209,7 +1216,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         contender = self.run_narrate(environment=second_environment)
 
         release.touch()
-        first_stdout, first_stderr = first.communicate(timeout=5)
+        first_stdout, first_stderr = first.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(75, contender.returncode, contender.stderr)
         self.assertIn("active narration lease", contender.stderr)
         self.assertEqual(1, log.read_text(encoding="utf-8").count("BEGIN="))
@@ -1329,7 +1336,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.addCleanup(lambda: process.poll() is None and process.kill())
         self.wait_for_path(ready, process)
         process.send_signal(signal.SIGTERM)
-        process.communicate(timeout=5)
+        process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(143, process.returncode)
         self.assertFalse(owner.exists())
 
@@ -1355,7 +1362,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.wait_for_path(ready, process)
         (self.run_root / "dist" / "fixture.epub").write_bytes(b"changed")
         release.touch()
-        stdout, stderr = process.communicate(timeout=5)
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("EPUB changed while narration lease was held", stderr)
         owner = self.run_root / "research" / "echo-render-output.owner.env"
@@ -1385,7 +1392,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(1, len(receipts))
         receipts[0].write_text("tampered=true\n", encoding="utf-8")
         release.touch()
-        stdout, stderr = process.communicate(timeout=5)
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("receipt changed while narration lease was held", stderr)
         owner = self.run_root / "research" / "echo-render-output.owner.env"
@@ -1417,7 +1424,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             '{"renderVersion":13}\n', encoding="utf-8"
         )
         release.touch()
-        stdout, stderr = process.communicate(timeout=5)
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("Echo resources changed while narration lease was held", stderr)
 
@@ -1820,7 +1827,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertTrue(owner.is_file())
 
         guardian.kill()
-        guardian.wait(timeout=5)
+        guardian.wait(timeout=WAIT_TIMEOUT)
         self.assertEqual(-signal.SIGKILL, guardian.returncode)
         contender = self.run_narrate(environment=environment)
         self.assertEqual(75, contender.returncode, contender.stderr)
@@ -1828,7 +1835,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(1, log.read_text(encoding="utf-8").count("BEGIN="))
 
         release.touch()
-        deadline = time.monotonic() + 5
+        deadline = time.monotonic() + WAIT_TIMEOUT
         while owner.exists() and time.monotonic() < deadline:
             time.sleep(0.05)
         self.assertFalse(
