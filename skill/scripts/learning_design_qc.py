@@ -725,9 +725,9 @@ def validate_pilot(pilot: dict[str, Any], run_root: Path) -> None:
     audio_hash = require_string(pilot.get("audioSHA256"), "pilot.audioSHA256")
     if not SHA256_RE.fullmatch(audio_hash):
         raise ValueError("pilot.audioSHA256 must be a lowercase SHA-256 digest")
-    require_string(pilot.get("centralIdeaInOwnWords"), "pilot.centralIdeaInOwnWords")
-    require_string(pilot.get("freshExampleResponse"), "pilot.freshExampleResponse")
-    require_string_list(pilot.get("lostAt"), "pilot.lostAt", allow_empty=True)
+    listener_notes = pilot.get("listenerNotes")
+    if listener_notes is not None and not isinstance(listener_notes, str):
+        raise ValueError("pilot.listenerNotes must be a string when present")
     checkpoints = pilot.get("humanCheckpoints")
     if not isinstance(checkpoints, dict):
         raise ValueError("pilot.humanCheckpoints must be an object")

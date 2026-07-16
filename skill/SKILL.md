@@ -373,9 +373,9 @@ python3 skill/scripts/build_book.py \
 
 Render it through the governed Echo path. Have the intended listener hear it in
 a representative context, then record the exact audio hash, listening context,
-their central idea in their own words, their response to a fresh example, where
-they became lost, and their decision in
-`research/comprehension-pilot.json`. Full drafting remains blocked until the
+and one lightweight `continue` or `revise` decision. Accept optional listener
+notes, but do not ask comprehension questions or require a written explanation.
+Record the verdict in `research/comprehension-pilot.json`. Full drafting remains blocked until the
 listener records `verdict: continue`. The first-section checkpoint and listening
 pilot are both required. Outline approval, text review, or agent confidence
 cannot substitute for this gate.

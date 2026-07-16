@@ -135,16 +135,12 @@ three durable terms, at least two real applications or consequences, and one
 retrieval in a fresh example.
 
 The intended listener hears the pilot in a representative context whenever
-safe and practical. Continue only when the listener can:
-
-- explain the central idea in their own words;
-- distinguish the key terms in a fresh example;
-- identify where they became lost, even when the answer is "nowhere."
-
-Record the exact pilot audio hash, listening context, responses, decision, and
-evidence in `research/comprehension-pilot.json`. The decision must be recorded
-before full drafting. Outline approval, a polished text sample, or an agent
-review cannot substitute for this gate.
+safe and practical. Surface one lightweight choice—`continue` or `revise`—and
+accept optional listener notes without requiring written comprehension answers.
+Record the exact pilot audio hash, listening context, decision, optional notes,
+and evidence in `research/comprehension-pilot.json`. The decision must be
+recorded before full drafting. Outline approval, a polished text sample, or an
+agent review cannot substitute for this gate.
 
 ## Human comprehension authority
 

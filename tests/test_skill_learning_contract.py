@@ -262,6 +262,44 @@ class SkillLearningContractTests(unittest.TestCase):
         self.assertTrue((root / "evidence-notes.md").is_file())
         self.assertTrue((root / "voice-source-profile.md").is_file())
 
+    def test_narrated_pilot_uses_one_lightweight_listener_verdict(self) -> None:
+        surfaces = (
+            "skill/SKILL.md",
+            "skill/references/learning-design.md",
+            "skill/references/road-book-mode.md",
+            "skills/custom-learning-audiobook/SKILL.md",
+            "skills/custom-learning-audiobook/references/intake-and-research.md",
+            "skills/custom-learning-audiobook/references/package-and-qc.md",
+            "skills/longform-book-development/SKILL.md",
+            "skills/longform-book-development/references/handoff-packet.md",
+        )
+        combined = "\n".join(self.read(path).lower() for path in surfaces)
+
+        for removed_questionnaire in (
+            "central idea in their own words",
+            "central idea in the listener's own words",
+            "fresh-example response",
+            "fresh-example distinction",
+            "where they became lost",
+        ):
+            self.assertNotIn(removed_questionnaire, combined)
+        self.assertIn("`continue` or `revise`", combined)
+        self.assertIn("optional listener notes", combined)
+
+        pilot = json.loads(
+            (
+                ROOT
+                / "skill"
+                / "templates"
+                / "learning-design"
+                / "comprehension-pilot.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertNotIn("centralIdeaInOwnWords", pilot)
+        self.assertNotIn("freshExampleResponse", pilot)
+        self.assertNotIn("lostAt", pilot)
+        self.assertEqual("", pilot["listenerNotes"])
+
     def test_longform_handoff_cannot_advance_without_learning_architecture(self) -> None:
         skill = self.read("skills/longform-book-development/SKILL.md")
         handoff = self.read("skills/longform-book-development/references/handoff-packet.md")

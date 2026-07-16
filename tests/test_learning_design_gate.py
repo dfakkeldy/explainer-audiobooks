@@ -745,6 +745,18 @@ class LearningDesignGateTests(LearningDesignFixture):
         with self.assertRaisesRegex(ValueError, "authority"):
             self.module().validate_run(self.root)
 
+    def test_pilot_accepts_listener_verdict_without_questionnaire(self) -> None:
+        pilot = self.read_json("comprehension-pilot.json")
+        pilot.pop("centralIdeaInOwnWords")
+        pilot.pop("freshExampleResponse")
+        pilot.pop("lostAt")
+        pilot["listenerNotes"] = "The pilot was clear; continue."
+        self.write_json("comprehension-pilot.json", pilot)
+
+        result = self.module().validate_run(self.root)
+
+        self.assertIsInstance(result, dict)
+
     def test_human_checkpoints_freeze_outline_and_first_section_exemplar(self) -> None:
         pilot = self.read_json("comprehension-pilot.json")
         pilot["humanCheckpoints"]["outline"]["recordedBeforePilotDraft"] = False
