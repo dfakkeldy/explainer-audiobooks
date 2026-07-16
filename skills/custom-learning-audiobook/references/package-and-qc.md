@@ -221,6 +221,17 @@ or system voice. Record the exact accepted audio hash and listener evidence in
 verdict, with optional listener notes and no comprehension questionnaire. Stop
 before full drafting unless the human decision is `continue` and the
 first-section checkpoint is accepted.
+`comprehension-pilot.json`; stop before full drafting unless the human decision
+is `continue` and the first-section checkpoint is accepted. Invoke the dedicated
+governed pilot entry point after the build:
+
+```bash
+export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
+export SLUG TITLE
+: "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
+export APPROVED_ECHO_PRONUNCIATION_SHA
+"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_learning_pilot_narrate.sh"
+```
 
 Before the final receipt, complete hash-bound `revision-passes.json` as separate
 single-job claim-traceability, tightening, de-listification, sentence-rhythm,
