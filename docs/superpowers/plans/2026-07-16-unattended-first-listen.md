@@ -199,7 +199,7 @@
 
   Expected: all four report valid skill structure.
 
-- [ ] **Step 3: Update and lint the KB**
+- [x] **Step 3: Update and lint the KB**
 
   Record that ready-to-listen/overnight requests default to private
   unattended-first-listen packages, while publication and learning acceptance
@@ -207,7 +207,7 @@
 
   Expected: PASS.
 
-- [ ] **Step 4: Commit and publish repository work**
+- [x] **Step 4: Commit and publish repository work**
 
   Commit coherent repository and KB changes separately, push the feature branch,
   open a ready PR against `main`, and report hosted CI status.
