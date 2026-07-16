@@ -21,6 +21,11 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).parents[1]
+# These tests spawn real narration wrappers and wait on their side effects. The
+# machine routinely runs concurrent Echo renders that saturate the CPU, so a tight
+# deadline reports load as a lease bug. Raise ECHO_TEST_WAIT_TIMEOUT on a busy host;
+# it bounds a failure path, so a generous value costs nothing when tests pass.
+WAIT_TIMEOUT = float(os.environ.get("ECHO_TEST_WAIT_TIMEOUT", "60"))
 PREFLIGHT = (
     ROOT
     / "skills"
@@ -576,7 +581,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         release.touch()
 
-        stdout, stderr = process.communicate(timeout=5)
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
 
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("renderer inputs changed while leases were held", stderr)
@@ -687,7 +692,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
     @staticmethod
     def wait_for_path(path: Path, process: subprocess.Popen[str]) -> None:
-        deadline = time.monotonic() + 5
+        deadline = time.monotonic() + WAIT_TIMEOUT
         while time.monotonic() < deadline:
             if path.exists():
                 return
@@ -1151,7 +1156,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
 
         release.touch()
-        first_stdout, first_stderr = first.communicate(timeout=5)
+        first_stdout, first_stderr = first.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(0, first.returncode, f"{first_stdout}\n{first_stderr}")
         self.assertFalse(owner.exists())
 
@@ -1209,7 +1214,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         contender = self.run_narrate(environment=second_environment)
 
         release.touch()
-        first_stdout, first_stderr = first.communicate(timeout=5)
+        first_stdout, first_stderr = first.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(75, contender.returncode, contender.stderr)
         self.assertIn("active narration lease", contender.stderr)
         self.assertEqual(1, log.read_text(encoding="utf-8").count("BEGIN="))
@@ -1329,7 +1334,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.addCleanup(lambda: process.poll() is None and process.kill())
         self.wait_for_path(ready, process)
         process.send_signal(signal.SIGTERM)
-        process.communicate(timeout=5)
+        process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(143, process.returncode)
         self.assertFalse(owner.exists())
 
@@ -1355,7 +1360,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.wait_for_path(ready, process)
         (self.run_root / "dist" / "fixture.epub").write_bytes(b"changed")
         release.touch()
-        stdout, stderr = process.communicate(timeout=5)
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("EPUB changed while narration lease was held", stderr)
         owner = self.run_root / "research" / "echo-render-output.owner.env"
@@ -1385,7 +1390,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(1, len(receipts))
         receipts[0].write_text("tampered=true\n", encoding="utf-8")
         release.touch()
-        stdout, stderr = process.communicate(timeout=5)
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("receipt changed while narration lease was held", stderr)
         owner = self.run_root / "research" / "echo-render-output.owner.env"
@@ -1417,7 +1422,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             '{"renderVersion":13}\n', encoding="utf-8"
         )
         release.touch()
-        stdout, stderr = process.communicate(timeout=5)
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("Echo resources changed while narration lease was held", stderr)
 
@@ -1820,7 +1825,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertTrue(owner.is_file())
 
         guardian.kill()
-        guardian.wait(timeout=5)
+        guardian.wait(timeout=WAIT_TIMEOUT)
         self.assertEqual(-signal.SIGKILL, guardian.returncode)
         contender = self.run_narrate(environment=environment)
         self.assertEqual(75, contender.returncode, contender.stderr)
@@ -1828,7 +1833,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(1, log.read_text(encoding="utf-8").count("BEGIN="))
 
         release.touch()
-        deadline = time.monotonic() + 5
+        deadline = time.monotonic() + WAIT_TIMEOUT
         while owner.exists() and time.monotonic() < deadline:
             time.sleep(0.05)
         self.assertFalse(
