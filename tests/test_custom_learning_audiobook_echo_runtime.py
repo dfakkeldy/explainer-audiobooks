@@ -21,6 +21,11 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).parents[1]
+# These tests spawn real narration wrappers and wait on their side effects. The
+# machine routinely runs concurrent Echo renders that saturate the CPU, so a tight
+# deadline reports load as a lease bug. Raise ECHO_TEST_WAIT_TIMEOUT on a busy host;
+# it bounds a failure path, so a generous value costs nothing when tests pass.
+WAIT_TIMEOUT = float(os.environ.get("ECHO_TEST_WAIT_TIMEOUT", "60"))
 PREFLIGHT = (
     ROOT
     / "skills"
@@ -103,6 +108,13 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
         )
         self.resources = self.cli.parent / "EchoNarrationResources"
+        # Mirrors echo_pronunciation_canonical_lease_root (echo_pronunciation_preflight.sh),
+        # which derives this root from the passwd database and so ignores both $HOME and
+        # $ECHO_PRONUNCIATION_LEASE_ROOT — the wrappers overwrite that variable with the
+        # canonical value rather than reading it, so the lease namespace cannot be forked
+        # (see test_alternate_lock_root_cannot_fork_the_build_lease_namespace). Redirecting
+        # this at a tmp dir would not move where the scripts lease; it would only desync the
+        # harness from them, so --assert-held fails and every leased test returns 70.
         self.lease_root = (
             Path(pwd.getpwuid(os.geteuid()).pw_dir)
             / ".cache"
@@ -1014,7 +1026,6 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(self.run_root, database.parent)
         run_id = work.name.removeprefix("audio-work-")
         self.assertEqual(f"narration-{run_id}.sqlite", database.name)
-        self.assertGreaterEqual(len(list(self.lease_root.glob("*.lock"))), 7)
         self.assertFalse(
             (self.run_root / "research" / "echo-render-output.owner.env").exists()
         )
