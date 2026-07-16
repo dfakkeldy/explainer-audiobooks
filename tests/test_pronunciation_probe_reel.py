@@ -27,11 +27,13 @@ class PronunciationProbeReelTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary.name)
         self.research = self.root / "research"
+        self.chapters = self.root / "chapters"
         self.work = self.root / "work"
         self.out = self.root / "dist" / "probe.m4b"
         self.evidence = self.research / "pronunciation-probe-evidence.json"
         self.timing_db = self.root / "narration.sqlite"
         self.research.mkdir()
+        self.chapters.mkdir()
         self.work.mkdir()
         self.audio = self.work / "chapter-0.m4a"
         subprocess.run(
@@ -218,6 +220,88 @@ class PronunciationProbeReelTests(unittest.TestCase):
             [clip["timingSource"] for clip in result["clips"]],
         )
         self.assertRegex(result["timingSnapshotSHA256"], r"^[0-9a-f]{64}$")
+
+    def test_infers_missing_term_range_from_timed_source_neighbors(self) -> None:
+        (self.research / "pronunciation-plan.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "terms": [
+                        {
+                            "term": "J-space",
+                            "variants": [],
+                            "expectedChapters": ["ch01.md"],
+                            "required": True,
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        (self.chapters / "ch01.md").write_text(
+            "# Chapter One\n\nSo the first step toward J-space is not a verdict.\n",
+            encoding="utf-8",
+        )
+        self.write_anchor(
+            words=[
+                {"word": "step", "start": 0.4, "end": 0.7},
+                {"word": "toward", "start": 0.75, "end": 1.1},
+                {"word": "is", "start": 1.8, "end": 1.95},
+                {"word": "not", "start": 2.0, "end": 2.2},
+            ]
+        )
+
+        result = self.module().build_reel(self.root, self.work, self.out, self.evidence)
+
+        clip = result["clips"][0]
+        self.assertEqual("sourceNeighborInference", clip["timingSource"])
+        self.assertEqual("adjacentSourceNeighbors", clip["timingPrecision"])
+        self.assertEqual(["step", "toward"], clip["leftContextWords"])
+        self.assertEqual(["is", "not"], clip["rightContextWords"])
+        self.assertEqual(0.0, clip["sourceStart"])
+        self.assertEqual(3.05, clip["sourceEnd"])
+
+    def test_infers_whole_unaligned_source_span_from_timed_brackets(self) -> None:
+        (self.research / "pronunciation-plan.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "terms": [
+                        {
+                            "term": "J-space",
+                            "variants": [],
+                            "expectedChapters": ["ch01.md"],
+                            "required": True,
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        (self.chapters / "ch01.md").write_text(
+            "# Chapter One\n\n"
+            "Settle the result in advance. "
+            "So the first step toward J-space is not a new theory. "
+            "Parameters are the slow residue.\n",
+            encoding="utf-8",
+        )
+        self.write_anchor(
+            words=[
+                {"word": "advance", "start": 0.4, "end": 0.9},
+                {"word": "Parameters", "start": 3.1, "end": 3.6},
+            ]
+        )
+
+        result = self.module().build_reel(self.root, self.work, self.out, self.evidence)
+
+        clip = result["clips"][0]
+        self.assertEqual("sourceSpanInference", clip["timingSource"])
+        self.assertEqual("unalignedSourceSpan", clip["timingPrecision"])
+        self.assertEqual(["advance"], clip["leftContextWords"])
+        self.assertEqual(["parameters"], clip["rightContextWords"])
+        self.assertEqual(11, clip["unalignedSourceWordCount"])
+        self.assertEqual(0.0, clip["sourceStart"])
+        self.assertEqual(4.0, clip["sourceEnd"])
 
     def test_builds_one_clip_for_multi_word_form_from_adjacent_timings(self) -> None:
         (self.research / "pronunciation-plan.json").write_text(
