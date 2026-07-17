@@ -1,0 +1,41 @@
+{
+  "book_slug": "jspace-inside-the-machine",
+  "candidate": {
+    "direction_name": "The Learned Watershed",
+    "id": "learned-watershed"
+  },
+  "edition_id": "jspace-inside-the-machine-2026-07-16",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-16T07:20:50-03:00",
+  "selection_source": "user",
+  "source_art_sha256": "8ad94022457ae9f53e8267612cb8aad0af8030267a1ca61243913add52635f83",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "61f6b9a977fd47717f150cf30b382a9e7afcfc924791b3d8daaa02302d8718af",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "8c608429f5508e379a3e0c8b492868095945fe961fdcc1ededa18bce97b2898e",
+      "specification_sha256": "9360336f2b5d64c7526cccb1c6de1aec3a4191d79c43fddc35b39991d91e55d0",
+      "subtitle_included": true,
+      "thumbnail_sha256": "7ec14ce3f2967558e732d8e59bf8d004b7aecf7ddc270f491375c0241ce22aeb"
+    },
+    "square": {
+      "cover_sha256": "4f6556f6011d7c61ad2006a1bbc2c1ae3ccd2f52ba7f50b0927a69ebc59b95c2",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "bcad232b3c7ceac1cacd5166c323e01ef5a6e74886f84098e6e2bb16350cfa6e",
+      "specification_sha256": "06e883765057c0b0378515901be3c9f51895e8b47d147f5174097af3eb2cc1a4",
+      "subtitle_included": true,
+      "thumbnail_sha256": "a99cb17c16186b991af43ae7687e83b94d9ed965754b8ae71d43c26f95b6ed33"
+    }
+  }
+}
