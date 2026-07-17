@@ -1,0 +1,41 @@
+{
+  "book_slug": "is-there-anyone-in-here",
+  "candidate": {
+    "direction_name": "One Lit Aperture",
+    "id": "one-lit-aperture"
+  },
+  "edition_id": "public-road-book-2026-07-17",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-17T10:11:14Z",
+  "selection_source": "user",
+  "source_art_sha256": "93206c67fecd49c14b8de45441d487018b61e2fabd1d8e44477eb9ea5d83244d",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "fe7010107364102e7d825e3ce5a2597aaa8a7f84dee794f41c1730da1f7b9f96",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "5bddbbce8211369830512740169fbec4e9e7bb322c39fbf7aef73ddd51d614f2",
+      "specification_sha256": "e1fbe94d2e2ed39fc5b3989c65c3e09dc77f881de9ea3b61fb009967475d2848",
+      "subtitle_included": true,
+      "thumbnail_sha256": "d1b1561f1838dd370d12a6c476c32bc4410d080ae63f228613d4130b78feaca9"
+    },
+    "square": {
+      "cover_sha256": "8aa19da296b7cf27502a8d22ba352981b11481184daba1531cd8370aebe5df4b",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "0bd79f6c740219e3393effb3d3df6f5cd6e79ea35bf2a5a4f2d651cae599a2d0",
+      "specification_sha256": "87689bb3ce57e9a424f383d983773a65f570f0c614071233b1dad4f99d3da0be",
+      "subtitle_included": false,
+      "thumbnail_sha256": "ebfc5c8fdae76331912e87aec788d0a7b28b148152fb2b332f97d46def24073c"
+    }
+  }
+}

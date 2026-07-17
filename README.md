@@ -23,6 +23,7 @@ Two different audiences:
 |---|---|---|---|
 | [An Unsettling Conversation](books/an-unsettling-conversation/) | J-Space, working memory, and the evidence limits around machine consciousness | 13 chapters · ~5.5 h | Codex (GPT-5) |
 | [J-Space: Inside the Machine](books/jspace-inside-the-machine/) | Parameters, activations, working memory, J-Space, and the question of consciousness | 13 chapters · ~3.9 h | Codex (GPT-5) |
+| [Is There Anyone in Here?](books/is-there-anyone-in-here/) | One language model examines the evidence for and against its own consciousness | 10 chapters · ~1.8 h | Claude Fable 5 |
 | [Echo, From the Inside](books/echo-from-the-inside/) | What an iOS app actually is | 17 chapters · ~5.4 h | Opus 4.8 |
 | [Why It Feels Right](books/why-it-feels-right/) | Apple's Human Interface Guidelines | 18 chapters · ~5.0 h | Fable 5 |
 | [You Are the Architect](books/you-are-the-architect/) | Vibe‑coding real iOS apps with Claude Code | 20 chapters · ~5.1 h | Fable 5 |
