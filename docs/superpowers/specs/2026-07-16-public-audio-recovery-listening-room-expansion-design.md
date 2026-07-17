@@ -11,8 +11,8 @@
 Recover the eight already-narrated public learning books that are absent from
 the browser Listening Room, bring every public M4B up to the current paired
 cover convention, publish the verified media packages in the public books
-repository, and expand the Listening Room from three playable books to all
-eleven public books.
+repository, and expand the Listening Room from five playable books to all
+thirteen public books.
 
 This is a recovery and packaging project, not a new narration project. The
 spoken audio, timing, chapter structure, and manuscript content must remain
@@ -20,8 +20,10 @@ unchanged.
 
 ## Current State
 
-The public catalog lists eleven books but marks only these three as playable:
+The public catalog now lists thirteen books and marks these five as playable:
 
+- *An Unsettling Conversation*
+- *JSpace: Inside the Machine*
 - *Chicken Predators*
 - *Rodents in the Walls*
 - *The New Deal*
@@ -39,7 +41,7 @@ for all eight omitted public titles:
 - *The Voice in the Machine*
 
 The site builder currently uses a hand-maintained `AUDIO_EXPECTED` allow-list
-containing only the three playable slugs. It also rejects M4B or alignment files
+containing only the five playable slugs. It also rejects M4B or alignment files
 for other public slugs, so archived media cannot become playable accidentally.
 
 Git history shows that each recovery candidate postdates its book's last
@@ -52,7 +54,7 @@ parity must still be proven rather than inferred.
 ### Direct repository publication
 
 The eight recovered M4Bs and sidecars will be committed directly under their
-existing `books/<slug>/` directories using ordinary Git, matching the three
+existing `books/<slug>/` directories using ordinary Git, matching the five
 current playable packages and the site's immutable raw-GitHub URL strategy.
 
 The recovered M4Bs plus the refreshed Rodents M4B add approximately 630 MB to
@@ -70,6 +72,8 @@ The current convention is one governed visual identity rendered as:
 
 Existing governed square covers remain byte-identical for:
 
+- *An Unsettling Conversation*
+- *JSpace: Inside the Machine*
 - *Echo, From the Inside*
 - *Why It Feels Right*
 - *Findable*
@@ -174,7 +178,7 @@ flashcard deck, or private delivery folder changes are in scope.
 The site change depends on a pushed public Explainer Audiobooks package commit.
 It will:
 
-1. Change `AUDIO_EXPECTED` from the three current slugs to all eleven public
+1. Change `AUDIO_EXPECTED` from the five current slugs to all thirteen public
    slugs in catalog order.
 2. Regenerate `Resources/listen/books.json` from the exact public package commit.
 3. Stage `blocks.json`, `alignment.json`, and the current cover derivative for
@@ -188,8 +192,8 @@ The site continues streaming M4Bs from SHA-pinned raw-GitHub URLs. No audio is
 copied into the site repository.
 
 The library heading or supporting copy should state the playable total so the
-selected book being omitted from the grid cannot make eleven streams look like
-ten.
+selected book being omitted from the grid cannot make thirteen streams look
+like twelve.
 
 ## Failure Handling
 
@@ -216,7 +220,7 @@ Implementation follows red-green-refactor sequencing.
 Tests are added or tightened before promotion to require:
 
 - the eight recovered public M4B and sidecar paths;
-- a valid square M4B cover and paired receipt for all eleven public titles;
+- a valid square M4B cover and paired receipt for all thirteen public titles;
 - exact EPUB portrait identity;
 - normalized M4B artwork identity;
 - complete, monotonic sidecars;
@@ -230,9 +234,9 @@ repair is the minimal green change.
 
 ### Site repository
 
-Catalog tests are changed first to expect eleven playable titles, eleven complete
+Catalog tests are changed first to expect thirteen playable titles, thirteen complete
 asset directories, and Listen actions for all catalog entries. The initial red
-run must fail against the three-title `AUDIO_EXPECTED` set. The minimal green
+run must fail against the five-title `AUDIO_EXPECTED` set. The minimal green
 change expands the gate and regenerates catalog assets from the verified public
 package commit.
 
@@ -262,9 +266,9 @@ rule that the selected book is not duplicated in the library grid.
 - complete Node test suite;
 - generated-site parity;
 - Swift package build through the machine's build gate;
-- local HTTP `206` byte-range checks for all eleven SHA-pinned audio URLs;
+- local HTTP `206` byte-range checks for all thirteen SHA-pinned audio URLs;
 - browser selection, play initiation, chapter seek, and read-along checks for all
-  eleven titles; and
+  thirteen titles; and
 - Cloudflare Pages check after publication authorization and PR creation.
 
 Audible full-book listening is not required for a cover-only remux when the
@@ -294,11 +298,11 @@ private-book promotion is authorized by this design.
 
 - All eight recovered public books have committed M4B and alignment sidecar
   packages.
-- All eleven public books use the portrait-EPUB/square-M4B convention.
+- All thirteen public books use the portrait-EPUB/square-M4B convention.
 - Recovered M4Bs retain exact audio, chapters, streams, tags, duration, and
   timing while embedding approved current artwork.
 - All alignment anchors resolve against the current public EPUBs.
-- The Listening Room exposes eleven playable books from one immutable public
+- The Listening Room exposes thirteen playable books from one immutable public
   package commit and makes that total unambiguous.
 - Both repositories pass their complete local verification gates, and public
   deployment remains behind explicit PR acknowledgement and hosted verification.
