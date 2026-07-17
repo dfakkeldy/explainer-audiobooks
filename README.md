@@ -14,13 +14,14 @@ The books teach how to **build and ship software**, and most are taught through 
 
 Two different audiences:
 
-- **If you want to learn** — there are more than 42 hours of beginner guides below, free, mostly grounded in real code and public technical sources. Every book has an EPUB, and selected books also include a chaptered M4B with Echo read-along data.
-- **If you build with AI agents** — the genuinely interesting part is the *method*: how to make a language model write 50,000 accurate words it *won't* hallucinate, by grounding every chapter in real source and fanning the work across one agent per chapter. That's in **[docs/how-these-were-made.md](docs/how-these-were-made.md)**.
+- **If you want to learn** — there are more than 47 hours of beginner guides below, free, mostly grounded in real code and public technical sources. Every book has an EPUB, and selected books also include a chaptered M4B with Echo read-along data.
+- **If you build with AI agents** — the genuinely interesting part is the *method*: how to make a language model sustain a long, accurate explanation by grounding claims in real sources, keeping one lead author responsible for the manuscript, and verifying the result independently. That's in **[docs/how-these-were-made.md](docs/how-these-were-made.md)**.
 
 ## The collection
 
 | Book | Teaches | Length | Written by |
 |---|---|---|---|
+| [An Unsettling Conversation](books/an-unsettling-conversation/) | J-Space, working memory, and the evidence limits around machine consciousness | 13 chapters · ~5.5 h | Codex (GPT-5) |
 | [Echo, From the Inside](books/echo-from-the-inside/) | What an iOS app actually is | 17 chapters · ~5.4 h | Opus 4.8 |
 | [Why It Feels Right](books/why-it-feels-right/) | Apple's Human Interface Guidelines | 18 chapters · ~5.0 h | Fable 5 |
 | [You Are the Architect](books/you-are-the-architect/) | Vibe‑coding real iOS apps with Claude Code | 20 chapters · ~5.1 h | Fable 5 |
