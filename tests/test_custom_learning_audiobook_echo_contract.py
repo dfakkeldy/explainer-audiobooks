@@ -105,6 +105,26 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             normalized_preflight,
         )
 
+    def test_run_id_is_derived_in_exactly_one_place(self) -> None:
+        """The preflight and the attestation both need RUN_ID. Restating the
+        formula in both let them drift the moment the source leg changed, which
+        broke every render with 'sealed run paths are not derived from the
+        attested inputs'. Both must call the shared helpers."""
+        preflight = self.preflight
+        self.assertIn("echo_pronunciation_source_id()", preflight)
+        self.assertIn("echo_pronunciation_run_id()", preflight)
+        # The literal formula must not appear anywhere: that is the duplication.
+        self.assertNotIn("PACKAGE_SHA256:0:12", preflight)
+        # Both call sites go through the helper.
+        self.assertGreaterEqual(
+            preflight.count("$(echo_pronunciation_run_id"), 2,
+            "preflight and attestation must both derive RUN_ID via the helper",
+        )
+        self.assertGreaterEqual(
+            preflight.count("$(echo_pronunciation_source_id"), 2,
+            "preflight and attestation must both derive the source id via the helper",
+        )
+
     def test_attestation_fails_closed_on_mid_render_drift(self) -> None:
         """A dirty starting tree is attested; drift from the recorded state is
         still refused."""

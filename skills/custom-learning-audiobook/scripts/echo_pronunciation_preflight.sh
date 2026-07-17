@@ -42,6 +42,31 @@ require_git_commit_sha() {
   fi
 }
 
+# The renderer's identity leg of RUN_ID. Derived in exactly one place so the
+# preflight and the attestation cannot drift apart: computing it twice is what
+# let them disagree when the source leg changed.
+echo_pronunciation_source_id() {
+  local source_sha=${1:?source sha is required}
+  local tree_state=${2:?tree state is required}
+  local tree_diff=${3:-}
+  if [[ "$tree_state" == clean ]]; then
+    printf '%s\n' "$source_sha"
+  else
+    printf '%s-dirty-%s\n' "$source_sha" "${tree_diff:0:8}"
+  fi
+}
+
+echo_pronunciation_run_id() {
+  local package_sha=${1:?package sha is required}
+  local cli_sha=${2:?cli sha is required}
+  local resources_sha=${3:?resources sha is required}
+  local source_id=${4:?source id is required}
+  local voice=${5:?voice is required}
+  printf '%s-%s-%s-%s-%s\n' \
+    "${package_sha:0:12}" "${cli_sha:0:12}" "${resources_sha:0:12}" \
+    "$source_id" "$voice"
+}
+
 echo_pronunciation_release_render_version() {
   local cli_version=${1:-}
   local render_version
@@ -269,11 +294,12 @@ echo_pronunciation_preflight() {
       ;;
   esac
 
-  local echo_source_id="$ECHO_SOURCE_SHA"
-  if [[ "$ECHO_TREE_STATE" != clean ]]; then
-    echo_source_id="${ECHO_SOURCE_SHA}-dirty-${ECHO_TREE_DIFF_SHA256:0:8}"
-  fi
-  RUN_ID="${PACKAGE_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${echo_source_id}-$VOICE"
+  local echo_source_id
+  echo_source_id=$(echo_pronunciation_source_id \
+    "$ECHO_SOURCE_SHA" "$ECHO_TREE_STATE" "$ECHO_TREE_DIFF_SHA256")
+  RUN_ID=$(echo_pronunciation_run_id \
+    "$PACKAGE_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
+    "$echo_source_id" "$VOICE")
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
@@ -573,8 +599,12 @@ echo_pronunciation_attest_inputs() {
     return 65
   fi
 
-  local expected_run_id expected_work expected_db expected_receipt
-  expected_run_id="${PACKAGE_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
+  local expected_run_id expected_work expected_db expected_receipt expected_source_id
+  expected_source_id=$(echo_pronunciation_source_id \
+    "$ECHO_SOURCE_SHA" "$ECHO_TREE_STATE" "$ECHO_TREE_DIFF_SHA256")
+  expected_run_id=$(echo_pronunciation_run_id \
+    "$PACKAGE_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
+    "$expected_source_id" "$VOICE")
   expected_work="$RUN_ROOT/audio-work-$expected_run_id"
   expected_db="$RUN_ROOT/narration-$expected_run_id.sqlite"
   expected_receipt="$RUN_ROOT/research/echo-render-inputs-$expected_run_id.env"
