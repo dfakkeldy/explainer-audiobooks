@@ -1931,6 +1931,20 @@ invalid = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{'f' * 12}-{commit}-am_m
 assert pattern.fullmatch(current)
 assert pattern.fullmatch(prototype)
 assert pattern.fullmatch(invalid) is None
+
+# A dirty Echo tree appends a marker to the source leg so a dirty render
+# cannot collide with the clean render of the same commit.
+dirty = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-dirty-{'9' * 8}-am_michael"
+assert pattern.fullmatch(dirty)
+dirty_long = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'d' * 64}-dirty-{'9' * 8}-am_michael"
+assert pattern.fullmatch(dirty_long)
+# The marker is still structured: it may not carry arbitrary text.
+assert pattern.fullmatch(
+    f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-dirty-nothex12-am_michael"
+) is None
+assert pattern.fullmatch(
+    f"{'a' * 12}-{'b' * 12}-{'c' * 12}-unpinned-am_michael"
+) is None
 """
         result = subprocess.run(
             [sys.executable, "-c", script, str(STATE_HELPER)],
