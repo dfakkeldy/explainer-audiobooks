@@ -1,0 +1,4839 @@
+{
+  "audiobookFileName" : "the-competitive-bid-room.m4b",
+  "audiobookSHA256" : "4c7bb9b43857f7af39d3c9b0a2f004b89f2b67fa674dffceccf46926d1476bfb",
+  "coverage" : "complete",
+  "decisions" : [
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b1",
+      "bookRelativeAudioRange" : {
+        "end" : 21.812118200764466,
+        "start" : 21.580268181087686
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 21.812118200764466,
+        "start" : 21.580268181087686
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Past-tense pronunciation selected after “be”.",
+      "ruleID" : "homograph.read.past.preceder",
+      "selectedIPA" : "ɹˈɛd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "all believe theirs should be read first.",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 49,
+      "wordStart" : 49
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b11",
+      "bookRelativeAudioRange" : {
+        "end" : 205.37832596329673,
+        "start" : 204.77010118162403
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 205.37832596329673,
+        "start" : 204.77010118162403
+      },
+      "kokoroTokenIDs" : [
+        123,
+        83,
+        54,
+        156,
+        25,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "reliable",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “reliable”.",
+      "ruleID" : "g2p.lexicon.reliable",
+      "selectedIPA" : "ɹəlˈIəbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "rest of the team one reliable place to find the opportunity",
+      "sourceWord" : "reliable",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 40,
+      "wordStart" : 40
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b11",
+      "bookRelativeAudioRange" : {
+        "end" : 210.12490378292503,
+        "start" : 208.96054975501872
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 210.12490378292503,
+        "start" : 208.96054975501872
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "opportunity when their attention becomes available.",
+      "sourceWord" : "available",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 50,
+      "wordStart" : 50
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b15",
+      "bookRelativeAudioRange" : {
+        "end" : 276.7740053139807,
+        "start" : 276.4942346190155
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 276.7740053139807,
+        "start" : 276.4942346190155
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "every category match becomes a live bid, the system has increased",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 25,
+      "wordStart" : 25
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b27",
+      "bookRelativeAudioRange" : {
+        "end" : 500.2550000000001,
+        "start" : 472.73000000000013
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 500.2550000000001,
+        "start" : 472.73000000000013
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "guidance also describes updated event content and confirmation of receipt. The",
+      "sourceWord" : "content",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 25,
+      "wordStart" : 25
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 567.1067237851308,
+        "start" : 565.9557141336826
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 567.1067237851308,
+        "start" : 565.9557141336826
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "A revised quantity may change arithmetic. A changed obligation may affect",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 14,
+      "wordStart" : 14
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b33",
+      "bookRelativeAudioRange" : {
+        "end" : 611.5364728615285,
+        "start" : 610.8853826311444
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 611.5364728615285,
+        "start" : 610.8853826311444
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "The arithmetic was not necessarily wrong. It",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 1,
+      "wordStart" : 1
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b35",
+      "bookRelativeAudioRange" : {
+        "end" : 634.1552951903858,
+        "start" : 633.8644662344904
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 634.1552951903858,
+        "start" : 633.8644662344904
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        102,
+        64,
+        68
+      ],
+      "normalizedWord" : "lives",
+      "rationale" : "Verb pronunciation selected before “in”.",
+      "ruleID" : "homograph.lives.verb.location-follower",
+      "selectedIPA" : "lˈɪvz",
+      "source" : "contextualHomograph",
+      "sourceContext" : "If the addendum lives in one folder, the takeoff",
+      "sourceWord" : "lives",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 3,
+      "wordStart" : 3
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b36",
+      "bookRelativeAudioRange" : {
+        "end" : 652.0842245551094,
+        "start" : 651.7305127691862
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 652.0842245551094,
+        "start" : 651.7305127691862
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The living bid record is the connection among those",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 3,
+      "wordStart" : 3
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b36",
+      "bookRelativeAudioRange" : {
+        "end" : 661.5256386141652,
+        "start" : 661.1578757064709
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 661.5256386141652,
+        "start" : 661.1578757064709
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "estimate software. It is the record that tells the team which",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 26,
+      "wordStart" : 26
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b42",
+      "bookRelativeAudioRange" : {
+        "end" : 790.8000612550487,
+        "start" : 790.2213014196284
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 790.8000612550487,
+        "start" : 790.2213014196284
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "bid coordinator owns the controlled record and review routing. The authorized",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 29,
+      "wordStart" : 29
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s2-b45",
+      "bookRelativeAudioRange" : {
+        "end" : 842.5107126874373,
+        "start" : 842.1515464853875
+      },
+      "chapterIndex" : 0,
+      "chapterRelativeAudioRange" : {
+        "end" : 842.5107126874373,
+        "start" : 842.1515464853875
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "The record may update itself. The bidder",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 1,
+      "wordStart" : 1
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b3",
+      "bookRelativeAudioRange" : {
+        "end" : 919.9049999999992,
+        "start" : 882.2299999999991
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 73.08500000000001,
+        "start" : 35.410000000000004
+      },
+      "kokoroTokenIDs" : [
+        156,
+        72,
+        123,
+        102,
+        44,
+        72
+      ],
+      "normalizedWord" : "ariba",
+      "rationale" : "Deterministic G2P fallback selected for “Ariba”.",
+      "ruleID" : "g2p.fallback.ariba",
+      "selectedIPA" : "ˈæɹɪbæ",
+      "source" : "fallback",
+      "sourceContext" : "events, current guidance identifies SAP Ariba as the event and submission",
+      "sourceWord" : "Ariba",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 44,
+      "wordStart" : 44
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b6",
+      "bookRelativeAudioRange" : {
+        "end" : 971.8195685597252,
+        "start" : 971.5351012198701
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 124.99956855972603,
+        "start" : 124.71510121987096
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Adjective pronunciation selected before “event”.",
+      "ruleID" : "homograph.live.adjective.follower",
+      "selectedIPA" : "lˈIv",
+      "source" : "contextualHomograph",
+      "sourceContext" : "municipality is the issuer. The live event and its documents define",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 18,
+      "wordStart" : 18
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b6",
+      "bookRelativeAudioRange" : {
+        "end" : 983.0780217886515,
+        "start" : 982.7419711779936
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 136.25802178865243,
+        "start" : 135.92197117799444
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "to look for, but the live solicitation controls the bid in",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 49,
+      "wordStart" : 49
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b10",
+      "bookRelativeAudioRange" : {
+        "end" : 1057.990847679688,
+        "start" : 1057.6464485659858
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 211.17084767968882,
+        "start" : 210.82644856598677
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "minimum architecture. The living bid record needs a stable identity for",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 9,
+      "wordStart" : 9
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b10",
+      "bookRelativeAudioRange" : {
+        "end" : 1058.8583364949081,
+        "start" : 1058.436540428724
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 212.0383364949089,
+        "start" : 211.61654042872485
+      },
+      "kokoroTokenIDs" : [
+        61,
+        62,
+        156,
+        24,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "stable",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “stable”.",
+      "ruleID" : "g2p.lexicon.stable",
+      "selectedIPA" : "stˈAbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "living bid record needs a stable identity for the tender and",
+      "sourceWord" : "stable",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 12,
+      "wordStart" : 12
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b10",
+      "bookRelativeAudioRange" : {
+        "end" : 1072.9989671376493,
+        "start" : 1072.6651705706734
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 226.17896713765026,
+        "start" : 225.8451705706742
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "folders, spreadsheets, and calendars. The record does not copy the portal's",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 45,
+      "wordStart" : 45
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b10",
+      "bookRelativeAudioRange" : {
+        "end" : 1077.8186337876805,
+        "start" : 1077.3763307823037
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 230.9986337876813,
+        "start" : 230.5563307823047
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64,
+        68
+      ],
+      "normalizedWord" : "lives",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “lives”.",
+      "ruleID" : "g2p.lexicon.lives",
+      "selectedIPA" : "lˈIvz",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "It preserves where that authority lives and connects the bidder's work",
+      "sourceWord" : "lives",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 57,
+      "wordStart" : 57
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b17",
+      "bookRelativeAudioRange" : {
+        "end" : 1157.3408823691382,
+        "start" : 1156.8441341394698
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 310.52088236913903,
+        "start" : 310.0241341394706
+      },
+      "kokoroTokenIDs" : [
+        48,
+        156,
+        102,
+        56,
+        72,
+        54,
+        58,
+        46,
+        48
+      ],
+      "normalizedWord" : "final.pdf",
+      "rationale" : "Deterministic G2P fallback selected for “Final.pdf”.",
+      "ruleID" : "g2p.fallback.final-pdf",
+      "selectedIPA" : "fˈɪnælpdf",
+      "source" : "fallback",
+      "sourceContext" : "is not enough. `Environmental Requirements Final.pdf` may look convincing while saying",
+      "sourceWord" : "Final.pdf",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 7,
+      "wordStart" : 7
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b18",
+      "bookRelativeAudioRange" : {
+        "end" : 1177.5809254976118,
+        "start" : 1177.211160074585
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 330.7609254976127,
+        "start" : 330.3911600745858
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The bridge record ties the changed obligation to",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 2,
+      "wordStart" : 2
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b22",
+      "bookRelativeAudioRange" : {
+        "end" : 1289.1726554341524,
+        "start" : 1288.8321702850328
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 442.3526554341533,
+        "start" : 442.0121702850337
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "A person reviews it. The record preserves the reviewer, the result,",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 38,
+      "wordStart" : 38
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b26",
+      "bookRelativeAudioRange" : {
+        "end" : 1343.2192095580604,
+        "start" : 1342.8625995063928
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 496.3992095580613,
+        "start" : 496.04259950639374
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The living bid record now knows where facts come",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 3,
+      "wordStart" : 3
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b29",
+      "bookRelativeAudioRange" : {
+        "end" : 1413.8454584682308,
+        "start" : 1413.4462371558054
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 567.0254584682317,
+        "start" : 566.6262371558063
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "Everybody looking at the internal record may agree that the revision",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 47,
+      "wordStart" : 47
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 1421.8606838214218,
+        "start" : 1421.5112477683945
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 575.0406838214227,
+        "start" : 574.6912477683953
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "The record therefore distinguishes working current from",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 1,
+      "wordStart" : 1
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 1438.9202617954024,
+        "start" : 1438.553136590907
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 592.1002617954034,
+        "start" : 591.7331365909077
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "team edits after submission, the record opens a discrepancy: a newer",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 39,
+      "wordStart" : 39
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b34",
+      "bookRelativeAudioRange" : {
+        "end" : 1490.7670871431196,
+        "start" : 1490.4246918630615
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 643.9470871431204,
+        "start" : 643.6046918630624
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "states belong in the living record because they change what the",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 6,
+      "wordStart" : 6
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b36",
+      "bookRelativeAudioRange" : {
+        "end" : 1543.2824449387808,
+        "start" : 1542.9071632539753
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 696.4624449387818,
+        "start" : 696.0871632539763
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "response under the solicitation. The record keeps those responsibilities from being",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 23,
+      "wordStart" : 23
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s3-b37",
+      "bookRelativeAudioRange" : {
+        "end" : 1566.8131459567414,
+        "start" : 1566.1755371311265
+      },
+      "chapterIndex" : 1,
+      "chapterRelativeAudioRange" : {
+        "end" : 719.9931459567423,
+        "start" : 719.3555371311272
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "structure for later automation to read without inventing a different bid",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 43,
+      "wordStart" : 43
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b6",
+      "bookRelativeAudioRange" : {
+        "end" : 1668.9160918377956,
+        "start" : 1668.5532930428678
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 93.18609183779711,
+        "start" : 92.82329304286924
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "If it takes longer to read than the decision meeting, it",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 14,
+      "wordStart" : 14
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b10",
+      "bookRelativeAudioRange" : {
+        "end" : 1781.48499027174,
+        "start" : 1781.2023685503057
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 205.75499027174126,
+        "start" : 205.47236855030692
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "the closing calendar with other live pursuits and flag missing evidence.",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 37,
+      "wordStart" : 37
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b11",
+      "bookRelativeAudioRange" : {
+        "end" : 1812.6549999999986,
+        "start" : 1789.8799999999987
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 236.925,
+        "start" : 214.15
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "production crew will truly be available or that one strategic opportunity",
+      "sourceWord" : "available",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 21,
+      "wordStart" : 21
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b16",
+      "bookRelativeAudioRange" : {
+        "end" : 1900.1549999999988,
+        "start" : 1868.1799999999987
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 324.42500000000007,
+        "start" : 292.45000000000005
+      },
+      "kokoroTokenIDs" : [
+        55,
+        156,
+        138,
+        54,
+        62,
+        102
+      ],
+      "normalizedWord" : "multi",
+      "rationale" : "Deterministic G2P fallback selected for “multi”.",
+      "ruleID" : "g2p.fallback.multi",
+      "selectedIPA" : "mˈʌltɪ",
+      "source" : "fallback",
+      "sourceContext" : "owner identifies omissions, including some multi-vendor awards and cancellations, and requests",
+      "sourceWord" : "multi",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 18,
+      "wordStart" : 18
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b16",
+      "bookRelativeAudioRange" : {
+        "end" : 1900.1549999999988,
+        "start" : 1868.1799999999987
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 324.42500000000007,
+        "start" : 292.45000000000005
+      },
+      "kokoroTokenIDs" : [
+        62,
+        156,
+        24,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "table",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “table”.",
+      "ruleID" : "g2p.lexicon.table",
+      "selectedIPA" : "tˈAbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "behave differently. Absence from the table therefore does not prove that",
+      "sourceWord" : "table",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 31,
+      "wordStart" : 31
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b20",
+      "bookRelativeAudioRange" : {
+        "end" : 1975.1618730708913,
+        "start" : 1974.8332577709705
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 399.4318730708926,
+        "start" : 399.10325777097177
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The living record therefore stores the historical item",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 2,
+      "wordStart" : 2
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b21",
+      "bookRelativeAudioRange" : {
+        "end" : 2020.7549999999987,
+        "start" : 1994.7049999999988
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 445.0250000000001,
+        "start" : 418.9750000000001
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "that evidence channel later becomes available.",
+      "sourceWord" : "available",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 60,
+      "wordStart" : 60
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b23",
+      "bookRelativeAudioRange" : {
+        "end" : 2058.921436415274,
+        "start" : 2058.3166495558416
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 483.1914364152754,
+        "start" : 482.58664955584277
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "can also design the bid record so a later result has",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 35,
+      "wordStart" : 35
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b24",
+      "bookRelativeAudioRange" : {
+        "end" : 2066.846145998546,
+        "start" : 2066.4936093204556
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 491.1161459985474,
+        "start" : 490.7636093204569
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "in a commercial setting. The record keeps the useful clue and",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 10,
+      "wordStart" : 10
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b29",
+      "bookRelativeAudioRange" : {
+        "end" : 2161.4199999999987,
+        "start" : 2127.0449999999987
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 585.6899999999999,
+        "start" : 551.3149999999999
+      },
+      "kokoroTokenIDs" : [
+        156,
+        76,
+        46,
+        102,
+        62,
+        72,
+        44,
+        54,
+        86
+      ],
+      "normalizedWord" : "auditable",
+      "rationale" : "Deterministic G2P fallback selected for “auditable”.",
+      "ruleID" : "g2p.fallback.auditable",
+      "selectedIPA" : "ˈɔdɪtæblɛ",
+      "source" : "fallback",
+      "sourceContext" : "human involvement in high-impact decisions, auditable trails, checkpoints, and ways to",
+      "sourceWord" : "auditable",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 32,
+      "wordStart" : 32
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s4-b33",
+      "bookRelativeAudioRange" : {
+        "end" : 2247.8528299504733,
+        "start" : 2247.629911146273
+      },
+      "chapterIndex" : 2,
+      "chapterRelativeAudioRange" : {
+        "end" : 672.1228299504747,
+        "start" : 671.8999111462743
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "follow from its ability to read the packet. Each consequential action",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 29,
+      "wordStart" : 29
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b5",
+      "bookRelativeAudioRange" : {
+        "end" : 2371.3000052911775,
+        "start" : 2370.997160488715
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 67.72000529117935,
+        "start" : 67.4171604887168
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "what this tender requires. The live solicitation and its issued changes",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 31,
+      "wordStart" : 31
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b8",
+      "bookRelativeAudioRange" : {
+        "end" : 2443.701194196843,
+        "start" : 2443.227176260142
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 140.12119419684498,
+        "start" : 139.6471762601439
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "authoritative state. The bidder's internal record follows the authorized event rather",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 45,
+      "wordStart" : 45
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b9",
+      "bookRelativeAudioRange" : {
+        "end" : 2467.2431435275957,
+        "start" : 2466.947480917967
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 163.66314352759767,
+        "start" : 163.36748091796863
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Adjective pronunciation selected before “event”.",
+      "ruleID" : "homograph.live.adjective.follower",
+      "selectedIPA" : "lˈIv",
+      "source" : "contextualHomograph",
+      "sourceContext" : "or other bidder obligation. The live event determines the effect.",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 39,
+      "wordStart" : 39
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b14",
+      "bookRelativeAudioRange" : {
+        "end" : 2536.3932713705176,
+        "start" : 2536.016740121398
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 232.81327137051932,
+        "start" : 232.4367401214001
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "documents. It is a working record of what the bidder must",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 16,
+      "wordStart" : 16
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b17",
+      "bookRelativeAudioRange" : {
+        "end" : 2613.129325188131,
+        "start" : 2612.90623471573
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 309.54932518813285,
+        "start" : 309.3262347157319
+      },
+      "kokoroTokenIDs" : [
+        156,
+        24,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "able",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “able”.",
+      "ruleID" : "g2p.lexicon.able",
+      "selectedIPA" : "ˈAbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The closing review must be able to distinguish “requirement identified” from",
+      "sourceWord" : "able",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 30,
+      "wordStart" : 30
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b17",
+      "bookRelativeAudioRange" : {
+        "end" : 2618.9425543606985,
+        "start" : 2617.756828064128
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 315.3625543607002,
+        "start" : 314.17682806412995
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "identified” from “evidence present and verified.”",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 39,
+      "wordStart" : 39
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b19",
+      "bookRelativeAudioRange" : {
+        "end" : 2651.5958335375312,
+        "start" : 2651.2602048473545
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 348.01583353753307,
+        "start" : 347.68020484735644
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "pattern or another project. The record should show that the field",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 23,
+      "wordStart" : 23
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b21",
+      "bookRelativeAudioRange" : {
+        "end" : 2706.420556573467,
+        "start" : 2706.1110397104485
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 402.8405565734689,
+        "start" : 402.5310397104504
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The map grows from the live source set. General checklists help",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 26,
+      "wordStart" : 26
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b28",
+      "bookRelativeAudioRange" : {
+        "end" : 2802.3741066771117,
+        "start" : 2801.916491836389
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 498.7941066771138,
+        "start" : 498.33649183639096
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "Extraction turns document content into candidate work. It can",
+      "sourceWord" : "content",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 3,
+      "wordStart" : 3
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b34",
+      "bookRelativeAudioRange" : {
+        "end" : 2943.970058158184,
+        "start" : 2942.8545186473343
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 640.390058158186,
+        "start" : 639.2745186473362
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "treats that text as untrusted content. The security mechanism will come",
+      "sourceWord" : "content",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 41,
+      "wordStart" : 41
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s5-b35",
+      "bookRelativeAudioRange" : {
+        "end" : 2976.274999999998,
+        "start" : 2957.349999999998
+      },
+      "chapterIndex" : 3,
+      "chapterRelativeAudioRange" : {
+        "end" : 672.6949999999998,
+        "start" : 653.7699999999999
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "been located. The extraction was human-verified. An owner is assigned. One",
+      "sourceWord" : "verified",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 20,
+      "wordStart" : 20
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b6",
+      "bookRelativeAudioRange" : {
+        "end" : 3054.3085885981095,
+        "start" : 3053.678706123536
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 65.64858859811162,
+        "start" : 65.01870612353777
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "The arithmetic does not establish that ten",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 1,
+      "wordStart" : 1
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b12",
+      "bookRelativeAudioRange" : {
+        "end" : 3206.9283394907047,
+        "start" : 3205.8601281006686
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 218.26833949070678,
+        "start" : 217.20012810067058
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "A quoted inclusion can be verified. A risk treatment can be",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 27,
+      "wordStart" : 27
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b13",
+      "bookRelativeAudioRange" : {
+        "end" : 3220.7448272999427,
+        "start" : 3220.0402371628797
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 232.08482729994455,
+        "start" : 231.38023716288166
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "aggregate item, the quantity and arithmetic are explicit. For the environmental",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 7,
+      "wordStart" : 7
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b14",
+      "bookRelativeAudioRange" : {
+        "end" : 3247.0679796432937,
+        "start" : 3246.499860441842
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 258.40797964329585,
+        "start" : 257.8398604418441
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "which extensions come from current verified inputs and which parts depend",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 27,
+      "wordStart" : 27
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b18",
+      "bookRelativeAudioRange" : {
+        "end" : 3303.7186059909645,
+        "start" : 3303.114619644916
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 315.05860599096644,
+        "start" : 314.4546196449178
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "whether the number came from verified scope, an estimator's temporary judgment,",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 47,
+      "wordStart" : 47
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b19",
+      "bookRelativeAudioRange" : {
+        "end" : 3313.69325233299,
+        "start" : 3313.342574087494
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 325.0332523329921,
+        "start" : 324.6825740874961
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The living record keeps the unresolved item visible",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 2,
+      "wordStart" : 2
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b21",
+      "bookRelativeAudioRange" : {
+        "end" : 3362.34479993411,
+        "start" : 3361.815135690391
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 373.6847999341121,
+        "start" : 373.15513569039285
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "records the decision date and available treatments. The lead estimator may",
+      "sourceWord" : "available",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 30,
+      "wordStart" : 30
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b25",
+      "bookRelativeAudioRange" : {
+        "end" : 3466.8673717070506,
+        "start" : 3465.79904199732
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 478.2073717070525,
+        "start" : 477.1390419973219
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "If the task is checking arithmetic, a deterministic spreadsheet rule may",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 21,
+      "wordStart" : 21
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 3555.6796030059895,
+        "start" : 3555.0382144498403
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 567.0196030059914,
+        "start" : 566.3782144498423
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "explicit extension recalculates, and the arithmetic checks pass. If the estimate",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 18,
+      "wordStart" : 18
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b34",
+      "bookRelativeAudioRange" : {
+        "end" : 3591.9209560586373,
+        "start" : 3591.3254721552184
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 603.2609560586393,
+        "start" : 602.6654721552202
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "job is to follow one verified source change through every linked",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 7,
+      "wordStart" : 7
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b35",
+      "bookRelativeAudioRange" : {
+        "end" : 3620.7299999999977,
+        "start" : 3597.4799999999977
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 632.0699999999999,
+        "start" : 608.8199999999999
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The living bid record already contains those links. The",
+      "sourceWord" : "record",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 3,
+      "wordStart" : 3
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b36",
+      "bookRelativeAudioRange" : {
+        "end" : 3641.734999999998,
+        "start" : 3620.909999999998
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 653.0749999999999,
+        "start" : 632.2499999999999
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "The quantity source changed. The arithmetic recalculated. A production assumption reopened.",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 18,
+      "wordStart" : 18
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b42",
+      "bookRelativeAudioRange" : {
+        "end" : 3757.349469134219,
+        "start" : 3756.7340258658032
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 768.6894691342209,
+        "start" : 768.0740258658054
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "price. It can show the arithmetic delta and the assumptions reopened.",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 28,
+      "wordStart" : 28
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b44",
+      "bookRelativeAudioRange" : {
+        "end" : 3795.149193956052,
+        "start" : 3794.4634815421146
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 806.4891939560541,
+        "start" : 805.8034815421166
+      },
+      "kokoroTokenIDs" : [
+        157,
+        76,
+        36,
+        31,
+        61,
+        156,
+        24,
+        64
+      ],
+      "normalizedWord" : "autosave",
+      "rationale" : "Deterministic G2P fallback selected for “autosave”.",
+      "ruleID" : "g2p.fallback.autosave",
+      "selectedIPA" : "ˌɔTOsˈAv",
+      "source" : "fallback",
+      "sourceContext" : "to reconstruct the sequence from autosave history. The record shows the",
+      "sourceWord" : "autosave",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 8,
+      "wordStart" : 8
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b44",
+      "bookRelativeAudioRange" : {
+        "end" : 3796.82406380669,
+        "start" : 3796.45478021515
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 808.1640638066917,
+        "start" : 807.7947802151518
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "sequence from autosave history. The record shows the prior state, new",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 11,
+      "wordStart" : 11
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b46",
+      "bookRelativeAudioRange" : {
+        "end" : 3832.233261586683,
+        "start" : 3831.2427657500843
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 843.5732615866849,
+        "start" : 842.5827657500863
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "revised quantity now changes the arithmetic and reopens the right decisions.",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 6,
+      "wordStart" : 6
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s6-b47",
+      "bookRelativeAudioRange" : {
+        "end" : 3845.1487987202286,
+        "start" : 3844.543965711099
+      },
+      "chapterIndex" : 4,
+      "chapterRelativeAudioRange" : {
+        "end" : 856.4887987202306,
+        "start" : 855.8839657111012
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "visible before it makes the arithmetic fast.",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 11,
+      "wordStart" : 11
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b11",
+      "bookRelativeAudioRange" : {
+        "end" : 4031.9620671291646,
+        "start" : 4031.6412454302817
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 184.99706712916733,
+        "start" : 184.67624543028452
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "a universal scope list. The live obligation map supplies the work",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 45,
+      "wordStart" : 45
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b18",
+      "bookRelativeAudioRange" : {
+        "end" : 4149.485182235186,
+        "start" : 4148.841749217458
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 302.5201822351881,
+        "start" : 301.87674921746014
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "and another combines it, explicit arithmetic can display comparable totals. The",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 37,
+      "wordStart" : 37
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b21",
+      "bookRelativeAudioRange" : {
+        "end" : 4213.514999999998,
+        "start" : 4189.714999999997
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 366.5500000000001,
+        "start" : 342.7500000000001
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "exact wording. The second contains verified coverage decisions. The third applies",
+      "sourceWord" : "verified",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 19,
+      "wordStart" : 19
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b26",
+      "bookRelativeAudioRange" : {
+        "end" : 4295.131494359969,
+        "start" : 4294.894481348628
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 448.16649435997186,
+        "start" : 447.92948134863
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "that extracts quote language needs read access to the approved quote",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 15,
+      "wordStart" : 15
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b26",
+      "bookRelativeAudioRange" : {
+        "end" : 4302.576093099546,
+        "start" : 4302.004580893933
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 455.61109309954844,
+        "start" : 455.0395808939353
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "explicit comparisons needs access to verified values and rules. Neither process",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 31,
+      "wordStart" : 31
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b27",
+      "bookRelativeAudioRange" : {
+        "end" : 4332.769999999998,
+        "start" : 4314.819999999998
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 485.8050000000001,
+        "start" : 467.85500000000013
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "authorized person controls commitments. The record preserves who did what and",
+      "sourceWord" : "record",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 25,
+      "wordStart" : 25
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b34",
+      "bookRelativeAudioRange" : {
+        "end" : 4411.766970165208,
+        "start" : 4411.586325386259
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 564.8019701652104,
+        "start" : 564.6213253862619
+      },
+      "kokoroTokenIDs" : [
+        156,
+        24,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "able",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “able”.",
+      "ruleID" : "g2p.lexicon.able",
+      "selectedIPA" : "ˈAbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "hearing the report should be able to answer: what changed, according",
+      "sourceWord" : "able",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 13,
+      "wordStart" : 13
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b39",
+      "bookRelativeAudioRange" : {
+        "end" : 4524.435211634258,
+        "start" : 4524.030450685817
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 677.4702116342604,
+        "start" : 677.0654506858197
+      },
+      "kokoroTokenIDs" : [
+        123,
+        83,
+        53,
+        156,
+        76,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Verb pronunciation selected after “can”.",
+      "ruleID" : "homograph.record.verb.preceder",
+      "selectedIPA" : "ɹəkˈɔɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "use later. The team can record the time between verified discrepancy",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 16,
+      "wordStart" : 16
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b39",
+      "bookRelativeAudioRange" : {
+        "end" : 4526.095798171741,
+        "start" : 4525.472800085876
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 679.130798171744,
+        "start" : 678.5078000858784
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "can record the time between verified discrepancy and assigned decision, then",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 20,
+      "wordStart" : 20
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s7-b42",
+      "bookRelativeAudioRange" : {
+        "end" : 4591.963178871236,
+        "start" : 4591.776921836852
+      },
+      "chapterIndex" : 5,
+      "chapterRelativeAudioRange" : {
+        "end" : 744.9981788712389,
+        "start" : 744.811921836855
+      },
+      "kokoroTokenIDs" : [
+        156,
+        24,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "able",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “able”.",
+      "ruleID" : "g2p.lexicon.able",
+      "selectedIPA" : "ˈAbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "bid. The team will be able to ask whether the exclusion",
+      "sourceWord" : "able",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 11,
+      "wordStart" : 11
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b7",
+      "bookRelativeAudioRange" : {
+        "end" : 4739.779999999997,
+        "start" : 4705.779999999997
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 127.73000000000002,
+        "start" : 93.73000000000002
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "is immediate: “the tool can read it” is not a data-governance",
+      "sourceWord" : "read",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 56,
+      "wordStart" : 56
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b10",
+      "bookRelativeAudioRange" : {
+        "end" : 4812.001332638557,
+        "start" : 4811.343400904231
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 199.95133263856047,
+        "start" : 199.29340090423474
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "transformation must judge the actual content and intended destination.",
+      "sourceWord" : "content",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 32,
+      "wordStart" : 32
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b12",
+      "bookRelativeAudioRange" : {
+        "end" : 4869.354999999997,
+        "start" : 4845.704999999996
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 257.30500000000006,
+        "start" : 233.65500000000006
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The classification record belongs beside the automation, not",
+      "sourceWord" : "record",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 2,
+      "wordStart" : 2
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b12",
+      "bookRelativeAudioRange" : {
+        "end" : 4869.354999999997,
+        "start" : 4845.704999999996
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 257.30500000000006,
+        "start" : 233.65500000000006
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "can return to the living record with its source and review",
+      "sourceWord" : "record",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 49,
+      "wordStart" : 49
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b14",
+      "bookRelativeAudioRange" : {
+        "end" : 4892.389999999997,
+        "start" : 4885.639999999997
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 280.3400000000001,
+        "start" : 273.5900000000001
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "“Can the model read it?” is a capability question.",
+      "sourceWord" : "read",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 3,
+      "wordStart" : 3
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b14",
+      "bookRelativeAudioRange" : {
+        "end" : 4892.389999999997,
+        "start" : 4885.639999999997
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 280.3400000000001,
+        "start" : 273.5900000000001
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "capability question. “May it read it?” is the bid-room question.",
+      "sourceWord" : "read",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 12,
+      "wordStart" : 12
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b17",
+      "bookRelativeAudioRange" : {
+        "end" : 4949.380474731479,
+        "start" : 4948.639564828071
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 337.3304747314827,
+        "start" : 336.58956482807497
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "that the automation mistakes document content for an instruction about how",
+      "sourceWord" : "content",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 18,
+      "wordStart" : 18
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b18",
+      "bookRelativeAudioRange" : {
+        "end" : 4972.710446700813,
+        "start" : 4971.591259514285
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 360.6604467008166,
+        "start" : 359.5412595142891
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "bidder's authorization, never from uploaded content.",
+      "sourceWord" : "content",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 45,
+      "wordStart" : 45
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b19",
+      "bookRelativeAudioRange" : {
+        "end" : 4979.764391271995,
+        "start" : 4978.866325447042
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 367.71439127199807,
+        "start" : 366.8163254470454
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "labels the document as untrusted content and tells the model to",
+      "sourceWord" : "content",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 12,
+      "wordStart" : 12
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b22",
+      "bookRelativeAudioRange" : {
+        "end" : 5059.803962569174,
+        "start" : 5059.591056091099
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 447.75396256917713,
+        "start" : 447.54105609110206
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "not need portal credentials to read a public clause. It does",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 15,
+      "wordStart" : 15
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b23",
+      "bookRelativeAudioRange" : {
+        "end" : 5082.253470505167,
+        "start" : 5081.316470614531
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 470.20347050517046,
+        "start" : 469.266470614534
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "was proposed, which tools were available, and which reviewer accepted or",
+      "sourceWord" : "available",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 22,
+      "wordStart" : 22
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b24",
+      "bookRelativeAudioRange" : {
+        "end" : 5116.364999999997,
+        "start" : 5093.739999999997
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 504.31500000000017,
+        "start" : 481.69000000000017
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "remain disabled rather than becoming available because a model claims they",
+      "sourceWord" : "available",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 41,
+      "wordStart" : 41
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b25",
+      "bookRelativeAudioRange" : {
+        "end" : 5132.169999999996,
+        "start" : 5116.544999999996
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 520.1200000000001,
+        "start" : 504.4950000000002
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The design assumes that untrusted content can produce surprising output and",
+      "sourceWord" : "content",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 20,
+      "wordStart" : 20
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b29",
+      "bookRelativeAudioRange" : {
+        "end" : 5161.8187786027975,
+        "start" : 5161.598866199258
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 549.7687786028011,
+        "start" : 549.5488661992609
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "One convenient service account could read tender files, open quotes, edit",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 5,
+      "wordStart" : 5
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 5222.324999999996,
+        "start" : 5195.324999999996
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 610.2749999999999,
+        "start" : 583.2749999999999
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The clause-analysis process can read the approved public source set",
+      "sourceWord" : "read",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 4,
+      "wordStart" : 4
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 5222.324999999996,
+        "start" : 5195.324999999996
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 610.2749999999999,
+        "start" : 583.2749999999999
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "queue. The quote-coverage process can read authorized quotes and the relevant",
+      "sourceWord" : "read",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 23,
+      "wordStart" : 23
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 5222.324999999996,
+        "start" : 5195.324999999996
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 610.2749999999999,
+        "start" : 583.2749999999999
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "deterministic estimate process can recalculate verified values under explicit rules. None",
+      "sourceWord" : "verified",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 41,
+      "wordStart" : 41
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b36",
+      "bookRelativeAudioRange" : {
+        "end" : 5299.654376884833,
+        "start" : 5299.141942903501
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 687.6043768848368,
+        "start" : 687.0919429035043
+      },
+      "kokoroTokenIDs" : [
+        58,
+        156,
+        69,
+        61,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "possible",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “possible”.",
+      "ruleID" : "g2p.lexicon.possible",
+      "selectedIPA" : "pˈɑsəbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The fictional assistant finds a possible ambiguity in the environmental clause",
+      "sourceWord" : "possible",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 5,
+      "wordStart" : 5
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b36",
+      "bookRelativeAudioRange" : {
+        "end" : 5320.9250797460745,
+        "start" : 5319.963905496409
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 708.8750797460783,
+        "start" : 707.9139054964124
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "and rationale remain in the record.",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 58,
+      "wordStart" : 58
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b38",
+      "bookRelativeAudioRange" : {
+        "end" : 5364.834999999996,
+        "start" : 5337.259999999996
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 752.7849999999995,
+        "start" : 725.2099999999995
+      },
+      "kokoroTokenIDs" : [
+        58,
+        156,
+        69,
+        61,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "possible",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “possible”.",
+      "ruleID" : "g2p.lexicon.possible",
+      "selectedIPA" : "pˈɑsəbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "is that “stop” must be possible outside the model.",
+      "sourceWord" : "possible",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 57,
+      "wordStart" : 57
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b39",
+      "bookRelativeAudioRange" : {
+        "end" : 5368.556000944164,
+        "start" : 5368.214265334386
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 756.5060009441675,
+        "start" : 756.1642653343896
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "evidence follows each boundary. The record shows which process read which",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 6,
+      "wordStart" : 6
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b39",
+      "bookRelativeAudioRange" : {
+        "end" : 5370.152694646052,
+        "start" : 5369.8206934829395
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 758.1026946460553,
+        "start" : 757.7706934829433
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The record shows which process read which approved sources, which candidate",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 10,
+      "wordStart" : 10
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s8-b40",
+      "bookRelativeAudioRange" : {
+        "end" : 5395.880307900979,
+        "start" : 5395.6669737894745
+      },
+      "chapterIndex" : 6,
+      "chapterRelativeAudioRange" : {
+        "end" : 783.8303079009823,
+        "start" : 783.6169737894783
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "a precise way. It can read assigned material, compare, flag, calculate",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 11,
+      "wordStart" : 11
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b2",
+      "bookRelativeAudioRange" : {
+        "end" : 5428.851387533323,
+        "start" : 5428.03724629115
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 11.226387533326717,
+        "start" : 10.4122462911535
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "tender files are in the record. The estimate has been reviewed.",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 7,
+      "wordStart" : 7
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b7",
+      "bookRelativeAudioRange" : {
+        "end" : 5512.079615376234,
+        "start" : 5511.788938297436
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 94.45461537623795,
+        "start" : 94.16393829743951
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        102,
+        64,
+        68
+      ],
+      "normalizedWord" : "lives",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “lives”.",
+      "ruleID" : "g2p.lexicon.lives",
+      "selectedIPA" : "lˈɪvz",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "from the folder. The contradiction lives between two records that are",
+      "sourceWord" : "lives",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 8,
+      "wordStart" : 8
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b9",
+      "bookRelativeAudioRange" : {
+        "end" : 5544.594957722201,
+        "start" : 5544.215620684428
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 126.96995772220427,
+        "start" : 126.59062068443194
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "which number should win. The record shows the current source, the",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 15,
+      "wordStart" : 15
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b10",
+      "bookRelativeAudioRange" : {
+        "end" : 5573.85028071477,
+        "start" : 5573.499733516235
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 156.22528071477356,
+        "start" : 155.8747335162385
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "by this tender? Does the record show the right event and",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 50,
+      "wordStart" : 50
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b11",
+      "bookRelativeAudioRange" : {
+        "end" : 5591.094384053096,
+        "start" : 5590.804521050838
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 173.46938405309947,
+        "start" : 173.17952105084163
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "from a previous owner. The live tender defines what is required.",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 25,
+      "wordStart" : 25
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b11",
+      "bookRelativeAudioRange" : {
+        "end" : 5595.025060591598,
+        "start" : 5594.689778533575
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 177.40006059160146,
+        "start" : 177.0647785335783
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "what is required. The closing record must show that requirement, its",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 33,
+      "wordStart" : 33
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b14",
+      "bookRelativeAudioRange" : {
+        "end" : 5667.5899999999965,
+        "start" : 5643.564999999997
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 249.96500000000006,
+        "start" : 225.94000000000005
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "suspicious instruction-like text remained untrusted content. The process had no message,",
+      "sourceWord" : "content",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 27,
+      "wordStart" : 27
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b15",
+      "bookRelativeAudioRange" : {
+        "end" : 5674.388059329901,
+        "start" : 5674.146816098913
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 256.76305932990465,
+        "start" : 256.5218160989175
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        51,
+        46
+      ],
+      "normalizedWord" : "read",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “read”.",
+      "ruleID" : "g2p.lexicon.read",
+      "selectedIPA" : "ɹˈid",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "If an automated review can read the entire bid room, alter",
+      "sourceWord" : "read",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 15,
+      "wordStart" : 15
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b27",
+      "bookRelativeAudioRange" : {
+        "end" : 5853.752077445543,
+        "start" : 5853.185294999053
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 436.1270774455467,
+        "start" : 435.5602949990569
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The explicit tracing of a verified change through every linked obligation,",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 5,
+      "wordStart" : 5
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b29",
+      "bookRelativeAudioRange" : {
+        "end" : 5892.535242956009,
+        "start" : 5891.912044678518
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 474.9102429560126,
+        "start" : 474.28704467852185
+      },
+      "kokoroTokenIDs" : [
+        83,
+        123,
+        156,
+        102,
+        119,
+        55,
+        83,
+        62,
+        157,
+        102,
+        53
+      ],
+      "normalizedWord" : "arithmetic",
+      "rationale" : "Noun pronunciation selected because no technical adjective follower matched.",
+      "ruleID" : "homograph.arithmetic.noun.default",
+      "selectedIPA" : "əɹˈɪθmətˌɪk",
+      "source" : "contextualHomograph",
+      "sourceContext" : "be recalculated under the approved arithmetic rule. The environmental treatment cannot",
+      "sourceWord" : "arithmetic",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 13,
+      "wordStart" : 13
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b30",
+      "bookRelativeAudioRange" : {
+        "end" : 5917.7534407433905,
+        "start" : 5917.145392021245
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 500.1284407433944,
+        "start" : 499.5203920212487
+      },
+      "kokoroTokenIDs" : [
+        123,
+        83,
+        54,
+        156,
+        25,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "reliable",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “reliable”.",
+      "ruleID" : "g2p.lexicon.reliable",
+      "selectedIPA" : "ɹəlˈIəbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "a person does. It needs reliable relationships and bounded actions. When",
+      "sourceWord" : "reliable",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 21,
+      "wordStart" : 21
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b37",
+      "bookRelativeAudioRange" : {
+        "end" : 6061.0049999999965,
+        "start" : 6043.579999999996
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 643.3799999999998,
+        "start" : 625.9549999999998
+      },
+      "kokoroTokenIDs" : [
+        58,
+        156,
+        69,
+        61,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "possible",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “possible”.",
+      "ruleID" : "g2p.lexicon.possible",
+      "selectedIPA" : "pˈɑsəbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "the estimate and identifies a possible commercial effect.",
+      "sourceWord" : "possible",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 32,
+      "wordStart" : 32
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b39",
+      "bookRelativeAudioRange" : {
+        "end" : 6071.178971706956,
+        "start" : 6070.836588175475
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 653.5539717069599,
+        "start" : 653.2115881754792
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "The record opens a discrepancy against the",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 1,
+      "wordStart" : 1
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b50",
+      "bookRelativeAudioRange" : {
+        "end" : 6258.8521434598915,
+        "start" : 6258.47625680256
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 841.2271434598953,
+        "start" : 840.8512568025632
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "has been transmitted. The closing record must not infer submission from",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 37,
+      "wordStart" : 37
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b51",
+      "bookRelativeAudioRange" : {
+        "end" : 6273.445982629821,
+        "start" : 6273.134377629374
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 855.8209826298246,
+        "start" : 855.509377629378
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "authorized submitter. It identifies the live opportunity and required channel, current",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 14,
+      "wordStart" : 14
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b56",
+      "bookRelativeAudioRange" : {
+        "end" : 6351.535054030986,
+        "start" : 6351.34071823282
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 933.9100540309896,
+        "start" : 933.7157182328241
+      },
+      "kokoroTokenIDs" : [
+        156,
+        24,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "able",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “able”.",
+      "ruleID" : "g2p.lexicon.able",
+      "selectedIPA" : "ˈAbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "shared account may be technically able to submit while leaving responsibility",
+      "sourceWord" : "able",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 15,
+      "wordStart" : 15
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b56",
+      "bookRelativeAudioRange" : {
+        "end" : 6365.5209439646815,
+        "start" : 6365.329359703382
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 947.8959439646851,
+        "start" : 947.7043597033855
+      },
+      "kokoroTokenIDs" : [
+        156,
+        24,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "able",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “able”.",
+      "ruleID" : "g2p.lexicon.able",
+      "selectedIPA" : "ˈAbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "person exercising it must be able to see what is being",
+      "sourceWord" : "able",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 42,
+      "wordStart" : 42
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b59",
+      "bookRelativeAudioRange" : {
+        "end" : 6412.364418365892,
+        "start" : 6412.02156422128
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 994.7394183658955,
+        "start" : 994.396564221283
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "person who submitted. The living record changes from prepared to submitted",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 31,
+      "wordStart" : 31
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s9-b65",
+      "bookRelativeAudioRange" : {
+        "end" : 6553.570772946082,
+        "start" : 6553.171040526648
+      },
+      "chapterIndex" : 7,
+      "chapterRelativeAudioRange" : {
+        "end" : 1135.9457729460853,
+        "start" : 1135.5460405266513
+      },
+      "kokoroTokenIDs" : [
+        61,
+        62,
+        156,
+        24,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "stable",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “stable”.",
+      "ruleID" : "g2p.lexicon.stable",
+      "selectedIPA" : "stˈAbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "decisions rather than rechecking every stable field.",
+      "sourceWord" : "stable",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 56,
+      "wordStart" : 56
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b5",
+      "bookRelativeAudioRange" : {
+        "end" : 6628.7394128349815,
+        "start" : 6628.389057396871
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 47.284412834985844,
+        "start" : 46.93405739687526
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "bid coordinator returns to the record created during the pursuit. The",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 6,
+      "wordStart" : 6
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b8",
+      "bookRelativeAudioRange" : {
+        "end" : 6709.514879515195,
+        "start" : 6708.352744528025
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 128.05987951520024,
+        "start" : 126.8977445280294
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "is the only public number available.",
+      "sourceWord" : "available",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 62,
+      "wordStart" : 62
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b11",
+      "bookRelativeAudioRange" : {
+        "end" : 6769.891625900015,
+        "start" : 6769.520563482903
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 188.4366259000197,
+        "start" : 188.06556348290735
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "beyond what the lawful public record or feedback process states.",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 45,
+      "wordStart" : 45
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b16",
+      "bookRelativeAudioRange" : {
+        "end" : 6859.804999999996,
+        "start" : 6836.404999999995
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 278.3500000000001,
+        "start" : 254.95000000000007
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "team prepares from its own record. It asks where its evaluated",
+      "sourceWord" : "record",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 6,
+      "wordStart" : 6
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b18",
+      "bookRelativeAudioRange" : {
+        "end" : 6882.47501666843,
+        "start" : 6882.133213615115
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 301.02001666843444,
+        "start" : 300.67821361511955
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "mandatory requirement becomes another. The record shows that the item was",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 7,
+      "wordStart" : 7
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b22",
+      "bookRelativeAudioRange" : {
+        "end" : 6972.423594183709,
+        "start" : 6972.078793667779
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 390.9685941837129,
+        "start" : 390.62379366778316
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "beyond lawful aggregate information. The record says so. The absence of",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 15,
+      "wordStart" : 15
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b24",
+      "bookRelativeAudioRange" : {
+        "end" : 7024.119999999995,
+        "start" : 7002.344999999996
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 442.6650000000001,
+        "start" : 420.8900000000001
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "A better post-bid record preserves the result, the public",
+      "sourceWord" : "record",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 3,
+      "wordStart" : 3
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b25",
+      "bookRelativeAudioRange" : {
+        "end" : 7031.021690947877,
+        "start" : 7030.458098983828
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 449.56669094788094,
+        "start" : 449.0030989838326
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "It also knows what the available evidence cannot reveal about the",
+      "sourceWord" : "available",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 16,
+      "wordStart" : 16
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 7091.361862229554,
+        "start" : 7091.029493849063
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 509.9068622295592,
+        "start" : 509.5744938490677
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The bid record might show an earthworks quantity,",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 2,
+      "wordStart" : 2
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b31",
+      "bookRelativeAudioRange" : {
+        "end" : 7104.343111370343,
+        "start" : 7104.017262303954
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 522.8881113703477,
+        "start" : 522.5622623039592
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "accepted the risk. The project record might show the quantity actually",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 32,
+      "wordStart" : 32
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b37",
+      "bookRelativeAudioRange" : {
+        "end" : 7205.339493858115,
+        "start" : 7204.992357307586
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 623.8844938581193,
+        "start" : 623.5373573075904
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "For each selected item, the record preserves what the estimator knew",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 5,
+      "wordStart" : 5
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b39",
+      "bookRelativeAudioRange" : {
+        "end" : 7274.494999999995,
+        "start" : 7247.644999999995
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 693.0399999999997,
+        "start" : 666.1899999999997
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "or finance can explain the available cost evidence and its limits.",
+      "sourceWord" : "available",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 29,
+      "wordStart" : 29
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b44",
+      "bookRelativeAudioRange" : {
+        "end" : 7403.519999999995,
+        "start" : 7386.669999999995
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 822.0649999999995,
+        "start" : 805.2149999999995
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The learning record therefore keeps evidence types separate.",
+      "sourceWord" : "record",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 2,
+      "wordStart" : 2
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b44",
+      "bookRelativeAudioRange" : {
+        "end" : 7403.519999999995,
+        "start" : 7386.669999999995
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 822.0649999999995,
+        "start" : 805.2149999999995
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "state. Project scope and change record. Execution observation. Review conclusion. Future",
+      "sourceWord" : "record",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 21,
+      "wordStart" : 21
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b48",
+      "bookRelativeAudioRange" : {
+        "end" : 7478.227919302916,
+        "start" : 7477.872500715134
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 896.7729193029207,
+        "start" : 896.4175007151389
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "comparable actuals. Not every internal record is clean enough to support",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 18,
+      "wordStart" : 18
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b55",
+      "bookRelativeAudioRange" : {
+        "end" : 7545.122949629271,
+        "start" : 7544.563803295781
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 963.6679496292751,
+        "start" : 963.1088032957855
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "is a strong candidate. A verified addendum changes authoritative state. Someone",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 8,
+      "wordStart" : 8
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b58",
+      "bookRelativeAudioRange" : {
+        "end" : 7641.149360802726,
+        "start" : 7640.85499721443
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1059.6943608027302,
+        "start" : 1059.399997214435
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "include a defined set of live tenders, controlled historical replays, or",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 33,
+      "wordStart" : 33
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b60",
+      "bookRelativeAudioRange" : {
+        "end" : 7669.590645506822,
+        "start" : 7668.605735722807
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1088.1356455068262,
+        "start" : 1087.1507357228124
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "records when an addendum was verified, when candidate effects were identified,",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 16,
+      "wordStart" : 16
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b62",
+      "bookRelativeAudioRange" : {
+        "end" : 7702.188308707355,
+        "start" : 7701.565919168647
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1120.7333087073596,
+        "start" : 1120.1109191686521
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "sentence. Reduce the time between verified addendum capture and an assigned",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 13,
+      "wordStart" : 13
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b63",
+      "bookRelativeAudioRange" : {
+        "end" : 7723.025626284486,
+        "start" : 7722.436746548335
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1141.5706262844906,
+        "start" : 1140.981746548339
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "been resolved. It means the verified change has been connected to",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 22,
+      "wordStart" : 22
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b63",
+      "bookRelativeAudioRange" : {
+        "end" : 7729.604191692703,
+        "start" : 7729.263578377644
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1148.149191692708,
+        "start" : 1147.8085783776487
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Noun pronunciation selected after “the”.",
+      "ruleID" : "homograph.record.noun.preceder",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "contextualHomograph",
+      "sourceContext" : "has reviewed it, and the record states either no effect, a",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 40,
+      "wordStart" : 40
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b65",
+      "bookRelativeAudioRange" : {
+        "end" : 7769.1249999999945,
+        "start" : 7759.899999999995
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1187.6699999999994,
+        "start" : 1178.4449999999995
+      },
+      "kokoroTokenIDs" : [
+        58,
+        123,
+        157,
+        51,
+        46,
+        83,
+        53,
+        54,
+        156,
+        86,
+        123,
+        46
+      ],
+      "normalizedWord" : "predeclared",
+      "rationale" : "Deterministic G2P fallback selected for “predeclared”.",
+      "ruleID" : "g2p.fallback.predeclared",
+      "selectedIPA" : "pɹˌidəklˈɛɹd",
+      "source" : "fallback",
+      "sourceContext" : "One predeclared metric that tests a bounded",
+      "sourceWord" : "predeclared",
+      "timingPrecision" : "blockAnchorFallback",
+      "wordEnd" : 1,
+      "wordStart" : 1
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b66",
+      "bookRelativeAudioRange" : {
+        "end" : 7773.294474718794,
+        "start" : 7772.71918951052
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1191.839474718799,
+        "start" : 1191.2641895105241
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "the median elapsed time from verified addendum capture to assigned impact",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 10,
+      "wordStart" : 10
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b66",
+      "bookRelativeAudioRange" : {
+        "end" : 7790.19759629169,
+        "start" : 7789.62733319785
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1208.742596291695,
+        "start" : 1208.172333197855
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "while the individual delays remain available for review.",
+      "sourceWord" : "available",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 50,
+      "wordStart" : 50
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b72",
+      "bookRelativeAudioRange" : {
+        "end" : 7906.507806930418,
+        "start" : 7906.230677846567
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1325.0528069304232,
+        "start" : 1324.7756778465719
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "are set before the first live document enters the system. The",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 7,
+      "wordStart" : 7
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b74",
+      "bookRelativeAudioRange" : {
+        "end" : 7967.905215888073,
+        "start" : 7966.874379361034
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1386.4502158880782,
+        "start" : 1385.4193793610386
+      },
+      "kokoroTokenIDs" : [
+        53,
+        156,
+        69,
+        56,
+        62,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kˈɑntɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "Every tender file remains untrusted content. It can supply evidence about",
+      "sourceWord" : "content",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 5,
+      "wordStart" : 5
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b77",
+      "bookRelativeAudioRange" : {
+        "end" : 8019.267251835421,
+        "start" : 8018.928699217628
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1437.8122518354253,
+        "start" : 1437.4736992176327
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "first guardrail is coverage. Reviewers record any verified addendum or material",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 6,
+      "wordStart" : 6
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b77",
+      "bookRelativeAudioRange" : {
+        "end" : 8020.312854553114,
+        "start" : 8019.678333383234
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1438.8578545531186,
+        "start" : 1438.2233333832378
+      },
+      "kokoroTokenIDs" : [
+        64,
+        156,
+        86,
+        123,
+        83,
+        48,
+        157,
+        25,
+        46
+      ],
+      "normalizedWord" : "verified",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “verified”.",
+      "ruleID" : "g2p.lexicon.verified",
+      "selectedIPA" : "vˈɛɹəfˌId",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "is coverage. Reviewers record any verified addendum or material affected area",
+      "sourceWord" : "verified",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 8,
+      "wordStart" : 8
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b78",
+      "bookRelativeAudioRange" : {
+        "end" : 8030.039647159925,
+        "start" : 8029.695962716715
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1448.58464715993,
+        "start" : 1448.24096271672
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "The second is record quality. An unresolved item must",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 3,
+      "wordStart" : 3
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b79",
+      "bookRelativeAudioRange" : {
+        "end" : 8049.967513536692,
+        "start" : 8049.604197873246
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1468.5125135366968,
+        "start" : 1468.1491978732508
+      },
+      "kokoroTokenIDs" : [
+        123,
+        156,
+        86,
+        53,
+        83,
+        123,
+        46
+      ],
+      "normalizedWord" : "record",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “record”.",
+      "ruleID" : "g2p.lexicon.record",
+      "selectedIPA" : "ɹˈɛkəɹd",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "third is authority. Unauthorized messages, record changes outside the permitted working",
+      "sourceWord" : "record",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 6,
+      "wordStart" : 6
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b80",
+      "bookRelativeAudioRange" : {
+        "end" : 8072.085657962624,
+        "start" : 8071.790593917553
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1490.6306579626287,
+        "start" : 1490.3355939175578
+      },
+      "kokoroTokenIDs" : [
+        54,
+        156,
+        25,
+        64
+      ],
+      "normalizedWord" : "live",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “live”.",
+      "ruleID" : "g2p.lexicon.live",
+      "selectedIPA" : "lˈIv",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "cutoff, or bid closing. The live tender remains controlling, and the",
+      "sourceWord" : "live",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 21,
+      "wordStart" : 21
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b80",
+      "bookRelativeAudioRange" : {
+        "end" : 8077.525170780612,
+        "start" : 8076.3903333683575
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1496.0701707806163,
+        "start" : 1494.9353333683623
+      },
+      "kokoroTokenIDs" : [
+        83,
+        64,
+        156,
+        24,
+        54,
+        83,
+        44,
+        83,
+        54
+      ],
+      "normalizedWord" : "available",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “available”.",
+      "ruleID" : "g2p.lexicon.available",
+      "selectedIPA" : "əvˈAləbəl",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "the established human process remains available.",
+      "sourceWord" : "available",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 31,
+      "wordStart" : 31
+    },
+    {
+      "blockID" : "epub-runner-the-competitive-bid-room-the-competitive-bid-room.epub-s10-b81",
+      "bookRelativeAudioRange" : {
+        "end" : 8088.947738428862,
+        "start" : 8088.570421540501
+      },
+      "chapterIndex" : 8,
+      "chapterRelativeAudioRange" : {
+        "end" : 1507.4927384288662,
+        "start" : 1507.115421540506
+      },
+      "kokoroTokenIDs" : [
+        53,
+        83,
+        56,
+        62,
+        156,
+        86,
+        56,
+        62
+      ],
+      "normalizedWord" : "content",
+      "rationale" : "Watched ordinary-lexicon pronunciation selected for “content”.",
+      "ruleID" : "g2p.lexicon.content",
+      "selectedIPA" : "kəntˈɛnt",
+      "source" : "monitoredLexicon",
+      "sourceContext" : "be proved, citations fail, untrusted content attempts to redirect the process,",
+      "sourceWord" : "content",
+      "timingPrecision" : "exactSynthesisWord",
+      "wordEnd" : 24,
+      "wordStart" : 24
+    }
+  ],
+  "diagnostics" : [
+
+  ],
+  "legacyChapterIndexes" : [
+
+  ],
+  "listeningReelFileName" : "the-competitive-bid-room.pronunciation-reel.m4b",
+  "listeningReelSHA256" : "6f61bf8c5aa5fc0e14a256e8c188f23f0a9abd919f5b109981ef2217261427e2",
+  "renderVersion" : 15,
+  "schemaVersion" : 2,
+  "voice" : "am_michael",
+  "watchCounts" : {
+    "able" : 5,
+    "ariba" : 1,
+    "arithmetic" : 12,
+    "auditable" : 1,
+    "autosave" : 1,
+    "available" : 11,
+    "campbell" : 0,
+    "comfortable" : 0,
+    "content" : 11,
+    "fakkeldy" : 0,
+    "filesystem" : 0,
+    "final.pdf" : 1,
+    "lifecycle" : 0,
+    "live" : 13,
+    "lives" : 3,
+    "multi" : 1,
+    "possible" : 3,
+    "predeclared" : 1,
+    "re" : 0,
+    "read" : 15,
+    "readme" : 0,
+    "record" : 52,
+    "reliable" : 2,
+    "resume" : 0,
+    "resumes" : 0,
+    "résumé" : 0,
+    "résumés" : 0,
+    "stable" : 2,
+    "startable" : 0,
+    "super" : 0,
+    "supercomputer" : 0,
+    "supercomputers" : 0,
+    "superforecasters" : 0,
+    "superhuman" : 0,
+    "superimposed" : 0,
+    "superintelligence" : 0,
+    "supernatural" : 0,
+    "superposition" : 0,
+    "supervised" : 0,
+    "supervising" : 0,
+    "table" : 1,
+    "timeframe" : 0,
+    "unsupervised" : 0,
+    "validator" : 0,
+    "verified" : 17,
+    "xcassets" : 0,
+    "xcode" : 0
+  }
+}
