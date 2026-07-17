@@ -20,6 +20,16 @@ Curious near‑beginners who want to understand how modern AI voices work withou
 ## Listen & read
 11 chapters, about 3.6 hours at 1.25x speed. Read it as an [EPUB](the-voice-in-the-machine.epub) or in [Markdown](the-voice-in-the-machine.md).
 
+## Narrated package
+
+The public reading edition is `the-voice-in-the-machine.epub`; the chaptered
+audio is `the-voice-in-the-machine.m4b`; and
+`the-voice-in-the-machine.alignment.json` provides 369 verified read-along
+anchors. This is the narration matched to the current public manuscript, not
+the older, longer draft. The EPUB embeds the portrait `cover.png`, while the
+M4B embeds the square `m4b-cover.png`. The package is ready for browser playback
+and synchronized reading through KinNoKi Labs after the public-media gate.
+
 ---
 
 _Written by Opus 4.8, grounded in Echo's real on‑device narration pipeline (the current ONNX Runtime engine). Spot‑checked, not expert‑reviewed — see the [honest disclosure](../../README.md#honest-disclosure)._

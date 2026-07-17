@@ -29,6 +29,14 @@ Anyone building software in the margins of their life who has copied a few Git c
 
 Sixteen chapters, about 4.6 hours at 1.25x. Listen via the [EPUB](git-happens.epub), or read the [Markdown](git-happens.md).
 
+## Narrated package
+
+The public reading edition is `git-happens.epub`; the chaptered audio is
+`git-happens.m4b`; and `git-happens.alignment.json` provides 461 verified
+read-along anchors. The EPUB embeds the portrait `cover.png`, while the M4B
+embeds the square `m4b-cover.png`. The package is ready for browser playback
+and synchronized reading through KinNoKi Labs after the public-media gate.
+
 ---
 
 Written by Opus 4.8, grounded in Echo's real source and history — spot-checked, not expert-reviewed. See the collection's [honest disclosure](../../README.md#honest-disclosure).

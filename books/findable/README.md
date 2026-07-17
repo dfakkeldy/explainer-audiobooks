@@ -32,6 +32,14 @@ Indie developers and solo builders with a small, good app, no marketing budget, 
 - **EPUB:** [findable.epub](findable.epub)
 - **Markdown:** [findable.md](findable.md)
 
+## Narrated package
+
+The public reading edition is `findable.epub`; the chaptered audio is
+`findable.m4b`; and `findable.alignment.json` provides 263 verified read-along
+anchors. The EPUB embeds the portrait `cover.png`, while the M4B embeds the
+square `m4b-cover.png`. The package is ready for browser playback and
+synchronized reading through KinNoKi Labs after the public-media gate.
+
 ---
 
 *Written by Opus 4.8 (an AI model), grounded in real App Store data from a real launch. Spot-checked, not expert-reviewed — please read the collection's [honest disclosure](../../README.md#honest-disclosure) before treating any of it as gospel.*
