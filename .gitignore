@@ -13,6 +13,7 @@ __pycache__/
 /tmp/
 .build/
 /build/
+.recovery/
 
 # Non-public-domain local book source
 books/everything-but-the-code/
