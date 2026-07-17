@@ -144,7 +144,7 @@ class LegacyCoverPairReceiptTests(unittest.TestCase):
         self._write_image("cover.png", (1600, 2560), (245, 235, 220))
         self._write_image("m4b-cover-source.png", (1024, 1024), (30, 60, 90))
         self._write_image("m4b-cover.png", (2400, 2400), (220, 80, 50))
-        self._write_image("m4b-cover-thumbnail.png", (240, 240), (220, 80, 50))
+        self._write_image("m4b-cover-thumbnail.png", (160, 160), (220, 80, 50))
         (self.book_dir / "m4b-cover-spec.json").write_text(
             '{"schema_version":2,"variant":"square"}\n', encoding="utf-8"
         )
@@ -282,6 +282,33 @@ class RecoveryManifestContractTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "absolute path"):
             recovery.verify_recovery_manifest(self.root, manifest, self.root / "blocks")
+
+
+class PublicPackageCoverContractTests(unittest.TestCase):
+    repo_root = Path(__file__).parents[1]
+    required_legacy_assets = (
+        "m4b-cover-source.png",
+        "m4b-cover-spec.json",
+        "m4b-cover.png",
+        "m4b-cover-thumbnail.png",
+        "m4b-cover.render.json",
+        "legacy-cover-pair.json",
+    )
+
+    def test_all_six_legacy_packages_have_verified_square_companions(self):
+        missing = [
+            f"books/{slug}/{name}"
+            for slug in recovery.LEGACY_PAIR_SLUGS
+            for name in self.required_legacy_assets
+            if not (self.repo_root / "books" / slug / name).is_file()
+        ]
+        self.assertEqual(missing, [], "missing legacy square assets")
+        for slug in recovery.LEGACY_PAIR_SLUGS:
+            with self.subTest(slug=slug):
+                book_dir = self.repo_root / "books" / slug
+                recovery.verify_legacy_cover_pair(
+                    book_dir, book_dir / "legacy-cover-pair.json"
+                )
 
 
 @unittest.skipUnless(

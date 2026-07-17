@@ -1,0 +1,40 @@
+{
+  "book_slug": "you-are-the-architect",
+  "candidate_id": "directed-construction",
+  "direction_name": "Directed Construction",
+  "edition_id": "public-audio-recovery-2026-07",
+  "portrait": {
+    "dimensions": [
+      1600,
+      2560
+    ],
+    "epub_cover_member": "OEBPS/cover.png",
+    "epub_cover_sha256": "c3fb6b82f0fa1de9a957f92eacfe9051afbfaf2dde4a55ffe92e1a270e7fe214",
+    "epub_path": "you-are-the-architect.epub",
+    "epub_sha256": "ab9def0aa470486a4fbdb6f8704de3b922d287a92ad05b940a5c0fc5bd201263",
+    "path": "cover.png",
+    "sha256": "c3fb6b82f0fa1de9a957f92eacfe9051afbfaf2dde4a55ffe92e1a270e7fe214"
+  },
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 1,
+  "selection_source": "user-approved-derivation",
+  "square": {
+    "dimensions": [
+      2400,
+      2400
+    ],
+    "path": "m4b-cover.png",
+    "render_path": "m4b-cover.render.json",
+    "render_sha256": "e2a800efb3f77fe8265bba2571efbe6fa985e77d2b79a6c63f9e8b94d32c4b17",
+    "sha256": "6afeba4188e4e138bb0772ad9cd525df6c816703e0ca1f8cb10b3e8be5d6e349",
+    "source_path": "m4b-cover-source.png",
+    "source_sha256": "8a172a8fdc4061659ce4438fe5779516feaaeec067263c24968314c5b7903d7a",
+    "spec_path": "m4b-cover-spec.json",
+    "spec_sha256": "1fe7625b3a3471a85fc87c80d4397bb02b0a0396774b1fcad0f18aa755851f2e",
+    "thumbnail_path": "m4b-cover-thumbnail.png",
+    "thumbnail_sha256": "46cdc1470e59f2b423d5df52784c37cef3d4c8718d7e6cd5e34470680e3c227e"
+  }
+}

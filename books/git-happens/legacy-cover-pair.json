@@ -1,0 +1,40 @@
+{
+  "book_slug": "git-happens",
+  "candidate_id": "the-deliberate-knot",
+  "direction_name": "The Deliberate Knot",
+  "edition_id": "public-audio-recovery-2026-07",
+  "portrait": {
+    "dimensions": [
+      1600,
+      2560
+    ],
+    "epub_cover_member": "OEBPS/cover.png",
+    "epub_cover_sha256": "fc12ad8dee431de5af930b2eaba8407798a45d41c376bd000cc87a72f543b546",
+    "epub_path": "git-happens.epub",
+    "epub_sha256": "b9cc5bdff4555795894d49b7c476351788ea71ab27fe6bad738747dead94d100",
+    "path": "cover.png",
+    "sha256": "fc12ad8dee431de5af930b2eaba8407798a45d41c376bd000cc87a72f543b546"
+  },
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 1,
+  "selection_source": "user-approved-derivation",
+  "square": {
+    "dimensions": [
+      2400,
+      2400
+    ],
+    "path": "m4b-cover.png",
+    "render_path": "m4b-cover.render.json",
+    "render_sha256": "65bc9188e97729c1e29e5122fc441b9ab006164c8f1c9ba821ef9cd48b40a548",
+    "sha256": "84dca530115178a5969245e180997d245d8343b958134930e39edaa63a9e892f",
+    "source_path": "m4b-cover-source.png",
+    "source_sha256": "5345035c0144f5ebf8937560a462a79c1736a5329fedf31001d61e1834023d95",
+    "spec_path": "m4b-cover-spec.json",
+    "spec_sha256": "d1f0d556cb9ac6061817f4fdab2651c8659e4279e8a5fe96a62c9f44326ee307",
+    "thumbnail_path": "m4b-cover-thumbnail.png",
+    "thumbnail_sha256": "07767dde77a4f6305a16c7961c9f48859f1b0bb63a91dd948d76cc5b943946c1"
+  }
+}

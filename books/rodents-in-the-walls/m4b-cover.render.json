@@ -1,0 +1,37 @@
+{
+  "candidate": {
+    "direction_name": "Compact Ribbon / Editorial Footer",
+    "id": "c2a-compact-ribbon-editorial-footer"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    2400,
+    2400
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "editorial-serif": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb",
+    "technical-mono": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
+  },
+  "output": "m4b-cover.png",
+  "output_sha256": "835d1ce59149db0d781991689983359d717d031280eb4fcb8c97c2a0076af9a9",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "m4b-cover-source.png",
+  "source_art_sha256": "52cf26c3fc64f860d001e1fa2bbe807ab2a67133d1adb02ebddc4b373f2dbbd0",
+  "spec": "m4b-cover-spec.json",
+  "spec_sha256": "28b8763a329650d985f8b1ec5afadb921376bf6dc37da26cff9cf388feae8128",
+  "thumbnail": "m4b-cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    160
+  ],
+  "thumbnail_sha256": "59d378e4a79ecb05fbf7139b835cc3bb8307bee7084d4f3f538a5e65604eae12",
+  "variant": "square",
+  "warnings": [
+    "layer 4 advisory contrast ratio is 2.97:1"
+  ]
+}

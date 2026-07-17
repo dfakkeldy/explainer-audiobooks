@@ -1,0 +1,40 @@
+{
+  "book_slug": "rodents-in-the-walls",
+  "candidate_id": "c2a-compact-ribbon-editorial-footer",
+  "direction_name": "Compact Ribbon / Editorial Footer",
+  "edition_id": "public-audio-recovery-2026-07",
+  "portrait": {
+    "dimensions": [
+      1600,
+      2560
+    ],
+    "epub_cover_member": "OEBPS/cover.png",
+    "epub_cover_sha256": "e1afe1fbcbd440927c8d4d62de475af3230afe0d8edbbb6a886c498fc21af2a2",
+    "epub_path": "rodents-in-the-walls.epub",
+    "epub_sha256": "0cf8d79d5e12369427fa78f56e6444575fc249b7846b83f4445c3cbcdc48d631",
+    "path": "cover.png",
+    "sha256": "e1afe1fbcbd440927c8d4d62de475af3230afe0d8edbbb6a886c498fc21af2a2"
+  },
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 1,
+  "selection_source": "user-approved-derivation",
+  "square": {
+    "dimensions": [
+      2400,
+      2400
+    ],
+    "path": "m4b-cover.png",
+    "render_path": "m4b-cover.render.json",
+    "render_sha256": "f905ae8b7778a70c96b3e890b0bd9185f94fc4a6eb81c77c22997b5fe4b93139",
+    "sha256": "835d1ce59149db0d781991689983359d717d031280eb4fcb8c97c2a0076af9a9",
+    "source_path": "m4b-cover-source.png",
+    "source_sha256": "52cf26c3fc64f860d001e1fa2bbe807ab2a67133d1adb02ebddc4b373f2dbbd0",
+    "spec_path": "m4b-cover-spec.json",
+    "spec_sha256": "bc2af2d8947740c05dd730e1693259d432887fa7d8b5b8d2bad2f70bbabaa5c3",
+    "thumbnail_path": "m4b-cover-thumbnail.png",
+    "thumbnail_sha256": "59d378e4a79ecb05fbf7139b835cc3bb8307bee7084d4f3f538a5e65604eae12"
+  }
+}

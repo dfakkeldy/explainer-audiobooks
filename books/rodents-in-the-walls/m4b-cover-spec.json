@@ -1,0 +1,16 @@
+{
+  "schema_version": 2,
+  "variant": "square",
+  "canvas": {"width": 2400, "height": 2400, "background": "#132238", "safe_margin": 120},
+  "candidate": {"id": "c2a-compact-ribbon-editorial-footer", "direction_name": "Compact Ribbon / Editorial Footer"},
+  "art": {"path": "m4b-cover-source.png", "mode": "bleed", "box": [0, 0, 2400, 2400], "anchor": "center", "opacity": 1, "blend_mode": "normal"},
+  "layers": [
+    {"kind": "field", "box": [80, 80, 1500, 770], "fill": {"kind": "solid", "colour": "#EF5735"}, "opacity": 0.94, "blend_mode": "normal", "purpose": "translate the approved compact orange ribbon into the square without covering the shadow fan"},
+    {"kind": "text", "role": "label", "text": "AUDIOBOOK", "box": [120, 120, 1200, 80], "font_id": "technical-mono", "size": 40, "line_height": 44, "tracking": 7, "align": "left", "colour": "#132238", "contrast_against": "#EF5735", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 1, "text": "RODENTS", "box": [120, 230, 1320, 240], "font_id": "editorial-serif", "size": 220, "line_height": 230, "tracking": 0, "align": "left", "colour": "#132238", "contrast_against": "#EF5735", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 2, "text": "IN THE WALLS", "box": [120, 490, 1320, 220], "font_id": "display-condensed", "size": 190, "line_height": 200, "tracking": 2, "align": "left", "colour": "#F6EDDA", "contrast_against": "#EF5735", "opacity": 1, "rotation": 0, "baseline_shift": 0, "outline": {"colour": "#132238", "width": 3}},
+    {"kind": "text", "role": "subtitle", "text": "SQUIRRELS AND OTHER HOUSEGUESTS IN WESTERN CAPE BRETON", "box": [120, 725, 1320, 70], "font_id": "technical-mono", "size": 36, "line_height": 42, "tracking": 0, "align": "left", "colour": "#132238", "contrast_against": "#EF5735", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "author", "text": "DAN FAKKELDY", "box": [120, 2180, 1200, 100], "font_id": "technical-mono", "size": 48, "line_height": 52, "tracking": 3, "align": "left", "colour": "#EF5735", "contrast_against": "#132238", "opacity": 1, "rotation": 0, "baseline_shift": 0}
+  ],
+  "metadata": {"title": "Rodents in the Walls", "subtitle": "Squirrels and Other Houseguests in Western Cape Breton", "author": "Dan Fakkeldy", "label": "AUDIOBOOK"}
+}

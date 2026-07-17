@@ -1,0 +1,40 @@
+{
+  "book_slug": "the-bug-is-a-clue",
+  "candidate_id": "revealing-shadow",
+  "direction_name": "Revealing Shadow",
+  "edition_id": "public-audio-recovery-2026-07",
+  "portrait": {
+    "dimensions": [
+      1600,
+      2560
+    ],
+    "epub_cover_member": "OEBPS/cover.png",
+    "epub_cover_sha256": "a941979e3e22299fe8c552060803feb8759d43accd3962c95ca0bff09c6da417",
+    "epub_path": "the-bug-is-a-clue.epub",
+    "epub_sha256": "52e774ad8305b7cea7e32dba5e2651f46b1da1a28b69a396f0faaff3a03183f4",
+    "path": "cover.png",
+    "sha256": "a941979e3e22299fe8c552060803feb8759d43accd3962c95ca0bff09c6da417"
+  },
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 1,
+  "selection_source": "user-approved-derivation",
+  "square": {
+    "dimensions": [
+      2400,
+      2400
+    ],
+    "path": "m4b-cover.png",
+    "render_path": "m4b-cover.render.json",
+    "render_sha256": "383a6a27095510267794691ed98acc1a1c8a24485eff8abb8c165232ee96b5ef",
+    "sha256": "f40a12d096185513c6328b13de82dd2b66a61b897e95b8d3f4f275633e299530",
+    "source_path": "m4b-cover-source.png",
+    "source_sha256": "1447df883dde8389ecdbb0ae1ab97c4947c4329ab72169f83d33391fffd97033",
+    "spec_path": "m4b-cover-spec.json",
+    "spec_sha256": "372aeec8a5bfa3a35e503e9e4faae3ee6ed272871a29a2c05884191a14778694",
+    "thumbnail_path": "m4b-cover-thumbnail.png",
+    "thumbnail_sha256": "af0281326e6cf851996cdf4623a3510c9c1ff4f0731052d0da930b175f55371e"
+  }
+}

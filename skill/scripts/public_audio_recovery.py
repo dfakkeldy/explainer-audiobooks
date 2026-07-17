@@ -358,10 +358,10 @@ def verify_legacy_cover_pair(book_dir: Path, receipt_path: Path) -> None:
     ) != (2400, 2400):
         raise ValueError("square dimensions must be 2400 by 2400")
     if _image_dimensions(resolved["square thumbnail"], "square thumbnail") != (
-        240,
-        240,
+        160,
+        160,
     ):
-        raise ValueError("square thumbnail dimensions must be 240 by 240")
+        raise ValueError("square thumbnail dimensions must be 160 by 160")
 
 
 def write_legacy_cover_pair(
@@ -387,10 +387,10 @@ def write_legacy_cover_pair(
     if _image_dimensions(square_paths["path"], "square") != (2400, 2400):
         raise ValueError("square dimensions must be 2400 by 2400")
     if _image_dimensions(square_paths["thumbnail_path"], "square thumbnail") != (
-        240,
-        240,
+        160,
+        160,
     ):
-        raise ValueError("square thumbnail dimensions must be 240 by 240")
+        raise ValueError("square thumbnail dimensions must be 160 by 160")
     portrait_hash = sha256_file(portrait)
     epub_cover_hash = _epub_cover_sha256(epub, "OEBPS/cover.png")
     if portrait_hash != epub_cover_hash:

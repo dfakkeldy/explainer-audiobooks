@@ -1,0 +1,16 @@
+{
+  "schema_version": 2,
+  "variant": "square",
+  "canvas": {"width": 2400, "height": 2400, "background": "#F4E5D8", "safe_margin": 120},
+  "candidate": {"id": "sentence-to-sound", "direction_name": "Sentence to Sound"},
+  "art": {"path": "m4b-cover-source.png", "mode": "bleed", "box": [0, 0, 2400, 2400], "anchor": "center", "opacity": 1, "blend_mode": "normal"},
+  "layers": [
+    {"kind": "scrim", "box": [80, 1480, 2240, 800], "fill": {"kind": "solid", "colour": "#F4E5D8"}, "opacity": 0.86, "blend_mode": "normal", "purpose": "continue the approved warm lower title field beneath the square acoustic mechanism"},
+    {"kind": "text", "role": "label", "text": "AUDIOBOOK", "box": [120, 1530, 1200, 80], "font_id": "geometric-sans", "size": 44, "line_height": 48, "tracking": 7, "align": "left", "colour": "#FF9F1C", "contrast_against": "#F4E5D8", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 1, "text": "THE VOICE IN", "box": [120, 1640, 2100, 240], "font_id": "display-condensed", "size": 210, "line_height": 220, "tracking": 1, "align": "left", "colour": "#17130F", "contrast_against": "#F4E5D8", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 2, "text": "THE MACHINE", "box": [120, 1880, 2100, 240], "font_id": "display-condensed", "size": 210, "line_height": 220, "tracking": 1, "align": "left", "colour": "#17130F", "contrast_against": "#F4E5D8", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "subtitle", "text": "HOW A PHONE LEARNED TO READ ANY BOOK ALOUD", "box": [120, 2115, 2100, 55], "font_id": "geometric-sans", "size": 36, "line_height": 42, "tracking": 1, "align": "left", "colour": "#17130F", "contrast_against": "#F4E5D8", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "author", "text": "DAN FAKKELDY", "box": [120, 2180, 1200, 100], "font_id": "geometric-sans", "size": 54, "line_height": 58, "tracking": 3, "align": "left", "colour": "#17130F", "contrast_against": "#F4E5D8", "opacity": 1, "rotation": 0, "baseline_shift": 0}
+  ],
+  "metadata": {"title": "The Voice in the Machine", "subtitle": "How a Phone Learned to Read Any Book Aloud", "author": "Dan Fakkeldy", "label": "AUDIOBOOK"}
+}
