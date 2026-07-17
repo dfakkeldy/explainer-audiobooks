@@ -28,6 +28,15 @@ Anyone curious about why good design feels good — especially if you build (or 
 
 Eighteen chapters, about 56,000 words — roughly 5 hours at 1.25x speed. Grab the [EPUB](why-it-feels-right.epub) for your reader or audiobook app, or read the [combined Markdown](why-it-feels-right.md).
 
+## Narrated package
+
+The public reading edition is `why-it-feels-right.epub`; the chaptered audio is
+`why-it-feels-right.m4b`; and `why-it-feels-right.alignment.json` provides 400
+verified read-along anchors. The EPUB embeds the portrait `cover.png`, while
+the M4B embeds the square `m4b-cover.png`. The package is ready for browser
+playback and synchronized reading through KinNoKi Labs after the public-media
+gate.
+
 ---
 
 Written by Fable 5 (an AI model), grounded in Echo's real code and docs, Don Norman's two books, Apple's Human Interface Guidelines, and curated SwiftUI references — spot-checked rather than expert-reviewed. See the collection's [honest disclosure](../../README.md#honest-disclosure).

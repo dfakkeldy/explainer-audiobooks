@@ -14,6 +14,8 @@ from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
 
 COVER_SIZE = (1600, 2560)
 THUMBNAIL_SIZE = (320, 512)
+SQUARE_COVER_SIZE = (2400, 2400)
+SQUARE_THUMBNAIL_SIZE = (320, 320)
 COLUMNS = 3
 GUTTER = 24
 LABEL_HEIGHT = 52
@@ -45,12 +47,15 @@ def _load_label_font() -> ImageFont.FreeTypeFont:
         ) from error
 
 
-def _validated_entries(entries: Sequence[dict[str, str]]) -> list[tuple[str, Path]]:
+def _validated_entries(
+    entries: Sequence[dict[str, str]],
+) -> list[tuple[str, Path, tuple[int, int]]]:
     if not entries:
         raise ValueError("contact sheet requires at least one entry")
 
-    validated: list[tuple[str, Path]] = []
+    validated: list[tuple[str, Path, tuple[int, int]]] = []
     titles: set[str] = set()
+    sheet_dimensions: tuple[int, int] | None = None
     for index, entry in enumerate(entries, start=1):
         if not isinstance(entry, dict):
             raise ValueError(f"entry {index}: expected an object")
@@ -74,10 +79,16 @@ def _validated_entries(entries: Sequence[dict[str, str]]) -> list[tuple[str, Pat
                 image.verify()
         except (OSError, UnidentifiedImageError) as error:
             raise ValueError(f"entry {index} ({title}): invalid cover image: {cover}") from error
-        if dimensions != COVER_SIZE:
+        if dimensions not in {COVER_SIZE, SQUARE_COVER_SIZE}:
             raise ValueError(
-                f"entry {index} ({title}): cover must be 1600x2560; "
+                f"entry {index} ({title}): cover must be 1600x2560 or 2400x2400; "
                 f"found {dimensions[0]}x{dimensions[1]}"
+            )
+        if sheet_dimensions is None:
+            sheet_dimensions = dimensions
+        elif dimensions != sheet_dimensions:
+            raise ValueError(
+                f"entry {index} ({title}): cover geometry must match the first entry"
             )
         if image_format != "PNG":
             raise ValueError(
@@ -90,7 +101,7 @@ def _validated_entries(entries: Sequence[dict[str, str]]) -> list[tuple[str, Pat
             )
 
         titles.add(title)
-        validated.append((title, cover))
+        validated.append((title, cover, dimensions))
     return validated
 
 
@@ -139,22 +150,27 @@ def _wrapped_label(
 def render(entries: Sequence[dict[str, str]], out: str | Path) -> ContactSheetResult:
     """Render entries in their given order and return details of the PNG output."""
     validated = _validated_entries(entries)
+    thumbnail_size = (
+        SQUARE_THUMBNAIL_SIZE
+        if validated[0][2] == SQUARE_COVER_SIZE
+        else THUMBNAIL_SIZE
+    )
     rows = (len(validated) + COLUMNS - 1) // COLUMNS
-    cell_width = THUMBNAIL_SIZE[0]
-    cell_height = THUMBNAIL_SIZE[1] + LABEL_HEIGHT
+    cell_width = thumbnail_size[0]
+    cell_height = thumbnail_size[1] + LABEL_HEIGHT
     sheet_width = COLUMNS * cell_width + (COLUMNS - 1) * GUTTER
     sheet_height = rows * cell_height + (rows - 1) * GUTTER
     sheet = Image.new("RGB", (sheet_width, sheet_height), BACKGROUND)
     draw = ImageDraw.Draw(sheet)
     font = _load_label_font()
 
-    for index, (title, cover) in enumerate(validated):
+    for index, (title, cover, _) in enumerate(validated):
         column = index % COLUMNS
         row = index // COLUMNS
         x = column * (cell_width + GUTTER)
         y = row * (cell_height + GUTTER)
         with Image.open(cover) as image:
-            thumbnail = image.convert("RGB").resize(THUMBNAIL_SIZE, Image.Resampling.LANCZOS)
+            thumbnail = image.convert("RGB").resize(thumbnail_size, Image.Resampling.LANCZOS)
             sheet.paste(thumbnail, (x, y))
         label = Image.new("RGB", (cell_width, LABEL_HEIGHT), BACKGROUND)
         label_draw = ImageDraw.Draw(label)
@@ -165,7 +181,7 @@ def render(entries: Sequence[dict[str, str]], out: str | Path) -> ContactSheetRe
             font=font,
             spacing=0,
         )
-        sheet.paste(label, (x, y + THUMBNAIL_SIZE[1]))
+        sheet.paste(label, (x, y + thumbnail_size[1]))
 
     output = Path(out)
     output.parent.mkdir(parents=True, exist_ok=True)

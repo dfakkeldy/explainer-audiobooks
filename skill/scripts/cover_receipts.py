@@ -907,34 +907,69 @@ def normalized_image_sha256(path: Path) -> str:
 
 def normalized_m4b_art_sha256(path: Path) -> str:
     m4b = _require_file(path, "M4B")
-    if not shutil.which("ffmpeg"):
-        raise ValueError("ffmpeg is required for M4B artwork verification")
+    ffmpeg = shutil.which("ffmpeg")
+    atomicparsley = shutil.which("AtomicParsley")
+    if not ffmpeg and not atomicparsley:
+        raise ValueError(
+            "ffmpeg or AtomicParsley is required for M4B artwork verification"
+        )
     with tempfile.TemporaryDirectory(prefix="cover-art-") as raw:
-        extracted = Path(raw) / "art.png"
-        command = [
-            "ffmpeg",
-            "-v",
-            "error",
-            "-y",
-            "-i",
-            str(m4b),
-            "-map",
-            "0:v:0",
-            "-frames:v",
-            "1",
-            str(extracted),
-        ]
-        try:
-            subprocess.run(command, check=True, capture_output=True)
-        except subprocess.CalledProcessError as error:
-            detail = (error.stderr or b"").decode("utf-8", errors="replace").strip()
-            suffix = f": {detail}" if detail else ""
-            raise ValueError(f"ffmpeg M4B artwork extraction failed{suffix}") from error
-        except OSError as error:
-            raise ValueError("ffmpeg M4B artwork extraction failed") from error
-        if not extracted.is_file():
-            raise ValueError("ffmpeg M4B artwork extraction produced no image")
-        return normalized_image_sha256(extracted)
+        root = Path(raw)
+        extracted = root / "art.png"
+        ffmpeg_error = ""
+        if ffmpeg:
+            command = [
+                "ffmpeg",
+                "-v",
+                "error",
+                "-y",
+                "-i",
+                str(m4b),
+                "-map",
+                "0:v:0",
+                "-frames:v",
+                "1",
+                str(extracted),
+            ]
+            try:
+                subprocess.run(command, check=True, capture_output=True)
+            except subprocess.CalledProcessError as error:
+                ffmpeg_error = (error.stderr or b"").decode(
+                    "utf-8", errors="replace"
+                ).strip()
+            except OSError as error:
+                ffmpeg_error = str(error)
+            if extracted.is_file():
+                return normalized_image_sha256(extracted)
+
+        if atomicparsley:
+            isolated = root / "source.m4b"
+            try:
+                shutil.copy2(m4b, isolated)
+                subprocess.run(
+                    ["AtomicParsley", str(isolated), "--extractPix"],
+                    check=True,
+                    capture_output=True,
+                )
+            except (OSError, subprocess.CalledProcessError) as error:
+                detail = (
+                    (error.stderr or b"").decode("utf-8", errors="replace").strip()
+                    if isinstance(error, subprocess.CalledProcessError)
+                    else str(error)
+                )
+                prefix = f"ffmpeg: {ffmpeg_error}; " if ffmpeg_error else ""
+                raise ValueError(
+                    f"{prefix}AtomicParsley M4B artwork extraction failed: {detail}"
+                ) from error
+            artwork = sorted(root.glob("source_artwork_*"))
+            if len(artwork) != 1:
+                raise ValueError(
+                    "AtomicParsley M4B artwork extraction did not produce exactly one image"
+                )
+            return normalized_image_sha256(artwork[0])
+
+        suffix = f": {ffmpeg_error}" if ffmpeg_error else ""
+        raise ValueError(f"ffmpeg M4B artwork extraction failed{suffix}")
 
 
 def verify_package(

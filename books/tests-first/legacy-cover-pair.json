@@ -1,0 +1,40 @@
+{
+  "book_slug": "tests-first",
+  "candidate_id": "safety-block",
+  "direction_name": "Safety Block",
+  "edition_id": "public-audio-recovery-2026-07",
+  "portrait": {
+    "dimensions": [
+      1600,
+      2560
+    ],
+    "epub_cover_member": "OEBPS/cover.png",
+    "epub_cover_sha256": "5f16eca3d70db64c9c55424f4be6bc069881aa9853ba950a08d4b11aabf30c99",
+    "epub_path": "tests-first.epub",
+    "epub_sha256": "58410d32b0aeebee2147cd421af11c71648117a6cae34778c9b258bd74089fbc",
+    "path": "cover.png",
+    "sha256": "5f16eca3d70db64c9c55424f4be6bc069881aa9853ba950a08d4b11aabf30c99"
+  },
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 1,
+  "selection_source": "user-approved-derivation",
+  "square": {
+    "dimensions": [
+      2400,
+      2400
+    ],
+    "path": "m4b-cover.png",
+    "render_path": "m4b-cover.render.json",
+    "render_sha256": "1ff7717ffaff1cb87aac73f98c6b723f4701e3c40e7ad70cc195ec489d19c336",
+    "sha256": "ce0be55768b0ce57aadf9d663966720fdf8b86652142b4f917c0886a55363e67",
+    "source_path": "m4b-cover-source.png",
+    "source_sha256": "1be3f6c08b6a1fdee71e0f3ca5dc922d42b2efcb2c72440af93b6f9c00c42a60",
+    "spec_path": "m4b-cover-spec.json",
+    "spec_sha256": "60cefbee37af74d94126b92536016ad22400da2197834192f9dbb51485c1c8d3",
+    "thumbnail_path": "m4b-cover-thumbnail.png",
+    "thumbnail_sha256": "0c2e783c027688feba41f036e98b32e9e26357a04d0dd7b4fa748bd40fb0a35a"
+  }
+}

@@ -34,6 +34,46 @@ def completed(command: list[str], stdout: bytes = b"") -> subprocess.CompletedPr
 
 @unittest.skipUnless(all(shutil.which(tool) for tool in ("AtomicParsley", "ffmpeg", "ffprobe", "magick")), "media tools required")
 class ReplaceM4BCoverTests(unittest.TestCase):
+    def test_accepts_single_covr_artwork_without_an_ffprobe_video_stream(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            source = root / "source.m4b"
+            cover = root / "cover.png"
+            output = root / "output.m4b"
+            source.write_bytes(b"source")
+            cover.write_bytes(b"cover")
+            signature = MediaSignature(
+                audio_packet_sha256="a" * 64,
+                streams=(("audio", "aac"), ("data", "bin_data")),
+                duration="1.000000",
+                chapters=(("0.000000", "1.000000", "Chapter 1"),),
+                format_tags=(("title", "Fixture"),),
+            )
+
+            def atomicparsley(
+                command: list[str], **_: object
+            ) -> subprocess.CompletedProcess[bytes]:
+                if "-t" in command:
+                    return completed(
+                        command, b'Atom "covr" contains: 1 piece of artwork\n'
+                    )
+                Path(command[command.index("--output") + 1]).write_bytes(b"candidate")
+                return completed(command)
+
+            with mock.patch.object(
+                subject, "media_signature", return_value=signature
+            ), mock.patch.object(
+                subject, "normalized_image_sha256", return_value="b" * 64
+            ), mock.patch.object(
+                subject, "normalized_m4b_art_sha256", return_value="b" * 64
+            ), mock.patch.object(
+                subject.subprocess, "run", side_effect=atomicparsley
+            ):
+                result = replace_m4b_cover(source, cover, output)
+
+            self.assertEqual(str(output), result.output)
+            self.assertEqual(b"candidate", output.read_bytes())
+
     def test_governed_post_embed_failure_preserves_output_and_cleans_temp(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -44,6 +84,10 @@ class ReplaceM4BCoverTests(unittest.TestCase):
             output = root / "output.m4b"; output.write_bytes(b"keep-me")
 
             def write_output(command: list[str], **_: object) -> subprocess.CompletedProcess[bytes]:
+                if "-t" in command:
+                    return completed(
+                        command, b'Atom "covr" contains: 1 piece of artwork\n'
+                    )
                 Path(command[command.index("--output") + 1]).write_bytes(b"candidate")
                 return completed(command)
 
@@ -221,6 +265,10 @@ class ReplaceM4BCoverTests(unittest.TestCase):
             command: list[str],
             **_: object,
         ) -> subprocess.CompletedProcess[bytes]:
+            if "-t" in command:
+                return completed(
+                    command, b'Atom "covr" contains: 1 piece of artwork\n'
+                )
             temporary = Path(command[command.index("--output") + 1])
             temporary.write_bytes(b"candidate")
             return completed(command)

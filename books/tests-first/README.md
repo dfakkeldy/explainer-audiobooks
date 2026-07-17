@@ -30,6 +30,14 @@ Anyone building software in the margins of their life who has never written an a
 
 Nine chapters, about 2.5 hours at 1.25x. Listen via the [EPUB](tests-first.epub), or read the [Markdown](tests-first.md).
 
+## Narrated package
+
+The public reading edition is `tests-first.epub`; the chaptered audio is
+`tests-first.m4b`; and `tests-first.alignment.json` provides 223 verified
+read-along anchors. The EPUB embeds the portrait `cover.png`, while the M4B
+embeds the square `m4b-cover.png`. The package is ready for browser playback
+and synchronized reading through KinNoKi Labs after the public-media gate.
+
 ---
 
 Written by Opus 4.8, grounded in Echo's real source and test suite — spot-checked, not expert-reviewed. See the collection's [honest disclosure](../../README.md#honest-disclosure).

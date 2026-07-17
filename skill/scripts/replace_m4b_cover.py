@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -66,6 +67,15 @@ def _run(command: list[str]) -> subprocess.CompletedProcess[bytes]:
         raise ValueError(f"{tool} command failed{suffix}") from error
     except (OSError, ValueError) as error:
         raise ValueError(f"{tool} command failed") from error
+
+
+def _atomicparsley_artwork_count(path: Path) -> int:
+    result = _run(["AtomicParsley", str(path), "-t"])
+    output = result.stdout.decode("utf-8", errors="replace")
+    matches = re.findall(
+        r'Atom "covr" contains:\s*(\d+)\s+pieces? of artwork', output
+    )
+    return sum(int(value) for value in matches)
 
 
 def _parse_probe(payload: bytes) -> tuple[
@@ -232,7 +242,7 @@ def replace_m4b_cover(
         after = media_signature(temporary)
         if after != before:
             raise ValueError("M4B media signature changed while replacing artwork")
-        if sum(codec_type == "video" for codec_type, _ in after.streams) != 1:
+        if _atomicparsley_artwork_count(temporary) != 1:
             raise ValueError("M4B replacement must contain exactly one artwork item")
 
         normalized = normalized_image_sha256(cover_path)

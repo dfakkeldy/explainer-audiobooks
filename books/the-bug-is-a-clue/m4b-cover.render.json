@@ -1,0 +1,36 @@
+{
+  "candidate": {
+    "direction_name": "Revealing Shadow",
+    "id": "revealing-shadow"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    2400,
+    2400
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+  },
+  "output": "m4b-cover.png",
+  "output_sha256": "f40a12d096185513c6328b13de82dd2b66a61b897e95b8d3f4f275633e299530",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "m4b-cover-source.png",
+  "source_art_sha256": "1447df883dde8389ecdbb0ae1ab97c4947c4329ab72169f83d33391fffd97033",
+  "spec": "m4b-cover-spec.json",
+  "spec_sha256": "1cec72e65662b7ca81090427a05f300f8c347c29b8cdc0fa74912e06be4b3454",
+  "thumbnail": "m4b-cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    160
+  ],
+  "thumbnail_sha256": "af0281326e6cf851996cdf4623a3510c9c1ff4f0731052d0da930b175f55371e",
+  "variant": "square",
+  "warnings": [
+    "layer 2 advisory contrast ratio is 1.99:1"
+  ]
+}

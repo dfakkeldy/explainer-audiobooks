@@ -1,0 +1,15 @@
+{
+  "schema_version": 2,
+  "variant": "square",
+  "canvas": {"width": 2400, "height": 2400, "background": "#F4E5DE", "safe_margin": 120},
+  "candidate": {"id": "the-deliberate-knot", "direction_name": "The Deliberate Knot"},
+  "art": {"path": "m4b-cover-source.png", "mode": "bleed", "box": [0, 0, 2400, 2400], "anchor": "center", "opacity": 1, "blend_mode": "normal"},
+  "layers": [
+    {"kind": "scrim", "box": [80, 80, 1380, 600], "fill": {"kind": "solid", "colour": "#F4E5DE"}, "opacity": 0.84, "blend_mode": "normal", "purpose": "retain the approved calm linen title field above the deliberate square knot"},
+    {"kind": "text", "role": "label", "text": "AUDIOBOOK", "box": [120, 120, 1200, 80], "font_id": "geometric-sans", "size": 44, "line_height": 48, "tracking": 7, "align": "left", "colour": "#D62828", "contrast_against": "#F4E5DE", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 1, "text": "GIT HAPPENS", "box": [120, 230, 1320, 300], "font_id": "display-condensed", "size": 250, "line_height": 260, "tracking": 1, "align": "left", "colour": "#17130F", "contrast_against": "#F4E5DE", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "subtitle", "text": "VERSION CONTROL FOR PEOPLE WHO SHIP SOFTWARE", "box": [120, 545, 1320, 70], "font_id": "geometric-sans", "size": 36, "line_height": 42, "tracking": 1, "align": "left", "colour": "#17130F", "contrast_against": "#F4E5DE", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "author", "text": "DAN FAKKELDY", "box": [120, 2180, 1200, 100], "font_id": "geometric-sans", "size": 54, "line_height": 58, "tracking": 3, "align": "left", "colour": "#17130F", "contrast_against": "#F4E5DE", "opacity": 1, "rotation": 0, "baseline_shift": 0}
+  ],
+  "metadata": {"title": "Git Happens", "subtitle": "Version Control for People Who Ship Software", "author": "Dan Fakkeldy", "label": "AUDIOBOOK"}
+}

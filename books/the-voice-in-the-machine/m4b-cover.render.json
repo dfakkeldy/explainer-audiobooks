@@ -1,0 +1,36 @@
+{
+  "candidate": {
+    "direction_name": "Sentence to Sound",
+    "id": "sentence-to-sound"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    2400,
+    2400
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+  },
+  "output": "m4b-cover.png",
+  "output_sha256": "d5cf8b8613ee544612725376fd7a2e0d607319363f5e86ea1d4c0c0c3ae2d4a6",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "m4b-cover-source.png",
+  "source_art_sha256": "c9bc6bbc8be3051cc201d4183e3ce12e18924cbef7f5fb9f01fceac757c73abe",
+  "spec": "m4b-cover-spec.json",
+  "spec_sha256": "72e7c2ace45aae498e9fee664ceeb637a15576bb7059aac7a722d187aee6084f",
+  "thumbnail": "m4b-cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    160
+  ],
+  "thumbnail_sha256": "4f2977a1833e69bcaf936264af13fb10718dee76cb5d3cc9c70cba9d2e896e10",
+  "variant": "square",
+  "warnings": [
+    "layer 2 advisory contrast ratio is 1.67:1"
+  ]
+}

@@ -99,6 +99,23 @@ class MakeCoverContactSheetTests(unittest.TestCase):
                     actual.append(sheet.getpixel((column * 344, row * 588)))
                 self.assertEqual(expected, actual)
 
+    def test_builds_square_companion_sheet_without_stretching(self) -> None:
+        from tempfile import TemporaryDirectory
+
+        with TemporaryDirectory() as raw_dir:
+            root = Path(raw_dir)
+            entries = make_entries(root, count=6, size=(2400, 2400))
+            result = make_cover_contact_sheet.render(entries, root / "sheet.png")
+
+            self.assertEqual((6, 3, 2), (result.cover_count, result.columns, result.rows))
+            with Image.open(result.path) as sheet:
+                self.assertEqual((1008, 768), sheet.size)
+                for index, entry in enumerate(entries):
+                    column = index % 3
+                    row = index // 3
+                    expected = Image.open(entry["cover"]).resize((320, 320)).getpixel((0, 0))
+                    self.assertEqual(expected, sheet.getpixel((column * 344, row * 396)))
+
     def test_rejects_wrong_cover_dimensions(self) -> None:
         from tempfile import TemporaryDirectory
 

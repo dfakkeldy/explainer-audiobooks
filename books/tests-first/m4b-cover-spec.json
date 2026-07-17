@@ -1,0 +1,15 @@
+{
+  "schema_version": 2,
+  "variant": "square",
+  "canvas": {"width": 2400, "height": 2400, "background": "#E9EDF2", "safe_margin": 120},
+  "candidate": {"id": "safety-block", "direction_name": "Safety Block"},
+  "art": {"path": "m4b-cover-source.png", "mode": "bleed", "box": [0, 0, 2400, 2400], "anchor": "center", "opacity": 1, "blend_mode": "normal"},
+  "layers": [
+    {"kind": "scrim", "box": [80, 80, 1380, 600], "fill": {"kind": "solid", "colour": "#E9EDF2"}, "opacity": 0.82, "blend_mode": "normal", "purpose": "keep the approved high-key title field distinct from the square domino action"},
+    {"kind": "text", "role": "label", "text": "AUDIOBOOK", "box": [120, 120, 1200, 80], "font_id": "geometric-sans", "size": 44, "line_height": 48, "tracking": 7, "align": "left", "colour": "#2364FF", "contrast_against": "#E9EDF2", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 1, "text": "TESTS FIRST", "box": [120, 230, 1320, 300], "font_id": "display-condensed", "size": 250, "line_height": 260, "tracking": 1, "align": "left", "colour": "#17130F", "contrast_against": "#E9EDF2", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "subtitle", "text": "TEST-DRIVEN DEVELOPMENT IN SWIFT", "box": [120, 545, 1320, 70], "font_id": "geometric-sans", "size": 38, "line_height": 44, "tracking": 1, "align": "left", "colour": "#17130F", "contrast_against": "#E9EDF2", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "author", "text": "DAN FAKKELDY", "box": [120, 2180, 1200, 100], "font_id": "geometric-sans", "size": 54, "line_height": 58, "tracking": 3, "align": "left", "colour": "#17130F", "contrast_against": "#E9EDF2", "opacity": 1, "rotation": 0, "baseline_shift": 0}
+  ],
+  "metadata": {"title": "Tests First", "subtitle": "Test-Driven Development in Swift", "author": "Dan Fakkeldy", "label": "AUDIOBOOK"}
+}

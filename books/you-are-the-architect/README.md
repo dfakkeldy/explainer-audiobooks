@@ -26,6 +26,15 @@ Anyone who already uses (or is about to use) an AI coding agent and wants better
 
 Grab the [EPUB](you-are-the-architect.epub) for your audiobook or reading app, or read the [combined Markdown](you-are-the-architect.md). It runs to 20 chapters — about 57,000 words, roughly 5.1 hours at 1.25×.
 
+## Narrated package
+
+The public reading edition is `you-are-the-architect.epub`; the chaptered
+audio is `you-are-the-architect.m4b`; and
+`you-are-the-architect.alignment.json` provides 444 verified read-along
+anchors. The EPUB embeds the portrait `cover.png`, while the M4B embeds the
+square `m4b-cover.png`. The package is ready for browser playback and
+synchronized reading through KinNoKi Labs after the public-media gate.
+
 ---
 
 _Written by Fable 5 (an AI model), grounded in the real Google whitepaper, Echo's real source and docs, and the first edition; spot-checked rather than expert-reviewed. See the collection's [honest disclosure](../../README.md#honest-disclosure)._

@@ -33,6 +33,15 @@ Anyone who built something real with AI and willpower and now wants to genuinely
 
 [**EPUB**](echo-from-the-inside.epub) · [**Markdown**](echo-from-the-inside.md) — 17 chapters, about 5.4 hours of listening at 1.25x speed.
 
+## Narrated package
+
+The public reading edition is `echo-from-the-inside.epub`; the chaptered audio
+is `echo-from-the-inside.m4b`; and `echo-from-the-inside.alignment.json`
+provides 547 verified read-along anchors. The EPUB embeds the portrait
+`cover.png`, while the M4B embeds the square `m4b-cover.png`. The package is
+ready for browser playback and synchronized reading through KinNoKi Labs after
+the public-media gate.
+
 ---
 
 Written by Opus 4.8 (an AI model), grounded in Echo's real source and docs — spot-checked, not expert-reviewed. See the collection's [honest disclosure](../../README.md#honest-disclosure).

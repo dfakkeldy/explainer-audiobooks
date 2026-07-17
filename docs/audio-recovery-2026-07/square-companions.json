@@ -1,0 +1,26 @@
+[
+  {
+    "title": "You Are the Architect",
+    "cover": "books/you-are-the-architect/m4b-cover.png"
+  },
+  {
+    "title": "The Bug Is a Clue",
+    "cover": "books/the-bug-is-a-clue/m4b-cover.png"
+  },
+  {
+    "title": "Tests First",
+    "cover": "books/tests-first/m4b-cover.png"
+  },
+  {
+    "title": "Git Happens",
+    "cover": "books/git-happens/m4b-cover.png"
+  },
+  {
+    "title": "The Voice in the Machine",
+    "cover": "books/the-voice-in-the-machine/m4b-cover.png"
+  },
+  {
+    "title": "Rodents in the Walls",
+    "cover": "books/rodents-in-the-walls/m4b-cover.png"
+  }
+]

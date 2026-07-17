@@ -20,6 +20,15 @@ Beginners and self-taught developers who can write a bit of code but freeze when
 ## Listen & read
 17 chapters, about 5.9 hours at 1.25x speed. Read it as an [EPUB](the-bug-is-a-clue.epub) or in [Markdown](the-bug-is-a-clue.md).
 
+## Narrated package
+
+The public reading edition is `the-bug-is-a-clue.epub`; the chaptered audio is
+`the-bug-is-a-clue.m4b`; and `the-bug-is-a-clue.alignment.json` provides 525
+verified read-along anchors. The EPUB embeds the portrait `cover.png`, while
+the M4B embeds the square `m4b-cover.png`. The package is ready for browser
+playback and synchronized reading through KinNoKi Labs after the public-media
+gate.
+
 ---
 
 _Written by Opus 4.8, grounded in Echo's real debugging history. Spot-checked, not expert-reviewed — see the [honest disclosure](../../README.md#honest-disclosure)._

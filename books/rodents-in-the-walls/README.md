@@ -14,6 +14,7 @@ This corrected edition treats American red squirrels as a leading daytime candid
 | `rodents-in-the-walls.epub` | EPUB edition with embedded cover and chapter navigation |
 | `cover.png` | Approved C2A adaptive cover, 1600 × 2560 |
 | `cover-selection.json` | Governed corrected-v2 selection receipt |
+| `m4b-cover.png` | Square audiobook cover derived from the approved EPUB visual direction |
 | `rodents-in-the-walls.m4b` | Echo audiobook, `am_michael`, 9 chapters |
 | `rodents-in-the-walls.alignment.json` | Echo read-along sidecar |
 
@@ -21,6 +22,13 @@ The public repository package contains the Markdown, EPUB, selected cover and
 its governed source/specification/render/selection provenance, chaptered M4B,
 alignment sidecar, and this README. The narration-QA JSON and delivery checksums
 are private delivery evidence and are intentionally absent from this package.
+
+The July 2026 browser-publication recovery left the narration and
+`rodents-in-the-walls.alignment.json` bytes unchanged; only the M4B's embedded
+artwork was modernized to the square `m4b-cover.png`. The sidecar retains its
+245 verified read-along anchors. The EPUB continues to embed the portrait
+`cover.png`. The package is ready for browser playback and synchronized reading
+through KinNoKi Labs after the public-media gate.
 
 ## Cover
 

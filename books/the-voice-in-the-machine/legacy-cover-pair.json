@@ -1,0 +1,40 @@
+{
+  "book_slug": "the-voice-in-the-machine",
+  "candidate_id": "sentence-to-sound",
+  "direction_name": "Sentence to Sound",
+  "edition_id": "public-audio-recovery-2026-07",
+  "portrait": {
+    "dimensions": [
+      1600,
+      2560
+    ],
+    "epub_cover_member": "OEBPS/cover.png",
+    "epub_cover_sha256": "9ecdf6c46c44b5c906855f69a76f036af4cc8a5088a15ce21483eb316d7d0f17",
+    "epub_path": "the-voice-in-the-machine.epub",
+    "epub_sha256": "852938ee1e95630d9cd3b77bc350f536c3f4beb7dfc849d121f3303ae4674734",
+    "path": "cover.png",
+    "sha256": "9ecdf6c46c44b5c906855f69a76f036af4cc8a5088a15ce21483eb316d7d0f17"
+  },
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 1,
+  "selection_source": "user-approved-derivation",
+  "square": {
+    "dimensions": [
+      2400,
+      2400
+    ],
+    "path": "m4b-cover.png",
+    "render_path": "m4b-cover.render.json",
+    "render_sha256": "05ed6d5cbd022b8878650c629edd21ecb52855f149462d27f4ad084a6e8641d8",
+    "sha256": "d5cf8b8613ee544612725376fd7a2e0d607319363f5e86ea1d4c0c0c3ae2d4a6",
+    "source_path": "m4b-cover-source.png",
+    "source_sha256": "c9bc6bbc8be3051cc201d4183e3ce12e18924cbef7f5fb9f01fceac757c73abe",
+    "spec_path": "m4b-cover-spec.json",
+    "spec_sha256": "0359d473bbec86f3c75db7e566c21acefc9a25cfe2b67851c94e6daf18ef7a1a",
+    "thumbnail_path": "m4b-cover-thumbnail.png",
+    "thumbnail_sha256": "4f2977a1833e69bcaf936264af13fb10718dee76cb5d3cc9c70cba9d2e896e10"
+  }
+}
