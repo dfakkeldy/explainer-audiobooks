@@ -808,10 +808,21 @@ def validate_pilot(
         raise ValueError("pilot.representativeMinutes must be between 10 and 15")
     if pilot.get("includesFirstTechnicalPassage") is not True:
         raise ValueError("pilot.includesFirstTechnicalPassage must be true")
-    require_string(pilot.get("audioPath"), "pilot.audioPath")
-    audio_hash = require_string(pilot.get("audioSHA256"), "pilot.audioSHA256")
-    if not SHA256_RE.fullmatch(audio_hash):
-        raise ValueError("pilot.audioSHA256 must be a lowercase SHA-256 digest")
+    # The EPUB is a text artifact. Requiring a rendered pilot before it can be
+    # built made every text package depend on a full Echo Release build and a
+    # speech synthesis run. A pilot may therefore declare itself not-rendered;
+    # when it claims audio, the claim is still checked exactly as before.
+    if pilot.get("audioRendered") is False:
+        if pilot.get("audioPath") not in (None, ""):
+            raise ValueError("pilot.audioPath must be empty when audioRendered is false")
+        if pilot.get("audioSHA256") not in (None, ""):
+            raise ValueError("pilot.audioSHA256 must be empty when audioRendered is false")
+        require_string(pilot.get("audioNotRenderedReason"), "pilot.audioNotRenderedReason")
+    else:
+        require_string(pilot.get("audioPath"), "pilot.audioPath")
+        audio_hash = require_string(pilot.get("audioSHA256"), "pilot.audioSHA256")
+        if not SHA256_RE.fullmatch(audio_hash):
+            raise ValueError("pilot.audioSHA256 must be a lowercase SHA-256 digest")
     listener_notes = pilot.get("listenerNotes")
     if listener_notes is not None and not isinstance(listener_notes, str):
         raise ValueError("pilot.listenerNotes must be a string when present")

@@ -343,6 +343,14 @@ than retyping it from memory.
     The learning receipt proves process evidence and an accepted pilot, not
     learning transfer; later negative human listening evidence overrides it.
 
+    The EPUB is a text artifact and does not require rendered pilot audio. When
+    narration has not run, set `audioRendered: false` in
+    `comprehension-pilot.json`, leave `audioPath` and `audioSHA256` empty, and
+    give `audioNotRenderedReason`. The text package then builds without a full
+    Echo build and a synthesis run standing in front of it. When a pilot does
+    claim audio, the hash is still validated exactly as before, and a record may
+    never claim a hash it does not have.
+
 12. **Build the governed EPUB.** Only now follow the paired selection and EPUB
     sections in `references/package-and-qc.md`: create the paired receipt with
     `cover_receipts.py select-pair`, then run the governed `build_book.py`

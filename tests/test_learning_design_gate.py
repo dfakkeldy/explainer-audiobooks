@@ -864,6 +864,59 @@ class LearningDesignGateTests(LearningDesignFixture):
 
         self.assertIsInstance(result, dict)
 
+    def test_a_text_package_does_not_require_rendered_pilot_audio(self) -> None:
+        """The EPUB is a text artifact. Requiring pilot audio before it could be
+        built made every text package depend on a full Echo build and a speech
+        synthesis run."""
+        pilot = self.read_json("comprehension-pilot.json")
+        pilot["audioRendered"] = False
+        pilot["audioPath"] = ""
+        pilot["audioSHA256"] = ""
+        pilot["audioNotRenderedReason"] = "Text package; narration has not run yet."
+        self.write_json("comprehension-pilot.json", pilot)
+
+        result = self.module().validate_run(self.root)
+
+        self.assertIsInstance(result, dict)
+
+    def test_a_not_rendered_pilot_must_not_also_claim_audio(self) -> None:
+        """Relaxing the requirement must not let a record claim an audio hash it
+        does not have."""
+        pilot = self.read_json("comprehension-pilot.json")
+        pilot["audioRendered"] = False
+        pilot["audioPath"] = ""
+        pilot["audioSHA256"] = "a" * 64
+        pilot["audioNotRenderedReason"] = "Text package."
+        self.write_json("comprehension-pilot.json", pilot)
+        with self.assertRaisesRegex(ValueError, "audioSHA256 must be empty"):
+            self.module().validate_run(self.root)
+
+        self.write_valid_records()
+        pilot = self.read_json("comprehension-pilot.json")
+        pilot["audioRendered"] = False
+        pilot["audioNotRenderedReason"] = "Text package."
+        self.write_json("comprehension-pilot.json", pilot)
+        with self.assertRaisesRegex(ValueError, "audioPath must be empty"):
+            self.module().validate_run(self.root)
+
+        self.write_valid_records()
+        pilot = self.read_json("comprehension-pilot.json")
+        pilot["audioRendered"] = False
+        pilot["audioPath"] = ""
+        pilot["audioSHA256"] = ""
+        self.write_json("comprehension-pilot.json", pilot)
+        with self.assertRaisesRegex(ValueError, "audioNotRenderedReason"):
+            self.module().validate_run(self.root)
+
+    def test_a_claimed_audio_hash_is_still_checked(self) -> None:
+        """When a pilot does claim audio, the claim is validated exactly as
+        before."""
+        pilot = self.read_json("comprehension-pilot.json")
+        pilot["audioSHA256"] = "not-a-digest"
+        self.write_json("comprehension-pilot.json", pilot)
+        with self.assertRaisesRegex(ValueError, "audioSHA256"):
+            self.module().validate_run(self.root)
+
     def test_human_checkpoints_freeze_outline_and_first_section_exemplar(self) -> None:
         pilot = self.read_json("comprehension-pilot.json")
         pilot["humanCheckpoints"]["outline"]["recordedBeforePilotDraft"] = False
