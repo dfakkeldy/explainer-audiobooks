@@ -301,6 +301,21 @@ first-section checkpoint and pilot decision are recorded. The unattended lane
 never rewrites the wrapper's pending listener acceptance or fabricates human
 evidence.
 
+If the intended listener explicitly waives the pilot decision and asks
+production to continue, governed-final may instead record
+`status: "waived-by-listener"`. Preserve the exact audio binding and add
+`waivedBy`, `waivedAt`, `reason`, and a `validationBoundary` stating that
+comprehension evidence was not collected. The resulting receipt is
+`pass-with-listener-waiver`, with `humanComprehensionPilot:
+waived-by-listener`; this is permission to continue, not evidence of learning.
+
+Continuity contexts normally remain one per section. A small same-chapter batch
+is allowed only when an explicit in-run fast-track authorization exists. Give
+the context a `-batch` ID, enumerate the exact `batchSections`, provide one
+matching `sectionJobs` record per section, and set `fastTrackAuthorizationPath`
+to that existing authorization artifact. Cross-chapter batches, duplicate
+coverage, unknown sections, and reused authorizations fail validation.
+
 Before the final receipt, complete hash-bound `revision-passes.json` as separate
 single-job claim-traceability, tightening, de-listification, sentence-rhythm,
 and rendered ear-pass lanes. Echo or Kokoro must actually render the ear-pass;
@@ -568,7 +583,8 @@ spoken variant, the expected canonical chapters, and the reason each term needs
 review. The wrapper validates this plan in `planning` mode for a bounded partial
 render. When `assuranceLevel` is absent or `governed-final`, it refuses an
 unbounded full render until every required term has accepted, hash-bound human
-listening evidence. When `assuranceLevel` is `unattended-first-listen`, it
+listening evidence or an explicit listener waiver bound to the same governed
+reel evidence. When `assuranceLevel` is `unattended-first-listen`, it
 requires every term to be `probed`, complete governed reel evidence for every
 spoken variant, no fabricated human decision, and records `humanListening:
 pending`. Export the canonical path:
@@ -590,9 +606,9 @@ but the book is still partial:
 set +e
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" \
   --max-chapters 1
-status=$?
+rc=$?
 set -e
-[[ "$status" == 2 ]]
+[[ "$rc" == 2 ]]
 ```
 
 The wrapper derives its own work directory and narration database; recover
@@ -619,9 +635,9 @@ current process:
 set +e
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" \
   --resume --max-chapters 1
-status=$?
+rc=$?
 set -e
-[[ "$status" == 2 ]]
+[[ "$rc" == 2 ]]
 ```
 
 This second probe adds `$WORK/.anchors-ch1.json` and its named chapter-one M4A.
@@ -656,6 +672,14 @@ clips, but it may not mark them accepted. After the listener accepts the reel,
 update each required plan entry to `status: "accepted"`, record `acceptedBy` and
 `acceptedAt`, and point its evidence path and SHA-256 at the shared governed
 evidence JSON.
+
+If the listener explicitly says to continue without hearing the reel, keep the
+same complete governed evidence but set each required entry to
+`status: "waived-by-listener"`. Record `waivedBy`, `waivedAt`, `reason`, and a
+`validationBoundary` stating that human listening was not collected. The
+receipt becomes `pass-with-listener-waiver` and reports `humanListening:
+not-collected-listener-waived`; it does not describe any term as accepted, and
+later negative human evidence overrides the waiver.
 
 For unattended-first-listen, set the plan-level `assuranceLevel`, update each
 required entry to `status: "probed"`, keep `decision: null`, and point the

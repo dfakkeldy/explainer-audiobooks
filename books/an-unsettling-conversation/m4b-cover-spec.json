@@ -1,0 +1,41 @@
+{
+  "schema_version": 2,
+  "variant": "square",
+  "candidate": {"id": "cut-in-the-page", "direction_name": "The Cut in the Page"},
+  "metadata": {
+    "title": "An Unsettling Conversation",
+    "subtitle": "",
+    "author": "Dan Fakkeldy",
+    "label": "AUDIOBOOK"
+  },
+  "canvas": {"width": 2400, "height": 2400, "background": "#F5E9D0", "safe_margin": 120},
+  "art": {
+    "path": "source-art.png",
+    "mode": "bleed",
+    "anchor": "center-bottom",
+    "box": [0, 0, 2400, 2400],
+    "opacity": 1,
+    "blend_mode": "normal"
+  },
+  "layers": [
+    {
+      "kind": "text", "role": "label", "text": "AUDIOBOOK", "font_id": "geometric-sans",
+      "box": [128, 120, 700, 70], "size": 38, "line_height": 44, "tracking": 6,
+      "align": "left", "colour": "#1746D1", "opacity": 1, "rotation": 0, "baseline_shift": 0,
+      "contrast_against": "#F5E9D0"
+    },
+    {
+      "kind": "text", "role": "title", "title_order": 1,
+      "text": "AN\nUNSETTLING\nCONVERSATION", "font_id": "display-condensed",
+      "box": [120, 215, 2160, 760], "size": 245, "line_height": 215, "tracking": 0,
+      "align": "left", "colour": "#18212B", "opacity": 1, "rotation": 0, "baseline_shift": 0,
+      "contrast_against": "#F5E9D0"
+    },
+    {
+      "kind": "text", "role": "author", "text": "DAN FAKKELDY", "font_id": "geometric-sans",
+      "box": [1480, 125, 790, 78], "size": 42, "line_height": 50, "tracking": 2,
+      "align": "right", "colour": "#18212B", "opacity": 1, "rotation": 0, "baseline_shift": 0,
+      "contrast_against": "#F5E9D0"
+    }
+  ]
+}

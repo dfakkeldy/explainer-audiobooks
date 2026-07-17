@@ -194,6 +194,57 @@ class PronunciationPlanTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "accepted human evidence"):
             self.module().validate_plan(self.root, "full-render")
 
+    def test_listener_can_waive_pronunciation_listening_without_acceptance(self) -> None:
+        evidence_path = self.accept_plan()
+        plan = json.loads(
+            (self.research / "pronunciation-plan.json").read_text(encoding="utf-8")
+        )
+        entry = plan["terms"][0]
+        entry["status"] = "waived-by-listener"
+        entry["decision"] = {
+            "waivedBy": "Dan Fakkeldy",
+            "waivedAt": "2026-07-16T15:30:00-03:00",
+            "reason": "The listener asked production to continue without another gate.",
+            "validationBoundary": (
+                "The governed reel exists, but human pronunciation listening "
+                "was not collected."
+            ),
+        }
+        self.write_plan(plan)
+        receipt_path = self.research / "pronunciation-plan-receipt.json"
+
+        receipt = self.module().write_receipt(self.root, receipt_path)
+
+        self.assertEqual("pass-with-listener-waiver", receipt["status"])
+        self.assertEqual(
+            "not-collected-listener-waived", receipt["humanListening"]
+        )
+        self.assertEqual(
+            "not-collected-listener-waived",
+            receipt["listeningAuthority"]["evidenceStatus"],
+        )
+        self.assertTrue(
+            receipt["listeningAuthority"]["waiverDoesNotCertifyPronunciation"]
+        )
+        self.assertEqual(sha256(evidence_path), receipt["evidenceSHA256"])
+
+    def test_pronunciation_waiver_requires_an_explicit_validation_boundary(self) -> None:
+        self.accept_plan()
+        plan = json.loads(
+            (self.research / "pronunciation-plan.json").read_text(encoding="utf-8")
+        )
+        entry = plan["terms"][0]
+        entry["status"] = "waived-by-listener"
+        entry["decision"] = {
+            "waivedBy": "Dan Fakkeldy",
+            "waivedAt": "2026-07-16T15:30:00-03:00",
+            "reason": "The listener asked production to continue.",
+        }
+        self.write_plan(plan)
+
+        with self.assertRaisesRegex(ValueError, "validationBoundary"):
+            self.module().validate_plan(self.root, "full-render")
+
     def test_unattended_full_render_uses_probe_without_fabricating_acceptance(self) -> None:
         evidence_path = self.probe_unattended_plan()
         receipt_path = self.research / "pronunciation-plan-receipt.json"

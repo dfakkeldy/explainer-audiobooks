@@ -1,0 +1,48 @@
+{
+  "schema_version": 2,
+  "variant": "portrait",
+  "candidate": {"id": "cut-in-the-page", "direction_name": "The Cut in the Page"},
+  "metadata": {
+    "title": "An Unsettling Conversation",
+    "subtitle": "J-Space, Working Memory, and the Question of Machine Experience",
+    "author": "Dan Fakkeldy",
+    "label": "AUDIOBOOK"
+  },
+  "canvas": {"width": 1600, "height": 2560, "background": "#F5E9D0", "safe_margin": 96},
+  "art": {
+    "path": "source-art.png",
+    "mode": "bleed",
+    "anchor": "center",
+    "box": [0, 0, 1600, 2560],
+    "opacity": 1,
+    "blend_mode": "normal"
+  },
+  "layers": [
+    {
+      "kind": "text", "role": "label", "text": "AUDIOBOOK", "font_id": "geometric-sans",
+      "box": [100, 105, 640, 60], "size": 31, "line_height": 38, "tracking": 6,
+      "align": "left", "colour": "#1746D1", "opacity": 1, "rotation": 0, "baseline_shift": 0,
+      "contrast_against": "#F5E9D0"
+    },
+    {
+      "kind": "text", "role": "title", "title_order": 1,
+      "text": "AN\nUNSETTLING\nCONVERSATION", "font_id": "display-condensed",
+      "box": [96, 200, 1390, 650], "size": 215, "line_height": 190, "tracking": 0,
+      "align": "left", "colour": "#18212B", "opacity": 1, "rotation": 0, "baseline_shift": 0,
+      "contrast_against": "#F5E9D0"
+    },
+    {
+      "kind": "text", "role": "subtitle",
+      "text": "J-Space, Working Memory, and the\nQuestion of Machine Experience", "font_id": "geometric-sans",
+      "box": [102, 905, 1280, 150], "size": 41, "line_height": 52, "tracking": 0,
+      "align": "left", "colour": "#24303C", "opacity": 1, "rotation": 0, "baseline_shift": 0,
+      "contrast_against": "#F5E9D0"
+    },
+    {
+      "kind": "text", "role": "author", "text": "DAN FAKKELDY", "font_id": "geometric-sans",
+      "box": [102, 2385, 900, 70], "size": 41, "line_height": 48, "tracking": 2,
+      "align": "left", "colour": "#18212B", "opacity": 1, "rotation": 0, "baseline_shift": 0,
+      "contrast_against": "#F5E9D0"
+    }
+  ]
+}

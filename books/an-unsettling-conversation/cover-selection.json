@@ -1,0 +1,41 @@
+{
+  "book_slug": "an-unsettling-conversation",
+  "candidate": {
+    "direction_name": "The Cut in the Page",
+    "id": "cut-in-the-page"
+  },
+  "edition_id": "public-road-book-2026-07-16",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-16T15:04:32-03:00",
+  "selection_source": "user",
+  "source_art_sha256": "4c8e27004a9aaf119c410922e976477ef0a8b17f02f33acb8732aac854684b8b",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "b3db27921c56791003c33b25859d5dec4134429c8c3337b101ac3e45392a567f",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "aae356437d53507d3260df337ce4ee7fd923c2352778fdccd6d20362b1d0c741",
+      "specification_sha256": "2dea9f95b9f9fb370b5cf2ced5c6c6e267c5c800f089afad71534c0c0756173e",
+      "subtitle_included": true,
+      "thumbnail_sha256": "cdd5c7656c33fa5ff792c8ea27d1deefcdc2d63c7edd5e7e07e813ac78236220"
+    },
+    "square": {
+      "cover_sha256": "f85568c4ac4add2583a3f5c367ce1f8c37921e888419f08789f815d32de3dcf4",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "a1fd97e839001cd999662f4d6c2128846eb200d0bb038c9c6af7291b0016253b",
+      "specification_sha256": "186c4d34308b24ac0e5e73a25ff044e7911be750c943fd7700d50dba8315ba05",
+      "subtitle_included": false,
+      "thumbnail_sha256": "259891034d38aa042195ab418e3376003bc0c27a7d5aff19ba07e5befdb0f3ec"
+    }
+  }
+}
