@@ -1,0 +1,37 @@
+{
+  "candidate": {
+    "direction_name": "One Lit Aperture",
+    "id": "one-lit-aperture"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    1600,
+    2560
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+    "technical-mono": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
+  },
+  "output": "cover.png",
+  "output_sha256": "fe7010107364102e7d825e3ce5a2597aaa8a7f84dee794f41c1730da1f7b9f96",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "source-art.png",
+  "source_art_sha256": "93206c67fecd49c14b8de45441d487018b61e2fabd1d8e44477eb9ea5d83244d",
+  "spec": "cover-spec.json",
+  "spec_sha256": "e1fbe94d2e2ed39fc5b3989c65c3e09dc77f881de9ea3b61fb009967475d2848",
+  "thumbnail": "cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    256
+  ],
+  "thumbnail_sha256": "d1b1561f1838dd370d12a6c476c32bc4410d080ae63f228613d4130b78feaca9",
+  "variant": "portrait",
+  "warnings": [
+    "layer 2 advisory contrast ratio is 3.09:1"
+  ]
+}
