@@ -1,0 +1,34 @@
+{
+  "candidate": {
+    "direction_name": "The Learned Watershed",
+    "id": "learned-watershed"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    2400,
+    2400
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+  },
+  "output": "m4b-cover.png",
+  "output_sha256": "4f6556f6011d7c61ad2006a1bbc2c1ae3ccd2f52ba7f50b0927a69ebc59b95c2",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "source-art.png",
+  "source_art_sha256": "8ad94022457ae9f53e8267612cb8aad0af8030267a1ca61243913add52635f83",
+  "spec": "m4b-cover-spec.json",
+  "spec_sha256": "06e883765057c0b0378515901be3c9f51895e8b47d147f5174097af3eb2cc1a4",
+  "thumbnail": "m4b-cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    160
+  ],
+  "thumbnail_sha256": "a99cb17c16186b991af43ae7687e83b94d9ed965754b8ae71d43c26f95b6ed33",
+  "variant": "square",
+  "warnings": []
+}
