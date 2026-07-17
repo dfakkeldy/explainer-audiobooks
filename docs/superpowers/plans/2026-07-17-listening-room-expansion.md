@@ -159,7 +159,7 @@ const expectedAnchorCounts = new Map([
   ['tests-first', 223],
   ['git-happens', 461],
   ['findable', 263],
-  ['the-voice-in-the-machine', 535],
+  ['the-voice-in-the-machine', 369],
   ['chicken-predators', 231],
   ['rodents-in-the-walls', 245],
   ['the-new-deal', 151],

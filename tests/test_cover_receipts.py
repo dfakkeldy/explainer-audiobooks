@@ -1220,6 +1220,37 @@ class CoverReceiptTests(unittest.TestCase):
             ):
                 cover_receipts.normalized_m4b_art_sha256(m4b)
 
+    def test_m4b_art_normalization_falls_back_to_covr_atom(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            m4b = root / "book.m4b"
+            m4b.write_bytes(b"fixture")
+
+            def extract(command: list[str], **_: object):
+                if Path(command[0]).name == "ffmpeg":
+                    raise subprocess.CalledProcessError(
+                        1, command, stderr=b"no video stream"
+                    )
+                isolated = Path(command[1])
+                isolated.with_name(f"{isolated.stem}_artwork_1.png").write_bytes(
+                    b"covr artwork"
+                )
+                return subprocess.CompletedProcess(command, 0, b"", b"")
+
+            with mock.patch.object(
+                cover_receipts.shutil, "which", side_effect=lambda tool: f"/tool/{tool}"
+            ), mock.patch.object(
+                cover_receipts.subprocess, "run", side_effect=extract
+            ), mock.patch.object(
+                cover_receipts,
+                "normalized_image_sha256",
+                return_value="a" * 64,
+            ) as normalized:
+                result = cover_receipts.normalized_m4b_art_sha256(m4b)
+
+            self.assertEqual("a" * 64, result)
+            self.assertEqual("source_artwork_1.png", normalized.call_args.args[0].name)
+
     def test_select_cli_prints_machine_readable_receipt(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

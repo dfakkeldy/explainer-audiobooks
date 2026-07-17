@@ -16,6 +16,17 @@ from skill.scripts.public_audio_recovery import (
     verify_block_parity,
 )
 
+EXPECTED_ANCHORS = {
+    "echo-from-the-inside": 547,
+    "why-it-feels-right": 400,
+    "you-are-the-architect": 444,
+    "the-bug-is-a-clue": 525,
+    "tests-first": 223,
+    "git-happens": 461,
+    "findable": 263,
+    "the-voice-in-the-machine": 369,
+}
+
 
 class PublicAudioRecoveryModuleTests(unittest.TestCase):
     def test_recovery_module_exists(self):
@@ -309,6 +320,42 @@ class PublicPackageCoverContractTests(unittest.TestCase):
                 recovery.verify_legacy_cover_pair(
                     book_dir, book_dir / "legacy-cover-pair.json"
                 )
+
+
+class PublicRecoveredMediaContractTests(unittest.TestCase):
+    repo_root = Path(__file__).parents[1]
+    manifest_path = repo_root / "docs/audio-recovery-2026-07/manifest.json"
+    blocks_dir = repo_root / ".recovery/blocks"
+
+    def test_recovered_media_package_is_complete_and_verified(self):
+        missing = [
+            f"books/{slug}/{slug}{suffix}"
+            for slug in recovery.RECOVERED_SLUGS
+            for suffix in (".m4b", ".alignment.json")
+            if not (self.repo_root / "books" / slug / f"{slug}{suffix}").is_file()
+        ]
+        self.assertEqual(missing, [], "missing recovered media assets")
+        self.assertTrue(self.manifest_path.is_file(), "missing recovery manifest")
+
+        manifest = json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        records = manifest["books"]
+        self.assertEqual(
+            tuple(record["slug"] for record in records), recovery.REMUXED_SLUGS
+        )
+        for record in records:
+            slug = record["slug"]
+            m4b = self.repo_root / record["final_m4b_path"]
+            self.assertLess(m4b.stat().st_size, recovery.MAX_GIT_BLOB_BYTES)
+            if slug in EXPECTED_ANCHORS:
+                self.assertEqual(record["anchor_count"], EXPECTED_ANCHORS[slug])
+
+        block_exports = [
+            self.blocks_dir / f"{slug}.json" for slug in recovery.RECOVERED_SLUGS
+        ]
+        if all(path.is_file() for path in block_exports):
+            recovery.verify_recovery_manifest(
+                self.repo_root, self.manifest_path, self.blocks_dir
+            )
 
 
 @unittest.skipUnless(

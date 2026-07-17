@@ -1,0 +1,2366 @@
+{
+  "books": [
+    {
+      "anchor_count": 547,
+      "epub_path": "books/echo-from-the-inside/echo-from-the-inside.epub",
+      "epub_sha256": "2b72f5b649ebb3435a9a4e55f23578f6daeb93e826bd7ca826fe5f7a548b0409",
+      "exported_block_count": 548,
+      "final_m4b_path": "books/echo-from-the-inside/echo-from-the-inside.m4b",
+      "final_m4b_sha256": "8f556f03423ecc5b08f8f92afc1151ea257c8895ce42cb95dc1fdb43ba266b29",
+      "final_media_signature": {
+        "audio_packet_sha256": "8bc6e4087b3bb809ecf9c612b05ffb75b7ce2b5fd5a680ee869e09ed0724a64c",
+        "chapters": [
+          [
+            "0.000000",
+            "9.100000",
+            "Chapter 1"
+          ],
+          [
+            "9.100000",
+            "1006.600000",
+            "Chapter 2"
+          ],
+          [
+            "1006.600000",
+            "2222.250000",
+            "Chapter 3"
+          ],
+          [
+            "2222.250000",
+            "3467.600000",
+            "Chapter 4"
+          ],
+          [
+            "3467.600000",
+            "4652.675000",
+            "Chapter 5"
+          ],
+          [
+            "4652.675000",
+            "5893.725000",
+            "Chapter 6"
+          ],
+          [
+            "5893.725000",
+            "7125.425000",
+            "Chapter 7"
+          ],
+          [
+            "7125.425000",
+            "8363.900000",
+            "Chapter 8"
+          ],
+          [
+            "8363.900000",
+            "9751.100000",
+            "Chapter 9"
+          ],
+          [
+            "9751.100000",
+            "11052.100000",
+            "Chapter 10"
+          ],
+          [
+            "11052.100000",
+            "12232.500000",
+            "Chapter 11"
+          ],
+          [
+            "12232.500000",
+            "13496.725000",
+            "Chapter 12"
+          ],
+          [
+            "13496.725000",
+            "14799.575000",
+            "Chapter 13"
+          ],
+          [
+            "14799.575000",
+            "16065.425000",
+            "Chapter 14"
+          ],
+          [
+            "16065.425000",
+            "17224.125000",
+            "Chapter 15"
+          ],
+          [
+            "17224.125000",
+            "18470.300000",
+            "Chapter 16"
+          ],
+          [
+            "18470.300000",
+            "19794.200000",
+            "Chapter 17"
+          ],
+          [
+            "19794.200000",
+            "21039.530000",
+            "Chapter 18"
+          ]
+        ],
+        "duration": "21039.530667",
+        "format_tags": [
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-23T11:01:17.000000Z"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ]
+        ]
+      },
+      "final_sidecar_path": "books/echo-from-the-inside/echo-from-the-inside.alignment.json",
+      "final_sidecar_sha256": "7d6ad6448c865d1ea5d12759dc1c79a813dff4c98acf192510bc2d6e808bb362",
+      "portrait_sha256": "0fe641954a1f20016613596afbaa8a95dc218611077c276bb13aa8cc191c40d1",
+      "resolved_anchor_count": 547,
+      "slug": "echo-from-the-inside",
+      "source_m4b_sha256": "51afbc309997f9d90311dd8e41e0bb3801d5dd348d03128cf5dc771c569955dd",
+      "source_media_signature": {
+        "audio_packet_sha256": "8bc6e4087b3bb809ecf9c612b05ffb75b7ce2b5fd5a680ee869e09ed0724a64c",
+        "chapters": [
+          [
+            "0.000000",
+            "9.100000",
+            "Chapter 1"
+          ],
+          [
+            "9.100000",
+            "1006.600000",
+            "Chapter 2"
+          ],
+          [
+            "1006.600000",
+            "2222.250000",
+            "Chapter 3"
+          ],
+          [
+            "2222.250000",
+            "3467.600000",
+            "Chapter 4"
+          ],
+          [
+            "3467.600000",
+            "4652.675000",
+            "Chapter 5"
+          ],
+          [
+            "4652.675000",
+            "5893.725000",
+            "Chapter 6"
+          ],
+          [
+            "5893.725000",
+            "7125.425000",
+            "Chapter 7"
+          ],
+          [
+            "7125.425000",
+            "8363.900000",
+            "Chapter 8"
+          ],
+          [
+            "8363.900000",
+            "9751.100000",
+            "Chapter 9"
+          ],
+          [
+            "9751.100000",
+            "11052.100000",
+            "Chapter 10"
+          ],
+          [
+            "11052.100000",
+            "12232.500000",
+            "Chapter 11"
+          ],
+          [
+            "12232.500000",
+            "13496.725000",
+            "Chapter 12"
+          ],
+          [
+            "13496.725000",
+            "14799.575000",
+            "Chapter 13"
+          ],
+          [
+            "14799.575000",
+            "16065.425000",
+            "Chapter 14"
+          ],
+          [
+            "16065.425000",
+            "17224.125000",
+            "Chapter 15"
+          ],
+          [
+            "17224.125000",
+            "18470.300000",
+            "Chapter 16"
+          ],
+          [
+            "18470.300000",
+            "19794.200000",
+            "Chapter 17"
+          ],
+          [
+            "19794.200000",
+            "21039.530000",
+            "Chapter 18"
+          ]
+        ],
+        "duration": "21039.530667",
+        "format_tags": [
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-23T11:01:17.000000Z"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ]
+        ]
+      },
+      "source_sidecar_sha256": "7d6ad6448c865d1ea5d12759dc1c79a813dff4c98acf192510bc2d6e808bb362",
+      "square_sha256": "3fd3c6c167ba13f8080c67d2aeb315851f63a0e2955e970daab0cff77d435ff9"
+    },
+    {
+      "anchor_count": 400,
+      "epub_path": "books/why-it-feels-right/why-it-feels-right.epub",
+      "epub_sha256": "5a4bde3e2537b86295ca08a976aa1472b5e2a7f678c6b33dd3b6e43436c95861",
+      "exported_block_count": 404,
+      "final_m4b_path": "books/why-it-feels-right/why-it-feels-right.m4b",
+      "final_m4b_sha256": "35e5898b5fad7f1356fca2f8cc5762df006aef7b9a6918ff3240a6c226d375be",
+      "final_media_signature": {
+        "audio_packet_sha256": "6da3bd4a895d956819468eb209a588735d659c9d79dd98f73117299b6d36a0e7",
+        "chapters": [
+          [
+            "0.000000",
+            "1052.275000",
+            "ch. 1: Chapter 0 \u2014 Why Apple Sweats the Details"
+          ],
+          [
+            "1052.275000",
+            "2145.600000",
+            "ch. 2: Chapter 1 \u2014 Doors, Teapots, and the Psychology of Feels Right"
+          ],
+          [
+            "2145.600000",
+            "3154.475000",
+            "ch. 3: Chapter 2 \u2014 Clarity, Deference, Depth"
+          ],
+          [
+            "3154.475000",
+            "4246.150000",
+            "ch. 4: Chapter 3 \u2014 Speaking SwiftUI"
+          ],
+          [
+            "4246.150000",
+            "5340.850000",
+            "ch. 5: Chapter 4 \u2014 Layout and the Grid You Don't See"
+          ],
+          [
+            "5340.850000",
+            "6423.975000",
+            "ch. 6: Chapter 5 \u2014 Color, Materials, and Liquid Glass"
+          ],
+          [
+            "6423.975000",
+            "7468.900000",
+            "ch. 7: Chapter 6 \u2014 Type That Breathes"
+          ],
+          [
+            "7468.900000",
+            "8519.850000",
+            "ch. 8: Chapter 7 \u2014 A Language of Glyphs"
+          ],
+          [
+            "8519.850000",
+            "9560.050000",
+            "ch. 9: Chapter 8 \u2014 The Icon on the Home Screen"
+          ],
+          [
+            "9560.050000",
+            "10597.225000",
+            "ch. 10: Chapter 9 \u2014 Bars That Frame the Screen"
+          ],
+          [
+            "10597.225000",
+            "11656.300000",
+            "ch. 11: Chapter 10 \u2014 Buttons and Controls"
+          ],
+          [
+            "11656.300000",
+            "12715.975000",
+            "ch. 12: Chapter 11 \u2014 Sheets, Alerts, and Earning the Interruption"
+          ],
+          [
+            "12715.975000",
+            "13810.800000",
+            "ch. 13: Chapter 12 \u2014 Lists, Grids, and Lazy Stacks"
+          ],
+          [
+            "13810.800000",
+            "14940.400000",
+            "ch. 14: Chapter 13 \u2014 Navigation: How People Move"
+          ],
+          [
+            "14940.400000",
+            "16017.400000",
+            "ch. 15: Chapter 14 \u2014 First Run and Feedback"
+          ],
+          [
+            "16017.400000",
+            "17102.325000",
+            "ch. 16: Chapter 15 \u2014 Designing for Everyone"
+          ],
+          [
+            "17102.325000",
+            "18152.600000",
+            "ch. 17: Chapter 16 \u2014 One App, Many Screens"
+          ],
+          [
+            "18152.600000",
+            "19201.792000",
+            "ch. 18: Chapter 17 \u2014 When to Break the Rules"
+          ]
+        ],
+        "duration": "19201.792000",
+        "format_tags": [
+          [
+            "album",
+            "Why It Feels Right"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-07-02 \u00b7 ONNX rv7"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-07-02T13:17:10.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 000002B8 000000001B77DD08 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "Why It Feels Right"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "final_sidecar_path": "books/why-it-feels-right/why-it-feels-right.alignment.json",
+      "final_sidecar_sha256": "5af1e30a9d17bbc570a6352917712fcdfa3c0e3f47e9a2f0869114a88810b856",
+      "portrait_sha256": "3fbc32510e611766c150c6280dc0059b634d1c6d4f0923beec84291fb0e819b3",
+      "resolved_anchor_count": 400,
+      "slug": "why-it-feels-right",
+      "source_m4b_sha256": "295c941219c9cbc2cddefc05fcdff8e21b09ac115bddfd77c68ac81f09accd6e",
+      "source_media_signature": {
+        "audio_packet_sha256": "6da3bd4a895d956819468eb209a588735d659c9d79dd98f73117299b6d36a0e7",
+        "chapters": [
+          [
+            "0.000000",
+            "1052.275000",
+            "ch. 1: Chapter 0 \u2014 Why Apple Sweats the Details"
+          ],
+          [
+            "1052.275000",
+            "2145.600000",
+            "ch. 2: Chapter 1 \u2014 Doors, Teapots, and the Psychology of Feels Right"
+          ],
+          [
+            "2145.600000",
+            "3154.475000",
+            "ch. 3: Chapter 2 \u2014 Clarity, Deference, Depth"
+          ],
+          [
+            "3154.475000",
+            "4246.150000",
+            "ch. 4: Chapter 3 \u2014 Speaking SwiftUI"
+          ],
+          [
+            "4246.150000",
+            "5340.850000",
+            "ch. 5: Chapter 4 \u2014 Layout and the Grid You Don't See"
+          ],
+          [
+            "5340.850000",
+            "6423.975000",
+            "ch. 6: Chapter 5 \u2014 Color, Materials, and Liquid Glass"
+          ],
+          [
+            "6423.975000",
+            "7468.900000",
+            "ch. 7: Chapter 6 \u2014 Type That Breathes"
+          ],
+          [
+            "7468.900000",
+            "8519.850000",
+            "ch. 8: Chapter 7 \u2014 A Language of Glyphs"
+          ],
+          [
+            "8519.850000",
+            "9560.050000",
+            "ch. 9: Chapter 8 \u2014 The Icon on the Home Screen"
+          ],
+          [
+            "9560.050000",
+            "10597.225000",
+            "ch. 10: Chapter 9 \u2014 Bars That Frame the Screen"
+          ],
+          [
+            "10597.225000",
+            "11656.300000",
+            "ch. 11: Chapter 10 \u2014 Buttons and Controls"
+          ],
+          [
+            "11656.300000",
+            "12715.975000",
+            "ch. 12: Chapter 11 \u2014 Sheets, Alerts, and Earning the Interruption"
+          ],
+          [
+            "12715.975000",
+            "13810.800000",
+            "ch. 13: Chapter 12 \u2014 Lists, Grids, and Lazy Stacks"
+          ],
+          [
+            "13810.800000",
+            "14940.400000",
+            "ch. 14: Chapter 13 \u2014 Navigation: How People Move"
+          ],
+          [
+            "14940.400000",
+            "16017.400000",
+            "ch. 15: Chapter 14 \u2014 First Run and Feedback"
+          ],
+          [
+            "16017.400000",
+            "17102.325000",
+            "ch. 16: Chapter 15 \u2014 Designing for Everyone"
+          ],
+          [
+            "17102.325000",
+            "18152.600000",
+            "ch. 17: Chapter 16 \u2014 One App, Many Screens"
+          ],
+          [
+            "18152.600000",
+            "19201.792000",
+            "ch. 18: Chapter 17 \u2014 When to Break the Rules"
+          ]
+        ],
+        "duration": "19201.792000",
+        "format_tags": [
+          [
+            "album",
+            "Why It Feels Right"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-07-02 \u00b7 ONNX rv7"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-07-02T13:17:10.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 000002B8 000000001B77DD08 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "Why It Feels Right"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "source_sidecar_sha256": "5af1e30a9d17bbc570a6352917712fcdfa3c0e3f47e9a2f0869114a88810b856",
+      "square_sha256": "060252a5878ee62f05586c5583fd71862d58f35202dd7692c1a48942ccde84d4"
+    },
+    {
+      "anchor_count": 444,
+      "epub_path": "books/you-are-the-architect/you-are-the-architect.epub",
+      "epub_sha256": "ab9def0aa470486a4fbdb6f8704de3b922d287a92ad05b940a5c0fc5bd201263",
+      "exported_block_count": 448,
+      "final_m4b_path": "books/you-are-the-architect/you-are-the-architect.m4b",
+      "final_m4b_sha256": "b7dd52fc164ad3e3ed2c7b96cea582450a4c2df1a04dd87e4d2d810e75e2f7a9",
+      "final_media_signature": {
+        "audio_packet_sha256": "ae2b01fd7cacfe844397145ac566ccdd2f0d6876b941cfde5036ca2b492349ed",
+        "chapters": [
+          [
+            "0.000000",
+            "1000.075000",
+            "ch. 1: Chapter 0 \u2014 This Time, With a Map"
+          ],
+          [
+            "1000.075000",
+            "1987.075000",
+            "ch. 2: Chapter 1 \u2014 From Syntax to Intent"
+          ],
+          [
+            "1987.075000",
+            "2984.775000",
+            "ch. 3: Chapter 2 \u2014 Anatomy of an Agent"
+          ],
+          [
+            "2984.775000",
+            "3998.450000",
+            "ch. 4: Chapter 3 \u2014 The Word That Ate Itself"
+          ],
+          [
+            "3998.450000",
+            "5090.300000",
+            "ch. 5: Chapter 4 \u2014 The Spectrum"
+          ],
+          [
+            "5090.300000",
+            "6073.850000",
+            "ch. 6: Chapter 5 \u2014 Proof Is the Differentiator"
+          ],
+          [
+            "6073.850000",
+            "7057.900000",
+            "ch. 7: Chapter 6 \u2014 What the Agent Needs to Know"
+          ],
+          [
+            "7057.900000",
+            "8088.825000",
+            "ch. 8: Chapter 7 \u2014 Static, Dynamic, and Skills"
+          ],
+          [
+            "8088.825000",
+            "9111.550000",
+            "ch. 9: Chapter 8 \u2014 The New Life Cycle"
+          ],
+          [
+            "9111.550000",
+            "10152.525000",
+            "ch. 10: Chapter 9 \u2014 Phase by Phase"
+          ],
+          [
+            "10152.525000",
+            "11171.025000",
+            "ch. 11: Chapter 10 \u2014 The Factory Model"
+          ],
+          [
+            "11171.025000",
+            "12180.675000",
+            "ch. 12: Chapter 11 \u2014 The Harness"
+          ],
+          [
+            "12180.675000",
+            "13202.050000",
+            "ch. 13: Chapter 12 \u2014 Conductor and Orchestrator"
+          ],
+          [
+            "13202.050000",
+            "14215.400000",
+            "ch. 14: Chapter 13 \u2014 The Eighty Percent Problem"
+          ],
+          [
+            "14215.400000",
+            "15254.225000",
+            "ch. 15: Chapter 14 \u2014 Three Places Agents Live"
+          ],
+          [
+            "15254.225000",
+            "16258.750000",
+            "ch. 16: Chapter 15 \u2014 When the Agent Is the Product"
+          ],
+          [
+            "16258.750000",
+            "17308.600000",
+            "ch. 17: Chapter 16 \u2014 The Token Economy"
+          ],
+          [
+            "17308.600000",
+            "18296.100000",
+            "ch. 18: Chapter 17 \u2014 Spending the Tokens Wisely"
+          ],
+          [
+            "18296.100000",
+            "19315.475000",
+            "ch. 19: Chapter 18 \u2014 The Monday Playbook"
+          ],
+          [
+            "19315.475000",
+            "20296.149000",
+            "ch. 20: Chapter 19 \u2014 The Craft That Remains"
+          ]
+        ],
+        "duration": "20296.149333",
+        "format_tags": [
+          [
+            "album",
+            "You Are the Architect"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-07-02 \u00b7 ONNX rv7"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-07-02T13:40:37.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 00000110 000000001D08A2B0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "You Are the Architect"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "final_sidecar_path": "books/you-are-the-architect/you-are-the-architect.alignment.json",
+      "final_sidecar_sha256": "fd175cde960baee9daf40e7ae043e48408c435336c57146e8c0f353203add96f",
+      "portrait_sha256": "c3fb6b82f0fa1de9a957f92eacfe9051afbfaf2dde4a55ffe92e1a270e7fe214",
+      "resolved_anchor_count": 444,
+      "slug": "you-are-the-architect",
+      "source_m4b_sha256": "f8f173cba2244bd79d04707fc048d41b38762c87fe332548a304ba107a03ade8",
+      "source_media_signature": {
+        "audio_packet_sha256": "ae2b01fd7cacfe844397145ac566ccdd2f0d6876b941cfde5036ca2b492349ed",
+        "chapters": [
+          [
+            "0.000000",
+            "1000.075000",
+            "ch. 1: Chapter 0 \u2014 This Time, With a Map"
+          ],
+          [
+            "1000.075000",
+            "1987.075000",
+            "ch. 2: Chapter 1 \u2014 From Syntax to Intent"
+          ],
+          [
+            "1987.075000",
+            "2984.775000",
+            "ch. 3: Chapter 2 \u2014 Anatomy of an Agent"
+          ],
+          [
+            "2984.775000",
+            "3998.450000",
+            "ch. 4: Chapter 3 \u2014 The Word That Ate Itself"
+          ],
+          [
+            "3998.450000",
+            "5090.300000",
+            "ch. 5: Chapter 4 \u2014 The Spectrum"
+          ],
+          [
+            "5090.300000",
+            "6073.850000",
+            "ch. 6: Chapter 5 \u2014 Proof Is the Differentiator"
+          ],
+          [
+            "6073.850000",
+            "7057.900000",
+            "ch. 7: Chapter 6 \u2014 What the Agent Needs to Know"
+          ],
+          [
+            "7057.900000",
+            "8088.825000",
+            "ch. 8: Chapter 7 \u2014 Static, Dynamic, and Skills"
+          ],
+          [
+            "8088.825000",
+            "9111.550000",
+            "ch. 9: Chapter 8 \u2014 The New Life Cycle"
+          ],
+          [
+            "9111.550000",
+            "10152.525000",
+            "ch. 10: Chapter 9 \u2014 Phase by Phase"
+          ],
+          [
+            "10152.525000",
+            "11171.025000",
+            "ch. 11: Chapter 10 \u2014 The Factory Model"
+          ],
+          [
+            "11171.025000",
+            "12180.675000",
+            "ch. 12: Chapter 11 \u2014 The Harness"
+          ],
+          [
+            "12180.675000",
+            "13202.050000",
+            "ch. 13: Chapter 12 \u2014 Conductor and Orchestrator"
+          ],
+          [
+            "13202.050000",
+            "14215.400000",
+            "ch. 14: Chapter 13 \u2014 The Eighty Percent Problem"
+          ],
+          [
+            "14215.400000",
+            "15254.225000",
+            "ch. 15: Chapter 14 \u2014 Three Places Agents Live"
+          ],
+          [
+            "15254.225000",
+            "16258.750000",
+            "ch. 16: Chapter 15 \u2014 When the Agent Is the Product"
+          ],
+          [
+            "16258.750000",
+            "17308.600000",
+            "ch. 17: Chapter 16 \u2014 The Token Economy"
+          ],
+          [
+            "17308.600000",
+            "18296.100000",
+            "ch. 18: Chapter 17 \u2014 Spending the Tokens Wisely"
+          ],
+          [
+            "18296.100000",
+            "19315.475000",
+            "ch. 19: Chapter 18 \u2014 The Monday Playbook"
+          ],
+          [
+            "19315.475000",
+            "20296.149000",
+            "ch. 20: Chapter 19 \u2014 The Craft That Remains"
+          ]
+        ],
+        "duration": "20296.149333",
+        "format_tags": [
+          [
+            "album",
+            "You Are the Architect"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-07-02 \u00b7 ONNX rv7"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-07-02T13:40:37.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 00000110 000000001D08A2B0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "You Are the Architect"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "source_sidecar_sha256": "fd175cde960baee9daf40e7ae043e48408c435336c57146e8c0f353203add96f",
+      "square_sha256": "6afeba4188e4e138bb0772ad9cd525df6c816703e0ca1f8cb10b3e8be5d6e349"
+    },
+    {
+      "anchor_count": 525,
+      "epub_path": "books/the-bug-is-a-clue/the-bug-is-a-clue.epub",
+      "epub_sha256": "52e774ad8305b7cea7e32dba5e2651f46b1da1a28b69a396f0faaff3a03183f4",
+      "exported_block_count": 529,
+      "final_m4b_path": "books/the-bug-is-a-clue/the-bug-is-a-clue.m4b",
+      "final_m4b_sha256": "8805d65f84d36eb83dfe7342e6c2d52dcf652484a346b61c198aeb7e165b5b08",
+      "final_media_signature": {
+        "audio_packet_sha256": "b4f2ae12cfb82ac75f5fa5a5b325556a0257d31f4cfb930b134134bd641b4654",
+        "chapters": [
+          [
+            "0.000000",
+            "1103.175000",
+            "ch. 1: Chapter 0 - Why Debugging Is the Real Job"
+          ],
+          [
+            "1103.175000",
+            "2222.250000",
+            "ch. 2: Chapter 1 - The Scientific Method of Debugging"
+          ],
+          [
+            "2222.250000",
+            "3295.050000",
+            "ch. 3: Chapter 2 - Learning to Listen: the Console and Logging"
+          ],
+          [
+            "3295.050000",
+            "4738.700000",
+            "ch. 4: Chapter 3 - Breakpoints: Pausing Reality"
+          ],
+          [
+            "4738.700000",
+            "6188.700000",
+            "ch. 5: Chapter 4 - Frozen in Time: Variables and the Call Stack"
+          ],
+          [
+            "6188.700000",
+            "7652.425000",
+            "ch. 6: Chapter 5 - LLDB: Talking to a Paused Program"
+          ],
+          [
+            "7652.425000",
+            "8682.675000",
+            "ch. 7: Chapter 6 - Breakpoints That Think"
+          ],
+          [
+            "8682.675000",
+            "10380.850000",
+            "ch. 8: Chapter 7 - When the App Dies: Anatomy of a Crash"
+          ],
+          [
+            "10380.850000",
+            "11499.400000",
+            "ch. 9: Chapter 8 - Crash Logs and Symbolication"
+          ],
+          [
+            "11499.400000",
+            "12627.075000",
+            "ch. 10: Chapter 9 - The Crash That Isn't Your Fault"
+          ],
+          [
+            "12627.075000",
+            "13726.525000",
+            "ch. 11: Chapter 10 - Chasing Memory Leaks"
+          ],
+          [
+            "13726.525000",
+            "14851.275000",
+            "ch. 12: Chapter 11 - Making Corruption Loud: the Sanitizers"
+          ],
+          [
+            "14851.275000",
+            "16022.325000",
+            "ch. 13: Chapter 12 - The Hardest Bugs: Concurrency and Data Races"
+          ],
+          [
+            "16022.325000",
+            "17089.300000",
+            "ch. 14: Chapter 13 - Profiling, Not Guessing: the Time Profiler"
+          ],
+          [
+            "17089.300000",
+            "18734.375000",
+            "ch. 15: Chapter 14 - Memory Under the Microscope"
+          ],
+          [
+            "18734.375000",
+            "20312.975000",
+            "ch. 16: Chapter 15 - Debugging the Interface"
+          ],
+          [
+            "20312.975000",
+            "21571.541000",
+            "ch. 17: Chapter 16 - The Debugger's Discipline"
+          ]
+        ],
+        "duration": "21571.541333",
+        "format_tags": [
+          [
+            "album",
+            "The Bug Is a Clue"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-07-02 \u00b7 ONNX rv7"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-07-02T14:20:17.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 00000050 000000001EDBB370 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "The Bug Is a Clue"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "final_sidecar_path": "books/the-bug-is-a-clue/the-bug-is-a-clue.alignment.json",
+      "final_sidecar_sha256": "17f835d6c7a3ed8bd8314862cd487fc694e4f9b1463df42866d54987bd5037dc",
+      "portrait_sha256": "a941979e3e22299fe8c552060803feb8759d43accd3962c95ca0bff09c6da417",
+      "resolved_anchor_count": 525,
+      "slug": "the-bug-is-a-clue",
+      "source_m4b_sha256": "f998bb30f8ae6d5cf48552d93bbd775a85073cfa261c6a1ab2e8d5c3d0807a97",
+      "source_media_signature": {
+        "audio_packet_sha256": "b4f2ae12cfb82ac75f5fa5a5b325556a0257d31f4cfb930b134134bd641b4654",
+        "chapters": [
+          [
+            "0.000000",
+            "1103.175000",
+            "ch. 1: Chapter 0 - Why Debugging Is the Real Job"
+          ],
+          [
+            "1103.175000",
+            "2222.250000",
+            "ch. 2: Chapter 1 - The Scientific Method of Debugging"
+          ],
+          [
+            "2222.250000",
+            "3295.050000",
+            "ch. 3: Chapter 2 - Learning to Listen: the Console and Logging"
+          ],
+          [
+            "3295.050000",
+            "4738.700000",
+            "ch. 4: Chapter 3 - Breakpoints: Pausing Reality"
+          ],
+          [
+            "4738.700000",
+            "6188.700000",
+            "ch. 5: Chapter 4 - Frozen in Time: Variables and the Call Stack"
+          ],
+          [
+            "6188.700000",
+            "7652.425000",
+            "ch. 6: Chapter 5 - LLDB: Talking to a Paused Program"
+          ],
+          [
+            "7652.425000",
+            "8682.675000",
+            "ch. 7: Chapter 6 - Breakpoints That Think"
+          ],
+          [
+            "8682.675000",
+            "10380.850000",
+            "ch. 8: Chapter 7 - When the App Dies: Anatomy of a Crash"
+          ],
+          [
+            "10380.850000",
+            "11499.400000",
+            "ch. 9: Chapter 8 - Crash Logs and Symbolication"
+          ],
+          [
+            "11499.400000",
+            "12627.075000",
+            "ch. 10: Chapter 9 - The Crash That Isn't Your Fault"
+          ],
+          [
+            "12627.075000",
+            "13726.525000",
+            "ch. 11: Chapter 10 - Chasing Memory Leaks"
+          ],
+          [
+            "13726.525000",
+            "14851.275000",
+            "ch. 12: Chapter 11 - Making Corruption Loud: the Sanitizers"
+          ],
+          [
+            "14851.275000",
+            "16022.325000",
+            "ch. 13: Chapter 12 - The Hardest Bugs: Concurrency and Data Races"
+          ],
+          [
+            "16022.325000",
+            "17089.300000",
+            "ch. 14: Chapter 13 - Profiling, Not Guessing: the Time Profiler"
+          ],
+          [
+            "17089.300000",
+            "18734.375000",
+            "ch. 15: Chapter 14 - Memory Under the Microscope"
+          ],
+          [
+            "18734.375000",
+            "20312.975000",
+            "ch. 16: Chapter 15 - Debugging the Interface"
+          ],
+          [
+            "20312.975000",
+            "21571.541000",
+            "ch. 17: Chapter 16 - The Debugger's Discipline"
+          ]
+        ],
+        "duration": "21571.541333",
+        "format_tags": [
+          [
+            "album",
+            "The Bug Is a Clue"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-07-02 \u00b7 ONNX rv7"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-07-02T14:20:17.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 00000050 000000001EDBB370 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "The Bug Is a Clue"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "source_sidecar_sha256": "17f835d6c7a3ed8bd8314862cd487fc694e4f9b1463df42866d54987bd5037dc",
+      "square_sha256": "f40a12d096185513c6328b13de82dd2b66a61b897e95b8d3f4f275633e299530"
+    },
+    {
+      "anchor_count": 223,
+      "epub_path": "books/tests-first/tests-first.epub",
+      "epub_sha256": "58410d32b0aeebee2147cd421af11c71648117a6cae34778c9b258bd74089fbc",
+      "exported_block_count": 224,
+      "final_m4b_path": "books/tests-first/tests-first.m4b",
+      "final_m4b_sha256": "99f31b8ed332682b9dfbe8adc16814f4b21f0b202c567148ee2dc5e5ff0bd9b4",
+      "final_media_signature": {
+        "audio_packet_sha256": "c18ed92ee42d0ea877238e13ed7b6cf45cc3a5c1ab8255565165f07c01d820b5",
+        "chapters": [
+          [
+            "0.000000",
+            "8.675000",
+            "Chapter 1"
+          ],
+          [
+            "8.675000",
+            "1067.775000",
+            "Chapter 2"
+          ],
+          [
+            "1067.775000",
+            "2101.600000",
+            "Chapter 3"
+          ],
+          [
+            "2101.600000",
+            "3143.600000",
+            "Chapter 4"
+          ],
+          [
+            "3143.600000",
+            "4275.400000",
+            "Chapter 5"
+          ],
+          [
+            "4275.400000",
+            "5453.750000",
+            "Chapter 6"
+          ],
+          [
+            "5453.750000",
+            "6527.550000",
+            "Chapter 7"
+          ],
+          [
+            "6527.550000",
+            "7603.675000",
+            "Chapter 8"
+          ],
+          [
+            "7603.675000",
+            "8697.250000",
+            "Chapter 9"
+          ],
+          [
+            "8697.250000",
+            "9751.168000",
+            "Chapter 10"
+          ]
+        ],
+        "duration": "9751.168000",
+        "format_tags": [
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-22T20:32:37.000000Z"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ]
+        ]
+      },
+      "final_sidecar_path": "books/tests-first/tests-first.alignment.json",
+      "final_sidecar_sha256": "f9a668981316719bac6e11525b790a97bf9155f2a2a939b256294d3a2eac4cce",
+      "portrait_sha256": "5f16eca3d70db64c9c55424f4be6bc069881aa9853ba950a08d4b11aabf30c99",
+      "resolved_anchor_count": 223,
+      "slug": "tests-first",
+      "source_m4b_sha256": "7572849a7370241b2e9f25b5877224227ab829dde238c012e0e95179f5744628",
+      "source_media_signature": {
+        "audio_packet_sha256": "c18ed92ee42d0ea877238e13ed7b6cf45cc3a5c1ab8255565165f07c01d820b5",
+        "chapters": [
+          [
+            "0.000000",
+            "8.675000",
+            "Chapter 1"
+          ],
+          [
+            "8.675000",
+            "1067.775000",
+            "Chapter 2"
+          ],
+          [
+            "1067.775000",
+            "2101.600000",
+            "Chapter 3"
+          ],
+          [
+            "2101.600000",
+            "3143.600000",
+            "Chapter 4"
+          ],
+          [
+            "3143.600000",
+            "4275.400000",
+            "Chapter 5"
+          ],
+          [
+            "4275.400000",
+            "5453.750000",
+            "Chapter 6"
+          ],
+          [
+            "5453.750000",
+            "6527.550000",
+            "Chapter 7"
+          ],
+          [
+            "6527.550000",
+            "7603.675000",
+            "Chapter 8"
+          ],
+          [
+            "7603.675000",
+            "8697.250000",
+            "Chapter 9"
+          ],
+          [
+            "8697.250000",
+            "9751.168000",
+            "Chapter 10"
+          ]
+        ],
+        "duration": "9751.168000",
+        "format_tags": [
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-22T20:32:37.000000Z"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ]
+        ]
+      },
+      "source_sidecar_sha256": "f9a668981316719bac6e11525b790a97bf9155f2a2a939b256294d3a2eac4cce",
+      "square_sha256": "ce0be55768b0ce57aadf9d663966720fdf8b86652142b4f917c0886a55363e67"
+    },
+    {
+      "anchor_count": 461,
+      "epub_path": "books/git-happens/git-happens.epub",
+      "epub_sha256": "b9cc5bdff4555795894d49b7c476351788ea71ab27fe6bad738747dead94d100",
+      "exported_block_count": 462,
+      "final_m4b_path": "books/git-happens/git-happens.m4b",
+      "final_m4b_sha256": "82eb205f7997ccc0f0657d43e4fdd083f13e90a78dd7013b785dc09bb9483f4e",
+      "final_media_signature": {
+        "audio_packet_sha256": "6e25f26612febb2e59ecf27e487f44a2006373cf2e4390486e69e1ac1f5007cb",
+        "chapters": [
+          [
+            "0.000000",
+            "7.425000",
+            "Chapter 1"
+          ],
+          [
+            "7.425000",
+            "1046.950000",
+            "Chapter 2"
+          ],
+          [
+            "1046.950000",
+            "2085.375000",
+            "Chapter 3"
+          ],
+          [
+            "2085.375000",
+            "3158.450000",
+            "Chapter 4"
+          ],
+          [
+            "3158.450000",
+            "4259.050000",
+            "Chapter 5"
+          ],
+          [
+            "4259.050000",
+            "5329.125000",
+            "Chapter 6"
+          ],
+          [
+            "5329.125000",
+            "6399.200000",
+            "Chapter 7"
+          ],
+          [
+            "6399.200000",
+            "7560.575000",
+            "Chapter 8"
+          ],
+          [
+            "7560.575000",
+            "8647.925000",
+            "Chapter 9"
+          ],
+          [
+            "8647.925000",
+            "9893.175000",
+            "Chapter 10"
+          ],
+          [
+            "9893.175000",
+            "11018.000000",
+            "Chapter 11"
+          ],
+          [
+            "11018.000000",
+            "12105.975000",
+            "Chapter 12"
+          ],
+          [
+            "12105.975000",
+            "13278.275000",
+            "Chapter 13"
+          ],
+          [
+            "13278.275000",
+            "14469.975000",
+            "Chapter 14"
+          ],
+          [
+            "14469.975000",
+            "15681.250000",
+            "Chapter 15"
+          ],
+          [
+            "15681.250000",
+            "16900.875000",
+            "Chapter 16"
+          ],
+          [
+            "16900.875000",
+            "17941.077000",
+            "Chapter 17"
+          ]
+        ],
+        "duration": "17941.077333",
+        "format_tags": [
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-22T18:44:11.000000Z"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ]
+        ]
+      },
+      "final_sidecar_path": "books/git-happens/git-happens.alignment.json",
+      "final_sidecar_sha256": "65157b9899caf23b5088a2721b49a8299390acbf4cc257933b1e1a92327a7c15",
+      "portrait_sha256": "fc12ad8dee431de5af930b2eaba8407798a45d41c376bd000cc87a72f543b546",
+      "resolved_anchor_count": 461,
+      "slug": "git-happens",
+      "source_m4b_sha256": "4d77a2530a6b0f37cca74dfc9a74cc4984e74a95a7161ae40d49062a8a6792ec",
+      "source_media_signature": {
+        "audio_packet_sha256": "6e25f26612febb2e59ecf27e487f44a2006373cf2e4390486e69e1ac1f5007cb",
+        "chapters": [
+          [
+            "0.000000",
+            "7.425000",
+            "Chapter 1"
+          ],
+          [
+            "7.425000",
+            "1046.950000",
+            "Chapter 2"
+          ],
+          [
+            "1046.950000",
+            "2085.375000",
+            "Chapter 3"
+          ],
+          [
+            "2085.375000",
+            "3158.450000",
+            "Chapter 4"
+          ],
+          [
+            "3158.450000",
+            "4259.050000",
+            "Chapter 5"
+          ],
+          [
+            "4259.050000",
+            "5329.125000",
+            "Chapter 6"
+          ],
+          [
+            "5329.125000",
+            "6399.200000",
+            "Chapter 7"
+          ],
+          [
+            "6399.200000",
+            "7560.575000",
+            "Chapter 8"
+          ],
+          [
+            "7560.575000",
+            "8647.925000",
+            "Chapter 9"
+          ],
+          [
+            "8647.925000",
+            "9893.175000",
+            "Chapter 10"
+          ],
+          [
+            "9893.175000",
+            "11018.000000",
+            "Chapter 11"
+          ],
+          [
+            "11018.000000",
+            "12105.975000",
+            "Chapter 12"
+          ],
+          [
+            "12105.975000",
+            "13278.275000",
+            "Chapter 13"
+          ],
+          [
+            "13278.275000",
+            "14469.975000",
+            "Chapter 14"
+          ],
+          [
+            "14469.975000",
+            "15681.250000",
+            "Chapter 15"
+          ],
+          [
+            "15681.250000",
+            "16900.875000",
+            "Chapter 16"
+          ],
+          [
+            "16900.875000",
+            "17941.077000",
+            "Chapter 17"
+          ]
+        ],
+        "duration": "17941.077333",
+        "format_tags": [
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-22T18:44:11.000000Z"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ]
+        ]
+      },
+      "source_sidecar_sha256": "65157b9899caf23b5088a2721b49a8299390acbf4cc257933b1e1a92327a7c15",
+      "square_sha256": "84dca530115178a5969245e180997d245d8343b958134930e39edaa63a9e892f"
+    },
+    {
+      "anchor_count": 263,
+      "epub_path": "books/findable/findable.epub",
+      "epub_sha256": "932345cd79d6f86598177086b22a9a7a131e6ae9b9eb434fc8128185e8824ecf",
+      "exported_block_count": 264,
+      "final_m4b_path": "books/findable/findable.m4b",
+      "final_m4b_sha256": "2bb0ca5a7653c5588d15a8ee1721142868c4fa5f7e802ac38558acc93300b308",
+      "final_media_signature": {
+        "audio_packet_sha256": "904338a80dd6ae329fae4ddea8fc16a911b356cfa6237cb89be972c96d270e51",
+        "chapters": [
+          [
+            "0.000000",
+            "7.225000",
+            "Chapter 1"
+          ],
+          [
+            "7.225000",
+            "1254.200000",
+            "Chapter 2"
+          ],
+          [
+            "1254.200000",
+            "2791.250000",
+            "Chapter 3"
+          ],
+          [
+            "2791.250000",
+            "4045.275000",
+            "Chapter 4"
+          ],
+          [
+            "4045.275000",
+            "5386.725000",
+            "Chapter 5"
+          ],
+          [
+            "5386.725000",
+            "6730.950000",
+            "Chapter 6"
+          ],
+          [
+            "6730.950000",
+            "8500.925000",
+            "Chapter 7"
+          ],
+          [
+            "8500.925000",
+            "10115.925000",
+            "Chapter 8"
+          ],
+          [
+            "10115.925000",
+            "11561.088000",
+            "Chapter 9"
+          ]
+        ],
+        "duration": "11561.088000",
+        "format_tags": [
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-22T23:42:38.000000Z"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ]
+        ]
+      },
+      "final_sidecar_path": "books/findable/findable.alignment.json",
+      "final_sidecar_sha256": "38a16ea04c1fb962ddf3afb7c00076a439524b4c011185a0d58deca242ed0f3d",
+      "portrait_sha256": "4b0ca55fb5e4f4edca32102c0fd3b49b67db1ed67399578ac8d241735501fe19",
+      "resolved_anchor_count": 263,
+      "slug": "findable",
+      "source_m4b_sha256": "f592c583a63c5a266af2e8ec811bfda23a739e61aa0ae0470a25a1d92a069f7e",
+      "source_media_signature": {
+        "audio_packet_sha256": "904338a80dd6ae329fae4ddea8fc16a911b356cfa6237cb89be972c96d270e51",
+        "chapters": [
+          [
+            "0.000000",
+            "7.225000",
+            "Chapter 1"
+          ],
+          [
+            "7.225000",
+            "1254.200000",
+            "Chapter 2"
+          ],
+          [
+            "1254.200000",
+            "2791.250000",
+            "Chapter 3"
+          ],
+          [
+            "2791.250000",
+            "4045.275000",
+            "Chapter 4"
+          ],
+          [
+            "4045.275000",
+            "5386.725000",
+            "Chapter 5"
+          ],
+          [
+            "5386.725000",
+            "6730.950000",
+            "Chapter 6"
+          ],
+          [
+            "6730.950000",
+            "8500.925000",
+            "Chapter 7"
+          ],
+          [
+            "8500.925000",
+            "10115.925000",
+            "Chapter 8"
+          ],
+          [
+            "10115.925000",
+            "11561.088000",
+            "Chapter 9"
+          ]
+        ],
+        "duration": "11561.088000",
+        "format_tags": [
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-22T23:42:38.000000Z"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ]
+        ]
+      },
+      "source_sidecar_sha256": "38a16ea04c1fb962ddf3afb7c00076a439524b4c011185a0d58deca242ed0f3d",
+      "square_sha256": "b56aec2a60d6a609bf416935791f03d3a612d9eb2837fd568c7a61815720b3e4"
+    },
+    {
+      "anchor_count": 369,
+      "epub_path": "books/the-voice-in-the-machine/the-voice-in-the-machine.epub",
+      "epub_sha256": "852938ee1e95630d9cd3b77bc350f536c3f4beb7dfc849d121f3303ae4674734",
+      "exported_block_count": 373,
+      "final_m4b_path": "books/the-voice-in-the-machine/the-voice-in-the-machine.m4b",
+      "final_m4b_sha256": "69c36d1d38dc4b7c751bfd55fb991f34ed5c4545650cb5cda8b821c90ff51bad",
+      "final_media_signature": {
+        "audio_packet_sha256": "e7d1b11d41c03178e882fdf5e88a94fd371488fe3dff8c4b722a85015187e8a1",
+        "chapters": [
+          [
+            "0.000000",
+            "1188.450000",
+            "Chapter 1 - The Dream of a Book That Reads Itself"
+          ],
+          [
+            "1188.450000",
+            "2400.500000",
+            "Chapter 2 - From Robot to Human"
+          ],
+          [
+            "2400.500000",
+            "3657.550000",
+            "Chapter 3 - Cleaning the Page Before You Read It"
+          ],
+          [
+            "3657.550000",
+            "4879.200000",
+            "Chapter 4 - Spelling With Sound"
+          ],
+          [
+            "4879.200000",
+            "6056.175000",
+            "Chapter 5 - Teaching the Machine a New Word"
+          ],
+          [
+            "6056.175000",
+            "7359.475000",
+            "Chapter 6 - Inside the Voice"
+          ],
+          [
+            "7359.475000",
+            "8588.675000",
+            "Chapter 7 - The Chip That Thinks, and the Crash"
+          ],
+          [
+            "8588.675000",
+            "9816.050000",
+            "Chapter 8 - The Fix That Wasn't"
+          ],
+          [
+            "9816.050000",
+            "11073.475000",
+            "Chapter 9 - The Runtime That Just Worked"
+          ],
+          [
+            "11073.475000",
+            "12250.500000",
+            "Chapter 10 - Slicing, Streaming, and Stitching the Sound"
+          ],
+          [
+            "12250.500000",
+            "13378.645000",
+            "Chapter 11 - Follow the Bouncing Word"
+          ]
+        ],
+        "duration": "13378.645333",
+        "format_tags": [
+          [
+            "album",
+            "The Voice in the Machine"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-06-24 \u00b7 ONNX rv6"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-24T11:22:02.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 00000308 0000000013235CB8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "The Voice in the Machine"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "final_sidecar_path": "books/the-voice-in-the-machine/the-voice-in-the-machine.alignment.json",
+      "final_sidecar_sha256": "cd8639b593ac564558ecb8796936fb7d094583eb08836f3604d55bf65ebd2829",
+      "portrait_sha256": "9ecdf6c46c44b5c906855f69a76f036af4cc8a5088a15ce21483eb316d7d0f17",
+      "resolved_anchor_count": 369,
+      "slug": "the-voice-in-the-machine",
+      "source_m4b_sha256": "124999d151d92fa55d2cb7ebbbfd40abb197a4cf857c4a23799a52bf06b87f5d",
+      "source_media_signature": {
+        "audio_packet_sha256": "e7d1b11d41c03178e882fdf5e88a94fd371488fe3dff8c4b722a85015187e8a1",
+        "chapters": [
+          [
+            "0.000000",
+            "1188.450000",
+            "Chapter 1 - The Dream of a Book That Reads Itself"
+          ],
+          [
+            "1188.450000",
+            "2400.500000",
+            "Chapter 2 - From Robot to Human"
+          ],
+          [
+            "2400.500000",
+            "3657.550000",
+            "Chapter 3 - Cleaning the Page Before You Read It"
+          ],
+          [
+            "3657.550000",
+            "4879.200000",
+            "Chapter 4 - Spelling With Sound"
+          ],
+          [
+            "4879.200000",
+            "6056.175000",
+            "Chapter 5 - Teaching the Machine a New Word"
+          ],
+          [
+            "6056.175000",
+            "7359.475000",
+            "Chapter 6 - Inside the Voice"
+          ],
+          [
+            "7359.475000",
+            "8588.675000",
+            "Chapter 7 - The Chip That Thinks, and the Crash"
+          ],
+          [
+            "8588.675000",
+            "9816.050000",
+            "Chapter 8 - The Fix That Wasn't"
+          ],
+          [
+            "9816.050000",
+            "11073.475000",
+            "Chapter 9 - The Runtime That Just Worked"
+          ],
+          [
+            "11073.475000",
+            "12250.500000",
+            "Chapter 10 - Slicing, Streaming, and Stitching the Sound"
+          ],
+          [
+            "12250.500000",
+            "13378.645000",
+            "Chapter 11 - Follow the Bouncing Word"
+          ]
+        ],
+        "duration": "13378.645333",
+        "format_tags": [
+          [
+            "album",
+            "The Voice in the Machine"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-06-24 \u00b7 ONNX rv6"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-06-24T11:22:02.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 00000308 0000000013235CB8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "The Voice in the Machine"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "source_sidecar_sha256": "cd8639b593ac564558ecb8796936fb7d094583eb08836f3604d55bf65ebd2829",
+      "square_sha256": "d5cf8b8613ee544612725376fd7a2e0d607319363f5e86ea1d4c0c0c3ae2d4a6"
+    },
+    {
+      "epub_path": "books/rodents-in-the-walls/rodents-in-the-walls.epub",
+      "epub_sha256": "0cf8d79d5e12369427fa78f56e6444575fc249b7846b83f4445c3cbcdc48d631",
+      "final_m4b_path": "books/rodents-in-the-walls/rodents-in-the-walls.m4b",
+      "final_m4b_sha256": "50829ce653da3c028463c82baba6c16fe241b645ffe976e5db7b28458aa51bba",
+      "final_media_signature": {
+        "audio_packet_sha256": "76a4c4a8461de8251eaf81e62264ed0dc6573feadae524474b6c3b5a9e8dff10",
+        "chapters": [
+          [
+            "0.000000",
+            "544.580000",
+            "ch. 1: Something Is Living in the Wall"
+          ],
+          [
+            "544.580000",
+            "1247.095000",
+            "ch. 2: The Animals You Are Dealing With"
+          ],
+          [
+            "1247.095000",
+            "1790.010000",
+            "ch. 3: How They Get In"
+          ],
+          [
+            "1790.010000",
+            "2649.735000",
+            "ch. 4: Visitor, Den, or Nursery?"
+          ],
+          [
+            "2649.735000",
+            "3554.445000",
+            "ch. 5: Eviction Without Making It Worse"
+          ],
+          [
+            "3554.445000",
+            "4352.850000",
+            "ch. 6: Repairing for Squirrels, Not Just Mice"
+          ],
+          [
+            "4352.850000",
+            "5352.495000",
+            "ch. 7: Trapping, Law, and Poison"
+          ],
+          [
+            "5352.495000",
+            "6410.130000",
+            "ch. 8: Damage and Safe Cleanup"
+          ],
+          [
+            "6410.130000",
+            "7377.962000",
+            "ch. 9: Keeping the House Out of the Habitat"
+          ]
+        ],
+        "duration": "7377.962667",
+        "format_tags": [
+          [
+            "album",
+            "Rodents in the Walls"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-07-11 \u00b7 ONNX rv10"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-07-11T06:59:14.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 00000160 000000000A8DDA60 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "Rodents in the Walls"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "portrait_sha256": "e1afe1fbcbd440927c8d4d62de475af3230afe0d8edbbb6a886c498fc21af2a2",
+      "slug": "rodents-in-the-walls",
+      "source_m4b_sha256": "5fec30e4d939f47e03fd0f60b541717ea1ec4b2d0880bd28b24bc70530b0adf1",
+      "source_media_signature": {
+        "audio_packet_sha256": "76a4c4a8461de8251eaf81e62264ed0dc6573feadae524474b6c3b5a9e8dff10",
+        "chapters": [
+          [
+            "0.000000",
+            "544.580000",
+            "ch. 1: Something Is Living in the Wall"
+          ],
+          [
+            "544.580000",
+            "1247.095000",
+            "ch. 2: The Animals You Are Dealing With"
+          ],
+          [
+            "1247.095000",
+            "1790.010000",
+            "ch. 3: How They Get In"
+          ],
+          [
+            "1790.010000",
+            "2649.735000",
+            "ch. 4: Visitor, Den, or Nursery?"
+          ],
+          [
+            "2649.735000",
+            "3554.445000",
+            "ch. 5: Eviction Without Making It Worse"
+          ],
+          [
+            "3554.445000",
+            "4352.850000",
+            "ch. 6: Repairing for Squirrels, Not Just Mice"
+          ],
+          [
+            "4352.850000",
+            "5352.495000",
+            "ch. 7: Trapping, Law, and Poison"
+          ],
+          [
+            "5352.495000",
+            "6410.130000",
+            "ch. 8: Damage and Safe Cleanup"
+          ],
+          [
+            "6410.130000",
+            "7377.962000",
+            "ch. 9: Keeping the House Out of the Habitat"
+          ]
+        ],
+        "duration": "7377.962667",
+        "format_tags": [
+          [
+            "album",
+            "Rodents in the Walls"
+          ],
+          [
+            "album_artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "artist",
+            "Dan Fakkeldy"
+          ],
+          [
+            "comment",
+            "Echo narration \u2014 2026-07-11 \u00b7 ONNX rv10"
+          ],
+          [
+            "compatible_brands",
+            "M4A isommp42"
+          ],
+          [
+            "creation_time",
+            "2026-07-11T06:59:14.000000Z"
+          ],
+          [
+            "genre",
+            "Audiobook"
+          ],
+          [
+            "iTunSMPB",
+            " 00000000 00000840 00000160 000000000A8DDA60 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000"
+          ],
+          [
+            "major_brand",
+            "M4A "
+          ],
+          [
+            "minor_version",
+            "0"
+          ],
+          [
+            "title",
+            "Rodents in the Walls"
+          ]
+        ],
+        "streams": [
+          [
+            "audio",
+            "aac"
+          ],
+          [
+            "data",
+            "bin_data"
+          ],
+          [
+            "video",
+            "png"
+          ]
+        ]
+      },
+      "square_sha256": "835d1ce59149db0d781991689983359d717d031280eb4fcb8c97c2a0076af9a9"
+    }
+  ],
+  "edition_id": "public-audio-recovery-2026-07",
+  "schema_version": 1
+}

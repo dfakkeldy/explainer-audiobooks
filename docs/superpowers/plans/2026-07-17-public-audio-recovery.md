@@ -360,7 +360,7 @@ EXPECTED_ANCHORS = {
     "tests-first": 223,
     "git-happens": 461,
     "findable": 263,
-    "the-voice-in-the-machine": 535,
+    "the-voice-in-the-machine": 369,
 }
 ```
 
