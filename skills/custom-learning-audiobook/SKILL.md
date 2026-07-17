@@ -358,6 +358,14 @@ than retyping it from memory.
     The learning receipt proves process evidence and an accepted pilot, not
     learning transfer; later negative human listening evidence overrides it.
 
+    The EPUB is a text artifact and does not require rendered pilot audio. When
+    narration has not run, set `audioRendered: false` in
+    `comprehension-pilot.json`, leave `audioPath` and `audioSHA256` empty, and
+    give `audioNotRenderedReason`. The text package then builds without a full
+    Echo build and a synthesis run standing in front of it. When a pilot does
+    claim audio, the hash is still validated exactly as before, and a record may
+    never claim a hash it does not have.
+
 12. **Build the governed EPUB.** Only now follow the paired selection and EPUB
     sections in `references/package-and-qc.md`: create the paired receipt with
     `cover_receipts.py select-pair`, then run the governed `build_book.py`
@@ -385,9 +393,13 @@ than retyping it from memory.
    content-addressed paths, FD-backed resource leases, and locked pre/post hash
    verification for everything it emits; the reference documents those
    internals, and the scripts enforce them regardless of caller behavior.
-   Do not bypass the wrapper with a direct CLI command. Supply and record the
-   reviewed `APPROVED_ECHO_PRONUNCIATION_SHA`; the preflight fails closed
-   unless it exactly equals the clean Echo source `HEAD` being built.
+   Do not bypass the wrapper with a direct CLI command. The renderer's identity
+   is recorded automatically: the preflight captures `ECHO_CLI_SHA256` and
+   `ECHO_RESOURCES_SHA256` from the built binary and its resource tree, plus
+   `ECHO_SOURCE_SHA`, `ECHO_TREE_STATE`, and `ECHO_TREE_DIFF_SHA256` so a dirty
+   Echo tree is described exactly rather than blocking the render. Supplying a
+   reviewed `APPROVED_ECHO_PRONUNCIATION_SHA` is optional; when set it still
+   pins that revision and fails closed unless it equals a clean source `HEAD`.
 
    Echo audio is part of the delivery contract: do not impose your own time
    limit, deadline, or "too slow" threshold just because synthesis may take

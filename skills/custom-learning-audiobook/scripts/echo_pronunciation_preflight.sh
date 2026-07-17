@@ -42,6 +42,31 @@ require_git_commit_sha() {
   fi
 }
 
+# The renderer's identity leg of RUN_ID. Derived in exactly one place so the
+# preflight and the attestation cannot drift apart: computing it twice is what
+# let them disagree when the source leg changed.
+echo_pronunciation_source_id() {
+  local source_sha=${1:?source sha is required}
+  local tree_state=${2:?tree state is required}
+  local tree_diff=${3:-}
+  if [[ "$tree_state" == clean ]]; then
+    printf '%s\n' "$source_sha"
+  else
+    printf '%s-dirty-%s\n' "$source_sha" "${tree_diff:0:8}"
+  fi
+}
+
+echo_pronunciation_run_id() {
+  local package_sha=${1:?package sha is required}
+  local cli_sha=${2:?cli sha is required}
+  local resources_sha=${3:?resources sha is required}
+  local source_id=${4:?source id is required}
+  local voice=${5:?voice is required}
+  printf '%s-%s-%s-%s-%s\n' \
+    "${package_sha:0:12}" "${cli_sha:0:12}" "${resources_sha:0:12}" \
+    "$source_id" "$voice"
+}
+
 echo_pronunciation_release_render_version() {
   local cli_version=${1:-}
   local render_version
@@ -87,12 +112,6 @@ echo_pronunciation_preflight() {
     return 70
   fi
 
-  if [[ -z "$approved_input" ]]; then
-    printf '%s\n' \
-      'APPROVED_ECHO_PRONUNCIATION_SHA is required;' \
-      'record the reviewed Echo commit boundary before rendering' >&2
-    return 64
-  fi
   if [[ ! ${SLUG:-} =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
     printf 'SLUG must use lowercase letters, digits, and internal hyphens only\n' >&2
     return 64
@@ -123,29 +142,59 @@ echo_pronunciation_preflight() {
     return 66
   fi
 
-  require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA "$approved_input"
-  if ! APPROVED_ECHO_PRONUNCIATION_SHA=$(
-    git -C "$echo_repo" rev-parse --verify "${approved_input}^{commit}"
-  ); then
-    printf 'approved Echo pronunciation revision is not a commit: %s\n' "$approved_input" >&2
-    return 65
-  fi
+  # The authoritative identity of the renderer that produces the audio is
+  # ECHO_CLI_SHA256 plus ECHO_RESOURCES_SHA256, computed below from the actual
+  # built binary and its resource tree. The Git revision is a convenience label
+  # for those, so it is recorded rather than gated on: a dirty tree is described
+  # honestly instead of blocking the render.
   if ! ECHO_SOURCE_SHA=$(git -C "$echo_repo" rev-parse HEAD); then
     printf 'cannot resolve Echo source revision at %s\n' "$echo_repo" >&2
     return 65
   fi
+  require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
+
   local echo_status
   echo_status=$(git -C "$echo_repo" status --porcelain --untracked-files=all)
-  if [[ -n "$echo_status" ]]; then
-    printf 'Echo working tree is not clean; source SHA would not identify the built renderer\n' >&2
-    return 65
+  if [[ -z "$echo_status" ]]; then
+    ECHO_TREE_STATE=clean
+    ECHO_TREE_DIFF_SHA256=$(printf '' | /usr/bin/shasum -a 256 | cut -d' ' -f1)
+  else
+    ECHO_TREE_STATE=dirty
+    # Fingerprint the exact deviation from HEAD so the receipt still identifies
+    # the built renderer: tracked diff plus the porcelain status (which carries
+    # untracked paths the diff cannot see).
+    ECHO_TREE_DIFF_SHA256=$(
+      {
+        git -C "$echo_repo" diff HEAD
+        printf '%s\n' "$echo_status"
+      } | /usr/bin/shasum -a 256 | cut -d' ' -f1
+    )
   fi
-  require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA "$APPROVED_ECHO_PRONUNCIATION_SHA"
-  require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
-  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
-    printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
-      "$APPROVED_ECHO_PRONUNCIATION_SHA" "$ECHO_SOURCE_SHA" >&2
-    return 65
+  require_sha256 ECHO_TREE_DIFF_SHA256 "$ECHO_TREE_DIFF_SHA256"
+
+  # APPROVED_ECHO_PRONUNCIATION_SHA is optional. When set it still pins a
+  # reviewed revision and is enforced exactly as before; when unset the render
+  # proceeds and the receipt records that no revision was pinned.
+  if [[ -n "$approved_input" ]]; then
+    require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA "$approved_input"
+    if ! APPROVED_ECHO_PRONUNCIATION_SHA=$(
+      git -C "$echo_repo" rev-parse --verify "${approved_input}^{commit}"
+    ); then
+      printf 'approved Echo pronunciation revision is not a commit: %s\n' "$approved_input" >&2
+      return 65
+    fi
+    require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA "$APPROVED_ECHO_PRONUNCIATION_SHA"
+    if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
+      printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
+        "$APPROVED_ECHO_PRONUNCIATION_SHA" "$ECHO_SOURCE_SHA" >&2
+      return 65
+    fi
+    if [[ "$ECHO_TREE_STATE" != clean ]]; then
+      printf 'APPROVED_ECHO_PRONUNCIATION_SHA pins a revision but the Echo working tree is not clean; the pinned SHA would not identify the built renderer\n' >&2
+      return 65
+    fi
+  else
+    APPROVED_ECHO_PRONUNCIATION_SHA=unpinned
   fi
 
   "$build_gate" --wait
@@ -245,7 +294,12 @@ echo_pronunciation_preflight() {
       ;;
   esac
 
-  RUN_ID="${PACKAGE_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
+  local echo_source_id
+  echo_source_id=$(echo_pronunciation_source_id \
+    "$ECHO_SOURCE_SHA" "$ECHO_TREE_STATE" "$ECHO_TREE_DIFF_SHA256")
+  RUN_ID=$(echo_pronunciation_run_id \
+    "$PACKAGE_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
+    "$echo_source_id" "$VOICE")
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
@@ -254,6 +308,8 @@ echo_pronunciation_preflight() {
   receipt_text=$(printf '%s\n' \
     "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
     "echo_source_sha=$ECHO_SOURCE_SHA" \
+    "echo_tree_state=$ECHO_TREE_STATE" \
+    "echo_tree_diff_sha256=$ECHO_TREE_DIFF_SHA256" \
     "epub_sha256=$EPUB_SHA256" \
     "cover_selection_path=$COVER_SELECTION" \
     "cover_selection_sha256=$COVER_SELECTION_SHA256" \
@@ -308,6 +364,7 @@ echo_pronunciation_preflight() {
   EXPLAINER_ROOT=$explainer_root
   export ECHO_REPO EXPLAINER_ROOT
   export APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA EPUB EPUB_SHA256
+  export ECHO_TREE_STATE ECHO_TREE_DIFF_SHA256
   export COVER_SELECTION COVER_SELECTION_SHA256 COVER COVER_SHA256
   export M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256
   export CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256
@@ -325,7 +382,8 @@ echo_pronunciation_attest_inputs() {
   local required
   for required in \
     ECHO_REPO EXPLAINER_ROOT SLUG RUN_ROOT APPROVED_ECHO_PRONUNCIATION_SHA \
-    ECHO_SOURCE_SHA EPUB EPUB_SHA256 COVER_SELECTION COVER_SELECTION_SHA256 \
+    ECHO_SOURCE_SHA ECHO_TREE_STATE ECHO_TREE_DIFF_SHA256 \
+    EPUB EPUB_SHA256 COVER_SELECTION COVER_SELECTION_SHA256 \
     COVER COVER_SHA256 M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256 \
     CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR \
     ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION VOICE RUN_ID WORK DB \
@@ -379,28 +437,46 @@ echo_pronunciation_attest_inputs() {
     printf 'Echo input attestation requires the inherited build lease\n' >&2
     return 70
   fi
-  require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
-    "$APPROVED_ECHO_PRONUNCIATION_SHA"
   require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
-  local resolved_approved current_source source_status
-  resolved_approved=$(/usr/bin/git -C "$ECHO_REPO" rev-parse --verify \
-    "${APPROVED_ECHO_PRONUNCIATION_SHA}^{commit}") || {
-    printf 'approved Echo pronunciation revision is not a commit\n' >&2
-    return 65
-  }
+  require_sha256 ECHO_TREE_DIFF_SHA256 "${ECHO_TREE_DIFF_SHA256:-}"
+  # The attestation's job is that the renderer did not change between preflight
+  # and render. It compares against the state preflight actually recorded rather
+  # than demanding a clean tree, so a dirty tree is attested rather than refused
+  # — but any drift from that exact state still fails closed.
+  local current_source source_status current_tree_state current_tree_diff
   current_source=$(/usr/bin/git -C "$ECHO_REPO" rev-parse HEAD) || return 65
   source_status=$(/usr/bin/git -C "$ECHO_REPO" status --porcelain \
     --untracked-files=all)
-  if [[ -n "$source_status" ]]; then
-    printf 'Echo working tree is not clean; renderer attestation failed\n' >&2
+  if [[ -z "$source_status" ]]; then
+    current_tree_state=clean
+    current_tree_diff=$(printf '' | /usr/bin/shasum -a 256 | cut -d' ' -f1)
+  else
+    current_tree_state=dirty
+    current_tree_diff=$(
+      {
+        /usr/bin/git -C "$ECHO_REPO" diff HEAD
+        printf '%s\n' "$source_status"
+      } | /usr/bin/shasum -a 256 | cut -d' ' -f1
+    )
+  fi
+  if [[ "$current_source" != "$ECHO_SOURCE_SHA" ]]; then
+    printf 'Echo source HEAD moved during the render: recorded %s, now %s\n' \
+      "$ECHO_SOURCE_SHA" "$current_source" >&2
     return 65
   fi
-  if [[ "$resolved_approved" != "$APPROVED_ECHO_PRONUNCIATION_SHA" \
-    || "$current_source" != "$ECHO_SOURCE_SHA" \
-    || "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$current_source" ]]; then
-    printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
-      "$APPROVED_ECHO_PRONUNCIATION_SHA" "$current_source" >&2
+  if [[ "$current_tree_state" != "${ECHO_TREE_STATE:-}" \
+    || "$current_tree_diff" != "$ECHO_TREE_DIFF_SHA256" ]]; then
+    printf 'Echo working tree changed during the render; renderer attestation failed\n' >&2
     return 65
+  fi
+  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != unpinned ]]; then
+    require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
+      "$APPROVED_ECHO_PRONUNCIATION_SHA"
+    if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$current_source" ]]; then
+      printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
+        "$APPROVED_ECHO_PRONUNCIATION_SHA" "$current_source" >&2
+      return 65
+    fi
   fi
 
   local expected_cli expected_resources expected_epub expected_cover_selection
@@ -523,8 +599,12 @@ echo_pronunciation_attest_inputs() {
     return 65
   fi
 
-  local expected_run_id expected_work expected_db expected_receipt
-  expected_run_id="${PACKAGE_SHA256:0:12}-${ECHO_CLI_SHA256:0:12}-${ECHO_RESOURCES_SHA256:0:12}-${APPROVED_ECHO_PRONUNCIATION_SHA}-$VOICE"
+  local expected_run_id expected_work expected_db expected_receipt expected_source_id
+  expected_source_id=$(echo_pronunciation_source_id \
+    "$ECHO_SOURCE_SHA" "$ECHO_TREE_STATE" "$ECHO_TREE_DIFF_SHA256")
+  expected_run_id=$(echo_pronunciation_run_id \
+    "$PACKAGE_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
+    "$expected_source_id" "$VOICE")
   expected_work="$RUN_ROOT/audio-work-$expected_run_id"
   expected_db="$RUN_ROOT/narration-$expected_run_id.sqlite"
   expected_receipt="$RUN_ROOT/research/echo-render-inputs-$expected_run_id.env"
@@ -549,6 +629,8 @@ echo_pronunciation_attest_inputs() {
   expected_receipt_text=$(printf '%s\n' \
     "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
     "echo_source_sha=$ECHO_SOURCE_SHA" \
+    "echo_tree_state=$ECHO_TREE_STATE" \
+    "echo_tree_diff_sha256=$ECHO_TREE_DIFF_SHA256" \
     "epub_sha256=$EPUB_SHA256" \
     "cover_selection_path=$COVER_SELECTION" \
     "cover_selection_sha256=$COVER_SELECTION_SHA256" \

@@ -20,10 +20,14 @@ from echo_pronunciation_lease import load_capability, validate_capability
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 CHAPTER_CONTENT_SIGNATURE_PATTERN = re.compile(r"[0-9a-f]{16}")
 MARKER_PATTERN = re.compile(r"\.anchors-ch([0-9]+)\.json")
+# package-cli-resources-source-voice. The source leg is the Echo commit, with an
+# optional -dirty-<8 hex> marker when the working tree deviates from it, so a
+# dirty render can never collide with the clean render of the same commit.
 RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
     r"(?:[0-9a-f]{12}-)?"
-    r"(?:[0-9a-f]{40}|[0-9a-f]{64})-(?:am_michael|am_puck)"
+    r"(?:[0-9a-f]{40}|[0-9a-f]{64})(?:-dirty-[0-9a-f]{8})?"
+    r"-(?:am_michael|am_puck)"
 )
 
 
