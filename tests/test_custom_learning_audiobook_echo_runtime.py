@@ -612,6 +612,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "EXPLAINER_ROOT",
             "APPROVED_ECHO_PRONUNCIATION_SHA",
             "ECHO_SOURCE_SHA",
+            "ECHO_TREE_STATE",
+            "ECHO_TREE_DIFF_SHA256",
             "EPUB",
             "EPUB_SHA256",
             "COVER_SELECTION",
@@ -828,12 +830,61 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("receipt=", result.stdout)
 
-    def test_preflight_rejects_missing_approval(self) -> None:
+    def test_preflight_renders_unpinned_without_an_approval(self) -> None:
+        """The approval pin is optional. Without it the render proceeds and the
+        receipt says so, because the built binary and resource hashes already
+        identify the renderer."""
         environment = self.environment()
         environment.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
+        result = self.run_preflight(
+            environment=environment,
+            body=(
+                "echo_pronunciation_preflight\n"
+                'printf "approved=%s\\n" "$APPROVED_ECHO_PRONUNCIATION_SHA"\n'
+                'printf "tree=%s\\n" "$ECHO_TREE_STATE"\n'
+                'printf "receipt=%s\\n" "$ECHO_RENDER_INPUT_RECEIPT"'
+            ),
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("approved=unpinned", result.stdout)
+        self.assertIn("tree=clean", result.stdout)
+        receipt = Path(
+            result.stdout.split("receipt=", 1)[1].splitlines()[0].strip()
+        ).read_text(encoding="utf-8")
+        self.assertIn("approved_echo_pronunciation_sha=unpinned", receipt)
+        self.assertIn("echo_tree_state=clean", receipt)
+
+    def test_preflight_records_a_dirty_tree_instead_of_refusing_it(self) -> None:
+        """A dirty Echo tree no longer blocks. It is fingerprinted so the
+        receipt still identifies the exact renderer that was built."""
+        environment = self.environment()
+        environment.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
+        (self.echo / "dirty-marker.txt").write_text("uncommitted\n", encoding="utf-8")
+        result = self.run_preflight(
+            environment=environment,
+            body=(
+                "echo_pronunciation_preflight\n"
+                'printf "tree=%s\\n" "$ECHO_TREE_STATE"\n'
+                'printf "diff=%s\\n" "$ECHO_TREE_DIFF_SHA256"\n'
+                'printf "runid=%s\\n" "$RUN_ID"'
+            ),
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("tree=dirty", result.stdout)
+        diff_digest = result.stdout.split("diff=", 1)[1].splitlines()[0].strip()
+        self.assertRegex(diff_digest, r"^[0-9a-f]{64}$")
+        # The dirty render must not collide with the clean render of the same commit.
+        self.assertIn(f"-dirty-{diff_digest[:8]}-", result.stdout.split("runid=", 1)[1])
+
+    def test_preflight_still_enforces_a_supplied_pin_against_a_dirty_tree(self) -> None:
+        """Removing the requirement did not weaken the pin: if you do pin a
+        revision, it still must identify the built renderer."""
+        environment = self.environment()
+        environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.second_sha
+        (self.echo / "dirty-marker.txt").write_text("uncommitted\n", encoding="utf-8")
         result = self.run_preflight(environment=environment)
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("APPROVED_ECHO_PRONUNCIATION_SHA", result.stderr)
+        self.assertIn("pins a revision but the Echo working tree is not clean", result.stderr)
 
     def test_preflight_rejects_symbolic_approval(self) -> None:
         environment = self.environment()

@@ -68,6 +68,8 @@ pilot_receipt_text() {
     "attempt_id=$ATTEMPT_ID" \
     "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
     "echo_source_sha=$ECHO_SOURCE_SHA" \
+    "echo_tree_state=$ECHO_TREE_STATE" \
+    "echo_tree_diff_sha256=$ECHO_TREE_DIFF_SHA256" \
     "epub_path=$EPUB" \
     "epub_sha256=$EPUB_SHA256" \
     "echo_cli_path=$CLI" \
@@ -99,13 +101,6 @@ pilot_preflight() {
       "$explainer_root" >&2
     return 66
   }
-  if [[ -z "$approved_input" ]]; then
-    printf '%s\n' \
-      'APPROVED_ECHO_PRONUNCIATION_SHA is required;' \
-      'record the reviewed Echo commit boundary before rendering' >&2
-    return 64
-  fi
-  require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA "$approved_input"
   if [[ ! ${SLUG:-} =~ ^[a-z0-9][a-z0-9-]*$ || "$SLUG" == *-pilot ]]; then
     printf 'SLUG must be the lowercase base-book slug without a -pilot suffix\n' >&2
     return 64
@@ -159,24 +154,45 @@ pilot_preflight() {
     return 66
   fi
 
-  APPROVED_ECHO_PRONUNCIATION_SHA=$(
-    git -C "$echo_repo" rev-parse --verify "${approved_input}^{commit}"
-  ) || {
-    printf 'approved Echo pronunciation revision is not a commit: %s\n' \
-      "$approved_input" >&2
-    return 65
-  }
+  # Renderer identity comes from the built binary and resource tree below. The
+  # Git revision is recorded, not gated on; a dirty tree is fingerprinted.
   ECHO_SOURCE_SHA=$(git -C "$echo_repo" rev-parse HEAD) || return 65
+  require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
   local echo_status
   echo_status=$(git -C "$echo_repo" status --porcelain --untracked-files=all)
-  if [[ -n "$echo_status" ]]; then
-    printf 'Echo working tree is not clean; renderer attestation failed\n' >&2
-    return 65
+  if [[ -z "$echo_status" ]]; then
+    ECHO_TREE_STATE=clean
+    ECHO_TREE_DIFF_SHA256=$(printf '' | /usr/bin/shasum -a 256 | cut -d' ' -f1)
+  else
+    ECHO_TREE_STATE=dirty
+    ECHO_TREE_DIFF_SHA256=$(
+      {
+        git -C "$echo_repo" diff HEAD
+        printf '%s\n' "$echo_status"
+      } | /usr/bin/shasum -a 256 | cut -d' ' -f1
+    )
   fi
-  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
-    printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
-      "$APPROVED_ECHO_PRONUNCIATION_SHA" "$ECHO_SOURCE_SHA" >&2
-    return 65
+
+  if [[ -n "$approved_input" ]]; then
+    require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA "$approved_input"
+    APPROVED_ECHO_PRONUNCIATION_SHA=$(
+      git -C "$echo_repo" rev-parse --verify "${approved_input}^{commit}"
+    ) || {
+      printf 'approved Echo pronunciation revision is not a commit: %s\n' \
+        "$approved_input" >&2
+      return 65
+    }
+    if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
+      printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
+        "$APPROVED_ECHO_PRONUNCIATION_SHA" "$ECHO_SOURCE_SHA" >&2
+      return 65
+    fi
+    if [[ "$ECHO_TREE_STATE" != clean ]]; then
+      printf 'APPROVED_ECHO_PRONUNCIATION_SHA pins a revision but the Echo working tree is not clean; the pinned SHA would not identify the built renderer\n' >&2
+      return 65
+    fi
+  else
+    APPROVED_ECHO_PRONUNCIATION_SHA=unpinned
   fi
 
   "$build_gate" --wait
@@ -274,6 +290,7 @@ pilot_preflight() {
   export ECHO_REPO EXPLAINER_ROOT RUN_ROOT SLUG TITLE VOICE
   export PILOT_SLUG PILOT_ROOT PILOT_DIST PILOT_RESEARCH
   export APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA
+  export ECHO_TREE_STATE ECHO_TREE_DIFF_SHA256
   export EPUB EPUB_SHA256 CLI ECHO_CLI_SHA256
   export ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION
   export PILOT_INPUT_SHA256 ATTEMPT_ID WORK DB OUTPUT SIDECAR AUDIT REEL
@@ -286,6 +303,7 @@ pilot_attest_inputs() {
     ECHO_REPO EXPLAINER_ROOT RUN_ROOT SLUG TITLE VOICE \
     PILOT_SLUG PILOT_ROOT PILOT_DIST PILOT_RESEARCH \
     APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA \
+    ECHO_TREE_STATE ECHO_TREE_DIFF_SHA256 \
     EPUB EPUB_SHA256 CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR \
     ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION PILOT_INPUT_SHA256 \
     ATTEMPT_ID WORK DB OUTPUT SIDECAR AUDIT REEL \
@@ -297,8 +315,10 @@ pilot_attest_inputs() {
       return 70
     fi
   done
-  require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
-    "$APPROVED_ECHO_PRONUNCIATION_SHA"
+  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != unpinned ]]; then
+    require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
+      "$APPROVED_ECHO_PRONUNCIATION_SHA"
+  fi
   require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
   require_sha256 EPUB_SHA256 "$EPUB_SHA256"
   require_sha256 ECHO_CLI_SHA256 "$ECHO_CLI_SHA256"
@@ -357,17 +377,39 @@ pilot_attest_inputs() {
     "$BUILD_RESOURCE" "$WORK" "$DB" "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL" \
     "$INPUT_RECEIPT" "$SUCCESS_RECEIPT"
 
-  local current_source source_status resolved_approved
+  # Attest that the renderer did not change while the lease was held. Compare
+  # against the state preflight recorded rather than demanding a clean tree.
+  local current_source source_status current_tree_state current_tree_diff
   current_source=$(/usr/bin/git -C "$ECHO_REPO" rev-parse HEAD) || return 65
   source_status=$(/usr/bin/git -C "$ECHO_REPO" status --porcelain \
     --untracked-files=all)
-  resolved_approved=$(/usr/bin/git -C "$ECHO_REPO" rev-parse --verify \
-    "${APPROVED_ECHO_PRONUNCIATION_SHA}^{commit}") || return 65
-  if [[ -n "$source_status" || "$current_source" != "$ECHO_SOURCE_SHA" \
-    || "$resolved_approved" != "$APPROVED_ECHO_PRONUNCIATION_SHA" \
-    || "$current_source" != "$APPROVED_ECHO_PRONUNCIATION_SHA" ]]; then
-    printf 'approved Echo source changed while pilot lease was held\n' >&2
+  if [[ -z "$source_status" ]]; then
+    current_tree_state=clean
+    current_tree_diff=$(printf '' | /usr/bin/shasum -a 256 | cut -d' ' -f1)
+  else
+    current_tree_state=dirty
+    current_tree_diff=$(
+      {
+        /usr/bin/git -C "$ECHO_REPO" diff HEAD
+        printf '%s\n' "$source_status"
+      } | /usr/bin/shasum -a 256 | cut -d' ' -f1
+    )
+  fi
+  if [[ "$current_source" != "$ECHO_SOURCE_SHA" \
+    || "$current_tree_state" != "${ECHO_TREE_STATE:-}" \
+    || "$current_tree_diff" != "${ECHO_TREE_DIFF_SHA256:-}" ]]; then
+    printf 'Echo source changed while pilot lease was held\n' >&2
     return 65
+  fi
+  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != unpinned ]]; then
+    local resolved_approved
+    resolved_approved=$(/usr/bin/git -C "$ECHO_REPO" rev-parse --verify \
+      "${APPROVED_ECHO_PRONUNCIATION_SHA}^{commit}") || return 65
+    if [[ "$resolved_approved" != "$APPROVED_ECHO_PRONUNCIATION_SHA" \
+      || "$current_source" != "$APPROVED_ECHO_PRONUNCIATION_SHA" ]]; then
+      printf 'approved Echo source changed while pilot lease was held\n' >&2
+      return 65
+    fi
   fi
   local expected_cli expected_resources release_component
   expected_cli="$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli"

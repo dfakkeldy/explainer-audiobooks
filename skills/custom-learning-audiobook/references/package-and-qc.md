@@ -283,8 +283,9 @@ export EXPLAINER_ROOT
 export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
 export SLUG TITLE
 export VOICE=am_michael
-: "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
-export APPROVED_ECHO_PRONUNCIATION_SHA
+# Optional: pin a reviewed Echo revision. Unset renders as `unpinned`, with the
+# built binary and resource hashes carrying provenance.
+export APPROVED_ECHO_PRONUNCIATION_SHA="${APPROVED_ECHO_PRONUNCIATION_SHA:-}"
 
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_learning_pilot_narrate.sh"
 ```
@@ -475,14 +476,28 @@ Never invoke a DerivedData `Debug/echo-cli`, a raw direct `echo-cli narrate`, or
 an older audiobook worktree command for a governed render; those paths bypass
 the wrapper's provenance, resource leases, and locked postchecks.
 
-Every governed render needs a nonempty approved source revision. Set
-`APPROVED_ECHO_PRONUNCIATION_SHA` to the reviewed Echo commit that established
-the pronunciation behavior being accepted; do not derive approval from the
-current `HEAD`. The preflight resolves that commit, captures `ECHO_SOURCE_SHA`,
-requires the Echo working tree to be clean, and fails unless the approved
-revision exactly equals the source `HEAD` being built. Descendants are not
-implicitly approved. This is an explicit review boundary, not a transient
-hard-coded SHA.
+The renderer that produced the audio is identified by `ECHO_CLI_SHA256` and
+`ECHO_RESOURCES_SHA256` — hashes of the actual built binary and its resource
+tree. Those are the authoritative fingerprint and the preflight always records
+them. The Git revision is a convenience label for the same thing, so the
+preflight records `ECHO_SOURCE_SHA` alongside `ECHO_TREE_STATE` (`clean` or
+`dirty`) and `ECHO_TREE_DIFF_SHA256`, a digest of the exact deviation from
+`HEAD`. A dirty tree is therefore described precisely instead of refused: the
+receipt still identifies the built renderer, because the diff digest closes the
+gap the bare commit SHA would leave.
+
+The mid-render attestation re-derives that state and fails closed if `HEAD`
+moved or the working tree changed between preflight and render. Drift still
+fails; a dirty starting point does not.
+
+`APPROVED_ECHO_PRONUNCIATION_SHA` is **optional**. Leave it unset and the render
+proceeds with `approved_echo_pronunciation_sha=unpinned` in the receipt. Set it
+to a reviewed Echo commit and the preflight enforces the original boundary
+exactly: it resolves the commit, requires a clean working tree, and fails unless
+the approved revision equals the source `HEAD` being built. Descendants are
+never implicitly approved. Use it when you want an explicit review boundary
+pinned into the receipt; omit it when the binary and resource hashes are
+provenance enough.
 
 A feature-worktree edit does not update installed agents merely because their
 paths are symlinks: those links resolve the canonical checkout at
@@ -548,8 +563,9 @@ export SLUG TITLE
 export COVER="$PAIR/cover.png"
 export M4B_COVER="$PAIR/m4b-cover.png"
 export PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
-: "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the approved Echo pronunciation commit}"
-export APPROVED_ECHO_PRONUNCIATION_SHA
+# Optional: pin a reviewed Echo revision. Unset renders as `unpinned`, with the
+# built binary and resource hashes carrying provenance.
+export APPROVED_ECHO_PRONUNCIATION_SHA="${APPROVED_ECHO_PRONUNCIATION_SHA:-}"
 
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh"
 ```

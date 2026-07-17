@@ -368,9 +368,13 @@ than retyping it from memory.
    content-addressed paths, FD-backed resource leases, and locked pre/post hash
    verification for everything it emits; the reference documents those
    internals, and the scripts enforce them regardless of caller behavior.
-   Do not bypass the wrapper with a direct CLI command. Supply and record the
-   reviewed `APPROVED_ECHO_PRONUNCIATION_SHA`; the preflight fails closed
-   unless it exactly equals the clean Echo source `HEAD` being built.
+   Do not bypass the wrapper with a direct CLI command. The renderer's identity
+   is recorded automatically: the preflight captures `ECHO_CLI_SHA256` and
+   `ECHO_RESOURCES_SHA256` from the built binary and its resource tree, plus
+   `ECHO_SOURCE_SHA`, `ECHO_TREE_STATE`, and `ECHO_TREE_DIFF_SHA256` so a dirty
+   Echo tree is described exactly rather than blocking the render. Supplying a
+   reviewed `APPROVED_ECHO_PRONUNCIATION_SHA` is optional; when set it still
+   pins that revision and fails closed unless it equals a clean source `HEAD`.
 
    Echo audio is part of the delivery contract: do not impose your own time
    limit, deadline, or "too slow" threshold just because synthesis may take

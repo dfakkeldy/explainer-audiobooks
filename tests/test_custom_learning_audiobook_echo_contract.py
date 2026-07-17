@@ -57,7 +57,6 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
     def test_builds_and_preflights_the_exact_release_cli(self) -> None:
         for marker in (
             "APPROVED_ECHO_PRONUNCIATION_SHA",
-            "approved source revision",
             "ECHO_SOURCE_SHA",
             "ECHO_CLI_SHA256",
             "EPUB_SHA256",
@@ -67,6 +66,55 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.normalized(self.package))
+
+    def test_renderer_identity_comes_from_the_built_artifacts(self) -> None:
+        """The built binary and its resource tree are the authoritative
+        fingerprint. The Git revision is a label for them, so a dirty tree is
+        recorded exactly rather than refused, and the pin is optional."""
+        normalized_package = self.normalized(self.package)
+        for marker in (
+            "ECHO_CLI_SHA256",
+            "ECHO_RESOURCES_SHA256",
+            "ECHO_TREE_STATE",
+            "ECHO_TREE_DIFF_SHA256",
+            "unpinned",
+        ):
+            with self.subTest(marker=marker, doc="package-and-qc.md"):
+                self.assertIn(marker, normalized_package)
+
+        normalized_preflight = self.normalized(self.preflight)
+        for marker in (
+            "ECHO_TREE_STATE=clean",
+            "ECHO_TREE_STATE=dirty",
+            "ECHO_TREE_DIFF_SHA256",
+            "APPROVED_ECHO_PRONUNCIATION_SHA=unpinned",
+        ):
+            with self.subTest(marker=marker, doc="preflight"):
+                self.assertIn(marker, normalized_preflight)
+
+    def test_optional_pin_still_enforces_its_original_boundary(self) -> None:
+        """Setting APPROVED_ECHO_PRONUNCIATION_SHA must still require a clean
+        tree and exact equality with HEAD; only the requirement to set it at all
+        was removed."""
+        normalized_preflight = self.normalized(self.preflight)
+        self.assertIn(
+            "must exactly equal Echo source HEAD", normalized_preflight
+        )
+        self.assertIn(
+            "pins a revision but the Echo working tree is not clean",
+            normalized_preflight,
+        )
+
+    def test_attestation_fails_closed_on_mid_render_drift(self) -> None:
+        """A dirty starting tree is attested; drift from the recorded state is
+        still refused."""
+        normalized_preflight = self.normalized(self.preflight)
+        self.assertIn(
+            "Echo source HEAD moved during the render", normalized_preflight
+        )
+        self.assertIn(
+            "Echo working tree changed during the render", normalized_preflight
+        )
 
         self.assertIn("echo_pronunciation_preflight.sh", self.narrate_wrapper)
         self.assertIn('"$CLI" narrate', self.narrate_wrapper)
