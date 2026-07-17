@@ -1,0 +1,193 @@
+{
+  "schema_version": 2,
+  "variant": "portrait",
+  "candidate": {
+    "id": "locked-stack",
+    "direction_name": "The Locked Stack"
+  },
+  "metadata": {
+    "title": "The Competitive Bid Room",
+    "subtitle": "Automating Heavy-Civil Tenders Without Automating Judgment",
+    "author": "Dan Fakkeldy",
+    "label": "AUDIOBOOK"
+  },
+  "canvas": {
+    "width": 1600,
+    "height": 2560,
+    "safe_margin": 96,
+    "background": "#080808"
+  },
+  "art": {
+    "path": "source-art.png",
+    "mode": "bleed",
+    "anchor": "center",
+    "box": [
+      0,
+      0,
+      1600,
+      2560
+    ],
+    "opacity": 1,
+    "blend_mode": "normal"
+  },
+  "layers": [
+    {
+      "kind": "scrim",
+      "box": [
+        0,
+        0,
+        1600,
+        760
+      ],
+      "fill": {
+        "kind": "linear-gradient",
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          0,
+          760
+        ],
+        "stops": [
+          {
+            "offset": 0,
+            "colour": "#080808",
+            "opacity": 0.98
+          },
+          {
+            "offset": 1,
+            "colour": "#080808",
+            "opacity": 0.18
+          }
+        ]
+      },
+      "opacity": 1,
+      "blend_mode": "normal",
+      "purpose": "Use the black photographic void as an editorial masthead."
+    },
+    {
+      "kind": "text",
+      "role": "label",
+      "text": "AUDIOBOOK",
+      "font_id": "geometric-sans",
+      "box": [
+        105,
+        105,
+        600,
+        65
+      ],
+      "size": 32,
+      "line_height": 40,
+      "tracking": 8,
+      "align": "left",
+      "colour": "#D8FF00",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#080808"
+    },
+    {
+      "kind": "text",
+      "role": "title",
+      "title_order": 1,
+      "text": "THE COMPETITIVE",
+      "font_id": "display-condensed",
+      "box": [
+        100,
+        225,
+        1390,
+        235
+      ],
+      "size": 176,
+      "line_height": 202,
+      "tracking": 0,
+      "align": "left",
+      "colour": "#F4F1EA",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#080808"
+    },
+    {
+      "kind": "text",
+      "role": "title",
+      "title_order": 2,
+      "text": "BID ROOM",
+      "font_id": "display-condensed",
+      "box": [
+        100,
+        420,
+        1120,
+        250
+      ],
+      "size": 205,
+      "line_height": 228,
+      "tracking": 0,
+      "align": "left",
+      "colour": "#D8FF00",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#080808"
+    },
+    {
+      "kind": "field",
+      "box": [
+        96,
+        1940,
+        1408,
+        300
+      ],
+      "fill": {
+        "kind": "solid",
+        "colour": "#080808"
+      },
+      "opacity": 0.82,
+      "blend_mode": "normal",
+      "purpose": "Hold the practical promise against the dense stack."
+    },
+    {
+      "kind": "text",
+      "role": "subtitle",
+      "text": "AUTOMATING HEAVY-CIVIL TENDERS\nWITHOUT AUTOMATING JUDGMENT",
+      "font_id": "technical-mono",
+      "box": [
+        125,
+        1990,
+        1340,
+        135
+      ],
+      "size": 36,
+      "line_height": 48,
+      "tracking": 0,
+      "align": "left",
+      "colour": "#F4F1EA",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#080808"
+    },
+    {
+      "kind": "text",
+      "role": "author",
+      "text": "DAN FAKKELDY",
+      "font_id": "geometric-sans",
+      "box": [
+        125,
+        2165,
+        1000,
+        65
+      ],
+      "size": 36,
+      "line_height": 44,
+      "tracking": 3,
+      "align": "left",
+      "colour": "#D8FF00",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#080808"
+    }
+  ]
+}

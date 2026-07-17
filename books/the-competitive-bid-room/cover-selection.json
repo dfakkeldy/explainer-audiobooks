@@ -1,0 +1,41 @@
+{
+  "book_slug": "the-competitive-bid-room",
+  "candidate": {
+    "direction_name": "The Locked Stack",
+    "id": "locked-stack"
+  },
+  "edition_id": "the-competitive-bid-room-road-book-restart-2026-07-16",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-17T00:42:23Z",
+  "selection_source": "user",
+  "source_art_sha256": "b8989bce38ed693a7d971ebf32538876aba5e8d5612864dd85d464eb93e01002",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "2163b4697107c38a29c2109c1051041f3063ff3df94b5d4f4cf735fccd55fda3",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "8bc65be5b69ed58cebc3ee453dd70a516528ba07511372505b608ced8bcd4671",
+      "specification_sha256": "b636da6e4965d258563dfdb0c18b30b5aa2b93d08bc58dbeb37413bc1195d7e7",
+      "subtitle_included": true,
+      "thumbnail_sha256": "874bead48443b37b02246affb305516101b9de3aefdac3bca99f17fd74e0cee7"
+    },
+    "square": {
+      "cover_sha256": "c71ff1a74d1ef9183dbf09d3acaf0312029b40cd425827513de9f9f1b453a808",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "b6068604f40917d479523f2651f362dbd1002ea86e68c5e692236d14be2a63e4",
+      "specification_sha256": "a8952e4479cda436cce45b13156328f743186b4317d0eaf2d8e8b7fdc9f87482",
+      "subtitle_included": false,
+      "thumbnail_sha256": "1c2f5758c25591b4167a03a9bd16f771dc9f9bf6a430201052c173ba1f984686"
+    }
+  }
+}
