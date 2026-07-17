@@ -310,7 +310,7 @@ load_owner_metadata() {
     || ! "$LOCK_OWNER_PID" =~ ^[1-9][0-9]*$ \
     || -z "$LOCK_OWNER_HOST" \
     || -z "$LOCK_OWNER_START" \
-    || ! "$LOCK_RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck)$ \
+    || ! "$LOCK_RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck|af_heart)$ \
     || ! "$LOCK_ATTEMPT_ID" =~ ^[0-9a-f]{64}$ \
     || "$LOCK_WORK" != "$RUN_ROOT/audio-work-$LOCK_RUN_ID" \
     || "$LOCK_DB" != "$RUN_ROOT/narration-$LOCK_RUN_ID.sqlite" \

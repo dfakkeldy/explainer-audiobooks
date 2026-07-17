@@ -554,6 +554,51 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertRegex(receipt, r"audio_sha256=[0-9a-f]{64}")
         self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
 
+    def test_learning_pilot_accepts_explicitly_selected_ava(self) -> None:
+        log = self.tmp / "ava-pilot-narrate.log"
+        environment = self.environment()
+        environment.update({"VOICE": "af_heart", "FAKE_NARRATE_LOG": str(log)})
+
+        result = self.run_pilot_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        arguments = [
+            line.removeprefix("ARG=")
+            for line in log.read_text(encoding="utf-8").splitlines()
+            if line.startswith("ARG=")
+        ]
+        self.assertEqual("af_heart", arguments[arguments.index("--voice") + 1])
+
+    def test_preflight_accepts_explicitly_selected_ava(self) -> None:
+        environment = self.environment()
+        environment["VOICE"] = "af_heart"
+
+        result = self.run_preflight(
+            environment=environment,
+            body='echo_pronunciation_preflight\nprintf "voice=%s\\n" "$VOICE"',
+        )
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("voice=af_heart", result.stdout)
+
+    def test_unapproved_voice_is_rejected_by_pilot_preflight_and_full_wrapper(
+        self,
+    ) -> None:
+        environment = self.environment()
+        environment["VOICE"] = "bf_emma"
+
+        for lane, result in (
+            ("preflight", self.run_preflight(environment=environment)),
+            ("pilot", self.run_pilot_narrate(environment=environment)),
+            ("full", self.run_narrate(environment=environment)),
+        ):
+            with self.subTest(lane=lane):
+                self.assertEqual(64, result.returncode)
+                self.assertIn(
+                    "VOICE must be am_michael, am_puck, or af_heart",
+                    result.stderr,
+                )
+
     def test_learning_pilot_preserves_optional_pronunciation_reel(self) -> None:
         environment = self.environment()
         environment["FAKE_EMIT_REEL"] = "1"
@@ -1098,6 +1143,48 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(selector["attemptID"], artifact_root.name)
         self.assertTrue((artifact_root / "fixture.m4b").is_file())
         self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
+
+    def test_ava_completes_full_governed_render_and_resume_lifecycle(self) -> None:
+        environment = self.environment()
+        environment["VOICE"] = "af_heart"
+
+        first = self.run_narrate(environment=environment)
+
+        self.assertEqual(0, first.returncode, first.stderr)
+        research = self.run_root / "research"
+        selector_path = research / "echo-render-current-accepted.json"
+        selector = json.loads(selector_path.read_text(encoding="utf-8"))
+        self.assertTrue(selector["runID"].endswith("-af_heart"))
+        input_receipt = research / selector["inputReceiptFileName"]
+        input_fields = dict(
+            line.split("=", 1)
+            for line in input_receipt.read_text(encoding="utf-8").splitlines()
+        )
+        self.assertEqual("af_heart", input_fields["voice"])
+        work = Path(input_fields["work_dir"])
+        marker = json.loads(
+            (work / ".anchors-ch0.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual("af_heart", marker["identity"]["voice"])
+        state = research / f"echo-resume-state-{selector['runID']}.json"
+        self.assertTrue(state.is_file())
+        first_attempt_id = selector["attemptID"]
+
+        resumed = self.run_narrate("--resume", environment=environment)
+
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        resumed_selector = json.loads(selector_path.read_text(encoding="utf-8"))
+        self.assertEqual(selector["runID"], resumed_selector["runID"])
+        self.assertNotEqual(first_attempt_id, resumed_selector["attemptID"])
+        artifact_root = (
+            self.run_root / "dist" / resumed_selector["artifactRelativePath"]
+        )
+        audit = json.loads(
+            (artifact_root / "fixture.pronunciation-audit.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual("af_heart", audit["voice"])
 
     def test_wrapper_replaces_inherited_echo_resource_dir_for_every_cli_call(
         self,
@@ -1876,9 +1963,11 @@ pattern = runpy.run_path(str(helper))["RUN_ID_PATTERN"]
 commit = "d" * 40
 current = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-am_michael"
 prototype = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{commit}-am_michael"
+ava = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-af_heart"
 invalid = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{'f' * 12}-{commit}-am_michael"
 assert pattern.fullmatch(current)
 assert pattern.fullmatch(prototype)
+assert pattern.fullmatch(ava)
 assert pattern.fullmatch(invalid) is None
 """
         result = subprocess.run(
@@ -1954,6 +2043,13 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("pronunciation_audit: clean", result.stdout)
 
+    def test_accepts_explicitly_approved_ava_voice(self) -> None:
+        self.payload["voice"] = "af_heart"
+
+        result = self.run_validator()
+
+        self.assertEqual(0, result.returncode, result.stderr)
+
     def test_rejects_non_v2_manifest(self) -> None:
         self.payload["schemaVersion"] = 1
         result = self.run_validator()
@@ -1992,7 +2088,11 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
 
     def test_rejects_disallowed_voice_or_pre_v12_render(self) -> None:
         for field, value, message in (
-            ("voice", "af_heart", "voice must be am_michael or am_puck"),
+            (
+                "voice",
+                "bf_emma",
+                "voice must be am_michael, am_puck, or af_heart",
+            ),
             ("renderVersion", 11, "renderVersion must be at least 12"),
         ):
             with self.subTest(field=field):

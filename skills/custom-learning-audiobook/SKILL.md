@@ -105,7 +105,7 @@ than retyping it from memory.
 | Sampler | 45-75 minutes when the topic is vague or commitment is light |
 | Audience | Curious beginner unless the request says otherwise |
 | Listening mode | `road-book`, for driving and delivering mail; use `focused-study` only when the listener explicitly expects pause/rewind/visual work |
-| Narrator | `am_michael`; fallback `am_puck`; do not default to `af_heart` |
+| Narrator | `am_michael`; automatic fallback `am_puck`; `af_heart` is an approved alternative only when the listener explicitly selects or accepts it |
 | Audio renderer | Native Echo/Kokoro through the governed narration wrapper; no raw Debug CLI or Apple/system-voice substitute |
 | Author metadata | `Dan Fakkeldy` |
 | Writing model metadata | Record the frontier author as contributor/source note |
@@ -364,7 +364,9 @@ than retyping it from memory.
 
    Narrate through the governed Echo narration wrapper from
    `references/package-and-qc.md` with `--voice am_michael` first and `am_puck`
-   only as an Echo voice fallback. The wrapper owns the Release preflight,
+   only as an automatic Echo voice fallback. When the listener explicitly
+   selects or accepts `af_heart` from an audition, use it through the same
+   governed wrapper instead. The wrapper owns the Release preflight,
    content-addressed paths, FD-backed resource leases, and locked pre/post hash
    verification for everything it emits; the reference documents those
    internals, and the scripts enforce them regardless of caller behavior.
@@ -473,7 +475,9 @@ than retyping it from memory.
 - Do not publish or commit a requester book unless it is public-safe and the
   user has permission to add it to the public learning library.
 - Do not copy private generated artifacts into the public repo or public KB.
-- Do not use `af_heart` as the default narrator.
+- Keep `am_michael` as the default narrator. Use `af_heart` only when the
+  listener explicitly selects it or accepts it from a voice audition; never
+  make it a silent fallback.
 - Do not invent a timebox for audio rendering. A multi-hour Echo/Kokoro render
   is allowed work, not a reason to downgrade the package.
 - Do not use Apple/macOS/system narration as a fallback for Echo audio unless

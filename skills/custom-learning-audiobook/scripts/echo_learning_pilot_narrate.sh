@@ -147,9 +147,9 @@ pilot_preflight() {
   fi
   VOICE=${VOICE:-am_michael}
   case "$VOICE" in
-    am_michael | am_puck) ;;
+    am_michael | am_puck | af_heart) ;;
     *)
-      printf 'VOICE must be am_michael or am_puck, got: %s\n' "$VOICE" >&2
+      printf 'VOICE must be am_michael, am_puck, or af_heart, got: %s\n' "$VOICE" >&2
       return 64
       ;;
   esac
@@ -309,7 +309,7 @@ pilot_attest_inputs() {
     return 70
   fi
   case "$VOICE" in
-    am_michael | am_puck) ;;
+    am_michael | am_puck | af_heart) ;;
     *)
       printf 'sealed pilot voice is unsupported: %s\n' "$VOICE" >&2
       return 64

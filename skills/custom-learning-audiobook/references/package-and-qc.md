@@ -700,8 +700,9 @@ Do not edit, retag, replace the cover of, or otherwise mutate the published M4B.
 
 If `am_michael` fails because the voice resource is unavailable, set and export
 `VOICE=am_puck`, then rerun the wrapper. Its preflight derives a new `RUN_ID`,
-`WORK`, `DB`, receipt, and resource leases. Record the fallback. Do not silently use
-`af_heart`.
+`WORK`, `DB`, receipt, and resource leases. Record the fallback. `af_heart` is
+also eligible when the listener explicitly selects it or accepts it from a
+voice audition, but do not use it as a silent fallback.
 
 Use a fresh `--work-dir` and `--db` whenever the source EPUB changes or the
 Release CLI binary or Echo source revision changes. Permit `--resume` only for
@@ -793,7 +794,7 @@ ARTIFACT_RELATIVE_PATH=$(selector_value artifactRelativePath)
 INPUT_RECEIPT_NAME=$(selector_value inputReceiptFileName)
 SUCCESS_RECEIPT_NAME=$(selector_value successReceiptFileName)
 STATE_RECEIPT_NAME="echo-resume-state-$RUN_ID.json"
-[[ "$RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck)$ ]]
+[[ "$RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck|af_heart)$ ]]
 [[ "$ATTEMPT_ID" =~ ^[0-9a-f]{64}$ ]]
 [[ "$ARTIFACT_RELATIVE_PATH" == "echo-renders/$RUN_ID/$ATTEMPT_ID" ]]
 [[ "$INPUT_RECEIPT_NAME" == "echo-render-inputs-$RUN_ID.env" ]]

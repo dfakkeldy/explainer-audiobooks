@@ -23,7 +23,7 @@ MARKER_PATTERN = re.compile(r"\.anchors-ch([0-9]+)\.json")
 RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
     r"(?:[0-9a-f]{12}-)?"
-    r"(?:[0-9a-f]{40}|[0-9a-f]{64})-(?:am_michael|am_puck)"
+    r"(?:[0-9a-f]{40}|[0-9a-f]{64})-(?:am_michael|am_puck|af_heart)"
 )
 
 
@@ -187,7 +187,10 @@ def capture_snapshot(
         or re.fullmatch(r"[0-9a-f]{40}", source_sha) is not None,
         "source SHA is invalid",
     )
-    require(voice in {"am_michael", "am_puck"}, "resume voice is invalid")
+    require(
+        voice in {"am_michael", "am_puck", "af_heart"},
+        "resume voice is invalid",
+    )
     require(
         type(render_version) is int and render_version >= 12,
         "resume render version must be an integer of at least 12",

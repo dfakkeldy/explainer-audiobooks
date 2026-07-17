@@ -81,7 +81,7 @@ DECISION_SOURCES = {
 TIMING_PRECISIONS = {"exactSynthesisWord", "blockAnchorFallback"}
 INT32_MAX = (2**31) - 1
 INT64_MAX = (2**63) - 1
-ALLOWED_VOICES = {"am_michael", "am_puck"}
+ALLOWED_VOICES = {"am_michael", "am_puck", "af_heart"}
 
 
 class AuditValidationError(ValueError):
@@ -249,7 +249,10 @@ def validate(audit_path: Path) -> None:
     render_version = require_nonnegative_int(payload["renderVersion"], "renderVersion")
     require(render_version >= 12, "renderVersion must be at least 12")
     voice = require_nonempty_string(payload["voice"], "voice")
-    require(voice in ALLOWED_VOICES, "voice must be am_michael or am_puck")
+    require(
+        voice in ALLOWED_VOICES,
+        "voice must be am_michael, am_puck, or af_heart",
+    )
     require(payload["coverage"] == "complete", "coverage must be complete")
     require(isinstance(payload["decisions"], list), "decisions must be an array")
     require(isinstance(payload["diagnostics"], list), "diagnostics must be an array")
