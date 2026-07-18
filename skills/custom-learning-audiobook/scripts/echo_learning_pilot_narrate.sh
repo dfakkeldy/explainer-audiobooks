@@ -489,6 +489,7 @@ narrate_command=(
 if (( RESUME )); then
   narrate_command+=(--resume)
 fi
+pilot_attest_inputs
 "${narrate_command[@]}" &
 NARRATE_PID=$!
 set +e

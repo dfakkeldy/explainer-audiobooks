@@ -423,6 +423,10 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
     ) -> None:
         cli = cli or self.cli
         resources = resources or self.resources
+        probe_block_control = self.tmp / "probe-block-control"
+        probe_block_count = self.tmp / "probe-block-count"
+        probe_block_ready = self.tmp / "probe-block-ready"
+        probe_block_release = self.tmp / "probe-block-release"
         help_text = (
             " ".join(REQUIRED_CAPABILITIES[:-1]) if include_review_flag else "--voice"
         )
@@ -504,6 +508,20 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "  printf 'CALL=%s:%s ECHO_RESOURCE_DIR=%s\\n' "
             '"${1:-}" "${2:-}" "${ECHO_RESOURCE_DIR-<unset>}" '
             '>>"$FAKE_ECHO_ENV_LOG"\n'
+            "fi\n"
+            'if [[ ${1:-} == verify-sidecar && ${2:-} == --help '
+            f'  && -f {shlex.quote(str(probe_block_control))} ]]; then\n'
+            f'  probe_target=$(<{shlex.quote(str(probe_block_control))})\n'
+            "  probe_count=0\n"
+            f'  [[ ! -f {shlex.quote(str(probe_block_count))} ]] '
+            f'|| read -r probe_count <{shlex.quote(str(probe_block_count))}\n'
+            "  (( probe_count += 1 ))\n"
+            f'  printf "%s\\n" "$probe_count" >{shlex.quote(str(probe_block_count))}\n'
+            '  if [[ $probe_count == "$probe_target" ]]; then\n'
+            f'    touch {shlex.quote(str(probe_block_ready))}\n'
+            f'    while [[ ! -e {shlex.quote(str(probe_block_release))} ]]; '
+            'do sleep 0.05; done\n'
+            "  fi\n"
             "fi\n"
             "if [[ ${1:-} == --version ]]; then\n"
             f"  echo 'ONNX rv{render_version} (Release)'\n"
@@ -1046,6 +1064,108 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertFalse(
             (pilot_dist / "fixture-pilot.pronunciation-audit.json").exists()
         )
+
+    def test_learning_pilot_rejects_executable_and_resource_mutation_before_cli_launch(
+        self,
+    ) -> None:
+        control = self.tmp / "probe-block-control"
+        ready = self.tmp / "probe-block-ready"
+        release = self.tmp / "probe-block-release"
+        narrate_log = self.tmp / "pilot-prelaunch-narrate.log"
+        control.write_text("2\n", encoding="utf-8")
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_LOG": str(narrate_log),
+            }
+        )
+        process = subprocess.Popen(
+            [str(PILOT_NARRATE_WRAPPER)],
+            cwd=self.explainer,
+            env=environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.addCleanup(lambda: process.poll() is None and process.kill())
+        self.wait_for_path(ready, process)
+
+        (self.resources / "pronunciations.json").write_text(
+            '{"renderVersion":13}\n', encoding="utf-8"
+        )
+        with self.cli.open("a", encoding="utf-8") as executable:
+            executable.write("\n# mutated before narration launch\n")
+        release.touch()
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
+
+        self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
+        narrate_calls = (
+            narrate_log.read_text(encoding="utf-8").count("BEGIN=")
+            if narrate_log.exists()
+            else 0
+        )
+        self.assertEqual(0, narrate_calls, "mutated package reached CLI narration")
+        pilot_dist = self.run_root / "pilot" / "dist"
+        for artifact in (
+            "fixture-pilot.m4b",
+            "fixture-pilot.alignment.json",
+            "fixture-pilot.pronunciation-audit.json",
+        ):
+            with self.subTest(artifact=artifact):
+                self.assertFalse((pilot_dist / artifact).exists())
+
+    def test_full_and_pilot_hold_the_exact_build_root_lease_through_narration(
+        self,
+    ) -> None:
+        for wrapper, command in (
+            ("full", NARRATE_WRAPPER),
+            ("pilot", PILOT_NARRATE_WRAPPER),
+        ):
+            with self.subTest(wrapper=wrapper):
+                ready = self.tmp / f"{wrapper}-build-lease-ready"
+                release = self.tmp / f"{wrapper}-build-lease-release"
+                environment = self.environment()
+                environment.update(
+                    {
+                        "FAKE_NARRATE_READY": str(ready),
+                        "FAKE_NARRATE_RELEASE": str(release),
+                    }
+                )
+                process = subprocess.Popen(
+                    [str(command)],
+                    cwd=self.explainer,
+                    env=environment,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                self.addCleanup(lambda: process.poll() is None and process.kill())
+                self.wait_for_path(ready, process)
+
+                contender = subprocess.run(
+                    [
+                        str(LEASE_HELPER),
+                        "--lock-root",
+                        str(self.lease_root),
+                        "--resource",
+                        str(self.renderer_build_root),
+                        "--",
+                        "/usr/bin/true",
+                    ],
+                    cwd=self.explainer,
+                    env=self.environment(),
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(75, contender.returncode, contender.stderr)
+                self.assertIn(
+                    f"active narration lease owns shared resource: {self.renderer_build_root}",
+                    contender.stderr,
+                )
+
+                release.touch()
+                stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
+                self.assertEqual(0, process.returncode, f"{stdout}\n{stderr}")
 
     def preflight_fields(self) -> dict[str, str]:
         names = (
