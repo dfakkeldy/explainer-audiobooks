@@ -1,0 +1,16 @@
+{
+  "schema_version": 2,
+  "variant": "portrait",
+  "candidate": {"id": "route-and-return", "direction_name": "Route and Return"},
+  "canvas": {"width": 1600, "height": 2560, "background": "#F5F0E7", "safe_margin": 96},
+  "art": {"path": "source-art.png", "mode": "bleed", "box": [0, 0, 1600, 2560], "anchor": "center", "opacity": 1, "blend_mode": "normal"},
+  "layers": [
+    {"kind": "text", "role": "label", "text": "AUDIOBOOK", "font_id": "geometric-sans", "size": 30, "line_height": 38, "tracking": 4, "colour": "#111111", "contrast_against": "#F5F0E7", "opacity": 1, "box": [100, 105, 850, 55], "align": "left", "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 1, "text": "THE", "font_id": "editorial-serif", "size": 170, "line_height": 178, "tracking": 0, "colour": "#111111", "contrast_against": "#F5F0E7", "opacity": 1, "box": [100, 225, 835, 190], "align": "left", "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 2, "text": "MESSAGE", "font_id": "display-condensed", "size": 205, "line_height": 212, "tracking": 1, "colour": "#111111", "contrast_against": "#F5F0E7", "opacity": 1, "box": [100, 405, 925, 225], "align": "left", "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "subtitle", "text": "Conversations, Content Blocks,\nand the Messages API", "font_id": "geometric-sans", "size": 38, "line_height": 51, "tracking": 0, "colour": "#111111", "contrast_against": "#F5F0E7", "opacity": 1, "box": [100, 690, 790, 130], "align": "left", "rotation": 0, "baseline_shift": 0},
+    {"kind": "field", "box": [0, 2310, 1600, 250], "fill": {"kind": "solid", "colour": "#111111"}, "opacity": 0.93, "blend_mode": "normal", "purpose": "author rail integrated with black aperture"},
+    {"kind": "text", "role": "author", "text": "DAN FAKKELDY", "font_id": "geometric-sans", "size": 40, "line_height": 48, "tracking": 3, "colour": "#F5F0E7", "contrast_against": "#111111", "opacity": 1, "box": [100, 2390, 1400, 65], "align": "left", "rotation": 0, "baseline_shift": 0}
+  ],
+  "metadata": {"title": "The Message", "subtitle": "Conversations, Content Blocks, and the Messages API", "author": "Dan Fakkeldy", "label": "AUDIOBOOK"}
+}

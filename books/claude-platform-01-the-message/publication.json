@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "slug": "claude-platform-01-the-message",
+  "editionId": "public-first-listen-2026-07-18",
+  "publicationStatus": "public-first-listen",
+  "humanListeningStatus": "pending",
+  "classification": "public-safe",
+  "permissionToPublish": true,
+  "permissionGrantedAt": "2026-07-18",
+  "disclosure": "This edition has passed package and audio checks. The creator's full listening review is still underway.",
+  "sourceArtIncluded": false,
+  "artifacts": {
+    "manuscript": {
+      "file": "claude-platform-01-the-message.md",
+      "sha256": "0808eb918e12d6776f5bcf52f3daf192fce261fe388f9f667b8f2517eb9350ef"
+    },
+    "epub": {
+      "file": "claude-platform-01-the-message.epub",
+      "sha256": "7c91f60a152fe803e8e9a35b00ddbd7c552ed42935b930b3b01230fcd62b7796"
+    },
+    "m4b": {
+      "file": "claude-platform-01-the-message.m4b",
+      "sha256": "f1684fe685d0d55249704b9f796313e320cfe86fde3c1ed7bd795db7fc1be142"
+    },
+    "alignment": {
+      "file": "claude-platform-01-the-message.alignment.json",
+      "sha256": "0067a3b50adf5d369f20b96b2456d6430e0df0c7457636c876b49d67931ede19"
+    },
+    "portraitCover": {
+      "file": "cover.png",
+      "sha256": "f60f0ef725bcc9a44a8800f49735421959bab8c8bb611ed9f47d529e5aebf44d"
+    },
+    "squareCover": {
+      "file": "m4b-cover.png",
+      "sha256": "e68c9a631252ec1353df8290495cf3da1d01efa399f92056fcd39a67f85b3c32"
+    }
+  }
+}
