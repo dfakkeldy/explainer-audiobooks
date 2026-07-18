@@ -1,0 +1,191 @@
+{
+  "schema_version": 2,
+  "variant": "portrait",
+  "candidate": {
+    "id": "event-by-event",
+    "direction_name": "Event by Event"
+  },
+  "canvas": {
+    "width": 1600,
+    "height": 2560,
+    "background": "#12316F",
+    "safe_margin": 96
+  },
+  "art": {
+    "path": "source-art.png",
+    "mode": "bleed",
+    "box": [
+      0,
+      0,
+      1600,
+      2560
+    ],
+    "anchor": "center",
+    "opacity": 1,
+    "blend_mode": "normal"
+  },
+  "layers": [
+    {
+      "kind": "scrim",
+      "box": [
+        0,
+        0,
+        1050,
+        1450
+      ],
+      "fill": {
+        "kind": "linear-gradient",
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          1050,
+          1450
+        ],
+        "stops": [
+          {
+            "offset": 0,
+            "colour": "#12316F",
+            "opacity": 0.96
+          },
+          {
+            "offset": 0.78,
+            "colour": "#12316F",
+            "opacity": 0.72
+          },
+          {
+            "offset": 1,
+            "colour": "#12316F",
+            "opacity": 0
+          }
+        ]
+      },
+      "opacity": 1,
+      "blend_mode": "normal",
+      "purpose": "integrated portrait title field"
+    },
+    {
+      "kind": "text",
+      "role": "label",
+      "text": "AUDIOBOOK",
+      "font_id": "technical-mono",
+      "size": 28,
+      "line_height": 30,
+      "tracking": 4,
+      "colour": "#F2A93B",
+      "contrast_against": "#12316F",
+      "opacity": 1,
+      "box": [
+        100,
+        100,
+        900,
+        48
+      ],
+      "align": "left",
+      "rotation": 0,
+      "baseline_shift": 0
+    },
+    {
+      "kind": "text",
+      "role": "title",
+      "text": "MAKING\nCLAUDE THINK\nAND RESPOND\nRELIABLY",
+      "font_id": "geometric-sans",
+      "size": 108,
+      "line_height": 116,
+      "tracking": 0,
+      "colour": "#FFF3D4",
+      "contrast_against": "#12316F",
+      "opacity": 1,
+      "box": [
+        100,
+        160,
+        900,
+        940
+      ],
+      "align": "left",
+      "rotation": 0,
+      "baseline_shift": 0,
+      "title_order": 1
+    },
+    {
+      "kind": "line",
+      "start": [
+        100,
+        1170
+      ],
+      "end": [
+        620,
+        1170
+      ],
+      "width": 8,
+      "colour": "#F2A93B",
+      "opacity": 1,
+      "purpose": "signature accent"
+    },
+    {
+      "kind": "text",
+      "role": "subtitle",
+      "text": "REASONING, MULTIMODAL INPUTS,\nSTRUCTURED OUTPUT, AND STREAMING",
+      "font_id": "geometric-sans",
+      "size": 38,
+      "line_height": 41,
+      "tracking": 1,
+      "colour": "#FFF3D4",
+      "contrast_against": "#12316F",
+      "opacity": 1,
+      "box": [
+        100,
+        1200,
+        1000,
+        130
+      ],
+      "align": "left",
+      "rotation": 0,
+      "baseline_shift": 0
+    },
+    {
+      "kind": "field",
+      "box": [
+        0,
+        2315,
+        1600,
+        245
+      ],
+      "fill": {
+        "kind": "solid",
+        "colour": "#12316F"
+      },
+      "opacity": 0.9,
+      "blend_mode": "normal",
+      "purpose": "author rail"
+    },
+    {
+      "kind": "text",
+      "role": "author",
+      "text": "DAN FAKKELDY",
+      "font_id": "technical-mono",
+      "size": 36,
+      "line_height": 38,
+      "tracking": 3,
+      "colour": "#FFF3D4",
+      "contrast_against": "#12316F",
+      "opacity": 1,
+      "box": [
+        100,
+        2390,
+        1400,
+        60
+      ],
+      "align": "left",
+      "rotation": 0,
+      "baseline_shift": 0
+    }
+  ],
+  "metadata": {
+    "title": "Making Claude Think and Respond Reliably",
+    "subtitle": "Reasoning, Multimodal Inputs, Structured Output, and Streaming",
+    "author": "Dan Fakkeldy",
+    "label": "AUDIOBOOK"
+  }
+}

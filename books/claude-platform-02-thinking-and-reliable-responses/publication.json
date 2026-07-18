@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "slug": "claude-platform-02-thinking-and-reliable-responses",
+  "editionId": "public-first-listen-2026-07-18",
+  "publicationStatus": "public-first-listen",
+  "humanListeningStatus": "pending",
+  "classification": "public-safe",
+  "permissionToPublish": true,
+  "permissionGrantedAt": "2026-07-18",
+  "disclosure": "This edition has passed package and audio checks. The creator's full listening review is still underway.",
+  "sourceArtIncluded": true,
+  "artifacts": {
+    "manuscript": {
+      "file": "claude-platform-02-thinking-and-reliable-responses.md",
+      "sha256": "2cca256bb31dd621337920c5c11ea154047d055ae213ff6b8ddd99feace626bb"
+    },
+    "epub": {
+      "file": "claude-platform-02-thinking-and-reliable-responses.epub",
+      "sha256": "52bae3f88c6ccf14f7dcdc61ffd27963d12e164ec2e5793aa974f7571dd336c7"
+    },
+    "m4b": {
+      "file": "claude-platform-02-thinking-and-reliable-responses.m4b",
+      "sha256": "6b0809123f9c00701e8591a2c7fc26e3c49b34d1515216bc270c7366f1ead6ca"
+    },
+    "alignment": {
+      "file": "claude-platform-02-thinking-and-reliable-responses.alignment.json",
+      "sha256": "d04e9d14cf130026a779a4651ecc7d84486f38db05523cddaa798538a79d55f1"
+    },
+    "portraitCover": {
+      "file": "cover.png",
+      "sha256": "1b7ca031550cde82c3f7ac8b1ee234b4884befad32cca1c96f5c3d5d2659493a"
+    },
+    "squareCover": {
+      "file": "m4b-cover.png",
+      "sha256": "f47d53aa8ed60e69e291b595eea2826a326682bfa21660277e84a42ae3b220d1"
+    }
+  }
+}

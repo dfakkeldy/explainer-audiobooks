@@ -1,0 +1,41 @@
+{
+  "book_slug": "claude-platform-02-thinking-and-reliable-responses",
+  "candidate": {
+    "direction_name": "Event by Event",
+    "id": "event-by-event"
+  },
+  "edition_id": "public-first-listen-2026-07-18",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-18T20:41:36Z",
+  "selection_source": "user",
+  "source_art_sha256": "08347afe0eca2587bc701a3aa610beed5024bfa1c5e775a8733dd58654abb1e5",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "1b7ca031550cde82c3f7ac8b1ee234b4884befad32cca1c96f5c3d5d2659493a",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "2e8d160c5d35c070a984a19f399a6ddc5d9df812acb3a4acf7c80d908fd683a0",
+      "specification_sha256": "01b752444f528f8877822bd1044c2dbf37beb5f35c0762e1a6c13945e9467b6a",
+      "subtitle_included": true,
+      "thumbnail_sha256": "a91902cb9a39dfce720fb8d3af45b2ef4a0afdbc4dc71401d18293b15092dcd7"
+    },
+    "square": {
+      "cover_sha256": "f47d53aa8ed60e69e291b595eea2826a326682bfa21660277e84a42ae3b220d1",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "a852bb5d50867441648961666e0f211c95fdfc954853f0b35135efdef1c1d354",
+      "specification_sha256": "9bfd7d67a100344ff7aff8c6e2519c353be873e63cb20938a065f0ec969d9155",
+      "subtitle_included": false,
+      "thumbnail_sha256": "2591186b4d53c00fd811c44f05fe5a7dce911b0a3e7e48cdd3742ac04294d21b"
+    }
+  }
+}
