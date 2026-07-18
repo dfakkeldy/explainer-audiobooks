@@ -57,7 +57,7 @@ def _sha256_file(path: Path) -> str:
 def reject_private_values(value: object, location: str = "publication.json") -> None:
     """Reject absolute local references recursively from public JSON values."""
     if isinstance(value, str):
-        if value.startswith(("/", "file://")) or _WINDOWS_ABSOLUTE.match(value):
+        if value.startswith("/") or value.casefold().startswith("file://") or _WINDOWS_ABSOLUTE.match(value):
             raise ValueError(f"absolute path in {location}: {value}")
     elif isinstance(value, list):
         for index, item in enumerate(value):
@@ -79,6 +79,21 @@ def load_receipt(book_dir: Path) -> dict[str, object]:
 def _require(condition: bool, message: str) -> None:
     if not condition:
         raise ValueError(message)
+
+
+def _require_contained_path(book_dir: Path, path: Path, label: str) -> None:
+    _require(not path.is_symlink(), f"{label} must not be a symlink")
+    try:
+        path.resolve().relative_to(book_dir.resolve())
+    except ValueError as error:
+        raise ValueError(f"{label} escapes the book directory") from error
+
+
+def _reject_symlinks(book_dir: Path) -> None:
+    _require(not book_dir.is_symlink(), "book directory must not be a symlink")
+    for path in book_dir.rglob("*"):
+        _require(not path.is_symlink(), f"package must not contain symlink: {path.relative_to(book_dir)}")
+        _require_contained_path(book_dir, path, f"package path {path.relative_to(book_dir)}")
 
 
 def _verify_receipt_fields(receipt: dict[str, object]) -> str:
@@ -116,6 +131,7 @@ def verify_artifacts(book_dir: Path, receipt: dict[str, object]) -> None:
         expected_hash = row.get("sha256")
         _require(isinstance(expected_hash, str) and _SHA256.fullmatch(expected_hash) is not None, f"{name} SHA-256 is invalid")
         path = book_dir / expected_name
+        _require_contained_path(book_dir, path, f"{name} artifact")
         _require(path.is_file(), f"{name} artifact is missing: {expected_name}")
         _require(_sha256_file(path) == expected_hash, f"{name} SHA-256 does not match")
 
@@ -156,8 +172,9 @@ def _verify_source_art(book_dir: Path, receipt: dict[str, object]) -> None:
     source_art = render.get("source_art")
     _require(isinstance(source_art, str) and Path(source_art).name == source_art, "cover-render.json source art is invalid")
     declared_art = book_dir / source_art
+    _require_contained_path(book_dir, declared_art, "declared source art")
     source_candidates = [
-        path for path in book_dir.iterdir()
+        path for path in book_dir.rglob("*")
         if path.is_file() and ("source-art" in path.name.lower() or "cover-source" in path.name.lower())
     ]
     if receipt["sourceArtIncluded"]:
@@ -184,6 +201,7 @@ def _verify_public_surface(book_dir: Path) -> None:
 def verify_public_package(book_dir: Path) -> None:
     book_dir = Path(book_dir)
     _require(book_dir.is_dir(), "book directory does not exist")
+    _reject_symlinks(book_dir)
     receipt = load_receipt(book_dir)
     verify_artifacts(book_dir, receipt)
     slug = receipt["slug"]

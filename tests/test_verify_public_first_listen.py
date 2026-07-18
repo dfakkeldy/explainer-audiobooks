@@ -135,7 +135,13 @@ class PublicFirstListenVerifierTests(unittest.TestCase):
                     self.receipt["artifacts"]["m4b"] = artifact(self.book_dir, "fixture-book.m4b", b"m4b-fixture")
 
     def test_rejects_absolute_and_file_url_values_anywhere(self) -> None:
-        for value in ("/Users/private/book", "file:///private/book", "C:\\private\\book"):
+        for value in (
+            "/Users/private/book",
+            "file:///private/book",
+            "FILE:///private/book",
+            "FiLe:///private/book",
+            "C:\\private\\book",
+        ):
             with self.subTest(value=value):
                 self.receipt["nested"] = {"value": value}
                 self.write_receipt()
@@ -163,6 +169,37 @@ class PublicFirstListenVerifierTests(unittest.TestCase):
         self.receipt["sourceArtIncluded"] = False
         self.write_receipt()
         self.assert_rejected("source art")
+
+    def test_rejects_nested_stale_source_art_when_receipt_says_absent(self) -> None:
+        self.receipt["sourceArtIncluded"] = False
+        (self.book_dir / "cover-source.png").unlink()
+        nested = self.book_dir / "assets"
+        nested.mkdir()
+        (nested / "cover-source.png").write_bytes(b"stale source art")
+        self.write_receipt()
+        self.assert_rejected("source art")
+
+    def test_rejects_artifact_symlink_to_outside_content(self) -> None:
+        external = self.book_dir.parent / "external.m4b"
+        external.write_bytes(b"m4b-fixture")
+        artifact_path = self.book_dir / "fixture-book.m4b"
+        artifact_path.unlink()
+        artifact_path.symlink_to(external)
+        self.assert_rejected("symlink")
+
+    def test_rejects_symlinked_directory_anywhere_in_package(self) -> None:
+        external_directory = self.book_dir.parent / f"{self.book_dir.name}-external-directory"
+        external_directory.mkdir()
+        (self.book_dir / "linked-assets").symlink_to(external_directory, target_is_directory=True)
+        self.assert_rejected("symlink")
+
+    def test_rejects_declared_source_art_symlink(self) -> None:
+        external = self.book_dir.parent / "external-source.png"
+        external.write_bytes(b"source art")
+        declared_art = self.book_dir / "cover-source.png"
+        declared_art.unlink()
+        declared_art.symlink_to(external)
+        self.assert_rejected("symlink")
 
     @unittest.skipUnless(
         shutil.which("unzip") and shutil.which("ffprobe") and shutil.which("ffmpeg"),
