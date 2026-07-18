@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "vectors": [
+    {
+      "fileName": "canonical-manifest-v1.json",
+      "sourceRepository": "https://github.com/dfakkeldy/Echo.git",
+      "installerSourceSHA": "2f23aceedb1b9f25b7ea4410756eea32a59af8cd",
+      "echoRelativePath": "Scripts/echo_renderer/test_vectors/canonical-manifest-v1.json",
+      "sha256": "30f857f3ac890b21775f2e7773ff70faae1e1e85e0cf05af49c4ee4d7bb92c15"
+    },
+    {
+      "fileName": "lease-identities-v1.json",
+      "sourceRepository": "https://github.com/dfakkeldy/Echo.git",
+      "installerSourceSHA": "2f23aceedb1b9f25b7ea4410756eea32a59af8cd",
+      "echoRelativePath": "Scripts/echo_renderer/test_vectors/lease-identities-v1.json",
+      "sha256": "bcde098b8b1dc902236d5f0ee383ce9a2d70f6462eb79e8a6be70059b8a806ac"
+    },
+    {
+      "fileName": "resource-tree-v1.json",
+      "sourceRepository": "https://github.com/dfakkeldy/Echo.git",
+      "installerSourceSHA": "2f23aceedb1b9f25b7ea4410756eea32a59af8cd",
+      "echoRelativePath": "Scripts/echo_renderer/test_vectors/resource-tree-v1.json",
+      "sha256": "c025db26fec03bbf897849898c74d134c18eef7a64dfdf097827170fee5a5132"
+    }
+  ]
+}
