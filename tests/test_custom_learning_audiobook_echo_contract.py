@@ -67,6 +67,32 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.normalized(self.package))
 
+    def test_ordinary_narration_has_no_checkout_or_build_boundary(self) -> None:
+        ordinary_source = self.preflight + self.narrate_wrapper
+        forbidden = (
+            "ECHO_REPO",
+            ".build/cli",
+            "xcode-build-gate.sh",
+            "xcodebuild",
+            "make",
+            "git ",
+            "/usr/bin/git",
+        )
+        for marker in forbidden:
+            with self.subTest(marker=marker):
+                self.assertNotIn(marker, ordinary_source)
+        for required in (
+            "echo_installed_renderer.py",
+            "resolve-new",
+            "resolve-resume",
+            "ECHO_RENDERER_BUILD_ROOT",
+            'case "$renderer_key" in',
+            "installed renderer attestation failed",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, ordinary_source)
+        self.assertNotIn("eval", ordinary_source)
+
     def test_renderer_identity_comes_from_the_built_artifacts(self) -> None:
         """The built binary and its resource tree are the authoritative
         fingerprint. The Git revision is a label for them, so a dirty tree is
@@ -84,9 +110,10 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
         normalized_preflight = self.normalized(self.preflight)
         for marker in (
-            "ECHO_TREE_STATE=clean",
-            "ECHO_TREE_STATE=dirty",
-            "ECHO_TREE_DIFF_SHA256",
+            "ECHO_RENDERER_BUILD_ROOT",
+            "ECHO_RENDERER_MANIFEST_SHA256",
+            "ECHO_CLI_SHA256",
+            "ECHO_RESOURCES_SHA256",
             "APPROVED_ECHO_PRONUNCIATION_SHA=unpinned",
         ):
             with self.subTest(marker=marker, doc="preflight"):
@@ -94,14 +121,11 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
     def test_optional_pin_still_enforces_its_original_boundary(self) -> None:
         """Setting APPROVED_ECHO_PRONUNCIATION_SHA must still require a clean
-        tree and exact equality with HEAD; only the requirement to set it at all
-        was removed."""
+        exact equality with the installed source; only the requirement to set it
+        at all was removed."""
         normalized_preflight = self.normalized(self.preflight)
         self.assertIn(
-            "must exactly equal Echo source HEAD", normalized_preflight
-        )
-        self.assertIn(
-            "pins a revision but the Echo working tree is not clean",
+            "must exactly equal installed source",
             normalized_preflight,
         )
 
@@ -156,15 +180,12 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
                 self.assertIn(marker, self.narrate_wrapper)
 
     def test_attestation_fails_closed_on_mid_render_drift(self) -> None:
-        """A dirty starting tree is attested; drift from the recorded state is
-        still refused."""
+        """The immutable package is re-attested before and after rendering."""
         normalized_preflight = self.normalized(self.preflight)
-        self.assertIn(
-            "Echo source HEAD moved during the render", normalized_preflight
-        )
-        self.assertIn(
-            "Echo working tree changed during the render", normalized_preflight
-        )
+        self.assertIn("echo_installed_renderer.py", normalized_preflight)
+        self.assertIn('"$resolver" attest', normalized_preflight)
+        self.assertIn('--source-sha "$ECHO_SOURCE_SHA"', normalized_preflight)
+        self.assertIn("installed renderer attestation failed", normalized_preflight)
 
         self.assertIn("echo_pronunciation_preflight.sh", self.narrate_wrapper)
         self.assertIn('"$CLI" narrate', self.narrate_wrapper)
@@ -221,9 +242,6 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
                 self.assertIn(marker, self.preflight)
 
         self.assertIn('--cover "$M4B_COVER"', self.narrate_wrapper)
-        self.assertIn(
-            "stale echo-cli: explicit cover art is unavailable", self.preflight
-        )
         self.assertIn("M4B_COVER_SHA256", self.normalized(self.package))
 
     def test_wrapper_holds_fd_backed_resource_leases_through_narration(self) -> None:
@@ -239,7 +257,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             'wait "$NARRATE_PID"',
             "--leased-preflight",
             "--assert-held",
-            "BUILD_RESOURCE",
+            "ECHO_RENDERER_BUILD_ROOT",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.narrate_wrapper)
