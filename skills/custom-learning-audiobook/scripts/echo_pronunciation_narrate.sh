@@ -103,17 +103,19 @@ ECHO_PRONUNCIATION_LEASE_ROOT=$(echo_pronunciation_canonical_lease_root) \
 export ECHO_PRONUNCIATION_LEASE_ROOT
 
 resolve_installed_renderer() {
-  local default_source_sha=81a635df84f75f2e391706e071878b379e6fe0a0
   local requested_source_sha requested_renderer_root renderer_output
-  if [[ -n ${APPROVED_ECHO_PRONUNCIATION_SHA:-} \
-    && -n ${ECHO_SOURCE_SHA:-} \
-    && "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
-    printf 'approved and requested Echo source revisions disagree\n' >&2
+  if [[ -z ${APPROVED_ECHO_PRONUNCIATION_SHA:-} ]]; then
+    printf 'APPROVED_ECHO_PRONUNCIATION_SHA is required for operational narration\n' >&2
     return 64
   fi
-  requested_source_sha=${APPROVED_ECHO_PRONUNCIATION_SHA:-${ECHO_SOURCE_SHA:-$default_source_sha}}
+  requested_source_sha=$APPROVED_ECHO_PRONUNCIATION_SHA
   if [[ ! "$requested_source_sha" =~ ^[0-9a-f]{40}$ ]]; then
-    printf 'requested Echo source must be exactly 40 lowercase hexadecimal characters\n' >&2
+    printf 'APPROVED_ECHO_PRONUNCIATION_SHA must be exactly 40 lowercase hexadecimal characters\n' >&2
+    return 64
+  fi
+  if [[ -n ${ECHO_SOURCE_SHA:-} \
+    && "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
+    printf 'approved and requested Echo source revisions disagree\n' >&2
     return 64
   fi
   requested_renderer_root=${ECHO_RENDERER_ROOT:-}
@@ -156,9 +158,19 @@ resolve_installed_renderer() {
   local renderer_count_version=0 renderer_count_model_revision=0
   local renderer_count_model_bytes=0 renderer_count_model_attested=0
   local renderer_key renderer_value
-  while IFS= read -r -d '' renderer_key; do
+  while :; do
+    renderer_key=
+    if ! IFS= read -r -d '' renderer_key; then
+      if [[ -n "$renderer_key" ]]; then
+        printf 'incomplete installed renderer env0 record\n' >&2
+        rm -f -- "$renderer_output"
+        return 65
+      fi
+      break
+    fi
+    renderer_value=
     if ! IFS= read -r -d '' renderer_value; then
-      printf 'installed renderer env0 ended without a value\n' >&2
+      printf 'incomplete installed renderer env0 record\n' >&2
       rm -f -- "$renderer_output"
       return 65
     fi

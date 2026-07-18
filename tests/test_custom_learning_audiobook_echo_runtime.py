@@ -632,6 +632,68 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             text=True,
         )
 
+    def run_narrate_with_resolver_payload(
+        self, payload: bytes
+    ) -> tuple[subprocess.CompletedProcess[str], Path]:
+        scripts = self.tmp / f"resolver-payload-{len(list(self.tmp.glob('resolver-payload-*')))}"
+        scripts.mkdir()
+        wrapper = scripts / NARRATE_WRAPPER.name
+        wrapper.write_bytes(NARRATE_WRAPPER.read_bytes())
+        wrapper.chmod(wrapper.stat().st_mode | stat.S_IXUSR)
+        (scripts / PREFLIGHT.name).write_text(
+            "#!/usr/bin/env bash\n"
+            "echo_pronunciation_canonical_lease_root() { "
+            f"printf '%s\\n' {shlex.quote(str(self.tmp / 'lease-root'))}; }}\n",
+            encoding="utf-8",
+        )
+        (scripts / "echo_installed_renderer.py").write_text(
+            "import sys\n" f"sys.stdout.buffer.write({payload!r})\n",
+            encoding="utf-8",
+        )
+        lease_marker = scripts / "lease-invoked"
+        lease = scripts / "echo_pronunciation_lease.py"
+        lease.write_text(
+            "#!/usr/bin/env bash\n"
+            f"touch {shlex.quote(str(lease_marker))}\n"
+            "exit 99\n",
+            encoding="utf-8",
+        )
+        lease.chmod(lease.stat().st_mode | stat.S_IXUSR)
+        environment = self.environment()
+        return (
+            subprocess.run(
+                [str(wrapper)],
+                cwd=self.explainer,
+                env=environment,
+                capture_output=True,
+                text=True,
+            ),
+            lease_marker,
+        )
+
+    @staticmethod
+    def valid_renderer_env0() -> bytes:
+        values = {
+            "ECHO_RENDERER_ROOT": "/installed",
+            "ECHO_RENDERER_BUILD_ROOT": "/installed/build",
+            "ECHO_RENDERER_MANIFEST": "/installed/build/renderer-manifest.json",
+            "ECHO_RENDERER_MANIFEST_SHA256": "1" * 64,
+            "APPROVED_ECHO_INSTALLER_SHA": "2" * 40,
+            "ECHO_SOURCE_SHA": ACCEPTED_SOURCE_SHA,
+            "CLI": "/installed/build/echo-cli",
+            "ECHO_CLI_SHA256": "3" * 64,
+            "ECHO_RESOURCE_DIR": "/installed/build/EchoNarrationResources",
+            "ECHO_RESOURCES_SHA256": "4" * 64,
+            "ECHO_RENDER_VERSION": "12",
+            "ECHO_MODEL_REVISION": "fixture",
+            "ECHO_MODEL_EXPECTED_BYTES": "1",
+            "ECHO_MODEL_BYTES_ATTESTED": "false",
+        }
+        return b"".join(
+            key.encode() + b"\0" + value.encode() + b"\0"
+            for key, value in values.items()
+        )
+
     def select_manifest_variant(
         self,
         mutate: Callable[[dict[str, object]], None],
@@ -1144,27 +1206,42 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("receipt=", result.stdout)
 
-    def test_preflight_renders_unpinned_without_an_approval(self) -> None:
-        """The approval pin is optional. Without it the render proceeds and the
-        receipt says so, because the built binary and resource hashes already
-        identify the renderer."""
+    def test_preflight_rejects_a_missing_approval(self) -> None:
         environment = self.environment()
         environment.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
-        result = self.run_preflight(
-            environment=environment,
-            body=(
-                "echo_pronunciation_preflight\n"
-                'printf "approved=%s\\n" "$APPROVED_ECHO_PRONUNCIATION_SHA"\n'
-                'printf "receipt=%s\\n" "$ECHO_RENDER_INPUT_RECEIPT"'
-            ),
+        result = self.run_preflight(environment=environment)
+        self.assertEqual(64, result.returncode)
+        self.assertIn("APPROVED_ECHO_PRONUNCIATION_SHA is required", result.stderr)
+
+    def test_new_and_resume_require_an_explicit_approval(self) -> None:
+        missing_new = self.environment()
+        missing_new.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
+        new_result = self.run_narrate(environment=missing_new)
+        self.assertEqual(64, new_result.returncode)
+        self.assertIn("APPROVED_ECHO_PRONUNCIATION_SHA is required", new_result.stderr)
+
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        missing_resume = self.environment()
+        missing_resume.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
+        resume_result = self.run_narrate(
+            *self.resume_arguments(), environment=missing_resume
         )
-        self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("approved=unpinned", result.stdout)
-        receipt = Path(
-            result.stdout.split("receipt=", 1)[1].splitlines()[0].strip()
-        ).read_text(encoding="utf-8")
-        self.assertIn("approved_echo_pronunciation_sha=unpinned", receipt)
-        self.assertNotIn("echo_tree_state=", receipt)
+        self.assertEqual(64, resume_result.returncode)
+        self.assertIn(
+            "APPROVED_ECHO_PRONUNCIATION_SHA is required", resume_result.stderr
+        )
+
+    def test_env0_rejects_partial_and_odd_trailing_records(self) -> None:
+        valid = self.valid_renderer_env0()
+        for suffix in (b"EXTRA_UNTERMINATED", b"EXTRA_WITHOUT_VALUE\0"):
+            with self.subTest(suffix=suffix):
+                result, lease_marker = self.run_narrate_with_resolver_payload(
+                    valid + suffix
+                )
+                self.assertEqual(65, result.returncode)
+                self.assertIn("incomplete installed renderer env0 record", result.stderr)
+                self.assertFalse(lease_marker.exists())
 
     def test_preflight_does_not_consult_an_echo_checkout(self) -> None:
         (self.echo / "dirty-marker.txt").write_text("uncommitted\n", encoding="utf-8")

@@ -224,18 +224,18 @@ echo_pronunciation_preflight() {
   echo_pronunciation_attest_renderer || return $?
 
   local approved_input=${APPROVED_ECHO_PRONUNCIATION_SHA:-}
-  if [[ -n "$approved_input" ]]; then
-    require_renderer_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
-      "$approved_input" || return $?
-    if [[ "$approved_input" != "$ECHO_SOURCE_SHA" ]]; then
-      printf 'approved Echo pronunciation revision %s must exactly equal installed source %s\n' \
-        "$approved_input" "$ECHO_SOURCE_SHA" >&2
-      return 65
-    fi
-    APPROVED_ECHO_PRONUNCIATION_SHA=$approved_input
-  else
-    APPROVED_ECHO_PRONUNCIATION_SHA=unpinned
+  if [[ -z "$approved_input" ]]; then
+    printf 'APPROVED_ECHO_PRONUNCIATION_SHA is required for operational narration\n' >&2
+    return 64
   fi
+  require_renderer_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
+    "$approved_input" || return $?
+  if [[ "$approved_input" != "$ECHO_SOURCE_SHA" ]]; then
+    printf 'approved Echo pronunciation revision %s must exactly equal installed source %s\n' \
+      "$approved_input" "$ECHO_SOURCE_SHA" >&2
+    return 65
+  fi
+  APPROVED_ECHO_PRONUNCIATION_SHA=$approved_input
 
   if [[ ! ${SLUG:-} =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
     printf 'SLUG must use lowercase letters, digits, and internal hyphens only\n' >&2
@@ -424,8 +424,7 @@ echo_pronunciation_attest_inputs() {
     printf 'RUN_ROOT and SLUG do not identify the canonical governed run\n' >&2
     return 64
   fi
-  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != unpinned \
-    && "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
+  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
     printf 'approved Echo pronunciation revision does not match installed source\n' >&2
     return 65
   fi

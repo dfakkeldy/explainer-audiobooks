@@ -95,15 +95,14 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
     def test_renderer_identity_comes_from_the_built_artifacts(self) -> None:
         """The built binary and its resource tree are the authoritative
-        fingerprint. The Git revision is a label for them, so a dirty tree is
-        recorded exactly rather than refused, and the pin is optional."""
+        fingerprint; operational narration separately requires an explicit
+        approved source revision."""
         normalized_package = self.normalized(self.package)
         for marker in (
             "ECHO_CLI_SHA256",
             "ECHO_RESOURCES_SHA256",
             "ECHO_TREE_STATE",
             "ECHO_TREE_DIFF_SHA256",
-            "unpinned",
         ):
             with self.subTest(marker=marker, doc="package-and-qc.md"):
                 self.assertIn(marker, normalized_package)
@@ -114,20 +113,21 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "ECHO_RENDERER_MANIFEST_SHA256",
             "ECHO_CLI_SHA256",
             "ECHO_RESOURCES_SHA256",
-            "APPROVED_ECHO_PRONUNCIATION_SHA=unpinned",
         ):
             with self.subTest(marker=marker, doc="preflight"):
                 self.assertIn(marker, normalized_preflight)
 
-    def test_optional_pin_still_enforces_its_original_boundary(self) -> None:
-        """Setting APPROVED_ECHO_PRONUNCIATION_SHA must still require a clean
-        exact equality with the installed source; only the requirement to set it
-        at all was removed."""
+    def test_operational_narration_requires_an_explicit_approved_source(self) -> None:
         normalized_preflight = self.normalized(self.preflight)
         self.assertIn(
             "must exactly equal installed source",
             normalized_preflight,
         )
+        self.assertIn(
+            "APPROVED_ECHO_PRONUNCIATION_SHA is required",
+            self.narrate_wrapper,
+        )
+        self.assertNotIn("APPROVED_ECHO_PRONUNCIATION_SHA=unpinned", self.preflight)
 
     def test_run_id_is_derived_in_exactly_one_place(self) -> None:
         """The preflight and the attestation both need RUN_ID. Restating the
