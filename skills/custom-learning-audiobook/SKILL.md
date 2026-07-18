@@ -403,13 +403,15 @@ than retyping it from memory.
    content-addressed paths, FD-backed resource leases, and locked pre/post hash
    verification for everything it emits; the reference documents those
    internals, and the scripts enforce them regardless of caller behavior.
-   Do not bypass the wrapper with a direct CLI command. The renderer's identity
-   is recorded automatically: the preflight captures `ECHO_CLI_SHA256` and
-   `ECHO_RESOURCES_SHA256` from the built binary and its resource tree, plus
-   `ECHO_SOURCE_SHA`, `ECHO_TREE_STATE`, and `ECHO_TREE_DIFF_SHA256` so a dirty
-   Echo tree is described exactly rather than blocking the render. Supplying a
-   reviewed `APPROVED_ECHO_PRONUNCIATION_SHA` is optional; when set it still
-   pins that revision and fails closed unless it equals a clean source `HEAD`.
+   Do not bypass the wrapper with a direct CLI command. This is installed
+   renderer work, never narration-time build work. Set the reviewed
+   `APPROVED_ECHO_PRONUNCIATION_SHA` to exactly 40 lowercase hexadecimal
+   characters; it must equal the installed package source SHA. New runs resolve
+   the approved selector, while `--resume` resolves only the manifest sealed in
+   the canonical resume-state receipt. The wrapper records the source,
+   installer, manifest, CLI, and resource identities and supplies the sealed
+   resources explicitly; see `references/package-and-qc.md` for store layout,
+   operator recovery, and the model non-attestation boundary.
 
    Echo audio is part of the delivery contract: do not impose your own time
    limit, deadline, or "too slow" threshold just because synthesis may take

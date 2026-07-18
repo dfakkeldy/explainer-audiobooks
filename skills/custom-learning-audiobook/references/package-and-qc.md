@@ -296,9 +296,8 @@ export EXPLAINER_ROOT
 export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
 export SLUG TITLE
 export VOICE=am_michael
-# Optional: pin a reviewed Echo revision. Unset renders as `unpinned`, with the
-# built binary and resource hashes carrying provenance.
-export APPROVED_ECHO_PRONUNCIATION_SHA="${APPROVED_ECHO_PRONUNCIATION_SHA:-}"
+: "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the exact reviewed 40-character source SHA}"
+export APPROVED_ECHO_PRONUNCIATION_SHA
 
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_learning_pilot_narrate.sh"
 ```
@@ -495,37 +494,106 @@ test ! -d .build/custom-learning-audiobooks/<slug>/chapters/images || \
 
 ## Echo M4B And Alignment
 
-Echo owns the M4B, alignment, and pronunciation-review renderer. Run this from
-the explainer-audiobooks repo root in Bash. The bundled preflight starts with
-`set -euo pipefail`, calls the memory gate and `make -C "$ECHO_REPO" echo-cli`
-without changing the caller's directory, and accepts only the deterministic
-`$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli` product.
+Echo owns the M4B, alignment, and pronunciation-review renderer. Narration is
+an installed-package operation: it never builds, checks out, or repairs Echo.
 Never invoke a DerivedData `Debug/echo-cli`, a raw direct `echo-cli narrate`, or
 an older audiobook worktree command for a governed render; those paths bypass
-the wrapper's provenance, resource leases, and locked postchecks.
+the wrapper's installed-package provenance, resource leases, and locked
+postchecks.
 
-The renderer that produced the audio is identified by `ECHO_CLI_SHA256` and
-`ECHO_RESOURCES_SHA256` — hashes of the actual built binary and its resource
-tree. Those are the authoritative fingerprint and the preflight always records
-them. The Git revision is a convenience label for the same thing, so the
-preflight records `ECHO_SOURCE_SHA` alongside `ECHO_TREE_STATE` (`clean` or
-`dirty`) and `ECHO_TREE_DIFF_SHA256`, a digest of the exact deviation from
-`HEAD`. A dirty tree is therefore described precisely instead of refused: the
-receipt still identifies the built renderer, because the diff digest closes the
-gap the bare commit SHA would leave.
+### Installed renderer store and approvals
 
-The mid-render attestation re-derives that state and fails closed if `HEAD`
-moved or the working tree changed between preflight and render. Drift still
-fails; a dirty starting point does not.
+The local, content-addressed store is:
 
-`APPROVED_ECHO_PRONUNCIATION_SHA` is **optional**. Leave it unset and the render
-proceeds with `approved_echo_pronunciation_sha=unpinned` in the receipt. Set it
-to a reviewed Echo commit and the preflight enforces the original boundary
-exactly: it resolves the commit, requires a clean working tree, and fails unless
-the approved revision equals the source `HEAD` being built. Descendants are
-never implicitly approved. Use it when you want an explicit review boundary
-pinned into the receipt; omit it when the binary and resource hashes are
-provenance enough.
+```text
+~/Library/Application Support/Echo/Renderers/
+  <40-hex source SHA>/
+    approved-renderer.json
+    <64-hex manifest SHA>/
+      echo-cli
+      EchoNarrationResources/
+      renderer-manifest.json
+```
+
+`<40-hex source SHA>` is the reviewed Echo source revision and `<64-hex
+manifest SHA>` names one immutable Release package. A source can have several
+packages; `approved-renderer.json` selects only the package for a *new* run.
+`APPROVED_ECHO_PRONUNCIATION_SHA` is required for every governed narration and
+must be exactly 40 lowercase hexadecimal characters. It must exactly equal the
+installed package's `ECHO_SOURCE_SHA`; a branch name, abbreviated SHA, current
+checkout, or inferred revision is not approval. The separate installer review
+is `APPROVED_ECHO_INSTALLER_SHA`, also an exact 40-character SHA. Record both
+identities in the render-input receipt.
+
+For a new render the wrapper uses `resolve-new`, which reads the selector while
+leased and seals the selected manifest. For `--resume`, provide the canonical
+absolute `research/echo-resume-state-$RUN_ID.json`; the wrapper uses
+`resolve-resume` and the sealed resume-state receipt, never a possibly changed
+selector. Do not copy captures, edit receipts, or turn a historical receipt
+into an operational resume. Historical receipts are read-only verification
+evidence; only the current installed-renderer schema and matching
+manifest-bound receipts can resume, publish, or authorize delivery.
+
+The wrapper records `ECHO_CLI_SHA256`, `ECHO_RESOURCES_SHA256`,
+`ECHO_RENDERER_MANIFEST_SHA256`, the exact source/installer SHAs, and the
+canonical `ECHO_RENDERER_BUILD_ROOT`. It passes the sealed
+`ECHO_RESOURCE_DIR` explicitly to every probe, narration, and
+`verify-sidecar` call, and re-attests the installed package before launch and
+before publication. The model-policy fields are informational only:
+`modelBytesAttested: false` means the shared cached model bytes are not
+attested by this package. Do not claim that a package receipt verifies the
+model cache.
+
+### Operator-only install and recovery
+
+Install, verification, promotion, and repair happen outside narration from a
+clean, reviewed Echo installer worktree with separate clean installer and
+source worktrees. Use the exact installer interface, not an improvised build:
+
+```bash
+PYTHONPATH=Scripts python3 -m echo_renderer.cli install \
+  --installer-worktree <installer worktree> \
+  --installer-sha <APPROVED_ECHO_INSTALLER_SHA> \
+  --source-worktree <source worktree> \
+  --source-sha <APPROVED_ECHO_PRONUNCIATION_SHA>
+
+PYTHONPATH=Scripts python3 -m echo_renderer.cli verify \
+  --source-sha <APPROVED_ECHO_PRONUNCIATION_SHA> \
+  --manifest-sha <64-hex manifest SHA>
+
+PYTHONPATH=Scripts python3 -m echo_renderer.cli promote \
+  --source-sha <APPROVED_ECHO_PRONUNCIATION_SHA> \
+  --manifest-sha <64-hex manifest SHA>
+
+PYTHONPATH=Scripts python3 -m echo_renderer.cli repair \
+  --installer-worktree <installer worktree> \
+  --installer-sha <APPROVED_ECHO_INSTALLER_SHA> \
+  --source-worktree <source worktree> \
+  --source-sha <APPROVED_ECHO_PRONUNCIATION_SHA> \
+  --manifest-sha <64-hex manifest SHA>
+```
+
+- **Missing version/selector**: install the exact approved source. Use
+  `install --promote` only for a source with no selector; otherwise verify the
+  new package and promote it explicitly after review.
+- **Corrupt package or failed attestation**: run `verify` first. If it cannot
+  verify, use `repair` for that exact source/manifest identity; repair
+  quarantines bytes and never promotes a selector.
+- **Incompatible package**: exit 69 means the Release package, capability,
+  architecture, or deployment floor is incompatible with the host. Install a
+  reviewed compatible renderer; do not weaken the narration wrapper.
+- **Approval mismatch**: obtain the exact reviewed
+  `APPROVED_ECHO_PRONUNCIATION_SHA` and select/install that identity. Do not
+  substitute a descendant, branch, or local checkout.
+- **Live lease (exit 75)**: wait for the holder and retry. Do not force a
+  selector, repair, or narration past a live lease. The narration wrapper's
+  `--recover-stale-lock` is only for its exact proven-local stale owner record;
+  it does not build, repair, or narrate.
+
+No automatic cleanup or update is permitted. Old packages and repair
+quarantines are preserved until an operator makes a manual disposition. The
+renderer store is local-only: it has no code-signing, notarization, or
+cross-machine distribution authority.
 
 A feature-worktree edit does not update installed agents merely because their
 paths are symlinks: those links resolve the canonical checkout at
@@ -542,14 +610,12 @@ the tool says `current` after integration.
 
 The public wrapper first derives one canonical lease namespace from the
 effective operating-system user account, ignoring any caller-supplied
-`ECHO_PRONUNCIATION_LEASE_ROOT`, then takes a kernel lease on Echo's shared
-`.build/cli` root. That prevents `make echo-cli`, the Release executable, and
-its resource bundle from racing another governed render even when callers try
-different environment roots. Every hidden wrapper mode verifies the inherited
+`ECHO_PRONUNCIATION_LEASE_ROOT`, then takes a kernel lease on the resolved
+`ECHO_RENDERER_BUILD_ROOT`. Every hidden wrapper mode verifies the inherited
 lock descriptors and their exact lock-file inodes; an environment variable by
 itself is not a capability. A real inherited descriptor is necessary but not
-sufficient: the hidden render stage independently re-attests the exact clean
-Echo `HEAD` against the approved SHA, canonical Release CLI and resource paths,
+sufficient: the hidden render stage independently re-attests the installed,
+approved source/manifest identity, canonical Release CLI and resource paths,
 the exact Release render version (`rv12` or newer) and help surface, complete
 resource-tree and CLI hashes, selected portrait and square cover paths and
 hashes, `M4B_COVER_SHA256`, the paired selection-receipt hash, the combined
@@ -591,9 +657,8 @@ export SLUG TITLE
 export COVER="$PAIR/cover.png"
 export M4B_COVER="$PAIR/m4b-cover.png"
 export PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
-# Optional: pin a reviewed Echo revision. Unset renders as `unpinned`, with the
-# built binary and resource hashes carrying provenance.
-export APPROVED_ECHO_PRONUNCIATION_SHA="${APPROVED_ECHO_PRONUNCIATION_SHA:-}"
+: "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the exact reviewed 40-character source SHA}"
+export APPROVED_ECHO_PRONUNCIATION_SHA
 
 "$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh"
 ```

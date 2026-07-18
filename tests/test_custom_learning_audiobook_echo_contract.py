@@ -93,16 +93,15 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
                 self.assertIn(required, ordinary_source)
         self.assertNotIn("eval", ordinary_source)
 
-    def test_renderer_identity_comes_from_the_built_artifacts(self) -> None:
-        """The built binary and its resource tree are the authoritative
-        fingerprint; operational narration separately requires an explicit
-        approved source revision."""
+    def test_renderer_identity_comes_from_the_installed_artifacts(self) -> None:
+        """The immutable installed package is the operational fingerprint."""
         normalized_package = self.normalized(self.package)
         for marker in (
             "ECHO_CLI_SHA256",
             "ECHO_RESOURCES_SHA256",
-            "ECHO_TREE_STATE",
-            "ECHO_TREE_DIFF_SHA256",
+            "ECHO_RENDERER_MANIFEST_SHA256",
+            "APPROVED_ECHO_INSTALLER_SHA",
+            "APPROVED_ECHO_PRONUNCIATION_SHA",
         ):
             with self.subTest(marker=marker, doc="package-and-qc.md"):
                 self.assertIn(marker, normalized_package)
@@ -425,6 +424,48 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         ):
             with self.subTest(report_marker=marker):
                 self.assertIn(marker, self.skill.casefold())
+
+    def test_operating_docs_require_the_installed_renderer_contract(self) -> None:
+        """The skill must send operators to the versioned store, not a checkout.
+
+        These are deliberately documentation assertions: the shell wrappers
+        already enforce the boundary, but an operator following stale prose can
+        still choose an unsafe or non-reproducible recovery path.
+        """
+        normalized = self.normalized(self.skill + "\n" + self.package)
+        for marker in (
+            "~/Library/Application Support/Echo/Renderers/",
+            "<40-hex source SHA>",
+            "<64-hex manifest SHA>",
+            "approved-renderer.json",
+            "APPROVED_ECHO_INSTALLER_SHA",
+            "APPROVED_ECHO_PRONUNCIATION_SHA",
+            "exactly 40 lowercase hexadecimal characters",
+            "resolve-new",
+            "resolve-resume",
+            "sealed resume-state receipt",
+            "python3 -m echo_renderer.cli install",
+            "python3 -m echo_renderer.cli verify",
+            "python3 -m echo_renderer.cli promote",
+            "python3 -m echo_renderer.cli repair",
+            "ECHO_RESOURCE_DIR",
+            "manifest-bound receipts",
+            "modelBytesAttested: false",
+            "Historical receipts are read-only",
+            "No automatic cleanup",
+            "local-only",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, normalized)
+
+        for stale_marker in (
+            "calls the memory gate",
+            'make -C "$ECHO_REPO" echo-cli',
+            "$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli",
+            "approved_echo_pronunciation_sha=unpinned",
+        ):
+            with self.subTest(stale_marker=stale_marker):
+                self.assertNotIn(stale_marker, normalized)
 
 
 if __name__ == "__main__":
