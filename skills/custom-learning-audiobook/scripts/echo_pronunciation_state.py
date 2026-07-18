@@ -78,6 +78,60 @@ def read_regular_bytes(path: Path, label: str) -> bytes:
         return input_file.read()
 
 
+def read_installed_renderer_identity(path: Path) -> tuple[str, str]:
+    """Read the exact installed-renderer identity from a schema-v2 resume receipt."""
+
+    def reject_duplicates(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        payload: dict[str, object] = {}
+        for key, value in pairs:
+            require(key not in payload, f"resume-state receipt duplicates key: {key}")
+            payload[key] = value
+        return payload
+
+    try:
+        payload = json.loads(
+            read_regular_bytes(path, "resume-state receipt"),
+            object_pairs_hook=reject_duplicates,
+        )
+    except (json.JSONDecodeError, UnicodeDecodeError) as error:
+        raise StateError("resume-state receipt is not valid UTF-8 JSON") from error
+    require(isinstance(payload, dict), "resume-state receipt must be an object")
+    expected_keys = {
+        "schemaVersion",
+        "echoSourceSHA",
+        "rendererManifestSHA256",
+        "sourceFingerprint",
+        "voice",
+        "renderVersion",
+        "captureSetID",
+        "inputReceiptSHA256",
+        "databaseSHA256",
+        "databaseByteCount",
+        "captures",
+    }
+    require(
+        set(payload) == expected_keys,
+        "resume-state receipt is not the exact installed-renderer schema",
+    )
+    require(
+        type(payload["schemaVersion"]) is int and payload["schemaVersion"] == 2,
+        "resume-state receipt is not installed-renderer schema 2",
+    )
+    source_sha = payload["echoSourceSHA"]
+    manifest_sha = payload["rendererManifestSHA256"]
+    require(
+        isinstance(source_sha, str)
+        and re.fullmatch(r"[0-9a-f]{40}", source_sha) is not None,
+        "resume-state receipt has an invalid echoSourceSHA",
+    )
+    require(
+        isinstance(manifest_sha, str)
+        and SHA256_PATTERN.fullmatch(manifest_sha) is not None,
+        "resume-state receipt has an invalid rendererManifestSHA256",
+    )
+    return source_sha, manifest_sha
+
+
 def sha256(path: Path) -> str:
     descriptor = open_regular(path, "hashed file")
     with os.fdopen(descriptor, "rb", closefd=True) as input_file:

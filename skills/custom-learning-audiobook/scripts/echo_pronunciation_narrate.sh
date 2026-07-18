@@ -9,11 +9,12 @@ source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"
 
 usage() {
   printf '%s\n' \
-    'usage: echo_pronunciation_narrate.sh [--resume] [--max-chapters N]' \
+    'usage: echo_pronunciation_narrate.sh [--resume --resume-state ABSOLUTE_PATH] [--max-chapters N]' \
     '       echo_pronunciation_narrate.sh --recover-stale-lock' >&2
 }
 
 RESUME=0
+RESUME_STATE=
 RECOVER_STALE_LOCK=0
 MAX_CHAPTERS=
 INTERNAL_MODE=
@@ -21,6 +22,15 @@ while (( $# )); do
   case "$1" in
     --resume)
       RESUME=1
+      ;;
+    --resume-state)
+      if [[ -n "$RESUME_STATE" || -z ${2:-} ]]; then
+        printf '%s\n' '--resume-state requires one absolute path' >&2
+        usage
+        exit 64
+      fi
+      RESUME_STATE=$2
+      shift
       ;;
     --recover-stale-lock)
       RECOVER_STALE_LOCK=1
@@ -54,6 +64,21 @@ while (( $# )); do
   esac
   shift
 done
+if (( RESUME )) && [[ -z "$RESUME_STATE" ]]; then
+  printf '%s\n' '--resume requires --resume-state ABSOLUTE_PATH' >&2
+  usage
+  exit 64
+fi
+if [[ -n "$RESUME_STATE" && $RESUME -eq 0 ]]; then
+  printf '%s\n' '--resume-state requires --resume' >&2
+  usage
+  exit 64
+fi
+if [[ -n "$RESUME_STATE" && "$RESUME_STATE" != /* ]]; then
+  printf '%s\n' '--resume-state must be an absolute path' >&2
+  usage
+  exit 64
+fi
 if (( RESUME && RECOVER_STALE_LOCK )) \
   || [[ "$INTERNAL_MODE" == recover && $RESUME == 1 ]] \
   || (( RECOVER_STALE_LOCK && ${#MAX_CHAPTERS} > 0 )); then
@@ -96,7 +121,7 @@ if [[ -z "$INTERNAL_MODE" ]]; then
   if (( RECOVER_STALE_LOCK )); then
     lease_command+=(--recover-stale-lock)
   elif (( RESUME )); then
-    lease_command+=(--resume)
+    lease_command+=(--resume --resume-state "$RESUME_STATE")
   fi
   if [[ -n "$MAX_CHAPTERS" ]]; then
     lease_command+=(--max-chapters "$MAX_CHAPTERS")
@@ -107,6 +132,15 @@ fi
 if [[ "$INTERNAL_MODE" == preflight ]]; then
   assert_leases "$BUILD_RESOURCE"
   echo_pronunciation_preflight
+
+  if (( RESUME )); then
+    EXPECTED_RESUME_STATE="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
+    if [[ "$RESUME_STATE" != "$EXPECTED_RESUME_STATE" ]]; then
+      printf 'resume state must be the canonical current-run receipt: %s\n' \
+        "$EXPECTED_RESUME_STATE" >&2
+      exit 64
+    fi
+  fi
 
   if (( ! RECOVER_STALE_LOCK )); then
     CANONICAL_PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
@@ -174,13 +208,21 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     fi
     lease_command+=(--leased-run)
     if (( RESUME )); then
-      lease_command+=(--resume)
+      lease_command+=(--resume --resume-state "$RESUME_STATE")
     fi
     if [[ -n "$MAX_CHAPTERS" ]]; then
       lease_command+=(--max-chapters "$MAX_CHAPTERS")
     fi
   fi
   exec "${lease_command[@]}"
+fi
+
+if (( RESUME )); then
+  expected_resume_state="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
+  if [[ "$RESUME_STATE" != "$expected_resume_state" ]]; then
+    printf 'internal resume state is not the canonical current-run receipt\n' >&2
+    exit 70
+  fi
 fi
 
 assert_leases "$BUILD_RESOURCE"

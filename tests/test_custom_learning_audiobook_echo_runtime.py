@@ -511,6 +511,12 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             text=True,
         )
 
+    def resume_arguments(self) -> tuple[str, str, str]:
+        state = next(
+            (self.run_root / "research").glob("echo-resume-state-*.json")
+        )
+        return ("--resume", "--resume-state", str(state))
+
     def test_learning_pilot_wrapper_uses_isolated_coverless_paths(self) -> None:
         log = self.tmp / "pilot-narrate.log"
         environment = self.environment()
@@ -1130,6 +1136,51 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 self.assertEqual(64, result.returncode)
                 self.assertIn("positive integer", result.stderr)
 
+    def test_resume_requires_the_canonical_absolute_state_path(self) -> None:
+        bare = self.run_narrate("--resume")
+        self.assertEqual(64, bare.returncode)
+        self.assertIn("--resume-state ABSOLUTE_PATH", bare.stderr)
+
+        relative = self.run_narrate(
+            "--resume", "--resume-state", "research/echo-resume-state.json"
+        )
+        self.assertEqual(64, relative.returncode)
+        self.assertIn("absolute", relative.stderr)
+
+        state_without_resume = self.run_narrate(
+            "--resume-state", str(self.run_root / "research" / "state.json")
+        )
+        self.assertEqual(64, state_without_resume.returncode)
+        self.assertIn("requires --resume", state_without_resume.stderr)
+
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        mismatched = self.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(self.run_root / "research" / "echo-resume-state-wrong.json"),
+        )
+        self.assertEqual(64, mismatched.returncode)
+        self.assertIn("canonical", mismatched.stderr)
+
+    def test_pilot_resume_cannot_omit_or_silently_ignore_state(self) -> None:
+        bare = self.run_pilot_narrate("--resume")
+        self.assertEqual(64, bare.returncode)
+        self.assertIn("--resume-state ABSOLUTE_PATH", bare.stderr)
+
+        relative = self.run_pilot_narrate(
+            "--resume", "--resume-state", "research/echo-resume-state.json"
+        )
+        self.assertEqual(64, relative.returncode)
+        self.assertIn("absolute", relative.stderr)
+
+        state = self.run_root / "research" / "echo-resume-state-placeholder.json"
+        unsupported = self.run_pilot_narrate(
+            "--resume", "--resume-state", str(state)
+        )
+        self.assertEqual(64, unsupported.returncode)
+        self.assertIn("not supported until installed preflight", unsupported.stderr)
+
     def test_success_publishes_run_scoped_media_and_current_selector(self) -> None:
         result = self.run_narrate()
         self.assertEqual(0, result.returncode, result.stderr)
@@ -1226,7 +1277,15 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
         resumed_environment = self.environment()
         resumed_environment["FAKE_NARRATE_LOG"] = str(log)
-        resumed = self.run_narrate("--resume", environment=resumed_environment)
+        resume_state = next(
+            (self.run_root / "research").glob("echo-resume-state-*.json")
+        )
+        resumed = self.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(resume_state),
+            environment=resumed_environment,
+        )
         self.assertEqual(0, resumed.returncode, resumed.stderr)
         log_lines = log.read_text(encoding="utf-8").splitlines()
         self.assertEqual(2, sum(line.startswith("BEGIN=") for line in log_lines))
@@ -1498,7 +1557,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         marker_payload["identity"]["renderVersion"] = True
         marker.write_text(json.dumps(marker_payload), encoding="utf-8")
 
-        resumed = self.run_narrate("--resume")
+        resumed = self.run_narrate(*self.resume_arguments())
         self.assertNotEqual(0, resumed.returncode)
         self.assertIn("resume state", resumed.stderr)
 
@@ -1514,7 +1573,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         marker_payload["identity"]["renderVersion"] = 12
         marker.write_text(json.dumps(marker_payload), encoding="utf-8")
 
-        resumed = self.run_narrate("--resume")
+        resumed = self.run_narrate(*self.resume_arguments())
 
         self.assertNotEqual(0, resumed.returncode)
         self.assertIn("render version 13", resumed.stderr)
@@ -1524,7 +1583,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(0, initial.returncode, initial.stderr)
         database = next(self.run_root.glob("narration-*.sqlite"))
         database.write_bytes(b"substituted database")
-        changed_database = self.run_narrate("--resume")
+        changed_database = self.run_narrate(*self.resume_arguments())
         self.assertNotEqual(0, changed_database.returncode)
         self.assertIn("resume state", changed_database.stderr)
 
@@ -1535,7 +1594,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         payload = json.loads(marker.read_text(encoding="utf-8"))
         payload["identity"] = None
         marker.write_text(json.dumps(payload), encoding="utf-8")
-        resumed = self.run_narrate("--resume")
+        resumed = self.run_narrate(*self.resume_arguments())
         self.assertNotEqual(0, resumed.returncode)
         self.assertIn("sealed Echo identity", resumed.stderr)
 
@@ -1910,7 +1969,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
         resumed_environment = self.environment()
         resumed_environment["FAKE_NARRATE_LOG"] = str(log)
-        resumed = self.run_narrate("--resume", environment=resumed_environment)
+        resumed = self.run_narrate(
+            *self.resume_arguments(), environment=resumed_environment
+        )
         self.assertEqual(0, resumed.returncode, resumed.stderr)
 
 

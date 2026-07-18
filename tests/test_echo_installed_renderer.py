@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import dataclasses
+import fcntl
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import platform
@@ -23,6 +25,13 @@ MODULE_PATH = (
     / "custom-learning-audiobook"
     / "scripts"
     / "echo_installed_renderer.py"
+)
+STATE_MODULE_PATH = (
+    ROOT
+    / "skills"
+    / "custom-learning-audiobook"
+    / "scripts"
+    / "echo_pronunciation_state.py"
 )
 LEASE_MODULE_PATH = (
     ROOT
@@ -82,8 +91,9 @@ def load_module(name: str, path: Path):
     return module
 
 
+LEASE = load_module("echo_pronunciation_lease", LEASE_MODULE_PATH)
+STATE = load_module("echo_pronunciation_state", STATE_MODULE_PATH)
 RENDERER = load_module("custom_learning_echo_installed_renderer", MODULE_PATH)
-LEASE = load_module("custom_learning_echo_pronunciation_lease", LEASE_MODULE_PATH)
 
 
 def canonical_json(payload: dict[str, object]) -> bytes:
@@ -324,18 +334,19 @@ class ManifestAndAttestationTests(unittest.TestCase):
         manifest_data: bytes | None = None,
         source_directory_name: str = ACCEPTED_SOURCE_SHA,
         build_directory_name: str | None = None,
+        renderer_root: Path | None = None,
     ) -> tuple[Path, str]:
         selected_payload = payload or self.payload()
         data = manifest_data or canonical_json(selected_payload)
         manifest_sha = hashlib.sha256(data).hexdigest()
         build_name = build_directory_name or manifest_sha
-        renderer_root = (
+        selected_renderer_root = renderer_root or (
             self.renderer_root
             if self.package_count == 0
             else self.root / f"renderers-{self.package_count}"
         )
         self.package_count += 1
-        build_root = renderer_root / source_directory_name / build_name
+        build_root = selected_renderer_root / source_directory_name / build_name
         resources = build_root / "EchoNarrationResources"
         resources.mkdir(parents=True)
         executable = build_root / "echo-cli"
@@ -347,6 +358,46 @@ class ManifestAndAttestationTests(unittest.TestCase):
             path.write_bytes(content)
         (build_root / "renderer-manifest.json").write_bytes(data)
         return build_root, manifest_sha
+
+    def write_selector(self, manifest_sha: str, *, data: bytes | None = None) -> Path:
+        selector = self.renderer_root / ACCEPTED_SOURCE_SHA / "approved-renderer.json"
+        selector.parent.mkdir(parents=True, exist_ok=True)
+        selector.write_bytes(
+            data
+            or canonical_json(
+                {
+                    "schemaVersion": 1,
+                    "echoSourceSHA": ACCEPTED_SOURCE_SHA,
+                    "manifestSHA256": manifest_sha,
+                }
+            )
+        )
+        return selector
+
+    def write_resume_state(
+        self,
+        path: Path,
+        manifest_sha: str,
+        *,
+        schema_version: int = 2,
+        include_manifest: bool = True,
+    ) -> None:
+        payload: dict[str, object] = {
+            "schemaVersion": schema_version,
+            "echoSourceSHA": ACCEPTED_SOURCE_SHA,
+            "sourceFingerprint": "a" * 64,
+            "voice": "am_michael",
+            "renderVersion": 15,
+            "captureSetID": "b" * 64,
+            "inputReceiptSHA256": "c" * 64,
+            "databaseSHA256": "d" * 64,
+            "databaseByteCount": 1,
+            "captures": [],
+        }
+        if include_manifest:
+            payload["rendererManifestSHA256"] = manifest_sha
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(canonical_json(payload))
 
     def parse_package(
         self, payload: dict[str, object] | None = None
@@ -377,6 +428,234 @@ class ManifestAndAttestationTests(unittest.TestCase):
         self.assertEqual(325566778, state.model_expected_byte_count)
         self.assertEqual("sharedEchoCache", state.model_delivery_mode)
         self.assertIs(False, state.model_bytes_attested)
+
+    def test_resolve_new_strictly_selects_and_validates_the_named_build(self):
+        build_root, manifest_sha = self.create_package(renderer_root=self.renderer_root)
+        self.write_selector(manifest_sha)
+
+        state = RENDERER.resolve_new_renderer(self.renderer_root, ACCEPTED_SOURCE_SHA)
+
+        self.assertEqual(build_root, state.build_root)
+        self.assertEqual(manifest_sha, state.manifest_sha)
+
+        selector_payload = {
+            "schemaVersion": 1,
+            "echoSourceSHA": ACCEPTED_SOURCE_SHA,
+            "manifestSHA256": manifest_sha,
+        }
+        invalid_selectors = (
+            canonical_json({**selector_payload, "unknown": True}),
+            canonical_json(
+                {key: value for key, value in selector_payload.items() if key != "manifestSHA256"}
+            ),
+            canonical_json({**selector_payload, "schemaVersion": 2}),
+            canonical_json({**selector_payload, "echoSourceSHA": "e" * 40}),
+            canonical_json({**selector_payload, "manifestSHA256": "f" * 63}),
+            b'{"schemaVersion":1,"schemaVersion":1,"echoSourceSHA":"'
+            + ACCEPTED_SOURCE_SHA.encode()
+            + b'","manifestSHA256":"'
+            + manifest_sha.encode()
+            + b'"}\n',
+        )
+        for data in invalid_selectors:
+            with self.subTest(data=data):
+                self.write_selector(manifest_sha, data=data)
+                with self.assertRaises(ValueError):
+                    RENDERER.resolve_new_renderer(
+                        self.renderer_root, ACCEPTED_SOURCE_SHA
+                    )
+
+    def test_resolve_new_honors_the_shared_nonblocking_selector_lease(self):
+        _, manifest_sha = self.create_package(renderer_root=self.renderer_root)
+        selector = self.write_selector(manifest_sha)
+        lock_root = (
+            Path(pwd.getpwuid(os.geteuid()).pw_dir).resolve()
+            / ".cache"
+            / "explainer-audiobooks"
+            / "echo-pronunciation-leases"
+        )
+        lock_root.mkdir(mode=0o700, parents=True, exist_ok=True)
+        lock_path = LEASE.lock_path(lock_root, str(selector))
+        descriptor = LEASE.open_lock(lock_path)
+        self.addCleanup(lambda: os.close(descriptor))
+        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+        with self.assertRaisesRegex(ValueError, "active renderer selector lease"):
+            RENDERER.resolve_new_renderer(self.renderer_root, ACCEPTED_SOURCE_SHA)
+
+    def test_resolver_cli_emits_env0_and_reports_usage_as_64(self):
+        _, manifest_sha = self.create_package(renderer_root=self.renderer_root)
+        self.write_selector(manifest_sha)
+        resolved = subprocess.run(
+            [
+                sys.executable,
+                str(MODULE_PATH),
+                "resolve-new",
+                "--source-sha",
+                ACCEPTED_SOURCE_SHA,
+                "--renderer-root",
+                str(self.renderer_root),
+                "--format",
+                "env0",
+            ],
+            capture_output=True,
+        )
+        self.assertEqual(0, resolved.returncode, resolved.stderr.decode())
+        records = resolved.stdout.split(b"\0")
+        self.assertEqual(b"", records.pop())
+        self.assertEqual(
+            [key.encode() for key in RENDERER._ENV0_KEYS],
+            records[0::2],
+        )
+
+        usage = subprocess.run(
+            [
+                sys.executable,
+                str(MODULE_PATH),
+                "resolve-new",
+                "--source-sha",
+                ACCEPTED_SOURCE_SHA,
+                "--renderer-root",
+                str(self.renderer_root),
+            ],
+            capture_output=True,
+        )
+        self.assertEqual(64, usage.returncode)
+
+    def test_resolve_resume_uses_only_the_sealed_receipt_identity(self):
+        original_root, original_manifest = self.create_package(
+            renderer_root=self.renderer_root
+        )
+        resume_state = self.root / "run" / "research" / "echo-resume-state-run.json"
+        self.write_resume_state(resume_state, original_manifest)
+
+        changed_payload = self.payload()
+        changed_payload["renderVersion"] = 16
+        _, changed_manifest = self.create_package(
+            changed_payload, renderer_root=self.renderer_root
+        )
+        selector = self.write_selector(changed_manifest)
+        selector_reads: list[Path] = []
+        original_reader = RENDERER._read_regular_file
+
+        def recording_reader(path: Path, label: str) -> bytes:
+            if path == selector:
+                selector_reads.append(path)
+            return original_reader(path, label)
+
+        with mock.patch.object(
+            RENDERER, "_read_regular_file", side_effect=recording_reader
+        ):
+            state = RENDERER.resolve_resume_renderer(
+                self.renderer_root,
+                ACCEPTED_SOURCE_SHA,
+                resume_state,
+            )
+
+        self.assertEqual(original_root, state.build_root)
+        self.assertEqual(original_manifest, state.manifest_sha)
+        self.assertEqual([], selector_reads)
+
+    def test_resolve_resume_rejects_historical_or_inexact_state(self):
+        _, manifest_sha = self.create_package(renderer_root=self.renderer_root)
+        resume_state = self.root / "run" / "research" / "echo-resume-state-run.json"
+        for schema_version, include_manifest in ((1, False), (1, True), (2, False)):
+            with self.subTest(
+                schema_version=schema_version, include_manifest=include_manifest
+            ):
+                self.write_resume_state(
+                    resume_state,
+                    manifest_sha,
+                    schema_version=schema_version,
+                    include_manifest=include_manifest,
+                )
+                with self.assertRaises(ValueError):
+                    RENDERER.resolve_resume_renderer(
+                        self.renderer_root,
+                        ACCEPTED_SOURCE_SHA,
+                        resume_state,
+                    )
+
+        self.write_resume_state(resume_state, manifest_sha)
+        payload = json.loads(resume_state.read_text(encoding="utf-8"))
+        payload["unknown"] = True
+        resume_state.write_bytes(canonical_json(payload))
+        with self.assertRaises(ValueError):
+            RENDERER.resolve_resume_renderer(
+                self.renderer_root,
+                ACCEPTED_SOURCE_SHA,
+                resume_state,
+            )
+
+    def test_state_reader_returns_only_exact_installed_renderer_identity(self):
+        _, manifest_sha = self.create_package(renderer_root=self.renderer_root)
+        resume_state = self.root / "run" / "research" / "echo-resume-state-run.json"
+        self.write_resume_state(resume_state, manifest_sha)
+
+        self.assertEqual(
+            (ACCEPTED_SOURCE_SHA, manifest_sha),
+            STATE.read_installed_renderer_identity(resume_state),
+        )
+
+        payload = json.loads(resume_state.read_text(encoding="utf-8"))
+        payload["unknown"] = True
+        resume_state.write_bytes(canonical_json(payload))
+        with self.assertRaises(ValueError):
+            STATE.read_installed_renderer_identity(resume_state)
+
+    def test_canonical_renderer_root_uses_the_effective_account_home(self):
+        expected = self.root / "Library" / "Application Support" / "Echo" / "Renderers"
+        expected.mkdir(parents=True)
+        account = mock.Mock(pw_dir=str(self.root))
+        with mock.patch.dict(os.environ, {"HOME": "/attacker"}, clear=False):
+            with mock.patch.object(RENDERER.pwd, "getpwuid", return_value=account):
+                self.assertEqual(expected, RENDERER.canonical_renderer_root(None))
+
+        with self.assertRaises(ValueError):
+            RENDERER.canonical_renderer_root("relative/renderers")
+        alias = self.root / "renderer-alias"
+        alias.symlink_to(expected, target_is_directory=True)
+        with self.assertRaises(ValueError):
+            RENDERER.canonical_renderer_root(str(alias))
+
+    def test_emit_env0_uses_only_fixed_alternating_key_value_records(self):
+        state = self.parse_package()
+        output = io.BytesIO()
+
+        RENDERER.emit_env0(state, output)
+
+        records = output.getvalue().split(b"\0")
+        self.assertEqual(b"", records.pop())
+        self.assertEqual(0, len(records) % 2)
+        values = dict(
+            zip(
+                (record.decode("ascii") for record in records[0::2]),
+                (record.decode("utf-8") for record in records[1::2]),
+                strict=True,
+            )
+        )
+        self.assertEqual(
+            [
+                "ECHO_RENDERER_ROOT",
+                "ECHO_RENDERER_BUILD_ROOT",
+                "ECHO_RENDERER_MANIFEST",
+                "ECHO_RENDERER_MANIFEST_SHA256",
+                "APPROVED_ECHO_INSTALLER_SHA",
+                "ECHO_SOURCE_SHA",
+                "CLI",
+                "ECHO_CLI_SHA256",
+                "ECHO_RESOURCE_DIR",
+                "ECHO_RESOURCES_SHA256",
+                "ECHO_RENDER_VERSION",
+                "ECHO_MODEL_REVISION",
+                "ECHO_MODEL_EXPECTED_BYTES",
+                "ECHO_MODEL_BYTES_ATTESTED",
+            ],
+            list(values),
+        )
+        self.assertEqual(str(state.build_root), values["ECHO_RENDERER_BUILD_ROOT"])
+        self.assertEqual("false", values["ECHO_MODEL_BYTES_ATTESTED"])
+        self.assertNotIn(b"=", output.getvalue())
 
     def test_canonical_manifest_vector_has_the_reviewed_bytes_and_sha(self):
         vector = load_vector("canonical-manifest-v1.json")

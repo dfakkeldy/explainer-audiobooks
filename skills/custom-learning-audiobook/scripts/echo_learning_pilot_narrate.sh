@@ -8,12 +8,27 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"
 
 usage() {
-  printf '%s\n' 'usage: echo_learning_pilot_narrate.sh' >&2
+  printf '%s\n' \
+    'usage: echo_learning_pilot_narrate.sh [--resume --resume-state ABSOLUTE_PATH]' >&2
 }
 
+RESUME=0
+RESUME_STATE=
 INTERNAL_MODE=
 while (( $# )); do
   case "$1" in
+    --resume)
+      RESUME=1
+      ;;
+    --resume-state)
+      if [[ -n "$RESUME_STATE" || -z ${2:-} ]]; then
+        printf '%s\n' '--resume-state requires one absolute path' >&2
+        usage
+        exit 64
+      fi
+      RESUME_STATE=$2
+      shift
+      ;;
     --leased-preflight)
       INTERNAL_MODE=preflight
       ;;
@@ -31,6 +46,26 @@ while (( $# )); do
   esac
   shift
 done
+if (( RESUME )) && [[ -z "$RESUME_STATE" ]]; then
+  printf '%s\n' '--resume requires --resume-state ABSOLUTE_PATH' >&2
+  usage
+  exit 64
+fi
+if [[ -n "$RESUME_STATE" && $RESUME -eq 0 ]]; then
+  printf '%s\n' '--resume-state requires --resume' >&2
+  usage
+  exit 64
+fi
+if [[ -n "$RESUME_STATE" && "$RESUME_STATE" != /* ]]; then
+  printf '%s\n' '--resume-state must be an absolute path' >&2
+  usage
+  exit 64
+fi
+if (( RESUME )); then
+  printf '%s\n' \
+    'learning-pilot resume is not supported until installed preflight integration' >&2
+  exit 64
+fi
 
 ECHO_PRONUNCIATION_LEASE_ROOT=$(echo_pronunciation_canonical_lease_root) \
   || exit $?
