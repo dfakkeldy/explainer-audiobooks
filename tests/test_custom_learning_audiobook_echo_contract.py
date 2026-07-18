@@ -231,6 +231,57 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
                 self.assertIn(marker, self.pilot_narrate_wrapper)
         self.assertNotIn("--cover", self.pilot_narrate_wrapper)
 
+    def test_learning_pilot_uses_the_shared_installed_renderer_boundary(self) -> None:
+        governed_source = (
+            self.preflight + self.narrate_wrapper + self.pilot_narrate_wrapper
+        )
+        for forbidden in (
+            "ECHO_REPO",
+            ".build/cli",
+            "xcode-build-gate.sh",
+            "xcodebuild",
+            "make",
+            "git ",
+            "/usr/bin/git",
+        ):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, governed_source)
+
+        for shared_function in (
+            "echo_pronunciation_resolve_installed_renderer",
+            "echo_pronunciation_assert_leases",
+            "echo_pronunciation_renderer_receipt_text",
+            "echo_pronunciation_attest_renderer",
+        ):
+            with self.subTest(shared_function=shared_function):
+                self.assertIn(f"{shared_function}()", self.preflight)
+                self.assertIn(shared_function, self.pilot_narrate_wrapper)
+
+        for identity_field in (
+            "renderer_schema_version",
+            "renderer_root",
+            "renderer_build_root",
+            "installer_source_sha",
+            "renderer_manifest_sha256",
+            "echo_cli_sha256",
+            "echo_resources_sha256",
+            "model_policy_revision",
+            "model_expected_byte_count",
+            "model_bytes_attested=false",
+        ):
+            with self.subTest(identity_field=identity_field):
+                self.assertIn(identity_field, self.preflight)
+
+        self.assertIn("resolve-new", self.preflight)
+        self.assertIn("resolve-resume", self.preflight)
+        self.assertIn("ECHO_RENDERER_BUILD_ROOT", self.pilot_narrate_wrapper)
+        self.assertIn("--resume", self.pilot_narrate_wrapper)
+        self.assertGreaterEqual(
+            self.pilot_narrate_wrapper.count("pilot_attest_inputs"),
+            4,
+            "pilot must attest before launch, after render, and around publish",
+        )
+
     def test_wrapper_binds_selected_square_cover_to_immutable_render(self) -> None:
         for marker in (
             "M4B_COVER",

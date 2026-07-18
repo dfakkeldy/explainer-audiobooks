@@ -744,8 +744,6 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         environment: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         pilot_environment = dict(environment or self.environment())
-        pilot_environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.second_sha
-        pilot_environment["ECHO_SOURCE_SHA"] = self.second_sha
         return subprocess.run(
             [str(PILOT_NARRATE_WRAPPER), *arguments],
             cwd=self.explainer,
@@ -757,6 +755,12 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
     def resume_arguments(self) -> tuple[str, str, str]:
         state = next(
             (self.run_root / "research").glob("echo-resume-state-*.json")
+        )
+        return ("--resume", "--resume-state", str(state))
+
+    def pilot_resume_arguments(self) -> tuple[str, str, str]:
+        state = next(
+            (self.run_root / "pilot" / "research").glob("echo-resume-state-*.json")
         )
         return ("--resume", "--resume-state", str(state))
 
@@ -773,9 +777,13 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             )
             sentinel.chmod(sentinel.stat().st_mode | stat.S_IXUSR)
 
-        result = self.run_narrate()
-
-        self.assertEqual(0, result.returncode, result.stderr)
+        for wrapper, invoke in (
+            ("full", self.run_narrate),
+            ("pilot", self.run_pilot_narrate),
+        ):
+            with self.subTest(wrapper=wrapper):
+                result = invoke()
+                self.assertEqual(0, result.returncode, result.stderr)
         self.assertFalse(forbidden_log.exists(), forbidden_log.read_text() if forbidden_log.exists() else "")
 
     def test_missing_installed_version_is_actionable_and_does_not_build(self) -> None:
@@ -930,6 +938,63 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertRegex(receipt, r"audio_sha256=[0-9a-f]{64}")
         self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
 
+    def test_learning_pilot_binds_the_full_installed_renderer_identity(self) -> None:
+        full_fields = self.preflight_fields()
+
+        result = self.run_pilot_narrate()
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        pilot_receipt = next(
+            (self.run_root / "pilot" / "research").glob("echo-pilot-inputs-*.env")
+        ).read_text(encoding="utf-8")
+        pilot_fields = dict(
+            line.split("=", 1) for line in pilot_receipt.splitlines() if "=" in line
+        )
+        shared_fields = {
+            "renderer_root": "ECHO_RENDERER_ROOT",
+            "renderer_build_root": "ECHO_RENDERER_BUILD_ROOT",
+            "installer_source_sha": "APPROVED_ECHO_INSTALLER_SHA",
+            "approved_echo_pronunciation_sha": "APPROVED_ECHO_PRONUNCIATION_SHA",
+            "echo_source_sha": "ECHO_SOURCE_SHA",
+            "renderer_manifest_sha256": "ECHO_RENDERER_MANIFEST_SHA256",
+            "echo_cli_path": "CLI",
+            "echo_cli_sha256": "ECHO_CLI_SHA256",
+            "echo_resource_dir": "ECHO_RESOURCE_DIR",
+            "echo_resources_sha256": "ECHO_RESOURCES_SHA256",
+            "render_version": "ECHO_RENDER_VERSION",
+            "model_policy_revision": "ECHO_MODEL_REVISION",
+            "model_expected_byte_count": "ECHO_MODEL_EXPECTED_BYTES",
+            "model_bytes_attested": "ECHO_MODEL_BYTES_ATTESTED",
+        }
+        for pilot_name, full_name in shared_fields.items():
+            with self.subTest(field=pilot_name):
+                self.assertEqual(full_fields[full_name], pilot_fields[pilot_name])
+
+    def test_learning_pilot_replaces_inherited_resource_dir_for_every_cli_call(
+        self,
+    ) -> None:
+        environment = self.environment()
+        environment["ECHO_RESOURCE_DIR"] = "/stale/debug/resources"
+
+        result = self.run_pilot_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        calls = self.installed_probe_log.read_text(encoding="utf-8").splitlines()
+        sealed_suffix = f" ECHO_RESOURCE_DIR={self.resources.resolve()}"
+        self.assertGreater(len(calls), 0)
+        self.assertTrue(all(call.endswith(sealed_suffix) for call in calls), calls)
+        for required_call in (
+            "CALL=--version:",
+            "CALL=narrate:--help",
+            "CALL=verify-sidecar:--help",
+            "CALL=narrate:--epub",
+            "CALL=verify-sidecar:--epub",
+        ):
+            with self.subTest(required_call=required_call):
+                self.assertTrue(
+                    any(call.startswith(required_call) for call in calls), calls
+                )
+
     def test_learning_pilot_preserves_optional_pronunciation_reel(self) -> None:
         environment = self.environment()
         environment["FAKE_EMIT_REEL"] = "1"
@@ -952,8 +1017,6 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         environment = self.environment()
         environment.update(
             {
-                "APPROVED_ECHO_PRONUNCIATION_SHA": self.second_sha,
-                "ECHO_SOURCE_SHA": self.second_sha,
                 "FAKE_NARRATE_READY": str(ready),
                 "FAKE_NARRATE_RELEASE": str(release),
             }
@@ -968,7 +1031,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         self.addCleanup(lambda: process.poll() is None and process.kill())
         self.wait_for_path(ready, process)
-        (self.pilot_resources / "pronunciations.json").write_text(
+        (self.resources / "pronunciations.json").write_text(
             '{"renderVersion":13}\n', encoding="utf-8"
         )
         release.touch()
@@ -976,7 +1039,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
 
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
-        self.assertIn("renderer inputs changed while leases were held", stderr)
+        self.assertIn("installed renderer attestation failed", stderr)
         pilot_dist = self.run_root / "pilot" / "dist"
         self.assertFalse((pilot_dist / "fixture-pilot.m4b").exists())
         self.assertFalse((pilot_dist / "fixture-pilot.alignment.json").exists())
@@ -1503,12 +1566,33 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(64, relative.returncode)
         self.assertIn("absolute", relative.stderr)
 
-        state = self.run_root / "research" / "echo-resume-state-placeholder.json"
-        unsupported = self.run_pilot_narrate(
-            "--resume", "--resume-state", str(state)
+        initial = self.run_pilot_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        resumed = self.run_pilot_narrate(*self.pilot_resume_arguments())
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+
+    def test_learning_pilot_resume_keeps_its_sealed_renderer_after_promotion(
+        self,
+    ) -> None:
+        selector_path = self.renderer_root / self.source_sha / "approved-renderer.json"
+        original_selector = selector_path.read_bytes()
+        sealed_build, sealed_manifest = self.select_manifest_variant(
+            lambda payload: payload.__setitem__("renderVersion", 13),
+            render_version=13,
         )
-        self.assertEqual(64, unsupported.returncode)
-        self.assertIn("not supported until installed preflight", unsupported.stderr)
+        initial = self.run_pilot_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        selector_path.write_bytes(original_selector)
+
+        resumed = self.run_pilot_narrate(*self.pilot_resume_arguments())
+
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        receipt = next(
+            (self.run_root / "pilot" / "research").glob("echo-pilot-inputs-*.env")
+        ).read_text(encoding="utf-8")
+        self.assertIn(f"renderer_build_root={sealed_build}", receipt)
+        self.assertIn(f"renderer_manifest_sha256={sealed_manifest}", receipt)
+        self.assertIn("render_version=13", receipt)
 
     def test_success_publishes_run_scoped_media_and_current_selector(self) -> None:
         result = self.run_narrate()

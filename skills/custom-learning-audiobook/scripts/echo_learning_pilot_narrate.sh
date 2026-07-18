@@ -62,75 +62,69 @@ if [[ -n "$RESUME_STATE" && "$RESUME_STATE" != /* ]]; then
   exit 64
 fi
 if (( RESUME )); then
-  printf '%s\n' \
-    'learning-pilot resume is not supported until installed preflight integration' >&2
-  exit 64
+  canonical_explainer_root=$(cd -- "${EXPLAINER_ROOT:-$SCRIPT_DIR/../../..}" && pwd -P)
+  canonical_resume_root="$canonical_explainer_root/.build/custom-learning-audiobooks/${SLUG:-}/pilot/research"
+  resume_filename=${RESUME_STATE#"$canonical_resume_root/"}
+  if [[ -z ${SLUG:-} || "$RESUME_STATE" == "$resume_filename" \
+    || ! "$resume_filename" =~ ^echo-resume-state-[a-z0-9_-]+\.json$ \
+    || -L "$RESUME_STATE" || ! -f "$RESUME_STATE" ]]; then
+    printf 'resume state must be the canonical pilot receipt under: %s\n' \
+      "$canonical_resume_root" >&2
+    exit 64
+  fi
 fi
 
 ECHO_PRONUNCIATION_LEASE_ROOT=$(echo_pronunciation_canonical_lease_root) \
   || exit $?
-ECHO_REPO=${ECHO_REPO:-/Users/dfakkeldy/Developer/Echo}
-BUILD_RESOURCE="$ECHO_REPO/.build/cli"
-export ECHO_PRONUNCIATION_LEASE_ROOT ECHO_REPO BUILD_RESOURCE
-
-assert_leases() {
-  local command=(
-    "$SCRIPT_DIR/echo_pronunciation_lease.py"
-    --assert-held
-    --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
-  )
-  local resource
-  for resource in "$@"; do
-    command+=(--resource "$resource")
-  done
-  if ! "${command[@]}" >/dev/null; then
-    printf 'learning-pilot narration requires inherited FD-backed leases\n' >&2
-    return 70
-  fi
-}
+export ECHO_PRONUNCIATION_LEASE_ROOT
 
 if [[ -z "$INTERNAL_MODE" ]]; then
-  exec "$SCRIPT_DIR/echo_pronunciation_lease.py" \
-    --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT" \
-    --resource "$BUILD_RESOURCE" \
-    -- "$0" --leased-preflight
+  echo_pronunciation_resolve_installed_renderer "$RESUME" "$RESUME_STATE" \
+    || exit $?
+  lease_command=(
+    "$SCRIPT_DIR/echo_pronunciation_lease.py"
+    --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
+    --resource "$ECHO_RENDERER_BUILD_ROOT"
+    --
+    "$0"
+    --leased-preflight
+  )
+  if (( RESUME )); then
+    lease_command+=(--resume --resume-state "$RESUME_STATE")
+  fi
+  exec "${lease_command[@]}"
 fi
 
 pilot_receipt_text() {
   printf '%s\n' \
-    'schema=1' \
-    'kind=learning-pilot-nonpackage' \
-    "attempt_id=$ATTEMPT_ID" \
-    "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
-    "echo_source_sha=$ECHO_SOURCE_SHA" \
-    "echo_tree_state=$ECHO_TREE_STATE" \
-    "echo_tree_diff_sha256=$ECHO_TREE_DIFF_SHA256" \
+    'schema=2' \
+    'kind=learning-pilot-nonpackage'
+  echo_pronunciation_renderer_receipt_text
+  printf '%s\n' \
     "epub_path=$EPUB" \
     "epub_sha256=$EPUB_SHA256" \
-    "echo_cli_path=$CLI" \
-    "echo_cli_sha256=$ECHO_CLI_SHA256" \
-    "echo_resource_dir=$ECHO_RESOURCE_DIR" \
-    "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
-    "render_version=$ECHO_RENDER_VERSION" \
-    "voice=$VOICE" \
     "title=$TITLE" \
     "pilot_input_sha256=$PILOT_INPUT_SHA256" \
+    "run_id=$RUN_ID" \
     "work_dir=$WORK" \
     "narration_db=$DB"
 }
 
 pilot_preflight() {
   local original_pwd=$PWD
-  local echo_repo=${ECHO_REPO:-/Users/dfakkeldy/Developer/Echo}
   local explainer_root=${EXPLAINER_ROOT:-$(cd -- "$SCRIPT_DIR/../../.." && pwd -P)}
-  local build_gate=${ECHO_BUILD_GATE:-$HOME/.claude/bin/xcode-build-gate.sh}
-  local approved_input=${APPROVED_ECHO_PRONUNCIATION_SHA:-}
 
-  assert_leases "$BUILD_RESOURCE"
-  echo_repo=$(cd -- "$echo_repo" 2>/dev/null && pwd -P) || {
-    printf 'cannot resolve Echo repository: %s\n' "$echo_repo" >&2
-    return 66
-  }
+  echo_pronunciation_assert_leases "$ECHO_RENDERER_BUILD_ROOT"
+  echo_pronunciation_renderer_required || return $?
+  echo_pronunciation_validate_renderer_paths || return $?
+  echo_pronunciation_attest_renderer || return $?
+  require_renderer_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
+    "${APPROVED_ECHO_PRONUNCIATION_SHA:-}" || return $?
+  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
+    printf 'approved Echo pronunciation revision %s must exactly equal installed source %s\n' \
+      "$APPROVED_ECHO_PRONUNCIATION_SHA" "$ECHO_SOURCE_SHA" >&2
+    return 65
+  fi
   explainer_root=$(cd -- "$explainer_root" 2>/dev/null && pwd -P) || {
     printf 'cannot resolve explainer-audiobooks repository: %s\n' \
       "$explainer_root" >&2
@@ -144,7 +138,7 @@ pilot_preflight() {
     printf 'RUN_ROOT must be the absolute canonical base-book run path\n' >&2
     return 64
   fi
-  local canonical_run_root expected_run_root
+  local canonical_run_root expected_run_root governed_path
   canonical_run_root=$(cd -- "$RUN_ROOT" 2>/dev/null && pwd -P) \
     || canonical_run_root=
   expected_run_root="$explainer_root/.build/custom-learning-audiobooks/$SLUG"
@@ -183,103 +177,22 @@ pilot_preflight() {
       return 64
       ;;
   esac
-  if [[ ! -x "$build_gate" ]]; then
-    printf 'Echo build gate is missing or not executable: %s\n' \
-      "$build_gate" >&2
-    return 66
-  fi
-
-  # Renderer identity comes from the built binary and resource tree below. The
-  # Git revision is recorded, not gated on; a dirty tree is fingerprinted.
-  ECHO_SOURCE_SHA=$(git -C "$echo_repo" rev-parse HEAD) || return 65
-  require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
-  local echo_status
-  echo_status=$(git -C "$echo_repo" status --porcelain --untracked-files=all)
-  if [[ -z "$echo_status" ]]; then
-    ECHO_TREE_STATE=clean
-    ECHO_TREE_DIFF_SHA256=$(printf '' | /usr/bin/shasum -a 256 | cut -d' ' -f1)
-  else
-    ECHO_TREE_STATE=dirty
-    ECHO_TREE_DIFF_SHA256=$(
-      {
-        git -C "$echo_repo" diff HEAD
-        printf '%s\n' "$echo_status"
-      } | /usr/bin/shasum -a 256 | cut -d' ' -f1
-    )
-  fi
-
-  if [[ -n "$approved_input" ]]; then
-    require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA "$approved_input"
-    APPROVED_ECHO_PRONUNCIATION_SHA=$(
-      git -C "$echo_repo" rev-parse --verify "${approved_input}^{commit}"
-    ) || {
-      printf 'approved Echo pronunciation revision is not a commit: %s\n' \
-        "$approved_input" >&2
-      return 65
-    }
-    if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
-      printf 'approved Echo pronunciation revision %s must exactly equal Echo source HEAD %s\n' \
-        "$APPROVED_ECHO_PRONUNCIATION_SHA" "$ECHO_SOURCE_SHA" >&2
-      return 65
-    fi
-    if [[ "$ECHO_TREE_STATE" != clean ]]; then
-      printf 'APPROVED_ECHO_PRONUNCIATION_SHA pins a revision but the Echo working tree is not clean; the pinned SHA would not identify the built renderer\n' >&2
-      return 65
-    fi
-  else
-    APPROVED_ECHO_PRONUNCIATION_SHA=unpinned
-  fi
-
-  "$build_gate" --wait
-  make -C "$echo_repo" echo-cli
-  CLI="$echo_repo/.build/cli/Build/Products/Release/echo-cli"
-  ECHO_RESOURCE_DIR="$(dirname -- "$CLI")/EchoNarrationResources"
-  if [[ -L "$CLI" || ! -x "$CLI" ]]; then
-    printf 'missing or unsafe Release echo-cli: %s\n' "$CLI" >&2
-    return 66
-  fi
-  if [[ -L "$ECHO_RESOURCE_DIR" || ! -d "$ECHO_RESOURCE_DIR" ]]; then
-    printf 'missing or unsafe Release EchoNarrationResources: %s\n' \
-      "$ECHO_RESOURCE_DIR" >&2
-    return 66
-  fi
-  local cli_version cli_help
-  cli_version=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" --version)
-  ECHO_RENDER_VERSION=$(
-    echo_pronunciation_release_render_version "$cli_version"
-  ) || {
-    printf 'stale, pre-v12, or non-Release echo-cli: %s\n' "$cli_version" >&2
-    return 65
-  }
-  cli_help=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help)
-  if [[ "$cli_help" != *"--no-pronunciation-review"* ]]; then
-    printf 'stale echo-cli: pronunciation review is unavailable\n' >&2
-    return 65
-  fi
 
   EPUB_SHA256=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
-  ECHO_CLI_SHA256=$(/usr/bin/shasum -a 256 "$CLI" | awk '{print $1}')
-  ECHO_RESOURCES_SHA256=$(
-    /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
-      hash-tree "$ECHO_RESOURCE_DIR"
-  )
   require_sha256 EPUB_SHA256 "$EPUB_SHA256"
-  require_sha256 ECHO_CLI_SHA256 "$ECHO_CLI_SHA256"
-  require_sha256 ECHO_RESOURCES_SHA256 "$ECHO_RESOURCES_SHA256"
+  local echo_source_id
+  echo_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
+  RUN_ID=$(echo_pronunciation_run_id \
+    "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$echo_source_id" "$VOICE")
   PILOT_INPUT_SHA256=$(printf '%s\n' \
-    "epub=$EPUB_SHA256" \
-    "echo_cli=$ECHO_CLI_SHA256" \
-    "echo_resources=$ECHO_RESOURCES_SHA256" \
-    "approved_source=$APPROVED_ECHO_PRONUNCIATION_SHA" \
-    "render_version=$ECHO_RENDER_VERSION" \
-    "voice=$VOICE" \
+    "run_id=$RUN_ID" \
     "title=$TITLE" \
     | /usr/bin/shasum -a 256 | awk '{print $1}')
   require_sha256 PILOT_INPUT_SHA256 "$PILOT_INPUT_SHA256"
 
-  ATTEMPT_ID=$(/usr/local/bin/python3 -c 'import secrets; print(secrets.token_hex(32))')
-  WORK="$PILOT_ROOT/audio-work-${PILOT_INPUT_SHA256:0:12}-$ATTEMPT_ID"
-  DB="$PILOT_ROOT/narration-${PILOT_INPUT_SHA256:0:12}-$ATTEMPT_ID.sqlite"
+  WORK="$PILOT_ROOT/audio-work-$RUN_ID"
+  DB="$PILOT_ROOT/narration-$RUN_ID.sqlite"
   OUTPUT="$PILOT_DIST/$PILOT_SLUG.m4b"
   SIDECAR="$PILOT_DIST/$PILOT_SLUG.alignment.json"
   AUDIT="$PILOT_DIST/$PILOT_SLUG.pronunciation-audit.json"
@@ -289,30 +202,46 @@ pilot_preflight() {
     printf 'pilot research path is unsafe: %s\n' "$PILOT_RESEARCH" >&2
     return 65
   fi
-  INPUT_RECEIPT="$PILOT_RESEARCH/echo-pilot-inputs-$ATTEMPT_ID.env"
+  INPUT_RECEIPT="$PILOT_RESEARCH/echo-pilot-inputs-$RUN_ID.env"
+  STATE_RECEIPT="$PILOT_RESEARCH/echo-resume-state-$RUN_ID.json"
+  ATTEMPT_ID=$(/usr/local/bin/python3 -c 'import secrets; print(secrets.token_hex(32))')
   SUCCESS_RECEIPT="$PILOT_RESEARCH/echo-pilot-success-$ATTEMPT_ID.env"
+  local governed_output
   for governed_output in \
     "$WORK" "$DB" "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL" \
-    "$INPUT_RECEIPT" "$SUCCESS_RECEIPT"; do
+    "$INPUT_RECEIPT" "$STATE_RECEIPT" "$SUCCESS_RECEIPT"; do
     if [[ -L "$governed_output" ]]; then
       printf 'governed pilot output must not be a symlink: %s\n' \
         "$governed_output" >&2
       return 65
     fi
   done
-  if [[ -e "$WORK" || -e "$DB" || -e "$INPUT_RECEIPT" \
-    || -e "$SUCCESS_RECEIPT" ]]; then
-    printf 'fresh pilot attempt paths unexpectedly already exist\n' >&2
-    return 65
-  fi
+
   local receipt_text
   receipt_text=$(pilot_receipt_text)
-  if ! printf '%s\n' "$receipt_text" \
-    | /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
-      immutable-file "$INPUT_RECEIPT"; then
-    printf 'could not create immutable pilot-input receipt: %s\n' \
-      "$INPUT_RECEIPT" >&2
-    return 65
+  if [[ -e "$INPUT_RECEIPT" ]]; then
+    if [[ "$(<"$INPUT_RECEIPT")" != "$receipt_text" ]]; then
+      printf 'existing pilot-input receipt does not match immutable inputs: %s\n' \
+        "$INPUT_RECEIPT" >&2
+      return 65
+    fi
+  else
+    if (( RESUME )) || [[ -e "$WORK" || -e "$DB" || -e "$STATE_RECEIPT" ]]; then
+      printf 'pre-existing pilot state requires a matching input receipt\n' >&2
+      return 65
+    fi
+    if ! printf '%s\n' "$receipt_text" \
+      | /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+        immutable-file "$INPUT_RECEIPT"; then
+      printf 'could not create immutable pilot-input receipt: %s\n' \
+        "$INPUT_RECEIPT" >&2
+      return 65
+    fi
+  fi
+  if (( RESUME )) && [[ "$RESUME_STATE" != "$STATE_RECEIPT" ]]; then
+    printf 'resume state must be the canonical current-pilot receipt: %s\n' \
+      "$STATE_RECEIPT" >&2
+    return 64
   fi
   if [[ "$PWD" != "$original_pwd" ]]; then
     printf 'pilot preflight changed cwd from %s to %s\n' \
@@ -320,29 +249,32 @@ pilot_preflight() {
     return 70
   fi
 
-  ECHO_REPO=$echo_repo
   EXPLAINER_ROOT=$explainer_root
-  export ECHO_REPO EXPLAINER_ROOT RUN_ROOT SLUG TITLE VOICE
+  export EXPLAINER_ROOT RUN_ROOT SLUG TITLE VOICE
   export PILOT_SLUG PILOT_ROOT PILOT_DIST PILOT_RESEARCH
   export APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA
-  export ECHO_TREE_STATE ECHO_TREE_DIFF_SHA256
+  export ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST
+  export ECHO_RENDERER_MANIFEST_SHA256 APPROVED_ECHO_INSTALLER_SHA
   export EPUB EPUB_SHA256 CLI ECHO_CLI_SHA256
   export ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION
-  export PILOT_INPUT_SHA256 ATTEMPT_ID WORK DB OUTPUT SIDECAR AUDIT REEL
-  export INPUT_RECEIPT SUCCESS_RECEIPT
+  export ECHO_MODEL_REVISION ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED
+  export PILOT_INPUT_SHA256 RUN_ID ATTEMPT_ID WORK DB OUTPUT SIDECAR AUDIT REEL
+  export INPUT_RECEIPT STATE_RECEIPT SUCCESS_RECEIPT
 }
 
 pilot_attest_inputs() {
   local required
   for required in \
-    ECHO_REPO EXPLAINER_ROOT RUN_ROOT SLUG TITLE VOICE \
+    EXPLAINER_ROOT RUN_ROOT SLUG TITLE VOICE \
     PILOT_SLUG PILOT_ROOT PILOT_DIST PILOT_RESEARCH \
     APPROVED_ECHO_PRONUNCIATION_SHA ECHO_SOURCE_SHA \
-    ECHO_TREE_STATE ECHO_TREE_DIFF_SHA256 \
+    ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST \
+    ECHO_RENDERER_MANIFEST_SHA256 APPROVED_ECHO_INSTALLER_SHA \
     EPUB EPUB_SHA256 CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR \
-    ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION PILOT_INPUT_SHA256 \
-    ATTEMPT_ID WORK DB OUTPUT SIDECAR AUDIT REEL \
-    INPUT_RECEIPT SUCCESS_RECEIPT; do
+    ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION ECHO_MODEL_REVISION \
+    ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED PILOT_INPUT_SHA256 \
+    RUN_ID ATTEMPT_ID WORK DB OUTPUT SIDECAR AUDIT REEL \
+    INPUT_RECEIPT STATE_RECEIPT SUCCESS_RECEIPT; do
     if [[ -z ${!required:-} || ${!required} == *$'\n'* \
       || ${!required} == *$'\r'* ]]; then
       printf 'sealed pilot preflight state is missing or unsafe: %s\n' \
@@ -350,38 +282,32 @@ pilot_attest_inputs() {
       return 70
     fi
   done
-  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != unpinned ]]; then
-    require_git_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
-      "$APPROVED_ECHO_PRONUNCIATION_SHA"
-  fi
-  require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
-  require_sha256 EPUB_SHA256 "$EPUB_SHA256"
-  require_sha256 ECHO_CLI_SHA256 "$ECHO_CLI_SHA256"
-  require_sha256 ECHO_RESOURCES_SHA256 "$ECHO_RESOURCES_SHA256"
-  require_sha256 PILOT_INPUT_SHA256 "$PILOT_INPUT_SHA256"
+  echo_pronunciation_renderer_required || return $?
+  echo_pronunciation_validate_renderer_paths || return $?
+  require_renderer_commit_sha APPROVED_ECHO_PRONUNCIATION_SHA \
+    "$APPROVED_ECHO_PRONUNCIATION_SHA" || return $?
+  require_renderer_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA" || return $?
+  require_sha256 EPUB_SHA256 "$EPUB_SHA256" || return $?
+  require_sha256 ECHO_CLI_SHA256 "$ECHO_CLI_SHA256" || return $?
+  require_sha256 ECHO_RESOURCES_SHA256 "$ECHO_RESOURCES_SHA256" || return $?
+  require_sha256 ECHO_RENDERER_MANIFEST_SHA256 \
+    "$ECHO_RENDERER_MANIFEST_SHA256" || return $?
+  require_sha256 PILOT_INPUT_SHA256 "$PILOT_INPUT_SHA256" || return $?
   if [[ ! "$ATTEMPT_ID" =~ ^[0-9a-f]{64}$ ]]; then
     printf 'sealed pilot attempt ID is invalid\n' >&2
     return 70
   fi
-  case "$VOICE" in
-    am_michael | am_puck) ;;
-    *)
-      printf 'sealed pilot voice is unsupported: %s\n' "$VOICE" >&2
-      return 64
-      ;;
-  esac
+  echo_pronunciation_assert_leases \
+    "$ECHO_RENDERER_BUILD_ROOT" "$WORK" "$DB" "$OUTPUT" "$SIDECAR" \
+    "$AUDIT" "$REEL" "$INPUT_RECEIPT" "$STATE_RECEIPT" "$SUCCESS_RECEIPT"
+  echo_pronunciation_attest_renderer || return $?
 
-  local canonical_echo canonical_explainer canonical_run canonical_pilot
-  canonical_echo=$(cd -- "$ECHO_REPO" 2>/dev/null && pwd -P) \
-    || canonical_echo=
+  local canonical_explainer canonical_run canonical_pilot governed_path
   canonical_explainer=$(cd -- "$EXPLAINER_ROOT" 2>/dev/null && pwd -P) \
     || canonical_explainer=
-  canonical_run=$(cd -- "$RUN_ROOT" 2>/dev/null && pwd -P) \
-    || canonical_run=
-  canonical_pilot=$(cd -- "$PILOT_ROOT" 2>/dev/null && pwd -P) \
-    || canonical_pilot=
-  if [[ "$canonical_echo" != "$ECHO_REPO" \
-    || "$canonical_explainer" != "$EXPLAINER_ROOT" \
+  canonical_run=$(cd -- "$RUN_ROOT" 2>/dev/null && pwd -P) || canonical_run=
+  canonical_pilot=$(cd -- "$PILOT_ROOT" 2>/dev/null && pwd -P) || canonical_pilot=
+  if [[ "$canonical_explainer" != "$EXPLAINER_ROOT" \
     || "$canonical_run" != "$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG" \
     || "$canonical_pilot" != "$RUN_ROOT/pilot" \
     || "$PILOT_SLUG" != "$SLUG-pilot" \
@@ -391,11 +317,7 @@ pilot_attest_inputs() {
     || "$OUTPUT" != "$PILOT_DIST/$PILOT_SLUG.m4b" \
     || "$SIDECAR" != "$PILOT_DIST/$PILOT_SLUG.alignment.json" \
     || "$AUDIT" != "$PILOT_DIST/$PILOT_SLUG.pronunciation-audit.json" \
-    || "$REEL" != "$PILOT_DIST/$PILOT_SLUG.pronunciation-reel.m4b" \
-    || "$WORK" != "$PILOT_ROOT/audio-work-${PILOT_INPUT_SHA256:0:12}-$ATTEMPT_ID" \
-    || "$DB" != "$PILOT_ROOT/narration-${PILOT_INPUT_SHA256:0:12}-$ATTEMPT_ID.sqlite" \
-    || "$INPUT_RECEIPT" != "$PILOT_RESEARCH/echo-pilot-inputs-$ATTEMPT_ID.env" \
-    || "$SUCCESS_RECEIPT" != "$PILOT_RESEARCH/echo-pilot-success-$ATTEMPT_ID.env" ]]; then
+    || "$REEL" != "$PILOT_DIST/$PILOT_SLUG.pronunciation-reel.m4b" ]]; then
     printf 'sealed pilot paths are not canonically derived\n' >&2
     return 65
   fi
@@ -408,96 +330,39 @@ pilot_attest_inputs() {
       return 65
     fi
   done
-  assert_leases \
-    "$BUILD_RESOURCE" "$WORK" "$DB" "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL" \
-    "$INPUT_RECEIPT" "$SUCCESS_RECEIPT"
-
-  # Attest that the renderer did not change while the lease was held. Compare
-  # against the state preflight recorded rather than demanding a clean tree.
-  local current_source source_status current_tree_state current_tree_diff
-  current_source=$(/usr/bin/git -C "$ECHO_REPO" rev-parse HEAD) || return 65
-  source_status=$(/usr/bin/git -C "$ECHO_REPO" status --porcelain \
-    --untracked-files=all)
-  if [[ -z "$source_status" ]]; then
-    current_tree_state=clean
-    current_tree_diff=$(printf '' | /usr/bin/shasum -a 256 | cut -d' ' -f1)
-  else
-    current_tree_state=dirty
-    current_tree_diff=$(
-      {
-        /usr/bin/git -C "$ECHO_REPO" diff HEAD
-        printf '%s\n' "$source_status"
-      } | /usr/bin/shasum -a 256 | cut -d' ' -f1
-    )
-  fi
-  if [[ "$current_source" != "$ECHO_SOURCE_SHA" \
-    || "$current_tree_state" != "${ECHO_TREE_STATE:-}" \
-    || "$current_tree_diff" != "${ECHO_TREE_DIFF_SHA256:-}" ]]; then
-    printf 'Echo source changed while pilot lease was held\n' >&2
+  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
+    printf 'approved Echo pronunciation revision does not match installed source\n' >&2
     return 65
   fi
-  if [[ "$APPROVED_ECHO_PRONUNCIATION_SHA" != unpinned ]]; then
-    local resolved_approved
-    resolved_approved=$(/usr/bin/git -C "$ECHO_REPO" rev-parse --verify \
-      "${APPROVED_ECHO_PRONUNCIATION_SHA}^{commit}") || return 65
-    if [[ "$resolved_approved" != "$APPROVED_ECHO_PRONUNCIATION_SHA" \
-      || "$current_source" != "$APPROVED_ECHO_PRONUNCIATION_SHA" ]]; then
-      printf 'approved Echo source changed while pilot lease was held\n' >&2
-      return 65
-    fi
-  fi
-  local expected_cli expected_resources release_component
-  expected_cli="$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli"
-  expected_resources="$(dirname -- "$expected_cli")/EchoNarrationResources"
-  for release_component in \
-    "$ECHO_REPO/.build" "$ECHO_REPO/.build/cli" \
-    "$ECHO_REPO/.build/cli/Build" "$ECHO_REPO/.build/cli/Build/Products" \
-    "$ECHO_REPO/.build/cli/Build/Products/Release"; do
-    if [[ -L "$release_component" ]]; then
-      printf 'canonical Release path contains a symlink: %s\n' \
-        "$release_component" >&2
-      return 65
-    fi
-  done
-  if [[ "$CLI" != "$expected_cli" || ! -x "$CLI" \
-    || "$ECHO_RESOURCE_DIR" != "$expected_resources" \
-    || ! -d "$ECHO_RESOURCE_DIR" || ! -f "$EPUB" ]]; then
-    printf 'canonical pilot renderer inputs are missing or changed\n' >&2
-    return 65
-  fi
-
-  local current_epub_sha current_cli_sha current_resources_sha
-  local cli_version current_render_version cli_help current_input_sha
+  case "$VOICE" in
+    am_michael | am_puck) ;;
+    *)
+      printf 'sealed pilot voice is unsupported: %s\n' "$VOICE" >&2
+      return 64
+      ;;
+  esac
+  local current_epub_sha expected_source_id expected_run_id expected_input_sha
   current_epub_sha=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
-  current_cli_sha=$(/usr/bin/shasum -a 256 "$CLI" | awk '{print $1}')
-  current_resources_sha=$(
-    /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
-      hash-tree "$ECHO_RESOURCE_DIR"
-  )
-  cli_version=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" --version)
-  current_render_version=$(
-    echo_pronunciation_release_render_version "$cli_version"
-  ) || {
-    printf 'stale, pre-v12, or non-Release echo-cli: %s\n' "$cli_version" >&2
-    return 65
-  }
-  cli_help=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help)
-  current_input_sha=$(printf '%s\n' \
-    "epub=$current_epub_sha" \
-    "echo_cli=$current_cli_sha" \
-    "echo_resources=$current_resources_sha" \
-    "approved_source=$APPROVED_ECHO_PRONUNCIATION_SHA" \
-    "render_version=$current_render_version" \
-    "voice=$VOICE" \
+  expected_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
+  expected_run_id=$(echo_pronunciation_run_id \
+    "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$expected_source_id" "$VOICE")
+  expected_input_sha=$(printf '%s\n' \
+    "run_id=$expected_run_id" \
     "title=$TITLE" \
     | /usr/bin/shasum -a 256 | awk '{print $1}')
-  if [[ "$current_epub_sha" != "$EPUB_SHA256" \
-    || "$current_cli_sha" != "$ECHO_CLI_SHA256" \
-    || "$current_resources_sha" != "$ECHO_RESOURCES_SHA256" \
-    || "$current_render_version" != "$ECHO_RENDER_VERSION" \
-    || "$current_input_sha" != "$PILOT_INPUT_SHA256" \
-    || "$cli_help" != *"--no-pronunciation-review"* ]]; then
-    printf 'learning-pilot renderer inputs changed while leases were held\n' >&2
+  if [[ "$current_epub_sha" != "$EPUB_SHA256" ]]; then
+    printf 'pilot EPUB changed while leases were held\n' >&2
+    return 65
+  fi
+  if [[ "$RUN_ID" != "$expected_run_id" \
+    || "$PILOT_INPUT_SHA256" != "$expected_input_sha" \
+    || "$WORK" != "$PILOT_ROOT/audio-work-$RUN_ID" \
+    || "$DB" != "$PILOT_ROOT/narration-$RUN_ID.sqlite" \
+    || "$INPUT_RECEIPT" != "$PILOT_RESEARCH/echo-pilot-inputs-$RUN_ID.env" \
+    || "$STATE_RECEIPT" != "$PILOT_RESEARCH/echo-resume-state-$RUN_ID.json" \
+    || "$SUCCESS_RECEIPT" != "$PILOT_RESEARCH/echo-pilot-success-$ATTEMPT_ID.env" ]]; then
+    printf 'sealed pilot run paths are not derived from attested inputs\n' >&2
     return 65
   fi
   if [[ ! -f "$INPUT_RECEIPT" \
@@ -505,10 +370,7 @@ pilot_attest_inputs() {
     printf 'pilot-input receipt is missing or has an unsafe mode\n' >&2
     return 65
   fi
-  local expected_receipt actual_receipt
-  expected_receipt=$(pilot_receipt_text)
-  actual_receipt=$(<"$INPUT_RECEIPT")
-  if [[ "$actual_receipt" != "$expected_receipt" ]]; then
+  if [[ "$(<"$INPUT_RECEIPT")" != "$(pilot_receipt_text)" ]]; then
     printf 'pilot-input receipt changed while leases were held\n' >&2
     return 65
   fi
@@ -516,6 +378,10 @@ pilot_attest_inputs() {
 
 if [[ "$INTERNAL_MODE" == preflight ]]; then
   pilot_preflight
+  if (( RESUME )) && [[ "$RESUME_STATE" != "$STATE_RECEIPT" ]]; then
+    printf 'internal resume state is not the canonical current-pilot receipt\n' >&2
+    exit 70
+  fi
   lease_command=(
     "$SCRIPT_DIR/echo_pronunciation_lease.py"
     --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
@@ -526,15 +392,57 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     --resource "$AUDIT"
     --resource "$REEL"
     --resource "$INPUT_RECEIPT"
+    --resource "$STATE_RECEIPT"
     --resource "$SUCCESS_RECEIPT"
     --
     "$0"
     --leased-run
   )
+  if (( RESUME )); then
+    lease_command+=(--resume --resume-state "$RESUME_STATE")
+  fi
   exec "${lease_command[@]}"
 fi
 
 pilot_attest_inputs
+
+renderer_state_arguments=(
+  --renderer-schema-version 1
+  --renderer-root "$ECHO_RENDERER_ROOT"
+  --renderer-build-root "$ECHO_RENDERER_BUILD_ROOT"
+  --installer-source-sha "$APPROVED_ECHO_INSTALLER_SHA"
+  --echo-source-sha "$ECHO_SOURCE_SHA"
+  --renderer-manifest-sha256 "$ECHO_RENDERER_MANIFEST_SHA256"
+  --echo-cli-sha256 "$ECHO_CLI_SHA256"
+  --echo-resources-sha256 "$ECHO_RESOURCES_SHA256"
+  --echo-render-version "$ECHO_RENDER_VERSION"
+  --model-policy-revision "$ECHO_MODEL_REVISION"
+  --model-expected-byte-count "$ECHO_MODEL_EXPECTED_BYTES"
+  --model-bytes-attested "$ECHO_MODEL_BYTES_ATTESTED"
+)
+state_command=(
+  "${renderer_state_arguments[@]}"
+  --work "$WORK"
+  --db "$DB"
+  --receipt "$STATE_RECEIPT"
+  --epub "$EPUB"
+  --source-sha "$ECHO_SOURCE_SHA"
+  --voice "$VOICE"
+  --render-version "$ECHO_RENDER_VERSION"
+  --input-receipt "$INPUT_RECEIPT"
+  --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
+)
+if (( RESUME )); then
+  if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+    verify-state "${state_command[@]}"; then
+    printf 'pilot resume state is not bound to the current capture set\n' >&2
+    exit 65
+  fi
+else
+  /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+    reset-state --work "$WORK" --db "$DB" --receipt "$STATE_RECEIPT" \
+    --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
+fi
 
 STAGE=
 NARRATE_PID=
@@ -578,6 +486,9 @@ narrate_command=(
   --jobs 1
   --threads 2
 )
+if (( RESUME )); then
+  narrate_command+=(--resume)
+fi
 "${narrate_command[@]}" &
 NARRATE_PID=$!
 set +e
@@ -586,8 +497,17 @@ narrate_status=$?
 set -e
 NARRATE_PID=
 pilot_attest_inputs
+if [[ -d "$WORK" && -f "$DB" ]] \
+  && compgen -G "$WORK/.anchors-ch*.json" >/dev/null; then
+  /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+    record-state "${state_command[@]}"
+fi
 if (( narrate_status != 0 )); then
   exit "$narrate_status"
+fi
+if [[ ! -f "$STATE_RECEIPT" || -L "$STATE_RECEIPT" ]]; then
+  printf 'successful pilot narration did not produce sealed capture state\n' >&2
+  exit 65
 fi
 for required_output in "$STAGE_OUTPUT" "$STAGE_SIDECAR" "$STAGE_AUDIT"; do
   if [[ -L "$required_output" || ! -f "$required_output" ]]; then
@@ -630,15 +550,20 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --audio "$OUTPUT" \
   --sidecar "$SIDECAR"
 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
+pilot_attest_inputs
+/usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+  verify-state "${state_command[@]}"
 
 AUDIO_SHA256=$(/usr/bin/shasum -a 256 "$OUTPUT" | awk '{print $1}')
 SIDECAR_SHA256=$(/usr/bin/shasum -a 256 "$SIDECAR" | awk '{print $1}')
 AUDIT_SHA256=$(/usr/bin/shasum -a 256 "$AUDIT" | awk '{print $1}')
 INPUT_RECEIPT_SHA256=$(/usr/bin/shasum -a 256 "$INPUT_RECEIPT" | awk '{print $1}')
+STATE_RECEIPT_SHA256=$(/usr/bin/shasum -a 256 "$STATE_RECEIPT" | awk '{print $1}')
 require_sha256 AUDIO_SHA256 "$AUDIO_SHA256"
 require_sha256 SIDECAR_SHA256 "$SIDECAR_SHA256"
 require_sha256 AUDIT_SHA256 "$AUDIT_SHA256"
 require_sha256 INPUT_RECEIPT_SHA256 "$INPUT_RECEIPT_SHA256"
+require_sha256 STATE_RECEIPT_SHA256 "$STATE_RECEIPT_SHA256"
 REEL_PATH=
 REEL_SHA256=
 if [[ -f "$REEL" && ! -L "$REEL" ]]; then
@@ -646,22 +571,29 @@ if [[ -f "$REEL" && ! -L "$REEL" ]]; then
   REEL_SHA256=$(/usr/bin/shasum -a 256 "$REEL" | awk '{print $1}')
   require_sha256 REEL_SHA256 "$REEL_SHA256"
 fi
-success_text=$(printf '%s\n' \
-  'schema=1' \
-  'kind=learning-pilot-nonpackage' \
-  'listener_acceptance=pending' \
-  "attempt_id=$ATTEMPT_ID" \
-  "pilot_input_sha256=$PILOT_INPUT_SHA256" \
-  "input_receipt_path=$INPUT_RECEIPT" \
-  "input_receipt_sha256=$INPUT_RECEIPT_SHA256" \
-  "audio_path=$OUTPUT" \
-  "audio_sha256=$AUDIO_SHA256" \
-  "sidecar_path=$SIDECAR" \
-  "sidecar_sha256=$SIDECAR_SHA256" \
-  "audit_path=$AUDIT" \
-  "audit_sha256=$AUDIT_SHA256" \
-  "reel_path=$REEL_PATH" \
-  "reel_sha256=$REEL_SHA256")
+success_text=$(
+  printf '%s\n' \
+    'schema=2' \
+    'kind=learning-pilot-nonpackage' \
+    'listener_acceptance=pending'
+  echo_pronunciation_renderer_receipt_text
+  printf '%s\n' \
+    "attempt_id=$ATTEMPT_ID" \
+    "run_id=$RUN_ID" \
+    "pilot_input_sha256=$PILOT_INPUT_SHA256" \
+    "input_receipt_path=$INPUT_RECEIPT" \
+    "input_receipt_sha256=$INPUT_RECEIPT_SHA256" \
+    "state_receipt_path=$STATE_RECEIPT" \
+    "state_receipt_sha256=$STATE_RECEIPT_SHA256" \
+    "audio_path=$OUTPUT" \
+    "audio_sha256=$AUDIO_SHA256" \
+    "sidecar_path=$SIDECAR" \
+    "sidecar_sha256=$SIDECAR_SHA256" \
+    "audit_path=$AUDIT" \
+    "audit_sha256=$AUDIT_SHA256" \
+    "reel_path=$REEL_PATH" \
+    "reel_sha256=$REEL_SHA256"
+)
 if ! printf '%s\n' "$success_text" \
   | /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
     immutable-file "$SUCCESS_RECEIPT"; then
