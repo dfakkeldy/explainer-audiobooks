@@ -12,7 +12,20 @@ acceptance. Unattended-first-listen uses hash-bound editorial decisions, labels
 human listening pending, permits only private editorial cover auto-selection,
 and still completes every non-human package and media check. A request to have a
 book ready to listen to may authorize the recorded private reading-copy delivery
-intent; it never authorizes publication.
+intent; it never authorizes publication. After a package is verified,
+`public-first-listen` is available only with explicit publication authorization
+for a public-safe package: it is mechanically verified with
+`humanListeningStatus: pending`, not human accepted. The public package and
+catalog must say: “This edition has passed package and audio checks. The
+creator’s full listening review is still underway.” A negative human verdict
+supersedes that edition.
+
+Publication states remain distinct: `unattended-first-listen` means private
+package, never automatically published; `public-first-listen` means explicitly
+authorized, public-safe, mechanically verified, human listen pending; and
+`governed-final` is the existing higher-confidence state with completed required
+human gates. The governed pilot still requires its lightweight `continue` or
+`revise` listener verdict; public-first-listen does not replace that contract.
 
 ## Universal paired-cover gate
 

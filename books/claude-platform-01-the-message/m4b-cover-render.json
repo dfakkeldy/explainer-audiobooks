@@ -1,0 +1,35 @@
+{
+  "candidate": {
+    "direction_name": "Route and Return",
+    "id": "route-and-return"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    2400,
+    2400
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "editorial-serif": "177ff6c0f14e5550a3c624247cd1189611d4eb65d000b14944c63d967958abbb",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+  },
+  "output": "m4b-cover.png",
+  "output_sha256": "e68c9a631252ec1353df8290495cf3da1d01efa399f92056fcd39a67f85b3c32",
+  "receipt_version": 1,
+  "renderer_version": 1,
+  "schema_version": 1,
+  "source_art": "source-art.png",
+  "source_art_sha256": "9c05f120931365179dee4f108371ee40f574b61268614f0fe4bd729f9a6b2d7c",
+  "spec": "m4b-cover-spec.json",
+  "spec_sha256": "b237e751ca4261b803d9a79da99246e0ff07e271fa376d3b30b464ff1a75bb6f",
+  "thumbnail": "m4b-cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    160
+  ],
+  "thumbnail_sha256": "38d7fbb5bfa8e5106444c55c9c88a3b0c10fecc20c28d4ec2add244f53068b78",
+  "variant": "square",
+  "warnings": []
+}

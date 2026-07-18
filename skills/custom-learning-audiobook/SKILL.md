@@ -19,7 +19,17 @@ for an overnight, ready-to-listen, delegated, or multi-book result selects
 routine questions. Treat unconditional human approval language below as the
 `governed-final` lane. In unattended mode, use the shared editorial outline,
 pilot, pronunciation, cover, delivery, and package-or-blocker rules. Never infer
-permission to publish.
+permission to publish. After a verified package exists, only explicit publication
+authorization may promote a public-safe package to `public-first-listen`; keep
+`humanListeningStatus: pending` and use the shared contract's exact public
+disclosure while the creator's full listening review is still underway.
+
+Keep these states separate: `unattended-first-listen` is a private package that
+is never automatically published; `public-first-listen` is explicitly
+authorized, public-safe, mechanically verified, and awaiting the human listen;
+and `governed-final` is the existing higher-confidence state with completed
+required human gates. The pilot's `continue`/`revise` listener contract remains
+unchanged. A negative human verdict supersedes a public-first-listen edition.
 
 ## Universal paired-cover publishing contract
 

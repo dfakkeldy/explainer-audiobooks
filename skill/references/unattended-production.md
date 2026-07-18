@@ -148,6 +148,28 @@ learning-validated, pronunciation-accepted, final, or public-ready. Promotion to
 `governed-final` reuses the existing artifacts but requires the applicable human
 listening, cover/publication, and delivery decisions.
 
+## Public first listen
+
+Unattended production never auto-publishes. After the package exists, explicit
+publication authorization may promote a verified public-safe package to
+`public-first-listen` while `humanListeningStatus: pending`. The public package
+and catalog must say: “This edition has passed package and audio checks. The
+creator’s full listening review is still underway.” A negative human verdict
+supersedes the public-first-listen edition.
+
+Keep the three publication states distinct:
+
+| State | Meaning |
+|---|---|
+| `unattended-first-listen` | Private package, never automatically published. |
+| `public-first-listen` | Explicitly authorized, public-safe, mechanically verified, human listen pending. |
+| `governed-final` | Existing higher-confidence state with completed required human gates. |
+
+`public-first-listen` is a publication promotion, not a replacement for the
+private unattended workflow or a human acceptance claim. It requires explicit
+publication authorization for that verified public-safe package; a later
+negative human verdict supersedes it.
+
 ## Batch execution
 
 Give every requested book an independent run root and decision receipt. Advance

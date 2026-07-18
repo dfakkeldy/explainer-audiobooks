@@ -1,0 +1,41 @@
+{
+  "schema_version": 2,
+  "book_slug": "claude-platform-01-the-message",
+  "edition_id": "public-first-listen-2026-07-18",
+  "candidate": {
+    "id": "route-and-return",
+    "direction_name": "Route and Return"
+  },
+  "source_art_sha256": "9c05f120931365179dee4f108371ee40f574b61268614f0fe4bd729f9a6b2d7c",
+  "variants": {
+    "portrait": {
+      "specification_sha256": "71556ccf218c6159c7a28ff78d75e96c50eb5d8e96d259c0bee89345623318a0",
+      "render_receipt_sha256": "9db99f9d899b452ab7c8d2aca3e7328e931fa4dbd0687a7ea22a18e901af1325",
+      "cover_sha256": "f60f0ef725bcc9a44a8800f49735421959bab8c8bb611ed9f47d529e5aebf44d",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "thumbnail_sha256": "6755c58290ab58c6c1d24bfbab976a4a3c676a9cdce314a2075723d9c3d4cc56",
+      "subtitle_included": true
+    },
+    "square": {
+      "specification_sha256": "b237e751ca4261b803d9a79da99246e0ff07e271fa376d3b30b464ff1a75bb6f",
+      "render_receipt_sha256": "009f1edae853512665ebb5adf90f81aec71819c55580b47e51dd90ea7497169a",
+      "cover_sha256": "e68c9a631252ec1353df8290495cf3da1d01efa399f92056fcd39a67f85b3c32",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "thumbnail_sha256": "38d7fbb5bfa8e5106444c55c9c88a3b0c10fecc20c28d4ec2add244f53068b78",
+      "subtitle_included": false
+    }
+  },
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "selection_source": "user",
+  "selected_at": "2026-07-18T20:24:46Z",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  }
+}

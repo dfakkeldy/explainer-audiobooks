@@ -78,6 +78,19 @@ class SkillUnattendedContractTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, contract)
 
+    def test_explicit_authorization_can_promote_a_verified_first_listen(self) -> None:
+        contract = self.read("skill/references/unattended-production.md")
+        for marker in (
+            "public-first-listen",
+            "explicit publication authorization",
+            "humanlisteningstatus: pending",
+            "full listening review is still underway",
+            "negative human verdict supersedes",
+            "never auto-publish",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, contract)
+
 
 if __name__ == "__main__":
     unittest.main()
