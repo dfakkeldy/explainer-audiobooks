@@ -42,29 +42,35 @@ require_git_commit_sha() {
   fi
 }
 
+require_renderer_commit_sha() {
+  local name=${1:?revision name is required}
+  local value=${2:-}
+  if [[ ! "$value" =~ ^[0-9a-f]{40}$ ]]; then
+    printf '%s must be exactly 40 lowercase hexadecimal characters\n' \
+      "$name" >&2
+    return 64
+  fi
+}
+
 # The renderer's identity leg of RUN_ID. Derived in exactly one place so the
 # preflight and the attestation cannot drift apart: computing it twice is what
 # let them disagree when the source leg changed.
 echo_pronunciation_source_id() {
   local source_sha=${1:?source sha is required}
-  local tree_state=${2:?tree state is required}
-  local tree_diff=${3:-}
-  if [[ "$tree_state" == clean ]]; then
-    printf '%s\n' "$source_sha"
-  else
-    printf '%s-dirty-%s\n' "$source_sha" "${tree_diff:0:8}"
-  fi
+  require_renderer_commit_sha ECHO_SOURCE_SHA "$source_sha" || return $?
+  printf '%s\n' "$source_sha"
 }
 
 echo_pronunciation_run_id() {
-  local package_sha=${1:?package sha is required}
+  local epub_sha=${1:?epub sha is required}
   local cli_sha=${2:?cli sha is required}
   local resources_sha=${3:?resources sha is required}
-  local source_id=${4:?source id is required}
-  local voice=${5:?voice is required}
-  printf '%s-%s-%s-%s-%s\n' \
-    "${package_sha:0:12}" "${cli_sha:0:12}" "${resources_sha:0:12}" \
-    "$source_id" "$voice"
+  local manifest_sha=${4:?manifest sha is required}
+  local source_id=${5:?source id is required}
+  local voice=${6:?voice is required}
+  printf '%s-%s-%s-%s-%s-%s\n' \
+    "${epub_sha:0:12}" "${cli_sha:0:12}" "${resources_sha:0:12}" \
+    "${manifest_sha:0:12}" "$source_id" "$voice"
 }
 
 echo_pronunciation_release_render_version() {
@@ -105,6 +111,42 @@ echo_pronunciation_preflight() {
   }
   local build_resource="$echo_repo/.build/cli"
   local approved_input=${APPROVED_ECHO_PRONUNCIATION_SHA:-}
+  local installed_source_sha=${ECHO_SOURCE_SHA:-}
+  local installed_cli_sha=${ECHO_CLI_SHA256:-}
+  local installed_resources_sha=${ECHO_RESOURCES_SHA256:-}
+  local installed_render_version=${ECHO_RENDER_VERSION:-}
+
+  local installed_required
+  for installed_required in \
+    ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST_SHA256 \
+    APPROVED_ECHO_INSTALLER_SHA ECHO_SOURCE_SHA ECHO_MODEL_REVISION \
+    ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED; do
+    if [[ -z ${!installed_required:-} ]]; then
+      printf 'installed renderer identity is missing: %s\n' \
+        "$installed_required" >&2
+      return 64
+    fi
+  done
+  for renderer_path in "$ECHO_RENDERER_ROOT" "$ECHO_RENDERER_BUILD_ROOT"; do
+    if [[ "$renderer_path" != /* || -L "$renderer_path" \
+      || ! -d "$renderer_path" \
+      || "$(cd -- "$renderer_path" && pwd -P)" != "$renderer_path" ]]; then
+      printf 'installed renderer path is not canonical: %s\n' "$renderer_path" >&2
+      return 64
+    fi
+  done
+  require_renderer_commit_sha APPROVED_ECHO_INSTALLER_SHA \
+    "$APPROVED_ECHO_INSTALLER_SHA"
+  require_renderer_commit_sha ECHO_SOURCE_SHA "$installed_source_sha"
+  require_sha256 ECHO_RENDERER_MANIFEST_SHA256 \
+    "$ECHO_RENDERER_MANIFEST_SHA256"
+  if [[ ! "$ECHO_MODEL_EXPECTED_BYTES" =~ ^[1-9][0-9]*$ \
+    || "$ECHO_MODEL_BYTES_ATTESTED" != false \
+    || "$ECHO_MODEL_REVISION" == *$'\n'* \
+    || "$ECHO_MODEL_REVISION" == *$'\r'* ]]; then
+    printf 'installed renderer model policy identity is invalid\n' >&2
+    return 64
+  fi
 
   if ! "$lease_helper" --assert-held --lock-root "$lease_root" \
     --resource "$build_resource" >/dev/null 2>&1; then
@@ -151,7 +193,11 @@ echo_pronunciation_preflight() {
     printf 'cannot resolve Echo source revision at %s\n' "$echo_repo" >&2
     return 65
   fi
-  require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
+  require_renderer_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
+  if [[ "$ECHO_SOURCE_SHA" != "$installed_source_sha" ]]; then
+    printf 'installed renderer source revision differs from Echo source HEAD\n' >&2
+    return 65
+  fi
 
   local echo_status
   echo_status=$(git -C "$echo_repo" status --porcelain --untracked-files=all)
@@ -215,12 +261,22 @@ echo_pronunciation_preflight() {
     /usr/local/bin/python3 "$state_helper" hash-tree "$ECHO_RESOURCE_DIR"
   )
   require_sha256 ECHO_RESOURCES_SHA256 "$ECHO_RESOURCES_SHA256"
+  if [[ -n "$installed_resources_sha" \
+    && "$ECHO_RESOURCES_SHA256" != "$installed_resources_sha" ]]; then
+    printf 'installed renderer resources differ from the resolved identity\n' >&2
+    return 65
+  fi
   local cli_version cli_help
   cli_version=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" --version)
   if ! ECHO_RENDER_VERSION=$(
     echo_pronunciation_release_render_version "$cli_version"
   ); then
     printf 'stale, pre-v12, or non-Release echo-cli: %s\n' "$cli_version" >&2
+    return 65
+  fi
+  if [[ -n "$installed_render_version" \
+    && "$ECHO_RENDER_VERSION" != "$installed_render_version" ]]; then
+    printf 'installed renderer version differs from the resolved identity\n' >&2
     return 65
   fi
   cli_help=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help)
@@ -277,6 +333,11 @@ echo_pronunciation_preflight() {
     require_sha256 "$hash_name" "${!hash_name}"
   done
   require_sha256 ECHO_CLI_SHA256 "$ECHO_CLI_SHA256"
+  if [[ -n "$installed_cli_sha" \
+    && "$ECHO_CLI_SHA256" != "$installed_cli_sha" ]]; then
+    printf 'installed renderer executable differs from the resolved identity\n' >&2
+    return 65
+  fi
   PACKAGE_SHA256=$(printf '%s\n' \
     "epub=$EPUB_SHA256" \
     "cover_selection=$COVER_SELECTION_SHA256" \
@@ -295,19 +356,23 @@ echo_pronunciation_preflight() {
   esac
 
   local echo_source_id
-  echo_source_id=$(echo_pronunciation_source_id \
-    "$ECHO_SOURCE_SHA" "$ECHO_TREE_STATE" "$ECHO_TREE_DIFF_SHA256")
+  echo_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
   RUN_ID=$(echo_pronunciation_run_id \
-    "$PACKAGE_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
-    "$echo_source_id" "$VOICE")
+    "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$echo_source_id" "$VOICE")
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
   ECHO_RENDER_INPUT_RECEIPT="$RUN_ROOT/research/echo-render-inputs-$RUN_ID.env"
   local receipt_text
   receipt_text=$(printf '%s\n' \
+    'renderer_schema_version=1' \
+    "renderer_root=$ECHO_RENDERER_ROOT" \
+    "renderer_build_root=$ECHO_RENDERER_BUILD_ROOT" \
+    "installer_source_sha=$APPROVED_ECHO_INSTALLER_SHA" \
     "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
     "echo_source_sha=$ECHO_SOURCE_SHA" \
+    "renderer_manifest_sha256=$ECHO_RENDERER_MANIFEST_SHA256" \
     "echo_tree_state=$ECHO_TREE_STATE" \
     "echo_tree_diff_sha256=$ECHO_TREE_DIFF_SHA256" \
     "epub_sha256=$EPUB_SHA256" \
@@ -323,6 +388,9 @@ echo_pronunciation_preflight() {
     "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
     "echo_resource_dir=$ECHO_RESOURCE_DIR" \
     "render_version=$ECHO_RENDER_VERSION" \
+    "model_policy_revision=$ECHO_MODEL_REVISION" \
+    "model_expected_byte_count=$ECHO_MODEL_EXPECTED_BYTES" \
+    'model_bytes_attested=false' \
     "voice=$VOICE" \
     "run_id=$RUN_ID" \
     "work_dir=$WORK" \
@@ -368,6 +436,9 @@ echo_pronunciation_preflight() {
   export COVER_SELECTION COVER_SELECTION_SHA256 COVER COVER_SHA256
   export M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256
   export CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256
+  export ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT
+  export ECHO_RENDERER_MANIFEST_SHA256 APPROVED_ECHO_INSTALLER_SHA
+  export ECHO_MODEL_REVISION ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED
   export ECHO_RENDER_VERSION VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
 }
 
@@ -386,7 +457,11 @@ echo_pronunciation_attest_inputs() {
     EPUB EPUB_SHA256 COVER_SELECTION COVER_SELECTION_SHA256 \
     COVER COVER_SHA256 M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256 \
     CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR \
-    ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION VOICE RUN_ID WORK DB \
+    ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION \
+    ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST_SHA256 \
+    APPROVED_ECHO_INSTALLER_SHA ECHO_MODEL_REVISION \
+    ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED \
+    VOICE RUN_ID WORK DB \
     ECHO_RENDER_INPUT_RECEIPT; do
     if [[ -z ${!required:-} ]]; then
       printf 'sealed preflight state is missing: %s\n' "$required" >&2
@@ -430,6 +505,23 @@ echo_pronunciation_attest_inputs() {
       return 64
       ;;
   esac
+  for renderer_path in "$ECHO_RENDERER_ROOT" "$ECHO_RENDERER_BUILD_ROOT"; do
+    if [[ "$renderer_path" != /* || -L "$renderer_path" \
+      || ! -d "$renderer_path" \
+      || "$(cd -- "$renderer_path" && pwd -P)" != "$renderer_path" ]]; then
+      printf 'sealed renderer path is not canonical: %s\n' "$renderer_path" >&2
+      return 64
+    fi
+  done
+  require_renderer_commit_sha APPROVED_ECHO_INSTALLER_SHA \
+    "$APPROVED_ECHO_INSTALLER_SHA"
+  require_sha256 ECHO_RENDERER_MANIFEST_SHA256 \
+    "$ECHO_RENDERER_MANIFEST_SHA256"
+  if [[ ! "$ECHO_MODEL_EXPECTED_BYTES" =~ ^[1-9][0-9]*$ \
+    || "$ECHO_MODEL_BYTES_ATTESTED" != false ]]; then
+    printf 'sealed renderer model policy identity is invalid\n' >&2
+    return 64
+  fi
 
   local build_resource="$ECHO_REPO/.build/cli"
   if ! "$lease_helper" --assert-held --lock-root "$lease_root" \
@@ -437,7 +529,7 @@ echo_pronunciation_attest_inputs() {
     printf 'Echo input attestation requires the inherited build lease\n' >&2
     return 70
   fi
-  require_git_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
+  require_renderer_commit_sha ECHO_SOURCE_SHA "$ECHO_SOURCE_SHA"
   require_sha256 ECHO_TREE_DIFF_SHA256 "${ECHO_TREE_DIFF_SHA256:-}"
   # The attestation's job is that the renderer did not change between preflight
   # and render. It compares against the state preflight actually recorded rather
@@ -600,11 +692,10 @@ echo_pronunciation_attest_inputs() {
   fi
 
   local expected_run_id expected_work expected_db expected_receipt expected_source_id
-  expected_source_id=$(echo_pronunciation_source_id \
-    "$ECHO_SOURCE_SHA" "$ECHO_TREE_STATE" "$ECHO_TREE_DIFF_SHA256")
+  expected_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
   expected_run_id=$(echo_pronunciation_run_id \
-    "$PACKAGE_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
-    "$expected_source_id" "$VOICE")
+    "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$expected_source_id" "$VOICE")
   expected_work="$RUN_ROOT/audio-work-$expected_run_id"
   expected_db="$RUN_ROOT/narration-$expected_run_id.sqlite"
   expected_receipt="$RUN_ROOT/research/echo-render-inputs-$expected_run_id.env"
@@ -627,8 +718,13 @@ echo_pronunciation_attest_inputs() {
   fi
   local expected_receipt_text actual_receipt_text
   expected_receipt_text=$(printf '%s\n' \
+    'renderer_schema_version=1' \
+    "renderer_root=$ECHO_RENDERER_ROOT" \
+    "renderer_build_root=$ECHO_RENDERER_BUILD_ROOT" \
+    "installer_source_sha=$APPROVED_ECHO_INSTALLER_SHA" \
     "approved_echo_pronunciation_sha=$APPROVED_ECHO_PRONUNCIATION_SHA" \
     "echo_source_sha=$ECHO_SOURCE_SHA" \
+    "renderer_manifest_sha256=$ECHO_RENDERER_MANIFEST_SHA256" \
     "echo_tree_state=$ECHO_TREE_STATE" \
     "echo_tree_diff_sha256=$ECHO_TREE_DIFF_SHA256" \
     "epub_sha256=$EPUB_SHA256" \
@@ -644,6 +740,9 @@ echo_pronunciation_attest_inputs() {
     "echo_resources_sha256=$ECHO_RESOURCES_SHA256" \
     "echo_resource_dir=$ECHO_RESOURCE_DIR" \
     "render_version=$ECHO_RENDER_VERSION" \
+    "model_policy_revision=$ECHO_MODEL_REVISION" \
+    "model_expected_byte_count=$ECHO_MODEL_EXPECTED_BYTES" \
+    'model_bytes_attested=false' \
     "voice=$VOICE" \
     "run_id=$RUN_ID" \
     "work_dir=$WORK" \

@@ -241,6 +241,21 @@ assert_leases \
   "$BUILD_RESOURCE" "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL" "$WORK" "$DB" \
   "$SELECTION_RESOURCE"
 
+renderer_state_arguments=(
+  --renderer-schema-version 1
+  --renderer-root "$ECHO_RENDERER_ROOT"
+  --renderer-build-root "$ECHO_RENDERER_BUILD_ROOT"
+  --installer-source-sha "$APPROVED_ECHO_INSTALLER_SHA"
+  --echo-source-sha "$ECHO_SOURCE_SHA"
+  --renderer-manifest-sha256 "$ECHO_RENDERER_MANIFEST_SHA256"
+  --echo-cli-sha256 "$ECHO_CLI_SHA256"
+  --echo-resources-sha256 "$ECHO_RESOURCES_SHA256"
+  --echo-render-version "$ECHO_RENDER_VERSION"
+  --model-policy-revision "$ECHO_MODEL_REVISION"
+  --model-expected-byte-count "$ECHO_MODEL_EXPECTED_BYTES"
+  --model-bytes-attested "$ECHO_MODEL_BYTES_ATTESTED"
+)
+
 if [[ ! "$ATTEMPT_ID" =~ ^[0-9a-f]{64}$ ]]; then
   printf 'internal narration mode has an invalid attempt ID\n' >&2
   exit 70
@@ -270,6 +285,7 @@ fi
 
 if [[ "$INTERNAL_MODE" == run ]]; then
   attempt_command=(
+    "${renderer_state_arguments[@]}"
     --attempt-id "$ATTEMPT_ID"
     --run-id "$RUN_ID"
     --receipt "$ATTEMPT_RECEIPT"
@@ -352,7 +368,7 @@ load_owner_metadata() {
     || ! "$LOCK_OWNER_PID" =~ ^[1-9][0-9]*$ \
     || -z "$LOCK_OWNER_HOST" \
     || -z "$LOCK_OWNER_START" \
-    || ! "$LOCK_RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck)$ \
+    || ! "$LOCK_RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{40}-(am_michael|am_puck)$ \
     || ! "$LOCK_ATTEMPT_ID" =~ ^[0-9a-f]{64}$ \
     || "$LOCK_WORK" != "$RUN_ROOT/audio-work-$LOCK_RUN_ID" \
     || "$LOCK_DB" != "$RUN_ROOT/narration-$LOCK_RUN_ID.sqlite" \
@@ -527,6 +543,7 @@ verify_locked_inputs() {
   echo_pronunciation_attest_inputs || return $?
   /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
     verify-attempt \
+    "${renderer_state_arguments[@]}" \
     --attempt-id "$ATTEMPT_ID" \
     --run-id "$RUN_ID" \
     --receipt "$ATTEMPT_RECEIPT" \
@@ -565,6 +582,7 @@ fi
 verify_locked_inputs
 
 state_command=(
+  "${renderer_state_arguments[@]}"
   --work "$WORK"
   --db "$DB"
   --receipt "$STATE_RECEIPT"
@@ -707,6 +725,7 @@ if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
 fi
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   write-success \
+  "${renderer_state_arguments[@]}" \
   --attempt-id "$ATTEMPT_ID" \
   --run-id "$RUN_ID" \
   --receipt "$SUCCESS_RECEIPT" \
@@ -728,6 +747,7 @@ fi
   --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   verify-success \
+  "${renderer_state_arguments[@]}" \
   --attempt-id "$ATTEMPT_ID" \
   --run-id "$RUN_ID" \
   --receipt "$SUCCESS_RECEIPT" \
@@ -747,6 +767,7 @@ fi
   --reel "$REEL"
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   accept-attempt \
+  "${renderer_state_arguments[@]}" \
   --attempt "$ATTEMPT_RECEIPT" \
   --success "$SUCCESS_RECEIPT" \
   --selector "$CURRENT_SELECTOR" \

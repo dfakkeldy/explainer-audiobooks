@@ -108,6 +108,12 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
         )
         self.resources = self.cli.parent / "EchoNarrationResources"
+        self.renderer_root = (self.echo / "installed-renderers").resolve()
+        self.renderer_build_root = self.cli.parent.resolve()
+        self.installer_source_sha = "2f23aceedb1b9f25b7ea4410756eea32a59af8cd"
+        self.renderer_manifest_sha = "7" * 64
+        self.model_policy_revision = "kokoro-fixture-revision"
+        self.model_expected_byte_count = 163234740
         # Mirrors echo_pronunciation_canonical_lease_root (echo_pronunciation_preflight.sh),
         # which derives this root from the passwd database and so ignores both $HOME and
         # $ECHO_PRONUNCIATION_LEASE_ROOT — the wrappers overwrite that variable with the
@@ -123,6 +129,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         )
 
         self.echo.mkdir(parents=True)
+        self.renderer_root.mkdir()
         self.explainer.mkdir()
         (self.echo / "Makefile").write_text(
             "echo-cli:\n\t@test -x .build/cli/Build/Products/Release/echo-cli\n",
@@ -440,6 +447,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "HOME": str(self.home),
                 "ECHO_REPO": str(self.echo),
                 "APPROVED_ECHO_PRONUNCIATION_SHA": self.second_sha,
+                "ECHO_SOURCE_SHA": self.second_sha,
                 "EXPLAINER_ROOT": str(self.explainer),
                 "SLUG": "fixture",
                 "RUN_ROOT": str(self.run_root),
@@ -452,6 +460,13 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "PRONUNCIATION_PLAN": str(
                     self.run_root / "research" / "pronunciation-plan.json"
                 ),
+                "ECHO_RENDERER_ROOT": str(self.renderer_root),
+                "ECHO_RENDERER_BUILD_ROOT": str(self.renderer_build_root),
+                "ECHO_RENDERER_MANIFEST_SHA256": self.renderer_manifest_sha,
+                "APPROVED_ECHO_INSTALLER_SHA": self.installer_source_sha,
+                "ECHO_MODEL_REVISION": self.model_policy_revision,
+                "ECHO_MODEL_EXPECTED_BYTES": str(self.model_expected_byte_count),
+                "ECHO_MODEL_BYTES_ATTESTED": "false",
                 "ECHO_PRONUNCIATION_LEASE_ROOT": str(self.lease_root),
             }
         )
@@ -516,6 +531,35 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             (self.run_root / "research").glob("echo-resume-state-*.json")
         )
         return ("--resume", "--resume-state", str(state))
+
+    @staticmethod
+    def renderer_state_arguments(identity: dict[str, object]) -> tuple[str, ...]:
+        return (
+            "--renderer-schema-version",
+            str(identity["rendererSchemaVersion"]),
+            "--renderer-root",
+            str(identity["rendererRoot"]),
+            "--renderer-build-root",
+            str(identity["rendererBuildRoot"]),
+            "--installer-source-sha",
+            str(identity["installerSourceSHA"]),
+            "--echo-source-sha",
+            str(identity["echoSourceSHA"]),
+            "--renderer-manifest-sha256",
+            str(identity["rendererManifestSHA256"]),
+            "--echo-cli-sha256",
+            str(identity["echoCLI_SHA256"]),
+            "--echo-resources-sha256",
+            str(identity["echoResourcesSHA256"]),
+            "--echo-render-version",
+            str(identity["echoRenderVersion"]),
+            "--model-policy-revision",
+            str(identity["modelPolicyRevision"]),
+            "--model-expected-byte-count",
+            str(identity["modelExpectedByteCount"]),
+            "--model-bytes-attested",
+            "false" if identity["modelBytesAttested"] is False else "true",
+        )
 
     def test_learning_pilot_wrapper_uses_isolated_coverless_paths(self) -> None:
         log = self.tmp / "pilot-narrate.log"
@@ -634,6 +678,13 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "ECHO_RESOURCE_DIR",
             "ECHO_RESOURCES_SHA256",
             "ECHO_RENDER_VERSION",
+            "ECHO_RENDERER_ROOT",
+            "ECHO_RENDERER_BUILD_ROOT",
+            "ECHO_RENDERER_MANIFEST_SHA256",
+            "APPROVED_ECHO_INSTALLER_SHA",
+            "ECHO_MODEL_REVISION",
+            "ECHO_MODEL_EXPECTED_BYTES",
+            "ECHO_MODEL_BYTES_ATTESTED",
             "VOICE",
             "RUN_ID",
             "WORK",
@@ -879,8 +930,13 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertIn("tree=dirty", result.stdout)
         diff_digest = result.stdout.split("diff=", 1)[1].splitlines()[0].strip()
         self.assertRegex(diff_digest, r"^[0-9a-f]{64}$")
-        # The dirty render must not collide with the clean render of the same commit.
-        self.assertIn(f"-dirty-{diff_digest[:8]}-", result.stdout.split("runid=", 1)[1])
+        run_id = result.stdout.split("runid=", 1)[1].strip()
+        self.assertNotIn("-dirty-", run_id)
+        self.assertRegex(
+            run_id,
+            rf"^[0-9a-f]{{12}}-[0-9a-f]{{12}}-[0-9a-f]{{12}}-"
+            rf"{self.renderer_manifest_sha[:12]}-{self.second_sha}-am_michael$",
+        )
 
     def test_preflight_still_enforces_a_supplied_pin_against_a_dirty_tree(self) -> None:
         """Removing the requirement did not weaken the pin: if you do pin a
@@ -905,7 +961,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.second_sha
         result = self.run_preflight(environment=environment)
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("must exactly equal Echo source HEAD", result.stderr)
+        self.assertIn("installed renderer source revision differs", result.stderr)
 
     def test_preflight_rejects_unsafe_slug_and_run_root(self) -> None:
         for slug in ("../escape", "Fixture", "fixture/other"):
@@ -1421,9 +1477,10 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         old_run_id = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'d' * 40}-am_michael"
         write_owner(run_id=old_run_id)
         old_recovered = self.run_narrate("--recover-stale-lock")
-        self.assertEqual(0, old_recovered.returncode, old_recovered.stderr)
-        self.assertIn("stale narration lock recovered", old_recovered.stdout)
-        self.assertFalse(owner.exists())
+        self.assertEqual(75, old_recovered.returncode, old_recovered.stderr)
+        self.assertIn("malformed narration lock", old_recovered.stderr)
+        self.assertTrue(owner.exists())
+        owner.unlink()
 
         fresh = self.run_narrate()
         self.assertEqual(0, fresh.returncode, fresh.stderr)
@@ -1643,7 +1700,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         receipts = list((self.run_root / "research").glob("echo-render-success-*.json"))
         self.assertEqual(1, len(receipts))
         receipt = json.loads(receipts[0].read_text(encoding="utf-8"))
-        self.assertEqual(2, receipt["schemaVersion"])
+        self.assertEqual(3, receipt["schemaVersion"])
         state_receipt = next(
             (self.run_root / "research").glob("echo-resume-state-*.json")
         )
@@ -1655,6 +1712,38 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         for field in ("audiobookSHA256", "sidecarSHA256", "auditSHA256"):
             self.assertRegex(receipt[field], r"^[0-9a-f]{64}$")
+
+        identity = {
+            "rendererSchemaVersion": 1,
+            "rendererRoot": str(self.renderer_root),
+            "rendererBuildRoot": str(self.renderer_build_root),
+            "installerSourceSHA": self.installer_source_sha,
+            "echoSourceSHA": self.second_sha,
+            "rendererManifestSHA256": self.renderer_manifest_sha,
+            "echoCLI_SHA256": hashlib.sha256(self.cli.read_bytes()).hexdigest(),
+            "echoResourcesSHA256": receipt["echoResourcesSHA256"],
+            "echoRenderVersion": 12,
+            "modelPolicyRevision": self.model_policy_revision,
+            "modelExpectedByteCount": self.model_expected_byte_count,
+            "modelBytesAttested": False,
+        }
+        for path in (
+            state_receipt,
+            self.run_root / "research" / "echo-render-current-attempt.json",
+            receipts[0],
+            self.run_root / "research" / "echo-render-current-accepted.json",
+        ):
+            with self.subTest(receipt=path.name):
+                payload = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(identity, {key: payload[key] for key in identity})
+                self.assertIs(payload["modelBytesAttested"], False)
+
+        run_id = receipt["runID"]
+        self.assertRegex(
+            run_id,
+            rf"^[0-9a-f]{{12}}-[0-9a-f]{{12}}-[0-9a-f]{{12}}-"
+            rf"{self.renderer_manifest_sha[:12]}-{self.second_sha}-am_michael$",
+        )
 
         input_receipt = next(
             (self.run_root / "research").glob("echo-render-inputs-*.env")
@@ -1668,6 +1757,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "/usr/local/bin/python3",
                 str(STATE_HELPER),
                 "record-state",
+                *self.renderer_state_arguments(identity),
                 "--work",
                 input_fields["work_dir"],
                 "--db",
@@ -1722,6 +1812,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "/usr/local/bin/python3",
                 str(STATE_HELPER),
                 "write-success",
+                *self.renderer_state_arguments(identity),
                 "--attempt-id",
                 selector_payload["attemptID"],
                 "--run-id",
@@ -1777,6 +1868,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "/usr/local/bin/python3",
             str(STATE_HELPER),
             "verify-delivery",
+            *self.renderer_state_arguments(identity),
+            "--voice",
+            "am_michael",
             "--attempt",
             str(attempt),
             "--selector",
@@ -1828,6 +1922,125 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertNotEqual(0, tampered.returncode)
         self.assertIn("SHA-256 differs", tampered.stderr)
 
+    def test_renderer_identity_changes_prevent_resume_and_delivery_reuse(self) -> None:
+        result = self.run_narrate()
+        self.assertEqual(0, result.returncode, result.stderr)
+        research = self.run_root / "research"
+        state = next(research.glob("echo-resume-state-*.json"))
+        attempt = research / "echo-render-current-attempt.json"
+        selector = research / "echo-render-current-accepted.json"
+        accepted = json.loads(selector.read_text(encoding="utf-8"))
+        success = research / accepted["successReceiptFileName"]
+        identity_keys = (
+            "rendererSchemaVersion",
+            "rendererRoot",
+            "rendererBuildRoot",
+            "installerSourceSHA",
+            "echoSourceSHA",
+            "rendererManifestSHA256",
+            "echoCLI_SHA256",
+            "echoResourcesSHA256",
+            "echoRenderVersion",
+            "modelPolicyRevision",
+            "modelExpectedByteCount",
+            "modelBytesAttested",
+        )
+        identity = {key: accepted[key] for key in identity_keys}
+        input_receipt = research / accepted["inputReceiptFileName"]
+        input_fields = dict(
+            line.split("=", 1)
+            for line in input_receipt.read_text(encoding="utf-8").splitlines()
+        )
+        artifact_root = self.run_root / "dist" / accepted["artifactRelativePath"]
+
+        state_base = [
+            "/usr/local/bin/python3",
+            str(STATE_HELPER),
+            "verify-state",
+            "--work",
+            input_fields["work_dir"],
+            "--db",
+            input_fields["narration_db"],
+            "--receipt",
+            str(state),
+            "--epub",
+            str(self.run_root / "dist" / "fixture.epub"),
+            "--source-sha",
+            self.second_sha,
+            "--voice",
+            "am_michael",
+            "--render-version",
+            input_fields["render_version"],
+            "--input-receipt",
+            str(input_receipt),
+        ]
+        delivery_base = [
+            "/usr/local/bin/python3",
+            str(STATE_HELPER),
+            "verify-delivery",
+            "--voice",
+            "am_michael",
+            "--attempt",
+            str(attempt),
+            "--selector",
+            str(selector),
+            "--receipt",
+            str(success),
+            "--input-receipt",
+            str(input_receipt),
+            "--state-receipt",
+            str(state),
+            "--epub",
+            str(self.run_root / "dist" / "fixture.epub"),
+            "--audiobook",
+            str(artifact_root / "fixture.m4b"),
+            "--sidecar",
+            str(artifact_root / "fixture.alignment.json"),
+            "--audit",
+            str(artifact_root / "fixture.pronunciation-audit.json"),
+            "--reel",
+            str(artifact_root / "fixture.pronunciation-reel.m4b"),
+        ]
+        mutations = {
+            "installerSourceSHA": "8" * 40,
+            "rendererManifestSHA256": "8" * 64,
+            "echoCLI_SHA256": "8" * 64,
+            "echoResourcesSHA256": "8" * 64,
+            "modelPolicyRevision": "different-policy-revision",
+            "modelExpectedByteCount": self.model_expected_byte_count + 1,
+            "echoSourceSHA": self.first_sha,
+            "voice": "am_puck",
+        }
+        for field, changed in mutations.items():
+            with self.subTest(field=field):
+                changed_identity = dict(identity)
+                if field == "voice":
+                    state_command = [
+                        "am_puck" if argument == "am_michael" else argument
+                        for argument in state_base
+                    ]
+                else:
+                    changed_identity[field] = changed
+                    state_command = list(state_base)
+                    if field == "echoSourceSHA":
+                        state_command[state_command.index(self.second_sha)] = self.first_sha
+                resume = subprocess.run(
+                    [*state_command, *self.renderer_state_arguments(changed_identity)],
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertNotEqual(0, resume.returncode, resume.stderr)
+                delivery_command = [
+                    "am_puck" if field == "voice" and argument == "am_michael" else argument
+                    for argument in delivery_base
+                ]
+                delivery = subprocess.run(
+                    [*delivery_command, *self.renderer_state_arguments(changed_identity)],
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertNotEqual(0, delivery.returncode, delivery.stderr)
+
     def test_failed_newer_source_attempt_invalidates_old_delivery_acceptance(
         self,
     ) -> None:
@@ -1859,6 +2072,24 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "/usr/local/bin/python3",
                 str(STATE_HELPER),
                 "verify-delivery",
+                *self.renderer_state_arguments(
+                    {key: first_selector[key] for key in (
+                        "rendererSchemaVersion",
+                        "rendererRoot",
+                        "rendererBuildRoot",
+                        "installerSourceSHA",
+                        "echoSourceSHA",
+                        "rendererManifestSHA256",
+                        "echoCLI_SHA256",
+                        "echoResourcesSHA256",
+                        "echoRenderVersion",
+                        "modelPolicyRevision",
+                        "modelExpectedByteCount",
+                        "modelBytesAttested",
+                    )}
+                ),
+                "--voice",
+                "am_michael",
                 "--attempt",
                 str(attempt_path),
                 "--selector",
@@ -1976,7 +2207,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
 
 class EchoPronunciationStateCompatibilityTests(unittest.TestCase):
-    def test_run_id_pattern_accepts_current_and_cover_hash_prototype_receipts(self) -> None:
+    def test_run_id_patterns_separate_operational_and_historical_receipts(self) -> None:
         script = """
 import runpy
 import sys
@@ -1984,25 +2215,20 @@ from pathlib import Path
 
 helper = Path(sys.argv[1])
 sys.path.insert(0, str(helper.parent))
-pattern = runpy.run_path(str(helper))["RUN_ID_PATTERN"]
+namespace = runpy.run_path(str(helper))
+pattern = namespace["RUN_ID_PATTERN"]
+legacy_pattern = namespace["LEGACY_RUN_ID_PATTERN"]
 commit = "d" * 40
-current = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-am_michael"
-prototype = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{commit}-am_michael"
-invalid = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{'f' * 12}-{commit}-am_michael"
+current = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{commit}-am_michael"
+legacy = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-am_michael"
 assert pattern.fullmatch(current)
-assert pattern.fullmatch(prototype)
-assert pattern.fullmatch(invalid) is None
+assert pattern.fullmatch(legacy) is None
+assert legacy_pattern.fullmatch(legacy)
+assert legacy_pattern.fullmatch(current)
 
-# A dirty Echo tree appends a marker to the source leg so a dirty render
-# cannot collide with the clean render of the same commit.
 dirty = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-dirty-{'9' * 8}-am_michael"
-assert pattern.fullmatch(dirty)
-dirty_long = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'d' * 64}-dirty-{'9' * 8}-am_michael"
-assert pattern.fullmatch(dirty_long)
-# The marker is still structured: it may not carry arbitrary text.
-assert pattern.fullmatch(
-    f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-dirty-nothex12-am_michael"
-) is None
+assert pattern.fullmatch(dirty) is None
+assert legacy_pattern.fullmatch(dirty)
 assert pattern.fullmatch(
     f"{'a' * 12}-{'b' * 12}-{'c' * 12}-unpinned-am_michael"
 ) is None
@@ -2013,6 +2239,129 @@ assert pattern.fullmatch(
             text=True,
         )
         self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_verify_delivery_remains_read_only_compatible_with_legacy_chain(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            research = root / "research"
+            research.mkdir()
+            run_id = (
+                f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'d' * 40}-am_michael"
+            )
+            attempt_id = "e" * 64
+            artifact_relative_path = f"echo-renders/{run_id}/{attempt_id}"
+            artifacts = root / artifact_relative_path
+            artifacts.mkdir(parents=True)
+            input_receipt = research / f"echo-render-inputs-{run_id}.env"
+            state_receipt = research / f"echo-resume-state-{run_id}.json"
+            epub = root / "fixture.epub"
+            audiobook = artifacts / "fixture.m4b"
+            sidecar = artifacts / "fixture.alignment.json"
+            audit = artifacts / "fixture.pronunciation-audit.json"
+            reel = artifacts / "fixture.pronunciation-reel.m4b"
+            input_receipt.write_text("legacy=true\n", encoding="utf-8")
+            state_receipt.write_text('{"schemaVersion":1}\n', encoding="utf-8")
+            epub.write_bytes(b"legacy epub")
+            audiobook.write_bytes(b"legacy audiobook")
+            sidecar.write_text("{}\n", encoding="utf-8")
+            audit.write_text("{}\n", encoding="utf-8")
+
+            digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+            attempt_payload = {
+                "schemaVersion": 1,
+                "attemptID": attempt_id,
+                "runID": run_id,
+                "inputReceiptFileName": input_receipt.name,
+                "inputReceiptSHA256": digest(input_receipt),
+                "sourceEPUBFileName": epub.name,
+                "sourceEPUBSHA256": digest(epub),
+                "artifactRelativePath": artifact_relative_path,
+            }
+            attempt = research / "echo-render-current-attempt.json"
+            attempt.write_text(
+                json.dumps(attempt_payload, sort_keys=True, separators=(",", ":"))
+                + "\n",
+                encoding="utf-8",
+            )
+            success_payload = {
+                "schemaVersion": 2,
+                **{key: attempt_payload[key] for key in (
+                    "attemptID",
+                    "runID",
+                    "inputReceiptFileName",
+                    "inputReceiptSHA256",
+                    "sourceEPUBFileName",
+                    "sourceEPUBSHA256",
+                    "artifactRelativePath",
+                )},
+                "attemptReceiptSHA256": digest(attempt),
+                "resumeStateFileName": state_receipt.name,
+                "resumeStateSHA256": digest(state_receipt),
+                "audiobookFileName": audiobook.name,
+                "audiobookSHA256": digest(audiobook),
+                "sidecarFileName": sidecar.name,
+                "sidecarSHA256": digest(sidecar),
+                "auditFileName": audit.name,
+                "auditSHA256": digest(audit),
+            }
+            success = research / f"echo-render-success-{run_id}-{attempt_id}.json"
+            success.write_text(
+                json.dumps(success_payload, sort_keys=True, separators=(",", ":"))
+                + "\n",
+                encoding="utf-8",
+            )
+            selector_payload = {
+                "schemaVersion": 1,
+                **{key: attempt_payload[key] for key in (
+                    "attemptID",
+                    "runID",
+                    "inputReceiptFileName",
+                    "inputReceiptSHA256",
+                    "sourceEPUBFileName",
+                    "sourceEPUBSHA256",
+                    "artifactRelativePath",
+                )},
+                "attemptReceiptSHA256": digest(attempt),
+                "successReceiptFileName": success.name,
+                "successReceiptSHA256": digest(success),
+            }
+            selector = research / "echo-render-current-accepted.json"
+            selector.write_text(
+                json.dumps(selector_payload, sort_keys=True, separators=(",", ":"))
+                + "\n",
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "/usr/local/bin/python3",
+                    str(STATE_HELPER),
+                    "verify-delivery",
+                    "--attempt",
+                    str(attempt),
+                    "--selector",
+                    str(selector),
+                    "--receipt",
+                    str(success),
+                    "--input-receipt",
+                    str(input_receipt),
+                    "--state-receipt",
+                    str(state_receipt),
+                    "--epub",
+                    str(epub),
+                    "--audiobook",
+                    str(audiobook),
+                    "--sidecar",
+                    str(sidecar),
+                    "--audit",
+                    str(audit),
+                    "--reel",
+                    str(reel),
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, result.returncode, result.stderr)
 
 
 class PronunciationAuditValidatorTests(unittest.TestCase):

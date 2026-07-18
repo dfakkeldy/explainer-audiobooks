@@ -125,6 +125,36 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "preflight and attestation must both derive the source id via the helper",
         )
 
+    def test_governed_receipts_bind_the_complete_installed_renderer_identity(self) -> None:
+        for marker in (
+            "renderer_schema_version",
+            "renderer_root",
+            "renderer_build_root",
+            "installer_source_sha",
+            "renderer_manifest_sha256",
+            "model_policy_revision",
+            "model_expected_byte_count",
+            "model_bytes_attested=false",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.preflight)
+
+        for marker in (
+            "--renderer-root",
+            "--renderer-build-root",
+            "--installer-source-sha",
+            "--echo-source-sha",
+            "--renderer-manifest-sha256",
+            "--echo-cli-sha256",
+            "--echo-resources-sha256",
+            "--echo-render-version",
+            "--model-policy-revision",
+            "--model-expected-byte-count",
+            "--model-bytes-attested",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.narrate_wrapper)
+
     def test_attestation_fails_closed_on_mid_render_drift(self) -> None:
         """A dirty starting tree is attested; drift from the recorded state is
         still refused."""

@@ -384,7 +384,21 @@ class ManifestAndAttestationTests(unittest.TestCase):
     ) -> None:
         payload: dict[str, object] = {
             "schemaVersion": schema_version,
+            "rendererSchemaVersion": 1,
+            "rendererRoot": str(self.renderer_root),
+            "rendererBuildRoot": str(
+                self.renderer_root / ACCEPTED_SOURCE_SHA / manifest_sha
+            ),
+            "installerSourceSHA": ACCEPTED_INSTALLER_SHA,
             "echoSourceSHA": ACCEPTED_SOURCE_SHA,
+            "echoCLI_SHA256": hashlib.sha256(self.executable_bytes).hexdigest(),
+            "echoResourcesSHA256": expected_resource_identity(
+                self.resource_files
+            )[0],
+            "echoRenderVersion": 15,
+            "modelPolicyRevision": "kokoro-v1.0",
+            "modelExpectedByteCount": 325566778,
+            "modelBytesAttested": False,
             "sourceFingerprint": "a" * 64,
             "voice": "am_michael",
             "renderVersion": 15,
