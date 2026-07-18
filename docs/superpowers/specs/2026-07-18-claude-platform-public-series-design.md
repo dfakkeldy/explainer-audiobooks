@@ -1,7 +1,7 @@
 # Claude Platform Public Audiobook Series Design
 
 Date: 2026-07-18
-Status: approved in conversation; written-spec review pending
+Status: approved in conversation
 Related curriculum: `2026-07-14-claude-platform-audiobook-series-design.md`
 
 ## Purpose
@@ -160,7 +160,9 @@ Each public folder contains only reader-facing or public-verification material:
 - `<slug>.alignment.json`;
 - `cover.png` and `m4b-cover.png`;
 - the selected cover’s public-safe specifications, render receipts,
-  thumbnails, source art, and `cover-selection.json`;
+  thumbnails, recoverable source art, and `cover-selection.json`;
+- `publication.json`, containing the public-first-listen state, disclosure,
+  permission, classification, and exact public artifact hashes;
 - `README.md` with source date, AI-authorship disclosure, first-listen status,
   formats, and verification summary;
 - a public-safe source map when one exists and contains no private path or
@@ -170,6 +172,14 @@ Pronunciation reels, raw pronunciation audits, renderer input receipts,
 resume-state receipts, success selectors, narration databases, and internal
 learning/research records do not belong in the public folders. Their private
 source package remains the provenance authority.
+
+Planning verification found that Volume 1's governed render receipt retains the
+original source-art hash, but the source raster itself is no longer present in
+the private delivery folder or the recovered source roots. Its public receipt
+therefore records `sourceArtIncluded: false`; the package retains the exact
+selected portrait/square covers and truthful governed specifications and render
+receipts, and does not fabricate replacement provenance. Volume 2 includes the
+selected Candidate 3 source raster and records `sourceArtIncluded: true`.
 
 ### Volume 1 public slug
 
