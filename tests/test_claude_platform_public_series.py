@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -45,25 +46,87 @@ def sha256(path: Path) -> str:
 
 
 def probe_m4b(path: Path) -> dict[str, object]:
-    completed = subprocess.run(
-        [
-            "ffprobe",
-            "-v",
-            "error",
-            "-show_entries",
-            "format=duration:format_tags=title,artist:chapter=start_time,end_time",
-            "-of",
-            "json",
-            str(path),
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    return json.loads(completed.stdout)
+    try:
+        completed = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-show_entries",
+                "format=duration:format_tags=title,artist:chapter=start_time,end_time",
+                "-of",
+                "json",
+                str(path),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:
+        detail = getattr(error, "stderr", "") or str(error)
+        raise AssertionError(f"{path}: ffprobe failed: {detail.strip()}") from error
+    try:
+        result = json.loads(completed.stdout)
+    except json.JSONDecodeError as error:
+        raise AssertionError(f"{path}: ffprobe returned invalid JSON") from error
+    if not isinstance(result, dict):
+        raise AssertionError(f"{path}: ffprobe JSON must be an object")
+    return result
+
+
+def assert_private_parity(test_case: unittest.TestCase, private_root: Path) -> None:
+    for slug, expected in CASES.items():
+        private_dir = private_root / expected["private_directory"]
+        if not private_dir.exists():
+            continue
+
+        private_stem = expected["private_stem"]
+        pairs = (
+            (f"{slug}.m4b", f"{private_stem}.m4b"),
+            (f"{slug}.alignment.json", f"{private_stem}.alignment.json"),
+        )
+        for _, private_name in pairs:
+            private_path = private_dir / private_name
+            test_case.assertTrue(
+                private_path.is_file(),
+                f"{slug}: named private master is missing: {private_name}",
+            )
+        for public_name, private_name in pairs:
+            public_path = ROOT / "books" / slug / public_name
+            private_path = private_dir / private_name
+            test_case.assertEqual(
+                sha256(private_path),
+                sha256(public_path),
+                f"{slug}: public {public_name} differs from private master {private_name}",
+            )
 
 
 class ClaudePlatformPublicSeriesTests(unittest.TestCase):
+    def test_existing_private_package_requires_both_named_artifacts(self) -> None:
+        slug = "claude-platform-01-the-message"
+        expected = CASES[slug]
+        pairs = (
+            (f"{slug}.m4b", f"{expected['private_stem']}.m4b"),
+            (f"{slug}.alignment.json", f"{expected['private_stem']}.alignment.json"),
+        )
+        for _, missing_private_name in pairs:
+            with self.subTest(missing=missing_private_name):
+                with tempfile.TemporaryDirectory() as temporary_directory:
+                    private_root = Path(temporary_directory)
+                    private_dir = private_root / expected["private_directory"]
+                    private_dir.mkdir()
+                    for public_name, private_name in pairs:
+                        (private_dir / private_name).write_bytes(
+                            (ROOT / "books" / slug / public_name).read_bytes()
+                        )
+                    (private_dir / missing_private_name).unlink()
+
+                    with self.assertRaisesRegex(
+                        AssertionError,
+                        f"named private master is missing: {missing_private_name}",
+                    ):
+                        assert_private_parity(self, private_root)
+
     def test_public_packages_are_complete_and_public_safe(self) -> None:
         for slug, expected in CASES.items():
             with self.subTest(slug=slug):
@@ -116,29 +179,21 @@ class ClaudePlatformPublicSeriesTests(unittest.TestCase):
                         or "resume-state" in lowered_name,
                         f"{slug}: forbidden file {relative}",
                     )
+                    if path.is_file() and path.suffix.casefold() in {".md", ".json"}:
+                        text = path.read_text(encoding="utf-8")
+                        self.assertNotIn(
+                            "/Users/",
+                            text,
+                            f"{slug}: absolute user path leaked in {relative}",
+                        )
+                        self.assertNotIn(
+                            "file://",
+                            text.casefold(),
+                            f"{slug}: file URL leaked in {relative}",
+                        )
 
     def test_public_media_matches_available_private_masters(self) -> None:
-        for slug, expected in CASES.items():
-            with self.subTest(slug=slug):
-                private_dir = PRIVATE_ROOT / expected["private_directory"]
-                if not private_dir.exists():
-                    continue
-
-                private_stem = expected["private_stem"]
-                pairs = (
-                    (f"{slug}.m4b", f"{private_stem}.m4b"),
-                    (f"{slug}.alignment.json", f"{private_stem}.alignment.json"),
-                )
-                for public_name, private_name in pairs:
-                    public_path = ROOT / "books" / slug / public_name
-                    private_path = private_dir / private_name
-                    if not private_path.is_file():
-                        continue
-                    self.assertEqual(
-                        sha256(private_path),
-                        sha256(public_path),
-                        f"{slug}: public {public_name} differs from private master {private_name}",
-                    )
+        assert_private_parity(self, PRIVATE_ROOT)
 
 
 if __name__ == "__main__":
