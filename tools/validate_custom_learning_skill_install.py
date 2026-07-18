@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import stat
 import subprocess
@@ -31,22 +32,59 @@ DEFAULT_LINKS = tuple(
 class ManifestEntry:
     kind: str
     mode: int
+    sha256: str | None = None
 
 
 SKILL_MANIFEST = {
-    Path("SKILL.md"): ManifestEntry("file", 0o644),
+    Path("SKILL.md"): ManifestEntry(
+        "file", 0o644, "fbaabafb6399333fa85f2989074fd98e9b798b2d1b7f7c165217f620dcbbaba8"
+    ),
     Path("agents"): ManifestEntry("directory", 0o755),
-    Path("agents/openai.yaml"): ManifestEntry("file", 0o644),
+    Path("agents/openai.yaml"): ManifestEntry(
+        "file", 0o644, "4f43f8f0c40a41d674e3caf46c624ae5cd33504693f2b71af295e3d14bee01f4"
+    ),
     Path("references"): ManifestEntry("directory", 0o755),
-    Path("references/intake-and-research.md"): ManifestEntry("file", 0o644),
-    Path("references/package-and-qc.md"): ManifestEntry("file", 0o644),
+    Path("references/echo-renderer-v1"): ManifestEntry("directory", 0o755),
+    Path("references/echo-renderer-v1/canonical-manifest-v1.json"): ManifestEntry(
+        "file", 0o644, "30f857f3ac890b21775f2e7773ff70faae1e1e85e0cf05af49c4ee4d7bb92c15"
+    ),
+    Path("references/echo-renderer-v1/lease-identities-v1.json"): ManifestEntry(
+        "file", 0o644, "bcde098b8b1dc902236d5f0ee383ce9a2d70f6462eb79e8a6be70059b8a806ac"
+    ),
+    Path("references/echo-renderer-v1/resource-tree-v1.json"): ManifestEntry(
+        "file", 0o644, "c025db26fec03bbf897849898c74d134c18eef7a64dfdf097827170fee5a5132"
+    ),
+    Path("references/echo-renderer-v1/vector-provenance.json"): ManifestEntry(
+        "file", 0o644, "078b73e92e5069ecb369f9ac02481a05014ed5ea988781eb0c840eee7896d484"
+    ),
+    Path("references/intake-and-research.md"): ManifestEntry(
+        "file", 0o644, "27c00cb8ececc8d6c158000ef84edbe40ee09202a9acb660f0785f21911f40f2"
+    ),
+    Path("references/package-and-qc.md"): ManifestEntry(
+        "file", 0o644, "25ed2fe29db1271c4c2cbba132d39757bf288a08555bf7cd8990ce3f92dbaab3"
+    ),
     Path("scripts"): ManifestEntry("directory", 0o755),
-    Path("scripts/echo_pronunciation_preflight.sh"): ManifestEntry("file", 0o755),
-    Path("scripts/echo_learning_pilot_narrate.sh"): ManifestEntry("file", 0o755),
-    Path("scripts/echo_pronunciation_narrate.sh"): ManifestEntry("file", 0o755),
-    Path("scripts/echo_pronunciation_lease.py"): ManifestEntry("file", 0o755),
-    Path("scripts/echo_pronunciation_state.py"): ManifestEntry("file", 0o755),
-    Path("scripts/validate_pronunciation_audit.py"): ManifestEntry("file", 0o755),
+    Path("scripts/echo_installed_renderer.py"): ManifestEntry(
+        "file", 0o755, "d3813a096929a320a53ddb0e8ca8a61eb6f3b25a78a03335bb3880207c92f8fb"
+    ),
+    Path("scripts/echo_pronunciation_preflight.sh"): ManifestEntry(
+        "file", 0o755, "5de16dc1b2b7b724b33858a17b0ab1158f033c06a5ba44099f038e66e13035be"
+    ),
+    Path("scripts/echo_learning_pilot_narrate.sh"): ManifestEntry(
+        "file", 0o755, "20f259d29ea43f35f292b13d807a58a8bab29a55b05ef85cce742aae3c621388"
+    ),
+    Path("scripts/echo_pronunciation_narrate.sh"): ManifestEntry(
+        "file", 0o755, "9af4f1e32d528ae1eb393c0468c6e52503f771206b7a96d33c1c6b48faf4d2f4"
+    ),
+    Path("scripts/echo_pronunciation_lease.py"): ManifestEntry(
+        "file", 0o755, "f36136112ce1f40f47c8312d9687cbaf77ce9dfafcfdf353aa477ec5e5a6271b"
+    ),
+    Path("scripts/echo_pronunciation_state.py"): ManifestEntry(
+        "file", 0o755, "08f42329fcb7f9fe3e034043c5556f62b72fd2b65327115194237302d8c885b7"
+    ),
+    Path("scripts/validate_pronunciation_audit.py"): ManifestEntry(
+        "file", 0o755, "e349c02b7a396f847e6f1cac88d2508f377b9aa22b4a9080e9d0c9aa30d288c2"
+    ),
 }
 IGNORED_TRANSIENT_NAMES = frozenset({".DS_Store", "__pycache__"})
 EXTERNAL_DISCOVERABLE_SKILL = Path("SKILL.md")
@@ -139,6 +177,15 @@ def candidate_manifest_error(candidate_root: Path) -> str | None:
                 f"candidate manifest mode differs for {relative_path}: "
                 f"{observed.mode:o} != {expected.mode:o}"
             )
+        if expected.sha256 is not None:
+            observed_hash = hashlib.sha256(
+                (candidate_root / relative_path).read_bytes()
+            ).hexdigest()
+            if observed_hash != expected.sha256:
+                return (
+                    f"candidate manifest hash differs for {relative_path}: "
+                    f"{observed_hash} != {expected.sha256}"
+                )
     return None
 
 
@@ -148,7 +195,7 @@ def installed_manifest_matches(candidate_root: Path, canonical_root: Path) -> bo
         canonical = skill_inventory(canonical_root)
     except (OSError, ValueError):
         return False
-    if candidate != canonical or candidate != SKILL_MANIFEST:
+    if candidate != canonical:
         return False
     for relative_path, entry in SKILL_MANIFEST.items():
         if entry.kind != "file":
