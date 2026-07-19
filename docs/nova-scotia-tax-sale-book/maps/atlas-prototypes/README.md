@@ -1,9 +1,10 @@
 # Inverness Packet Atlas — three-card prototype
 
-Status: three QGIS 4 **review candidates**, not accepted appendix frames and
-not part of the forty canonical book figures. Dan authorized prototype
-development with “let's do it” on 2026-07-19. That direction does not authorize
-the remaining 42 lien cards, canonical insertion, narration or publication.
+Status: three QGIS 4 **accepted prototype-direction frames**, not final appendix
+frames and not part of the forty canonical book figures. Dan authorized
+prototype development with “let's do it” and accepted the exact rendered set
+with “I like them.” on 2026-07-19. That acceptance does not authorize the
+remaining 42 lien cards, canonical insertion, narration or publication.
 
 ## What this gate tests
 
@@ -36,7 +37,8 @@ geometry and downloads the official DP ME 10 Version 9 AMO archive. The wrapper
 uses QGIS 4.0.2 to rebuild the existing proofs and these three atlas cards.
 `atlas-prototype-specs.json` is the teaching and safety input;
 `render-receipt.json` binds it to the listing data, source archive and rendered
-PNG hashes.
+PNG hashes. `human-visual-approval.json` binds Dan's dated verbatim approval to
+that exact receipt and asset set.
 
 ## Rights and evidence boundary
 
@@ -60,6 +62,7 @@ primary teaching contrast remain distinguishable at phone stage. Detailed
 source footers are intended for full-screen, EPUB and paused-video inspection;
 they are not expected to serve as phone-size teaching copy.
 
-Human acceptance and an actual Echo phone/desktop and video-stage proof remain
-pending. A failed review returns the template to development; it does not
-authorize batch rendering.
+Human acceptance of the exact three-card visual direction is recorded. Actual
+Echo phone/desktop and video-stage proof remains pending. Any re-render changes
+the bound hashes and requires fresh review; this acceptance does not authorize
+batch rendering.

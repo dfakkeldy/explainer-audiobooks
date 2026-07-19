@@ -27,8 +27,9 @@ ranking, or an advertisement disguised as education.
   2026 listing facts;
 - `maps/qgis/`: the editable QGIS 4.0.2 project used for the current proofs;
 - `maps/exports/`: two attributed 2560-by-1440 development renders;
-- `maps/atlas-prototypes/`: three owner-free QGIS 4 evidence-card review
-  candidates plus full/phone contact sheets, specs and render receipt;
+- `maps/atlas-prototypes/`: three owner-free QGIS 4 evidence-card prototypes
+  plus full/phone contact sheets, specs, render receipt and hash-bound human
+  visual-approval receipt;
 - `maps/scripts/`: a reproducible local NSPRD/AMO source build and QGIS 4 render
   workflow;
 - `figures/`: the deterministic diagram renderer, teaching/provenance
@@ -70,14 +71,15 @@ packet and its reproducible QGIS proofs.
 The project is in `governed-final` pilot development. Deep research, the
 approved argument outline, structured chapter plans, coverage ledger, forty-row
 figure manifest, two QGIS proofs, and eight reproducible diagram candidates
-exist. Three additional Inverness Packet Atlas cards are separate review
-candidates outside the forty-figure manifest. Dan approved the revised
+exist. Three additional Inverness Packet Atlas cards are accepted
+prototype-direction frames outside the forty-figure manifest. Dan approved the revised
 twelve-chapter outline and forty-figure visual
-direction for pilot development on 2026-07-19. Accepted first-section voice,
-the narrated comprehension-pilot verdict, atlas-card acceptance and batch
-authorization, full manuscript, independent learning and prose review, accepted
-final figures, cover selection, EPUB, Echo narration, public package
-verification, and full listening all remain pending.
+direction for pilot development on 2026-07-19, and later accepted the exact
+three-card atlas direction with “I like them.” Accepted first-section voice,
+the narrated comprehension-pilot verdict, actual Echo/video-stage atlas proof,
+atlas batch authorization, full manuscript, independent learning and prose
+review, accepted final figures, cover selection, EPUB, Echo narration, public
+package verification, and full listening all remain pending.
 
 ## Safety and currency
 

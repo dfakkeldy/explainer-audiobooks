@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "status": "accepted-prototype-direction",
+  "acceptedBy": "Dan Fakkeldy",
+  "acceptedAt": "2026-07-19T15:39:47-03:00",
+  "verbatimQuote": "I like them.",
+  "reviewContext": "Dan received links to the three full-size prototype cards, the full-size contact sheet and the phone-stage contact sheet, then replied with the recorded quote.",
+  "renderReceiptPath": "render-receipt.json",
+  "renderReceiptSHA256": "273c32e0153b4ae29ffc6d5668dfdc2c32b340e59ab7e75935faf3969f09676c",
+  "acceptedFiles": [
+    "atlas-lien-01-community-roadside.png",
+    "atlas-lien-08-mine-screening.png",
+    "atlas-lien-11-three-pid-group.png"
+  ],
+  "scope": {
+    "threeCardVisualDirectionAccepted": true,
+    "exactRenderedPrototypeSetAccepted": true,
+    "remainingCardsBatchAuthorized": false,
+    "actualEchoStageProofCompleted": false,
+    "canonicalFigureManifestChanged": false,
+    "narrationAuthorized": false,
+    "publicationAuthorized": false
+  },
+  "supersessionRule": "Any changed accepted-file hash or render-receipt hash requires a new human review and approval receipt."
+}

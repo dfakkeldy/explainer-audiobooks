@@ -19,6 +19,7 @@ PROJECT_PATH = MAP_ROOT / "qgis/inverness-tax-sale-2026-08-11.qgz"
 ATLAS_ROOT = MAP_ROOT / "atlas-prototypes"
 ATLAS_SPEC_PATH = ATLAS_ROOT / "atlas-prototype-specs.json"
 ATLAS_RECEIPT_PATH = ATLAS_ROOT / "render-receipt.json"
+ATLAS_APPROVAL_PATH = ATLAS_ROOT / "human-visual-approval.json"
 MUNICIPAL_SOURCE_REGISTER = PACKET_ROOT / "research/municipal-map-source-register.json"
 NS_MARKS_PROMPT = PACKET_ROOT / "research/ns-marks-multi-municipality-map-prompt.md"
 ATTRIBUTION = (
@@ -163,6 +164,35 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertIn("Inverness Packet Atlas", visuals)
         self.assertIn("does not change the forty canonical figures", visuals)
+
+    def test_inverness_atlas_visual_approval_binds_exact_prototype_set(self) -> None:
+        receipt = json.loads(ATLAS_RECEIPT_PATH.read_text(encoding="utf-8"))
+        approval = json.loads(ATLAS_APPROVAL_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            approval["renderReceiptSHA256"],
+            hashlib.sha256(ATLAS_RECEIPT_PATH.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(approval["status"], "accepted-prototype-direction")
+        self.assertEqual(approval["acceptedBy"], "Dan Fakkeldy")
+        self.assertEqual(approval["verbatimQuote"], "I like them.")
+        self.assertRegex(
+            approval["acceptedAt"], r"^2026-07-19T\d{2}:\d{2}:\d{2}-03:00$"
+        )
+        self.assertEqual(
+            approval["acceptedFiles"],
+            [item["filename"] for item in receipt["files"]],
+        )
+        for item in receipt["files"]:
+            self.assertEqual(
+                item["sha256"],
+                hashlib.sha256(
+                    (ATLAS_ROOT / item["filename"]).read_bytes()
+                ).hexdigest(),
+            )
+        self.assertFalse(approval["scope"]["remainingCardsBatchAuthorized"])
+        self.assertFalse(approval["scope"]["actualEchoStageProofCompleted"])
+        self.assertFalse(approval["scope"]["publicationAuthorized"])
 
     def test_payment_and_stage_outcomes_are_distinct(self) -> None:
         ledger = json.loads(
@@ -353,7 +383,11 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         receipt = json.loads(ATLAS_RECEIPT_PATH.read_text(encoding="utf-8"))
 
         self.assertEqual(receipt["assetStatus"], "review-candidate")
-        self.assertEqual(receipt["humanAcceptance"], "pending")
+        self.assertEqual(
+            receipt["humanAcceptance"]["status"],
+            "accepted-prototype-direction",
+        )
+        self.assertEqual(receipt["humanAcceptance"]["verbatimQuote"], "I like them.")
         self.assertFalse(receipt["canonicalFigureManifestChanged"])
         self.assertFalse(receipt["propertyOnlineUsed"])
         self.assertEqual(receipt["renderer"], "QGIS 4")

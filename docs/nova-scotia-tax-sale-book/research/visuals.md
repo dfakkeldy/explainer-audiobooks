@@ -102,10 +102,12 @@ states the database's incompleteness, subsidence exclusion and approximately
 50-metre private-land positional caveat.
 
 The first full/phone visual inspection tightened the Lien 11 extent and combined
-two nearly co-located mine-record labels. Human card acceptance and an actual
-Echo phone/desktop and video-stage proof remain pending. This development step
-does not approve the 42 remaining lien cards, canonical insertion, narration,
-batch rendering or publication.
+two nearly co-located mine-record labels. After receiving the three cards and
+phone-stage sheet, Dan accepted the exact rendered prototype direction with “I
+like them.” at 2026-07-19T15:39:47-03:00. The hash-bound human receipt lives
+beside the render receipt. Actual Echo phone/desktop and video-stage proof
+remains pending. This acceptance does not approve the 42 remaining lien cards,
+canonical insertion, narration, batch rendering or publication.
 
 ## Purpose
 
