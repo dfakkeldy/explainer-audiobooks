@@ -52,7 +52,7 @@ class NonNarratedAppendixTests(unittest.TestCase):
                 appendix_doc = archive.read("OEBPS/appendix.xhtml").decode("utf-8")
 
             self.assertIn('<item id="appendix" href="appendix.xhtml"', opf)
-            self.assertIn('<itemref idref="appendix" linear="no"/>', opf)
+            self.assertNotIn('<itemref idref="appendix"', opf)
             self.assertIn('<a href="appendix.xhtml">Sources</a>', nav)
             self.assertIn('<content src="appendix.xhtml"/>', ncx)
             self.assertIn('epub:type="bibliography"', appendix_doc)
