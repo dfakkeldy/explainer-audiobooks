@@ -23,10 +23,6 @@ from echo_pronunciation_state import read_installed_renderer_identity
 
 
 ACCEPTED_INSTALLER_SOURCE_SHA = "2f23aceedb1b9f25b7ea4410756eea32a59af8cd"
-ACCEPTED_ECHO_SOURCE_SHA = "81a635df84f75f2e391706e071878b379e6fe0a0"
-ACCEPTED_MANIFEST_SHA = (
-    "41bbb3c795b32c0e0273bec8847169bbd2bb9158d7b447255e9b90f587d4bdfd"
-)
 
 _EXECUTABLE_NAME = "echo-cli"
 _RESOURCES_NAME = "EchoNarrationResources"
@@ -197,7 +193,9 @@ def strict_json_object(path: Path, label: str) -> dict[str, object]:
 
     data = _read_regular_file(path, label)
     try:
-        payload = json.loads(data, object_pairs_hook=reject_duplicates)
+        payload = json.loads(
+            data.decode("utf-8"), object_pairs_hook=reject_duplicates
+        )
     except (json.JSONDecodeError, UnicodeDecodeError) as error:
         raise ValueError(f"{label} is invalid JSON") from error
     if not isinstance(payload, dict):

@@ -102,190 +102,9 @@ ECHO_PRONUNCIATION_LEASE_ROOT=$(echo_pronunciation_canonical_lease_root) \
   || exit $?
 export ECHO_PRONUNCIATION_LEASE_ROOT
 
-resolve_installed_renderer() {
-  local requested_source_sha requested_renderer_root renderer_output
-  if [[ -z ${APPROVED_ECHO_PRONUNCIATION_SHA:-} ]]; then
-    printf 'APPROVED_ECHO_PRONUNCIATION_SHA is required for operational narration\n' >&2
-    return 64
-  fi
-  requested_source_sha=$APPROVED_ECHO_PRONUNCIATION_SHA
-  if [[ ! "$requested_source_sha" =~ ^[0-9a-f]{40}$ ]]; then
-    printf 'APPROVED_ECHO_PRONUNCIATION_SHA must be exactly 40 lowercase hexadecimal characters\n' >&2
-    return 64
-  fi
-  if [[ -n ${ECHO_SOURCE_SHA:-} \
-    && "$APPROVED_ECHO_PRONUNCIATION_SHA" != "$ECHO_SOURCE_SHA" ]]; then
-    printf 'approved and requested Echo source revisions disagree\n' >&2
-    return 64
-  fi
-  requested_renderer_root=${ECHO_RENDERER_ROOT:-}
-  renderer_output=$(mktemp "${TMPDIR:-/tmp}/echo-installed-renderer.XXXXXX") \
-    || return 70
-
-  local resolver_command=(
-    /usr/local/bin/python3 "$SCRIPT_DIR/echo_installed_renderer.py"
-  )
-  if (( RESUME )); then
-    resolver_command+=(
-      resolve-resume
-      --source-sha "$requested_source_sha"
-      --resume-state "$RESUME_STATE"
-    )
-  else
-    resolver_command+=(resolve-new --source-sha "$requested_source_sha")
-  fi
-  if [[ -n "$requested_renderer_root" ]]; then
-    resolver_command+=(--renderer-root "$requested_renderer_root")
-  fi
-  resolver_command+=(--format env0)
-  if ! "${resolver_command[@]}" >"$renderer_output"; then
-    printf 'installed Echo renderer %s is unavailable; install the approved Echo renderer for this exact source, then retry\n' \
-      "$requested_source_sha" >&2
-    rm -f -- "$renderer_output"
-    return 65
-  fi
-
-  unset ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST
-  unset ECHO_RENDERER_MANIFEST_SHA256 APPROVED_ECHO_INSTALLER_SHA
-  unset ECHO_SOURCE_SHA CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR
-  unset ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION ECHO_MODEL_REVISION
-  unset ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED
-  local renderer_count_root=0 renderer_count_build_root=0
-  local renderer_count_manifest=0 renderer_count_manifest_sha=0
-  local renderer_count_installer_sha=0 renderer_count_source_sha=0
-  local renderer_count_cli=0 renderer_count_cli_sha=0
-  local renderer_count_resources=0 renderer_count_resources_sha=0
-  local renderer_count_version=0 renderer_count_model_revision=0
-  local renderer_count_model_bytes=0 renderer_count_model_attested=0
-  local renderer_key renderer_value
-  while :; do
-    renderer_key=
-    if ! IFS= read -r -d '' renderer_key; then
-      if [[ -n "$renderer_key" ]]; then
-        printf 'incomplete installed renderer env0 record\n' >&2
-        rm -f -- "$renderer_output"
-        return 65
-      fi
-      break
-    fi
-    renderer_value=
-    if ! IFS= read -r -d '' renderer_value; then
-      printf 'incomplete installed renderer env0 record\n' >&2
-      rm -f -- "$renderer_output"
-      return 65
-    fi
-    if [[ "$renderer_value" == *$'\n'* || "$renderer_value" == *$'\r'* ]]; then
-      printf 'installed renderer env0 contains a line break: %s\n' \
-        "$renderer_key" >&2
-      rm -f -- "$renderer_output"
-      return 65
-    fi
-    case "$renderer_key" in
-      ECHO_RENDERER_ROOT)
-        (( renderer_count_root += 1 ))
-        ECHO_RENDERER_ROOT=$renderer_value
-        ;;
-      ECHO_RENDERER_BUILD_ROOT)
-        (( renderer_count_build_root += 1 ))
-        ECHO_RENDERER_BUILD_ROOT=$renderer_value
-        ;;
-      ECHO_RENDERER_MANIFEST)
-        (( renderer_count_manifest += 1 ))
-        ECHO_RENDERER_MANIFEST=$renderer_value
-        ;;
-      ECHO_RENDERER_MANIFEST_SHA256)
-        (( renderer_count_manifest_sha += 1 ))
-        ECHO_RENDERER_MANIFEST_SHA256=$renderer_value
-        ;;
-      APPROVED_ECHO_INSTALLER_SHA)
-        (( renderer_count_installer_sha += 1 ))
-        APPROVED_ECHO_INSTALLER_SHA=$renderer_value
-        ;;
-      ECHO_SOURCE_SHA)
-        (( renderer_count_source_sha += 1 ))
-        ECHO_SOURCE_SHA=$renderer_value
-        ;;
-      CLI)
-        (( renderer_count_cli += 1 ))
-        CLI=$renderer_value
-        ;;
-      ECHO_CLI_SHA256)
-        (( renderer_count_cli_sha += 1 ))
-        ECHO_CLI_SHA256=$renderer_value
-        ;;
-      ECHO_RESOURCE_DIR)
-        (( renderer_count_resources += 1 ))
-        ECHO_RESOURCE_DIR=$renderer_value
-        ;;
-      ECHO_RESOURCES_SHA256)
-        (( renderer_count_resources_sha += 1 ))
-        ECHO_RESOURCES_SHA256=$renderer_value
-        ;;
-      ECHO_RENDER_VERSION)
-        (( renderer_count_version += 1 ))
-        ECHO_RENDER_VERSION=$renderer_value
-        ;;
-      ECHO_MODEL_REVISION)
-        (( renderer_count_model_revision += 1 ))
-        ECHO_MODEL_REVISION=$renderer_value
-        ;;
-      ECHO_MODEL_EXPECTED_BYTES)
-        (( renderer_count_model_bytes += 1 ))
-        ECHO_MODEL_EXPECTED_BYTES=$renderer_value
-        ;;
-      ECHO_MODEL_BYTES_ATTESTED)
-        (( renderer_count_model_attested += 1 ))
-        ECHO_MODEL_BYTES_ATTESTED=$renderer_value
-        ;;
-      *)
-        printf 'installed renderer env0 contains an unknown key: %s\n' \
-          "$renderer_key" >&2
-        rm -f -- "$renderer_output"
-        return 65
-        ;;
-    esac
-  done <"$renderer_output"
-  rm -f -- "$renderer_output"
-  local renderer_count
-  for renderer_count in \
-    renderer_count_root renderer_count_build_root renderer_count_manifest \
-    renderer_count_manifest_sha renderer_count_installer_sha \
-    renderer_count_source_sha renderer_count_cli renderer_count_cli_sha \
-    renderer_count_resources renderer_count_resources_sha \
-    renderer_count_version renderer_count_model_revision \
-    renderer_count_model_bytes renderer_count_model_attested; do
-    if [[ ${!renderer_count} -ne 1 ]]; then
-      printf 'installed renderer env0 key count is not exactly one: %s=%s\n' \
-        "$renderer_count" "${!renderer_count}" >&2
-      return 65
-    fi
-  done
-  export ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST
-  export ECHO_RENDERER_MANIFEST_SHA256 APPROVED_ECHO_INSTALLER_SHA
-  export ECHO_SOURCE_SHA CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR
-  export ECHO_RESOURCES_SHA256 ECHO_RENDER_VERSION ECHO_MODEL_REVISION
-  export ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED
-}
-
-assert_leases() {
-  local resources=("$@")
-  local command=(
-    "$SCRIPT_DIR/echo_pronunciation_lease.py"
-    --assert-held
-    --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
-  )
-  local resource
-  for resource in "${resources[@]}"; do
-    command+=(--resource "$resource")
-  done
-  if ! "${command[@]}"; then
-    printf 'internal narration mode requires an inherited FD-backed lease capability\n' >&2
-    return 70
-  fi
-}
-
 if [[ -z "$INTERNAL_MODE" ]]; then
-  resolve_installed_renderer || exit $?
+  echo_pronunciation_resolve_installed_renderer "$RESUME" "$RESUME_STATE" \
+    || exit $?
   lease_command=(
     "$SCRIPT_DIR/echo_pronunciation_lease.py"
     --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
@@ -306,7 +125,7 @@ if [[ -z "$INTERNAL_MODE" ]]; then
 fi
 
 if [[ "$INTERNAL_MODE" == preflight ]]; then
-  assert_leases "$ECHO_RENDERER_BUILD_ROOT"
+  echo_pronunciation_assert_leases "$ECHO_RENDERER_BUILD_ROOT"
   echo_pronunciation_preflight
 
   if (( RESUME )); then
@@ -401,7 +220,7 @@ if (( RESUME )); then
   fi
 fi
 
-assert_leases "$ECHO_RENDERER_BUILD_ROOT"
+echo_pronunciation_assert_leases "$ECHO_RENDERER_BUILD_ROOT"
 echo_pronunciation_attest_inputs
 for required_internal_variable in \
   ATTEMPT_ID ARTIFACT_RELATIVE_PATH ARTIFACT_ROOT OUTPUT SIDECAR AUDIT REEL \
@@ -413,7 +232,7 @@ for required_internal_variable in \
     exit 70
   fi
 done
-assert_leases \
+echo_pronunciation_assert_leases \
   "$ECHO_RENDERER_BUILD_ROOT" "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL" "$WORK" "$DB" \
   "$SELECTION_RESOURCE"
 

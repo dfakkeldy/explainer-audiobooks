@@ -124,7 +124,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         )
         self.assertIn(
             "APPROVED_ECHO_PRONUNCIATION_SHA is required",
-            self.narrate_wrapper,
+            self.preflight,
         )
         self.assertNotIn("APPROVED_ECHO_PRONUNCIATION_SHA=unpinned", self.preflight)
 
@@ -281,6 +281,24 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "pilot must attest before launch, after render, and around publish",
         )
 
+    def test_full_and_pilot_wrappers_use_shared_renderer_and_lease_functions(
+        self,
+    ) -> None:
+        for name, wrapper in (
+            ("full", self.narrate_wrapper),
+            ("pilot", self.pilot_narrate_wrapper),
+        ):
+            with self.subTest(wrapper=name):
+                self.assertIn(
+                    'source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"', wrapper
+                )
+                self.assertIn(
+                    "echo_pronunciation_resolve_installed_renderer", wrapper
+                )
+                self.assertIn("echo_pronunciation_assert_leases", wrapper)
+                self.assertNotIn("\nresolve_installed_renderer() {", wrapper)
+                self.assertNotIn("\nassert_leases() {", wrapper)
+
     def test_wrapper_binds_selected_square_cover_to_immutable_render(self) -> None:
         for marker in (
             "M4B_COVER",
@@ -306,11 +324,11 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "malformed narration lock",
             'wait "$NARRATE_PID"',
             "--leased-preflight",
-            "--assert-held",
             "ECHO_RENDERER_BUILD_ROOT",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.narrate_wrapper)
+        self.assertIn("--assert-held", self.preflight)
 
         for marker in (
             "fcntl.flock",

@@ -267,7 +267,7 @@ def read_installed_renderer_identity(path: Path) -> tuple[str, str]:
 
     try:
         payload = json.loads(
-            read_regular_bytes(path, "resume-state receipt"),
+            read_regular_bytes(path, "resume-state receipt").decode("utf-8"),
             object_pairs_hook=reject_duplicates,
         )
     except (json.JSONDecodeError, UnicodeDecodeError) as error:

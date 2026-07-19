@@ -658,12 +658,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         wrapper = scripts / NARRATE_WRAPPER.name
         wrapper.write_bytes(NARRATE_WRAPPER.read_bytes())
         wrapper.chmod(wrapper.stat().st_mode | stat.S_IXUSR)
-        (scripts / PREFLIGHT.name).write_text(
-            "#!/usr/bin/env bash\n"
-            "echo_pronunciation_canonical_lease_root() { "
-            f"printf '%s\\n' {shlex.quote(str(self.tmp / 'lease-root'))}; }}\n",
-            encoding="utf-8",
-        )
+        (scripts / PREFLIGHT.name).write_bytes(PREFLIGHT.read_bytes())
         (scripts / "echo_installed_renderer.py").write_text(
             "import sys\n" f"sys.stdout.buffer.write({payload!r})\n",
             encoding="utf-8",

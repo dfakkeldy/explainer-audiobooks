@@ -479,6 +479,24 @@ class ManifestAndAttestationTests(unittest.TestCase):
                         self.renderer_root, ACCEPTED_SOURCE_SHA
                     )
 
+    def test_resolve_new_rejects_utf16_and_utf32_selectors(self):
+        _, manifest_sha = self.create_package(renderer_root=self.renderer_root)
+        payload = canonical_json(
+            {
+                "schemaVersion": 1,
+                "echoSourceSHA": ACCEPTED_SOURCE_SHA,
+                "manifestSHA256": manifest_sha,
+            }
+        ).decode("utf-8")
+
+        for encoding in ("utf-16", "utf-32"):
+            with self.subTest(encoding=encoding):
+                self.write_selector(manifest_sha, data=payload.encode(encoding))
+                with self.assertRaises(ValueError):
+                    RENDERER.resolve_new_renderer(
+                        self.renderer_root, ACCEPTED_SOURCE_SHA
+                    )
+
     def test_resolve_new_honors_the_shared_nonblocking_selector_lease(self):
         _, manifest_sha = self.create_package(renderer_root=self.renderer_root)
         selector = self.write_selector(manifest_sha)
@@ -666,6 +684,24 @@ class ManifestAndAttestationTests(unittest.TestCase):
         resume_state.write_bytes(canonical_json(payload))
         with self.assertRaises(ValueError):
             STATE.read_installed_renderer_identity(resume_state)
+
+    def test_resolve_resume_rejects_utf16_and_utf32_state_receipts(self):
+        _, manifest_sha = self.create_package(renderer_root=self.renderer_root)
+        resume_state = self.root / "run" / "research" / "echo-resume-state-run.json"
+        self.write_resume_state(resume_state, manifest_sha)
+        payload = resume_state.read_text(encoding="utf-8")
+
+        for encoding in ("utf-16", "utf-32"):
+            with self.subTest(encoding=encoding):
+                resume_state.write_bytes(payload.encode(encoding))
+                with self.assertRaises(ValueError):
+                    STATE.read_installed_renderer_identity(resume_state)
+                with self.assertRaises(ValueError):
+                    RENDERER.resolve_resume_renderer(
+                        self.renderer_root,
+                        ACCEPTED_SOURCE_SHA,
+                        resume_state,
+                    )
 
     def test_canonical_renderer_root_uses_the_effective_account_home(self):
         expected = self.root / "Library" / "Application Support" / "Echo" / "Renderers"

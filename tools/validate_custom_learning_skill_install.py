@@ -65,7 +65,7 @@ SKILL_MANIFEST = {
     ),
     Path("scripts"): ManifestEntry("directory", 0o755),
     Path("scripts/echo_installed_renderer.py"): ManifestEntry(
-        "file", 0o755, "7d0a70e1e690932667bf51c5b039cfdcfbd1b46eb7bf3c6b0fa86b2e4e845086"
+        "file", 0o755, "d4535145c655b5f0a5d82786aeb0be30b4f069a45a3564c82bb1cccffc6c9d70"
     ),
     Path("scripts/echo_pronunciation_preflight.sh"): ManifestEntry(
         "file", 0o755, "5de16dc1b2b7b724b33858a17b0ab1158f033c06a5ba44099f038e66e13035be"
@@ -74,13 +74,13 @@ SKILL_MANIFEST = {
         "file", 0o755, "20f259d29ea43f35f292b13d807a58a8bab29a55b05ef85cce742aae3c621388"
     ),
     Path("scripts/echo_pronunciation_narrate.sh"): ManifestEntry(
-        "file", 0o755, "9af4f1e32d528ae1eb393c0468c6e52503f771206b7a96d33c1c6b48faf4d2f4"
+        "file", 0o755, "1cb8e3048367fb1496e08652b3dbcd30a709b689295fc265011882e55d7e902a"
     ),
     Path("scripts/echo_pronunciation_lease.py"): ManifestEntry(
         "file", 0o755, "f36136112ce1f40f47c8312d9687cbaf77ce9dfafcfdf353aa477ec5e5a6271b"
     ),
     Path("scripts/echo_pronunciation_state.py"): ManifestEntry(
-        "file", 0o755, "08f42329fcb7f9fe3e034043c5556f62b72fd2b65327115194237302d8c885b7"
+        "file", 0o755, "34572e6cf07c971716b9e3ff82461e0bdcfebaf2eca526b637caae339136b54a"
     ),
     Path("scripts/validate_pronunciation_audit.py"): ManifestEntry(
         "file", 0o755, "e349c02b7a396f847e6f1cac88d2508f377b9aa22b4a9080e9d0c9aa30d288c2"
