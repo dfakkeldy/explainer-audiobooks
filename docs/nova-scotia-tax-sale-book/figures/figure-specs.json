@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "edition": "public-development",
+  "assetStatus": "review-candidate",
+  "candidateReview": {
+    "reviewedAt": "2026-07-19",
+    "reviewer": "Codex editorial and visual inspection",
+    "outcome": "pass-as-review-candidates",
+    "humanAcceptance": "pending",
+    "echoStageAcceptance": "pending",
+    "notes": [
+      "All six full-size PNGs were inspected after rendering.",
+      "A first inspection found ambiguous flow and escaped centered text; the renderer was corrected and the set was re-rendered.",
+      "The corrected set was inspected in a 640x360-per-frame contact sheet. Primary teaching structure and labels remain legible; dense secondary copy still requires the planned real Echo phone-stage proof."
+    ]
+  },
+  "canvas": {
+    "width": 2560,
+    "height": 1440,
+    "colorSpace": "sRGB",
+    "echoExportTarget": "1920x1080"
+  },
+  "visualGrammar": {
+    "municipalFact": "navy",
+    "verifiedPublicRecord": "teal",
+    "screeningOrInterpretation": "amber",
+    "professionalVerification": "magenta",
+    "noGoUntilResolved": "red",
+    "completeOrReconciled": "green"
+  },
+  "figures": [
+    {
+      "id": "figure-03",
+      "filename": "figure-03-two-clocks.png",
+      "chapter": 1,
+      "title": "Auction day connects two clocks",
+      "caption": "The sale connects two legal clocks; it does not end either one instantly.",
+      "altText": "Two horizontal timelines meet at auction day: arrears, notices and advertisement before it; certificate, possible redemption and deed after it.",
+      "teachingJob": "Separate the municipality's pre-sale process from the purchaser's post-sale legal route.",
+      "claimIds": ["LAW-002", "LAW-003", "LAW-004", "LAW-007", "LAW-009", "LAW-012"],
+      "legalLocators": ["MGA ss. 134, 137-142, 150, 152, 155-156"],
+      "rights": "Self-created educational diagram.",
+      "status": "review-candidate"
+    },
+    {
+      "id": "figure-04",
+      "filename": "figure-04-packet-anatomy.png",
+      "chapter": 2,
+      "title": "A parcel sheet is a set of claims to verify",
+      "caption": "Every field is an identifier or claim to verify, not a promise about the parcel.",
+      "altText": "Annotated fictional tax-sale packet page pointing to lien number, AAN, PID, recovery amount, assessment, redemption marker, map and legal-description areas.",
+      "teachingJob": "Explain the common fields in an Inverness-style parcel sheet without reproducing owner data or Property Online material.",
+      "claimIds": ["DATA-005", "LAND-001", "LAND-002", "LAND-003", "LAND-004"],
+      "legalLocators": ["Inverness August 11, 2026 public packet structure"],
+      "rights": "Self-created fictional composite; no real parcel, owner or Property Online reproduction.",
+      "status": "review-candidate"
+    },
+    {
+      "id": "figure-05",
+      "filename": "figure-05-identifiers-not-promises.png",
+      "chapter": 2,
+      "title": "Identifiers help records meet",
+      "caption": "Identifiers help records meet; none alone proves boundaries, access, condition or value.",
+      "altText": "Seven labelled record cards form a chain from tax-sale lien to legal description, with unsupported property conclusions separated below.",
+      "teachingJob": "Keep the lien, AAN, PID, location, assessment, map and legal description in their proper evidentiary roles.",
+      "claimIds": ["LAND-001", "LAND-002", "LAND-003", "LAND-004"],
+      "legalLocators": ["MGA s. 142; Nova Scotia land and assessment record definitions"],
+      "rights": "Self-created educational diagram.",
+      "status": "review-candidate"
+    },
+    {
+      "id": "figure-06",
+      "filename": "figure-06-reconcile-the-packet.png",
+      "chapter": 2,
+      "title": "Preserve disagreement between sources",
+      "caption": "A careful file preserves disagreement instead of silently choosing a convenient number.",
+      "altText": "Six source cards feed a reconciliation table where a missing detail page, differing recovery amounts and differing auction-result counts remain visibly unresolved.",
+      "teachingJob": "Show why the summary, detail sheet, live webpage, registry research, result sheet and council record remain separate evidence.",
+      "claimIds": ["DATA-002", "DATA-003", "OPS-003"],
+      "legalLocators": ["Inverness August 11, 2026 packet; May 27, 2025 packet, results and June 19 council minutes"],
+      "rights": "Self-created diagram from aggregated official counts; no owner or parcel narrative.",
+      "status": "review-candidate"
+    },
+    {
+      "id": "figure-07",
+      "filename": "figure-07-redeemable-route.png",
+      "chapter": 3,
+      "title": "The ordinary redeemable route",
+      "caption": "A winning bid may begin a six-month certificate-holder period rather than immediate ownership.",
+      "altText": "Timeline from full payment to certificate, a six-month certificate-holder period, possible redemption, and a municipal tax deed if redemption does not occur.",
+      "teachingJob": "Explain the ordinary six-month redemption route while keeping certificate-holder duties visible.",
+      "claimIds": ["LAW-007", "LAW-008", "LAW-009", "LAW-010", "LAW-011", "LAW-012"],
+      "legalLocators": ["MGA ss. 150-156"],
+      "rights": "Self-created statutory-process diagram; educational overview only.",
+      "status": "review-candidate"
+    },
+    {
+      "id": "figure-08",
+      "filename": "figure-08-nonredeemable-route.png",
+      "chapter": 3,
+      "title": "No redemption period does not mean no uncertainty",
+      "caption": "Immediate deed changes the redemption route, not possession, access, title quality or buildability.",
+      "altText": "Short route from older tax arrears to the statutory redemption exception and a requested municipal deed, followed by unresolved branches for possession, access, title review and intended use.",
+      "teachingJob": "Explain the older-arrears redemption exception without implying instant possession or a problem-free property.",
+      "claimIds": ["LAW-009", "LAW-012"],
+      "legalLocators": ["MGA ss. 152(1), 155-156"],
+      "rights": "Self-created statutory-process diagram; educational overview only.",
+      "status": "review-candidate"
+    }
+  ],
+  "sourceRefresh": {
+    "checkedAt": "2026-07-19",
+    "municipalGovernmentAct": {
+      "consolidationDate": "2026-04-09",
+      "url": "https://nslegislature.ca/sites/default/files/legc/statutes/municipal%20government.pdf"
+    },
+    "invernessTaxSales": {
+      "checkedAt": "2026-07-19",
+      "url": "https://invernesscounty.ca/services/finance-taxation/tax-sales/"
+    }
+  }
+}

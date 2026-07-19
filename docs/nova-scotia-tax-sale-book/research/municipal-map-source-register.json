@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-07-19",
+  "scope": "Owner-free official municipal tax-sale sources suitable for NS Marks The Spot research",
+  "privacyRule": "Never store or publish assessed-owner, successful-bidder, tenant or occupant names.",
+  "events": [
+    {
+      "id": "cbrm-2026-07-21",
+      "municipality": "Cape Breton Regional Municipality",
+      "eventType": "public-auction",
+      "eventStatusAsOfCheck": "upcoming",
+      "saleStartsAt": "2026-07-21T11:00:00-03:00",
+      "venue": "Centre 200 main concourse",
+      "mapReadiness": "parcel-ready-after-extraction-review",
+      "expectedListingCount": 67,
+      "expectedPIDCount": 68,
+      "sources": {
+        "landingPage": "https://cbrm.ns.ca/business/property-sales-management/tax-sales/",
+        "propertyList": "https://cbrm.ns.ca/wp-content/uploads/2026/06/JULY-21-2026-2nd-Ad.pdf",
+        "mapAndDescriptions": "https://cbrm.ns.ca/wp-content/uploads/2026/06/1.-List-of-Maps-and-Descriptions36.pdf"
+      },
+      "publicFields": [
+        "lien",
+        "aan",
+        "pids",
+        "addressOrDescription",
+        "location",
+        "minimumBidCents",
+        "redemptionCategory"
+      ],
+      "extractionNotes": [
+        "The official list contains an assessed-name column; discard it before writing any source file.",
+        "One lien contains two PIDs, producing 68 PIDs from 67 rows.",
+        "Use the map-and-descriptions PDF only to visually reconcile public parcel fields; do not republish its document pages."
+      ]
+    },
+    {
+      "id": "pictou-county-2026-01",
+      "municipality": "Municipality of the County of Pictou",
+      "eventType": "sealed-tender",
+      "eventStatusAsOfCheck": "historical-closed",
+      "closedAt": "2026-04-10T16:00:00-03:00",
+      "mapReadiness": "historical-parcel-ready-after-visual-review",
+      "expectedAdvertisedRowCount": 19,
+      "expectedWithdrawnRowCount": 3,
+      "expectedRemainingRowCount": 16,
+      "expectedPIDCount": 19,
+      "sources": {
+        "advertisement": "https://munpict.ca/assets/Tax-Sale-2026-01-Final-Advertisement-Posted-revised-April-10.pdf"
+      },
+      "publicFields": [
+        "aan",
+        "pid",
+        "district",
+        "locationOrDescription",
+        "taxInterestAndCostCents",
+        "minimumBidCents",
+        "redeemable",
+        "subjectToHST",
+        "listingStatus"
+      ],
+      "extractionNotes": [
+        "The official PDF contains owner names; discard them before writing any source file.",
+        "Three rows are marked no longer part of the sale and must remain withdrawn, not active.",
+        "PDF text extraction drops leading zeroes from at least two PIDs; visually verify every PID against the rendered page and store it as an eight-character string.",
+        "This event is historical and must be off by default in an upcoming-sales view."
+      ]
+    },
+    {
+      "id": "richmond-county-2026-06-12",
+      "municipality": "Municipality of the County of Richmond",
+      "eventType": "public-auction",
+      "eventStatusAsOfCheck": "historical-results",
+      "saleDate": "2026-06-12",
+      "mapReadiness": "historical-result-ready",
+      "expectedResultCount": 3,
+      "expectedPIDCount": 3,
+      "sources": {
+        "resultsPage": "https://www.richmondcounty.ca/tax-sales.html"
+      },
+      "publicFields": [
+        "district",
+        "aan",
+        "pid",
+        "descriptionOrLocation",
+        "redeemable",
+        "recoveryAmountCents",
+        "successfulBidCents",
+        "listingStatus"
+      ],
+      "extractionNotes": [
+        "The official results table includes assessed-owner and successful-bidder names; discard both.",
+        "Label these three records as historical sold results, never as currently available parcels."
+      ]
+    },
+    {
+      "id": "annapolis-county-2026",
+      "municipality": "Municipality of the County of Annapolis",
+      "eventType": "auction-then-tender",
+      "eventStatusAsOfCheck": "historical-results",
+      "mapReadiness": "blocked-pending-verifiable-pid-extraction",
+      "sources": {
+        "index": "https://annapoliscounty.ca/tax-finance/tax-sale",
+        "marchResults": "https://annapoliscounty.ca/tax-finance/tax-sale/1997-2024-tax-sale-results",
+        "juneTenderResults": "https://annapoliscounty.ca/tax-finance/tax-sale/2363-june-2026-tax-sale-by-tender-2"
+      },
+      "extractionNotes": [
+        "The current result pages embed their tables as images.",
+        "Do not map OCR output until every PID and row status is visually checked against the official image."
+      ]
+    },
+    {
+      "id": "kings-county-2026-03-24",
+      "municipality": "Municipality of the County of Kings",
+      "eventType": "public-auction",
+      "eventStatusAsOfCheck": "historical-event-only",
+      "saleStartsAt": "2026-03-24T09:30:00-03:00",
+      "mapReadiness": "no-current-parcel-table-found",
+      "sources": {
+        "taxSalesPage": "https://www.countyofkings.ca/business/sales.aspx"
+      },
+      "extractionNotes": [
+        "The current page confirms the event but exposes no parcel table suitable for the map.",
+        "Do not invent parcel rows from the event notice."
+      ]
+    },
+    {
+      "id": "chester-2026",
+      "municipality": "Municipality of the District of Chester",
+      "eventType": "none-in-2026",
+      "eventStatusAsOfCheck": "no-sale",
+      "mapReadiness": "municipality-status-only",
+      "sources": {
+        "taxSalesPage": "https://chester.ca/government/property-taxes-and-rates/tax-sales"
+      },
+      "extractionNotes": [
+        "The municipality explicitly states that it is not holding a 2026 tax sale.",
+        "Show this only in a municipality-status view; create no parcel records."
+      ]
+    }
+  ]
+}

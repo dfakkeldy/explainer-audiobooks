@@ -1,10 +1,40 @@
 # Visual-listening figure plan
 
-Status: planned, with two QGIS 4 development proofs rendered but not approved
-as book figures. This register is the authority for interior figures in the
-public edition. Finished assets will live under `chapters/images/` and will be
-embedded as standalone Markdown figures only after the governed outline and
-figure direction are approved.
+Status: planned, with two QGIS 4 development proofs and six legal/process
+diagram candidates rendered but not approved as book figures. This register is
+the authority for interior figures in the public edition. Candidate assets live
+under `chapters/images/` and will be embedded as standalone Markdown figures
+only after the matching narration, placement and Echo proof are approved.
+
+## First slideshow diagram batch — 2026-07-19
+
+Figures 03 through 08 now exist as reproducible 2560-by-1440 sRGB review
+candidates:
+
+- the two pre-sale/post-sale clocks;
+- a fictional Inverness-style parcel-sheet anatomy;
+- the identifier chain and its limits;
+- the packet/source reconciliation table;
+- the ordinary six-month redeemable route; and
+- the older-arrears redemption exception and unresolved property questions.
+
+Their editable source, machine-readable teaching/provenance specifications,
+large contact sheet, 640-by-360-per-frame phone-stage contact sheet and
+hash-bound render receipt live under `figures/`. The rendered PNGs live under
+`chapters/images/`.
+
+The first visual inspection found ambiguous flow in Figure 03 and centered text
+escaping its cards in Figures 05, 07 and 08. The renderer was corrected and all
+six candidates were regenerated and re-inspected. The primary teaching
+structure remains readable in the 640-by-360 preview, but dense secondary copy,
+caption placement and the subtitle band still require the planned real Echo
+phone/desktop and short-video proof. No figure has human acceptance yet.
+
+The legal labels were refreshed against the Municipal Government Act snapshot
+consolidated to April 9, 2026 and the live Inverness tax-sale page on July 19,
+2026. Figures 07 and 08 remain educational route summaries, not legal advice;
+current law and event-specific municipal terms must be checked again before a
+public edition is packaged.
 
 ## QGIS 4 development proof — 2026-07-18
 
@@ -194,9 +224,10 @@ Each of the fifteen map plates needs its own provenance row before rendering:
 ## Creation order
 
 1. Approve the argument outline and this visual direction.
-2. Create one **style proof**, preferably `figure-15-case-a-access-terrain.png`,
-   because it tests QGIS labels, colour semantics, attribution, phone legibility
-   and Echo's 16:9 video stage at once.
+2. Use figures 03–08 as the diagram-system proof, then create one **map style
+   proof**, preferably `figure-15-case-a-access-terrain.png`, because it tests
+   QGIS labels, colour semantics, attribution, phone legibility and Echo's 16:9
+   video stage at once.
 3. Export the style proof to PNG, embed it in a tiny test EPUB and inspect it in
    Echo on phone-size and desktop-size stages.
 4. Export a 60–90 second video range in Karaoke and Simple modes. Check figure,
