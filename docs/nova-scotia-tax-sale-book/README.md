@@ -21,15 +21,17 @@ ranking, or an advertisement disguised as education.
 - `research/`: the public-safe research brief, official-source register,
   traceable evidence notes, fact pack, twelve-chapter argument outline,
   structured learning records, Inverness dossier, municipal comparison,
-  auction-result analysis, and 38-figure visual plan;
+  auction-result analysis, pronunciation plan, conversation decision log,
+  handoff packet, and 40-figure visual plan;
 - `maps/data/`: an owner-free snapshot of the municipality-published August
   2026 listing facts;
 - `maps/qgis/`: the editable QGIS 4.0.2 project used for the current proofs;
 - `maps/exports/`: two attributed 2560-by-1440 development renders;
 - `maps/scripts/`: a reproducible local NSPRD fetch and QGIS 4 render workflow;
 - `figures/`: the deterministic diagram renderer, teaching/provenance
-  specifications, contact sheets and hash-bound receipt for figures 03–08; and
-- `chapters/images/`: six 2560-by-1440 legal/process review candidates that are
+  specifications, contact sheets and hash-bound receipt for figures 03–08, 39
+  and 40; and
+- `chapters/images/`: eight 2560-by-1440 legal/process review candidates that are
   not yet accepted or embedded in a manuscript.
 
 ![Inverness County auction orientation proof](maps/exports/inverness-all-properties-orientation.png)
@@ -38,8 +40,9 @@ ranking, or an advertisement disguised as education.
 
 The schedule has 45 liens and 47 unique PIDs. NSPRD returned 53 polygon
 features because four PIDs are represented by multiple mapped pieces. The map
-project includes every listed PID; the county-scale proof suppresses some
-colliding labels and still needs final cartographic refinement.
+project includes every listed PID; the county-scale proof uses large cyan and
+orange halo markers over an OpenStreetMap orientation basemap and suppresses
+individual lien labels at that scale. NS Aerial remains the detail basemap.
 
 ## What is deliberately absent
 
@@ -60,8 +63,8 @@ packet and its reproducible QGIS proofs.
 ## Current production gates
 
 The project is in `governed-final` development. Deep research, the argument
-outline, structured chapter plans, coverage ledger, figure manifest, two QGIS
-proofs, and six reproducible diagram candidates exist. Human outline
+outline, structured chapter plans, coverage ledger, forty-row figure manifest,
+two QGIS proofs, and eight reproducible diagram candidates exist. Human outline
 authorization, accepted first-section voice, the narrated comprehension pilot,
 full manuscript, independent learning and prose review, accepted final figures,
 cover selection, EPUB, Echo narration, public package verification, and full

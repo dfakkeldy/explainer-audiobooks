@@ -9,9 +9,9 @@
     "humanAcceptance": "pending",
     "echoStageAcceptance": "pending",
     "notes": [
-      "All six full-size PNGs were inspected after rendering.",
+      "All eight full-size PNGs were inspected after rendering.",
       "A first inspection found ambiguous flow and escaped centered text; the renderer was corrected and the set was re-rendered.",
-      "The corrected set was inspected in a 640x360-per-frame contact sheet. Primary teaching structure and labels remain legible; dense secondary copy still requires the planned real Echo phone-stage proof."
+      "The corrected and expanded set was inspected in a 640x360-per-frame contact sheet. Primary teaching structure and labels remain legible; dense secondary copy still requires the planned real Echo phone-stage proof."
     ]
   },
   "canvas": {
@@ -105,6 +105,32 @@
       "claimIds": ["LAW-009", "LAW-012"],
       "legalLocators": ["MGA ss. 152(1), 155-156"],
       "rights": "Self-created statutory-process diagram; educational overview only.",
+      "status": "review-candidate"
+    },
+    {
+      "id": "figure-39",
+      "filename": "figure-39-payment-readiness-clock.png",
+      "chapter": 9,
+      "title": "Payment readiness extends beyond the hammer",
+      "caption": "The hammer identifies a leading bid; readiness and payment determine whether the sale completes.",
+      "altText": "Horizontal readiness path from authorized registration through accepted funds, immediate payment and a three-business-day balance, with branches for no sufficient bidder, immediate re-offer, re-advertisement and resale expenses.",
+      "teachingJob": "Make payment performance and the no-bid or bidder-default branches visible before the auction scene accelerates.",
+      "claimIds": ["LAW-006", "LAW-015", "LAW-016", "OPS-004", "OPS-006"],
+      "legalLocators": ["MGA ss. 143, 148-149; HRMC ss. 158-159, 163-164"],
+      "rights": "Self-created statutory-process diagram; event terms remain perishable.",
+      "status": "review-candidate"
+    },
+    {
+      "id": "figure-40",
+      "filename": "figure-40-surplus-proceeds-route.png",
+      "chapter": 11,
+      "title": "Surplus follows a statutory route",
+      "caption": "Surplus is held and claimed through a statutory route; it is not silently awarded to the purchaser.",
+      "altText": "Sale proceeds first satisfy statutory municipal amounts and then enter a surplus account, with branches for redemption adjustment and a prior interest holder's Supreme Court application before twenty years pass.",
+      "teachingJob": "Return the story to former interest holders and distinguish the purchaser's deed from the separate surplus-proceeds account.",
+      "claimIds": ["LAW-014"],
+      "legalLocators": ["MGA ss. 146-147; HRMC ss. 161-162"],
+      "rights": "Self-created statutory-account diagram; educational overview only.",
       "status": "review-candidate"
     }
   ],

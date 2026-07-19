@@ -6,10 +6,12 @@ import struct
 import subprocess
 import unittest
 import zipfile
+import re
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PACKET_ROOT = REPO_ROOT / "docs/nova-scotia-tax-sale-book"
+RESEARCH_ROOT = PACKET_ROOT / "research"
 MAP_ROOT = PACKET_ROOT / "maps"
 LISTING_PATH = MAP_ROOT / "data/inverness-tax-sale-2026-08-11.json"
 METADATA_PATH = MAP_ROOT / "build-metadata.json"
@@ -28,6 +30,106 @@ ATTRIBUTION = (
 
 
 class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
+    def test_learning_evidence_matches_validator_contract(self) -> None:
+        evidence_path = RESEARCH_ROOT / "evidence-notes.json"
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            evidence["notesSHA256"],
+            hashlib.sha256((RESEARCH_ROOT / "evidence-notes.md").read_bytes()).hexdigest(),
+        )
+        self.assertTrue(evidence["claims"])
+        for claim in evidence["claims"]:
+            self.assertEqual(claim["verificationStatus"], "verified")
+            self.assertTrue(claim["claim"])
+            self.assertTrue(claim["verificationNote"])
+
+    def test_scope_receipt_preserves_original_target_and_verbatim_quotes(self) -> None:
+        brief = json.loads(
+            (RESEARCH_ROOT / "learning-brief.json").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(brief["originalTargetWords"], 22000)
+        self.assertEqual(brief["currentTargetWords"], 42800)
+        self.assertEqual(len(brief["scopeHistory"]), 6)
+        for decision in brief["scopeHistory"]:
+            self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19)T")
+            self.assertTrue(decision["verbatimQuote"])
+            self.assertEqual(decision["evidence"], decision["verbatimQuote"])
+
+    def test_outline_gate_is_not_backfilled_without_user_approval(self) -> None:
+        outline = json.loads(
+            (RESEARCH_ROOT / "learning-outline.json").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(outline["authorization"]["status"], "pending")
+        self.assertIn("No verbatim approval", outline["authorization"]["evidence"])
+
+    def test_required_planning_handoff_artifacts_exist(self) -> None:
+        conversation = (RESEARCH_ROOT / "conversation-log.md").read_text(encoding="utf-8")
+        handoff = (PACKET_ROOT / "handoff-packet.md").read_text(encoding="utf-8")
+        pronunciation = json.loads(
+            (RESEARCH_ROOT / "pronunciation-plan.json").read_text(encoding="utf-8")
+        )
+
+        terms = {entry["term"] for entry in pronunciation["terms"]}
+        self.assertTrue(
+            {"Mabou", "Whycocomagh", "Judique", "AAN", "PID", "NSPRD", "MGA"}
+            <= terms
+        )
+        self.assertIn("development draft", handoff)
+        self.assertIn("No outline approval", conversation)
+
+    def test_payment_and_stage_outcomes_are_distinct(self) -> None:
+        ledger = json.loads(
+            (RESEARCH_ROOT / "coverage-ledger.json").read_text(encoding="utf-8")
+        )
+        concepts = {item["name"]: item for item in ledger["concepts"]}
+        self.assertNotEqual(
+            concepts["payment performance"]["durableOutcome"],
+            concepts["staged responsibility"]["durableOutcome"],
+        )
+        self.assertIn("three-business-day", concepts["payment performance"]["durableOutcome"])
+
+    def test_research_closes_named_failure_path_gaps(self) -> None:
+        evidence = json.loads(
+            (RESEARCH_ROOT / "evidence-notes.json").read_text(encoding="utf-8")
+        )
+        claim_ids = {claim["id"] for claim in evidence["claims"]}
+        self.assertTrue(
+            {
+                "LAW-015",
+                "LAW-016",
+                "LAW-017",
+                "LAW-018",
+                "OPS-006",
+                "OPS-007",
+                "INS-001",
+            }
+            <= claim_ids
+        )
+        comparison = (RESEARCH_ROOT / "municipality-comparison.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("Halifax Regional Municipality", comparison)
+
+    def test_visual_category_math_matches_the_forty_row_manifest(self) -> None:
+        visuals = (RESEARCH_ROOT / "visuals.md").read_text(encoding="utf-8")
+        ids = {
+            int(match.group(1))
+            for match in re.finditer(r"^\| `figure-(\d{2})-", visuals, re.MULTILINE)
+        }
+        map_ids = set(range(13, 23)) | set(range(33, 38))
+        editorial_ids = {1, 9}
+        retrieval_ids = {38}
+        diagram_ids = ids - map_ids - editorial_ids - retrieval_ids
+
+        self.assertEqual(ids, set(range(1, 41)))
+        self.assertEqual(
+            (len(map_ids), len(diagram_ids), len(editorial_ids), len(retrieval_ids)),
+            (15, 22, 2, 1),
+        )
+
     def test_public_listing_is_owner_free_and_complete(self) -> None:
         payload = json.loads(LISTING_PATH.read_text(encoding="utf-8"))
 
@@ -115,6 +217,15 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
         )
         self.assertEqual(ast.literal_eval(attribution_node.value), ATTRIBUTION)
+
+    def test_orientation_uses_phone_legible_halo_markers(self) -> None:
+        renderer = (MAP_ROOT / "scripts/render_qgis_maps.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("styled_orientation_markers", renderer)
+        self.assertIn("OpenStreetMap", renderer)
+        self.assertIn("QgsGeometryGeneratorSymbolLayer", renderer)
+        self.assertIn("setLabelsEnabled(False)", renderer)
 
     def test_multi_municipality_map_handoff_is_owner_free_and_fail_closed(self) -> None:
         register = json.loads(MUNICIPAL_SOURCE_REGISTER.read_text(encoding="utf-8"))

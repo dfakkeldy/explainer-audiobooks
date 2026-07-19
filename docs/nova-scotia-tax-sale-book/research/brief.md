@@ -18,7 +18,7 @@
 - Current-law boundary: core official sources were refreshed on 2026-07-19 and
   must be checked again before a later edition or before relying on a live-sale
   detail.
-- Visual-listening target: a figure-rich Echo slideshow and video-export edition. The current plan contains 38 purposeful figures—15 QGIS map plates across three fictional/composite five-map case files, 19 diagrams/charts, two original editorial scene illustrations and two final retrieval aids. Narration must still work with the screen unavailable.
+- Visual-listening target: a figure-rich Echo slideshow and video-export edition. The current plan contains 40 purposeful figures—15 QGIS map plates across three fictional/composite five-map case files, 22 diagrams/charts, two original editorial scene illustrations and one final retrieval aid. Narration must still work with the screen unavailable.
 
 ## Editorial stance
 

@@ -1,6 +1,6 @@
 # Visual-listening figure plan
 
-Status: planned, with two QGIS 4 development proofs and six legal/process
+Status: planned, with two QGIS 4 development proofs and eight legal/process
 diagram candidates rendered but not approved as book figures. This register is
 the authority for interior figures in the public edition. Candidate assets live
 under `chapters/images/` and will be embedded as standalone Markdown figures
@@ -8,15 +8,19 @@ only after the matching narration, placement and Echo proof are approved.
 
 ## First slideshow diagram batch — 2026-07-19
 
-Figures 03 through 08 now exist as reproducible 2560-by-1440 sRGB review
-candidates:
+Figures 03 through 08, 39 and 40 now exist as reproducible 2560-by-1440 sRGB
+review candidates:
 
 - the two pre-sale/post-sale clocks;
 - a fictional Inverness-style parcel-sheet anatomy;
 - the identifier chain and its limits;
 - the packet/source reconciliation table;
 - the ordinary six-month redeemable route; and
-- the older-arrears redemption exception and unresolved property questions.
+- the older-arrears redemption exception and unresolved property questions;
+- auction payment readiness, immediate payment and the three-business-day
+  default branches; and
+- the surplus-proceeds account, court-application window and twenty-year
+  endpoint.
 
 Their editable source, machine-readable teaching/provenance specifications,
 large contact sheet, 640-by-360-per-frame phone-stage contact sheet and
@@ -25,8 +29,10 @@ hash-bound render receipt live under `figures/`. The rendered PNGs live under
 
 The first visual inspection found ambiguous flow in Figure 03 and centered text
 escaping its cards in Figures 05, 07 and 08. The renderer was corrected and all
-six candidates were regenerated and re-inspected. The primary teaching
-structure remains readable in the 640-by-360 preview, but dense secondary copy,
+original six candidates were regenerated and re-inspected. The two drought-repair
+figures use the same visual grammar and are included in the current phone-stage
+contact sheet. The primary teaching structure remains readable in the
+640-by-360 preview, but dense secondary copy,
 caption placement and the subtitle band still require the planned real Echo
 phone/desktop and short-video proof. No figure has human acceptance yet.
 
@@ -36,7 +42,7 @@ consolidated to April 9, 2026 and the live Inverness tax-sale page on July 19,
 current law and event-specific municipal terms must be checked again before a
 public edition is packaged.
 
-## QGIS 4 development proof — 2026-07-18
+## QGIS 4 development proof — 2026-07-18; overview refined 2026-07-19
 
 The local map workspace now contains an editable QGIS project and two
 2560-by-1440 proofs built with QGIS 4.0.2 (`4.0.2-Norrköping` in the saved
@@ -57,10 +63,18 @@ expected because several PIDs have more than one mapped feature. Owner names
 were deliberately omitted from the derived listing and map attributes.
 
 These are development evidence, not accepted book plates. The county-scale
-proof establishes coverage and symbology but needs a cleaner overview basemap,
-label strategy and layout treatment before publication. The Lien 1 detail is a
-strong style proof for the proposed public-current-list showcase, subject to
-final source, safety, caption and Echo-stage checks.
+proof now uses sized, coloured halo markers over an OpenStreetMap orientation
+basemap, with individual lien labels removed at that scale and the live count
+stated in the header. This fixes the white-speck, phone-label and aerial
+tile-gap failures while preserving NS Aerial for detail.
+
+The Lien 1 detail remains a strong **pre-gate development specimen**. It is not
+an approved book plate merely because it is committed. Before any canonical
+chapter insertion or public package, its deliberate gate order is: source and
+licence check; owner/privacy and live-event-status refresh; educational-need
+review; caption and non-recommendation review; Echo phone/desktop and video
+stage proof; then human visual acceptance. A failed gate retires or replaces
+the specimen; it does not inherit approval from its earlier production date.
 
 ## Purpose
 
@@ -69,15 +83,15 @@ an audio book with a few incidental illustrations. The main narration must
 remain complete with the screen unavailable, while the visual track should make
 spatial, procedural and numerical relationships easier to retrieve.
 
-The current target is **38 purposeful figures**:
+The current target is **40 purposeful figures**:
 
 - 15 QGIS map plates: three fictional/composite case files, each using the
   five-map packet structure;
-- 19 diagrams and charts that explain law, source authority, reconciliation,
+- 22 diagrams and charts that explain law, source authority, reconciliation,
   auction behaviour and post-sale responsibility;
 - 2 original editorial illustrations that establish the auction-room and
   research-desk story settings; and
-- 2 final retrieval/decision aids.
+- 1 final retrieval/decision aid.
 
 At an estimated 42,800 narrated words, this gives roughly one new figure every
 7–9 minutes. Echo's karaoke subtitles provide motion between figure changes, so
@@ -205,6 +219,8 @@ final visual and narration before packaging.
 | `figure-36-case-c-planning-services.png` | 12 | Case C map 4: show a plausible intended-use path and exact planner/service questions. | QGIS; recreated planning geometry unless embedding terms are confirmed. | A coherent file names the confirmations still required before an intended use is credible. | Parcel C planning map shows zone, frontage, well and septic assumptions and three written questions for municipal planning staff. |
 | `figure-37-case-c-physical-screening.png` | 12 | Case C map 5: show no found screening overlap while preserving database and site-inspection limits. | QGIS; open screening data and attributed rendered imagery. | “No mapped overlap found” is a bounded result, not a clean bill of health. | Physical-screening map for Parcel C shows searched layers, no highlighted overlap, coverage limits and an inspection handoff. |
 | `figure-38-known-unresolved-professional.png` | 12 | End with the reusable three-column evidence record and decision boundary. | Self-created retrieval sheet based on the three composite cases. | A responsible file ends by separating what is known, what remains unresolved and who is authorized to answer next. | Final summary sheet with columns for known facts, unresolved questions and professional handoffs, plus a separate box stating that the bidder owns the decision. |
+| `figure-39-payment-readiness-clock.png` | 9 | Put bidder authority, accepted funds, immediate payment and the three-business-day balance on one operational clock, with no-bid and payment-default exits. | Self-created statutory-process diagram from LAW-006, LAW-015, LAW-016, OPS-004 and OPS-006. | The hammer identifies a leading bid; readiness and payment determine whether the sale completes. | Horizontal readiness path from authorized registration to accepted funds, immediate recovery and registration payment, then the three-business-day balance, with branches for no sufficient bidder, immediate re-offer, re-advertisement and resale costs. |
+| `figure-40-surplus-proceeds-route.png` | 11 | Follow money above municipal claims into the surplus account and the former interest-holder's court route without implying automatic payment. | Self-created statutory account diagram from MGA ss. 146–147 and HRMC ss. 161–162. | Surplus is held and claimed through a statutory route; it is not a windfall silently awarded to the purchaser. | Sale proceeds first satisfy statutory municipal amounts, then enter a surplus account; after redemption expiry a prior interest holder may apply to Supreme Court before the twenty-year endpoint. |
 
 ## Map-pack source record
 
@@ -221,21 +237,25 @@ Each of the fifteen map plates needs its own provenance row before rendering:
 | Attribution | Exact open-data and/or restricted-service statement, rendered into the image. |
 | Safety check | No owner name, live recommendation, hidden personal information, provincial mark or implied endorsement. |
 
-## Creation order
+## Creation and promotion order
 
-1. Approve the argument outline and this visual direction.
-2. Use figures 03–08 as the diagram-system proof, then create one **map style
+1. Treat figures 03–08, 39–40 and the two QGIS renders as pre-gate development
+   evidence created under the user's explicit requests to work on maps and
+   slideshow figures. None may be promoted into canonical chapter placement by
+   that fact alone.
+2. Approve the revised argument outline and forty-figure visual direction.
+3. Use figures 03–08 and 39–40 as the diagram-system proof, then create one **map style
    proof**, preferably `figure-15-case-a-access-terrain.png`, because it tests
    QGIS labels, colour semantics, attribution, phone legibility and Echo's 16:9
    video stage at once.
-3. Export the style proof to PNG, embed it in a tiny test EPUB and inspect it in
+4. Export the style proof to PNG, embed it in a tiny test EPUB and inspect it in
    Echo on phone-size and desktop-size stages.
-4. Export a 60–90 second video range in Karaoke and Simple modes. Check figure,
+5. Export a 60–90 second video range in Karaoke and Simple modes. Check figure,
    caption, subtitle band, attribution legibility and SRT timing.
-5. Lock the template, then batch the remaining map families and diagrams.
-6. Generate the two editorial illustrations only after the visual grammar is
+6. Lock the template, then batch the remaining map families and diagrams.
+7. Generate the two editorial illustrations only after the visual grammar is
    stable; they should feel like the same book, not unrelated AI art.
-7. Insert figures into chapter Markdown only after the matching narration and
+8. Insert figures into chapter Markdown only after the matching narration and
    placement paragraph are stable.
 
 ## Figure QC and acceptance

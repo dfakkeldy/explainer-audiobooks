@@ -13,8 +13,9 @@ municipal list.
 - `working/inverness-tax-sale-parcels.geojson`: local build snapshot queried
   from the NSPRD service. It is ignored by Git; keep this raw geometry out of
   public distribution.
-- `qgis/inverness-tax-sale-2026-08-11.qgz`: editable QGIS project with NS
-  Aerial and the 2026 auction parcels, built and rendered with QGIS 4.0.2.
+- `qgis/inverness-tax-sale-2026-08-11.qgz`: editable QGIS project with an
+  OpenStreetMap orientation layer, NS Aerial detail layer and the 2026 auction
+  parcels, built and rendered with QGIS 4.0.2.
 - `exports/`: 2560-by-1440 publication/video proofs.
 - `scripts/`: repeatable data and QGIS-render steps.
 - `build-metadata.json`: receipt for the checked-in proof render. A fresh fetch
@@ -60,6 +61,9 @@ NSPRD property layer:
 NS Aerial basemap:
 <https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer>
 
+OpenStreetMap orientation basemap:
+<https://www.openstreetmap.org/copyright>
+
 Province Restricted Map Services Licence used by this build:
 <https://nsgiwa.novascotia.ca/documents/licenses/MapService/Restricted%20Map%20Services%20License%20-%20NSPRD%20v1.pdf>
 
@@ -96,6 +100,13 @@ its parcel or parcels and expose the municipal-source facts plus a separate
 `research questions` panel. NS Aerial should be a user-controlled basemap rather
 than the only view because county-scale aerial imagery makes overview labels
 harder to read.
+
+The publication orientation proof follows that same split: it uses one large
+cyan circle or orange diamond per listed PID over OpenStreetMap, suppresses
+individual lien labels at county scale and states the dated total in the
+header. NS Aerial is reserved for close detail where parcel context is actually
+legible. This avoids the coastline tile-gap artifacts and white polygon specks
+seen in the first county-scale experiment.
 
 The companion website itself is maintained in the separate [NS Marks The Spot
 repository at `92f1261e5`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/92f1261e5/web)

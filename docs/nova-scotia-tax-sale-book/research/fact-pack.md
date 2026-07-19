@@ -5,7 +5,7 @@ This is a chapter-facing selection from `evidence-notes.md`; the stable claim ID
 ## 1. The auction is the last scene
 
 - `LAW-001`, `LAW-002`, `LAW-003`, `LAW-004`: first lien, eligibility, notices, title search and advertisement.
-- `OPS-004`, `OPS-005`, `DATA-002`, `DATA-005`: Inverness County's current packet and Port Hood auction are the principal municipal worked examples. The packet already does substantial orientation work; municipality-specific procedures remain live and variable.
+- `OPS-004`, `OPS-005`, `OPS-007`, `DATA-002`, `DATA-005`: Inverness County's current packet and Port Hood auction are the principal municipal worked examples. The packet already does substantial orientation work; municipality-specific procedures remain live and variable, and Halifax uses the parallel HRM Charter.
 - Human frame: the assessed owner, lienholders, municipal treasurer and possible occupants all enter the story before the bidder does.
 
 ## 2. Read the notice without hallucinating a property
@@ -45,18 +45,18 @@ This is a chapter-facing selection from `evidence-notes.md`; the stable claim ID
 
 ## 9. Auction and tender day
 
-- `LAW-005`, `LAW-006`, `OPS-001` through `OPS-005`, `DATA-001`, `DATA-002`.
-- A written maximum is decided before bidding. Payment readiness is part of eligibility, not an after-sale task.
+- `LAW-005`, `LAW-006`, `LAW-015`, `LAW-016`, `OPS-001` through `OPS-006`, `DATA-001`, `DATA-002`.
+- A written maximum is decided before bidding. Payment readiness is part of eligibility, not an after-sale task. No sufficient bidder, failed immediate payment, missed balance and event rescheduling are explicit branches rather than blank space after the happy path.
 
 ## 10. The certificate-holder months
 
-- `LAW-007` through `LAW-011`, `OCC-001`.
-- Protect, insure if possible, pay new tax bills, document qualifying expenses, avoid diminishment and do not confuse protection with redevelopment.
+- `LAW-007` through `LAW-011`, `INS-001`, `OPS-007`, `OCC-001`.
+- Protect, seek actual insurance, pay new tax bills, document qualifying expenses and offsets, avoid diminishment and do not confuse a statutory insurable interest with guaranteed underwriting. Halifax's fee schedule is a local itemization example, not a province-wide tariff.
 
 ## 11. Deed, possession and the second due-diligence wave
 
-- `LAW-012`, `LAND-005`, `LAND-006`, `ENV-001`, `OCC-001`, `TAX-001`.
-- The deed resolves the statutory sale stage; it starts rather than ends many owner responsibilities.
+- `LAW-012` through `LAW-014`, `LAW-017`, `LAW-018`, `LAND-005`, `LAND-006`, `ENV-001`, `OCC-001`, `TAX-001`.
+- The deed resolves the statutory sale stage; registration starts the general six-year contestability window, while surplus proceeds and any set-aside claim follow separate statutory and court routes.
 
 ## 12. A repeatable decision record
 

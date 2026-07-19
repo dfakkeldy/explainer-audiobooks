@@ -5,8 +5,10 @@ tax-sale book's 16:9 diagrams. The rendered PNGs live under
 `../chapters/images/`, where the governed EPUB build will eventually consume
 them.
 
-The first batch covers figures 03 through 08: the legal/process and record-
-research sequence for Chapters 1–3. They are **review candidates**, not accepted
+The current batch covers figures 03 through 08 plus figures 39 and 40: the
+legal/process and record-research sequence for Chapters 1–3, the Chapter 9
+payment-performance clock and the Chapter 11 surplus-proceeds route. They are
+**review candidates**, not accepted
 book figures. They use no owner information, live property recommendation,
 Property Online reproduction, raw provincial geometry or cached aerial tiles.
 
@@ -17,7 +19,7 @@ Render with the repository's Pillow-capable Python:
   docs/nova-scotia-tax-sale-book/figures/render_slideshow_figures.py
 ```
 
-The renderer creates six 2560×1440 sRGB PNGs, a large contact sheet, a
+The renderer creates eight 2560×1440 sRGB PNGs, a large contact sheet, a
 640×360-per-frame phone-stage contact sheet and a hash-bound render receipt. The
 machine-readable `figure-specs.json` records each figure's teaching job,
 caption, alt text, evidence claim IDs, legal locators, rights status and current

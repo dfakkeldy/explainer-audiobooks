@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "assuranceLevel": "governed-final",
+  "status": "planning",
+  "humanListening": "pending",
+  "terms": [
+    {
+      "term": "Mabou",
+      "variants": [],
+      "spokenCandidates": ["muh-BOO", "MAB-oo"],
+      "source": "listener",
+      "reason": "Inverness place name attached to the live-map style proof; local pronunciation must be heard rather than inferred from spelling.",
+      "expectedChapters": ["ch01.md", "ch09.md"],
+      "required": true,
+      "status": "planned",
+      "decision": null
+    },
+    {
+      "term": "Whycocomagh",
+      "variants": [],
+      "spokenCandidates": ["why-COG-uh-mah"],
+      "source": "listener",
+      "reason": "Inverness place name with Mi'kmaw origins and an easily mangled written form; confirm with a locally authoritative recording.",
+      "expectedChapters": ["ch01.md", "ch05.md", "ch12.md"],
+      "required": true,
+      "status": "planned",
+      "decision": null
+    },
+    {
+      "term": "Judique",
+      "variants": [],
+      "spokenCandidates": ["joo-DEEK"],
+      "source": "listener",
+      "reason": "Recurring Inverness location whose local stress and final consonant need an early narration probe.",
+      "expectedChapters": ["ch01.md", "ch06.md", "ch12.md"],
+      "required": true,
+      "status": "planned",
+      "decision": null
+    },
+    {
+      "term": "AAN",
+      "variants": ["Assessment Account Number"],
+      "spokenCandidates": ["A A N", "assessment account number"],
+      "source": "listener",
+      "reason": "The acronym and expanded form both recur in the identifier lesson and must remain distinguishable from PID.",
+      "expectedChapters": ["ch02.md", "ch04.md", "ch12.md"],
+      "required": true,
+      "status": "planned",
+      "decision": null
+    },
+    {
+      "term": "PID",
+      "variants": ["Parcel Identification Number"],
+      "spokenCandidates": ["P I D", "parcel identification number"],
+      "source": "listener",
+      "reason": "The identifier is visually compact but should not sound like an unexplained word or become confused with the assessment account.",
+      "expectedChapters": ["ch02.md", "ch04.md", "ch12.md"],
+      "required": true,
+      "status": "planned",
+      "decision": null
+    },
+    {
+      "term": "NSPRD",
+      "variants": [],
+      "spokenCandidates": ["N S P R D"],
+      "source": "listener",
+      "reason": "Five-letter map-service acronym used in the public QGIS workflow; spell it consistently and define it in prose before reuse.",
+      "expectedChapters": ["ch04.md", "ch05.md", "ch12.md"],
+      "required": true,
+      "status": "planned",
+      "decision": null
+    },
+    {
+      "term": "MGA",
+      "variants": ["Municipal Government Act"],
+      "spokenCandidates": ["M G A", "Municipal Government Act"],
+      "source": "listener",
+      "reason": "The act name and acronym anchor the province-wide legal route outside Halifax; narration should prefer the expansion on first use.",
+      "expectedChapters": ["ch01.md", "ch03.md", "ch09.md", "ch10.md", "ch11.md"],
+      "required": true,
+      "status": "planned",
+      "decision": null
+    }
+  ],
+  "acceptanceBoundary": "Every required term remains planned until one governed reel covers every term and variant and the listener records an accepted or waived-by-listener decision. Candidate spellings are probe prompts, not accepted pronunciations."
+}

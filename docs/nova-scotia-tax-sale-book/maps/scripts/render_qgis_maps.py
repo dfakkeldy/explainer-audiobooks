@@ -16,8 +16,10 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsFillSymbol,
+    QgsGeometryGeneratorSymbolLayer,
     QgsMapRendererParallelJob,
     QgsMapSettings,
+    QgsMarkerSymbol,
     QgsPalLayerSettings,
     QgsProject,
     QgsRasterLayer,
@@ -40,10 +42,12 @@ AERIAL_URL = (
     "https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/"
     "BASE_NSODB_10k_WM84/MapServer/tile/{z}/{y}/{x}"
 )
+OSM_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 ATTRIBUTION = (
     "Contains information obtained under license from the Province of Nova Scotia "
     "which is provided without warranty or liability for errors or omissions."
 )
+OSM_ATTRIBUTION = "Orientation basemap © OpenStreetMap contributors, ODbL."
 
 
 def styled_parcel_layer() -> QgsVectorLayer:
@@ -86,6 +90,43 @@ def styled_parcel_layer() -> QgsVectorLayer:
     return layer
 
 
+def styled_orientation_markers() -> QgsVectorLayer:
+    layer = QgsVectorLayer(str(GEOJSON), "August 11, 2026 orientation markers", "ogr")
+    if not layer.isValid():
+        raise RuntimeError(f"Could not open {GEOJSON}")
+
+    categories = []
+    for value, label, color, shape in (
+        ("YES", "Redeemable", "30,177,255,255", "circle"),
+        ("NO", "Non-redeemable", "255,171,64,255", "diamond"),
+    ):
+        marker = QgsMarkerSymbol.createSimple(
+            {
+                "name": shape,
+                "color": color,
+                "outline_color": "255,255,255,255",
+                "outline_width": "1.2",
+                "size": "7.5",
+            }
+        )
+        geometry_generator = QgsGeometryGeneratorSymbolLayer.create(
+            {
+                "geometryModifier": "point_on_surface($geometry)",
+                "SymbolType": "Marker",
+            }
+        )
+        geometry_generator.setSymbolType(Qgis.SymbolType.Marker)
+        geometry_generator.setSubSymbol(marker)
+        symbol = QgsFillSymbol()
+        symbol.deleteSymbolLayer(0)
+        symbol.appendSymbolLayer(geometry_generator)
+        categories.append(QgsRendererCategory(value, symbol, label))
+
+    layer.setRenderer(QgsCategorizedSymbolRenderer("redeemable", categories))
+    layer.setLabelsEnabled(False)
+    return layer
+
+
 def aerial_layer() -> QgsRasterLayer:
     uri = (
         "type=xyz&url="
@@ -96,6 +137,19 @@ def aerial_layer() -> QgsRasterLayer:
     if not layer.isValid():
         raise RuntimeError("NS Aerial XYZ layer did not load")
     layer.setOpacity(0.78)
+    return layer
+
+
+def osm_layer() -> QgsRasterLayer:
+    uri = (
+        "type=xyz&url="
+        + OSM_URL.replace("{", "%7B").replace("}", "%7D")
+        + "&zmin=0&zmax=19&crs=EPSG3857"
+    )
+    layer = QgsRasterLayer(uri, "OpenStreetMap orientation", "wms")
+    if not layer.isValid():
+        raise RuntimeError("OpenStreetMap XYZ layer did not load")
+    layer.setOpacity(0.72)
     return layer
 
 
@@ -122,6 +176,7 @@ def render_map(
     title: str,
     subtitle: str,
     legend: bool,
+    attribution: str,
 ) -> None:
     width, height = 2560, 1440
     header, footer = 150, 125
@@ -152,14 +207,24 @@ def render_map(
 
     if legend:
         legend_y = header + 34
-        for color, text in (("#1eb1ff", "Redeemable"), ("#ffab40", "Non-redeemable")):
+        for color, text, shape in (
+            ("#1eb1ff", "Redeemable", "circle"),
+            ("#ffab40", "Non-redeemable", "diamond"),
+        ):
             painter.setBrush(QColor(color))
-            painter.setPen(QPen(QColor("#ffffff"), 2))
-            painter.drawRect(width - 410, legend_y, 30, 30)
+            painter.setPen(QPen(QColor("#ffffff"), 5))
+            if shape == "circle":
+                painter.drawEllipse(width - 420, legend_y - 3, 38, 38)
+            else:
+                painter.save()
+                painter.translate(width - 401, legend_y + 16)
+                painter.rotate(45)
+                painter.drawRect(-14, -14, 28, 28)
+                painter.restore()
             painter.setPen(QColor("#ffffff"))
-            painter.setFont(QFont("Helvetica Neue", 18, QFont.Weight.DemiBold))
-            painter.drawText(width - 365, legend_y + 24, text)
-            legend_y += 48
+            painter.setFont(QFont("Helvetica Neue", 22, QFont.Weight.DemiBold))
+            painter.drawText(width - 360, legend_y + 27, text)
+            legend_y += 58
 
     painter.setPen(QColor("#d6d9e2"))
     painter.setFont(QFont("Helvetica Neue", 16))
@@ -169,7 +234,7 @@ def render_map(
         "Dated municipal snapshot. Confirm the live list. Parcel graphics are not a survey or title opinion.",
     )
     painter.setFont(QFont("Helvetica Neue", 14))
-    painter.drawText(58, height - 39, ATTRIBUTION)
+    painter.drawText(58, height - 39, attribution)
     painter.end()
 
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -184,18 +249,23 @@ def run() -> None:
     project.setCrs(QgsCoordinateReferenceSystem("EPSG:3857"))
 
     aerial = aerial_layer()
+    osm = osm_layer()
     parcels = styled_parcel_layer()
+    orientation_markers = styled_orientation_markers()
     project.addMapLayer(aerial)
+    project.addMapLayer(osm)
     project.addMapLayer(parcels)
+    project.addMapLayer(orientation_markers)
 
-    orientation_extent = padded(transformed_extent(parcels, project), 0.08)
+    orientation_extent = padded(transformed_extent(orientation_markers, project), 0.08)
     render_map(
         ORIENTATION_PATH,
-        [parcels, aerial],
+        [orientation_markers, osm],
         orientation_extent,
         "Inverness County tax-sale properties",
-        "August 11, 2026 public-auction snapshot · 45 liens · 47 PIDs",
+        "August 11, 2026 snapshot · 45 liens · 47 PIDs · each marker is one listed PID",
         True,
+        f"{OSM_ATTRIBUTION} {ATTRIBUTION}",
     )
 
     detail = QgsVectorLayer(str(GEOJSON), "Lien 1 detail", "ogr")
@@ -217,7 +287,17 @@ def run() -> None:
         "Aerial and graphical parcel context — Lien 1",
         "PID 50203256 · Highway 19, Mabou · not a survey, access proof, appraisal, or recommendation",
         False,
+        ATTRIBUTION,
     )
+
+    for layer, visible in (
+        (aerial, False),
+        (parcels, False),
+        (detail, False),
+        (osm, True),
+        (orientation_markers, True),
+    ):
+        project.layerTreeRoot().findLayer(layer.id()).setItemVisibilityChecked(visible)
 
     PROJECT_PATH.parent.mkdir(parents=True, exist_ok=True)
     if not project.write(str(PROJECT_PATH)):

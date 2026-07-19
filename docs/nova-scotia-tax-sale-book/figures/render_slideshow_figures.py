@@ -386,6 +386,71 @@ def render_08(spec: dict) -> Image.Image:
     return image
 
 
+def render_39(spec: dict) -> Image.Image:
+    image, draw = base(spec)
+    stages = [
+        ("AUTHORIZED", "Identity, authority and conflict check", NAVY),
+        ("FUNDS READY", "Event-accepted forms in hand", TEAL),
+        ("IMMEDIATE", "Price or recovery deposit; Inverness registration amount", AMBER),
+        ("3 BUSINESS DAYS", "Any remaining purchase balance", GREEN),
+    ]
+    card_width = 500
+    gap = 70
+    y = 365
+    for index, (title, detail, color) in enumerate(stages):
+        x = MARGIN + index * (card_width + gap)
+        node(draw, x, y, card_width, 225, title, detail, color)
+        if index < len(stages) - 1:
+            arrow(draw, (x + card_width + 8, y + 112), (x + card_width + gap - 12, y + 112), color, width=8)
+
+    draw.text((MARGIN, 680), "WHEN THE EXPECTED PATH BREAKS", font=font(39, condensed=True), fill=INK)
+    branches = [
+        ("NO SUFFICIENT BID", "Municipality may buy for the recovery amount — or advertise again for auction or tender.", NAVY),
+        ("NO IMMEDIATE PAYMENT", "Treasurer puts the land up for sale again immediately.", RED),
+        ("BALANCE MISSED", "Re-advertise and resell; resale expenses come out of the deposit.", MAGENTA),
+    ]
+    branch_width = 700
+    branch_gap = 80
+    for index, (title, detail, color) in enumerate(branches):
+        x = MARGIN + index * (branch_width + branch_gap)
+        rounded(draw, (x, 750, x + branch_width, 1090), WHITE, outline=color, width=5, radius=28)
+        draw.text((x + 35, 790), title, font=font(38, condensed=True), fill=color)
+        paragraph(draw, (x + 35, 860), detail, font(32), INK, branch_width - 70, spacing=10)
+
+    rounded(draw, (MARGIN, 1150, WIDTH - MARGIN, 1255), "#F2E7D4", outline=AMBER, width=4, radius=24)
+    draw.text((WIDTH // 2, 1202), "The hammer finds a leading bid. Prepared payment completes the sale step.", font=font(38), fill=INK, anchor="mm")
+    footer(draw, "Sources: MGA ss. 143, 148–149; HRMC ss. 158–159, 163–164  •  verify current event terms")
+    return image
+
+
+def render_40(spec: dict) -> Image.Image:
+    image, draw = base(spec)
+    node(draw, MARGIN, 380, 520, 230, "PURCHASE MONEY", "Amount received at the tax sale", NAVY)
+    arrow(draw, (680, 495), (805, 495), NAVY)
+    node(draw, 825, 380, 720, 230, "STATUTORY APPLICATIONS", "Taxes, interest, sale expenses and specified municipal amounts", TEAL)
+    arrow(draw, (1555, 495), (1680, 495), TEAL)
+    node(draw, 1700, 380, 710, 230, "BALANCE TO SURPLUS", "Held in the tax-sale surplus account", AMBER)
+
+    draw.line((2055, 625, 2055, 735), fill=LINE, width=8)
+    draw.line((820, 735, 2055, 735), fill=LINE, width=8)
+    draw.ellipse((2031, 711, 2079, 759), fill=LINE)
+    left = (430, 790, 1210, 1120)
+    right = (1350, 790, 2130, 1120)
+    rounded(draw, left, "#E5EFF2", outline=NAVY, width=5, radius=30)
+    rounded(draw, right, "#F2E7D4", outline=AMBER, width=5, radius=30)
+    draw.text((820, 850), "IF REDEEMED", font=font(42, condensed=True), fill=NAVY, anchor="mm")
+    centered_paragraph(draw, (820, 985), "The balance reduces the redemption amount under the statutory formula.", font(34), INK, 650, spacing=10)
+    draw.text((1740, 850), "AFTER REDEMPTION EXPIRES", font=font(42, condensed=True), fill=AMBER, anchor="mm")
+    centered_paragraph(draw, (1740, 985), "A prior interest holder may apply to Supreme Court for a proportional payment before twenty years pass.", font(32), INK, 650, spacing=9)
+    arrow(draw, (820, 735), (820, 775), NAVY, width=8)
+    arrow(draw, (1740, 735), (1740, 775), AMBER, width=8)
+
+    rounded(draw, (MARGIN, 1165, WIDTH - MARGIN, 1255), "#F8E5E2", outline=RED, width=4, radius=22)
+    draw.text((WIDTH // 2, 1210), "No automatic payout • no purchaser windfall • court route and deadlines matter", font=font(37, condensed=True), fill=RED, anchor="mm")
+    footer(draw, "Sources: MGA ss. 146–147; HRMC ss. 161–162  •  educational route summary")
+    return image
+
+
 RENDERERS: dict[str, Callable[[dict], Image.Image]] = {
     "figure-03": render_03,
     "figure-04": render_04,
@@ -393,6 +458,8 @@ RENDERERS: dict[str, Callable[[dict], Image.Image]] = {
     "figure-06": render_06,
     "figure-07": render_07,
     "figure-08": render_08,
+    "figure-39": render_39,
+    "figure-40": render_40,
 }
 
 
@@ -406,7 +473,8 @@ def save_contact_sheet(
 ) -> None:
     entries = list(paths)
     thumb_height = round(thumb_width * 9 / 16)
-    sheet = Image.new("RGB", (thumb_width * 2 + gutter * 3, (thumb_height + label_height) * 3 + gutter * 4), "#202833")
+    rows = (len(entries) + 1) // 2
+    sheet = Image.new("RGB", (thumb_width * 2 + gutter * 3, (thumb_height + label_height) * rows + gutter * (rows + 1)), "#202833")
     draw = ImageDraw.Draw(sheet)
     for index, path in enumerate(entries):
         row, column = divmod(index, 2)
@@ -465,7 +533,7 @@ def write_receipt(paths: Iterable[Path], spec_path: Path, destination: Path) -> 
         "specPath": spec_path.name,
         "specSHA256": sha256(spec_path),
         "machineChecks": {
-            "expectedCount": 6,
+            "expectedCount": len(files),
             "dimensions": "2560x1440",
             "mode": "RGB",
             "format": "PNG",
@@ -481,8 +549,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--spec", type=Path, default=DEFAULT_SPEC)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--contact-sheet", type=Path, default=SCRIPT_DIR / "slideshow-figures-03-08-contact-sheet.png")
-    parser.add_argument("--phone-sheet", type=Path, default=SCRIPT_DIR / "slideshow-figures-03-08-phone-contact-sheet.png")
+    parser.add_argument("--contact-sheet", type=Path, default=SCRIPT_DIR / "slideshow-figures-03-08-39-40-contact-sheet.png")
+    parser.add_argument("--phone-sheet", type=Path, default=SCRIPT_DIR / "slideshow-figures-03-08-39-40-phone-contact-sheet.png")
     parser.add_argument("--receipt", type=Path, default=SCRIPT_DIR / "render-receipt.json")
     args = parser.parse_args()
     rendered = render_all(args.spec, args.output_dir, args.contact_sheet)

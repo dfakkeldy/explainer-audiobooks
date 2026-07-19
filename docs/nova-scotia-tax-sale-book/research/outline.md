@@ -28,16 +28,16 @@ By the end, the listener should be able to:
 6. Recognize physical and environmental unknowns that records can reveal, narrow or fail to answer.
 7. Separate title, encumbrances, easements, occupancy and vacant possession.
 8. Construct an all-in uncertainty budget and a written maximum-bid rule without treating the minimum as value.
-9. Move through auction, certificate, redemption and deed stages without confusing a win with a completed acquisition.
+9. Execute registration, immediate payment and any three-business-day balance without confusing the leading bid with a completed sale.
 10. Explain what a municipal packet already provides, what additional research can responsibly contribute, and where professional authority begins.
 
 ## Chapter route
 
 ### 1. The Packet Before the Room — scene, orientation, whole-system map — 3,300 words
 
-Open with the researcher discovering that Inverness has already done far more than publish a one-page legal notice: each detailed entry includes core facts, aerial/parcel mapping and a legal description. Ask what work remains. Then move into the Port Hood room and pull backward from the first called parcel to the treasurer's arrears list. Explain why the auction is a collection mechanism, not a distressed-property storefront. Contrast Inverness's in-person auction with Pictou's tender and Chester's current no-sale year. End with the two clocks: the municipal pre-sale clock and the purchaser's post-sale clock.
+Open with the researcher discovering that Inverness has already done far more than publish a one-page legal notice: each detailed entry includes core facts, aerial/parcel mapping and a legal description. Ask what work remains. Then move into the Port Hood room and pull backward from the first called parcel to the treasurer's arrears list. Explain why the auction is a collection mechanism, not a distressed-property storefront. Contrast Inverness's in-person auction with Pictou's tender, Chester's current no-sale year and Halifax's parallel HRM Charter framework. End with the two clocks: the municipal pre-sale clock and the purchaser's post-sale clock.
 
-Claims: `LAW-001`–`LAW-006`, `OPS-004`, `OPS-005`, `DATA-002`, `DATA-005`.
+Claims: `LAW-001`–`LAW-006`, `OPS-004`, `OPS-005`, `OPS-007`, `DATA-002`, `DATA-005`.
 
 ### 2. What the Notice Says—and Does Not Say — document-reading and terminology — 3,500 words
 
@@ -83,21 +83,21 @@ Claims: `DATA-001`, `DATA-003`, `DATA-004`, `LAND-003`, `TAX-001`–`TAX-003`, `
 
 ### 9. When the Card Goes Up — auction scene and behavioural discipline — 3,200 words
 
-Return to Port Hood. Compare Inverness open-outcry bidding with Pictou and Annapolis tenders and Kings's policy choices. Cover registration, authority to bid, accepted funds, immediate recovery payment, the $200 Inverness recording amount, three-day balance, withdrawn lots, jump bids and the written walk-away number. A fictional bidder—not the researcher-author—supplies the dramatic payoff by choosing not to bid.
+Return to Port Hood. Compare Inverness open-outcry bidding with Pictou and Annapolis tenders and Kings's policy choices. Cover registration, statutory conflicts on who may not buy, authority to bid, accepted funds, immediate recovery payment, the $200 Inverness registration amount, the three-business-day balance, withdrawn lots, jump bids and the written walk-away number. Then rehearse the unhappy branches: no sufficient bidder, municipal purchase, re-advertisement, immediate re-offer after failed payment, deposit deductions after later resale, and a postponed or rescheduled event that must be verified from the live municipal notice rather than an old advertisement. A fictional bidder—not the researcher-author—supplies the dramatic payoff by choosing not to bid.
 
-Claims: `LAW-005`, `LAW-006`, `OPS-002`–`OPS-005`, `DATA-002`.
+Claims: `LAW-005`, `LAW-006`, `LAW-015`, `LAW-016`, `OPS-002`–`OPS-006`, `DATA-002`.
 
 ### 10. The Certificate-Holder Months — post-sale operations — 3,400 words
 
-Follow the successful bidder through certificate registration, insurance attempts, new tax bills, protective repairs, rent records and possible redemption. Explain why every dollar and authorization needs documentation. Keep human safety and lawful communication central.
+Follow the successful bidder through certificate registration, insurer outreach, new tax bills, protective repairs, rent records and possible redemption. Separate the statutory duty to insure an insurable building from an insurer's willingness to write a vacant or otherwise non-standard risk. Walk the redemption arithmetic categories: later taxes and interest, certificate-of-discharge registration, fire-insurance premiums, treasurer-approved necessary repairs, surplus offsets and rent or other income. Use Halifax Administrative Order 18 as a clearly labelled local example of what notice, title-search, survey, certificate, deed, registration, closing and redemption-administration expenses can contain. Explain why every dollar and authorization needs documentation and why the purchaser may have fourteen days to provide the requested insurance-and-repair statement. Keep human safety and lawful communication central.
 
-Claims: `LAW-007`–`LAW-011`, `OCC-001`.
+Claims: `LAW-007`–`LAW-011`, `INS-001`, `OPS-007`, `OCC-001`.
 
 ### 11. The Deed Is a Beginning — ownership, cleanup, exit — 3,400 words
 
-If no redemption occurs, request and register the deed, revisit title and insurance, resolve possession lawfully, and repeat planning/physical due diligence before repair, development, rental or resale. Explain surplus proceeds from the former interest-holder's side so the system is not narrated only from the bidder's chair.
+If no redemption occurs, request and register the deed, revisit title and insurance, resolve possession lawfully, and repeat planning/physical due diligence before repair, development, rental or resale. Explain surplus proceeds from the former interest-holder's side: the municipal payment order, the redemption-period hold, the later Supreme Court application window and the twenty-year endpoint. Then teach the contested branch. A defective sale may be set aside without discharging the tax lien, while the Marketable Titles Act generally limits attacks on a registered tax deed to the following six years, subject to its stated exceptions and possible damages remedy. Make the clock start at deed registration, not auction day, and hand every actual contest to counsel.
 
-Claims: `LAW-012`–`LAW-014`, `LAND-005`, `LAND-006`, `ENV-001`, `OCC-001`, `TAX-001`.
+Claims: `LAW-012`–`LAW-014`, `LAW-017`, `LAW-018`, `LAND-005`, `LAND-006`, `ENV-001`, `OCC-001`, `TAX-001`.
 
 ### 12. Three Case Files Marked Known, Unresolved and Professional — retrieval and decision framework — 3,400 words
 
@@ -110,7 +110,7 @@ Estimated total: approximately 42,800 words before editorial compression.
 ## Visual-listening route
 
 The book is planned as a figure-rich Echo slideshow and video-export title with
-38 purposeful figures. `visuals.md` is the detailed manifest and provenance
+40 purposeful figures. `visuals.md` is the detailed manifest and provenance
 authority. The chapter-level route is:
 
 - Chapter 1: auction-morning editorial scene, Nova Scotia municipal-method map,
@@ -127,9 +127,11 @@ authority. The chapter-level route is:
   and possession boundaries (`figure-18`–`figure-25`).
 - Chapter 8: Inverness 2025 ratio distribution, 50/35/31 source reconciliation,
   municipal comparison and all-in cost stack (`figure-26`–`figure-29`).
-- Chapter 9: open auction versus sealed tender (`figure-30`).
+- Chapter 9: open auction versus sealed tender plus payment readiness and the
+  three-business-day default branches (`figure-30` and `figure-39`).
 - Chapter 10: certificate-holder calendar (`figure-31`).
-- Chapter 11: deed-to-next-work handoff (`figure-32`).
+- Chapter 11: deed-to-next-work handoff plus the surplus-proceeds route
+  (`figure-32` and `figure-40`).
 - Chapter 12: the five-map Case C coherent-file packet and final
   known/unresolved/professional retrieval sheet (`figure-33`–`figure-38`).
 
