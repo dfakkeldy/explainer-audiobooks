@@ -17,7 +17,7 @@ from xml.sax.saxutils import escape
 from cover_fonts import DEFAULT_MANIFEST, FontRecord
 from cover_spec import ValidatedCoverSpec, load_cover_spec
 
-RENDERER_VERSION = 1
+RENDERER_VERSION = 2
 
 
 class CoverRenderError(ValueError):
@@ -111,6 +111,18 @@ def _art_markup(spec: ValidatedCoverSpec, definitions: list[str]) -> str:
         f'width="{width:g}" height="{height:g}" '
         f'preserveAspectRatio="{anchor} {fit}" opacity="{art["opacity"]:g}" '
         f'style="mix-blend-mode:{_blend(art["blend_mode"])}"{mask_attribute}/>'
+    )
+
+
+def _brand_mark_markup(spec: ValidatedCoverSpec, layer: dict[str, Any]) -> str:
+    brand_mark = spec.brand_marks[0]
+    x, y, width, height = layer["box"]
+    return (
+        f'<image href="{_data_uri(brand_mark.path)}" x="{x:g}" y="{y:g}" '
+        f'width="{width:g}" height="{height:g}" '
+        'preserveAspectRatio="xMidYMid meet" '
+        f'opacity="{layer["opacity"]:g}" '
+        f'style="mix-blend-mode:{_blend(layer["blend_mode"])}"/>'
     )
 
 
@@ -242,6 +254,8 @@ def build_svg(spec: ValidatedCoverSpec) -> str:
                 f'stroke="{layer["colour"]}" stroke-width="{layer["width"]:g}" '
                 f'opacity="{layer["opacity"]:g}"/>'
             )
+        elif kind == "brand_mark":
+            body.append(_brand_mark_markup(spec, layer))
         else:
             body.append(_text_markup(layer, index, definitions, spec.fonts))
     defs = f'<defs><style>{_font_css(spec.fonts)}</style>{"".join(definitions)}</defs>'
@@ -419,6 +433,7 @@ def _validate_artifact_paths(
         spec.art_path.resolve(),
         spec.font_manifest.path.resolve(),
     }
+    protected_inputs.update(mark.path.resolve() for mark in spec.brand_marks)
     for record in spec.font_manifest.fonts.values():
         protected_inputs.add(record.path.resolve())
         protected_inputs.add(record.license_path.resolve())
@@ -501,6 +516,12 @@ def render_cover_spec(
             "colour_mode": "RGB",
             "warnings": list(spec.warnings),
         }
+        if spec.brand_marks:
+            brand_mark = spec.brand_marks[0]
+            payload["brand_mark"] = {
+                "source": brand_mark.path.name,
+                "source_sha256": brand_mark.sha256,
+            }
         staged_receipt.write_text(
             json.dumps(payload, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",

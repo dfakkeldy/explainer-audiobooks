@@ -98,6 +98,29 @@ class CoverPairTests(unittest.TestCase):
         with self.assertRaisesRegex(CoverRenderError, "source"):
             self.render_pair(self.portrait_spec, changed_art)
 
+    def test_pair_rejects_brand_mark_on_only_one_variant(self) -> None:
+        brand = self.root / "brand-mark.svg"
+        brand.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+            '<circle cx="50" cy="50" r="48" fill="#F6EDDA"/></svg>',
+            encoding="utf-8",
+        )
+        payload = json.loads(self.portrait_spec.read_text(encoding="utf-8"))
+        payload["layers"].append(
+            {
+                "kind": "brand_mark",
+                "path": brand.name,
+                "box": [1300, 1900, 180, 180],
+                "opacity": 1,
+                "blend_mode": "normal",
+                "purpose": "identify KinNoKi Labs as the publisher",
+            }
+        )
+        self.portrait_spec.write_text(json.dumps(payload), encoding="utf-8")
+
+        with self.assertRaisesRegex(CoverRenderError, "both variants"):
+            self.render_pair(self.portrait_spec, self.square_spec)
+
     def test_pair_publishes_both_variants_and_receipts(self) -> None:
         result = self.render_pair(self.portrait_spec, self.square_spec)
         self.assertEqual(result.candidate_id, "open-machine")
@@ -159,6 +182,36 @@ class CoverPairTests(unittest.TestCase):
 
     def test_pair_rejects_output_hardlinked_to_input_before_render(self) -> None:
         os.link(self.portrait_spec, self.outputs[0])
+        with mock.patch("cover_pairs.render_cover_spec") as renderer:
+            with self.assertRaisesRegex(CoverRenderError, "alias"):
+                self.render_pair(self.portrait_spec, self.square_spec)
+            renderer.assert_not_called()
+
+    def test_pair_rejects_output_hardlinked_to_brand_mark_before_render(self) -> None:
+        brand = self.root / "brand-mark.svg"
+        brand.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+            '<circle cx="50" cy="50" r="48" fill="#F6EDDA"/></svg>',
+            encoding="utf-8",
+        )
+        for spec_path, box in (
+            (self.portrait_spec, [1300, 1900, 180, 180]),
+            (self.square_spec, [2000, 1800, 240, 240]),
+        ):
+            payload = json.loads(spec_path.read_text(encoding="utf-8"))
+            payload["layers"].append(
+                {
+                    "kind": "brand_mark",
+                    "path": brand.name,
+                    "box": box,
+                    "opacity": 1,
+                    "blend_mode": "normal",
+                    "purpose": "identify KinNoKi Labs as the publisher",
+                }
+            )
+            spec_path.write_text(json.dumps(payload), encoding="utf-8")
+        os.link(brand, self.outputs[0])
+
         with mock.patch("cover_pairs.render_cover_spec") as renderer:
             with self.assertRaisesRegex(CoverRenderError, "alias"):
                 self.render_pair(self.portrait_spec, self.square_spec)

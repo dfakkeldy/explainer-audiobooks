@@ -73,9 +73,24 @@ SHAPE_KEYS = {
     "purpose",
 }
 LINE_KEYS = {"kind", "start", "end", "colour", "width", "opacity", "purpose"}
+BRAND_MARK_KEYS = {
+    "kind",
+    "path",
+    "box",
+    "opacity",
+    "blend_mode",
+    "purpose",
+}
 RUN_KEYS = {"text", "colour", "size_scale", "rotation", "baseline_shift", "dx", "tracking"}
 class CoverSpecError(ValueError):
     pass
+
+
+@dataclass(frozen=True)
+class BrandMarkInput:
+    role: str
+    path: Path
+    sha256: str
 
 
 @dataclass(frozen=True)
@@ -90,6 +105,7 @@ class ValidatedCoverSpec:
     art_path: Path
     spec_sha256: str
     art_sha256: str
+    brand_marks: tuple[BrandMarkInput, ...]
     font_manifest: FontManifest
     fonts: dict[str, FontRecord]
     warnings: tuple[str, ...]
@@ -439,6 +455,42 @@ def _validate_line(layer: dict[str, Any], index: int, canvas: tuple[int, int]) -
         raise CoverSpecError("line layer requires compositional purpose")
 
 
+def _validate_brand_mark(
+    layer: dict[str, Any],
+    index: int,
+    root: Path,
+    canvas: tuple[int, int],
+    safe_margin: int,
+) -> Path:
+    if set(layer) != BRAND_MARK_KEYS:
+        raise CoverSpecError(f"layer {index} brand_mark has missing or unknown keys")
+    raw_path = layer.get("path")
+    if not isinstance(raw_path, str) or not raw_path:
+        raise CoverSpecError(f"layer {index} brand_mark path must be a non-empty string")
+    path = _safe_child(root, raw_path, f"layer {index} brand_mark")
+    if not path.is_file() or path.suffix.lower() not in ART_SUFFIXES:
+        raise CoverSpecError(
+            f"layer {index} brand_mark must be an existing SVG, PNG, JPEG, WebP, or GIF"
+        )
+    x, y, width, height = _box(layer.get("box"), f"layer {index} box", canvas)
+    if (
+        x < safe_margin
+        or y < safe_margin
+        or x + width > canvas[0] - safe_margin
+        or y + height > canvas[1] - safe_margin
+    ):
+        raise CoverSpecError(
+            f"layer {index} brand_mark is outside {safe_margin}px safe margin"
+        )
+    _number(layer.get("opacity"), 0, 1, f"layer {index} opacity")
+    if not _is_choice(layer.get("blend_mode"), BLENDS):
+        raise CoverSpecError(f"layer {index} brand_mark has invalid blend_mode")
+    purpose = layer.get("purpose")
+    if not isinstance(purpose, str) or not purpose.strip():
+        raise CoverSpecError(f"layer {index} brand_mark requires compositional purpose")
+    return path
+
+
 def _load_manifest(path: Path) -> FontManifest:
     try:
         return load_font_manifest(path)
@@ -561,6 +613,7 @@ def load_cover_spec(
         raise CoverSpecError("layers must be a non-empty array")
     warnings: list[str] = []
     fonts: dict[str, FontRecord] = {}
+    brand_mark_paths: list[Path] = []
     for index, layer in enumerate(layers, start=1):
         if not isinstance(layer, dict):
             raise CoverSpecError(f"layer {index} must be an object")
@@ -576,8 +629,22 @@ def load_cover_spec(
             _validate_shape(layer, index, canvas_dimensions)
         elif kind == "line":
             _validate_line(layer, index, canvas_dimensions)
+        elif kind == "brand_mark":
+            brand_mark_paths.append(
+                _validate_brand_mark(
+                    layer,
+                    index,
+                    spec_path.parent,
+                    canvas_dimensions,
+                    safe_margin,
+                )
+            )
         else:
             raise CoverSpecError(f"unknown layer kind: {kind}")
+    if len(brand_mark_paths) > 1:
+        raise CoverSpecError("cover specification may contain at most one brand_mark layer")
+    if brand_mark_paths and schema_version != 2:
+        raise CoverSpecError("brand_mark layers require paired cover schema version 2")
 
     title_layers = sorted(
         (layer for layer in layers if layer.get("kind") == "text" and layer.get("role") == "title"),
@@ -609,6 +676,14 @@ def load_cover_spec(
             raise CoverSpecError(f"{role} layers must reproduce canonical metadata")
     try:
         art_sha256 = hashlib.sha256(art_path.read_bytes()).hexdigest()
+        brand_marks = tuple(
+            BrandMarkInput(
+                role="brand_mark",
+                path=brand_path,
+                sha256=hashlib.sha256(brand_path.read_bytes()).hexdigest(),
+            )
+            for brand_path in brand_mark_paths
+        )
         spec_sha256 = _canonical_digest(payload)
     except (OSError, TypeError, ValueError) as error:
         raise CoverSpecError("cover specification content could not be hashed") from error
@@ -623,6 +698,7 @@ def load_cover_spec(
         art_path=art_path,
         spec_sha256=spec_sha256,
         art_sha256=art_sha256,
+        brand_marks=brand_marks,
         font_manifest=manifest,
         fonts=fonts,
         warnings=tuple(warnings),

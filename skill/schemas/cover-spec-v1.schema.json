@@ -61,7 +61,8 @@
           {"$ref": "#/$defs/text_layer"},
           {"$ref": "#/$defs/field_layer"},
           {"$ref": "#/$defs/shape_layer"},
-          {"$ref": "#/$defs/line_layer"}
+          {"$ref": "#/$defs/line_layer"},
+          {"$ref": "#/$defs/brand_mark_layer"}
         ]
       }
     }
@@ -71,9 +72,14 @@
       "if": {"properties": {"schema_version": {"const": 1}}, "required": ["schema_version"]},
       "then": {
         "not": {"required": ["variant"]},
-        "properties": {"canvas": {"properties": {
-          "width": {"const": 1600}, "height": {"const": 2560}, "safe_margin": {"const": 96}
-        }}}
+        "properties": {
+          "canvas": {"properties": {
+            "width": {"const": 1600}, "height": {"const": 2560}, "safe_margin": {"const": 96}
+          }},
+          "layers": {"not": {"contains": {
+            "properties": {"kind": {"const": "brand_mark"}}, "required": ["kind"]
+          }}}
+        }
       },
       "else": {"required": ["variant"]}
     },
@@ -251,6 +257,19 @@
         "colour": {"$ref": "#/$defs/colour"},
         "width": {"type": "number", "minimum": 1, "maximum": 40},
         "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "purpose": {"type": "string", "minLength": 1}
+      }
+    },
+    "brand_mark_layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path", "box", "opacity", "blend_mode", "purpose"],
+      "properties": {
+        "kind": {"const": "brand_mark"},
+        "path": {"type": "string", "minLength": 1},
+        "box": {"$ref": "#/$defs/box"},
+        "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+        "blend_mode": {"$ref": "#/$defs/blend"},
         "purpose": {"type": "string", "minLength": 1}
       }
     }

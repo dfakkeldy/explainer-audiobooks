@@ -97,11 +97,64 @@ def write_spec(root: Path, payload: dict[str, object], name: str) -> Path:
     return path
 
 
+def add_brand_mark(root: Path, payload: dict[str, object]) -> Path:
+    payload["schema_version"] = 2
+    payload["variant"] = "portrait"
+    brand = root / "brand-mark.svg"
+    brand.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+        '<rect width="100" height="100" fill="#FF0000"/></svg>',
+        encoding="utf-8",
+    )
+    payload["layers"].append(
+        {
+            "kind": "brand_mark",
+            "path": brand.name,
+            "box": [1300, 1900, 180, 180],
+            "opacity": 1,
+            "blend_mode": "normal",
+            "purpose": "identify KinNoKi Labs as the publisher",
+        }
+    )
+    return brand
+
+
 @unittest.skipUnless(
     shutil.which("rsvg-convert") and shutil.which("magick"),
     "renderer tools required",
 )
 class CoverRendererTests(unittest.TestCase):
+    def test_composites_the_brand_mark_in_declared_layer_order(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            payload = base_spec()
+            add_brand_mark(root, payload)
+            spec = write_spec(root, payload, "branded")
+
+            result = render_cover_spec(spec, root / "branded.png", FONT_MANIFEST)
+
+            with Image.open(result.output_path) as image:
+                self.assertEqual((255, 0, 0), image.getpixel((1390, 1990)))
+
+    def test_receipt_binds_the_brand_mark_source_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            payload = base_spec()
+            brand = add_brand_mark(root, payload)
+            spec = write_spec(root, payload, "branded")
+
+            result = render_cover_spec(spec, root / "branded.png", FONT_MANIFEST)
+
+            receipt = json.loads(result.receipt_path.read_text(encoding="utf-8"))
+            self.assertEqual(2, receipt["renderer_version"])
+            self.assertEqual(
+                {
+                    "source": brand.name,
+                    "source_sha256": cover_renderer._sha(brand),
+                },
+                receipt["brand_mark"],
+            )
+
     def test_renders_square_cover_thumbnail_and_receipt_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

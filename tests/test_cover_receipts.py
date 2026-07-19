@@ -269,6 +269,25 @@ def create_valid_selection(root: Path, cover: Path) -> Path:
 
 
 class CoverReceiptTests(unittest.TestCase):
+    def test_legacy_single_selection_rejects_branded_render_receipts(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            cover = make_cover(root / "cover.png")
+            payload = render_payload(cover)
+            payload["renderer_version"] = 2
+            payload["brand_mark"] = {
+                "source": "brand-mark.png",
+                "source_sha256": "6" * 64,
+            }
+            render_receipt = make_render_receipt(root, cover, payload)
+
+            with self.assertRaisesRegex(ValueError, "paired cover selection"):
+                cover_receipts.create_selection(
+                    render_receipt,
+                    root / "selection.json",
+                    **VALID_SELECTION,
+                )
+
     @unittest.skipUnless(
         shutil.which("rsvg-convert") and shutil.which("magick"),
         "renderer tools required",
@@ -313,6 +332,89 @@ class CoverReceiptTests(unittest.TestCase):
                 receipt.variants["portrait"].specification_sha256,
                 load_cover_spec(root / "portrait.json", FONT_MANIFEST).spec_sha256,
             )
+
+    @unittest.skipUnless(
+        shutil.which("rsvg-convert") and shutil.which("magick"),
+        "renderer tools required",
+    )
+    def test_paired_selection_verifies_brand_mark_receipt_provenance(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            brand = root / "brand-mark.svg"
+            brand.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+                '<circle cx="50" cy="50" r="48" fill="#F6EDDA"/></svg>',
+                encoding="utf-8",
+            )
+            portrait = make_cover(root / "portrait.png")
+            square = make_cover(root / "square.png", size=(2400, 2400))
+            paired_render_payload(root, portrait, "portrait")
+            paired_render_payload(root, square, "square", subtitle="")
+            for variant, box in (
+                ("portrait", [1300, 1900, 180, 180]),
+                ("square", [2000, 1800, 240, 240]),
+            ):
+                spec_path = root / f"{variant}.json"
+                spec = json.loads(spec_path.read_text(encoding="utf-8"))
+                spec["layers"].append(
+                    {
+                        "kind": "brand_mark",
+                        "path": brand.name,
+                        "box": box,
+                        "opacity": 1,
+                        "blend_mode": "normal",
+                        "purpose": "identify KinNoKi Labs as the publisher",
+                    }
+                )
+                spec_path.write_text(json.dumps(spec), encoding="utf-8")
+
+            portrait_receipt = root / "portrait.render.json"
+            square_receipt = root / "square.render.json"
+            render_cover_spec(
+                root / "portrait.json",
+                portrait,
+                root / "portrait-thumbnail.png",
+                portrait_receipt,
+                FONT_MANIFEST,
+            )
+            render_cover_spec(
+                root / "square.json",
+                square,
+                root / "square-thumbnail.png",
+                square_receipt,
+                FONT_MANIFEST,
+            )
+
+            receipt = cover_receipts.create_paired_selection(
+                portrait_receipt,
+                square_receipt,
+                root / "selection.json",
+                "fixture-book",
+                "public-v1",
+                "user",
+                "2026-07-13T12:00:00-03:00",
+                "public-safe",
+                True,
+            )
+
+            self.assertEqual("open-machine", receipt.candidate.id)
+            brand.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+                '<rect width="100" height="100" fill="#000000"/></svg>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "brand_mark provenance"):
+                cover_receipts.create_paired_selection(
+                    portrait_receipt,
+                    square_receipt,
+                    root / "selection-after-mutation.json",
+                    "fixture-book",
+                    "public-v1",
+                    "user",
+                    "2026-07-13T12:00:00-03:00",
+                    "public-safe",
+                    True,
+                )
 
     def create_pair_fixture(self, root: Path):
         portrait = make_cover(root / "portrait.png")
