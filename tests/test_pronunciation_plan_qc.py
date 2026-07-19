@@ -172,6 +172,62 @@ class PronunciationPlanTests(unittest.TestCase):
         self.assertEqual(["ch01.md"], result["plannedChapters"])
         self.assertEqual({}, result["chapterSHA256"])
 
+    def test_fiction_planning_uses_hash_bound_fiction_receipt_without_learning_outline(self) -> None:
+        (self.research / "learning-outline.json").unlink()
+        continuity = self.root / "continuity"
+        revisions = self.root / "revisions"
+        continuity.mkdir()
+        revisions.mkdir()
+        artifacts = {
+            "authorization": self.research / "unattended-decisions.json",
+            "storyBible": self.root / "story-bible.md",
+            "continuity": continuity / "final.md",
+            "revisionReview": revisions / "review.md",
+            "proseQC": revisions / "prose-qc.md",
+        }
+        for path in artifacts.values():
+            path.write_text("Verified.\n", encoding="utf-8")
+        (self.research / "fiction-production-receipt.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "status": "first-listen",
+                    "productionMode": "unattended-first-listen",
+                    "privacy": "private",
+                    "permissionToPublish": False,
+                    "humanReadingStatus": "pending",
+                    "canonicalChapterSHA256": {
+                        "ch01.md": sha256(self.chapters / "ch01.md")
+                    },
+                    "artifacts": {
+                        name: {
+                            "path": str(path.relative_to(self.root)),
+                            "sha256": sha256(path),
+                        }
+                        for name, path in artifacts.items()
+                    },
+                    "gates": {
+                        "manuscriptClosed": "pass",
+                        "storyBibleReconciled": "pass",
+                        "continuityReconciled": "pass",
+                        "revisionPassesCompleted": "pass",
+                        "proseQCPassed": "pass",
+                    },
+                    "negativeHumanVerdictOverrides": True,
+                    "receiptDoesNotCertifyHumanAcceptance": True,
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        result = self.module().validate_plan(self.root, "planning")
+
+        self.assertEqual(["ch01.md"], result["plannedChapters"])
+        self.assertEqual({}, result["chapterSHA256"])
+
     def test_listener_term_must_exist_in_each_expected_chapter(self) -> None:
         plan = self.valid_plan()
         plan["terms"][0]["expectedChapters"] = ["ch02.md"]

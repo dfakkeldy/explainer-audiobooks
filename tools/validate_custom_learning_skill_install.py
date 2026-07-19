@@ -61,7 +61,7 @@ SKILL_MANIFEST = {
         "file", 0o644, "27c00cb8ececc8d6c158000ef84edbe40ee09202a9acb660f0785f21911f40f2"
     ),
     Path("references/package-and-qc.md"): ManifestEntry(
-        "file", 0o644, "5425a444bc30eb0e280dc781cf5407c4f2bfb4af65d634514cb8c51a76de9610"
+        "file", 0o644, "157abc55d7a620793c49d86847d0573d8ea940e2736668329665f41203b5a853"
     ),
     Path("scripts"): ManifestEntry("directory", 0o755),
     Path("scripts/echo_installed_renderer.py"): ManifestEntry(
