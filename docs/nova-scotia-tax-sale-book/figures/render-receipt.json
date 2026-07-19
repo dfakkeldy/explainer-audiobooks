@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "assetStatus": "review-candidate",
+  "renderer": "render_slideshow_figures.py",
+  "specPath": "figure-specs.json",
+  "specSHA256": "ed6bdc06ef38181e7b073c27d4c98bd1cac49635e15513d0ca14d34663ab3a57",
+  "machineChecks": {
+    "expectedCount": 6,
+    "dimensions": "2560x1440",
+    "mode": "RGB",
+    "format": "PNG",
+    "status": "pass"
+  },
+  "humanAcceptance": "pending",
+  "files": [
+    {
+      "filename": "figure-03-two-clocks.png",
+      "sha256": "9a9ffed6bd05652f1fccbff466c0ce568738251c2dd8bd5c98c7f1a94afd5610",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "filename": "figure-04-packet-anatomy.png",
+      "sha256": "d89230cd7aabea8031dbd84f91b39127a9d94e4af1724972c5e5a7d3a0cf3ca0",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "filename": "figure-05-identifiers-not-promises.png",
+      "sha256": "1672ded04272293552460dfa4c41bee4128f50786f54addd90c67035a880ec4e",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "filename": "figure-06-reconcile-the-packet.png",
+      "sha256": "9c1be6f67380b8d405c9c58b60965d2bb31da16e182b24ddfa5d8ed97f1deaa3",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "filename": "figure-07-redeemable-route.png",
+      "sha256": "b8d8efd4fd56eb6d2c451a1bb87c404d771f16ff3c50a944e944e3ec2d90dab5",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "filename": "figure-08-nonredeemable-route.png",
+      "sha256": "90c5a0ba69d4c347743782a8a65c3b3a0afb4dc95fd07198475f5f4ec28a90ab",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    }
+  ]
+}

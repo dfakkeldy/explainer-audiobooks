@@ -25,8 +25,12 @@ ranking, or an advertisement disguised as education.
 - `maps/data/`: an owner-free snapshot of the municipality-published August
   2026 listing facts;
 - `maps/qgis/`: the editable QGIS 4.0.2 project used for the current proofs;
-- `maps/exports/`: two attributed 2560-by-1440 development renders; and
-- `maps/scripts/`: a reproducible local NSPRD fetch and QGIS 4 render workflow.
+- `maps/exports/`: two attributed 2560-by-1440 development renders;
+- `maps/scripts/`: a reproducible local NSPRD fetch and QGIS 4 render workflow;
+- `figures/`: the deterministic diagram renderer, teaching/provenance
+  specifications, contact sheets and hash-bound receipt for figures 03–08; and
+- `chapters/images/`: six 2560-by-1440 legal/process review candidates that are
+  not yet accepted or embedded in a manuscript.
 
 ![Inverness County auction orientation proof](maps/exports/inverness-all-properties-orientation.png)
 
@@ -56,11 +60,12 @@ packet and its reproducible QGIS proofs.
 ## Current production gates
 
 The project is in `governed-final` development. Deep research, the argument
-outline, structured chapter plans, coverage ledger, figure manifest, and two
-QGIS proofs exist. Human outline authorization, accepted first-section voice,
-the narrated comprehension pilot, full manuscript, independent learning and
-prose review, final figures, cover selection, EPUB, Echo narration, public
-package verification, and full listening all remain pending.
+outline, structured chapter plans, coverage ledger, figure manifest, two QGIS
+proofs, and six reproducible diagram candidates exist. Human outline
+authorization, accepted first-section voice, the narrated comprehension pilot,
+full manuscript, independent learning and prose review, accepted final figures,
+cover selection, EPUB, Echo narration, public package verification, and full
+listening all remain pending.
 
 ## Safety and currency
 
