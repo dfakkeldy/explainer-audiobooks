@@ -45,11 +45,16 @@ package.
   >
   > Could you pr the work so far on this book?
 - **09:40:38 — continue figure development:** “Let’s work on slideshow figures.”
+- **11:56:49 — outline and visual direction approved for pilot development:**
+  “I approve the revised twelve-chapter outline and forty-figure visual
+  direction for pilot development.” This authorizes the first-section and
+  narrated-pilot development gates. It does not accept the first-section voice,
+  accept a future pilot, authorize the full manuscript or narration, accept the
+  final figure set, or authorize finished-audiobook publication.
 
 ## Gate status
 
-No outline approval is present in these directions. The revised twelve-chapter
-argument outline, the added failure paths and the forty-figure direction remain
-pending explicit user approval. Pilot prose, the first-section voice exemplar,
-the narrated comprehension pilot and canonical drafting remain downstream
-gates.
+The revised twelve-chapter argument outline, added failure paths and forty-figure
+direction are approved for pilot development. The first-section voice exemplar,
+narrated comprehension-pilot verdict, canonical full drafting, pronunciation
+acceptance, final figure acceptance, and publication remain downstream gates.
