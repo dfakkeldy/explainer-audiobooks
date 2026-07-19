@@ -68,13 +68,18 @@ package.
   evidence-card visual direction. It does not prove actual Echo/video-stage
   playback, authorize batch rendering of the remaining 42 lien cards, add the
   atlas to the forty canonical figures, or authorize publication.
+- **16:17:07 — first-section teaching and voice accepted:** “Let’s go for the
+  voice.” This accepts the exact 1,022-word opening as the hash-bound project
+  voice exemplar and authorizes representative pilot development. It does not
+  record a narrated-pilot `continue` verdict, authorize the remaining
+  manuscript, accept pronunciations, or authorize publication.
 
 ## Gate status
 
 The revised twelve-chapter argument outline, added failure paths and forty-figure
 direction are approved for pilot development. The three-card atlas prototype
 direction is also accepted against its exact rendered hashes. The first-section
-voice exemplar, narrated comprehension-pilot verdict, canonical full drafting,
-pronunciation acceptance, actual Echo/video-stage prototype proof, atlas batch
-authorization, final figure acceptance, and publication remain downstream
-gates.
+voice exemplar is accepted against its exact text hash. The narrated
+comprehension-pilot verdict, canonical full drafting, pronunciation acceptance,
+actual Echo/video-stage prototype proof, atlas batch authorization, final figure
+acceptance, and publication remain downstream gates.

@@ -4,12 +4,12 @@ This folder contains a public-safe first-section candidate produced after Dan
 approved the twelve-chapter outline and forty-figure direction for pilot
 development.
 
-`first-section-candidate.md` is **not the accepted voice exemplar**, a complete
-chapter, or canonical full-book prose. There is no pilot audio and no
-comprehension verdict. It exists so Dan can review the teaching, rhythm, and
-public-interest stance before Section 2 or narrated-pilot production begins.
+Dan accepted the exact `first-section-candidate.md` teaching and voice with
+“Let’s go for the voice.” at 2026-07-19T16:17:07-03:00. Its bytes are preserved
+as `research/voice-exemplar.md`, SHA-256
+`ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df`.
 
-If Dan accepts it, the exact accepted text will be copied to
-`research/voice-exemplar.md`, hash-bound in `research/comprehension-pilot.json`,
-and used as the voice input for later sections. A requested revision returns
-only this section to drafting.
+This remains a first section rather than a complete chapter or full-book rough
+draft. There is no pilot audio and no comprehension verdict. The next pilot
+step is to add the first technical passage, build a 10-to-15-minute pilot and
+obtain Dan's separate `continue` or `revise` verdict against the exact audio.

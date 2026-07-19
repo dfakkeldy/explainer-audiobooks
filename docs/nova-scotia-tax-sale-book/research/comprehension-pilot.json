@@ -1,12 +1,14 @@
 {
   "schemaVersion": 2,
   "status": "pending",
-  "listener": "",
+  "listener": "Dan Fakkeldy",
   "listeningContext": "Driving and delivering mail",
   "representativeMinutes": 12,
   "includesFirstTechnicalPassage": true,
   "audioPath": "",
   "audioSHA256": "",
+  "audioRendered": false,
+  "audioNotRenderedReason": "The first-section voice is accepted; the representative narrated pilot has not yet been built or rendered.",
   "listenerNotes": "",
   "humanCheckpoints": {
     "voiceSource": {
@@ -24,12 +26,13 @@
       "recordedBeforePilotDraft": true
     },
     "firstSection": {
-      "status": "pending",
-      "reviewer": "",
-      "evidence": "",
-      "recordedBeforeRemainingDraft": false,
+      "status": "accepted",
+      "reviewer": "Dan Fakkeldy",
+      "evidence": "Let’s go for the voice.",
+      "acceptedAt": "2026-07-19T16:17:07-03:00",
+      "recordedBeforeRemainingDraft": true,
       "voiceExemplarPath": "research/voice-exemplar.md",
-      "voiceExemplarSHA256": ""
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df"
     }
   },
   "decision": {
