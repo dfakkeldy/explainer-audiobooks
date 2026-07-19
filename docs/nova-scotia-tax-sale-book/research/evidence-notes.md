@@ -257,8 +257,8 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Confidence: high.
 
 ### ENV-005 — abandoned-mine inventory is incomplete
-- Supported wording: Nova Scotia's abandoned-mine database identifies thousands of historic openings but explicitly says it is not complete and does not include every subsidence expression.
-- Source: Nova Scotia Abandoned Mine Openings Database.
+- Supported wording: Nova Scotia's abandoned-mine database is expressly incomplete and does not include surface expressions of subsidence. Its 2024 Version 9 metadata says private-land opening positions can be inaccurate by up to approximately 50 metres. A mapped point is therefore a screening record, not a parcel-specific hazard boundary or proof that no other opening exists.
+- Source: Nova Scotia Abandoned Mine Openings Database description and DP ME 10, Version 9 metadata, especially the inventory limits and positional-accuracy report.
 - Confidence: high.
 
 ## Occupancy, taxes and eligibility

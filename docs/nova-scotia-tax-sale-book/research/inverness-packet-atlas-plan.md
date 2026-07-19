@@ -1,7 +1,8 @@
 # Inverness Packet Atlas — proposed appendix and slideshow companion
 
-Status: proposed public-safe development lane. This atlas is **outside the approved forty-figure manifest**.
-It does not change the approved book outline,
+Status: proposed public-safe development lane with three rendered review
+candidates. This atlas is **outside the approved forty-figure manifest**. It
+does not change the approved book outline,
 the forty canonical figures or the first-section voice gate. Promotion into the
 book, Echo slideshow or video package needs a separate content, rights,
 live-event-status and human-legibility approval.
@@ -223,3 +224,13 @@ The atlas can advance after four distinct decisions:
 3. approve the three representative prototype cards after phone and video-stage
    review; and
 4. approve the fully rendered, status-refreshed atlas for public release.
+
+### Current gate record — 2026-07-19
+
+Dan replied “let's do it” to the proposed next step of producing three
+deliberately contrasting prototype cards. That authorizes prototype development
+for Liens 1, 8 and 11. The cards have been rendered and machine-checked, but the
+reply is not recorded as visual acceptance. Gate 3 therefore remains pending
+Dan's review of the resulting full-size/phone cards and a later actual Echo
+stage proof. Gates 1, 2 and 4 remain separate; the other 42 lien cards are not
+authorized for batch rendering.

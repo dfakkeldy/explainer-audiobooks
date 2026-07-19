@@ -16,12 +16,11 @@ MAP_ROOT = PACKET_ROOT / "maps"
 LISTING_PATH = MAP_ROOT / "data/inverness-tax-sale-2026-08-11.json"
 METADATA_PATH = MAP_ROOT / "build-metadata.json"
 PROJECT_PATH = MAP_ROOT / "qgis/inverness-tax-sale-2026-08-11.qgz"
-MUNICIPAL_SOURCE_REGISTER = (
-    PACKET_ROOT / "research/municipal-map-source-register.json"
-)
-NS_MARKS_PROMPT = (
-    PACKET_ROOT / "research/ns-marks-multi-municipality-map-prompt.md"
-)
+ATLAS_ROOT = MAP_ROOT / "atlas-prototypes"
+ATLAS_SPEC_PATH = ATLAS_ROOT / "atlas-prototype-specs.json"
+ATLAS_RECEIPT_PATH = ATLAS_ROOT / "render-receipt.json"
+MUNICIPAL_SOURCE_REGISTER = PACKET_ROOT / "research/municipal-map-source-register.json"
+NS_MARKS_PROMPT = PACKET_ROOT / "research/ns-marks-multi-municipality-map-prompt.md"
 ATTRIBUTION = (
     "Contains information obtained under license from the Province of Nova "
     "Scotia which is provided without warranty or liability for errors or "
@@ -36,7 +35,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         self.assertEqual(
             evidence["notesSHA256"],
-            hashlib.sha256((RESEARCH_ROOT / "evidence-notes.md").read_bytes()).hexdigest(),
+            hashlib.sha256(
+                (RESEARCH_ROOT / "evidence-notes.md").read_bytes()
+            ).hexdigest(),
         )
         self.assertTrue(evidence["claims"])
         for claim in evidence["claims"]:
@@ -89,7 +90,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertTrue(outline_checkpoint["recordedBeforePilotDraft"])
 
     def test_required_planning_handoff_artifacts_exist(self) -> None:
-        conversation = (RESEARCH_ROOT / "conversation-log.md").read_text(encoding="utf-8")
+        conversation = (RESEARCH_ROOT / "conversation-log.md").read_text(
+            encoding="utf-8"
+        )
         handoff = (PACKET_ROOT / "handoff-packet.md").read_text(encoding="utf-8")
         pronunciation = json.loads(
             (RESEARCH_ROOT / "pronunciation-plan.json").read_text(encoding="utf-8")
@@ -97,8 +100,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         terms = {entry["term"] for entry in pronunciation["terms"]}
         self.assertTrue(
-            {"Mabou", "Whycocomagh", "Judique", "AAN", "PID", "NSPRD", "MGA"}
-            <= terms
+            {"Mabou", "Whycocomagh", "Judique", "AAN", "PID", "NSPRD", "MGA"} <= terms
         )
         self.assertIn("pilot development authorized", handoff)
         self.assertIn(
@@ -119,9 +121,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(len(continuity["draftContexts"]), 1)
         context = continuity["draftContexts"][0]
         self.assertEqual(context["section"], "ch01-s01")
-        self.assertEqual(
-            context["specificClaims"], ["OPS-004", "DATA-002", "DATA-005"]
-        )
+        self.assertEqual(context["specificClaims"], ["OPS-004", "DATA-002", "DATA-005"])
         self.assertEqual(context["status"], "unaccepted-first-section-candidate")
 
         self.assertIn("not the accepted voice exemplar", pilot_readme.lower())
@@ -135,7 +135,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             r"tattoo this|burn this into|let that land|the honest answer|the whole point",
         )
 
-    def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(self) -> None:
+    def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
+        self,
+    ) -> None:
         atlas = (RESEARCH_ROOT / "inverness-packet-atlas-plan.md").read_text(
             encoding="utf-8"
         )
@@ -171,7 +173,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             concepts["payment performance"]["durableOutcome"],
             concepts["staged responsibility"]["durableOutcome"],
         )
-        self.assertIn("three-business-day", concepts["payment performance"]["durableOutcome"])
+        self.assertIn(
+            "three-business-day", concepts["payment performance"]["durableOutcome"]
+        )
 
     def test_research_closes_named_failure_path_gaps(self) -> None:
         evidence = json.loads(
@@ -245,11 +249,18 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(metadata["requestedPIDCount"], 47)
         self.assertEqual(metadata["returnedFeatureCount"], 53)
         self.assertEqual(metadata["attribution"], ATTRIBUTION)
-        self.assertIn("Keep this raw geometry snapshot local", metadata["publicDistributionBoundary"])
+        self.assertIn(
+            "Keep this raw geometry snapshot local",
+            metadata["publicDistributionBoundary"],
+        )
 
-    def test_qgis_project_is_version_4_and_uses_only_relative_working_geometry(self) -> None:
+    def test_qgis_project_is_version_4_and_uses_only_relative_working_geometry(
+        self,
+    ) -> None:
         with zipfile.ZipFile(PROJECT_PATH) as archive:
-            project_names = [name for name in archive.namelist() if name.endswith(".qgs")]
+            project_names = [
+                name for name in archive.namelist() if name.endswith(".qgs")
+            ]
             self.assertEqual(len(project_names), 1)
             project_xml = archive.read(project_names[0]).decode("utf-8")
 
@@ -258,17 +269,19 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertNotIn("/Users/", project_xml)
         self.assertNotIn("source-snapshots", project_xml)
 
-    def test_raw_geometry_is_not_tracked(self) -> None:
+    def test_raw_geometry_and_source_archives_are_not_tracked(self) -> None:
         geometry_path = MAP_ROOT / "working/inverness-tax-sale-parcels.geojson"
-        result = subprocess.run(
-            ["git", "check-ignore", "-q", str(geometry_path.relative_to(REPO_ROOT))],
-            cwd=REPO_ROOT,
-            check=False,
-        )
-        self.assertEqual(result.returncode, 0)
+        amo_path = MAP_ROOT / "working/dp010v9sgkx_NS_Abandoned_Mines.zip"
+        for source_path in (geometry_path, amo_path):
+            result = subprocess.run(
+                ["git", "check-ignore", "-q", str(source_path.relative_to(REPO_ROOT))],
+                cwd=REPO_ROOT,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0)
         self.assertEqual(
             (MAP_ROOT / "working/.gitignore").read_text(encoding="utf-8"),
-            "# Raw NSPRD geometry is a local restricted-service build cache.\n"
+            "# Raw NSPRD geometry and downloaded GIS source archives are local build caches.\n"
             "*\n"
             "!.gitignore\n",
         )
@@ -300,6 +313,89 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertEqual(ast.literal_eval(attribution_node.value), ATTRIBUTION)
 
+    def test_atlas_prototype_specs_are_owner_free_and_outside_canonical_manifest(
+        self,
+    ) -> None:
+        specs = json.loads(ATLAS_SPEC_PATH.read_text(encoding="utf-8"))
+        listing = json.loads(LISTING_PATH.read_text(encoding="utf-8"))
+        evidence = json.loads(
+            (RESEARCH_ROOT / "evidence-notes.json").read_text(encoding="utf-8")
+        )
+        listing_by_lien = {item["lien"]: item for item in listing["listings"]}
+        valid_claim_ids = {claim["id"] for claim in evidence["claims"]}
+
+        self.assertEqual(specs["assetStatus"], "review-candidate")
+        self.assertFalse(specs["canonicalFigureManifestChanged"])
+        self.assertFalse(specs["propertyOnlineUsed"])
+        self.assertFalse(specs["assessedOwnerNamesIncluded"])
+        self.assertEqual([card["lien"] for card in specs["cards"]], [1, 8, 11])
+
+        for card in specs["cards"]:
+            source = listing_by_lien[card["lien"]]
+            self.assertEqual(card["municipalFacts"]["aan"], source["aan"])
+            self.assertEqual(card["municipalFacts"]["pids"], source["pids"])
+            self.assertEqual(card["municipalFacts"]["location"], source["location"])
+            self.assertEqual(
+                card["municipalFacts"]["recoveryAmount"],
+                source["recoveryAmount"],
+            )
+            self.assertTrue(set(card["evidenceClaimIds"]) <= valid_claim_ids)
+            self.assertIn("not legal access", " ".join(card["limitations"]).lower())
+            self.assertIn("not a title opinion", " ".join(card["limitations"]).lower())
+
+        mine_card = specs["cards"][1]
+        self.assertEqual(mine_card["archetype"], "mine-record-screening")
+        self.assertIn("incomplete", " ".join(mine_card["limitations"]).lower())
+        self.assertIn("50 metres", " ".join(mine_card["limitations"]).lower())
+
+    def test_atlas_prototype_receipt_binds_three_qgis4_renders(self) -> None:
+        specs = json.loads(ATLAS_SPEC_PATH.read_text(encoding="utf-8"))
+        receipt = json.loads(ATLAS_RECEIPT_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(receipt["assetStatus"], "review-candidate")
+        self.assertEqual(receipt["humanAcceptance"], "pending")
+        self.assertFalse(receipt["canonicalFigureManifestChanged"])
+        self.assertFalse(receipt["propertyOnlineUsed"])
+        self.assertEqual(receipt["renderer"], "QGIS 4")
+        self.assertRegex(receipt["qgisVersion"], r"^4\.")
+        self.assertEqual(
+            receipt["specSHA256"],
+            hashlib.sha256(ATLAS_SPEC_PATH.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            receipt["listingDataSHA256"],
+            hashlib.sha256(LISTING_PATH.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(len(receipt["files"]), 3)
+        self.assertEqual({item["lien"] for item in receipt["files"]}, {1, 8, 11})
+
+        expected_names = {card["filename"] for card in specs["cards"]}
+        self.assertEqual(
+            {item["filename"] for item in receipt["files"]}, expected_names
+        )
+        for item in receipt["files"]:
+            path = ATLAS_ROOT / item["filename"]
+            data = path.read_bytes()
+            self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+            self.assertEqual(struct.unpack(">II", data[16:24]), (2560, 1440))
+            self.assertEqual(item["sha256"], hashlib.sha256(data).hexdigest())
+            self.assertEqual((item["width"], item["height"]), (2560, 1440))
+
+        self.assertEqual(receipt["mineScreening"]["recordedOpeningCount"], 4)
+        self.assertGreater(
+            receipt["mineScreening"]["nearestRecordedOpeningMetres"], 1000
+        )
+        self.assertLess(receipt["mineScreening"]["nearestRecordedOpeningMetres"], 4000)
+        self.assertEqual(
+            {(item["width"], item["height"]) for item in receipt["reviewAids"]},
+            {(3840, 720), (1920, 360)},
+        )
+        for item in receipt["reviewAids"]:
+            path = ATLAS_ROOT / item["filename"]
+            self.assertEqual(
+                item["sha256"], hashlib.sha256(path.read_bytes()).hexdigest()
+            )
+
     def test_orientation_uses_phone_legible_halo_markers(self) -> None:
         renderer = (MAP_ROOT / "scripts/render_qgis_maps.py").read_text(
             encoding="utf-8"
@@ -315,7 +411,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         self.assertEqual(events["cbrm-2026-07-21"]["expectedListingCount"], 67)
         self.assertEqual(events["cbrm-2026-07-21"]["expectedPIDCount"], 68)
-        self.assertEqual(events["pictou-county-2026-01"]["expectedWithdrawnRowCount"], 3)
+        self.assertEqual(
+            events["pictou-county-2026-01"]["expectedWithdrawnRowCount"], 3
+        )
         self.assertEqual(events["richmond-county-2026-06-12"]["expectedPIDCount"], 3)
         self.assertEqual(
             events["annapolis-county-2026"]["mapReadiness"],

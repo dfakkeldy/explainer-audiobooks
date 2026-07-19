@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "title": "Inverness Packet Atlas — three-card prototype",
+  "assetStatus": "review-candidate",
+  "approvalScope": "three-prototype-development",
+  "approvalEvidence": "let's do it",
+  "canonicalFigureManifestChanged": false,
+  "propertyOnlineUsed": false,
+  "assessedOwnerNamesIncluded": false,
+  "saleDate": "2026-08-11",
+  "listingSnapshotDate": "2026-07-19",
+  "design": {
+    "canvas": "2560x1440",
+    "mapEngine": "QGIS 4",
+    "evidenceBands": [
+      "municipal fact",
+      "public-map screening observation",
+      "unresolved professional question"
+    ],
+    "palette": {
+      "municipalFact": "#17365D",
+      "mappedObservation": "#B56A18",
+      "unresolvedQuestion": "#A02C88",
+      "background": "#10151E"
+    }
+  },
+  "sources": {
+    "municipalPacket": "https://invernesscounty.ca/wp-content/uploads/2026/07/Tax-Sale_August-11.pdf",
+    "nsprd": "https://nsgiwa2.novascotia.ca/arcgis/rest/services/PLAN/PLAN_NSPRD_WM84/MapServer/0",
+    "nsAerial": "https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer",
+    "abandonedMineOpenings": "https://novascotia.ca/natr/meb/download/dp010.asp",
+    "abandonedMineOpeningsMetadata": "https://novascotia.ca/natr/meb/download/dp010md.asp",
+    "openGovernmentLicence": "https://support.novascotia.ca/services/open-data-portal-licence",
+    "restrictedMapServicesLicence": "https://nsgiwa.novascotia.ca/documents/licenses/MapService/Restricted%20Map%20Services%20License%20-%20NSPRD%20v1.pdf"
+  },
+  "cards": [
+    {
+      "lien": 1,
+      "filename": "atlas-lien-01-community-roadside.png",
+      "archetype": "community-roadside",
+      "title": "Lien 1 — roadside context, unresolved access",
+      "teachingJob": "Show why an apparent roadside parcel still needs registry, frontage, possession, planning, and condition research.",
+      "evidenceClaimIds": [
+        "DATA-002",
+        "DATA-005",
+        "LAND-004"
+      ],
+      "municipalFacts": {
+        "aan": "00603988",
+        "location": "Highway 19, Mabou",
+        "recoveryAmount": 15529.15,
+        "redeemable": false,
+        "pids": [
+          "50203256"
+        ]
+      },
+      "mapMode": "aerial-parcel",
+      "mapMinimumWidthMetres": 1400,
+      "mapSubtitle": "A visible road relationship is a clue, not access proof.",
+      "publicMapObservations": [
+        "One published PID resolved to one NSPRD polygon feature.",
+        "NS Aerial and the parcel graphic provide dated roadside context."
+      ],
+      "unresolvedQuestions": [
+        "Does registry evidence establish frontage or another legal access right?",
+        "What are the current title, possession, and physical-condition facts?",
+        "What does current planning permit, and what servicing evidence exists?"
+      ],
+      "limitations": [
+        "Mapped road proximity is not legal access.",
+        "The graphical parcel is not a survey; the card is not a title opinion.",
+        "Imagery does not establish occupancy, current condition, value, or permission to enter."
+      ]
+    },
+    {
+      "lien": 8,
+      "filename": "atlas-lien-08-mine-screening.png",
+      "archetype": "mine-record-screening",
+      "title": "Lien 8 — a mine record is a question, not a verdict",
+      "teachingJob": "Put the published Soapstone Mine location beside the official abandoned-mine inventory while preserving completeness, position, subsidence, and professional-review limits.",
+      "evidenceClaimIds": [
+        "DATA-002",
+        "DATA-005",
+        "ENV-005"
+      ],
+      "municipalFacts": {
+        "aan": "02976161",
+        "location": "Whycocomagh–Port Hood Road, Soapstone Mine",
+        "recoveryAmount": 25651.51,
+        "redeemable": true,
+        "pids": [
+          "50113968"
+        ]
+      },
+      "mapMode": "aerial-parcel-amo",
+      "mapMinimumWidthMetres": 0,
+      "mapSubtitle": "Four official Soapstone Mine records are mapped; two are nearly co-located.",
+      "amoFilter": {
+        "field": "S_Location",
+        "value": "BRIGEND BROOK (SOAPSTONE MINE)"
+      },
+      "publicMapObservations": [
+        "One published PID resolved to one NSPRD polygon feature.",
+        "The official 2024 AMO dataset contains four Brigend Brook (Soapstone Mine) opening records; the render reports their measured map distance from the parcel."
+      ],
+      "unresolvedQuestions": [
+        "Do recorded or undocumented mine workings affect the parcel or intended use?",
+        "What field, geotechnical, environmental, or agency review is appropriate?",
+        "What do title, mineral-rights, access, planning, and current site evidence establish?"
+      ],
+      "limitations": [
+        "The AMO inventory is incomplete and excludes subsidence expressions.",
+        "The Province says private-land AMO positions could be off by up to about 50 metres.",
+        "A mapped record is not a parcel-specific hazard finding; mapped road proximity is not legal access, and this card is not a title opinion."
+      ]
+    },
+    {
+      "lien": 11,
+      "filename": "atlas-lien-11-three-pid-group.png",
+      "archetype": "multi-pid-group",
+      "title": "Lien 11 — one lien, three parcel identifiers",
+      "teachingJob": "Keep a multi-PID municipal entry together and show why polygon count must not be mistaken for the number of sale entries.",
+      "evidenceClaimIds": [
+        "DATA-002",
+        "DATA-005",
+        "LAND-001"
+      ],
+      "municipalFacts": {
+        "aan": "04545133",
+        "location": "6509 Cabot Trail, Northeast Margaree",
+        "recoveryAmount": 9300.65,
+        "redeemable": true,
+        "pids": [
+          "50076777",
+          "50207794",
+          "50207802"
+        ]
+      },
+      "mapMode": "aerial-parcel",
+      "mapMinimumWidthMetres": 500,
+      "mapSubtitle": "Three PIDs belong to one published lien entry.",
+      "publicMapObservations": [
+        "Three published PIDs resolved to three NSPRD polygon features.",
+        "The three graphical features appear contiguous at this map scale."
+      ],
+      "unresolvedQuestions": [
+        "What legal interest is offered across the three PIDs?",
+        "Does each PID have lawful access, and do any rights or burdens differ?",
+        "How do planning, services, possession, condition, and intended use apply to the group?"
+      ],
+      "limitations": [
+        "Apparent graphical contiguity does not merge titles or prove a common boundary.",
+        "Mapped road proximity is not legal access.",
+        "The graphical parcels are not surveys; this card is not a title opinion or recommendation."
+      ]
+    }
+  ]
+}

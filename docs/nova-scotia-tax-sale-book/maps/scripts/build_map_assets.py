@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Build a local-only NSPRD working layer from owner-free public input.
+"""Build local-only GIS working sources from owner-free public input.
 
 The checked-in listing JSON deliberately excludes assessed-owner names. This
 script validates that public boundary and uses the listed PIDs to reconstruct a
-restricted-service geometry cache for local QGIS rendering. Public web maps
-should query the Province service at runtime instead of redistributing the
-cache.
+restricted-service geometry cache for local QGIS rendering. It also downloads
+the openly licensed 2024 Abandoned Mine Openings archive used by the atlas mine
+screening prototype. Public web maps should query the Province service at
+runtime instead of redistributing the NSPRD cache.
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ import json
 import hashlib
 import urllib.parse
 import urllib.request
+import zipfile
 from datetime import date
 from pathlib import Path
 
@@ -21,11 +23,11 @@ from pathlib import Path
 MAP_ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_DATA = MAP_ROOT / "data/inverness-tax-sale-2026-08-11.json"
 WORKING_GEOJSON = MAP_ROOT / "working/inverness-tax-sale-parcels.geojson"
+AMO_ARCHIVE = MAP_ROOT / "working/dp010v9sgkx_NS_Abandoned_Mines.zip"
 WORKING_METADATA = MAP_ROOT / "working/build-metadata.json"
 
 MUNICIPAL_SOURCE = (
-    "https://invernesscounty.ca/wp-content/uploads/2026/07/"
-    "Tax-Sale_August-11.pdf"
+    "https://invernesscounty.ca/wp-content/uploads/2026/07/" "Tax-Sale_August-11.pdf"
 )
 NSPRD_LAYER = (
     "https://nsgiwa2.novascotia.ca/arcgis/rest/services/PLAN/"
@@ -41,6 +43,14 @@ ATTRIBUTION = (
     "Scotia which is provided without warranty or liability for errors or "
     "omissions."
 )
+AMO_URL = (
+    "https://novascotia.ca/natr/meb/data/exe/" "dp010v9sgkx_NS_Abandoned_Mines.zip"
+)
+AMO_METADATA_URL = "https://novascotia.ca/natr/meb/download/dp010md.asp"
+OPEN_GOVERNMENT_LICENSE = (
+    "https://support.novascotia.ca/services/open-data-portal-licence"
+)
+AMO_SHAPE_PREFIX = "dp010v9sgkx_NS_Abandoned_Mines/d010ns/shp/d010nssh/d010nssh"
 
 
 def load_public_listings() -> tuple[dict[str, object], list[dict[str, object]]]:
@@ -97,9 +107,7 @@ def fetch_parcels(listings: list[dict[str, object]]) -> dict[str, object]:
     with urllib.request.urlopen(request, timeout=60) as response:
         collection = json.load(response)
 
-    listing_by_pid = {
-        pid: listing for listing in listings for pid in listing["pids"]
-    }
+    listing_by_pid = {pid: listing for listing in listings for pid in listing["pids"]}
     found: set[str] = set()
     for feature in collection.get("features", []):
         pid = feature.get("properties", {}).get("PID")
@@ -122,9 +130,35 @@ def fetch_parcels(listings: list[dict[str, object]]) -> dict[str, object]:
     return collection
 
 
+def fetch_amo_archive() -> str:
+    """Download and validate the fixed-version AMO archive used by QGIS."""
+    AMO_ARCHIVE.parent.mkdir(parents=True, exist_ok=True)
+    if not AMO_ARCHIVE.exists():
+        request = urllib.request.Request(
+            AMO_URL, headers={"User-Agent": "KinNoKiLabs-map-build/1"}
+        )
+        with urllib.request.urlopen(request, timeout=120) as response:
+            payload = response.read()
+        temporary = AMO_ARCHIVE.with_suffix(".zip.download")
+        temporary.write_bytes(payload)
+        temporary.replace(AMO_ARCHIVE)
+
+    required_members = {
+        f"{AMO_SHAPE_PREFIX}.{extension}" for extension in ("shp", "shx", "dbf", "prj")
+    }
+    with zipfile.ZipFile(AMO_ARCHIVE) as archive:
+        missing = sorted(required_members - set(archive.namelist()))
+    if missing:
+        raise RuntimeError(
+            "AMO archive is missing required shapefile members: " + ", ".join(missing)
+        )
+    return hashlib.sha256(AMO_ARCHIVE.read_bytes()).hexdigest()
+
+
 def main() -> None:
     public_record, listings = load_public_listings()
     parcels = fetch_parcels(listings)
+    amo_archive_hash = fetch_amo_archive()
     WORKING_GEOJSON.parent.mkdir(parents=True, exist_ok=True)
     WORKING_GEOJSON.write_text(
         json.dumps(parcels, separators=(",", ":"), ensure_ascii=False) + "\n",
@@ -139,6 +173,19 @@ def main() -> None:
         "nsprdLayer": NSPRD_LAYER,
         "license": LICENSE_URL,
         "attribution": ATTRIBUTION,
+        "abandonedMineOpenings": {
+            "product": "DP ME 10, Version 9, 2024",
+            "archiveURL": AMO_URL,
+            "metadataURL": AMO_METADATA_URL,
+            "archiveSHA256": amo_archive_hash,
+            "license": OPEN_GOVERNMENT_LICENSE,
+            "workingArchive": AMO_ARCHIVE.name,
+            "publicDistributionBoundary": (
+                "The source is openly licensed. This build keeps the full "
+                "archive local and publishes only the attributed screening "
+                "view and bounded derived observations."
+            ),
+        },
         "publicDistributionBoundary": (
             "Rendered views may be displayed with attribution. Keep this raw "
             "geometry snapshot local; a public web map should query the "
@@ -148,9 +195,7 @@ def main() -> None:
         "requestedPIDCount": len(pids),
         "returnedFeatureCount": len(parcels.get("features", [])),
     }
-    WORKING_METADATA.write_text(
-        json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
-    )
+    WORKING_METADATA.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(metadata, indent=2))
 
 

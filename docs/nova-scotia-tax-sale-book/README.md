@@ -27,7 +27,10 @@ ranking, or an advertisement disguised as education.
   2026 listing facts;
 - `maps/qgis/`: the editable QGIS 4.0.2 project used for the current proofs;
 - `maps/exports/`: two attributed 2560-by-1440 development renders;
-- `maps/scripts/`: a reproducible local NSPRD fetch and QGIS 4 render workflow;
+- `maps/atlas-prototypes/`: three owner-free QGIS 4 evidence-card review
+  candidates plus full/phone contact sheets, specs and render receipt;
+- `maps/scripts/`: a reproducible local NSPRD/AMO source build and QGIS 4 render
+  workflow;
 - `figures/`: the deterministic diagram renderer, teaching/provenance
   specifications, contact sheets and hash-bound receipt for figures 03–08, 39
   and 40; and
@@ -37,6 +40,8 @@ ranking, or an advertisement disguised as education.
 ![Inverness County auction orientation proof](maps/exports/inverness-all-properties-orientation.png)
 
 ![Lien 1 aerial and parcel-context proof](maps/exports/inverness-lien-01-aerial.png)
+
+![Three-card Inverness Packet Atlas phone-stage review](maps/atlas-prototypes/atlas-prototype-phone-contact-sheet.png)
 
 The schedule has 45 liens and 47 unique PIDs. NSPRD returned 53 polygon
 features because four PIDs are represented by multiple mapped pieces. The map
@@ -65,11 +70,14 @@ packet and its reproducible QGIS proofs.
 The project is in `governed-final` pilot development. Deep research, the
 approved argument outline, structured chapter plans, coverage ledger, forty-row
 figure manifest, two QGIS proofs, and eight reproducible diagram candidates
-exist. Dan approved the revised twelve-chapter outline and forty-figure visual
+exist. Three additional Inverness Packet Atlas cards are separate review
+candidates outside the forty-figure manifest. Dan approved the revised
+twelve-chapter outline and forty-figure visual
 direction for pilot development on 2026-07-19. Accepted first-section voice,
-the narrated comprehension-pilot verdict, full manuscript, independent learning
-and prose review, accepted final figures, cover selection, EPUB, Echo narration,
-public package verification, and full listening all remain pending.
+the narrated comprehension-pilot verdict, atlas-card acceptance and batch
+authorization, full manuscript, independent learning and prose review, accepted
+final figures, cover selection, EPUB, Echo narration, public package
+verification, and full listening all remain pending.
 
 ## Safety and currency
 
@@ -86,6 +94,9 @@ the [Inverness County tax-sale page](https://invernesscounty.ca/services/finance
 the [August 11, 2026 municipal packet](https://invernesscounty.ca/wp-content/uploads/2026/07/Tax-Sale_August-11.pdf),
 the [NSPRD parcel service](https://nsgiwa2.novascotia.ca/arcgis/rest/services/PLAN/PLAN_NSPRD_WM84/MapServer/0),
 and the [NS Aerial service](https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer).
+The Lien 8 prototype additionally uses the Province's [DP ME 10 Version 9
+Abandoned Mine Openings product](https://novascotia.ca/natr/meb/download/dp010.asp)
+under the Nova Scotia Open Government Licence.
 
 Rendered provincial-service views carry the required attribution inside each
 image. See [the map workspace](maps/README.md) for the exact licence boundary

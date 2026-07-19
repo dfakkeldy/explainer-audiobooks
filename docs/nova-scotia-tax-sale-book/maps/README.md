@@ -13,10 +13,15 @@ municipal list.
 - `working/inverness-tax-sale-parcels.geojson`: local build snapshot queried
   from the NSPRD service. It is ignored by Git; keep this raw geometry out of
   public distribution.
+- `working/dp010v9sgkx_NS_Abandoned_Mines.zip`: ignored local copy of the
+  openly licensed 2024 abandoned-mine-opening product used by one prototype.
 - `qgis/inverness-tax-sale-2026-08-11.qgz`: editable QGIS project with an
   OpenStreetMap orientation layer, NS Aerial detail layer and the 2026 auction
   parcels, built and rendered with QGIS 4.0.2.
 - `exports/`: 2560-by-1440 publication/video proofs.
+- `atlas-prototypes/`: three attributed 2560-by-1440 evidence-card review
+  candidates, full/phone contact sheets, teaching specs and a hash-bound QGIS 4
+  receipt. These are outside the canonical forty-figure manifest.
 - `scripts/`: repeatable data and QGIS-render steps.
 - `build-metadata.json`: receipt for the checked-in proof render. A fresh fetch
   writes its current metadata beside the ignored GeoJSON under `working/`.
@@ -34,9 +39,10 @@ python3 scripts/build_map_assets.py
 ```
 
 That command validates the owner-free listing JSON, queries the Province's
-NSPRD service for every PID, and writes the ignored working GeoJSON. It fails if
-a listed PID is missing or if the public input does not preserve the explicit
-owner-exclusion contract.
+NSPRD service for every PID, writes the ignored working GeoJSON, and downloads
+and validates the fixed-version DP ME 10 Version 9 source archive. It fails if
+a listed PID is missing, the AMO shapefile members are absent or the public
+input does not preserve the explicit owner-exclusion contract.
 
 The proof renderer requires QGIS 4. On macOS, the checked-in wrapper reproduces
 the producing environment:
@@ -46,9 +52,10 @@ scripts/render_qgis4_macos.sh
 ```
 
 Set `QGIS4_APP` if QGIS is installed somewhere other than
-`/Applications/QGIS-final-4_0_2.app`. Other platforms should launch
-`render_qgis_maps.py` through their QGIS 4 Python environment. The checked-in
-project and proof receipt identify QGIS 4.0.2 as the producing version.
+`/Applications/QGIS-final-4_0_2.app`. Other platforms should launch both
+`render_qgis_maps.py` and `render_atlas_prototypes.py` through their QGIS 4
+Python environment. The checked-in project and render receipts identify QGIS
+4.0.2 as the producing version.
 
 ## Source and licence boundary
 
@@ -60,6 +67,13 @@ NSPRD property layer:
 
 NS Aerial basemap:
 <https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer>
+
+Abandoned Mine Openings DP ME 10 Version 9 and metadata:
+<https://novascotia.ca/natr/meb/download/dp010.asp> and
+<https://novascotia.ca/natr/meb/download/dp010md.asp>
+
+Nova Scotia Open Government Licence:
+<https://support.novascotia.ca/services/open-data-portal-licence>
 
 OpenStreetMap orientation basemap:
 <https://www.openstreetmap.org/copyright>
