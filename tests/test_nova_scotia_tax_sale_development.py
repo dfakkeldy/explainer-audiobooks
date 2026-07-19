@@ -14,6 +14,12 @@ MAP_ROOT = PACKET_ROOT / "maps"
 LISTING_PATH = MAP_ROOT / "data/inverness-tax-sale-2026-08-11.json"
 METADATA_PATH = MAP_ROOT / "build-metadata.json"
 PROJECT_PATH = MAP_ROOT / "qgis/inverness-tax-sale-2026-08-11.qgz"
+MUNICIPAL_SOURCE_REGISTER = (
+    PACKET_ROOT / "research/municipal-map-source-register.json"
+)
+NS_MARKS_PROMPT = (
+    PACKET_ROOT / "research/ns-marks-multi-municipality-map-prompt.md"
+)
 ATTRIBUTION = (
     "Contains information obtained under license from the Province of Nova "
     "Scotia which is provided without warranty or liability for errors or "
@@ -109,6 +115,33 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
         )
         self.assertEqual(ast.literal_eval(attribution_node.value), ATTRIBUTION)
+
+    def test_multi_municipality_map_handoff_is_owner_free_and_fail_closed(self) -> None:
+        register = json.loads(MUNICIPAL_SOURCE_REGISTER.read_text(encoding="utf-8"))
+        events = {event["id"]: event for event in register["events"]}
+
+        self.assertEqual(events["cbrm-2026-07-21"]["expectedListingCount"], 67)
+        self.assertEqual(events["cbrm-2026-07-21"]["expectedPIDCount"], 68)
+        self.assertEqual(events["pictou-county-2026-01"]["expectedWithdrawnRowCount"], 3)
+        self.assertEqual(events["richmond-county-2026-06-12"]["expectedPIDCount"], 3)
+        self.assertEqual(
+            events["annapolis-county-2026"]["mapReadiness"],
+            "blocked-pending-verifiable-pid-extraction",
+        )
+        self.assertEqual(events["chester-2026"]["eventStatusAsOfCheck"], "no-sale")
+
+        public_fields = {
+            field.lower()
+            for event in events.values()
+            for field in event.get("publicFields", [])
+        }
+        self.assertFalse({"owner", "ownername", "successfulbidder"} & public_fields)
+
+        prompt = NS_MARKS_PROMPT.read_text(encoding="utf-8")
+        self.assertIn("67 listings/68 unique PIDs", prompt)
+        self.assertIn("Historical 2026 events", prompt)
+        self.assertIn("Do not add parcel records yet", prompt)
+        self.assertIn("Never write those names", prompt)
 
 
 if __name__ == "__main__":
