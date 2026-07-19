@@ -51,6 +51,13 @@ package.
   narrated-pilot development gates. It does not accept the first-section voice,
   accept a future pilot, authorize the full manuscript or narration, accept the
   final figure set, or authorize finished-audiobook publication.
+- **12:43:26 — Property Online excluded from public-source material:** “I have
+  access to a ns property online account, but I don't think we could publish
+  anything from that.” The proposed Inverness Packet Atlas therefore treats
+  Property Online as a private research boundary, not a publication source. No
+  screenshots, plans, registry documents, owner information or
+  subscription-derived extracts enter the public book without separate written
+  authorization for the precise reuse.
 
 ## Gate status
 

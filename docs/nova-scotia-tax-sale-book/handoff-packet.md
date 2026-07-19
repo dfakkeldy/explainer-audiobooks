@@ -2,7 +2,8 @@
 
 **Status: pilot development authorized — not authorized for canonical full-book
 production.** Human outline approval is recorded. First-section acceptance and
-a narrated comprehension-pilot decision remain absent.
+a narrated comprehension-pilot decision remain absent. A separate owner-free
+Inverness Packet Atlas is proposed outside the forty-figure manifest.
 
 ## Production request
 
@@ -17,6 +18,9 @@ unranked.
 
 - Privacy: public-safe development; assessed-owner names, subscription records,
   raw NSPRD geometry and live-property scoring are excluded.
+- Property Online: private research boundary only; no screenshots, plans,
+  registry documents, owner information or subscription-derived extracts in
+  the public package without written authorization for the precise reuse.
 - Permission to publish: yes for the eventual public book; this is not finished
   publication authorization.
 - Length target: 42,800 words, estimated range 40,000–45,000.
@@ -132,6 +136,12 @@ route are deterministic review candidates. The county overview is a QGIS 4
 halo-marker orientation view; the real Lien 1 aerial remains a pre-gate
 development specimen and cannot enter canonical chapters before its separate
 source, rights, event-status, public-safety and Echo-stage review.
+
+`research/inverness-packet-atlas-plan.md` proposes 45 lien cards plus overview
+and comparison frames as a separate appendix/slideshow companion. It does not
+alter the approved forty figures. Its source-rights ledger, three-card
+prototype, full render and live-event-status refresh each require separate
+approval.
 
 ## Style notes
 
