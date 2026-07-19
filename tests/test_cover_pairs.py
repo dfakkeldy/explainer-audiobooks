@@ -138,6 +138,49 @@ class CoverPairTests(unittest.TestCase):
         self.assertEqual(square_receipt["output"], self.outputs[1].name)
         self.assertEqual(square_receipt["thumbnail"], self.outputs[3].name)
 
+    def test_pair_allows_cover_specific_brand_placement_and_asset(self) -> None:
+        portrait_brand = self.root / "brand-on-dark.svg"
+        square_brand = self.root / "brand-on-light.svg"
+        portrait_brand.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+            '<rect width="100" height="100" fill="#FF0000"/></svg>',
+            encoding="utf-8",
+        )
+        square_brand.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+            '<rect width="100" height="100" fill="#00FF00"/></svg>',
+            encoding="utf-8",
+        )
+        portrait_box = [1300, 1900, 180, 180]
+        square_box = [1900, 300, 240, 240]
+        for spec_path, brand, box in (
+            (self.portrait_spec, portrait_brand, portrait_box),
+            (self.square_spec, square_brand, square_box),
+        ):
+            payload = json.loads(spec_path.read_text(encoding="utf-8"))
+            payload["layers"].append(
+                {
+                    "kind": "brand_mark",
+                    "path": brand.name,
+                    "box": box,
+                    "opacity": 1,
+                    "blend_mode": "normal",
+                    "purpose": "identify KinNoKi Labs as the publisher",
+                }
+            )
+            spec_path.write_text(json.dumps(payload), encoding="utf-8")
+
+        self.render_pair(self.portrait_spec, self.square_spec)
+
+        with Image.open(self.outputs[0]) as image:
+            self.assertEqual((255, 0, 0), image.getpixel((1390, 1990)))
+        with Image.open(self.outputs[1]) as image:
+            self.assertEqual((0, 255, 0), image.getpixel((2020, 420)))
+        portrait_receipt = json.loads(self.outputs[4].read_text(encoding="utf-8"))
+        square_receipt = json.loads(self.outputs[5].read_text(encoding="utf-8"))
+        self.assertEqual(portrait_brand.name, portrait_receipt["brand_mark"]["source"])
+        self.assertEqual(square_brand.name, square_receipt["brand_mark"]["source"])
+
     def test_second_render_failure_preserves_all_existing_pair_files(self) -> None:
         sentinels = self.install_existing_outputs()
         real_render = cover_pairs.render_cover_spec
