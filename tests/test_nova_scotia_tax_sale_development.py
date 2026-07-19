@@ -106,6 +106,62 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             conversation,
         )
 
+    def test_first_section_candidate_is_grounded_and_still_unaccepted(self) -> None:
+        continuity = json.loads(
+            (RESEARCH_ROOT / "continuity.json").read_text(encoding="utf-8")
+        )
+        pilot_readme = (PACKET_ROOT / "pilot/README.md").read_text(encoding="utf-8")
+        candidate = (PACKET_ROOT / "pilot/first-section-candidate.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertEqual(continuity["checkpoints"], [])
+        self.assertEqual(len(continuity["draftContexts"]), 1)
+        context = continuity["draftContexts"][0]
+        self.assertEqual(context["section"], "ch01-s01")
+        self.assertEqual(
+            context["specificClaims"], ["OPS-004", "DATA-002", "DATA-005"]
+        )
+        self.assertEqual(context["status"], "unaccepted-first-section-candidate")
+
+        self.assertIn("not the accepted voice exemplar", pilot_readme.lower())
+        self.assertIn("no pilot audio", pilot_readme.lower())
+        self.assertTrue(candidate.startswith("## Chapter 1 — The Last Scene First"))
+        self.assertGreaterEqual(len(candidate.split()), 800)
+        self.assertLessEqual(len(candidate.split()), 1500)
+        self.assertNotIn("![", candidate)
+        self.assertNotRegex(
+            candidate.lower(),
+            r"tattoo this|burn this into|let that land|the honest answer|the whole point",
+        )
+
+    def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(self) -> None:
+        atlas = (RESEARCH_ROOT / "inverness-packet-atlas-plan.md").read_text(
+            encoding="utf-8"
+        )
+        visuals = (RESEARCH_ROOT / "visuals.md").read_text(encoding="utf-8")
+        handoff = (PACKET_ROOT / "handoff-packet.md").read_text(encoding="utf-8")
+        conversation = (RESEARCH_ROOT / "conversation-log.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("45 lien entries", atlas)
+        self.assertIn("47 unique PIDs", atlas)
+        self.assertIn("53 NSPRD polygon features", atlas)
+        self.assertIn("outside the approved forty-figure manifest", atlas.lower())
+        self.assertIn("No assessed-owner names", atlas)
+        self.assertIn("not legal access", atlas.lower())
+        self.assertIn("not a wetland determination", atlas.lower())
+        self.assertIn("not a title opinion", atlas.lower())
+        self.assertIn("Property Online is a private research boundary", atlas)
+        self.assertIn("no screenshots, plans", handoff.lower())
+        self.assertIn(
+            "I have access to a ns property online account, but I don't think",
+            " ".join(conversation.split()),
+        )
+        self.assertIn("Inverness Packet Atlas", visuals)
+        self.assertIn("does not change the forty canonical figures", visuals)
+
     def test_payment_and_stage_outcomes_are_distinct(self) -> None:
         ledger = json.loads(
             (RESEARCH_ROOT / "coverage-ledger.json").read_text(encoding="utf-8")

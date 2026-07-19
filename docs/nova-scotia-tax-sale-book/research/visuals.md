@@ -76,6 +76,21 @@ review; caption and non-recommendation review; Echo phone/desktop and video
 stage proof; then human visual acceptance. A failed gate retires or replaces
 the specimen; it does not inherit approval from its earlier production date.
 
+## Proposed Inverness Packet Atlas
+
+The separate `inverness-packet-atlas-plan.md` proposes an owner-free appendix
+and slideshow companion: one repeatable evidence card for each of the 45 liens,
+plus orientation, reconciliation and source-limit dashboards. It would combine
+municipal packet facts with rights-checked public mapping, clearly separated
+screening observations and professional handoffs. Property Online screenshots,
+documents, owner information and subscription-derived extracts are excluded.
+
+This proposal **does not change the forty canonical figures**. The atlas stays
+outside the approved manifest until its card structure, source-and-rights
+ledger, three-card prototype, live-event-status refresh and complete rendered
+set each pass a separate approval gate. The existing Lien 1 aerial is only a
+pre-gate specimen for that discussion.
+
 ## Purpose
 
 This book should be a strong Echo Visual Listening and video-export title, not

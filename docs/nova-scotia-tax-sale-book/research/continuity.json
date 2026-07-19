@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 2,
+  "draftContexts": [
+    {
+      "section": "ch01-s01",
+      "status": "unaccepted-first-section-candidate",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "previousSectionTextOrSummary": "Opening section; there is no previous section.",
+      "sectionJob": "Open the municipal packet and establish the listener's governing question.",
+      "specificClaims": [
+        "OPS-004",
+        "DATA-002",
+        "DATA-005"
+      ],
+      "throughlineAdvance": "Separate the municipal information product from a decision and from value before any terminology arrives.",
+      "payoff": "The research gap becomes visible without belittling the municipality's work.",
+      "landingBeat": "The listener wants to know why the parcel is being sold and what each source can actually establish.",
+      "mustNotRepeat": [],
+      "draftPath": "pilot/first-section-candidate.md",
+      "authorizationPath": "research/learning-outline.json",
+      "recordedBeforeDraft": true
+    }
+  ],
+  "checkpoints": []
+}
