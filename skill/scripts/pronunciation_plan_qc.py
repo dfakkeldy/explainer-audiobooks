@@ -10,6 +10,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from fiction_production_qc import verify_fiction_receipt
+
 
 SCHEMA_VERSION = 1
 PHASES = {"planning", "full-render"}
@@ -87,20 +89,25 @@ def validate_plan(run_root: Path, phase: str) -> dict[str, object]:
 
     chapters_dir = run_root / "chapters"
     if phase == "planning":
-        outline = load_json(
-            run_root / "research" / "learning-outline.json", "learning outline"
-        )
-        outline_chapters = outline.get("chapters")
-        if not isinstance(outline_chapters, list) or not outline_chapters:
-            raise ValueError("learning outline chapters must be a non-empty list")
-        chapter_names: set[str] = set()
-        for index, chapter in enumerate(outline_chapters):
-            if not isinstance(chapter, dict):
-                raise ValueError(f"learning outline chapters[{index}] must be an object")
-            name = require_string(chapter.get("file"), f"learning outline chapters[{index}].file")
-            if name in chapter_names:
-                raise ValueError(f"duplicate learning outline chapter: {name}")
-            chapter_names.add(name)
+        fiction_receipt_path = run_root / "research" / "fiction-production-receipt.json"
+        if fiction_receipt_path.is_file():
+            fiction_receipt = verify_fiction_receipt(chapters_dir, fiction_receipt_path)
+            chapter_names = set(fiction_receipt["canonicalChapterSHA256"])
+        else:
+            outline = load_json(
+                run_root / "research" / "learning-outline.json", "learning outline"
+            )
+            outline_chapters = outline.get("chapters")
+            if not isinstance(outline_chapters, list) or not outline_chapters:
+                raise ValueError("learning outline chapters must be a non-empty list")
+            chapter_names = set()
+            for index, chapter in enumerate(outline_chapters):
+                if not isinstance(chapter, dict):
+                    raise ValueError(f"learning outline chapters[{index}] must be an object")
+                name = require_string(chapter.get("file"), f"learning outline chapters[{index}].file")
+                if name in chapter_names:
+                    raise ValueError(f"duplicate learning outline chapter: {name}")
+                chapter_names.add(name)
         hashes: dict[str, str] = {}
         chapter_text: dict[str, str] = {}
     else:

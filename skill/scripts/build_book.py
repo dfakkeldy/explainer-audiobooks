@@ -44,6 +44,7 @@ import zipfile
 from pathlib import Path
 
 from cover_receipts import load_selection, sha256_file, verify_package
+from fiction_production_qc import verify_fiction_receipt
 from learning_design_qc import verify_learning_receipt
 from prose_qc import verify_style_receipt
 
@@ -95,9 +96,11 @@ def parse_chapter(path):
 
 def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover=None,
           contributor="", cover_selection=None, m4b_cover=None, prose_receipt=None,
-          learning_receipt=None, non_narrated_appendix=None):
+          learning_receipt=None, fiction_receipt=None, non_narrated_appendix=None):
     if learning_receipt is not None:
         verify_learning_receipt(Path(chapters_dir), Path(learning_receipt))
+    if fiction_receipt is not None:
+        verify_fiction_receipt(Path(chapters_dir), Path(fiction_receipt))
     if prose_receipt is not None:
         verify_style_receipt(Path(chapters_dir), Path(prose_receipt))
     selection_path = Path(cover_selection) if cover_selection else None
@@ -437,6 +440,11 @@ def main():
         help="Passed learning-design receipt that must match the canonical chapters",
     )
     learning_gate.add_argument(
+        "--fiction-receipt",
+        default=None,
+        help="Passed private first-listen fiction receipt matching the canonical chapters",
+    )
+    learning_gate.add_argument(
         "--legacy-without-learning-receipt",
         action="store_true",
         help="Reproduce a legacy artifact only; forbidden for new or revised books",
@@ -451,11 +459,13 @@ def main():
         ap.error("pilot builds require --slug ending in -pilot")
     if (
         a.learning_receipt is None
+        and a.fiction_receipt is None
         and not a.legacy_without_learning_receipt
         and not a.learning_pilot
     ):
         ap.error(
             "current builds require --learning-receipt; use "
+            "--fiction-receipt for a private first-listen fiction package, "
             "--learning-pilot for a nonpackage pilot or "
             "--legacy-without-learning-receipt only to reproduce an old artifact"
         )
@@ -463,7 +473,7 @@ def main():
         print("PILOT ONLY: not a governed book package or learning-completion claim")
     build(a.chapters_dir, a.out_dir, a.title, a.author, a.subtitle, a.slug, a.lang, a.cover,
           a.contributor, a.cover_selection, a.m4b_cover, a.prose_receipt,
-          a.learning_receipt, a.non_narrated_appendix)
+          a.learning_receipt, a.fiction_receipt, a.non_narrated_appendix)
 
 
 if __name__ == "__main__":

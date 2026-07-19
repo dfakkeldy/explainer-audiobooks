@@ -257,6 +257,39 @@ receive an iCloud Books reading copy only on an explicit user request. Public-sa
 final packages may also publish to `books/<slug>/` only through the governed
 public sync described below.
 
+## Fiction Production QC
+
+An explicitly authorized private fiction handoff uses
+`research/fiction-production-receipt.json` instead of a learning-design receipt.
+The receipt binds canonical chapter hashes to the production authorization,
+story bible, final continuity record, full-manuscript revision review, and prose
+QC. It must remain `first-listen`, `unattended-first-listen`, private,
+not publishable, and human-reading pending. A later negative human verdict
+overrides it.
+
+Build the EPUB and combined Markdown with the normal paired-cover arguments and
+the fiction-specific gate:
+
+```bash
+/usr/local/bin/python3 skill/scripts/build_book.py \
+  --chapters-dir "$RUN_ROOT/chapters" \
+  --out-dir "$DIST" \
+  --title "$TITLE" \
+  --author "Dan Fakkeldy" \
+  --contributor "$CONTRIBUTOR" \
+  --subtitle "$SUBTITLE" \
+  --slug "$SLUG" \
+  --cover "$PAIR/cover.png" \
+  --m4b-cover "$PAIR/m4b-cover.png" \
+  --cover-selection "$DIST/cover-selection.json" \
+  --fiction-receipt "$RUN_ROOT/research/fiction-production-receipt.json"
+```
+
+Do not synthesize nonfiction learning records for a novel, and do not use
+`--legacy-without-learning-receipt` for a new fiction edition. The fiction
+receipt proves manuscript-production evidence, not comprehension or learning
+transfer.
+
 ## Learning Design QC
 
 Read `../../skill/references/road-book-mode.md` and

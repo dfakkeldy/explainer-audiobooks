@@ -81,6 +81,11 @@ request.
    current bible and ledgers. A ready-to-listen or overnight request is explicit
    private-production authorization; other fiction requests require a separate
    production request.
+9. **Fiction keeps its own proof.** Before an authorized private EPUB build,
+   create `research/fiction-production-receipt.json` and bind the final chapter
+   hashes, production authorization, story bible, final continuity state,
+   manuscript review, and prose QC. Build with `--fiction-receipt`; do not use
+   the legacy bypass. Do not pretend fiction passed a learning-design gate.
 
 ## Workflow
 
@@ -200,6 +205,27 @@ payoffs or deliberate ambiguity, and reconcile the bible to final canon.
 **Done when:** chapters, bible, continuity ledgers, revision record, and a clean
 combined Markdown manuscript agree; unresolved creative choices are explicitly
 listed rather than silently guessed.
+
+### 10. Hand authorized fiction to production
+
+When the user explicitly authorizes private production, preserve the accepted
+chapter bytes and create `research/fiction-production-receipt.json` with:
+
+- `status: first-listen`, `productionMode: unattended-first-listen`,
+  `privacy: private`, and `permissionToPublish: false`;
+- `humanReadingStatus: pending`, negative-human-verdict authority, and an
+  explicit statement that the receipt does not certify human acceptance;
+- SHA-256 bindings for every canonical `ch*.md` file;
+- path-and-hash bindings for the unattended authorization, story bible, final
+  continuity record, full-manuscript revision review, and final prose-QC record;
+- passing manuscript-closure, bible, continuity, revision, and prose gates.
+
+The audiobook production lane then builds with
+`build_book.py --fiction-receipt research/fiction-production-receipt.json` and
+continues through the normal paired-cover, Echo narration, alignment, media QC,
+and private-delivery rules. A changed chapter or evidence artifact invalidates
+the receipt. This gate authorizes packaging; it does not authorize publication
+or claim a human read/listen verdict.
 
 ## Common Pitfalls
 
