@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "assetStatus": "review-candidate",
+  "renderer": "QGIS 4",
+  "qgisVersion": "4.0.2-Norrk\u00f6ping",
+  "renderedDate": "2026-07-19",
+  "specPath": "atlas-prototype-specs.json",
+  "specSHA256": "b8f0de399d2a54f7dfb479bbb2e193af8b1c541e28caf6f442eaae1c13f0fe15",
+  "listingDataSHA256": "b69a50e76fd87fc6785e4742367796a4d2ee9f013b9c0ebd002868e01d5c3be4",
+  "amoArchiveSHA256": "058e7e344849dade89e0c10a199e4795b51a27d711e2069849ebb37a2857d147",
+  "canonicalFigureManifestChanged": false,
+  "propertyOnlineUsed": false,
+  "humanAcceptance": "pending",
+  "files": [
+    {
+      "lien": 1,
+      "filename": "atlas-lien-01-community-roadside.png",
+      "sha256": "c5be28f2a1e65e8167903ec84e5e2903db56a6622a91a45dd5f30550894c51ce",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "lien": 8,
+      "filename": "atlas-lien-08-mine-screening.png",
+      "sha256": "a3556f42ba19a72087edface63ed798dba8b8677457cd0e41f6a3b22f5570496",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "lien": 11,
+      "filename": "atlas-lien-11-three-pid-group.png",
+      "sha256": "8a8a2a94500ac4566461eb462271c491024adefe3068d2d4ae71fb0a993ae1ff",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    }
+  ],
+  "reviewAids": [
+    {
+      "filename": "atlas-prototype-contact-sheet.png",
+      "sha256": "991be7178cf5113ff3aa5971945fc16f0f07dd3f174dc9bee75ffd64dc914ec6",
+      "width": 3840,
+      "height": 720
+    },
+    {
+      "filename": "atlas-prototype-phone-contact-sheet.png",
+      "sha256": "501627fb7839491b9409498c43f233eeb0d4c84cbb2bc13c08de27b282179527",
+      "width": 1920,
+      "height": 360
+    }
+  ],
+  "mineScreening": {
+    "sourceProduct": "DP ME 10, Version 9, 2024",
+    "filter": "S_Location = BRIGEND BROOK (SOAPSTONE MINE)",
+    "recordedOpeningCount": 4,
+    "nearestRecordedOpeningMetres": 1939,
+    "measurement": "Minimum planar distance after transforming the NSPRD graphic into the AMO layer CRS.",
+    "limitations": [
+      "Inventory is incomplete.",
+      "Database excludes surface expressions of subsidence.",
+      "Private-land positions could be inaccurate by up to about 50 metres."
+    ]
+  }
+}

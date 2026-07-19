@@ -58,10 +58,16 @@ package.
   screenshots, plans, registry documents, owner information or
   subscription-derived extracts enter the public book without separate written
   authorization for the precise reuse.
+- **14:15:04 — three-card atlas prototype development:** “let's do it” This
+  authorizes the proposed next gate: render the community/roadside,
+  mine-screening and three-PID prototype cards for review. It does not accept
+  the resulting cards, authorize the remaining 42 lien cards, change the forty
+  canonical figures or authorize narration or publication.
 
 ## Gate status
 
 The revised twelve-chapter argument outline, added failure paths and forty-figure
 direction are approved for pilot development. The first-section voice exemplar,
 narrated comprehension-pilot verdict, canonical full drafting, pronunciation
-acceptance, final figure acceptance, and publication remain downstream gates.
+acceptance, prototype-atlas visual acceptance, final figure acceptance, and
+publication remain downstream gates.

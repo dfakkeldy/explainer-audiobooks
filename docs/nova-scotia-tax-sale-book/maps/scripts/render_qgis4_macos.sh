@@ -20,3 +20,12 @@ env \
   PROJ_DATA="$qgis_resources/qgis/proj" \
   "$qgis_python" \
   "$script_dir/render_qgis_maps.py"
+
+env \
+  QT_QPA_PLATFORM=offscreen \
+  QGIS_PREFIX_PATH="$qgis_app" \
+  PYTHONPATH="$qgis_resources/python3.11:$qgis_resources/python3.11/lib-dynload:$qgis_resources/python3.11/site-packages" \
+  DYLD_LIBRARY_PATH="$qgis_app/Contents/Frameworks" \
+  PROJ_DATA="$qgis_resources/qgis/proj" \
+  "$qgis_python" \
+  "$script_dir/render_atlas_prototypes.py"

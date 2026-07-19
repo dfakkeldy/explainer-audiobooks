@@ -143,6 +143,12 @@ alter the approved forty figures. Its source-rights ledger, three-card
 prototype, full render and live-event-status refresh each require separate
 approval.
 
+Dan authorized development of the three-card prototype on 2026-07-19 with
+“let's do it.” QGIS 4 review candidates for Liens 1, 8 and 11 now live under
+`maps/atlas-prototypes/`, with a hash-bound receipt and full/phone contact
+sheets. Human visual acceptance, actual Echo-stage proof, the remaining 42
+cards and publication remain unapproved.
+
 ## Style notes
 
 - Humanizer pass: required after substantive review, not as a fact-changing

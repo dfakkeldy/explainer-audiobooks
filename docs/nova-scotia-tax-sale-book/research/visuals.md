@@ -91,6 +91,22 @@ ledger, three-card prototype, live-event-status refresh and complete rendered
 set each pass a separate approval gate. The existing Lien 1 aerial is only a
 pre-gate specimen for that discussion.
 
+Dan authorized the three-card prototype development step on 2026-07-19 with
+“let's do it.” QGIS 4.0.2 review candidates now exist for Lien 1
+(community/roadside context), Lien 8 (abandoned-mine-record screening) and Lien
+11 (one lien with three PIDs). Their specs, full/phone contact sheets and
+hash-bound receipt live under `maps/atlas-prototypes/`. The mine card uses four
+official 2024 Brigend Brook (Soapstone Mine) records and reports the nearest
+displayed record approximately 1,939 metres from the NSPRD graphic. It also
+states the database's incompleteness, subsidence exclusion and approximately
+50-metre private-land positional caveat.
+
+The first full/phone visual inspection tightened the Lien 11 extent and combined
+two nearly co-located mine-record labels. Human card acceptance and an actual
+Echo phone/desktop and video-stage proof remain pending. This development step
+does not approve the 42 remaining lien cards, canonical insertion, narration,
+batch rendering or publication.
+
 ## Purpose
 
 This book should be a strong Echo Visual Listening and video-export title, not
