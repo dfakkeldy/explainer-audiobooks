@@ -1,12 +1,13 @@
 # Beyond the Tax-Sale Packet — handoff packet
 
-**Status: development draft — not authorized for pilot or canonical
-production.** Human outline approval, first-section acceptance and a narrated
-comprehension-pilot decision are absent.
+**Status: pilot development authorized — not authorized for canonical full-book
+production.** Human outline approval is recorded. First-section acceptance and
+a narrated comprehension-pilot decision remain absent.
 
 ## Production request
 
-After the missing gates are satisfied, use `$custom-learning-audiobook` to turn
+Use `$custom-learning-audiobook` to develop the governed first section and
+narrated pilot, then pause for the remaining human gates before turning
 this public-safe plan into a spoken-first Nova Scotia learning book. Preserve
 the forty-figure Echo slideshow/video direction, make the narration complete
 without a screen, and keep every live-property reference educational and
@@ -33,7 +34,10 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- User approval status: scope recorded; revised outline approval pending.
+- User approval status: revised outline and forty-figure direction approved for
+  pilot development at 2026-07-19T11:56:49-03:00. The exact quote is preserved
+  in `research/learning-outline.json`, `research/comprehension-pilot.json`, and
+  `research/conversation-log.md`.
 
 ## Core promise
 
@@ -69,7 +73,11 @@ under the HRM Charter parallel rather than silently folded into the MGA.
 - New failure-path spine: no sufficient bidder, re-advertisement, payment
   default, event rescheduling boundary, prohibited bidders, set-aside effect and
   the tax-deed contestability window.
-- Authorization: **pending**. No user quote approves this revised progression.
+- Authorization: **approved for pilot development** by Dan Fakkeldy at
+  2026-07-19T11:56:49-03:00: “I approve the revised twelve-chapter outline and
+  forty-figure visual direction for pilot development.” This does not authorize
+  full manuscript drafting, full narration, final figure acceptance, or
+  finished-audiobook publication.
 
 The structured outline is authoritative for the chapter and argument-level
 tables; duplicating all section rows here would create a second drifting copy.
@@ -84,8 +92,8 @@ outcome by copy and paste.
 
 ## Road-book review and pilot
 
-- Human checkpoint: approve the revised argument-level outline and forty-figure
-  direction.
+- Human outline checkpoint: complete; the revised argument-level outline and
+  forty-figure direction are approved for pilot development.
 - First-section checkpoint: accept the project-authored opening as
   `research/voice-exemplar.md`.
 - Pilot: 10–15 narrated minutes covering opening orientation and the first
@@ -137,10 +145,8 @@ source, rights, event-status, public-safety and Echo-stage review.
 
 ## Open questions
 
-1. Will the user approve the revised twelve-chapter progression and forty-figure
-   direction verbatim?
-2. Which locally authoritative pronunciations should win the governed reel?
-3. Does the first narrated pilot remain understandable during the stated road
+1. Which locally authoritative pronunciations should win the governed reel?
+2. Does the first narrated pilot remain understandable during the stated road
    context?
 
 ## Acceptance criteria

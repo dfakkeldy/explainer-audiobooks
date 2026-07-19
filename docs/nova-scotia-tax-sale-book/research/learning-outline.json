@@ -1,9 +1,21 @@
 {
   "schemaVersion": 2,
   "authorization": {
-    "status": "pending",
+    "status": "approved",
     "source": "user",
-    "evidence": "No verbatim approval of the revised twelve-chapter outline appears in the 2026-07-18 to 2026-07-19 conversation record. Awaiting explicit user approval before pilot prose."
+    "approvedBy": "Dan Fakkeldy",
+    "approvedAt": "2026-07-19T11:56:49-03:00",
+    "verbatimQuote": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
+    "evidence": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
+    "scope": "pilot-development",
+    "doesNotAuthorize": [
+      "first-section voice acceptance",
+      "comprehension-pilot acceptance",
+      "full manuscript drafting",
+      "full narration",
+      "final figure acceptance",
+      "finished-audiobook publication"
+    ]
   },
   "curriculumPattern": {
     "name": "end-to-end-trace",

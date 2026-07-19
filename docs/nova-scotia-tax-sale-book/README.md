@@ -62,13 +62,14 @@ packet and its reproducible QGIS proofs.
 
 ## Current production gates
 
-The project is in `governed-final` development. Deep research, the argument
-outline, structured chapter plans, coverage ledger, forty-row figure manifest,
-two QGIS proofs, and eight reproducible diagram candidates exist. Human outline
-authorization, accepted first-section voice, the narrated comprehension pilot,
-full manuscript, independent learning and prose review, accepted final figures,
-cover selection, EPUB, Echo narration, public package verification, and full
-listening all remain pending.
+The project is in `governed-final` pilot development. Deep research, the
+approved argument outline, structured chapter plans, coverage ledger, forty-row
+figure manifest, two QGIS proofs, and eight reproducible diagram candidates
+exist. Dan approved the revised twelve-chapter outline and forty-figure visual
+direction for pilot development on 2026-07-19. Accepted first-section voice,
+the narrated comprehension-pilot verdict, full manuscript, independent learning
+and prose review, accepted final figures, cover selection, EPUB, Echo narration,
+public package verification, and full listening all remain pending.
 
 ## Safety and currency
 

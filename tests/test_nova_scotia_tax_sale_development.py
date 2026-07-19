@@ -57,13 +57,36 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             self.assertTrue(decision["verbatimQuote"])
             self.assertEqual(decision["evidence"], decision["verbatimQuote"])
 
-    def test_outline_gate_is_not_backfilled_without_user_approval(self) -> None:
+    def test_outline_gate_records_exact_user_approval_for_pilot_only(self) -> None:
         outline = json.loads(
             (RESEARCH_ROOT / "learning-outline.json").read_text(encoding="utf-8")
         )
+        pilot = json.loads(
+            (RESEARCH_ROOT / "comprehension-pilot.json").read_text(encoding="utf-8")
+        )
+        approval_quote = (
+            "I approve the revised twelve-chapter outline and forty-figure "
+            "visual direction for pilot development."
+        )
 
-        self.assertEqual(outline["authorization"]["status"], "pending")
-        self.assertIn("No verbatim approval", outline["authorization"]["evidence"])
+        self.assertEqual(outline["authorization"]["status"], "approved")
+        self.assertEqual(outline["authorization"]["approvedBy"], "Dan Fakkeldy")
+        self.assertRegex(
+            outline["authorization"]["approvedAt"],
+            r"^2026-07-19T\d{2}:\d{2}:\d{2}-03:00$",
+        )
+        self.assertEqual(outline["authorization"]["verbatimQuote"], approval_quote)
+        self.assertEqual(outline["authorization"]["evidence"], approval_quote)
+        self.assertEqual(outline["authorization"]["scope"], "pilot-development")
+        excluded_actions = " ".join(outline["authorization"]["doesNotAuthorize"])
+        self.assertIn("full manuscript", excluded_actions)
+        self.assertIn("publication", excluded_actions)
+
+        outline_checkpoint = pilot["humanCheckpoints"]["outline"]
+        self.assertEqual(outline_checkpoint["status"], "approved")
+        self.assertEqual(outline_checkpoint["reviewer"], "Dan Fakkeldy")
+        self.assertEqual(outline_checkpoint["evidence"], approval_quote)
+        self.assertTrue(outline_checkpoint["recordedBeforePilotDraft"])
 
     def test_required_planning_handoff_artifacts_exist(self) -> None:
         conversation = (RESEARCH_ROOT / "conversation-log.md").read_text(encoding="utf-8")
@@ -77,8 +100,11 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             {"Mabou", "Whycocomagh", "Judique", "AAN", "PID", "NSPRD", "MGA"}
             <= terms
         )
-        self.assertIn("development draft", handoff)
-        self.assertIn("No outline approval", conversation)
+        self.assertIn("pilot development authorized", handoff)
+        self.assertIn(
+            "I approve the revised twelve-chapter outline and forty-figure",
+            conversation,
+        )
 
     def test_payment_and_stage_outcomes_are_distinct(self) -> None:
         ledger = json.loads(

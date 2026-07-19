@@ -17,10 +17,11 @@
       "rawSourceExcerptsCommitted": false
     },
     "outline": {
-      "status": "pending",
-      "reviewer": "",
-      "evidence": "",
-      "recordedBeforePilotDraft": false
+      "status": "approved",
+      "reviewer": "Dan Fakkeldy",
+      "evidence": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
+      "approvedAt": "2026-07-19T11:56:49-03:00",
+      "recordedBeforePilotDraft": true
     },
     "firstSection": {
       "status": "pending",
