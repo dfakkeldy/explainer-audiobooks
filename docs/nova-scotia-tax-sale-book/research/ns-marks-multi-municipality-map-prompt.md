@@ -26,8 +26,8 @@ Read these Explainer Audiobooks research files before implementation:
 - `docs/nova-scotia-tax-sale-book/research/municipality-comparison.md`
 - `docs/nova-scotia-tax-sale-book/research/sources.md`
 
-They are available in [Explainer Audiobooks PR
-#62](https://github.com/dfakkeldy/explainer-audiobooks/pull/62). If both
+They are available after [Explainer Audiobooks PR
+#63](https://github.com/dfakkeldy/explainer-audiobooks/pull/63). If both
 repositories are checked out locally, locate the Explainer repository from the
 workspace rather than embedding a machine-specific path in source or receipts.
 
