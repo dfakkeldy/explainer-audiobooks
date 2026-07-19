@@ -536,6 +536,56 @@ class ManifestAndAttestationTests(unittest.TestCase):
         )
         self.assertEqual(64, usage.returncode)
 
+    def test_missing_approved_source_reports_exact_operator_install_command_without_building(
+        self,
+    ):
+        self.renderer_root.mkdir()
+        sentinel_bin = self.root / "sentinel-bin"
+        sentinel_bin.mkdir()
+        sentinel_log = self.root / "build-sentinel.log"
+        for name in ("make", "xcodebuild"):
+            command = sentinel_bin / name
+            command.write_text(
+                "#!/bin/sh\n"
+                f"printf '%s\\n' {name!r} >> {str(sentinel_log)!r}\n"
+                "exit 99\n",
+                encoding="utf-8",
+            )
+            command.chmod(0o755)
+        environment = os.environ.copy()
+        environment["PATH"] = (
+            f"{sentinel_bin}:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        )
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(MODULE_PATH),
+                "resolve-new",
+                "--source-sha",
+                ACCEPTED_SOURCE_SHA,
+                "--renderer-root",
+                str(self.renderer_root),
+                "--format",
+                "env0",
+            ],
+            capture_output=True,
+            env=environment,
+        )
+
+        expected_command = (
+            "PYTHONPATH=Scripts python3 -m echo_renderer.cli install \\\n"
+            "  --installer-worktree <clean-reviewed-installer-worktree> \\\n"
+            f"  --installer-sha {ACCEPTED_INSTALLER_SHA} \\\n"
+            "  --source-worktree <clean-source-worktree-at-SHA> \\\n"
+            f"  --source-sha {ACCEPTED_SOURCE_SHA} \\\n"
+            "  --promote"
+        )
+        self.assertEqual(65, result.returncode)
+        self.assertEqual(b"", result.stdout)
+        self.assertIn(expected_command, result.stderr.decode())
+        self.assertFalse(sentinel_log.exists())
+
     def test_resolve_resume_uses_only_the_sealed_receipt_identity(self):
         original_root, original_manifest = self.create_package(
             renderer_root=self.renderer_root

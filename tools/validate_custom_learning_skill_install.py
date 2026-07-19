@@ -65,7 +65,7 @@ SKILL_MANIFEST = {
     ),
     Path("scripts"): ManifestEntry("directory", 0o755),
     Path("scripts/echo_installed_renderer.py"): ManifestEntry(
-        "file", 0o755, "d3813a096929a320a53ddb0e8ca8a61eb6f3b25a78a03335bb3880207c92f8fb"
+        "file", 0o755, "7d0a70e1e690932667bf51c5b039cfdcfbd1b46eb7bf3c6b0fa86b2e4e845086"
     ),
     Path("scripts/echo_pronunciation_preflight.sh"): ManifestEntry(
         "file", 0o755, "5de16dc1b2b7b724b33858a17b0ab1158f033c06a5ba44099f038e66e13035be"

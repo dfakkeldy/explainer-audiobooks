@@ -766,6 +766,18 @@ def _argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _operator_install_recovery(source_sha: str) -> str:
+    return (
+        "operator-only recovery command:\n"
+        "PYTHONPATH=Scripts python3 -m echo_renderer.cli install \\\n"
+        "  --installer-worktree <clean-reviewed-installer-worktree> \\\n"
+        f"  --installer-sha {ACCEPTED_INSTALLER_SOURCE_SHA} \\\n"
+        "  --source-worktree <clean-source-worktree-at-SHA> \\\n"
+        f"  --source-sha {source_sha} \\\n"
+        "  --promote"
+    )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     try:
         options = _argument_parser().parse_args(argv)
@@ -800,6 +812,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     except (OSError, ValueError) as error:
         print(f"echo_installed_renderer: {error}", file=sys.stderr)
+        if options.command in ("resolve-new", "resolve-resume") and (
+            _COMMIT_SHA_PATTERN.fullmatch(options.source_sha) is not None
+        ):
+            print(_operator_install_recovery(options.source_sha), file=sys.stderr)
         return 65
 
 
