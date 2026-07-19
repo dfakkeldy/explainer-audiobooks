@@ -536,6 +536,38 @@ class CoverReceiptTests(unittest.TestCase):
             self.assertEqual("private", receipt.privacy["classification"])
             self.assertFalse(receipt.privacy["permission_to_publish"])
 
+    def test_delegated_editorial_choice_can_bind_an_authorized_public_pair(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            portrait = make_cover(root / "portrait.png")
+            square = make_cover(root / "square.png", size=(2400, 2400))
+            portrait_render = write_json(
+                root / "portrait.render.json",
+                paired_render_payload(root, portrait, "portrait"),
+            )
+            square_render = write_json(
+                root / "square.render.json",
+                paired_render_payload(root, square, "square", subtitle=""),
+            )
+
+            receipt = cover_receipts.create_paired_selection(
+                portrait_render,
+                square_render,
+                root / "selection.json",
+                book_slug="fixture-book",
+                edition_id="public-first-listen",
+                selection_source="delegated-editorial-choice",
+                selected_at="2026-07-18T12:00:00-03:00",
+                privacy_classification="public-safe",
+                permission_to_publish=True,
+            )
+
+            self.assertEqual(
+                "delegated-editorial-choice", receipt.selection_source
+            )
+            self.assertEqual("public-safe", receipt.privacy["classification"])
+            self.assertTrue(receipt.privacy["permission_to_publish"])
+
     def test_editorial_autoselection_cannot_escape_private_nonpublishing_lane(self) -> None:
         for classification, permission in (
             ("public-safe", False),

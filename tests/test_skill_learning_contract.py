@@ -53,6 +53,23 @@ class SkillLearningContractTests(unittest.TestCase):
                 self.assertIn("legacy-without-learning-receipt", text)
                 self.assertIn("new or revised", text)
 
+    def test_public_first_listen_requires_exact_authorization_and_disclosure(self) -> None:
+        disclosure = (
+            "This edition has passed package and audio checks. "
+            "The creator's full listening review is still underway."
+        )
+        for relative in (
+            "skill/references/unattended-production.md",
+            "skills/custom-learning-audiobook/SKILL.md",
+            "skills/custom-learning-audiobook/references/package-and-qc.md",
+        ):
+            with self.subTest(relative=relative):
+                text = self.read(relative)
+                self.assertIn("publicationAuthorization", text)
+                self.assertIn("public-first-listen", text)
+                self.assertIn("humanListeningStatus: pending", text)
+                self.assertIn(disclosure, text)
+
     def test_supporting_references_use_the_same_learning_evidence(self) -> None:
         for relative in (
             "skill/references/frontier-manuscript-pipeline.md",

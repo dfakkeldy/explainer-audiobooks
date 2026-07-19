@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -60,6 +61,10 @@ REQUIRED_REVISION_PASSES = {
     "sentence-rhythm",
     "ear-pass",
 }
+PUBLIC_FIRST_LISTEN_DISCLOSURE = (
+    "This edition has passed package and audio checks. The creator's full "
+    "listening review is still underway."
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -222,10 +227,10 @@ def validate_evidence(evidence: dict[str, Any], run_root: Path) -> set[str]:
 
 def validate_production_mode(
     brief: dict[str, Any], run_root: Path
-) -> tuple[str, Path | None]:
+) -> tuple[str, Path | None, dict[str, str] | None]:
     production = brief.get("productionMode")
     if production is None:
-        return "governed-final", None
+        return "governed-final", None, None
     if not isinstance(production, dict):
         raise ValueError("brief.productionMode must be an object")
     name = require_string(production.get("name"), "brief.productionMode.name")
@@ -234,7 +239,7 @@ def validate_production_mode(
             "brief.productionMode.name must be governed-final or unattended-first-listen"
         )
     if name == "governed-final":
-        return name, None
+        return name, None, None
 
     request_evidence = require_string(
         production.get("requestEvidence"), "brief.productionMode.requestEvidence"
@@ -257,10 +262,71 @@ def validate_production_mode(
         raise ValueError("unattended decisions productionMode must be unattended-first-listen")
     if decisions.get("requestEvidence") != request_evidence:
         raise ValueError("unattended decisions requestEvidence must match the learning brief")
-    if decisions.get("privacy") != "private":
-        raise ValueError("unattended decisions privacy must be private")
-    if decisions.get("permissionToPublish") is not False:
-        raise ValueError("unattended decisions permissionToPublish must be false")
+    privacy = decisions.get("privacy")
+    permission_to_publish = decisions.get("permissionToPublish")
+    publication_authorization: dict[str, str] | None = None
+    if privacy == "private":
+        if permission_to_publish is not False:
+            raise ValueError(
+                "private unattended decisions permissionToPublish must be false"
+            )
+        if decisions.get("publicationAuthorization") is not None:
+            raise ValueError(
+                "private unattended decisions must not claim publication authorization"
+            )
+    elif privacy == "public-safe":
+        if permission_to_publish is not True:
+            raise ValueError(
+                "public-safe unattended decisions permissionToPublish must be true"
+            )
+        authorization = decisions.get("publicationAuthorization")
+        if not isinstance(authorization, dict):
+            raise ValueError(
+                "public-safe unattended decisions require publicationAuthorization"
+            )
+        if authorization.get("status") != "granted":
+            raise ValueError("publicationAuthorization.status must be granted")
+        if authorization.get("publicationStatus") != "public-first-listen":
+            raise ValueError(
+                "publicationAuthorization.publicationStatus must be public-first-listen"
+            )
+        if authorization.get("disclosure") != PUBLIC_FIRST_LISTEN_DISCLOSURE:
+            raise ValueError(
+                "publicationAuthorization.disclosure must match the approved text"
+            )
+        authorized_by = require_string(
+            authorization.get("authorizedBy"),
+            "publicationAuthorization.authorizedBy",
+        )
+        authorized_at = require_string(
+            authorization.get("authorizedAt"),
+            "publicationAuthorization.authorizedAt",
+        )
+        try:
+            parsed_authorized_at = datetime.fromisoformat(authorized_at)
+        except ValueError as error:
+            raise ValueError(
+                "publicationAuthorization.authorizedAt must be timezone-aware ISO-8601"
+            ) from error
+        if parsed_authorized_at.utcoffset() is None:
+            raise ValueError(
+                "publicationAuthorization.authorizedAt must be timezone-aware ISO-8601"
+            )
+        evidence = require_string(
+            authorization.get("evidence"), "publicationAuthorization.evidence"
+        )
+        publication_authorization = {
+            "status": "public-first-listen",
+            "permission": "granted",
+            "authorizedBy": authorized_by,
+            "authorizedAt": authorized_at,
+            "evidence": evidence,
+            "disclosure": PUBLIC_FIRST_LISTEN_DISCLOSURE,
+        }
+    else:
+        raise ValueError(
+            "unattended decisions privacy must be private or public-safe"
+        )
     require_string(decisions.get("deliveryIntent"), "unattended decisions deliveryIntent")
     if decisions.get("humanListeningStatus") != "pending":
         raise ValueError("unattended decisions humanListeningStatus must be pending")
@@ -275,7 +341,7 @@ def validate_production_mode(
         )
         if source not in UNATTENDED_DECISION_SOURCES:
             raise ValueError(f"unattended decisions[{index}].source is unsupported")
-    return name, decisions_path
+    return name, decisions_path, publication_authorization
 
 
 def validate_brief(brief: dict[str, Any], run_root: Path) -> dict[str, Any]:
@@ -318,12 +384,15 @@ def validate_brief(brief: dict[str, Any], run_root: Path) -> dict[str, Any]:
         raise ValueError("brief.openingOrientation must be an object")
     for field in ("context", "promise", "route"):
         require_string(orientation.get(field), f"brief.openingOrientation.{field}")
-    production_mode, decisions_path = validate_production_mode(brief, run_root)
+    production_mode, decisions_path, publication_authorization = (
+        validate_production_mode(brief, run_root)
+    )
     return {
         "audienceLevel": audience_level,
         "listeningMode": listening_mode,
         "productionMode": production_mode,
         "decisionsPath": decisions_path,
+        "publicationAuthorization": publication_authorization,
     }
 
 
@@ -1042,6 +1111,11 @@ def validate_run(run_root: Path) -> dict[str, Any]:
             else "pass-with-listener-waiver" if listener_waiver else "pass"
         ),
         "productionMode": brief["productionMode"],
+        **(
+            {"publicationAuthorization": brief["publicationAuthorization"]}
+            if brief["publicationAuthorization"] is not None
+            else {}
+        ),
         "chapterSHA256": hashes,
         "recordSHA256": {
             name: sha256_file(path) for name, path in record_paths.items()

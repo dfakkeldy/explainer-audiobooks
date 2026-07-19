@@ -16,8 +16,9 @@ intent; it never authorizes publication. After a package is verified,
 `public-first-listen` is available only with explicit publication authorization
 for a public-safe package: it is mechanically verified with
 `humanListeningStatus: pending`, not human accepted. The public package and
-catalog must say: “This edition has passed package and audio checks. The
-creator’s full listening review is still underway.” A negative human verdict
+catalog must say: “This edition has passed package and audio checks. The creator's full listening review is still underway.” Bind the user's grant in a
+`publicationAuthorization` object, keep `humanListeningStatus: pending`, and do
+not publish until all required non-human gates pass. A negative human verdict
 supersedes that edition.
 
 Publication states remain distinct: `unattended-first-listen` means private
@@ -77,7 +78,11 @@ render_cover_pair(
 )
 ```
 
-After human review selects one pair, run the complete governed sequence:
+After the mode-authorized reviewer selects one pair, run the complete governed
+sequence. Set `--selection-source` to `user` for a direct user choice,
+`requested-mix` for a requested mix, `editorial-autoselection` only for the
+private non-publishing unattended lane, or `delegated-editorial-choice` when
+the user explicitly delegates editorial selection for the named edition:
 
 ```bash
 PAIR="$DIST/candidate-$SELECTED"

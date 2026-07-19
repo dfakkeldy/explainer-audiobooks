@@ -256,6 +256,14 @@ class SkillCoverContractTests(unittest.TestCase):
             self.assertIn("selection_source=user", active_text)
             self.assertNotIn("selection_source=explicit-user-choice", active_text)
 
+    def test_delegated_public_cover_choice_is_distinct_from_autoselection(self) -> None:
+        for key in ("custom", "package", "cover"):
+            with self.subTest(file=key):
+                text = FILES[key].read_text(encoding="utf-8")
+                self.assertIn("delegated-editorial-choice", text)
+                self.assertIn("editorial-autoselection", text)
+                self.assertIn("explicitly delegates", text)
+
     def test_paired_chronology_is_literal_and_ordered(self) -> None:
         markers = (
             "research → three source directions",

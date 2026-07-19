@@ -132,6 +132,14 @@ Record `selection_source: editorial-autoselection` in the paired receipt and the
 reason in the unattended decisions receipt. This source is valid only with
 `privacy: private` and `permission_to_publish: false`.
 
+When the user explicitly delegates the editorial cover choice for a named
+public-safe edition, inspect all full-size pairs and thumbnails, choose with the
+same rubric, and record `selection_source: delegated-editorial-choice` plus the
+rationale. This is an explicit choice, not `editorial-autoselection`, and it
+does not itself grant publication permission. The public selection receipt must
+separately record `privacy: public-safe` and the user's explicit permission to
+publish.
+
 ## Packaging and delivery
 
 A verified unattended package is a **private first-listen edition**. Report:
@@ -154,8 +162,20 @@ Unattended production never auto-publishes. After the package exists, explicit
 publication authorization may promote a verified public-safe package to
 `public-first-listen` while `humanListeningStatus: pending`. The public package
 and catalog must say: “This edition has passed package and audio checks. The
-creator’s full listening review is still underway.” A negative human verdict
+creator's full listening review is still underway.” A negative human verdict
 supersedes the public-first-listen edition.
+
+Bind that authority in `research/unattended-decisions.json` as a
+`publicationAuthorization` object with `status: granted`,
+`publicationStatus: public-first-listen`, `authorizedBy`, a timezone-aware
+`authorizedAt`, the user's exact authorization evidence, and this exact
+disclosure:
+
+> This edition has passed package and audio checks. The creator's full listening review is still underway.
+
+Keep `humanListeningStatus: pending`. The authorization permits publication
+only after every required non-human gate passes; it never converts pending
+human comprehension or pronunciation listening into acceptance.
 
 Keep the three publication states distinct:
 
