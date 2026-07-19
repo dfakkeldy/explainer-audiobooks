@@ -42,6 +42,15 @@ Two different audiences:
 
 Each folder holds the **`.epub`**, a combined **`.md`** readable on GitHub, and the cover. Narrated public packages also include a chaptered **`.m4b`** and Echo **`.alignment.json`** read-along sidecar.
 
+### In development
+
+- [Beyond the Tax-Sale Packet](docs/nova-scotia-tax-sale-book/) is a public-safe
+  Nova Scotia municipal tax-sale research and visual-development packet. It
+  includes an Inverness-heavy official-source dossier, a twelve-chapter
+  argument outline, a 38-figure plan, an owner-free August 2026 listing
+  snapshot, and reproducible QGIS 4 map proofs. It is not yet a manuscript,
+  EPUB, audiobook, legal review, or finished public edition.
+
 Together they trace the life of a real app — *what it's made of* → *how it should look* → *how to build it with AI* → *how to test it* → *how to debug it* → *how to version it* → *how to get it found* — mostly through the same real codebase.
 
 **Model-agnostic, on purpose.** The method doesn't care which model runs it; each book's EPUB metadata records the model that wrote it (as the `contributor`), with the human curator as the author. *Git Happens* makes the point twice over: it was first written by **DeepSeek v4**, then rewritten by **Opus 4.8** (the original DeepSeek edition is preserved in this repo's git history).

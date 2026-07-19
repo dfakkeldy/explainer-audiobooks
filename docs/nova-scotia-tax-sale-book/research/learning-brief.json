@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 2,
+  "learnerOutcome": "Explain Nova Scotia's municipal tax-sale path, distinguish a municipal information packet from a decision-grade evidence file, research a listed parcel lawfully and systematically, and define what a bounded property-research service can contribute without making legal, surveying, appraisal or investment decisions.",
+  "priorKnowledge": "Curious beginner or prospective research client familiar with ordinary property listings but not municipal collection law, Nova Scotia land registration, title research, redemption, auction operations or the division between research and professional opinions.",
+  "audienceLevel": "beginner",
+  "listeningMode": {
+    "name": "road-book",
+    "primaryContext": "Driving and delivering mail",
+    "attentionConstraints": [
+      "eyes unavailable",
+      "single-pass listening",
+      "real interruptions",
+      "legal and financial distinctions must be reset through concrete parcels"
+    ]
+  },
+  "revisionMode": {
+    "name": "new-book",
+    "sourceEdition": "",
+    "preserve": {
+      "governingQuestion": "",
+      "narrativeSpine": "",
+      "successfulExamples": [],
+      "chapterJobs": []
+    }
+  },
+  "openingOrientation": {
+    "context": "A researcher opens Inverness County's unusually detailed municipal packet and asks what useful work remains before anyone can make an auction decision.",
+    "promise": "Make clear what the municipality already provides, what is actually sold, how additional research can narrow uncertainty, and which questions remain with bidders and retained professionals.",
+    "route": "Move from the municipal packet backward to arrears and notice, then forward through evidence-file construction, auction mechanics, certificate, redemption and deed."
+  },
+  "originalTargetWords": 42800,
+  "currentTargetWords": 42800,
+  "estimatedMinimumWords": 40000,
+  "estimatedMaximumWords": 45000,
+  "draftingStarted": false,
+  "scopeHistory": [
+    {
+      "date": "2026-07-18",
+      "oldTargetWords": 22000,
+      "newTargetWords": 42800,
+      "reason": "The user explicitly invited a longer book and requested extensive research across terminology, law, due diligence and auction operations.",
+      "approvalStatus": "approved-in-request",
+      "approvalSource": "user",
+      "evidence": "The author requested an unusually thorough treatment and explicitly invited a longer book."
+    },
+    {
+      "date": "2026-07-18",
+      "oldTargetWords": 42800,
+      "newTargetWords": 42800,
+      "reason": "The user requested a public Nova Scotia-wide book with Inverness County as the principal worked municipal example and offered to contribute public-source QGIS research packets.",
+      "approvalStatus": "approved-in-request",
+      "approvalSource": "user",
+      "evidence": "The author requested a public Nova Scotia-wide book with substantial Inverness County research."
+    },
+    {
+      "date": "2026-07-18",
+      "oldTargetWords": 42800,
+      "newTargetWords": 42800,
+      "reason": "The user clarified that he has no personal purchase intent. The edition should demonstrate a possible property-research service while recognizing that Inverness already publishes a substantial parcel packet.",
+      "approvalStatus": "approved-in-request",
+      "approvalSource": "user",
+      "evidence": "The author stated that he is not a prospective purchaser and wants the Inverness work to demonstrate research capability."
+    },
+    {
+      "date": "2026-07-18",
+      "oldTargetWords": 42800,
+      "newTargetWords": 42800,
+      "reason": "The public book's primary success criterion is educational usefulness and thoughtful brand proof; a viable paid research service is optional and must not become the manuscript's premise or sales pitch.",
+      "approvalStatus": "approved-in-request",
+      "approvalSource": "user",
+      "evidence": "The author made public education the success criterion even if no paid research service results."
+    },
+    {
+      "date": "2026-07-18",
+      "oldTargetWords": 42800,
+      "newTargetWords": 42800,
+      "reason": "The edition should become a figure-rich Echo Visual Listening and whole-book video-export title. The plan adds 38 purposeful, rights-safe figures while preserving a complete eyes-free road-book narration.",
+      "approvalStatus": "approved-in-request",
+      "approvalSource": "user",
+      "evidence": "The author requested a figure-rich edition suitable for Echo slideshow and video export."
+    },
+    {
+      "date": "2026-07-19",
+      "oldTargetWords": 42800,
+      "newTargetWords": 42800,
+      "reason": "The author authorized a public pull request for the completed research and map-development work without representing the audiobook as finished.",
+      "approvalStatus": "approved-in-request",
+      "approvalSource": "user",
+      "evidence": "Public-safe development PR explicitly requested."
+    }
+  ],
+  "safety": {
+    "classification": "sensitive-high-stakes",
+    "framing": "educational-only",
+    "limitations": [
+      "not legal advice",
+      "not tax advice",
+      "not investment advice",
+      "no live-property recommendation",
+      "no personalized bid calculation",
+      "law and rates require a live refresh"
+    ]
+  },
+  "privacy": {
+    "status": "public-safe-development",
+    "permissionToPublish": true,
+    "publicationIntent": "public",
+    "publicationActionStatus": "development-pr-authorized; finished-audiobook-publication-pending"
+  }
+}

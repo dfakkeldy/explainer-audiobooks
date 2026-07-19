@@ -1,0 +1,13 @@
+{
+  "builtDate": "2026-07-19",
+  "listingSnapshotDate": "2026-07-19",
+  "listingDataSHA256": "b69a50e76fd87fc6785e4742367796a4d2ee9f013b9c0ebd002868e01d5c3be4",
+  "municipalSource": "https://invernesscounty.ca/wp-content/uploads/2026/07/Tax-Sale_August-11.pdf",
+  "nsprdLayer": "https://nsgiwa2.novascotia.ca/arcgis/rest/services/PLAN/PLAN_NSPRD_WM84/MapServer/0",
+  "license": "https://nsgiwa.novascotia.ca/documents/licenses/MapService/Restricted%20Map%20Services%20License%20-%20NSPRD%20v1.pdf",
+  "attribution": "Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions.",
+  "publicDistributionBoundary": "Rendered views may be displayed with attribution. Keep this raw geometry snapshot local; a public web map should query the Province service directly at runtime.",
+  "listingCount": 45,
+  "requestedPIDCount": 47,
+  "returnedFeatureCount": 53
+}
