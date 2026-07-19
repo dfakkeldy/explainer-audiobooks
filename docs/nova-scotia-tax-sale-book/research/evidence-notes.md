@@ -1,6 +1,6 @@
 # Grounded evidence notes
 
-Claim policy: `traceable-only`. Retrieved and checked 2026-07-18. The current-law source snapshots are the Nova Scotia Municipal Government Act consolidated to 2026-04-09 and the Halifax Regional Municipality Charter consolidated to 2026-05-01.
+Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-law source snapshots are the Nova Scotia Municipal Government Act consolidated to 2026-04-09 and the Halifax Regional Municipality Charter consolidated to 2026-05-01.
 
 ## Why a property reaches sale
 
@@ -39,6 +39,24 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-18. The current-la
 - Confidence: high.
 - Boundary: The exact methods a municipality will accept at a particular event must be checked in that sale's current terms.
 
+### LAW-015 — no sufficient bidder and resale
+- Supported wording: If no sufficient bid is received, the treasurer may bid the taxes, interest and expenses for the municipality. If the municipality does not buy, it may advertise again and sell later by auction for the best obtainable price or by highest tender, subject to any council-set acceptable minimum. A winning bidder who does not make the immediate payment loses that attempt to an immediate re-offer; failure to pay the balance within three business days leads to re-advertisement and resale, with resale expenses deducted from the deposit.
+- Source: MGA ss. 143, 148–149; HRMC ss. 158–159, 163–164.
+- Confidence: high.
+- Boundary: “No bidder” does not mean the parcel becomes privately available on whatever terms an observer proposes.
+
+### LAW-016 — people prohibited from buying
+- Supported wording: A council member or municipal employee of the selling municipality, the specified village equivalents, their spouses, and a company majority-owned by one of those people may not buy the land directly or through an agent. The statute attaches a $5,000 summary-conviction penalty and possible office or employment forfeiture.
+- Source: MGA s. 144; HRMC s. 159.
+- Confidence: high.
+- Boundary: Event registration rules may impose additional authority, identification or representation requirements; this claim lists the statutory conflict prohibition, not every bidder-eligibility rule.
+
+### OPS-006 — postponement or adjournment is a live-event question
+- Supported wording: The statutory sale notice must state the advertised date, time and place, but the reviewed MGA and HRMC tax-sale sections do not provide a general bidder-facing “adjournment” rule. A postponed, cancelled or rescheduled event must therefore be treated as a live municipal-status question and checked against the municipality's current notice rather than inferred from an old advertisement.
+- Source: MGA s. 142(2A); HRMC s. 157(2A); reviewed tax-sale sections 133–157 and 147–172 respectively.
+- Confidence: high for the notice requirement and for the bounded statutory review.
+- Boundary: This is not an opinion that every scheduling change is valid or invalid. The governing notice and legal advice control a disputed event.
+
 ### OPS-001 — live in-person auction example
 - Supported wording: CBRM's July 21, 2026 sale requires in-person registration with photo identification, uses numbered bidding cards, requires immediate payment of the minimum plus its administrative fee, and gives three business days for the balance.
 - Source: CBRM Tax Sales page, lines 155–174 and 203–223 in the retrieved page.
@@ -55,7 +73,7 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-18. The current-la
 - Confidence: high.
 
 ### OPS-004 — current Inverness auction mechanics
-- Supported wording: Inverness County's current August 11, 2026 sale is an in-person public auction in Port Hood. Its terms require immediate payment of the taxes, interest and expenses plus the stated $200 recording amount, with any remaining purchase price due within three business days using the accepted forms listed for the event.
+- Supported wording: Inverness County's current August 11, 2026 sale is an in-person public auction in Port Hood. Its terms require immediate payment of the taxes, interest and expenses plus the stated $200 registration amount, with any remaining purchase price due within three business days using the accepted forms listed for the event.
 - Source: Inverness Property Tax Sales page; August 11, 2026 property packet; December 2025 FAQ.
 - Confidence: high for this event; perishable.
 
@@ -63,6 +81,12 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-18. The current-la
 - Supported wording: Current Nova Scotia examples include Inverness and Richmond open auctions, Pictou sealed tender, Annapolis auction followed by tender treatment for unsold property, Kings's annual process, and Chester's statement that it will not hold a 2026 sale.
 - Source: official municipal pages and notices collected in `municipality-comparison.md`.
 - Confidence: high for the dated examples; perishable.
+
+### OPS-007 — Halifax practice and itemized tax-sale expenses
+- Supported wording: Halifax operates under the parallel Halifax Regional Municipality Charter rather than the MGA tax-sale division. Its current tax-sale page is event-specific, while Administrative Order 18 itemizes possible process charges such as advance notice, internal or external title search, survey at actual cost, notice of intention, certificate preparation, deed preparation, registration at actual cost, closing and redemption administration.
+- Source: HRMC ss. 147–172; Halifax Property Tax Sales; Halifax Administrative Order 18, Schedule 1.
+- Confidence: high for the legal distinction and dated fee schedule.
+- Boundary: Halifax's fee categories illustrate what sale expenses can include; they are not a province-wide price list and must be refreshed before use.
 
 ### DATA-001 — minimum bid is not market value
 - Supported wording: The minimum bid is built around taxes, interest and sale expenses, not a property appraisal. In CBRM's official March 10, 2026 results, 24 recorded sales had a median winning/minimum ratio of 3.17, a range of 1.00–42.25, eight sales at minimum and nine at five or more times minimum.
@@ -137,6 +161,24 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-18. The current-la
 - Supported wording: Sale proceeds first pay specified municipal amounts; a balance goes to the tax-sale surplus account. A person with a prior interest may apply to the Nova Scotia Supreme Court for a proportional payment after redemption expires and before twenty years pass.
 - Source: MGA ss. 146–147; HRMC ss. 161–162.
 - Confidence: high.
+
+### LAW-017 — setting aside a sale does not erase the tax lien
+- Supported wording: The MGA and HRMC expressly contemplate that a tax sale can be set aside and provide that, when this happens, the municipal tax lien is not discharged.
+- Source: MGA s. 133(4); HRMC s. 147(4).
+- Confidence: high.
+- Boundary: The provisions do not provide a do-it-yourself test for defects or a guaranteed remedy; a contested sale is a lawyer-and-court matter.
+
+### LAW-018 — six-year tax-deed contestability window
+- Supported wording: Under the Marketable Titles Act, a tax deed generally may be set aside only during the six years following its registration. After that period it is generally binding and conclusive, subject to the section's exceptions for mistakenly included land and participation by the current owner in fraud or breach of trust; the section also preserves a possible damages action for wrongful tax sale.
+- Source: Marketable Titles Act s. 6(2)–(6), standalone consolidation dated 2015-09-01.
+- Confidence: high for the cited consolidation.
+- Boundary: The six years run from registration of the tax deed, not auction day. The exception and damages provisions require property-specific legal advice, and the section number should be refreshed against the edition used in production.
+
+### INS-001 — statutory duty does not guarantee insurance availability
+- Supported wording: The certificate holder has an insurable interest and must insure a building if it is insurable, but the municipal statutes do not compel an insurer to issue coverage. Canadian insurer materials treat vacant buildings as a special or non-standard risk for which ordinary home coverage may not continue and specialized underwriting may be needed.
+- Source: MGA s. 151(c); HRMC s. 166(c); Intact vacant-home and non-standard-property pages.
+- Confidence: high for the statutory duty; medium for the market-practice illustration.
+- Boundary: Obtain terms for the specific parcel and certificate-holder interest before bidding. The existence of a specialty product is not evidence that this applicant or property will be accepted or that the cost is affordable.
 
 ## Identifying and researching the parcel
 

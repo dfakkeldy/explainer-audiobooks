@@ -5,6 +5,7 @@ Checked 2026-07-19. The Municipal Government Act supplies the common legal frame
 | Municipality | Current or recent practice | Data available | Teaching use |
 |---|---|---|---|
 | Inverness County | In-person public auction in Port Hood; municipality aims for at least two sales each year | Detailed 2025 and 2026 property packets, FAQ, 2025 results and council surplus report | Main recurring municipal case; identifier reconciliation, rural planning and observed bidding |
+| Halifax Regional Municipality | Separate HRM Charter framework; the public page reports the December 9, 2025 event closed and directs readers to monitor for results | Current event-status page plus Administrative Order 18's process and itemized fee schedule | Largest-municipality comparison; prevents MGA shorthand from being presented as Halifax law and makes “sale expenses” concrete without treating Halifax fees as province-wide |
 | CBRM | July 21, 2026 in-person auction with registration and bidding cards | Current owner-bearing notice has 67 lien rows/68 PIDs plus a separate maps-and-descriptions PDF; itemized March results also exist | Best next owner-free live map layer after stripping names and visually reconciling all PIDs |
 | Kings County | Annual sale; 2026 sale held by public auction on March 24 | Current tax-sale page and council policy governing auction/tender choices | Shows annual policy cadence and council-level process design |
 | Chester | Public process page, but municipality states it is not holding a 2026 sale | Process explanation and current no-sale notice | Demonstrates that a statutory system does not mean every municipality has a sale every year |
@@ -15,6 +16,8 @@ Checked 2026-07-19. The Municipal Government Act supplies the common legal frame
 ## Sources
 
 - [Inverness County Property Tax Sales](https://invernesscounty.ca/services/finance-taxation/tax-sales/)
+- [Halifax Property Tax Sales](https://www.halifax.ca/home-property/property-taxes/tax-sale)
+- [Halifax Administrative Order 18](https://www.halifax.ca/sites/default/files/documents/city-hall/legislation-by-laws/ao18.pdf)
 - [CBRM Tax Sales](https://cbrm.ns.ca/business/property-sales-management/tax-sales/)
 - [Kings County Tax Sales](https://www.countyofkings.ca/business/sales.aspx)
 - [Chester Tax Sales](https://chester.ca/government/property-taxes-and-rates/tax-sales)

@@ -27,7 +27,10 @@ class NovaScotiaTaxSaleFigureTests(unittest.TestCase):
 
     def test_first_batch_is_complete_and_review_only(self):
         figures = self.spec["figures"]
-        self.assertEqual([item["id"] for item in figures], [f"figure-{number:02d}" for number in range(3, 9)])
+        self.assertEqual(
+            [item["id"] for item in figures],
+            [*(f"figure-{number:02d}" for number in range(3, 9)), "figure-39", "figure-40"],
+        )
         self.assertEqual(self.spec["assetStatus"], "review-candidate")
         self.assertTrue(all(item["status"] == "review-candidate" for item in figures))
 
@@ -54,7 +57,7 @@ class NovaScotiaTaxSaleFigureTests(unittest.TestCase):
             output = root / "images"
             contact_sheet = root / "contact.png"
             paths = renderer.render_all(SPEC_PATH, output, contact_sheet)
-            self.assertEqual(len(paths), 6)
+            self.assertEqual(len(paths), 8)
             self.assertTrue(contact_sheet.exists())
             for path in paths:
                 with self.subTest(path=path.name), Image.open(path) as image:
@@ -76,7 +79,7 @@ class NovaScotiaTaxSaleFigureTests(unittest.TestCase):
             receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
             self.assertEqual(receipt["specSHA256"], renderer.sha256(SPEC_PATH))
             self.assertEqual(receipt["humanAcceptance"], "pending")
-            self.assertEqual(len(receipt["files"]), 6)
+            self.assertEqual(len(receipt["files"]), 8)
             for entry in receipt["files"]:
                 self.assertEqual((entry["width"], entry["height"], entry["mode"]), (2560, 1440, "RGB"))
 

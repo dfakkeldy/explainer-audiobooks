@@ -3,9 +3,9 @@
   "assetStatus": "review-candidate",
   "renderer": "render_slideshow_figures.py",
   "specPath": "figure-specs.json",
-  "specSHA256": "ed6bdc06ef38181e7b073c27d4c98bd1cac49635e15513d0ca14d34663ab3a57",
+  "specSHA256": "85702d4caf8e9a4e26b7a4502e4e6a4aecb124f1aa8fa3af4bf18af33632ec11",
   "machineChecks": {
-    "expectedCount": 6,
+    "expectedCount": 8,
     "dimensions": "2560x1440",
     "mode": "RGB",
     "format": "PNG",
@@ -51,6 +51,20 @@
     {
       "filename": "figure-08-nonredeemable-route.png",
       "sha256": "90c5a0ba69d4c347743782a8a65c3b3a0afb4dc95fd07198475f5f4ec28a90ab",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "filename": "figure-39-payment-readiness-clock.png",
+      "sha256": "399c724ccf1ac52e2196d492353c5181b3d7361d6446ff13e811ceb72326420c",
+      "width": 2560,
+      "height": 1440,
+      "mode": "RGB"
+    },
+    {
+      "filename": "figure-40-surplus-proceeds-route.png",
+      "sha256": "b54c3b5429af16cd1bbb208d2d7daed159965fdcf9e8ce9e68aee3b14a27d4e8",
       "width": 2560,
       "height": 1440,
       "mode": "RGB"

@@ -10,5 +10,5 @@ The structured authority is `coverage-ledger.json`.
 6. Record limitation — introduced across environmental sources in Chapter 6, tested against post-deed inspection in Chapter 11 and retrieved in Chapter 12.
 7. Title versus possession — introduced in Chapter 7, applied during redemption in Chapter 10, after deed in Chapter 11 and retrieved in Chapter 12.
 8. All-in cost — introduced in Chapter 8, executed in Chapter 9 and retrieved in Chapter 12.
-9. Payment performance — foreshadowed in Chapter 1, taught operationally in Chapter 9 and retrieved in Chapter 12.
-10. Staged responsibility — introduced in Chapter 3, operated in Chapter 10, handed into ownership in Chapter 11 and retrieved in Chapter 12.
+9. Payment performance — its own durable outcome: execute registration, immediate payment and any three-business-day balance; foreshadowed in Chapter 1, taught operationally in Chapter 9 and retrieved in Chapter 12.
+10. Staged responsibility — supports the separate terminology-and-consequences outcome; introduced in Chapter 3, operated in Chapter 10, handed into ownership in Chapter 11 and retrieved in Chapter 12.

@@ -1,6 +1,6 @@
 # Inverness County tax-sale dossier
 
-Checked 2026-07-18. This is an educational research record, not a recommendation about any listed property. The live list, terms and amounts can change before the sale.
+Checked 2026-07-19. This is an educational research record, not a recommendation about any listed property. The live list, terms and amounts can change before the sale.
 
 ## Current municipal process
 
