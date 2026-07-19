@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 VALIDATOR = ROOT / "tools" / "validate_custom_learning_skill_install.py"
+SKILL_SOURCE = ROOT / "skills" / "custom-learning-audiobook"
 LIVE_HERMES_IMPORT = (
     Path.home()
     / ".hermes"
@@ -43,8 +44,13 @@ Load `{CANONICAL_ROUTE}` and follow that canonical skill.
 SKILL_FILES = {
     "SKILL.md": 0o644,
     "agents/openai.yaml": 0o644,
+    "references/echo-renderer-v1/canonical-manifest-v1.json": 0o644,
+    "references/echo-renderer-v1/lease-identities-v1.json": 0o644,
+    "references/echo-renderer-v1/resource-tree-v1.json": 0o644,
+    "references/echo-renderer-v1/vector-provenance.json": 0o644,
     "references/intake-and-research.md": 0o644,
     "references/package-and-qc.md": 0o644,
+    "scripts/echo_installed_renderer.py": 0o755,
     "scripts/echo_pronunciation_preflight.sh": 0o755,
     "scripts/echo_learning_pilot_narrate.sh": 0o755,
     "scripts/validate_pronunciation_audit.py": 0o755,
@@ -66,24 +72,26 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         self.hermes = self.tmp / "hermes"
         self.hermes_agent = self.tmp / "hermes-agent"
         self.hermes_python = self.tmp / "hermes-python"
-        for root in (self.candidate, self.canonical, self.external):
-            (root / "agents").mkdir(parents=True)
-            (root / "references").mkdir(parents=True)
-            (root / "scripts").mkdir()
+        for root in (self.candidate, self.canonical):
+            shutil.copytree(
+                SKILL_SOURCE,
+                root,
+                ignore=shutil.ignore_patterns("__pycache__", ".DS_Store"),
+            )
+        (self.external / "references").mkdir(parents=True)
         for link in self.links:
             link.symlink_to(self.canonical, target_is_directory=True)
-        self.write_skill(self.candidate, "candidate")
-        self.write_skill(self.canonical, "old canonical")
+        self.write_stale_skill(self.canonical)
         self.write_disabled_external()
         self.write_hermes_discovery("custom-learning-audiobook | local | enabled")
         self.hermes_agent.mkdir()
         self.write_hermes_view()
 
     @staticmethod
-    def write_skill(root: Path, value: str) -> None:
+    def write_stale_skill(root: Path) -> None:
         for relative, mode in SKILL_FILES.items():
             path = root / relative
-            path.write_text(value, encoding="utf-8")
+            path.write_text(f"old canonical: {relative}\n", encoding="utf-8")
             path.chmod(mode)
 
     def integrate_candidate(self) -> None:
@@ -166,6 +174,32 @@ class InstalledCustomLearningSkillContractTests(unittest.TestCase):
         result = self.run_validator()
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("installed_skill_parity: current", result.stdout)
+
+    def test_rejects_candidate_with_missing_frozen_vector(self) -> None:
+        (
+            self.candidate
+            / "references/echo-renderer-v1/resource-tree-v1.json"
+        ).unlink()
+        result = self.run_validator()
+        self.assertEqual(1, result.returncode)
+        self.assertIn("missing", result.stderr)
+        self.assertIn("resource-tree-v1.json", result.stderr)
+
+    def test_rejects_candidate_with_altered_frozen_vector_hash(self) -> None:
+        vector = self.candidate / "references/echo-renderer-v1/lease-identities-v1.json"
+        vector.write_text("altered frozen vector\n", encoding="utf-8")
+        result = self.run_validator()
+        self.assertEqual(1, result.returncode)
+        self.assertIn("hash", result.stderr)
+        self.assertIn("lease-identities-v1.json", result.stderr)
+
+    def test_rejects_candidate_with_wrong_renderer_mode(self) -> None:
+        renderer = self.candidate / "scripts/echo_installed_renderer.py"
+        renderer.chmod(0o644)
+        result = self.run_validator()
+        self.assertEqual(1, result.returncode)
+        self.assertIn("mode", result.stderr)
+        self.assertIn("echo_installed_renderer.py", result.stderr)
 
     def test_reports_pending_when_canonical_lacks_a_new_helper(self) -> None:
         self.integrate_candidate()

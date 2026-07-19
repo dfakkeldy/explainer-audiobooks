@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import importlib.util
 import json
 import os
+import platform
 import pwd
 import re
 import shlex
@@ -15,8 +17,8 @@ import sys
 import tempfile
 import time
 import unittest
-import importlib.util
 import zipfile
+from collections.abc import Callable
 from pathlib import Path
 
 
@@ -68,6 +70,48 @@ STATE_HELPER = (
     / "scripts"
     / "echo_pronunciation_state.py"
 )
+INSTALLED_RENDERER = (
+    ROOT
+    / "skills"
+    / "custom-learning-audiobook"
+    / "scripts"
+    / "echo_installed_renderer.py"
+)
+
+ACCEPTED_INSTALLER_SHA = "2f23aceedb1b9f25b7ea4410756eea32a59af8cd"
+ACCEPTED_SOURCE_SHA = "81a635df84f75f2e391706e071878b379e6fe0a0"
+REQUIRED_CAPABILITIES = (
+    "--cover",
+    "--sidecar",
+    "--voice",
+    "--db",
+    "--work-dir",
+    "--jobs",
+    "--threads",
+    "--resume",
+    "--max-chapters",
+    "--no-pronunciation-review",
+    "verify-sidecar",
+)
+
+
+def canonical_json(payload: dict[str, object]) -> bytes:
+    return (
+        json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        .encode("utf-8")
+        + b"\n"
+    )
+
+
+def resource_tree_identity(root: Path) -> tuple[str, int]:
+    digest = hashlib.sha256()
+    files = sorted(path for path in root.rglob("*") if path.is_file())
+    for path in files:
+        relative = path.relative_to(root).as_posix().encode("utf-8")
+        digest.update(len(relative).to_bytes(8, "big", signed=False))
+        digest.update(relative)
+        digest.update(hashlib.sha256(path.read_bytes()).digest())
+    return digest.hexdigest(), len(files)
 
 # Backstop against a hang, never an assertion about speed: every wait below returns
 # as soon as its condition holds, so this only costs wall time when something is
@@ -96,18 +140,24 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
-        self.tmp = Path(self.temporary.name)
+        self.tmp = Path(self.temporary.name).resolve()
         self.echo = self.tmp / "Echo"
         self.explainer = self.tmp / "explainer-audiobooks"
         self.home = self.tmp / "home"
         self.fake_bin = self.home / "bin"
+        self.installed_probe_log = self.tmp / "installed-probe-environment.log"
         self.run_root = (
             self.explainer / ".build" / "custom-learning-audiobooks" / "fixture"
         )
-        self.cli = (
+        self.pilot_cli = (
             self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
         )
-        self.resources = self.cli.parent / "EchoNarrationResources"
+        self.pilot_resources = self.pilot_cli.parent / "EchoNarrationResources"
+        self.renderer_root = (self.tmp / "installed-renderers").resolve()
+        self.source_sha = ACCEPTED_SOURCE_SHA
+        self.installer_source_sha = ACCEPTED_INSTALLER_SHA
+        self.model_policy_revision = "kokoro-fixture-revision"
+        self.model_expected_byte_count = 163234740
         # Mirrors echo_pronunciation_canonical_lease_root (echo_pronunciation_preflight.sh),
         # which derives this root from the passwd database and so ignores both $HOME and
         # $ECHO_PRONUNCIATION_LEASE_ROOT — the wrappers overwrite that variable with the
@@ -123,18 +173,72 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         )
 
         self.echo.mkdir(parents=True)
+        self.renderer_root.mkdir()
         self.explainer.mkdir()
         (self.echo / "Makefile").write_text(
             "echo-cli:\n\t@test -x .build/cli/Build/Products/Release/echo-cli\n",
             encoding="utf-8",
         )
         (self.echo / ".gitignore").write_text(".build/\n", encoding="utf-8")
-        self.cli.parent.mkdir(parents=True)
-        self.resources.mkdir()
-        (self.resources / "pronunciations.json").write_text(
-            '{"renderVersion":12}\n', encoding="utf-8"
+        self.pilot_cli.parent.mkdir(parents=True)
+        self.pilot_resources.mkdir()
+        self.write_cli(
+            include_review_flag=True,
+            cli=self.pilot_cli,
+            resources=self.pilot_resources,
         )
+
+        staging_root = self.renderer_root / self.source_sha / ("f" * 64)
+        self.cli = staging_root / "echo-cli"
+        self.resources = staging_root / "EchoNarrationResources"
+        self.resources.mkdir(parents=True)
         self.write_cli(include_review_flag=True)
+        resource_sha, resource_count = resource_tree_identity(self.resources)
+        manifest_payload = {
+            "schemaVersion": 1,
+            "echoSourceSHA": self.source_sha,
+            "installerSourceSHA": self.installer_source_sha,
+            "executablePath": "echo-cli",
+            "executable": {
+                "sha256": hashlib.sha256(self.cli.read_bytes()).hexdigest(),
+                "byteCount": self.cli.stat().st_size,
+            },
+            "resourcesPath": "EchoNarrationResources",
+            "resources": {
+                "sha256": resource_sha,
+                "regularFileCount": resource_count,
+            },
+            "renderVersion": 12,
+            "buildConfiguration": "Release",
+            "architectures": [platform.machine() or "arm64"],
+            "minimumMacOSVersion": "10.15",
+            "modelPolicy": {
+                "revision": self.model_policy_revision,
+                "expectedByteCount": self.model_expected_byte_count,
+                "deliveryMode": "sharedEchoCache",
+                "modelBytesAttested": False,
+            },
+            "capabilities": list(REQUIRED_CAPABILITIES),
+        }
+        self.manifest_payload = copy.deepcopy(manifest_payload)
+        manifest_data = canonical_json(manifest_payload)
+        self.renderer_manifest_sha = hashlib.sha256(manifest_data).hexdigest()
+        (staging_root / "renderer-manifest.json").write_bytes(manifest_data)
+        self.renderer_build_root = (
+            self.renderer_root / self.source_sha / self.renderer_manifest_sha
+        )
+        staging_root.rename(self.renderer_build_root)
+        self.cli = self.renderer_build_root / "echo-cli"
+        self.resources = self.renderer_build_root / "EchoNarrationResources"
+        (self.renderer_root / self.source_sha / "approved-renderer.json").write_bytes(
+            canonical_json(
+                {
+                    "schemaVersion": 1,
+                    "echoSourceSHA": self.source_sha,
+                    "manifestSHA256": self.renderer_manifest_sha,
+                }
+            )
+        )
 
         self.fake_bin.mkdir(parents=True)
         ffprobe = self.fake_bin / "ffprobe"
@@ -309,14 +413,27 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             text=True,
         )
 
-    def write_cli(self, *, include_review_flag: bool, render_version: int = 12) -> None:
+    def write_cli(
+        self,
+        *,
+        include_review_flag: bool,
+        render_version: int = 12,
+        cli: Path | None = None,
+        resources: Path | None = None,
+    ) -> None:
+        cli = cli or self.cli
+        resources = resources or self.resources
+        probe_block_control = self.tmp / "probe-block-control"
+        probe_block_count = self.tmp / "probe-block-count"
+        probe_block_ready = self.tmp / "probe-block-ready"
+        probe_block_release = self.tmp / "probe-block-release"
         help_text = (
-            "--no-pronunciation-review --cover" if include_review_flag else "--voice"
+            " ".join(REQUIRED_CAPABILITIES[:-1]) if include_review_flag else "--voice"
         )
-        (self.resources / "pronunciations.json").write_text(
+        (resources / "pronunciations.json").write_text(
             json.dumps({"renderVersion": render_version}) + "\n", encoding="utf-8"
         )
-        emitter = self.cli.parent / "fake_echo_emit.py"
+        emitter = resources / "fake_echo_emit.py"
         emitter_source = """#!/usr/bin/env python3
 import hashlib, json, os, pathlib, sys
 
@@ -380,19 +497,38 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             encoding="utf-8",
         )
         emitter.chmod(emitter.stat().st_mode | stat.S_IXUSR)
-        self.cli.write_text(
+        cli.write_text(
             "#!/usr/bin/env bash\n"
             "set -euo pipefail\n"
+            'script_dir=$(cd -- "$(dirname -- "$0")" && pwd -P)\n'
+            f"printf 'CALL=%s:%s ECHO_RESOURCE_DIR=%s\\n' "
+            '"${1:-}" "${2:-}" "${ECHO_RESOURCE_DIR-<unset>}" '
+            f">>{shlex.quote(str(self.installed_probe_log))}\n"
             "if [[ -n ${FAKE_ECHO_ENV_LOG:-} ]]; then\n"
             "  printf 'CALL=%s:%s ECHO_RESOURCE_DIR=%s\\n' "
             '"${1:-}" "${2:-}" "${ECHO_RESOURCE_DIR-<unset>}" '
             '>>"$FAKE_ECHO_ENV_LOG"\n'
             "fi\n"
+            'if [[ ${1:-} == verify-sidecar && ${2:-} == --help '
+            f'  && -f {shlex.quote(str(probe_block_control))} ]]; then\n'
+            f'  probe_target=$(<{shlex.quote(str(probe_block_control))})\n'
+            "  probe_count=0\n"
+            f'  [[ ! -f {shlex.quote(str(probe_block_count))} ]] '
+            f'|| read -r probe_count <{shlex.quote(str(probe_block_count))}\n'
+            "  (( probe_count += 1 ))\n"
+            f'  printf "%s\\n" "$probe_count" >{shlex.quote(str(probe_block_count))}\n'
+            '  if [[ $probe_count == "$probe_target" ]]; then\n'
+            f'    touch {shlex.quote(str(probe_block_ready))}\n'
+            f'    while [[ ! -e {shlex.quote(str(probe_block_release))} ]]; '
+            'do sleep 0.05; done\n'
+            "  fi\n"
+            "fi\n"
             "if [[ ${1:-} == --version ]]; then\n"
-            f"  echo 'echo-cli fixture rv{render_version} (Release)'\n"
+            f"  echo 'ONNX rv{render_version} (Release)'\n"
             "elif [[ ${1:-} == narrate && ${2:-} == --help ]]; then\n"
             f"  echo '{help_text}'\n"
             "elif [[ ${1:-} == verify-sidecar ]]; then\n"
+            "  if [[ ${2:-} == --help ]]; then echo 'verify-sidecar'; exit 0; fi\n"
             "  if [[ -n ${FAKE_TAMPER_RESUME_STATE_ON_VERIFY:-} ]]; then\n"
             "    tamper_marker=$RUN_ROOT/research/fake-resume-tamper-fired\n"
             "    if [[ ! -e $tamper_marker ]]; then\n"
@@ -424,14 +560,14 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "  if [[ -n ${FAKE_NARRATE_RELEASE:-} ]]; then\n"
             "    while [[ ! -e $FAKE_NARRATE_RELEASE ]]; do sleep 0.05; done\n"
             "  fi\n"
-            f'  "{emitter}" "$epub" "$out" "$sidecar" "$work" "$db" "$voice"\n'
+            '  "$script_dir/EchoNarrationResources/fake_echo_emit.py" "$epub" "$out" "$sidecar" "$work" "$db" "$voice"\n'
             '  exit "${FAKE_NARRATE_EXIT:-0}"\n'
             "else\n"
             "  exit 64\n"
             "fi\n",
             encoding="utf-8",
         )
-        self.cli.chmod(self.cli.stat().st_mode | stat.S_IXUSR)
+        cli.chmod(cli.stat().st_mode | stat.S_IXUSR)
 
     def environment(self) -> dict[str, str]:
         environment = os.environ.copy()
@@ -439,7 +575,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             {
                 "HOME": str(self.home),
                 "ECHO_REPO": str(self.echo),
-                "APPROVED_ECHO_PRONUNCIATION_SHA": self.second_sha,
+                "APPROVED_ECHO_PRONUNCIATION_SHA": self.source_sha,
+                "ECHO_SOURCE_SHA": self.source_sha,
                 "EXPLAINER_ROOT": str(self.explainer),
                 "SLUG": "fixture",
                 "RUN_ROOT": str(self.run_root),
@@ -452,6 +589,21 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "PRONUNCIATION_PLAN": str(
                     self.run_root / "research" / "pronunciation-plan.json"
                 ),
+                "ECHO_RENDERER_ROOT": str(self.renderer_root),
+                "ECHO_RENDERER_BUILD_ROOT": str(self.renderer_build_root),
+                "ECHO_RENDERER_MANIFEST": str(
+                    self.renderer_build_root / "renderer-manifest.json"
+                ),
+                "ECHO_RENDERER_MANIFEST_SHA256": self.renderer_manifest_sha,
+                "APPROVED_ECHO_INSTALLER_SHA": self.installer_source_sha,
+                "CLI": str(self.cli),
+                "ECHO_CLI_SHA256": hashlib.sha256(self.cli.read_bytes()).hexdigest(),
+                "ECHO_RESOURCE_DIR": str(self.resources),
+                "ECHO_RESOURCES_SHA256": resource_tree_identity(self.resources)[0],
+                "ECHO_RENDER_VERSION": "12",
+                "ECHO_MODEL_REVISION": self.model_policy_revision,
+                "ECHO_MODEL_EXPECTED_BYTES": str(self.model_expected_byte_count),
+                "ECHO_MODEL_BYTES_ATTESTED": "false",
                 "ECHO_PRONUNCIATION_LEASE_ROOT": str(self.lease_root),
             }
         )
@@ -473,7 +625,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "--lock-root",
                 str(self.lease_root),
                 "--resource",
-                str(self.echo / ".build" / "cli"),
+                str(self.renderer_build_root),
                 "--",
                 "bash",
                 "-c",
@@ -498,17 +650,262 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             text=True,
         )
 
+    def run_narrate_with_resolver_payload(
+        self, payload: bytes
+    ) -> tuple[subprocess.CompletedProcess[str], Path]:
+        scripts = self.tmp / f"resolver-payload-{len(list(self.tmp.glob('resolver-payload-*')))}"
+        scripts.mkdir()
+        wrapper = scripts / NARRATE_WRAPPER.name
+        wrapper.write_bytes(NARRATE_WRAPPER.read_bytes())
+        wrapper.chmod(wrapper.stat().st_mode | stat.S_IXUSR)
+        (scripts / PREFLIGHT.name).write_bytes(PREFLIGHT.read_bytes())
+        (scripts / "echo_installed_renderer.py").write_text(
+            "import sys\n" f"sys.stdout.buffer.write({payload!r})\n",
+            encoding="utf-8",
+        )
+        lease_marker = scripts / "lease-invoked"
+        lease = scripts / "echo_pronunciation_lease.py"
+        lease.write_text(
+            "#!/usr/bin/env bash\n"
+            f"touch {shlex.quote(str(lease_marker))}\n"
+            "exit 99\n",
+            encoding="utf-8",
+        )
+        lease.chmod(lease.stat().st_mode | stat.S_IXUSR)
+        environment = self.environment()
+        return (
+            subprocess.run(
+                [str(wrapper)],
+                cwd=self.explainer,
+                env=environment,
+                capture_output=True,
+                text=True,
+            ),
+            lease_marker,
+        )
+
+    @staticmethod
+    def valid_renderer_env0() -> bytes:
+        values = {
+            "ECHO_RENDERER_ROOT": "/installed",
+            "ECHO_RENDERER_BUILD_ROOT": "/installed/build",
+            "ECHO_RENDERER_MANIFEST": "/installed/build/renderer-manifest.json",
+            "ECHO_RENDERER_MANIFEST_SHA256": "1" * 64,
+            "APPROVED_ECHO_INSTALLER_SHA": "2" * 40,
+            "ECHO_SOURCE_SHA": ACCEPTED_SOURCE_SHA,
+            "CLI": "/installed/build/echo-cli",
+            "ECHO_CLI_SHA256": "3" * 64,
+            "ECHO_RESOURCE_DIR": "/installed/build/EchoNarrationResources",
+            "ECHO_RESOURCES_SHA256": "4" * 64,
+            "ECHO_RENDER_VERSION": "12",
+            "ECHO_MODEL_REVISION": "fixture",
+            "ECHO_MODEL_EXPECTED_BYTES": "1",
+            "ECHO_MODEL_BYTES_ATTESTED": "false",
+        }
+        return b"".join(
+            key.encode() + b"\0" + value.encode() + b"\0"
+            for key, value in values.items()
+        )
+
+    def select_manifest_variant(
+        self,
+        mutate: Callable[[dict[str, object]], None],
+        *,
+        render_version: int = 12,
+        include_review_flag: bool = True,
+    ) -> tuple[Path, str]:
+        staging = self.renderer_root / self.source_sha / ("e" * 64)
+        cli = staging / "echo-cli"
+        resources = staging / "EchoNarrationResources"
+        resources.mkdir(parents=True)
+        self.write_cli(
+            include_review_flag=include_review_flag,
+            render_version=render_version,
+            cli=cli,
+            resources=resources,
+        )
+        payload = copy.deepcopy(self.manifest_payload)
+        payload["executable"] = {
+            "sha256": hashlib.sha256(cli.read_bytes()).hexdigest(),
+            "byteCount": cli.stat().st_size,
+        }
+        resources_sha, resources_count = resource_tree_identity(resources)
+        payload["resources"] = {
+            "sha256": resources_sha,
+            "regularFileCount": resources_count,
+        }
+        mutate(payload)
+        manifest_data = canonical_json(payload)
+        manifest_sha = hashlib.sha256(manifest_data).hexdigest()
+        (staging / "renderer-manifest.json").write_bytes(manifest_data)
+        build_root = self.renderer_root / self.source_sha / manifest_sha
+        staging.rename(build_root)
+        (self.renderer_root / self.source_sha / "approved-renderer.json").write_bytes(
+            canonical_json(
+                {
+                    "schemaVersion": 1,
+                    "echoSourceSHA": self.source_sha,
+                    "manifestSHA256": manifest_sha,
+                }
+            )
+        )
+        return build_root, manifest_sha
+
     def run_pilot_narrate(
         self,
         *arguments: str,
         environment: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
+        pilot_environment = dict(environment or self.environment())
         return subprocess.run(
             [str(PILOT_NARRATE_WRAPPER), *arguments],
             cwd=self.explainer,
-            env=environment or self.environment(),
+            env=pilot_environment,
             capture_output=True,
             text=True,
+        )
+
+    def resume_arguments(self) -> tuple[str, str, str]:
+        state = next(
+            (self.run_root / "research").glob("echo-resume-state-*.json")
+        )
+        return ("--resume", "--resume-state", str(state))
+
+    def pilot_resume_arguments(self) -> tuple[str, str, str]:
+        state = next(
+            (self.run_root / "pilot" / "research").glob("echo-resume-state-*.json")
+        )
+        return ("--resume", "--resume-state", str(state))
+
+    def test_ordinary_wrapper_observes_no_build_or_checkout_descendants(self) -> None:
+        forbidden_log = self.tmp / "forbidden-descendants.log"
+        for command in ("make", "git", "xcodebuild", "xcode-build-gate.sh"):
+            sentinel = self.fake_bin / command
+            sentinel.write_text(
+                "#!/usr/bin/env bash\n"
+                f"printf '%s\\n' {shlex.quote(command)} >>"
+                f"{shlex.quote(str(forbidden_log))}\n"
+                "exit 97\n",
+                encoding="utf-8",
+            )
+            sentinel.chmod(sentinel.stat().st_mode | stat.S_IXUSR)
+
+        for wrapper, invoke in (
+            ("full", self.run_narrate),
+            ("pilot", self.run_pilot_narrate),
+        ):
+            with self.subTest(wrapper=wrapper):
+                result = invoke()
+                self.assertEqual(0, result.returncode, result.stderr)
+        self.assertFalse(forbidden_log.exists(), forbidden_log.read_text() if forbidden_log.exists() else "")
+
+    def test_missing_installed_version_is_actionable_and_does_not_build(self) -> None:
+        missing_source = "a" * 40
+        environment = self.environment()
+        environment["ECHO_SOURCE_SHA"] = missing_source
+        environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = missing_source
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(65, result.returncode)
+        self.assertIn("install the approved Echo renderer", result.stderr)
+        self.assertIn(missing_source, result.stderr)
+
+    def test_invalid_selector_reports_the_selector_failure(self) -> None:
+        selector = self.renderer_root / self.source_sha / "approved-renderer.json"
+        selector.write_text('{"schemaVersion":1}\n', encoding="utf-8")
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("renderer selector", result.stderr)
+
+    def test_corrupt_manifest_reports_manifest_bytes(self) -> None:
+        manifest = self.renderer_build_root / "renderer-manifest.json"
+        manifest.write_bytes(manifest.read_bytes() + b" ")
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("manifest bytes", result.stderr)
+
+    def test_changed_executable_reports_executable_identity(self) -> None:
+        self.cli.write_bytes(self.cli.read_bytes() + b"# changed\n")
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("executable identity", result.stderr)
+
+    def test_changed_resources_report_resource_identity(self) -> None:
+        (self.resources / "changed.bin").write_bytes(b"changed")
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("resource identity", result.stderr)
+
+    def test_incompatible_nonrelease_manifest_is_distinct(self) -> None:
+        self.select_manifest_variant(
+            lambda payload: payload.__setitem__("buildConfiguration", "Debug")
+        )
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("buildConfiguration must be Release", result.stderr)
+
+    def test_incompatible_live_version_is_distinct(self) -> None:
+        self.select_manifest_variant(
+            lambda payload: payload.__setitem__("renderVersion", 13),
+            render_version=12,
+        )
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("live render version", result.stderr)
+
+    def test_incompatible_architecture_is_distinct(self) -> None:
+        other = "x86_64" if (platform.machine() or "arm64") != "x86_64" else "arm64"
+        self.select_manifest_variant(
+            lambda payload: payload.__setitem__("architectures", [other])
+        )
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("current host architecture", result.stderr)
+
+    def test_incompatible_macos_floor_is_distinct(self) -> None:
+        self.select_manifest_variant(
+            lambda payload: payload.__setitem__("minimumMacOSVersion", "999.0")
+        )
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("newer macOS", result.stderr)
+
+    def test_incompatible_capabilities_are_distinct(self) -> None:
+        self.select_manifest_variant(
+            lambda payload: payload["capabilities"].append("--impossible")
+        )
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("live capabilities", result.stderr)
+
+    @staticmethod
+    def renderer_state_arguments(identity: dict[str, object]) -> tuple[str, ...]:
+        return (
+            "--renderer-schema-version",
+            str(identity["rendererSchemaVersion"]),
+            "--renderer-root",
+            str(identity["rendererRoot"]),
+            "--renderer-build-root",
+            str(identity["rendererBuildRoot"]),
+            "--installer-source-sha",
+            str(identity["installerSourceSHA"]),
+            "--echo-source-sha",
+            str(identity["echoSourceSHA"]),
+            "--renderer-manifest-sha256",
+            str(identity["rendererManifestSHA256"]),
+            "--echo-cli-sha256",
+            str(identity["echoCLI_SHA256"]),
+            "--echo-resources-sha256",
+            str(identity["echoResourcesSHA256"]),
+            "--echo-render-version",
+            str(identity["echoRenderVersion"]),
+            "--model-policy-revision",
+            str(identity["modelPolicyRevision"]),
+            "--model-expected-byte-count",
+            str(identity["modelExpectedByteCount"]),
+            "--model-bytes-attested",
+            "false" if identity["modelBytesAttested"] is False else "true",
         )
 
     def test_learning_pilot_wrapper_uses_isolated_coverless_paths(self) -> None:
@@ -554,6 +951,63 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertRegex(receipt, r"audio_sha256=[0-9a-f]{64}")
         self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
 
+    def test_learning_pilot_binds_the_full_installed_renderer_identity(self) -> None:
+        full_fields = self.preflight_fields()
+
+        result = self.run_pilot_narrate()
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        pilot_receipt = next(
+            (self.run_root / "pilot" / "research").glob("echo-pilot-inputs-*.env")
+        ).read_text(encoding="utf-8")
+        pilot_fields = dict(
+            line.split("=", 1) for line in pilot_receipt.splitlines() if "=" in line
+        )
+        shared_fields = {
+            "renderer_root": "ECHO_RENDERER_ROOT",
+            "renderer_build_root": "ECHO_RENDERER_BUILD_ROOT",
+            "installer_source_sha": "APPROVED_ECHO_INSTALLER_SHA",
+            "approved_echo_pronunciation_sha": "APPROVED_ECHO_PRONUNCIATION_SHA",
+            "echo_source_sha": "ECHO_SOURCE_SHA",
+            "renderer_manifest_sha256": "ECHO_RENDERER_MANIFEST_SHA256",
+            "echo_cli_path": "CLI",
+            "echo_cli_sha256": "ECHO_CLI_SHA256",
+            "echo_resource_dir": "ECHO_RESOURCE_DIR",
+            "echo_resources_sha256": "ECHO_RESOURCES_SHA256",
+            "render_version": "ECHO_RENDER_VERSION",
+            "model_policy_revision": "ECHO_MODEL_REVISION",
+            "model_expected_byte_count": "ECHO_MODEL_EXPECTED_BYTES",
+            "model_bytes_attested": "ECHO_MODEL_BYTES_ATTESTED",
+        }
+        for pilot_name, full_name in shared_fields.items():
+            with self.subTest(field=pilot_name):
+                self.assertEqual(full_fields[full_name], pilot_fields[pilot_name])
+
+    def test_learning_pilot_replaces_inherited_resource_dir_for_every_cli_call(
+        self,
+    ) -> None:
+        environment = self.environment()
+        environment["ECHO_RESOURCE_DIR"] = "/stale/debug/resources"
+
+        result = self.run_pilot_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        calls = self.installed_probe_log.read_text(encoding="utf-8").splitlines()
+        sealed_suffix = f" ECHO_RESOURCE_DIR={self.resources.resolve()}"
+        self.assertGreater(len(calls), 0)
+        self.assertTrue(all(call.endswith(sealed_suffix) for call in calls), calls)
+        for required_call in (
+            "CALL=--version:",
+            "CALL=narrate:--help",
+            "CALL=verify-sidecar:--help",
+            "CALL=narrate:--epub",
+            "CALL=verify-sidecar:--epub",
+        ):
+            with self.subTest(required_call=required_call):
+                self.assertTrue(
+                    any(call.startswith(required_call) for call in calls), calls
+                )
+
     def test_learning_pilot_preserves_optional_pronunciation_reel(self) -> None:
         environment = self.environment()
         environment["FAKE_EMIT_REEL"] = "1"
@@ -598,7 +1052,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
 
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
-        self.assertIn("renderer inputs changed while leases were held", stderr)
+        self.assertIn("installed renderer attestation failed", stderr)
         pilot_dist = self.run_root / "pilot" / "dist"
         self.assertFalse((pilot_dist / "fixture-pilot.m4b").exists())
         self.assertFalse((pilot_dist / "fixture-pilot.alignment.json").exists())
@@ -606,14 +1060,113 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             (pilot_dist / "fixture-pilot.pronunciation-audit.json").exists()
         )
 
+    def test_learning_pilot_rejects_executable_and_resource_mutation_before_cli_launch(
+        self,
+    ) -> None:
+        control = self.tmp / "probe-block-control"
+        ready = self.tmp / "probe-block-ready"
+        release = self.tmp / "probe-block-release"
+        narrate_log = self.tmp / "pilot-prelaunch-narrate.log"
+        control.write_text("2\n", encoding="utf-8")
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_LOG": str(narrate_log),
+            }
+        )
+        process = subprocess.Popen(
+            [str(PILOT_NARRATE_WRAPPER)],
+            cwd=self.explainer,
+            env=environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.addCleanup(lambda: process.poll() is None and process.kill())
+        self.wait_for_path(ready, process)
+
+        (self.resources / "pronunciations.json").write_text(
+            '{"renderVersion":13}\n', encoding="utf-8"
+        )
+        with self.cli.open("a", encoding="utf-8") as executable:
+            executable.write("\n# mutated before narration launch\n")
+        release.touch()
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
+
+        self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
+        narrate_calls = (
+            narrate_log.read_text(encoding="utf-8").count("BEGIN=")
+            if narrate_log.exists()
+            else 0
+        )
+        self.assertEqual(0, narrate_calls, "mutated package reached CLI narration")
+        pilot_dist = self.run_root / "pilot" / "dist"
+        for artifact in (
+            "fixture-pilot.m4b",
+            "fixture-pilot.alignment.json",
+            "fixture-pilot.pronunciation-audit.json",
+        ):
+            with self.subTest(artifact=artifact):
+                self.assertFalse((pilot_dist / artifact).exists())
+
+    def test_full_and_pilot_hold_the_exact_build_root_lease_through_narration(
+        self,
+    ) -> None:
+        for wrapper, command in (
+            ("full", NARRATE_WRAPPER),
+            ("pilot", PILOT_NARRATE_WRAPPER),
+        ):
+            with self.subTest(wrapper=wrapper):
+                ready = self.tmp / f"{wrapper}-build-lease-ready"
+                release = self.tmp / f"{wrapper}-build-lease-release"
+                environment = self.environment()
+                environment.update(
+                    {
+                        "FAKE_NARRATE_READY": str(ready),
+                        "FAKE_NARRATE_RELEASE": str(release),
+                    }
+                )
+                process = subprocess.Popen(
+                    [str(command)],
+                    cwd=self.explainer,
+                    env=environment,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                self.addCleanup(lambda: process.poll() is None and process.kill())
+                self.wait_for_path(ready, process)
+
+                contender = subprocess.run(
+                    [
+                        str(LEASE_HELPER),
+                        "--lock-root",
+                        str(self.lease_root),
+                        "--resource",
+                        str(self.renderer_build_root),
+                        "--",
+                        "/usr/bin/true",
+                    ],
+                    cwd=self.explainer,
+                    env=self.environment(),
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(75, contender.returncode, contender.stderr)
+                self.assertIn(
+                    f"active narration lease owns shared resource: {self.renderer_build_root}",
+                    contender.stderr,
+                )
+
+                release.touch()
+                stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
+                self.assertEqual(0, process.returncode, f"{stdout}\n{stderr}")
+
     def preflight_fields(self) -> dict[str, str]:
         names = (
-            "ECHO_REPO",
             "EXPLAINER_ROOT",
             "APPROVED_ECHO_PRONUNCIATION_SHA",
             "ECHO_SOURCE_SHA",
-            "ECHO_TREE_STATE",
-            "ECHO_TREE_DIFF_SHA256",
             "EPUB",
             "EPUB_SHA256",
             "COVER_SELECTION",
@@ -628,6 +1181,14 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "ECHO_RESOURCE_DIR",
             "ECHO_RESOURCES_SHA256",
             "ECHO_RENDER_VERSION",
+            "ECHO_RENDERER_ROOT",
+            "ECHO_RENDERER_BUILD_ROOT",
+            "ECHO_RENDERER_MANIFEST",
+            "ECHO_RENDERER_MANIFEST_SHA256",
+            "APPROVED_ECHO_INSTALLER_SHA",
+            "ECHO_MODEL_REVISION",
+            "ECHO_MODEL_EXPECTED_BYTES",
+            "ECHO_MODEL_BYTES_ATTESTED",
             "VOICE",
             "RUN_ID",
             "WORK",
@@ -688,7 +1249,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             str(self.lease_root),
         ]
         for resource in (
-            self.echo / ".build" / "cli",
+            self.renderer_build_root,
             output,
             sidecar,
             audit,
@@ -742,8 +1303,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             line.split("=", 1)
             for line in receipt.read_text(encoding="utf-8").splitlines()
         )
-        self.assertEqual(self.second_sha, fields["approved_echo_pronunciation_sha"])
-        self.assertEqual(self.second_sha, fields["echo_source_sha"])
+        self.assertEqual(self.source_sha, fields["approved_echo_pronunciation_sha"])
+        self.assertEqual(self.source_sha, fields["echo_source_sha"])
         self.assertRegex(fields["epub_sha256"], r"^[0-9a-f]{64}$")
         self.assertRegex(fields["echo_cli_sha256"], r"^[0-9a-f]{64}$")
         self.assertRegex(fields["echo_resources_sha256"], r"^[0-9a-f]{64}$")
@@ -751,28 +1312,21 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual("12", fields["render_version"])
 
     def test_preflight_accepts_and_binds_newer_release_render_version(self) -> None:
-        self.write_cli(include_review_flag=True, render_version=13)
-
-        result = self.run_preflight(
-            body=(
-                "echo_pronunciation_preflight\n"
-                'printf "render_version=%s\\nreceipt=%s\\n" '
-                '"$ECHO_RENDER_VERSION" "$ECHO_RENDER_INPUT_RECEIPT"'
-            )
+        _, manifest_sha = self.select_manifest_variant(
+            lambda payload: payload.__setitem__("renderVersion", 13),
+            render_version=13,
         )
-
+        result = self.run_narrate()
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("render_version=13", result.stdout)
-        receipt_match = re.search(r"receipt=(.+)", result.stdout)
-        self.assertIsNotNone(receipt_match)
-        receipt = Path(receipt_match.group(1))
+        receipt = next((self.run_root / "research").glob("echo-render-inputs-*.env"))
         fields = dict(
             line.split("=", 1)
             for line in receipt.read_text(encoding="utf-8").splitlines()
         )
         self.assertEqual("13", fields["render_version"])
+        self.assertEqual(manifest_sha, fields["renderer_manifest_sha256"])
 
-    def test_standalone_preflight_rejects_make_without_build_lease(self) -> None:
+    def test_standalone_preflight_rejects_without_renderer_lease(self) -> None:
         command = f"source {shlex.quote(str(PREFLIGHT))}; echo_pronunciation_preflight"
         result = subprocess.run(
             ["bash", "-c", command],
@@ -782,14 +1336,14 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             text=True,
         )
         self.assertEqual(70, result.returncode)
-        self.assertIn("requires the inherited build lease", result.stderr)
+        self.assertIn("requires the inherited renderer lease", result.stderr)
 
     def test_preflight_requires_the_exact_reviewed_echo_source(self) -> None:
         environment = self.environment()
-        environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.first_sha
+        environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = "a" * 40
         result = self.run_preflight(environment=environment)
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("must exactly equal Echo source HEAD", result.stderr)
+        self.assertIn("must exactly equal installed source", result.stderr)
 
     def test_preflight_rejects_mismatched_receipt_or_unreceipted_capture(self) -> None:
         result = self.run_preflight(
@@ -830,76 +1384,68 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("receipt=", result.stdout)
 
-    def test_preflight_renders_unpinned_without_an_approval(self) -> None:
-        """The approval pin is optional. Without it the render proceeds and the
-        receipt says so, because the built binary and resource hashes already
-        identify the renderer."""
+    def test_preflight_rejects_a_missing_approval(self) -> None:
         environment = self.environment()
         environment.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
-        result = self.run_preflight(
-            environment=environment,
-            body=(
-                "echo_pronunciation_preflight\n"
-                'printf "approved=%s\\n" "$APPROVED_ECHO_PRONUNCIATION_SHA"\n'
-                'printf "tree=%s\\n" "$ECHO_TREE_STATE"\n'
-                'printf "receipt=%s\\n" "$ECHO_RENDER_INPUT_RECEIPT"'
-            ),
-        )
-        self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("approved=unpinned", result.stdout)
-        self.assertIn("tree=clean", result.stdout)
-        receipt = Path(
-            result.stdout.split("receipt=", 1)[1].splitlines()[0].strip()
-        ).read_text(encoding="utf-8")
-        self.assertIn("approved_echo_pronunciation_sha=unpinned", receipt)
-        self.assertIn("echo_tree_state=clean", receipt)
-
-    def test_preflight_records_a_dirty_tree_instead_of_refusing_it(self) -> None:
-        """A dirty Echo tree no longer blocks. It is fingerprinted so the
-        receipt still identifies the exact renderer that was built."""
-        environment = self.environment()
-        environment.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
-        (self.echo / "dirty-marker.txt").write_text("uncommitted\n", encoding="utf-8")
-        result = self.run_preflight(
-            environment=environment,
-            body=(
-                "echo_pronunciation_preflight\n"
-                'printf "tree=%s\\n" "$ECHO_TREE_STATE"\n'
-                'printf "diff=%s\\n" "$ECHO_TREE_DIFF_SHA256"\n'
-                'printf "runid=%s\\n" "$RUN_ID"'
-            ),
-        )
-        self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("tree=dirty", result.stdout)
-        diff_digest = result.stdout.split("diff=", 1)[1].splitlines()[0].strip()
-        self.assertRegex(diff_digest, r"^[0-9a-f]{64}$")
-        # The dirty render must not collide with the clean render of the same commit.
-        self.assertIn(f"-dirty-{diff_digest[:8]}-", result.stdout.split("runid=", 1)[1])
-
-    def test_preflight_still_enforces_a_supplied_pin_against_a_dirty_tree(self) -> None:
-        """Removing the requirement did not weaken the pin: if you do pin a
-        revision, it still must identify the built renderer."""
-        environment = self.environment()
-        environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.second_sha
-        (self.echo / "dirty-marker.txt").write_text("uncommitted\n", encoding="utf-8")
         result = self.run_preflight(environment=environment)
-        self.assertNotEqual(0, result.returncode)
-        self.assertIn("pins a revision but the Echo working tree is not clean", result.stderr)
+        self.assertEqual(64, result.returncode)
+        self.assertIn("APPROVED_ECHO_PRONUNCIATION_SHA is required", result.stderr)
+
+    def test_new_and_resume_require_an_explicit_approval(self) -> None:
+        missing_new = self.environment()
+        missing_new.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
+        new_result = self.run_narrate(environment=missing_new)
+        self.assertEqual(64, new_result.returncode)
+        self.assertIn("APPROVED_ECHO_PRONUNCIATION_SHA is required", new_result.stderr)
+
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        missing_resume = self.environment()
+        missing_resume.pop("APPROVED_ECHO_PRONUNCIATION_SHA")
+        resume_result = self.run_narrate(
+            *self.resume_arguments(), environment=missing_resume
+        )
+        self.assertEqual(64, resume_result.returncode)
+        self.assertIn(
+            "APPROVED_ECHO_PRONUNCIATION_SHA is required", resume_result.stderr
+        )
+
+    def test_env0_rejects_partial_and_odd_trailing_records(self) -> None:
+        valid = self.valid_renderer_env0()
+        for suffix in (b"EXTRA_UNTERMINATED", b"EXTRA_WITHOUT_VALUE\0"):
+            with self.subTest(suffix=suffix):
+                result, lease_marker = self.run_narrate_with_resolver_payload(
+                    valid + suffix
+                )
+                self.assertEqual(65, result.returncode)
+                self.assertIn("incomplete installed renderer env0 record", result.stderr)
+                self.assertFalse(lease_marker.exists())
+
+    def test_preflight_does_not_consult_an_echo_checkout(self) -> None:
+        (self.echo / "dirty-marker.txt").write_text("uncommitted\n", encoding="utf-8")
+        result = self.run_narrate()
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_installed_source_pin_is_independent_of_checkout_dirt(self) -> None:
+        environment = self.environment()
+        (self.echo / "dirty-marker.txt").write_text("uncommitted\n", encoding="utf-8")
+        result = self.run_narrate(environment=environment)
+        self.assertEqual(0, result.returncode, result.stderr)
 
     def test_preflight_rejects_symbolic_approval(self) -> None:
         environment = self.environment()
         environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = "HEAD"
         result = self.run_preflight(environment=environment)
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("canonical Git commit SHA", result.stderr)
+        self.assertIn("40 lowercase hexadecimal", result.stderr)
 
     def test_preflight_rejects_unapproved_source_revision(self) -> None:
-        self.git("checkout", "-q", "--detach", self.first_sha)
         environment = self.environment()
-        environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.second_sha
-        result = self.run_preflight(environment=environment)
-        self.assertNotEqual(0, result.returncode)
-        self.assertIn("must exactly equal Echo source HEAD", result.stderr)
+        environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = "a" * 40
+        environment["ECHO_SOURCE_SHA"] = "a" * 40
+        result = self.run_narrate(environment=environment)
+        self.assertEqual(65, result.returncode)
+        self.assertIn("renderer source directory", result.stderr)
 
     def test_preflight_rejects_unsafe_slug_and_run_root(self) -> None:
         for slug in ("../escape", "Fixture", "fixture/other"):
@@ -924,7 +1470,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertIn("inherited FD-backed lease capability", result.stderr)
 
         environment["ECHO_PRONUNCIATION_LEASE_CAPABILITY"] = json.dumps(
-            {str((self.echo / ".build" / "cli").resolve()): 1}
+            {str(self.renderer_build_root): 1}
         )
         forged_fd = self.run_narrate("--leased-preflight", environment=environment)
         self.assertNotEqual(0, forged_fd.returncode)
@@ -936,75 +1482,42 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         fields = self.preflight_fields()
         receipt = Path(fields["ECHO_RENDER_INPUT_RECEIPT"])
         receipt_text = receipt.read_text(encoding="utf-8")
-        fields["APPROVED_ECHO_PRONUNCIATION_SHA"] = self.first_sha
+        wrong_source = "a" * 40
+        fields["APPROVED_ECHO_PRONUNCIATION_SHA"] = wrong_source
         receipt.write_text(
-            receipt_text.replace(self.second_sha, self.first_sha, 1),
+            receipt_text.replace(self.source_sha, wrong_source, 1),
             encoding="utf-8",
         )
         unapproved = self.run_direct_leased(fields)
         self.assertNotEqual(0, unapproved.returncode)
-        self.assertIn("must exactly equal Echo source HEAD", unapproved.stderr)
+        self.assertIn("does not match installed source", unapproved.stderr)
 
-        receipt.write_text(receipt_text, encoding="utf-8")
-        fields = self.preflight_fields()
-        receipt = Path(fields["ECHO_RENDER_INPUT_RECEIPT"])
-        self.cli.write_text(
-            self.cli.read_text(encoding="utf-8").replace(
-                "fixture rv12 (Release)", "fixture rv11 (Release)"
-            ),
-            encoding="utf-8",
-        )
-        cli_sha = hashlib.sha256(self.cli.read_bytes()).hexdigest()
-        fields["ECHO_CLI_SHA256"] = cli_sha
-        receipt.write_text(
-            re.sub(
-                r"(?m)^echo_cli_sha256=.*$",
-                f"echo_cli_sha256={cli_sha}",
-                receipt.read_text(encoding="utf-8"),
-            ),
-            encoding="utf-8",
-        )
-        stale_cli = self.run_direct_leased(fields)
-        self.assertNotEqual(0, stale_cli.returncode)
-        self.assertIn("pre-v12", stale_cli.stderr)
-
-    def test_preflight_rejects_dirty_echo_source(self) -> None:
+    def test_preflight_ignores_dirty_echo_source(self) -> None:
         (self.echo / "revision.txt").write_text("uncommitted\n", encoding="utf-8")
         result = self.run_preflight()
-        self.assertNotEqual(0, result.returncode)
-        self.assertIn("working tree is not clean", result.stderr)
+        self.assertEqual(0, result.returncode, result.stderr)
 
     def test_preflight_rejects_missing_or_invalid_sha256_output(self) -> None:
-        for fake_output in ("", "not-a-sha"):
-            with self.subTest(fake_output=fake_output):
-                fake_bin = self.tmp / f"fake-{fake_output or 'missing'}"
-                fake_bin.mkdir()
-                shasum = fake_bin / "shasum"
-                shasum.write_text(
-                    f"#!/usr/bin/env bash\nprintf '%s\\n' {shlex.quote(fake_output)}\n",
-                    encoding="utf-8",
-                )
-                shasum.chmod(shasum.stat().st_mode | stat.S_IXUSR)
-                environment = self.environment()
-                environment["PATH"] = f"{fake_bin}:{environment['PATH']}"
-                result = self.run_preflight(environment=environment)
-                self.assertNotEqual(0, result.returncode)
-                self.assertIn("64 lowercase hexadecimal", result.stderr)
+        environment = self.environment()
+        environment["ECHO_CLI_SHA256"] = "not-a-sha"
+        result = self.run_preflight(environment=environment)
+        self.assertEqual(64, result.returncode)
+        self.assertIn("64 lowercase hexadecimal", result.stderr)
 
     def test_preflight_rejects_cli_without_review_flag(self) -> None:
-        self.write_cli(include_review_flag=False)
-        result = self.run_preflight()
-        self.assertNotEqual(0, result.returncode)
-        self.assertIn("pronunciation review is unavailable", result.stderr)
+        self.select_manifest_variant(lambda payload: None, include_review_flag=False)
+        result = self.run_narrate()
+        self.assertEqual(65, result.returncode)
+        self.assertIn("live capabilities", result.stderr)
 
     def test_preflight_rejects_pre_v12_release_cli(self) -> None:
-        cli_text = self.cli.read_text(encoding="utf-8").replace(
-            "fixture rv12 (Release)", "fixture rv11 (Release)"
+        self.select_manifest_variant(
+            lambda payload: payload.__setitem__("renderVersion", 11),
+            render_version=11,
         )
-        self.cli.write_text(cli_text, encoding="utf-8")
-        result = self.run_preflight()
-        self.assertNotEqual(0, result.returncode)
-        self.assertIn("pre-v12", result.stderr)
+        result = self.run_narrate()
+        self.assertEqual(64, result.returncode)
+        self.assertIn("at least 12", result.stderr)
 
     def test_narration_wrapper_uses_exact_content_addressed_paths(self) -> None:
         log = self.tmp / "narrate.log"
@@ -1130,6 +1643,72 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 self.assertEqual(64, result.returncode)
                 self.assertIn("positive integer", result.stderr)
 
+    def test_resume_requires_the_canonical_absolute_state_path(self) -> None:
+        bare = self.run_narrate("--resume")
+        self.assertEqual(64, bare.returncode)
+        self.assertIn("--resume-state ABSOLUTE_PATH", bare.stderr)
+
+        relative = self.run_narrate(
+            "--resume", "--resume-state", "research/echo-resume-state.json"
+        )
+        self.assertEqual(64, relative.returncode)
+        self.assertIn("absolute", relative.stderr)
+
+        state_without_resume = self.run_narrate(
+            "--resume-state", str(self.run_root / "research" / "state.json")
+        )
+        self.assertEqual(64, state_without_resume.returncode)
+        self.assertIn("requires --resume", state_without_resume.stderr)
+
+        initial = self.run_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        mismatched = self.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(self.run_root / "research" / "echo-resume-state-wrong.json"),
+        )
+        self.assertEqual(64, mismatched.returncode)
+        self.assertIn("canonical", mismatched.stderr)
+
+    def test_pilot_resume_cannot_omit_or_silently_ignore_state(self) -> None:
+        bare = self.run_pilot_narrate("--resume")
+        self.assertEqual(64, bare.returncode)
+        self.assertIn("--resume-state ABSOLUTE_PATH", bare.stderr)
+
+        relative = self.run_pilot_narrate(
+            "--resume", "--resume-state", "research/echo-resume-state.json"
+        )
+        self.assertEqual(64, relative.returncode)
+        self.assertIn("absolute", relative.stderr)
+
+        initial = self.run_pilot_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        resumed = self.run_pilot_narrate(*self.pilot_resume_arguments())
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+
+    def test_learning_pilot_resume_keeps_its_sealed_renderer_after_promotion(
+        self,
+    ) -> None:
+        selector_path = self.renderer_root / self.source_sha / "approved-renderer.json"
+        original_selector = selector_path.read_bytes()
+        sealed_build, sealed_manifest = self.select_manifest_variant(
+            lambda payload: payload.__setitem__("renderVersion", 13),
+            render_version=13,
+        )
+        initial = self.run_pilot_narrate()
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        selector_path.write_bytes(original_selector)
+
+        resumed = self.run_pilot_narrate(*self.pilot_resume_arguments())
+
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        receipt = next(
+            (self.run_root / "pilot" / "research").glob("echo-pilot-inputs-*.env")
+        ).read_text(encoding="utf-8")
+        self.assertIn(f"renderer_build_root={sealed_build}", receipt)
+        self.assertIn(f"renderer_manifest_sha256={sealed_manifest}", receipt)
+        self.assertIn("render_version=13", receipt)
+
     def test_success_publishes_run_scoped_media_and_current_selector(self) -> None:
         result = self.run_narrate()
         self.assertEqual(0, result.returncode, result.stderr)
@@ -1153,35 +1732,27 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
     def test_wrapper_replaces_inherited_echo_resource_dir_for_every_cli_call(
         self,
     ) -> None:
-        environment_log = self.tmp / "echo-environment.log"
         environment = self.environment()
         environment["ECHO_RESOURCE_DIR"] = "/stale/debug/resources"
-        environment["FAKE_ECHO_ENV_LOG"] = str(environment_log)
 
         result = self.run_narrate(environment=environment)
 
         self.assertEqual(0, result.returncode, result.stderr)
-        calls = environment_log.read_text(encoding="utf-8").splitlines()
-        self.assertEqual(
-            [
-                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=narrate:--epub ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=verify-sidecar:--epub ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=--version: ECHO_RESOURCE_DIR={self.resources.resolve()}",
-                f"CALL=narrate:--help ECHO_RESOURCE_DIR={self.resources.resolve()}",
-            ],
-            calls,
-        )
+        calls = self.installed_probe_log.read_text(encoding="utf-8").splitlines()
+        sealed_suffix = f" ECHO_RESOURCE_DIR={self.resources.resolve()}"
+        self.assertGreater(len(calls), 0)
+        self.assertTrue(all(call.endswith(sealed_suffix) for call in calls), calls)
+        for required_call in (
+            "CALL=--version:",
+            "CALL=narrate:--help",
+            "CALL=verify-sidecar:--help",
+            "CALL=narrate:--epub",
+            "CALL=verify-sidecar:--epub",
+        ):
+            with self.subTest(required_call=required_call):
+                self.assertTrue(
+                    any(call.startswith(required_call) for call in calls), calls
+                )
 
     def test_concurrent_owner_fails_before_narrate_then_resume_is_allowed(self) -> None:
         log = self.tmp / "narrate.log"
@@ -1226,7 +1797,15 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
         resumed_environment = self.environment()
         resumed_environment["FAKE_NARRATE_LOG"] = str(log)
-        resumed = self.run_narrate("--resume", environment=resumed_environment)
+        resume_state = next(
+            (self.run_root / "research").glob("echo-resume-state-*.json")
+        )
+        resumed = self.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(resume_state),
+            environment=resumed_environment,
+        )
         self.assertEqual(0, resumed.returncode, resumed.stderr)
         log_lines = log.read_text(encoding="utf-8").splitlines()
         self.assertEqual(2, sum(line.startswith("BEGIN=") for line in log_lines))
@@ -1362,9 +1941,10 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         old_run_id = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'d' * 40}-am_michael"
         write_owner(run_id=old_run_id)
         old_recovered = self.run_narrate("--recover-stale-lock")
-        self.assertEqual(0, old_recovered.returncode, old_recovered.stderr)
-        self.assertIn("stale narration lock recovered", old_recovered.stdout)
-        self.assertFalse(owner.exists())
+        self.assertEqual(75, old_recovered.returncode, old_recovered.stderr)
+        self.assertIn("malformed narration lock", old_recovered.stderr)
+        self.assertTrue(owner.exists())
+        owner.unlink()
 
         fresh = self.run_narrate()
         self.assertEqual(0, fresh.returncode, fresh.stderr)
@@ -1488,7 +2068,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         release.touch()
         stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
-        self.assertIn("Echo resources changed while narration lease was held", stderr)
+        self.assertIn("resource identity", stderr)
 
     def test_resume_requires_hash_bound_current_render_version_capture_state(self) -> None:
         initial = self.run_narrate()
@@ -1498,33 +2078,43 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         marker_payload["identity"]["renderVersion"] = True
         marker.write_text(json.dumps(marker_payload), encoding="utf-8")
 
-        resumed = self.run_narrate("--resume")
+        resumed = self.run_narrate(*self.resume_arguments())
         self.assertNotEqual(0, resumed.returncode)
         self.assertIn("resume state", resumed.stderr)
 
-    def test_resume_rejects_capture_from_a_different_release_render_version(
+    def test_resume_keeps_the_sealed_renderer_after_a_new_promotion(
         self,
     ) -> None:
-        self.write_cli(include_review_flag=True, render_version=13)
+        selector_path = self.renderer_root / self.source_sha / "approved-renderer.json"
+        original_selector = selector_path.read_bytes()
+        _, sealed_manifest = self.select_manifest_variant(
+            lambda payload: payload.__setitem__("renderVersion", 13),
+            render_version=13,
+        )
         initial = self.run_narrate()
         self.assertEqual(0, initial.returncode, initial.stderr)
         marker = next(self.run_root.glob("audio-work-*/.anchors-ch0.json"))
         marker_payload = json.loads(marker.read_text(encoding="utf-8"))
         self.assertEqual(13, marker_payload["identity"]["renderVersion"])
-        marker_payload["identity"]["renderVersion"] = 12
-        marker.write_text(json.dumps(marker_payload), encoding="utf-8")
+        selector_path.write_bytes(original_selector)
 
-        resumed = self.run_narrate("--resume")
+        resumed = self.run_narrate(*self.resume_arguments())
 
-        self.assertNotEqual(0, resumed.returncode)
-        self.assertIn("render version 13", resumed.stderr)
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        accepted = json.loads(
+            (self.run_root / "research" / "echo-render-current-accepted.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(sealed_manifest, accepted["rendererManifestSHA256"])
+        self.assertEqual(13, accepted["echoRenderVersion"])
 
     def test_resume_rejects_database_mutation(self) -> None:
         initial = self.run_narrate()
         self.assertEqual(0, initial.returncode, initial.stderr)
         database = next(self.run_root.glob("narration-*.sqlite"))
         database.write_bytes(b"substituted database")
-        changed_database = self.run_narrate("--resume")
+        changed_database = self.run_narrate(*self.resume_arguments())
         self.assertNotEqual(0, changed_database.returncode)
         self.assertIn("resume state", changed_database.stderr)
 
@@ -1535,7 +2125,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         payload = json.loads(marker.read_text(encoding="utf-8"))
         payload["identity"] = None
         marker.write_text(json.dumps(payload), encoding="utf-8")
-        resumed = self.run_narrate("--resume")
+        resumed = self.run_narrate(*self.resume_arguments())
         self.assertNotEqual(0, resumed.returncode)
         self.assertIn("sealed Echo identity", resumed.stderr)
 
@@ -1584,7 +2174,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         receipts = list((self.run_root / "research").glob("echo-render-success-*.json"))
         self.assertEqual(1, len(receipts))
         receipt = json.loads(receipts[0].read_text(encoding="utf-8"))
-        self.assertEqual(2, receipt["schemaVersion"])
+        self.assertEqual(3, receipt["schemaVersion"])
         state_receipt = next(
             (self.run_root / "research").glob("echo-resume-state-*.json")
         )
@@ -1596,6 +2186,38 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         for field in ("audiobookSHA256", "sidecarSHA256", "auditSHA256"):
             self.assertRegex(receipt[field], r"^[0-9a-f]{64}$")
+
+        identity = {
+            "rendererSchemaVersion": 1,
+            "rendererRoot": str(self.renderer_root),
+            "rendererBuildRoot": str(self.renderer_build_root),
+            "installerSourceSHA": self.installer_source_sha,
+            "echoSourceSHA": self.source_sha,
+            "rendererManifestSHA256": self.renderer_manifest_sha,
+            "echoCLI_SHA256": hashlib.sha256(self.cli.read_bytes()).hexdigest(),
+            "echoResourcesSHA256": receipt["echoResourcesSHA256"],
+            "echoRenderVersion": 12,
+            "modelPolicyRevision": self.model_policy_revision,
+            "modelExpectedByteCount": self.model_expected_byte_count,
+            "modelBytesAttested": False,
+        }
+        for path in (
+            state_receipt,
+            self.run_root / "research" / "echo-render-current-attempt.json",
+            receipts[0],
+            self.run_root / "research" / "echo-render-current-accepted.json",
+        ):
+            with self.subTest(receipt=path.name):
+                payload = json.loads(path.read_text(encoding="utf-8"))
+                self.assertEqual(identity, {key: payload[key] for key in identity})
+                self.assertIs(payload["modelBytesAttested"], False)
+
+        run_id = receipt["runID"]
+        self.assertRegex(
+            run_id,
+            rf"^[0-9a-f]{{12}}-[0-9a-f]{{12}}-[0-9a-f]{{12}}-"
+            rf"{self.renderer_manifest_sha[:12]}-{self.source_sha}-am_michael$",
+        )
 
         input_receipt = next(
             (self.run_root / "research").glob("echo-render-inputs-*.env")
@@ -1609,6 +2231,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "/usr/local/bin/python3",
                 str(STATE_HELPER),
                 "record-state",
+                *self.renderer_state_arguments(identity),
                 "--work",
                 input_fields["work_dir"],
                 "--db",
@@ -1618,7 +2241,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "--epub",
                 str(self.run_root / "dist" / "fixture.epub"),
                 "--source-sha",
-                self.second_sha,
+                self.source_sha,
                 "--voice",
                 "am_michael",
                 "--render-version",
@@ -1663,6 +2286,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "/usr/local/bin/python3",
                 str(STATE_HELPER),
                 "write-success",
+                *self.renderer_state_arguments(identity),
                 "--attempt-id",
                 selector_payload["attemptID"],
                 "--run-id",
@@ -1684,7 +2308,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "--db",
                 input_fields["narration_db"],
                 "--source-sha",
-                self.second_sha,
+                self.source_sha,
                 "--voice",
                 "am_michael",
                 "--render-version",
@@ -1718,6 +2342,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "/usr/local/bin/python3",
             str(STATE_HELPER),
             "verify-delivery",
+            *self.renderer_state_arguments(identity),
+            "--voice",
+            "am_michael",
             "--attempt",
             str(attempt),
             "--selector",
@@ -1769,6 +2396,125 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertNotEqual(0, tampered.returncode)
         self.assertIn("SHA-256 differs", tampered.stderr)
 
+    def test_renderer_identity_changes_prevent_resume_and_delivery_reuse(self) -> None:
+        result = self.run_narrate()
+        self.assertEqual(0, result.returncode, result.stderr)
+        research = self.run_root / "research"
+        state = next(research.glob("echo-resume-state-*.json"))
+        attempt = research / "echo-render-current-attempt.json"
+        selector = research / "echo-render-current-accepted.json"
+        accepted = json.loads(selector.read_text(encoding="utf-8"))
+        success = research / accepted["successReceiptFileName"]
+        identity_keys = (
+            "rendererSchemaVersion",
+            "rendererRoot",
+            "rendererBuildRoot",
+            "installerSourceSHA",
+            "echoSourceSHA",
+            "rendererManifestSHA256",
+            "echoCLI_SHA256",
+            "echoResourcesSHA256",
+            "echoRenderVersion",
+            "modelPolicyRevision",
+            "modelExpectedByteCount",
+            "modelBytesAttested",
+        )
+        identity = {key: accepted[key] for key in identity_keys}
+        input_receipt = research / accepted["inputReceiptFileName"]
+        input_fields = dict(
+            line.split("=", 1)
+            for line in input_receipt.read_text(encoding="utf-8").splitlines()
+        )
+        artifact_root = self.run_root / "dist" / accepted["artifactRelativePath"]
+
+        state_base = [
+            "/usr/local/bin/python3",
+            str(STATE_HELPER),
+            "verify-state",
+            "--work",
+            input_fields["work_dir"],
+            "--db",
+            input_fields["narration_db"],
+            "--receipt",
+            str(state),
+            "--epub",
+            str(self.run_root / "dist" / "fixture.epub"),
+            "--source-sha",
+            self.source_sha,
+            "--voice",
+            "am_michael",
+            "--render-version",
+            input_fields["render_version"],
+            "--input-receipt",
+            str(input_receipt),
+        ]
+        delivery_base = [
+            "/usr/local/bin/python3",
+            str(STATE_HELPER),
+            "verify-delivery",
+            "--voice",
+            "am_michael",
+            "--attempt",
+            str(attempt),
+            "--selector",
+            str(selector),
+            "--receipt",
+            str(success),
+            "--input-receipt",
+            str(input_receipt),
+            "--state-receipt",
+            str(state),
+            "--epub",
+            str(self.run_root / "dist" / "fixture.epub"),
+            "--audiobook",
+            str(artifact_root / "fixture.m4b"),
+            "--sidecar",
+            str(artifact_root / "fixture.alignment.json"),
+            "--audit",
+            str(artifact_root / "fixture.pronunciation-audit.json"),
+            "--reel",
+            str(artifact_root / "fixture.pronunciation-reel.m4b"),
+        ]
+        mutations = {
+            "installerSourceSHA": "8" * 40,
+            "rendererManifestSHA256": "8" * 64,
+            "echoCLI_SHA256": "8" * 64,
+            "echoResourcesSHA256": "8" * 64,
+            "modelPolicyRevision": "different-policy-revision",
+            "modelExpectedByteCount": self.model_expected_byte_count + 1,
+            "echoSourceSHA": "a" * 40,
+            "voice": "am_puck",
+        }
+        for field, changed in mutations.items():
+            with self.subTest(field=field):
+                changed_identity = dict(identity)
+                if field == "voice":
+                    state_command = [
+                        "am_puck" if argument == "am_michael" else argument
+                        for argument in state_base
+                    ]
+                else:
+                    changed_identity[field] = changed
+                    state_command = list(state_base)
+                    if field == "echoSourceSHA":
+                        state_command[state_command.index(self.source_sha)] = "a" * 40
+                resume = subprocess.run(
+                    [*state_command, *self.renderer_state_arguments(changed_identity)],
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertNotEqual(0, resume.returncode, resume.stderr)
+                delivery_command = [
+                    "am_puck" if field == "voice" and argument == "am_michael" else argument
+                    for argument in delivery_base
+                ]
+                delivery = subprocess.run(
+                    [*delivery_command, *self.renderer_state_arguments(changed_identity)],
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertNotEqual(0, delivery.returncode, delivery.stderr)
+
     def test_failed_newer_source_attempt_invalidates_old_delivery_acceptance(
         self,
     ) -> None:
@@ -1800,6 +2546,24 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "/usr/local/bin/python3",
                 str(STATE_HELPER),
                 "verify-delivery",
+                *self.renderer_state_arguments(
+                    {key: first_selector[key] for key in (
+                        "rendererSchemaVersion",
+                        "rendererRoot",
+                        "rendererBuildRoot",
+                        "installerSourceSHA",
+                        "echoSourceSHA",
+                        "rendererManifestSHA256",
+                        "echoCLI_SHA256",
+                        "echoResourcesSHA256",
+                        "echoRenderVersion",
+                        "modelPolicyRevision",
+                        "modelExpectedByteCount",
+                        "modelBytesAttested",
+                    )}
+                ),
+                "--voice",
+                "am_michael",
                 "--attempt",
                 str(attempt_path),
                 "--selector",
@@ -1839,7 +2603,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             if line.startswith("ARG=")
         ]
         resources = (
-            self.echo / ".build" / "cli",
+            self.renderer_build_root,
             Path(arguments[arguments.index("--work-dir") + 1]),
             Path(arguments[arguments.index("--db") + 1]),
         )
@@ -1910,12 +2674,14 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
         resumed_environment = self.environment()
         resumed_environment["FAKE_NARRATE_LOG"] = str(log)
-        resumed = self.run_narrate("--resume", environment=resumed_environment)
+        resumed = self.run_narrate(
+            *self.resume_arguments(), environment=resumed_environment
+        )
         self.assertEqual(0, resumed.returncode, resumed.stderr)
 
 
 class EchoPronunciationStateCompatibilityTests(unittest.TestCase):
-    def test_run_id_pattern_accepts_current_and_cover_hash_prototype_receipts(self) -> None:
+    def test_run_id_patterns_separate_operational_and_historical_receipts(self) -> None:
         script = """
 import runpy
 import sys
@@ -1923,25 +2689,20 @@ from pathlib import Path
 
 helper = Path(sys.argv[1])
 sys.path.insert(0, str(helper.parent))
-pattern = runpy.run_path(str(helper))["RUN_ID_PATTERN"]
+namespace = runpy.run_path(str(helper))
+pattern = namespace["RUN_ID_PATTERN"]
+legacy_pattern = namespace["LEGACY_RUN_ID_PATTERN"]
 commit = "d" * 40
-current = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-am_michael"
-prototype = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{commit}-am_michael"
-invalid = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{'f' * 12}-{commit}-am_michael"
+current = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{commit}-am_michael"
+legacy = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-am_michael"
 assert pattern.fullmatch(current)
-assert pattern.fullmatch(prototype)
-assert pattern.fullmatch(invalid) is None
+assert pattern.fullmatch(legacy) is None
+assert legacy_pattern.fullmatch(legacy)
+assert legacy_pattern.fullmatch(current)
 
-# A dirty Echo tree appends a marker to the source leg so a dirty render
-# cannot collide with the clean render of the same commit.
 dirty = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-dirty-{'9' * 8}-am_michael"
-assert pattern.fullmatch(dirty)
-dirty_long = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'d' * 64}-dirty-{'9' * 8}-am_michael"
-assert pattern.fullmatch(dirty_long)
-# The marker is still structured: it may not carry arbitrary text.
-assert pattern.fullmatch(
-    f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-dirty-nothex12-am_michael"
-) is None
+assert pattern.fullmatch(dirty) is None
+assert legacy_pattern.fullmatch(dirty)
 assert pattern.fullmatch(
     f"{'a' * 12}-{'b' * 12}-{'c' * 12}-unpinned-am_michael"
 ) is None
@@ -1952,6 +2713,129 @@ assert pattern.fullmatch(
             text=True,
         )
         self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_verify_delivery_remains_read_only_compatible_with_legacy_chain(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            research = root / "research"
+            research.mkdir()
+            run_id = (
+                f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'d' * 40}-am_michael"
+            )
+            attempt_id = "e" * 64
+            artifact_relative_path = f"echo-renders/{run_id}/{attempt_id}"
+            artifacts = root / artifact_relative_path
+            artifacts.mkdir(parents=True)
+            input_receipt = research / f"echo-render-inputs-{run_id}.env"
+            state_receipt = research / f"echo-resume-state-{run_id}.json"
+            epub = root / "fixture.epub"
+            audiobook = artifacts / "fixture.m4b"
+            sidecar = artifacts / "fixture.alignment.json"
+            audit = artifacts / "fixture.pronunciation-audit.json"
+            reel = artifacts / "fixture.pronunciation-reel.m4b"
+            input_receipt.write_text("legacy=true\n", encoding="utf-8")
+            state_receipt.write_text('{"schemaVersion":1}\n', encoding="utf-8")
+            epub.write_bytes(b"legacy epub")
+            audiobook.write_bytes(b"legacy audiobook")
+            sidecar.write_text("{}\n", encoding="utf-8")
+            audit.write_text("{}\n", encoding="utf-8")
+
+            digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+            attempt_payload = {
+                "schemaVersion": 1,
+                "attemptID": attempt_id,
+                "runID": run_id,
+                "inputReceiptFileName": input_receipt.name,
+                "inputReceiptSHA256": digest(input_receipt),
+                "sourceEPUBFileName": epub.name,
+                "sourceEPUBSHA256": digest(epub),
+                "artifactRelativePath": artifact_relative_path,
+            }
+            attempt = research / "echo-render-current-attempt.json"
+            attempt.write_text(
+                json.dumps(attempt_payload, sort_keys=True, separators=(",", ":"))
+                + "\n",
+                encoding="utf-8",
+            )
+            success_payload = {
+                "schemaVersion": 2,
+                **{key: attempt_payload[key] for key in (
+                    "attemptID",
+                    "runID",
+                    "inputReceiptFileName",
+                    "inputReceiptSHA256",
+                    "sourceEPUBFileName",
+                    "sourceEPUBSHA256",
+                    "artifactRelativePath",
+                )},
+                "attemptReceiptSHA256": digest(attempt),
+                "resumeStateFileName": state_receipt.name,
+                "resumeStateSHA256": digest(state_receipt),
+                "audiobookFileName": audiobook.name,
+                "audiobookSHA256": digest(audiobook),
+                "sidecarFileName": sidecar.name,
+                "sidecarSHA256": digest(sidecar),
+                "auditFileName": audit.name,
+                "auditSHA256": digest(audit),
+            }
+            success = research / f"echo-render-success-{run_id}-{attempt_id}.json"
+            success.write_text(
+                json.dumps(success_payload, sort_keys=True, separators=(",", ":"))
+                + "\n",
+                encoding="utf-8",
+            )
+            selector_payload = {
+                "schemaVersion": 1,
+                **{key: attempt_payload[key] for key in (
+                    "attemptID",
+                    "runID",
+                    "inputReceiptFileName",
+                    "inputReceiptSHA256",
+                    "sourceEPUBFileName",
+                    "sourceEPUBSHA256",
+                    "artifactRelativePath",
+                )},
+                "attemptReceiptSHA256": digest(attempt),
+                "successReceiptFileName": success.name,
+                "successReceiptSHA256": digest(success),
+            }
+            selector = research / "echo-render-current-accepted.json"
+            selector.write_text(
+                json.dumps(selector_payload, sort_keys=True, separators=(",", ":"))
+                + "\n",
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "/usr/local/bin/python3",
+                    str(STATE_HELPER),
+                    "verify-delivery",
+                    "--attempt",
+                    str(attempt),
+                    "--selector",
+                    str(selector),
+                    "--receipt",
+                    str(success),
+                    "--input-receipt",
+                    str(input_receipt),
+                    "--state-receipt",
+                    str(state_receipt),
+                    "--epub",
+                    str(epub),
+                    "--audiobook",
+                    str(audiobook),
+                    "--sidecar",
+                    str(sidecar),
+                    "--audit",
+                    str(audit),
+                    "--reel",
+                    str(reel),
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, result.returncode, result.stderr)
 
 
 class PronunciationAuditValidatorTests(unittest.TestCase):

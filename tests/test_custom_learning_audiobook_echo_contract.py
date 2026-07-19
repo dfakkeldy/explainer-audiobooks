@@ -67,43 +67,66 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.normalized(self.package))
 
-    def test_renderer_identity_comes_from_the_built_artifacts(self) -> None:
-        """The built binary and its resource tree are the authoritative
-        fingerprint. The Git revision is a label for them, so a dirty tree is
-        recorded exactly rather than refused, and the pin is optional."""
+    def test_ordinary_narration_has_no_checkout_or_build_boundary(self) -> None:
+        ordinary_source = self.preflight + self.narrate_wrapper
+        forbidden = (
+            "ECHO_REPO",
+            ".build/cli",
+            "xcode-build-gate.sh",
+            "xcodebuild",
+            "make",
+            "git ",
+            "/usr/bin/git",
+        )
+        for marker in forbidden:
+            with self.subTest(marker=marker):
+                self.assertNotIn(marker, ordinary_source)
+        for required in (
+            "echo_installed_renderer.py",
+            "resolve-new",
+            "resolve-resume",
+            "ECHO_RENDERER_BUILD_ROOT",
+            'case "$renderer_key" in',
+            "installed renderer attestation failed",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, ordinary_source)
+        self.assertNotIn("eval", ordinary_source)
+
+    def test_renderer_identity_comes_from_the_installed_artifacts(self) -> None:
+        """The immutable installed package is the operational fingerprint."""
         normalized_package = self.normalized(self.package)
         for marker in (
             "ECHO_CLI_SHA256",
             "ECHO_RESOURCES_SHA256",
-            "ECHO_TREE_STATE",
-            "ECHO_TREE_DIFF_SHA256",
-            "unpinned",
+            "ECHO_RENDERER_MANIFEST_SHA256",
+            "APPROVED_ECHO_INSTALLER_SHA",
+            "APPROVED_ECHO_PRONUNCIATION_SHA",
         ):
             with self.subTest(marker=marker, doc="package-and-qc.md"):
                 self.assertIn(marker, normalized_package)
 
         normalized_preflight = self.normalized(self.preflight)
         for marker in (
-            "ECHO_TREE_STATE=clean",
-            "ECHO_TREE_STATE=dirty",
-            "ECHO_TREE_DIFF_SHA256",
-            "APPROVED_ECHO_PRONUNCIATION_SHA=unpinned",
+            "ECHO_RENDERER_BUILD_ROOT",
+            "ECHO_RENDERER_MANIFEST_SHA256",
+            "ECHO_CLI_SHA256",
+            "ECHO_RESOURCES_SHA256",
         ):
             with self.subTest(marker=marker, doc="preflight"):
                 self.assertIn(marker, normalized_preflight)
 
-    def test_optional_pin_still_enforces_its_original_boundary(self) -> None:
-        """Setting APPROVED_ECHO_PRONUNCIATION_SHA must still require a clean
-        tree and exact equality with HEAD; only the requirement to set it at all
-        was removed."""
+    def test_operational_narration_requires_an_explicit_approved_source(self) -> None:
         normalized_preflight = self.normalized(self.preflight)
         self.assertIn(
-            "must exactly equal Echo source HEAD", normalized_preflight
-        )
-        self.assertIn(
-            "pins a revision but the Echo working tree is not clean",
+            "must exactly equal installed source",
             normalized_preflight,
         )
+        self.assertIn(
+            "APPROVED_ECHO_PRONUNCIATION_SHA is required",
+            self.preflight,
+        )
+        self.assertNotIn("APPROVED_ECHO_PRONUNCIATION_SHA=unpinned", self.preflight)
 
     def test_run_id_is_derived_in_exactly_one_place(self) -> None:
         """The preflight and the attestation both need RUN_ID. Restating the
@@ -125,16 +148,43 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "preflight and attestation must both derive the source id via the helper",
         )
 
+    def test_governed_receipts_bind_the_complete_installed_renderer_identity(self) -> None:
+        for marker in (
+            "renderer_schema_version",
+            "renderer_root",
+            "renderer_build_root",
+            "installer_source_sha",
+            "renderer_manifest_sha256",
+            "model_policy_revision",
+            "model_expected_byte_count",
+            "model_bytes_attested=false",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.preflight)
+
+        for marker in (
+            "--renderer-root",
+            "--renderer-build-root",
+            "--installer-source-sha",
+            "--echo-source-sha",
+            "--renderer-manifest-sha256",
+            "--echo-cli-sha256",
+            "--echo-resources-sha256",
+            "--echo-render-version",
+            "--model-policy-revision",
+            "--model-expected-byte-count",
+            "--model-bytes-attested",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.narrate_wrapper)
+
     def test_attestation_fails_closed_on_mid_render_drift(self) -> None:
-        """A dirty starting tree is attested; drift from the recorded state is
-        still refused."""
+        """The immutable package is re-attested before and after rendering."""
         normalized_preflight = self.normalized(self.preflight)
-        self.assertIn(
-            "Echo source HEAD moved during the render", normalized_preflight
-        )
-        self.assertIn(
-            "Echo working tree changed during the render", normalized_preflight
-        )
+        self.assertIn("echo_installed_renderer.py", normalized_preflight)
+        self.assertIn('"$resolver" attest', normalized_preflight)
+        self.assertIn('--source-sha "$ECHO_SOURCE_SHA"', normalized_preflight)
+        self.assertIn("installed renderer attestation failed", normalized_preflight)
 
         self.assertIn("echo_pronunciation_preflight.sh", self.narrate_wrapper)
         self.assertIn('"$CLI" narrate', self.narrate_wrapper)
@@ -180,6 +230,75 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
                 self.assertIn(marker, self.pilot_narrate_wrapper)
         self.assertNotIn("--cover", self.pilot_narrate_wrapper)
 
+    def test_learning_pilot_uses_the_shared_installed_renderer_boundary(self) -> None:
+        governed_source = (
+            self.preflight + self.narrate_wrapper + self.pilot_narrate_wrapper
+        )
+        for forbidden in (
+            "ECHO_REPO",
+            ".build/cli",
+            "xcode-build-gate.sh",
+            "xcodebuild",
+            "make",
+            "git ",
+            "/usr/bin/git",
+        ):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, governed_source)
+
+        for shared_function in (
+            "echo_pronunciation_resolve_installed_renderer",
+            "echo_pronunciation_assert_leases",
+            "echo_pronunciation_renderer_receipt_text",
+            "echo_pronunciation_attest_renderer",
+        ):
+            with self.subTest(shared_function=shared_function):
+                self.assertIn(f"{shared_function}()", self.preflight)
+                self.assertIn(shared_function, self.pilot_narrate_wrapper)
+
+        for identity_field in (
+            "renderer_schema_version",
+            "renderer_root",
+            "renderer_build_root",
+            "installer_source_sha",
+            "renderer_manifest_sha256",
+            "echo_cli_sha256",
+            "echo_resources_sha256",
+            "model_policy_revision",
+            "model_expected_byte_count",
+            "model_bytes_attested=false",
+        ):
+            with self.subTest(identity_field=identity_field):
+                self.assertIn(identity_field, self.preflight)
+
+        self.assertIn("resolve-new", self.preflight)
+        self.assertIn("resolve-resume", self.preflight)
+        self.assertIn("ECHO_RENDERER_BUILD_ROOT", self.pilot_narrate_wrapper)
+        self.assertIn("--resume", self.pilot_narrate_wrapper)
+        self.assertGreaterEqual(
+            self.pilot_narrate_wrapper.count("pilot_attest_inputs"),
+            4,
+            "pilot must attest before launch, after render, and around publish",
+        )
+
+    def test_full_and_pilot_wrappers_use_shared_renderer_and_lease_functions(
+        self,
+    ) -> None:
+        for name, wrapper in (
+            ("full", self.narrate_wrapper),
+            ("pilot", self.pilot_narrate_wrapper),
+        ):
+            with self.subTest(wrapper=name):
+                self.assertIn(
+                    'source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"', wrapper
+                )
+                self.assertIn(
+                    "echo_pronunciation_resolve_installed_renderer", wrapper
+                )
+                self.assertIn("echo_pronunciation_assert_leases", wrapper)
+                self.assertNotIn("\nresolve_installed_renderer() {", wrapper)
+                self.assertNotIn("\nassert_leases() {", wrapper)
+
     def test_wrapper_binds_selected_square_cover_to_immutable_render(self) -> None:
         for marker in (
             "M4B_COVER",
@@ -191,9 +310,6 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
                 self.assertIn(marker, self.preflight)
 
         self.assertIn('--cover "$M4B_COVER"', self.narrate_wrapper)
-        self.assertIn(
-            "stale echo-cli: explicit cover art is unavailable", self.preflight
-        )
         self.assertIn("M4B_COVER_SHA256", self.normalized(self.package))
 
     def test_wrapper_holds_fd_backed_resource_leases_through_narration(self) -> None:
@@ -208,11 +324,11 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "malformed narration lock",
             'wait "$NARRATE_PID"',
             "--leased-preflight",
-            "--assert-held",
-            "BUILD_RESOURCE",
+            "ECHO_RENDERER_BUILD_ROOT",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.narrate_wrapper)
+        self.assertIn("--assert-held", self.preflight)
 
         for marker in (
             "fcntl.flock",
@@ -326,6 +442,48 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         ):
             with self.subTest(report_marker=marker):
                 self.assertIn(marker, self.skill.casefold())
+
+    def test_operating_docs_require_the_installed_renderer_contract(self) -> None:
+        """The skill must send operators to the versioned store, not a checkout.
+
+        These are deliberately documentation assertions: the shell wrappers
+        already enforce the boundary, but an operator following stale prose can
+        still choose an unsafe or non-reproducible recovery path.
+        """
+        normalized = self.normalized(self.skill + "\n" + self.package)
+        for marker in (
+            "~/Library/Application Support/Echo/Renderers/",
+            "<40-hex source SHA>",
+            "<64-hex manifest SHA>",
+            "approved-renderer.json",
+            "APPROVED_ECHO_INSTALLER_SHA",
+            "APPROVED_ECHO_PRONUNCIATION_SHA",
+            "exactly 40 lowercase hexadecimal characters",
+            "resolve-new",
+            "resolve-resume",
+            "sealed resume-state receipt",
+            "python3 -m echo_renderer.cli install",
+            "python3 -m echo_renderer.cli verify",
+            "python3 -m echo_renderer.cli promote",
+            "python3 -m echo_renderer.cli repair",
+            "ECHO_RESOURCE_DIR",
+            "manifest-bound receipts",
+            "modelBytesAttested: false",
+            "Historical receipts are read-only",
+            "No automatic cleanup",
+            "local-only",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, normalized)
+
+        for stale_marker in (
+            "calls the memory gate",
+            'make -C "$ECHO_REPO" echo-cli',
+            "$ECHO_REPO/.build/cli/Build/Products/Release/echo-cli",
+            "approved_echo_pronunciation_sha=unpinned",
+        ):
+            with self.subTest(stale_marker=stale_marker):
+                self.assertNotIn(stale_marker, normalized)
 
 
 if __name__ == "__main__":
