@@ -32,7 +32,7 @@
   "currentTargetWords": 42800,
   "estimatedMinimumWords": 40000,
   "estimatedMaximumWords": 45000,
-  "draftingStarted": false,
+  "draftingStarted": true,
   "scopeHistory": [
     {
       "date": "2026-07-18",

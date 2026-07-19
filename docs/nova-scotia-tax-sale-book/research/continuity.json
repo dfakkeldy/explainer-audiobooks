@@ -3,7 +3,7 @@
   "draftContexts": [
     {
       "section": "ch01-s01",
-      "status": "unaccepted-first-section-candidate",
+      "status": "accepted-first-section-voice-exemplar",
       "fullOutlinePath": "research/learning-outline.json",
       "evidenceNotesPath": "research/evidence-notes.md",
       "factPackPath": "research/fact-pack.md",
@@ -20,6 +20,10 @@
       "landingBeat": "The listener wants to know why the parcel is being sold and what each source can actually establish.",
       "mustNotRepeat": [],
       "draftPath": "pilot/first-section-candidate.md",
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "humanAcceptanceEvidence": "Let’s go for the voice.",
+      "acceptedAt": "2026-07-19T16:17:07-03:00",
       "authorizationPath": "research/learning-outline.json",
       "recordedBeforeDraft": true
     }

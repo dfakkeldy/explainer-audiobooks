@@ -21,8 +21,8 @@ ranking, or an advertisement disguised as education.
 - `research/`: the public-safe research brief, official-source register,
   traceable evidence notes, fact pack, twelve-chapter argument outline,
   structured learning records, Inverness dossier, municipal comparison,
-  auction-result analysis, pronunciation plan, conversation decision log,
-  handoff packet, and 40-figure visual plan;
+  auction-result analysis, accepted voice exemplar, pronunciation plan,
+  conversation decision log, handoff packet, and 40-figure visual plan;
 - `maps/data/`: an owner-free snapshot of the municipality-published August
   2026 listing facts;
 - `maps/qgis/`: the editable QGIS 4.0.2 project used for the current proofs;
@@ -75,11 +75,12 @@ exist. Three additional Inverness Packet Atlas cards are accepted
 prototype-direction frames outside the forty-figure manifest. Dan approved the revised
 twelve-chapter outline and forty-figure visual
 direction for pilot development on 2026-07-19, and later accepted the exact
-three-card atlas direction with “I like them.” Accepted first-section voice,
-the narrated comprehension-pilot verdict, actual Echo/video-stage atlas proof,
-atlas batch authorization, full manuscript, independent learning and prose
-review, accepted final figures, cover selection, EPUB, Echo narration, public
-package verification, and full listening all remain pending.
+three-card atlas direction with “I like them.” Dan accepted the exact
+first-section teaching and voice with “Let’s go for the voice.” The narrated
+comprehension-pilot verdict, actual Echo/video-stage atlas proof, atlas batch
+authorization, full manuscript, independent learning and prose review, accepted
+final figures, cover selection, EPUB, Echo narration, public package
+verification, and full listening all remain pending.
 
 ## Safety and currency
 

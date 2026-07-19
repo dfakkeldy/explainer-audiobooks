@@ -53,6 +53,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         self.assertEqual(brief["originalTargetWords"], 22000)
         self.assertEqual(brief["currentTargetWords"], 42800)
+        self.assertTrue(brief["draftingStarted"])
         self.assertEqual(len(brief["scopeHistory"]), 6)
         for decision in brief["scopeHistory"]:
             self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19)T")
@@ -109,23 +110,37 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             conversation,
         )
 
-    def test_first_section_candidate_is_grounded_and_still_unaccepted(self) -> None:
+    def test_first_section_voice_acceptance_binds_exact_candidate(self) -> None:
         continuity = json.loads(
             (RESEARCH_ROOT / "continuity.json").read_text(encoding="utf-8")
         )
-        pilot_readme = (PACKET_ROOT / "pilot/README.md").read_text(encoding="utf-8")
-        candidate = (PACKET_ROOT / "pilot/first-section-candidate.md").read_text(
-            encoding="utf-8"
+        pilot = json.loads(
+            (RESEARCH_ROOT / "comprehension-pilot.json").read_text(encoding="utf-8")
         )
+        pilot_readme = (PACKET_ROOT / "pilot/README.md").read_text(encoding="utf-8")
+        candidate_path = PACKET_ROOT / "pilot/first-section-candidate.md"
+        exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
+        candidate = candidate_path.read_text(encoding="utf-8")
 
         self.assertEqual(continuity["checkpoints"], [])
         self.assertEqual(len(continuity["draftContexts"]), 1)
         context = continuity["draftContexts"][0]
         self.assertEqual(context["section"], "ch01-s01")
         self.assertEqual(context["specificClaims"], ["OPS-004", "DATA-002", "DATA-005"])
-        self.assertEqual(context["status"], "unaccepted-first-section-candidate")
+        self.assertEqual(context["status"], "accepted-first-section-voice-exemplar")
 
-        self.assertIn("not the accepted voice exemplar", pilot_readme.lower())
+        checkpoint = pilot["humanCheckpoints"]["firstSection"]
+        self.assertEqual(checkpoint["status"], "accepted")
+        self.assertEqual(checkpoint["reviewer"], "Dan Fakkeldy")
+        self.assertEqual(checkpoint["evidence"], "Let’s go for the voice.")
+        self.assertTrue(checkpoint["recordedBeforeRemainingDraft"])
+        self.assertEqual(candidate_path.read_bytes(), exemplar_path.read_bytes())
+        self.assertEqual(
+            checkpoint["voiceExemplarSHA256"],
+            hashlib.sha256(exemplar_path.read_bytes()).hexdigest(),
+        )
+
+        self.assertIn("accepted", pilot_readme.lower())
         self.assertIn("no pilot audio", pilot_readme.lower())
         self.assertTrue(candidate.startswith("## Chapter 1 — The Last Scene First"))
         self.assertGreaterEqual(len(candidate.split()), 800)

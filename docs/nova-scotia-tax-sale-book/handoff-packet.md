@@ -98,8 +98,11 @@ outcome by copy and paste.
 
 - Human outline checkpoint: complete; the revised argument-level outline and
   forty-figure direction are approved for pilot development.
-- First-section checkpoint: accept the project-authored opening as
-  `research/voice-exemplar.md`.
+- First-section checkpoint: **accepted** by Dan Fakkeldy at
+  2026-07-19T16:17:07-03:00 with “Let’s go for the voice.” The exact
+  project-authored opening is preserved as `research/voice-exemplar.md`,
+  SHA-256
+  `ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df`.
 - Pilot: 10–15 narrated minutes covering opening orientation and the first
   technical passage with no more than three durable terms.
 - Representative listen: driving/delivering only when safe.
