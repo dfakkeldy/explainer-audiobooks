@@ -149,7 +149,61 @@ def write_fixture(root: Path, payload: object) -> Path:
     return path
 
 
+def add_brand_mark(root: Path, payload: dict[str, object]) -> Path:
+    brand = root / "brand-mark.svg"
+    brand.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+        '<circle cx="50" cy="50" r="48" fill="#F6EDDA"/></svg>',
+        encoding="utf-8",
+    )
+    payload["layers"].append(
+        {
+            "kind": "brand_mark",
+            "path": brand.name,
+            "box": [1300, 2280, 180, 180],
+            "opacity": 0.9,
+            "blend_mode": "normal",
+            "purpose": "identify KinNoKi Labs as the publisher",
+        }
+    )
+    return brand
+
+
 class CoverSpecValidationTests(unittest.TestCase):
+    def test_loads_one_safe_brand_mark_as_a_hashed_render_input(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            payload = valid_payload()
+            brand = add_brand_mark(root, payload)
+
+            loaded = load_cover_spec(write_fixture(root, payload), FONT_MANIFEST)
+
+            self.assertEqual(1, len(loaded.brand_marks))
+            self.assertEqual(brand.resolve(), loaded.brand_marks[0].path)
+            self.assertEqual("brand_mark", loaded.brand_marks[0].role)
+            self.assertRegex(loaded.brand_marks[0].sha256, r"^[0-9a-f]{64}$")
+
+    def test_rejects_more_than_one_brand_mark(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            payload = valid_payload()
+            add_brand_mark(root, payload)
+            payload["layers"].append(dict(payload["layers"][-1]))
+
+            with self.assertRaisesRegex(CoverSpecError, "at most one brand_mark"):
+                load_cover_spec(write_fixture(root, payload), FONT_MANIFEST)
+
+    def test_rejects_brand_mark_in_legacy_single_cover_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            payload = valid_payload()
+            payload["schema_version"] = 1
+            payload.pop("variant")
+            add_brand_mark(root, payload)
+
+            with self.assertRaisesRegex(CoverSpecError, "schema version 2"):
+                load_cover_spec(write_fixture(root, payload), FONT_MANIFEST)
+
     def test_loads_legacy_v1_as_portrait_without_mutating_source(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             payload = valid_payload()
@@ -210,6 +264,30 @@ class CoverSpecValidationTests(unittest.TestCase):
             )
         with self.subTest(definition="point"):
             self.assertEqual([expected_x, expected_y], schema["$defs"]["point"]["prefixItems"])
+
+    def test_schema_declares_the_constrained_brand_mark_layer(self) -> None:
+        schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+
+        layer_refs = schema["properties"]["layers"]["items"]["oneOf"]
+        self.assertIn({"$ref": "#/$defs/brand_mark_layer"}, layer_refs)
+        brand = schema["$defs"]["brand_mark_layer"]
+        self.assertFalse(brand["additionalProperties"])
+        self.assertEqual({"const": "brand_mark"}, brand["properties"]["kind"])
+        self.assertEqual(
+            {"kind", "path", "box", "opacity", "blend_mode", "purpose"},
+            set(brand["required"]),
+        )
+        legacy_rule = next(
+            rule
+            for rule in schema["allOf"]
+            if rule.get("if", {}).get("properties", {}).get("schema_version")
+            == {"const": 1}
+        )
+        prohibited = legacy_rule["then"]["properties"]["layers"]["not"]["contains"]
+        self.assertEqual(
+            {"properties": {"kind": {"const": "brand_mark"}}, "required": ["kind"]},
+            prohibited,
+        )
 
     def test_accepts_exact_portrait_and_square_canvas(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

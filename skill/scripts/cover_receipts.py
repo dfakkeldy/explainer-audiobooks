@@ -59,6 +59,8 @@ RENDER_FIELDS = frozenset(
     }
 )
 PAIRED_RENDER_FIELDS = RENDER_FIELDS | {"variant", "thumbnail_dimensions"}
+BRANDED_RENDER_FIELDS = RENDER_FIELDS | {"brand_mark"}
+BRANDED_PAIRED_RENDER_FIELDS = PAIRED_RENDER_FIELDS | {"brand_mark"}
 PAIRED_SELECTION_FIELDS = frozenset(
     {
         "schema_version",
@@ -204,6 +206,12 @@ def _version(value: object, label: str) -> int:
     return value
 
 
+def _renderer_version(value: object, label: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value not in {1, 2}:
+        raise ValueError(f"{label} must be integer 1 or 2")
+    return value
+
+
 def _slug(value: object, label: str) -> str:
     if not isinstance(value, str) or not SLUG.fullmatch(value):
         raise ValueError(f"{label} must be a lowercase slug")
@@ -220,6 +228,22 @@ def _hash(value: object, label: str) -> str:
     if not isinstance(value, str) or not SHA256.fullmatch(value):
         raise ValueError(f"{label} must be a lowercase SHA-256")
     return value
+
+
+def _validate_brand_mark_payload(value: object, label: str) -> dict[str, str]:
+    if not isinstance(value, dict):
+        raise ValueError(f"{label} must be an object")
+    _exact_fields(
+        value,
+        frozenset({"source", "source_sha256"}),
+        label,
+    )
+    return {
+        "source": _file_name(value["source"], f"{label} source"),
+        "source_sha256": _hash(
+            value["source_sha256"], f"{label} source_sha256"
+        ),
+    }
 
 
 def _choice(value: object, choices: frozenset[str], label: str) -> str:
@@ -302,9 +326,12 @@ def sha256_file(path: Path) -> str:
 
 
 def _validate_render_receipt(payload: dict[str, object]) -> dict[str, object]:
-    _exact_fields(payload, RENDER_FIELDS, "render receipt")
+    expected_fields = (
+        BRANDED_RENDER_FIELDS if "brand_mark" in payload else RENDER_FIELDS
+    )
+    _exact_fields(payload, expected_fields, "render receipt")
     _version(payload["receipt_version"], "render receipt_version")
-    _version(payload["renderer_version"], "renderer_version")
+    _renderer_version(payload["renderer_version"], "renderer_version")
     _version(payload["schema_version"], "schema_version")
     candidate = payload["candidate"]
     if not isinstance(candidate, dict) or set(candidate) != {"id", "direction_name"}:
@@ -335,6 +362,8 @@ def _validate_render_receipt(payload: dict[str, object]) -> dict[str, object]:
         not isinstance(warning, str) for warning in warnings
     ):
         raise ValueError("render warnings must be an array of strings")
+    if "brand_mark" in payload:
+        _validate_brand_mark_payload(payload["brand_mark"], "render brand_mark")
     return payload
 
 
@@ -602,6 +631,8 @@ def create_selection(
     except (OSError, RuntimeError, ValueError) as error:
         raise ValueError(f"invalid render receipt: {raw_render_path}") from error
     render = _validate_render_receipt(_read_json(render_path, "render receipt"))
+    if "brand_mark" in render:
+        raise ValueError("brand_mark receipts require paired cover selection")
     cover = _resolve_render_cover(render_path, render["output"])
     cover_payload = _read_bytes(cover, "rendered cover")
     cover_hash = hashlib.sha256(cover_payload).hexdigest()
@@ -651,14 +682,17 @@ def _validated_paired_render(
     except (OSError, RuntimeError, ValueError) as error:
         raise ValueError(f"invalid {expected_variant} render receipt") from error
     render = _read_json(render_path, f"{expected_variant} render receipt")
-    _exact_fields(render, PAIRED_RENDER_FIELDS, f"{expected_variant} render receipt")
-    for field in (
-        "receipt_version",
-        "renderer_version",
-        "schema_version",
-        "font_manifest_version",
-    ):
+    expected_fields = (
+        BRANDED_PAIRED_RENDER_FIELDS
+        if "brand_mark" in render
+        else PAIRED_RENDER_FIELDS
+    )
+    _exact_fields(render, expected_fields, f"{expected_variant} render receipt")
+    for field in ("receipt_version", "schema_version", "font_manifest_version"):
         _version(render[field], f"{expected_variant} {field}")
+    _renderer_version(
+        render["renderer_version"], f"{expected_variant} renderer_version"
+    )
     if render["variant"] != expected_variant:
         raise ValueError(f"{expected_variant} render receipt has wrong variant")
     candidate = render["candidate"]
@@ -694,6 +728,13 @@ def _validated_paired_render(
         not isinstance(item, str) for item in warnings
     ):
         raise ValueError(f"{expected_variant} warnings must be strings")
+    rendered_brand_mark = (
+        _validate_brand_mark_payload(
+            render["brand_mark"], f"{expected_variant} brand_mark"
+        )
+        if "brand_mark" in render
+        else None
+    )
     cover = _resolve_render_cover(render_path, render["output"])
     cover_bytes = _read_bytes(cover, f"{expected_variant} rendered cover")
     if hashlib.sha256(cover_bytes).hexdigest() != render["output_sha256"]:
@@ -737,6 +778,16 @@ def _validated_paired_render(
         raise ValueError(f"{expected_variant} source_art does not match specification")
     if validated_spec.art_sha256 != render["source_art_sha256"]:
         raise ValueError(f"{expected_variant} source art hash mismatch")
+    expected_brand_mark = (
+        {
+            "source": validated_spec.brand_marks[0].path.name,
+            "source_sha256": validated_spec.brand_marks[0].sha256,
+        }
+        if validated_spec.brand_marks
+        else None
+    )
+    if rendered_brand_mark != expected_brand_mark:
+        raise ValueError(f"{expected_variant} brand_mark provenance mismatch")
     if validated_spec.font_manifest.version != render["font_manifest_version"]:
         raise ValueError(f"{expected_variant} font manifest version mismatch")
     if validated_spec.font_manifest.sha256 != render["font_manifest_sha256"]:

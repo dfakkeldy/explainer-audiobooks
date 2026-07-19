@@ -328,6 +328,35 @@ false. The renderer itself never selects automatically.
 The old single-render receipt and title/art/accent/tone/layout paths are
 verification-only compatibility for existing packages.
 
+### Publisher brand mark
+
+Schema-v2 paired covers may add one `brand_mark` layer. This is a separately
+hashed compositor input, not part of the generated source art and not a
+post-render watermark. Copy the selected transparent mark into the candidate
+directory, choose the version intended for the local light or dark surface, and
+place it inside the canvas safe margin. The layer is composited in declared
+order and its exact source bytes are recorded in the render receipt.
+
+```json
+{
+  "kind": "brand_mark",
+  "path": "brand-mark.png",
+  "box": [1324, 96, 180, 180],
+  "opacity": 0.9,
+  "blend_mode": "normal",
+  "purpose": "identify KinNoKi Labs as the publisher"
+}
+```
+
+Use the transparent tree mark by default. A portrait mark around 180 pixels and
+a square mark around 240 pixels are useful starting sizes, but placement remains
+part of each candidate's art direction. Keep it clear of the title, author,
+`AUDIOBOOK` label, focal subject, and trim edge; reduce opacity only when the
+real thumbnail remains unmistakably legible. Do not bake the mark into generated
+art, use the full black-background wordmark as a generic badge, add more than one
+brand mark, or retrofit it after rendering. Portrait and square specifications
+may use different light/dark variants when their local surfaces differ.
+
 ## Award-Worthy Acceptance Bar
 
 Reject and replace any candidate that:
@@ -356,6 +385,10 @@ Reject and replace any candidate that:
   high-resolution portrait art and no external image URLs.
 - Each spec-driven render writes the full-size RGB cover, a 160×256 thumbnail,
   and a `.render.json` receipt. Treat every warning as part of human review.
+- One optional schema-v2 `brand_mark` layer may reference a local SVG, PNG,
+  JPEG, WebP, or GIF. It must remain inside the safe margin; the renderer binds
+  its filename and SHA-256 in a version-2 render receipt, while version-1
+  receipts remain valid compatibility inputs.
 - Keep the candidate's signature accent unmistakable enough for Echo/library
   colour derivation to find it, but do not flatten the whole cover into one
   colour.

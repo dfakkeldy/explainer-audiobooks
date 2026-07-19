@@ -36,6 +36,7 @@ def _protected_inputs(specs: tuple[ValidatedCoverSpec, ...]) -> set[Path]:
     paths: set[Path] = set()
     for spec in specs:
         paths.update((spec.path, spec.art_path, spec.font_manifest.path))
+        paths.update(mark.path for mark in spec.brand_marks)
         for font in spec.font_manifest.fonts.values():
             paths.update((font.path, font.license_path))
     return paths
@@ -63,6 +64,8 @@ def _validate_identity(
         raise CoverRenderError("pair candidate IDs must match")
     if portrait.art_sha256 != square.art_sha256:
         raise CoverRenderError("pair source-art SHA-256 values must match")
+    if bool(portrait.brand_marks) != bool(square.brand_marks):
+        raise CoverRenderError("pair brand_mark must be present on both variants or neither")
     for field in ("title", "author"):
         if portrait.metadata[field] != square.metadata[field]:
             raise CoverRenderError(f"pair metadata {field} values must match")

@@ -45,6 +45,10 @@ Echo narration wrapper embeds the square cover itself and binds the exact
 resulting M4B bytes into the pronunciation audit.
 Never run `replace_m4b_cover.py` or otherwise mutate a narrated M4B after Echo
 emits it.
+When a paired cover carries studio branding, add the transparent publisher mark
+as the schema-v2 `brand_mark` layer documented in `references/cover-art.md`.
+The renderer hashes that separate input into each render receipt; never bake it
+into generated source art or add it after rendering.
 Run `cover_receipts.py verify --cover ... --m4b-cover ... --epub ... --m4b ...`
 for post-embed verification. Finally dry-run and apply `sync_selected_cover.py
 --paired-artifact-dir ...` for governed public/iCloud/site sync under the
