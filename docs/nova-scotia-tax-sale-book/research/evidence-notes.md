@@ -233,6 +233,38 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Source: Province of Nova Scotia Restricted Geographic Services License version 1.0.
 - Confidence: high.
 
+## Interactive map research method
+
+### MAP-001 — current integrated map capabilities
+- Supported wording: NS Marks The Spot source commit `1ee76d15b` adds approximate NSPRD mapped acreage, exact mapped road/trail and water-feature intersection results, and explicit loading, empty and error states to the parcel inspector.
+- Source: NS Marks The Spot pull request 89 and source commit `1ee76d15b2466d40674e62113ac9f1e9044421c1`.
+- Confidence: high for the checked source version; perishable as the app evolves.
+- Boundary: Approximate mapped acreage is not deed area or survey area. A service intersection is not a legal-access, environmental or physical-condition conclusion.
+
+### MAP-002 — current Province-data layer catalogue
+- Supported wording: The checked public build offers NS Aerial, NS Property Boundaries, Crown Lands, Flood Risk Areas, Waterfalls, Water features, and Roads/trails/culverts. Fletcher historical mapping is listed but disabled while display rights remain unresolved.
+- Source: NS Marks The Spot layer catalogue and the 2026-07-19 captured interface.
+- Confidence: high for the checked build; refresh before publication.
+- Boundary: Each service has its own scale, currency, coverage and question. Layer availability does not make every layer relevant to every parcel.
+
+### MAP-003 — event-aware notice catalogue
+- Supported wording: The checked build organizes the CBRM July 21, 2026 and Inverness August 11, 2026 notices, supports municipality/event and redemption-category filtering, and searches across 115 unique notice PIDs.
+- Source: NS Marks The Spot pull request 89, current catalogue source and captured overview/filter states.
+- Confidence: high for the dated snapshot; perishable.
+- Boundary: The catalogue is a dated research index. The municipality's current notice controls whether an event or parcel remains live.
+
+### MAP-004 — production deployment contains the chapter features
+- Supported wording: On 2026-07-19 the public map returned HTTP 200 and its deployed JavaScript bundle contained the current layer names, “Mapped area,” and the exact road/trail and water intersection interface labels.
+- Source: `https://kinnokilabs.com/apps/nsmarksthespot/map/`; deployed asset `assets/index-CCMc9yKR.js`, checked 2026-07-19. HTML SHA-256 `627783c024f18dbfa013ab68a77aff0c43cbbfd4cae6a30fc1b4f6ec99eb1c70`; JavaScript SHA-256 `a9485a657493d0d0e2bf0e667095abf314e59106241a109cc8db65455dd219fc`.
+- Confidence: high for the dated deployment receipt; perishable.
+- Boundary: HTTP reachability and bundled labels do not prove every upstream map service is available at every later visit.
+
+### MAP-005 — River Denys screenshot demonstration
+- Supported wording: In the version-stamped capture for PID `50308311`, the parcel inspector reports approximately 5.12 mapped acres, returns mapped River Denys water features, and reports no mapped road/trail intersection.
+- Source: NS Marks The Spot source commit `1ee76d15b`; `figure-51-combined-parcel-research.png`; screenshot receipt.
+- Confidence: high for the captured interface state; refresh the parcel, notice and services before publication.
+- Boundary: The result is an interface demonstration, not a property recommendation. It proves neither legal access nor no access, and it is not a wetland, flood, survey, title or site-condition opinion.
+
 ## Physical and environmental uncertainty
 
 ### ENV-001 — environmental records are part of due diligence

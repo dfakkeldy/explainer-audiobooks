@@ -2,64 +2,581 @@
   "schemaVersion": 2,
   "concepts": [
     {
-      "name":"tax-sale sequence","durableOutcome":"Explain why a municipality can sell property and reconstruct the statutory sequence.","definition":"The statutory collection path from arrears and lien through notices, title work, advertisement and public sale.","reason":"A bidder enters only at the last stage and needs to understand the rights and work that precede the event.","mechanism":"Unpaid taxes form a priority lien; statutory timing, notice, title search and public-sale requirements move the account toward auction or tender.","concreteCase":"One Inverness parcel called at Port Hood after municipal notice and advertisement.","problemBeforeName":"The listener sees an auction but cannot explain why the municipality may sell another person's land.","realWorldApplications":["Inverness and other MGA municipalities","Halifax under the HRMC"],
-      "analogy":{"name":"runway before takeoff","relationship":"The public event is possible only after required earlier stages.","correspondence":["notice and title work are runway checks","the auction is takeoff rather than the whole journey"],"limit":"A legal sale is not optional pilot judgment; the analogy does not describe owner rights or exact statutory compliance."},"analogyNotApplicableReason":"","boundary":"A tax sale is not a municipal warranty, foreclosure auction or ordinary listing.","boundaryNotApplicableReason":"","misconception":"The auction itself creates the municipality's authority.","expectedAbility":"Put lien, preliminary notice, title search, notice of intent, advertisement and sale in order.",
-      "chapterUses":[{"chapter":"ch01.md","function":"introduce mechanism"},{"chapter":"ch09.md","function":"retrieve at event"},{"chapter":"ch12.md","function":"apply to fresh parcels"}],
-      "retrievals":[{"chapter":"ch09.md","afterGapFrom":"ch01.md","freshSituation":"A parcel is withdrawn minutes before bidding.","listenerTask":"Explain which earlier process remains live and why payment can stop the sale.","answerPlacement":"After the withdrawal scene."}]
+      "name": "tax-sale sequence",
+      "durableOutcome": "Explain why a municipality can sell property and reconstruct the statutory sequence.",
+      "definition": "The statutory collection path from arrears and lien through notices, title work, advertisement and public sale.",
+      "reason": "A bidder enters only at the last stage and needs to understand the rights and work that precede the event.",
+      "mechanism": "Unpaid taxes form a priority lien; statutory timing, notice, title search and public-sale requirements move the account toward auction or tender.",
+      "concreteCase": "One Inverness parcel called at Port Hood after municipal notice and advertisement.",
+      "problemBeforeName": "The listener sees an auction but cannot explain why the municipality may sell another person's land.",
+      "realWorldApplications": [
+        "Inverness and other MGA municipalities",
+        "Halifax under the HRMC"
+      ],
+      "analogy": {
+        "name": "runway before takeoff",
+        "relationship": "The public event is possible only after required earlier stages.",
+        "correspondence": [
+          "notice and title work are runway checks",
+          "the auction is takeoff rather than the whole journey"
+        ],
+        "limit": "A legal sale is not optional pilot judgment; the analogy does not describe owner rights or exact statutory compliance."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "A tax sale is not a municipal warranty, foreclosure auction or ordinary listing.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "The auction itself creates the municipality's authority.",
+      "expectedAbility": "Put lien, preliminary notice, title search, notice of intent, advertisement and sale in order.",
+      "chapterUses": [
+        {
+          "chapter": "ch01.md",
+          "function": "introduce mechanism"
+        },
+        {
+          "chapter": "ch10.md",
+          "function": "retrieve at event"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "apply to fresh parcels"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch10.md",
+          "afterGapFrom": "ch01.md",
+          "freshSituation": "A parcel is withdrawn minutes before bidding.",
+          "listenerTask": "Explain which earlier process remains live and why payment can stop the sale.",
+          "answerPlacement": "After the withdrawal scene."
+        }
+      ]
     },
     {
-      "name":"notice identifiers","durableOutcome":"Distinguish AAN, PID, civic address, assessment, parcel map, legal description, survey and parcel register.","definition":"A set of identifiers and records that answer different questions about tax account, parcel, location, value basis, description, boundary and title.","reason":"Collapsing them into one imagined property is the fastest route to researching the wrong thing.","mechanism":"The notice routes the researcher from AAN and PID to assessment, mapping, registry documents, legal description and professional interpretation.","concreteCase":"An Inverness summary row disagrees with its detail sheet while a civic address points near a building whose PID and deed define the actual land extent.","problemBeforeName":"The auction row shows several numbers and the listener assumes they all mean the same property object.","realWorldApplications":["Inverness August 2026 packet","Property Online","NSPRD and PVSC screening"],
-      "analogy":{"name":"library catalogue","relationship":"Different identifiers lead to different authoritative records.","correspondence":["PID resembles the catalogue key for the parcel","the deed and register resemble the source material reached through the key"],"limit":"Land records create and evidence legal interests; they are not merely descriptions of a book already understood."},"analogyNotApplicableReason":"","boundary":"A PID map is not a survey and an AAN is not title.","boundaryNotApplicableReason":"","misconception":"The civic address or assessed-owner name proves exactly what land and building are sold.","expectedAbility":"Say which source answers account, parcel, boundary, title and assessment questions.",
-      "chapterUses":[{"chapter":"ch02.md","function":"introduce"},{"chapter":"ch04.md","function":"deepen into source chain"},{"chapter":"ch12.md","function":"retrieve"}],
-      "retrievals":[{"chapter":"ch04.md","afterGapFrom":"ch02.md","freshSituation":"The parcel map and civic-address point disagree.","listenerTask":"Choose which records to inspect rather than deciding from the map.","answerPlacement":"At the start of the parcel-biography build."}]
+      "name": "notice identifiers",
+      "durableOutcome": "Distinguish AAN, PID, civic address, assessment, parcel map, legal description, survey and parcel register.",
+      "definition": "A set of identifiers and records that answer different questions about tax account, parcel, location, value basis, description, boundary and title.",
+      "reason": "Collapsing them into one imagined property is the fastest route to researching the wrong thing.",
+      "mechanism": "The notice routes the researcher from AAN and PID to assessment, mapping, registry documents, legal description and professional interpretation.",
+      "concreteCase": "An Inverness summary row disagrees with its detail sheet while a civic address points near a building whose PID and deed define the actual land extent.",
+      "problemBeforeName": "The auction row shows several numbers and the listener assumes they all mean the same property object.",
+      "realWorldApplications": [
+        "Inverness August 2026 packet",
+        "Property Online",
+        "NSPRD and PVSC screening"
+      ],
+      "analogy": {
+        "name": "library catalogue",
+        "relationship": "Different identifiers lead to different authoritative records.",
+        "correspondence": [
+          "PID resembles the catalogue key for the parcel",
+          "the deed and register resemble the source material reached through the key"
+        ],
+        "limit": "Land records create and evidence legal interests; they are not merely descriptions of a book already understood."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "A PID map is not a survey and an AAN is not title.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "The civic address or assessed-owner name proves exactly what land and building are sold.",
+      "expectedAbility": "Say which source answers account, parcel, boundary, title and assessment questions.",
+      "chapterUses": [
+        {
+          "chapter": "ch02.md",
+          "function": "introduce"
+        },
+        {
+          "chapter": "ch04.md",
+          "function": "deepen into source chain"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch04.md",
+          "afterGapFrom": "ch02.md",
+          "freshSituation": "The parcel map and civic-address point disagree.",
+          "listenerTask": "Choose which records to inspect rather than deciding from the map.",
+          "answerPlacement": "At the start of the parcel-biography build."
+        }
+      ]
     },
     {
-      "name":"redemption clock","durableOutcome":"Translate auction, tender, minimum bid, immediate deed, redemption, certificate of sale and tax deed into consequences.","definition":"The six-month statutory period in which qualifying owners or interest holders may recover property sold for taxes, except in the older-arrears case.","reason":"It changes what the bidder receives, can do, must protect and may ultimately keep.","mechanism":"Full payment creates a registered certificate; qualifying redemption payment ends the purchaser's rights, while expiry without redemption permits deed request.","concreteCase":"A building is insured and protected for four months before its owner redeems.","problemBeforeName":"The bidder wins but cannot yet explain whether final title exists or what happens if the owner pays.","realWorldApplications":["Inverness six-month category","Inverness non-redeemable category"],
-      "analogy":{"name":"forked railway","relationship":"One paid bid can continue toward either discharge or deed.","correspondence":["the certificate is the shared track after sale","redemption and deed are different endpoints"],"limit":"The branches are controlled by law and payment, not by the purchaser choosing a destination."},"analogyNotApplicableReason":"","boundary":"Immediate deed removes the statutory redemption period; it does not promise immediate possession, insurance or usability.","boundaryNotApplicableReason":"","misconception":"Winning at auction always means immediate unrestricted ownership.","expectedAbility":"Narrate certificate, redemption/discharge and deed paths and the older-arrears exception.",
-      "chapterUses":[{"chapter":"ch03.md","function":"introduce"},{"chapter":"ch10.md","function":"operate within"},{"chapter":"ch12.md","function":"retrieve"}],
-      "retrievals":[{"chapter":"ch10.md","afterGapFrom":"ch03.md","freshSituation":"The treasurer asks for the purchaser's approved repair statement before redemption.","listenerTask":"Explain why the certificate period required documentation.","answerPlacement":"In the redemption accounting scene."}]
+      "name": "redemption clock",
+      "durableOutcome": "Translate auction, tender, minimum bid, immediate deed, redemption, certificate of sale and tax deed into consequences.",
+      "definition": "The six-month statutory period in which qualifying owners or interest holders may recover property sold for taxes, except in the older-arrears case.",
+      "reason": "It changes what the bidder receives, can do, must protect and may ultimately keep.",
+      "mechanism": "Full payment creates a registered certificate; qualifying redemption payment ends the purchaser's rights, while expiry without redemption permits deed request.",
+      "concreteCase": "A building is insured and protected for four months before its owner redeems.",
+      "problemBeforeName": "The bidder wins but cannot yet explain whether final title exists or what happens if the owner pays.",
+      "realWorldApplications": [
+        "Inverness six-month category",
+        "Inverness non-redeemable category"
+      ],
+      "analogy": {
+        "name": "forked railway",
+        "relationship": "One paid bid can continue toward either discharge or deed.",
+        "correspondence": [
+          "the certificate is the shared track after sale",
+          "redemption and deed are different endpoints"
+        ],
+        "limit": "The branches are controlled by law and payment, not by the purchaser choosing a destination."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "Immediate deed removes the statutory redemption period; it does not promise immediate possession, insurance or usability.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "Winning at auction always means immediate unrestricted ownership.",
+      "expectedAbility": "Narrate certificate, redemption/discharge and deed paths and the older-arrears exception.",
+      "chapterUses": [
+        {
+          "chapter": "ch03.md",
+          "function": "introduce"
+        },
+        {
+          "chapter": "ch11.md",
+          "function": "operate within"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch11.md",
+          "afterGapFrom": "ch03.md",
+          "freshSituation": "The treasurer asks for the purchaser's approved repair statement before redemption.",
+          "listenerTask": "Explain why the certificate period required documentation.",
+          "answerPlacement": "In the redemption accounting scene."
+        }
+      ]
     },
     {
-      "name":"evidence classification","durableOutcome":"Build a lawful public research file and explain what the municipal packet already provides, what additional research contributes and where professional authority begins.","definition":"A source-traceable record separating reused municipal facts, added research, facts needing a named professional, unresolved uncertainties and conditions that stop a decision.","reason":"Inverness already supplies strong orientation material, while a tax sale still prevents ordinary inspection and leaves legal, physical and decision questions open.","mechanism":"Every research question records whether the fact came from the municipal packet or a new source, plus locator, date, confidence, next authority and decision consequence.","concreteCase":"The municipal packet shows a parcel beside a road, while the added file labels legal access as unresolved for lawyer/surveyor review rather than treating the image as proof.","problemBeforeName":"The researcher has a substantial municipal packet and more screenshots but cannot yet state what was added, what is proved or what remains outside the researcher's role.","realWorldApplications":["Inverness municipal-packet delta","Property Online record file","public QGIS screening","professional handoff"],
-      "analogy":{"name":"four labelled trays","relationship":"Evidence moves into a decision category rather than one undifferentiated pile.","correspondence":["verified facts enter the ready tray","disqualifying unknowns enter the stop tray"],"limit":"Real findings can move between trays as evidence changes; the categories do not calculate legal risk automatically."},"analogyNotApplicableReason":"","boundary":"An unresolved fact is not automatically priceable.","boundaryNotApplicableReason":"","misconception":"Enough online searching turns every uncertainty into a known fact.","expectedAbility":"Classify a finding and name the source or professional needed next.",
-      "chapterUses":[{"chapter":"ch04.md","function":"introduce"},{"chapter":"ch06.md","function":"use with physical records"},{"chapter":"ch08.md","function":"connect to budget"},{"chapter":"ch12.md","function":"retrieve"}],
-      "retrievals":[{"chapter":"ch06.md","afterGapFrom":"ch04.md","freshSituation":"No septic record appears for an old property.","listenerTask":"Classify the negative search without calling the system compliant.","answerPlacement":"Immediately after the database limitation."}]
+      "name": "evidence classification",
+      "durableOutcome": "Explain what a municipal packet already provides, what additional research can responsibly contribute and where professional authority begins.",
+      "definition": "A source-traceable record separating reused municipal facts, added research, facts needing a named professional, unresolved uncertainties and conditions that stop a decision.",
+      "reason": "Inverness already supplies strong orientation material, while a tax sale still prevents ordinary inspection and leaves legal, physical and decision questions open.",
+      "mechanism": "Every research question records whether the fact came from the municipal packet or a new source, plus locator, date, confidence, next authority and decision consequence.",
+      "concreteCase": "The municipal packet shows a parcel beside a road, while the added file labels legal access as unresolved for lawyer/surveyor review rather than treating the image as proof.",
+      "problemBeforeName": "The researcher has a substantial municipal packet and more screenshots but cannot yet state what was added, what is proved or what remains outside the researcher's role.",
+      "realWorldApplications": [
+        "Inverness municipal-packet delta",
+        "Property Online record file",
+        "public QGIS screening",
+        "professional handoff"
+      ],
+      "analogy": {
+        "name": "four labelled trays",
+        "relationship": "Evidence moves into a decision category rather than one undifferentiated pile.",
+        "correspondence": [
+          "verified facts enter the ready tray",
+          "disqualifying unknowns enter the stop tray"
+        ],
+        "limit": "Real findings can move between trays as evidence changes; the categories do not calculate legal risk automatically."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "An unresolved fact is not automatically priceable.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "Enough online searching turns every uncertainty into a known fact.",
+      "expectedAbility": "Classify a finding and name the source or professional needed next.",
+      "chapterUses": [
+        {
+          "chapter": "ch04.md",
+          "function": "introduce"
+        },
+        {
+          "chapter": "ch07.md",
+          "function": "use with physical records"
+        },
+        {
+          "chapter": "ch09.md",
+          "function": "connect to budget"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch07.md",
+          "afterGapFrom": "ch04.md",
+          "freshSituation": "No septic record appears for an old property.",
+          "listenerTask": "Classify the negative search without calling the system compliant.",
+          "answerPlacement": "Immediately after the database limitation."
+        }
+      ]
     },
     {
-      "name":"legal access","durableOutcome":"Test legal access, intended use, zoning, services, boundaries and municipal compliance separately.","definition":"A legally supportable right for the parcel or owner to reach the land, distinct from visual proximity or historic informal use.","reason":"Land without usable legal access can fail a building, financing, service or resale plan despite looking reachable.","mechanism":"Title documents, plans, easements/rights-of-way, public-road frontage and municipal rules are reconciled by appropriate professionals.","concreteCase":"A visible driveway crosses a neighbour's parcel without a confirmed registered right.","problemBeforeName":"The listener can see a route on imagery and assumes that seeing is owning a route.","realWorldApplications":["landlocked vacant parcel","shared rural driveway","road-frontage development test"],
-      "analogy":{"name":"door and key","relationship":"Physical entry and legal authority to enter are different requirements.","correspondence":["the visible driveway is the door","the registered right or frontage evidence is the key"],"limit":"A right-of-way has detailed scope and obligations; it is not a simple universal key."},"analogyNotApplicableReason":"","boundary":"Legal access does not by itself prove a building permit, servicing or year-round physical suitability.","boundaryNotApplicableReason":"","misconception":"A parcel touching a mapped road has adequate legal and development access.","expectedAbility":"Ask separately about title access, frontage, physical route and intended-use requirements.",
-      "chapterUses":[{"chapter":"ch05.md","function":"introduce in failure case"},{"chapter":"ch07.md","function":"retrieve with easements"},{"chapter":"ch11.md","function":"recheck after deed"}],
-      "retrievals":[{"chapter":"ch07.md","afterGapFrom":"ch05.md","freshSituation":"The tax deed preserves an easement burden.","listenerTask":"Explain why free-of-encumbrances language did not erase every access relationship.","answerPlacement":"In the deed-effect interpretation."}]
+      "name": "mapped intersection",
+      "durableOutcome": "Build a lawful pre-bid evidence file without entering private property.",
+      "definition": "A result saying that the current geometry from one mapped service crosses the selected parcel polygon.",
+      "reason": "Visual proximity is easy to overread, while even an exact geometry result inherits the source service’s scale, currency, coverage and legal limits.",
+      "mechanism": "The app sends the selected PID geometry and a named service layer through an intersection query, then reports matched mapped features or an honest empty/error state.",
+      "concreteCase": "For PID 50308311, the captured build returns River Denys water features and no mapped road/trail intersection, creating separate water and access questions.",
+      "problemBeforeName": "The listener sees a line near a parcel and needs language more precise than “there is a road” or “there is water.”",
+      "realWorldApplications": [
+        "NS Marks The Spot parcel inspector",
+        "public water-feature screening",
+        "public road/trail screening"
+      ],
+      "analogy": {
+        "name": "transparent sheets over one outline",
+        "relationship": "Each sheet answers only whether its own marks overlap the parcel outline.",
+        "correspondence": [
+          "one sheet represents one layer",
+          "overlap creates a question for that layer’s source"
+        ],
+        "limit": "The sheets do not create legal access, survey accuracy, physical condition or complete real-world coverage."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "A mapped intersection is not a survey, title opinion, legal right-of-way, wetland delineation, flood opinion, inspection or development approval.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "A visible or returned overlap proves the real-world feature and its legal consequence; an empty result proves absence.",
+      "expectedAbility": "State the layer, returned result, retrieval date, limitation and next authoritative question for one parcel.",
+      "chapterUses": [
+        {
+          "chapter": "ch05.md",
+          "function": "introduce and practise"
+        },
+        {
+          "chapter": "ch06.md",
+          "function": "challenge with apparent access"
+        },
+        {
+          "chapter": "ch07.md",
+          "function": "challenge with physical and environmental records"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve across fresh parcel files"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch06.md",
+          "afterGapFrom": "ch05.md",
+          "freshSituation": "A driveway-like line appears beside a parcel but the map reports no road/trail intersection.",
+          "listenerTask": "Write a bounded observation and choose the legal-access records and professionals needed next.",
+          "answerPlacement": "At the start of the landlocked-sliver case."
+        }
+      ]
     },
     {
-      "name":"record limitation","durableOutcome":"Recognize physical and environmental unknowns that records can reveal, narrow or fail to answer.","definition":"The stated boundary on what a database, map, inspection opportunity or missing record can support.","reason":"Tax-sale research is vulnerable to converting a negative search into invented reassurance.","mechanism":"Each result is paired with coverage date, scale, geolocation quality, completeness warning and property-specific next step.","concreteCase":"An abandoned-mine database has no point on the parcel but expressly admits undocumented openings and omitted subsidence.","problemBeforeName":"A clean search screen feels like evidence that nothing is wrong.","realWorldApplications":["well-log geolocation","coastal 2100 scenario","contaminated-site registry","abandoned-mine inventory"],
-      "analogy":{"name":"flashlight in a dark barn","relationship":"A source illuminates part of the risk field without proving the rest empty.","correspondence":["the beam is the database's coverage","the unlit space is residual uncertainty"],"limit":"A database has systematic scope and evidence, not a randomly moving beam; the analogy must not imply all sources are equally weak."},"analogyNotApplicableReason":"","boundary":"A limitation does not make the source useless; it defines the claim the source can support.","boundaryNotApplicableReason":"","misconception":"No record means no well, septic problem, contamination, flood exposure or mine hazard.","expectedAbility":"State one supported finding and one residual uncertainty for each source.",
-      "chapterUses":[{"chapter":"ch06.md","function":"introduce across sources"},{"chapter":"ch11.md","function":"revisit after inspection access"},{"chapter":"ch12.md","function":"retrieve"}],
-      "retrievals":[{"chapter":"ch11.md","afterGapFrom":"ch06.md","freshSituation":"Post-deed inspection contradicts an estimated well-map point.","listenerTask":"Explain why the pre-bid record was a clue rather than a false fact.","answerPlacement":"In the post-deed reinspection."}]
+      "name": "legal access",
+      "durableOutcome": "Test legal access, intended use, zoning, services, boundaries and municipal compliance separately.",
+      "definition": "A legally supportable right for the parcel or owner to reach the land, distinct from visual proximity or historic informal use.",
+      "reason": "Land without usable legal access can fail a building, financing, service or resale plan despite looking reachable.",
+      "mechanism": "Title documents, plans, easements/rights-of-way, public-road frontage and municipal rules are reconciled by appropriate professionals.",
+      "concreteCase": "A visible driveway crosses a neighbour's parcel without a confirmed registered right.",
+      "problemBeforeName": "The listener can see a route on imagery and assumes that seeing is owning a route.",
+      "realWorldApplications": [
+        "landlocked vacant parcel",
+        "shared rural driveway",
+        "road-frontage development test"
+      ],
+      "analogy": {
+        "name": "door and key",
+        "relationship": "Physical entry and legal authority to enter are different requirements.",
+        "correspondence": [
+          "the visible driveway is the door",
+          "the registered right or frontage evidence is the key"
+        ],
+        "limit": "A right-of-way has detailed scope and obligations; it is not a simple universal key."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "Legal access does not by itself prove a building permit, servicing or year-round physical suitability.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "A parcel touching a mapped road has adequate legal and development access.",
+      "expectedAbility": "Ask separately about title access, frontage, physical route and intended-use requirements.",
+      "chapterUses": [
+        {
+          "chapter": "ch06.md",
+          "function": "introduce in failure case"
+        },
+        {
+          "chapter": "ch08.md",
+          "function": "retrieve with easements"
+        },
+        {
+          "chapter": "ch12.md",
+          "function": "recheck after deed"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch08.md",
+          "afterGapFrom": "ch06.md",
+          "freshSituation": "The tax deed preserves an easement burden.",
+          "listenerTask": "Explain why free-of-encumbrances language did not erase every access relationship.",
+          "answerPlacement": "In the deed-effect interpretation."
+        }
+      ]
     },
     {
-      "name":"title versus possession","durableOutcome":"Separate title, encumbrances, easements, occupancy and vacant possession.","definition":"Title describes legal ownership interests; possession describes control or occupancy of the place; each can require a different legal process.","reason":"A tax deed does not safely answer who is inside, whether a tenancy exists or how possession changes.","mechanism":"The deed and title opinion address conveyed interests; occupancy facts and applicable tenancy/possession law determine lawful next steps.","concreteCase":"A deeded four-unit-or-less building remains occupied and the municipality supplies neither keys nor eviction.","problemBeforeName":"The bidder assumes ownership paperwork physically empties the premises.","realWorldApplications":["owner-occupied building","rental unit","abandoned goods","mobile home on leased land"],
-      "analogy":{"name":"name on the coat-check ticket versus coat in hand","relationship":"Documented entitlement and physical control are distinct.","correspondence":["the ticket resembles evidence of legal entitlement","having the coat resembles actual possession"],"limit":"Real-property possession and tenancy rights are far more complex, and self-help cannot be inferred from the analogy."},"analogyNotApplicableReason":"","boundary":"The book will not prescribe eviction, lockout or abandoned-goods steps for a specific property.","boundaryNotApplicableReason":"","misconception":"Immediate deed means immediate vacant possession.","expectedAbility":"Ask separate lawyer-reviewed questions about deed, burdens, occupants and possession process.",
-      "chapterUses":[{"chapter":"ch07.md","function":"introduce"},{"chapter":"ch10.md","function":"apply during redemption"},{"chapter":"ch11.md","function":"apply after deed"},{"chapter":"ch12.md","function":"retrieve"}],
-      "retrievals":[{"chapter":"ch10.md","afterGapFrom":"ch07.md","freshSituation":"Rent arrives during the redemption period while an occupant remains.","listenerTask":"Identify why certificate powers do not justify improvising possession actions.","answerPlacement":"In the certificate-holder operations scene."}]
+      "name": "record limitation",
+      "durableOutcome": "Recognize physical and environmental unknowns that records can reveal, narrow or fail to answer.",
+      "definition": "The stated boundary on what a database, map, inspection opportunity or missing record can support.",
+      "reason": "Tax-sale research is vulnerable to converting a negative search into invented reassurance.",
+      "mechanism": "Each result is paired with coverage date, scale, geolocation quality, completeness warning and property-specific next step.",
+      "concreteCase": "An abandoned-mine database has no point on the parcel but expressly admits undocumented openings and omitted subsidence.",
+      "problemBeforeName": "A clean search screen feels like evidence that nothing is wrong.",
+      "realWorldApplications": [
+        "well-log geolocation",
+        "coastal 2100 scenario",
+        "contaminated-site registry",
+        "abandoned-mine inventory"
+      ],
+      "analogy": {
+        "name": "flashlight in a dark barn",
+        "relationship": "A source illuminates part of the risk field without proving the rest empty.",
+        "correspondence": [
+          "the beam is the database's coverage",
+          "the unlit space is residual uncertainty"
+        ],
+        "limit": "A database has systematic scope and evidence, not a randomly moving beam; the analogy must not imply all sources are equally weak."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "A limitation does not make the source useless; it defines the claim the source can support.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "No record means no well, septic problem, contamination, flood exposure or mine hazard.",
+      "expectedAbility": "State one supported finding and one residual uncertainty for each source.",
+      "chapterUses": [
+        {
+          "chapter": "ch07.md",
+          "function": "introduce across sources"
+        },
+        {
+          "chapter": "ch12.md",
+          "function": "revisit after inspection access"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch12.md",
+          "afterGapFrom": "ch07.md",
+          "freshSituation": "Post-deed inspection contradicts an estimated well-map point.",
+          "listenerTask": "Explain why the pre-bid record was a clue rather than a false fact.",
+          "answerPlacement": "In the post-deed reinspection."
+        }
+      ]
     },
     {
-      "name":"all-in cost","durableOutcome":"Construct an all-in uncertainty budget and written maximum-bid rule without treating the minimum as value.","definition":"The total exposure required to reach a defined use, including bid, taxes, professional work, carrying, condition, possession and uncertainty reserves.","reason":"The auction price is only one cost and the minimum has no built-in allowance for defects or plans.","mechanism":"Start from a defined use and conservative value boundary, subtract known costs and reserves, then set a written maximum that cannot rise in the room.","concreteCase":"A low-minimum building requires HST/tax review, legal work, insurance, security, remediation and occupancy reserves before any rehabilitation budget.","problemBeforeName":"The listener sees a four-figure minimum and compares it directly with ordinary house prices.","realWorldApplications":["vacant land","occupied building","non-resident residential purchase"],
-      "analogy":{"name":"iceberg cost stack","relationship":"The visible bid can be smaller than less visible acquisition and responsibility costs.","correspondence":["the visible tip is the winning bid","submerged mass is taxes, professional work, carrying, repair and uncertainty"],"limit":"The proportions are not fixed and known costs should be estimated rather than treated as unknowable danger."},"analogyNotApplicableReason":"","boundary":"The framework is educational and does not select a return target or personalized bid.","boundaryNotApplicableReason":"","misconception":"A winning bid below assessed value is necessarily a bargain.","expectedAbility":"Name the cost categories and derive a stopping number from evidence rather than competition.",
-      "chapterUses":[{"chapter":"ch08.md","function":"introduce"},{"chapter":"ch09.md","function":"execute"},{"chapter":"ch12.md","function":"retrieve"}],
-      "retrievals":[{"chapter":"ch09.md","afterGapFrom":"ch08.md","freshSituation":"The live bid crosses the written ceiling by one increment.","listenerTask":"Decide whether any auction-room fact justifies a higher number.","answerPlacement":"The fictional bidder lowers the card; the researcher does not change the evidence file."}]
+      "name": "title versus possession",
+      "durableOutcome": "Separate title, encumbrances, easements, occupancy and vacant possession.",
+      "definition": "Title describes legal ownership interests; possession describes control or occupancy of the place; each can require a different legal process.",
+      "reason": "A tax deed does not safely answer who is inside, whether a tenancy exists or how possession changes.",
+      "mechanism": "The deed and title opinion address conveyed interests; occupancy facts and applicable tenancy/possession law determine lawful next steps.",
+      "concreteCase": "A deeded four-unit-or-less building remains occupied and the municipality supplies neither keys nor eviction.",
+      "problemBeforeName": "The bidder assumes ownership paperwork physically empties the premises.",
+      "realWorldApplications": [
+        "owner-occupied building",
+        "rental unit",
+        "abandoned goods",
+        "mobile home on leased land"
+      ],
+      "analogy": {
+        "name": "name on the coat-check ticket versus coat in hand",
+        "relationship": "Documented entitlement and physical control are distinct.",
+        "correspondence": [
+          "the ticket resembles evidence of legal entitlement",
+          "having the coat resembles actual possession"
+        ],
+        "limit": "Real-property possession and tenancy rights are far more complex, and self-help cannot be inferred from the analogy."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "The book will not prescribe eviction, lockout or abandoned-goods steps for a specific property.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "Immediate deed means immediate vacant possession.",
+      "expectedAbility": "Ask separate lawyer-reviewed questions about deed, burdens, occupants and possession process.",
+      "chapterUses": [
+        {
+          "chapter": "ch08.md",
+          "function": "introduce"
+        },
+        {
+          "chapter": "ch11.md",
+          "function": "apply during redemption"
+        },
+        {
+          "chapter": "ch12.md",
+          "function": "apply after deed"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch11.md",
+          "afterGapFrom": "ch08.md",
+          "freshSituation": "Rent arrives during the redemption period while an occupant remains.",
+          "listenerTask": "Identify why certificate powers do not justify improvising possession actions.",
+          "answerPlacement": "In the certificate-holder operations scene."
+        }
+      ]
     },
     {
-      "name":"payment performance","durableOutcome":"Execute registration, immediate payment and any three-business-day balance without confusing the leading bid with a completed sale.","definition":"The bidder's ability to satisfy immediate deposit, accepted-funds and three-business-day balance rules exactly.","reason":"An unaffordable or unavailable payment method voids the apparent win and can create resale costs.","mechanism":"Current event terms are checked, funds and bidder authority are arranged per parcel, and the balance path is rehearsed before bidding.","concreteCase":"An Inverness bidder has the recovery amount and $200 registration amount ready immediately and the verified balance available within three business days.","problemBeforeName":"The listener plans to arrange financing after learning the winning price.","realWorldApplications":["Inverness open auction","Pictou or Annapolis tender acceptance"],
-      "analogy":{"name":"finish line beyond the hammer","relationship":"The high bid is an intermediate event, not completed performance.","correspondence":["the hammer identifies the leading bid","accepted payment completes the sale step"],"limit":"Legal completion includes certificate/deed stages and cannot be reduced to a race."},"analogyNotApplicableReason":"","boundary":"Accepted methods and fees are municipality- and event-specific.","boundaryNotApplicableReason":"","misconception":"Winning creates time to seek an ordinary conditional mortgage approval.","expectedAbility":"State the immediate and three-day obligations and verify event-specific payment readiness.",
-      "chapterUses":[{"chapter":"ch01.md","function":"foreshadow"},{"chapter":"ch09.md","function":"introduce operationally"},{"chapter":"ch12.md","function":"retrieve"}],
-      "retrievals":[{"chapter":"ch12.md","afterGapFrom":"ch09.md","freshSituation":"A researched parcel is affordable but the bidder cannot satisfy the event's payment method.","listenerTask":"Classify it as not ready rather than changing the process after the bid.","answerPlacement":"In the ready-envelope test."}]
+      "name": "all-in cost",
+      "durableOutcome": "Construct an all-in uncertainty budget and written maximum-bid rule without treating the minimum as value.",
+      "definition": "The total exposure required to reach a defined use, including bid, taxes, professional work, carrying, condition, possession and uncertainty reserves.",
+      "reason": "The auction price is only one cost and the minimum has no built-in allowance for defects or plans.",
+      "mechanism": "Start from a defined use and conservative value boundary, subtract known costs and reserves, then set a written maximum that cannot rise in the room.",
+      "concreteCase": "A low-minimum building requires HST/tax review, legal work, insurance, security, remediation and occupancy reserves before any rehabilitation budget.",
+      "problemBeforeName": "The listener sees a four-figure minimum and compares it directly with ordinary house prices.",
+      "realWorldApplications": [
+        "vacant land",
+        "occupied building",
+        "non-resident residential purchase"
+      ],
+      "analogy": {
+        "name": "iceberg cost stack",
+        "relationship": "The visible bid can be smaller than less visible acquisition and responsibility costs.",
+        "correspondence": [
+          "the visible tip is the winning bid",
+          "submerged mass is taxes, professional work, carrying, repair and uncertainty"
+        ],
+        "limit": "The proportions are not fixed and known costs should be estimated rather than treated as unknowable danger."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "The framework is educational and does not select a return target or personalized bid.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "A winning bid below assessed value is necessarily a bargain.",
+      "expectedAbility": "Name the cost categories and derive a stopping number from evidence rather than competition.",
+      "chapterUses": [
+        {
+          "chapter": "ch09.md",
+          "function": "introduce"
+        },
+        {
+          "chapter": "ch10.md",
+          "function": "execute"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch10.md",
+          "afterGapFrom": "ch09.md",
+          "freshSituation": "The live bid crosses the written ceiling by one increment.",
+          "listenerTask": "Decide whether any auction-room fact justifies a higher number.",
+          "answerPlacement": "The fictional bidder lowers the card; the researcher does not change the evidence file."
+        }
+      ]
     },
     {
-      "name":"staged responsibility","durableOutcome":"Translate auction, tender, minimum bid, immediate deed, redemption, certificate of sale and tax deed into consequences.","definition":"The changing set of rights and duties attached to bidder, paid purchaser, certificate holder and deeded owner states.","reason":"Each stage permits different actions and demands different records, insurance and professional work.","mechanism":"Payment leads to certificate; certificate creates limited protection/use duties; redemption ends rights or expiry permits deed; deed opens possession and ordinary ownership work.","concreteCase":"One building requires insurance during redemption, is not redeemed, then undergoes lawful possession and post-deed inspection.","problemBeforeName":"The listener has one word—owner—for several legally different moments.","realWorldApplications":["protective repair during redemption","new tax bills","deed request and registration"],
-      "analogy":{"name":"relay baton","relationship":"Responsibility changes form at documented handoffs.","correspondence":["certificate and deed are handoff documents","each stage carries a different permitted job"],"limit":"The same purchaser may hold every stage, and legal rights are not literally passed between different runners."},"analogyNotApplicableReason":"","boundary":"Staged responsibility does not guarantee the ability to insure, finance, occupy or develop.","boundaryNotApplicableReason":"","misconception":"The auction win, certificate and deed are interchangeable proof of full ownership.","expectedAbility":"Identify the current stage, document, permitted action and next terminating event.",
-      "chapterUses":[{"chapter":"ch03.md","function":"introduce"},{"chapter":"ch10.md","function":"operate"},{"chapter":"ch11.md","function":"complete and reopen"},{"chapter":"ch12.md","function":"retrieve"}],
-      "retrievals":[{"chapter":"ch11.md","afterGapFrom":"ch10.md","freshSituation":"The six months expire without redemption.","listenerTask":"Name the document to request and the owner questions that remain open.","answerPlacement":"At the deed handoff."}]
+      "name": "payment performance",
+      "durableOutcome": "Execute registration, immediate payment and any three-business-day balance without confusing the leading bid with a completed sale.",
+      "definition": "The bidder's ability to satisfy immediate deposit, accepted-funds and three-business-day balance rules exactly.",
+      "reason": "An unaffordable or unavailable payment method voids the apparent win and can create resale costs.",
+      "mechanism": "Current event terms are checked, funds and bidder authority are arranged per parcel, and the balance path is rehearsed before bidding.",
+      "concreteCase": "An Inverness bidder has the recovery amount and $200 registration amount ready immediately and the verified balance available within three business days.",
+      "problemBeforeName": "The listener plans to arrange financing after learning the winning price.",
+      "realWorldApplications": [
+        "Inverness open auction",
+        "Pictou or Annapolis tender acceptance"
+      ],
+      "analogy": {
+        "name": "finish line beyond the hammer",
+        "relationship": "The high bid is an intermediate event, not completed performance.",
+        "correspondence": [
+          "the hammer identifies the leading bid",
+          "accepted payment completes the sale step"
+        ],
+        "limit": "Legal completion includes certificate/deed stages and cannot be reduced to a race."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "Accepted methods and fees are municipality- and event-specific.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "Winning creates time to seek an ordinary conditional mortgage approval.",
+      "expectedAbility": "State the immediate and three-day obligations and verify event-specific payment readiness.",
+      "chapterUses": [
+        {
+          "chapter": "ch01.md",
+          "function": "foreshadow"
+        },
+        {
+          "chapter": "ch10.md",
+          "function": "introduce operationally"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch13.md",
+          "afterGapFrom": "ch10.md",
+          "freshSituation": "A researched parcel is affordable but the bidder cannot satisfy the event's payment method.",
+          "listenerTask": "Classify it as not ready rather than changing the process after the bid.",
+          "answerPlacement": "In the ready-envelope test."
+        }
+      ]
+    },
+    {
+      "name": "staged responsibility",
+      "durableOutcome": "Translate auction, tender, minimum bid, immediate deed, redemption, certificate of sale and tax deed into consequences.",
+      "definition": "The changing set of rights and duties attached to bidder, paid purchaser, certificate holder and deeded owner states.",
+      "reason": "Each stage permits different actions and demands different records, insurance and professional work.",
+      "mechanism": "Payment leads to certificate; certificate creates limited protection/use duties; redemption ends rights or expiry permits deed; deed opens possession and ordinary ownership work.",
+      "concreteCase": "One building requires insurance during redemption, is not redeemed, then undergoes lawful possession and post-deed inspection.",
+      "problemBeforeName": "The listener has one word—owner—for several legally different moments.",
+      "realWorldApplications": [
+        "protective repair during redemption",
+        "new tax bills",
+        "deed request and registration"
+      ],
+      "analogy": {
+        "name": "relay baton",
+        "relationship": "Responsibility changes form at documented handoffs.",
+        "correspondence": [
+          "certificate and deed are handoff documents",
+          "each stage carries a different permitted job"
+        ],
+        "limit": "The same purchaser may hold every stage, and legal rights are not literally passed between different runners."
+      },
+      "analogyNotApplicableReason": "",
+      "boundary": "Staged responsibility does not guarantee the ability to insure, finance, occupy or develop.",
+      "boundaryNotApplicableReason": "",
+      "misconception": "The auction win, certificate and deed are interchangeable proof of full ownership.",
+      "expectedAbility": "Identify the current stage, document, permitted action and next terminating event.",
+      "chapterUses": [
+        {
+          "chapter": "ch03.md",
+          "function": "introduce"
+        },
+        {
+          "chapter": "ch11.md",
+          "function": "operate"
+        },
+        {
+          "chapter": "ch12.md",
+          "function": "complete and reopen"
+        },
+        {
+          "chapter": "ch13.md",
+          "function": "retrieve"
+        }
+      ],
+      "retrievals": [
+        {
+          "chapter": "ch12.md",
+          "afterGapFrom": "ch11.md",
+          "freshSituation": "The six months expire without redemption.",
+          "listenerTask": "Name the document to request and the owner questions that remain open.",
+          "answerPlacement": "At the deed handoff."
+        }
+      ]
     }
   ]
 }

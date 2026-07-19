@@ -19,11 +19,17 @@
       "rawSourceExcerptsCommitted": false
     },
     "outline": {
-      "status": "approved",
+      "status": "pending",
       "reviewer": "Dan Fakkeldy",
-      "evidence": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
-      "approvedAt": "2026-07-19T11:56:49-03:00",
-      "recordedBeforePilotDraft": true
+      "evidence": "A thirteenth map-method chapter and eleven additional figures are proposed for review.",
+      "recordedBeforePilotDraft": true,
+      "priorApproval": {
+        "status": "approved",
+        "reviewer": "Dan Fakkeldy",
+        "evidence": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
+        "approvedAt": "2026-07-19T11:56:49-03:00",
+        "recordedBeforePilotDraft": true
+      }
     },
     "firstSection": {
       "status": "accepted",

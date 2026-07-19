@@ -19,10 +19,10 @@ ranking, or an advertisement disguised as education.
 ## What is here
 
 - `research/`: the public-safe research brief, official-source register,
-  traceable evidence notes, fact pack, twelve-chapter argument outline,
+  traceable evidence notes, fact pack, proposed thirteen-chapter argument outline,
   structured learning records, Inverness dossier, municipal comparison,
   auction-result analysis, accepted voice exemplar, pronunciation plan,
-  conversation decision log, handoff packet, and 40-figure visual plan;
+  conversation decision log, handoff packet, and proposed 51-figure visual plan;
 - `maps/data/`: an owner-free snapshot of the municipality-published August
   2026 listing facts;
 - `maps/qgis/`: the editable QGIS 4.0.2 project used for the current proofs;
@@ -35,8 +35,9 @@ ranking, or an advertisement disguised as education.
 - `figures/`: the deterministic diagram renderer, teaching/provenance
   specifications, contact sheets and hash-bound receipt for figures 03–08, 39
   and 40; and
-- `chapters/images/`: eight 2560-by-1440 legal/process review candidates that are
-  not yet accepted or embedded in a manuscript.
+- `chapters/images/`: eight legal/process candidates plus eleven
+  2560-by-1440 NS Marks The Spot walkthrough screenshots; none is yet accepted
+  or embedded in a manuscript.
 
 ![Inverness County auction orientation proof](maps/exports/inverness-all-properties-orientation.png)
 
@@ -61,25 +62,26 @@ individual lien labels at that scale. NS Aerial remains the detail basemap.
 - manuscript chapters, covers, EPUB, M4B, read-along data, or any claim of
   human listening acceptance.
 
-The interactive website implementation remains in [NS Marks The Spot at
-`92f1261e5`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/92f1261e5/web)
-rather than being duplicated here. This repository owns the book development
-packet and its reproducible QGIS proofs.
+The interactive website implementation remains in [NS Marks The Spot pull
+request 89](https://github.com/dfakkeldy/ns-marks-the-spot/pull/89) and the
+[live map](https://kinnokilabs.com/apps/nsmarksthespot/map/) rather than being
+duplicated here. This repository owns the book development packet, its
+reproducible QGIS proofs and the version-stamped chapter screenshots.
 
 ## Current production gates
 
-The project is in `governed-final` pilot development. Deep research, the
-approved argument outline, structured chapter plans, coverage ledger, forty-row
-figure manifest, two QGIS proofs, and eight reproducible diagram candidates
-exist. Three additional Inverness Packet Atlas cards are accepted
-prototype-direction frames outside the forty-figure manifest. Dan approved the revised
-twelve-chapter outline and forty-figure visual
-direction for pilot development on 2026-07-19, and later accepted the exact
-three-card atlas direction with “I like them.” Dan accepted the exact
-first-section teaching and voice with “Let’s go for the voice.” The narrated
-comprehension-pilot verdict, actual Echo/video-stage atlas proof, atlas batch
-authorization, full manuscript, independent learning and prose review, accepted
-final figures, cover selection, EPUB, Echo narration, public package
+The project is in `governed-final` pilot development. Dan approved the prior
+twelve-chapter outline and forty-figure visual direction on 2026-07-19, accepted
+the exact three-card Inverness Packet Atlas direction with “I like them,” and
+accepted the exact first-section teaching and voice with “Let’s go for the
+voice.” The current update proposes a thirteenth map-method chapter and a
+replacement eleven-frame walkthrough, so the expanded thirteen-chapter,
+51-figure scope still requires a new outline/figure verdict. Deep research,
+structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
+diagram candidates and three accepted-direction atlas prototypes exist. The
+narrated comprehension-pilot verdict, actual Echo/video-stage atlas proof,
+atlas batch authorization, full manuscript, independent learning and prose
+review, accepted final figures, cover selection, EPUB, Echo narration, public package
 verification, and full listening all remain pending.
 
 ## Safety and currency

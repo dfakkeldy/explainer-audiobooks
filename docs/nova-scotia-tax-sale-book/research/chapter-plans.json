@@ -2,76 +2,595 @@
   "schemaVersion": 2,
   "chapters": [
     {
-      "file":"ch01.md","purpose":"Open the municipal packet, identify the remaining research gap and reveal the collection system behind the auction scene.","prerequisites":[],"knowledgeDelta":"Explain what Inverness already publishes, reconstruct the pre-sale statutory clock and distinguish municipal information from a purchase decision.","groundedExample":"Inverness County's detailed packet and Port Hood auction viewed from a public researcher's desk.","concepts":["tax lien","tax sale","notice of intent"],"beats":["open the packet","identify what remains unknown","rewind to arrears","name the two clocks"],
-      "newCoreTerms":[{"term":"tax lien","problemBeforeName":"Unpaid municipal tax must attach to something durable enough to support collection."},{"term":"tax sale","problemBeforeName":"The municipality needs a final public collection mechanism when arrears remain."},{"term":"notice of intent","problemBeforeName":"Owners and interest holders need a defined final period before sale."}],
-      "audioLoad":{"temporaryValues":0,"symbolicChainSteps":0,"calculationTreatment":"none","focusedLessonMinutes":0,"concreteReset":"Return to the first parcel being called at eleven o'clock."},
-      "teachingInfrastructure":{"narrativeConnection":"The packet sends the story backward to the treasurer's file and forward to the researcher's limits.","realWorldApplication":"Inverness's August 2026 packet, MGA/HRMC municipal collection and province-wide procedural variation."}
+      "file": "ch01.md",
+      "purpose": "Open the municipal packet, identify the remaining research gap and reveal the collection system behind the auction scene.",
+      "prerequisites": [],
+      "knowledgeDelta": "Explain what Inverness already publishes, reconstruct the pre-sale statutory clock and distinguish municipal information from a purchase decision.",
+      "groundedExample": "Inverness County's detailed packet and Port Hood auction viewed from a public researcher's desk.",
+      "concepts": [
+        "tax lien",
+        "tax sale",
+        "notice of intent"
+      ],
+      "beats": [
+        "open the packet",
+        "identify what remains unknown",
+        "rewind to arrears",
+        "name the two clocks"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "tax lien",
+          "problemBeforeName": "Unpaid municipal tax must attach to something durable enough to support collection."
+        },
+        {
+          "term": "tax sale",
+          "problemBeforeName": "The municipality needs a final public collection mechanism when arrears remain."
+        },
+        {
+          "term": "notice of intent",
+          "problemBeforeName": "Owners and interest holders need a defined final period before sale."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to the first parcel being called at eleven o'clock."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The packet sends the story backward to the treasurer's file and forward to the researcher's limits.",
+        "realWorldApplication": "Inverness's August 2026 packet, MGA/HRMC municipal collection and province-wide procedural variation."
+      }
     },
     {
-      "file":"ch02.md","purpose":"Decode a tax-sale notice without treating it as a listing.","prerequisites":["tax-sale sequence"],"knowledgeDelta":"Route each notice field to the system that can verify it.","groundedExample":"A fictional notice modelled on the August 2026 Inverness packet and its reconciliation problems.","concepts":["AAN","PID","minimum bid"],"beats":["read the row","separate identifiers","challenge the minimum","refresh the list"],
-      "newCoreTerms":[{"term":"Assessment Account Number","problemBeforeName":"The municipality needs to connect the notice to a tax assessment account."},{"term":"Parcel Identification Number","problemBeforeName":"The researcher needs to connect the notice to one mapped land parcel."},{"term":"minimum bid","problemBeforeName":"The municipality needs a recovery threshold even though it is not marketing the property."}],
-      "audioLoad":{"temporaryValues":2,"symbolicChainSteps":0,"calculationTreatment":"brief-spoken","focusedLessonMinutes":0,"concreteReset":"Point to one row and ask what each number identifies."},
-      "teachingInfrastructure":{"narrativeConnection":"The protagonist turns the auction sheet into a research index.","realWorldApplication":"Inverness 2026 summary/detail reconciliation and live-list refresh."}
+      "file": "ch02.md",
+      "purpose": "Decode a tax-sale notice without treating it as a listing.",
+      "prerequisites": [
+        "tax-sale sequence"
+      ],
+      "knowledgeDelta": "Route each notice field to the system that can verify it.",
+      "groundedExample": "A fictional notice modelled on the August 2026 Inverness packet and its reconciliation problems.",
+      "concepts": [
+        "AAN",
+        "PID",
+        "minimum bid"
+      ],
+      "beats": [
+        "read the row",
+        "separate identifiers",
+        "challenge the minimum",
+        "refresh the list"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "Assessment Account Number",
+          "problemBeforeName": "The municipality needs to connect the notice to a tax assessment account."
+        },
+        {
+          "term": "Parcel Identification Number",
+          "problemBeforeName": "The researcher needs to connect the notice to one mapped land parcel."
+        },
+        {
+          "term": "minimum bid",
+          "problemBeforeName": "The municipality needs a recovery threshold even though it is not marketing the property."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "brief-spoken",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Point to one row and ask what each number identifies."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The protagonist turns the auction sheet into a research index.",
+        "realWorldApplication": "Inverness 2026 summary/detail reconciliation and live-list refresh."
+      }
     },
     {
-      "file":"ch03.md","purpose":"Explain the two post-sale branches.","prerequisites":["minimum bid","redemption marker"],"knowledgeDelta":"Distinguish certificate-holder, redeemed and deeded states.","groundedExample":"Parallel redeemable and immediate-deed composite parcels.","concepts":["certificate of sale","redemption","tax deed"],"beats":["issue certificate","limit interim powers","calculate redemption conceptually","follow both endings"],
-      "newCoreTerms":[{"term":"certificate of sale","problemBeforeName":"A paid winning bidder needs a registered interest before final deed timing is resolved."},{"term":"redemption","problemBeforeName":"The law preserves a final route for owners and interest holders to recover qualifying property."},{"term":"tax deed","problemBeforeName":"An unredeemed sale needs a document that conveys the municipal sale interest."}],
-      "audioLoad":{"temporaryValues":3,"symbolicChainSteps":2,"calculationTreatment":"brief-spoken","focusedLessonMinutes":0,"concreteReset":"Return to one hundred dollars of purchase price and the six-month clock."},
-      "teachingInfrastructure":{"narrativeConnection":"Two parcels leave the same auction by different clocks.","realWorldApplication":"MGA/HRMC certificate, redemption and deed rules."}
+      "file": "ch03.md",
+      "purpose": "Explain the two post-sale branches.",
+      "prerequisites": [
+        "minimum bid",
+        "redemption marker"
+      ],
+      "knowledgeDelta": "Distinguish certificate-holder, redeemed and deeded states.",
+      "groundedExample": "Parallel redeemable and immediate-deed composite parcels.",
+      "concepts": [
+        "certificate of sale",
+        "redemption",
+        "tax deed"
+      ],
+      "beats": [
+        "issue certificate",
+        "limit interim powers",
+        "calculate redemption conceptually",
+        "follow both endings"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "certificate of sale",
+          "problemBeforeName": "A paid winning bidder needs a registered interest before final deed timing is resolved."
+        },
+        {
+          "term": "redemption",
+          "problemBeforeName": "The law preserves a final route for owners and interest holders to recover qualifying property."
+        },
+        {
+          "term": "tax deed",
+          "problemBeforeName": "An unredeemed sale needs a document that conveys the municipal sale interest."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "brief-spoken",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to one hundred dollars of purchase price and the six-month clock."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "Two parcels leave the same auction by different clocks.",
+        "realWorldApplication": "MGA/HRMC certificate, redemption and deed rules."
+      }
     },
     {
-      "file":"ch04.md","purpose":"Build a traceable parcel biography beyond the municipal baseline.","prerequisites":["AAN","PID","tax deed"],"knowledgeDelta":"Separate reused municipal facts, additional research, interpretation limits and professional handoff.","groundedExample":"Inventory an Inverness entry, then trace its fictionalized counterpart through source records and added public QGIS layers.","concepts":["parcel register","legal description","title search"],"beats":["inventory the municipal packet","add source records","label uncertainty","form professional questions"],
-      "newCoreTerms":[{"term":"parcel register","problemBeforeName":"The researcher needs the authoritative indexed record of interests for a registered parcel."},{"term":"legal description","problemBeforeName":"A civic address cannot state exactly what land the deed describes."},{"term":"title search","problemBeforeName":"A buyer needs the ownership and interest chain examined rather than inferred from a name on a notice."}],
-      "audioLoad":{"temporaryValues":0,"symbolicChainSteps":0,"calculationTreatment":"none","focusedLessonMinutes":0,"concreteReset":"Return to one PID and one source document at a time."},
-      "teachingInfrastructure":{"narrativeConnection":"The parcel acquires a source-traceable biography instead of a repackaged municipal listing.","realWorldApplication":"Inverness packet reconciliation, Property Online, public NSPRD screening and attributed NS Aerial/QGIS layers."}
+      "file": "ch04.md",
+      "purpose": "Build a traceable parcel biography beyond the municipal baseline.",
+      "prerequisites": [
+        "AAN",
+        "PID",
+        "tax deed"
+      ],
+      "knowledgeDelta": "Separate reused municipal facts, additional research, interpretation limits and professional handoff.",
+      "groundedExample": "Inventory an Inverness entry, then trace its fictionalized counterpart through source records and added public QGIS layers.",
+      "concepts": [
+        "parcel register",
+        "legal description",
+        "title search"
+      ],
+      "beats": [
+        "inventory the municipal packet",
+        "add source records",
+        "label uncertainty",
+        "form professional questions"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "parcel register",
+          "problemBeforeName": "The researcher needs the authoritative indexed record of interests for a registered parcel."
+        },
+        {
+          "term": "legal description",
+          "problemBeforeName": "A civic address cannot state exactly what land the deed describes."
+        },
+        {
+          "term": "title search",
+          "problemBeforeName": "A buyer needs the ownership and interest chain examined rather than inferred from a name on a notice."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to one PID and one source document at a time."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The parcel acquires a source-traceable biography instead of a repackaged municipal listing.",
+        "realWorldApplication": "Inverness packet reconciliation, Property Online, public NSPRD screening and attributed NS Aerial/QGIS layers."
+      }
     },
     {
-      "file":"ch05.md","purpose":"Test access and intended use.","prerequisites":["legal description","parcel map"],"knowledgeDelta":"Separate physical approach, legal access, frontage and development permission.","groundedExample":"A cheap sliver beside a road with no proven legal access.","concepts":["right-of-way","road frontage","zoning"],"beats":["see the driveway","inspect title","ask planning question","reach a no-go"],
-      "newCoreTerms":[{"term":"right-of-way","problemBeforeName":"The parcel appears reachable but needs a lawful route over land."},{"term":"road frontage","problemBeforeName":"Development rules may require the parcel itself to meet a public-road relationship."},{"term":"zoning","problemBeforeName":"The intended project needs a permitted land-use category before design begins."}],
-      "audioLoad":{"temporaryValues":0,"symbolicChainSteps":0,"calculationTreatment":"none","focusedLessonMinutes":0,"concreteReset":"Stand conceptually at the road edge and ask which legal fact gets you onto the parcel."},
-      "teachingInfrastructure":{"narrativeConnection":"The apparent driveway fails to answer the legal-access question.","realWorldApplication":"Plan Inverness, Eastern District Planning Commission and Nova Scotia legal-access research."}
+      "file": "ch05.md",
+      "purpose": "Use NS Marks The Spot as a question-generating research screen rather than a property verdict.",
+      "prerequisites": [
+        "PID",
+        "municipal event source",
+        "source hierarchy",
+        "map limitation"
+      ],
+      "knowledgeDelta": "Run a layer-by-layer parcel screening pass and leave a dated research note containing the observation, limitation, next source and professional handoff.",
+      "groundedExample": "A version-stamped Southside River Denys interface demonstration in which mapped water intersects and no mapped road/trail intersection is returned.",
+      "concepts": [
+        "layer",
+        "mapped intersection"
+      ],
+      "beats": [
+        "verify the event",
+        "search one PID",
+        "toggle one layer",
+        "compare proximity with intersection",
+        "write the next question"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "layer",
+          "problemBeforeName": "The researcher needs to isolate one category of mapped information instead of reading every colour as one claim."
+        },
+        {
+          "term": "mapped intersection",
+          "problemBeforeName": "A feature may look near the parcel, but the researcher needs a bounded description of whether the current service geometry crosses the selected polygon."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to one parcel, one toggle and one note."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The parcel biography becomes an interactive research record before the access and environmental failure cases.",
+        "realWorldApplication": "NS Marks The Spot event catalogues, provincial map services and exact mapped road/water intersection results."
+      }
     },
     {
-      "file":"ch06.md","purpose":"Investigate physical and environmental uncertainty.","prerequisites":["lawful exterior research","intended use"],"knowledgeDelta":"Interpret positive, negative and missing environmental records without overclaiming.","groundedExample":"A coastal former workshop with an estimated well point and no old septic file.","concepts":["contaminated site","well log","hazard map"],"beats":["reconstruct prior use","read a well record","check scenario maps","state residual unknowns"],
-      "newCoreTerms":[{"term":"contaminated site","problemBeforeName":"Historic use or a spill may create responsibility invisible from the road."},{"term":"well log","problemBeforeName":"A rural parcel needs evidence about how water was reached and what was recorded."},{"term":"hazard map","problemBeforeName":"The researcher needs a screening view of future or geological risk without pretending it is an inspection."}],
-      "audioLoad":{"temporaryValues":0,"symbolicChainSteps":0,"calculationTreatment":"none","focusedLessonMinutes":0,"concreteReset":"Return to what one database row can and cannot prove about one parcel."},
-      "teachingInfrastructure":{"narrativeConnection":"The parcel's biography moves below ground and into future climate scenarios.","realWorldApplication":"Environmental Registry, Well Logs, Coastal Hazard Map and abandoned-mine inventory."}
+      "file": "ch06.md",
+      "purpose": "Test access and intended use.",
+      "prerequisites": [
+        "legal description",
+        "parcel map"
+      ],
+      "knowledgeDelta": "Separate physical approach, legal access, frontage and development permission.",
+      "groundedExample": "A cheap sliver beside a road with no proven legal access.",
+      "concepts": [
+        "right-of-way",
+        "road frontage",
+        "zoning"
+      ],
+      "beats": [
+        "see the driveway",
+        "inspect title",
+        "ask planning question",
+        "reach a no-go"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "right-of-way",
+          "problemBeforeName": "The parcel appears reachable but needs a lawful route over land."
+        },
+        {
+          "term": "road frontage",
+          "problemBeforeName": "Development rules may require the parcel itself to meet a public-road relationship."
+        },
+        {
+          "term": "zoning",
+          "problemBeforeName": "The intended project needs a permitted land-use category before design begins."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Stand conceptually at the road edge and ask which legal fact gets you onto the parcel."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The apparent driveway fails to answer the legal-access question.",
+        "realWorldApplication": "Plan Inverness, Eastern District Planning Commission and Nova Scotia legal-access research."
+      }
     },
     {
-      "file":"ch07.md","purpose":"Separate title from possession and handle occupied/mobile branches safely.","prerequisites":["tax deed","right-of-way","title search"],"knowledgeDelta":"Ask distinct questions about title interest, continuing burdens and people or goods in possession.","groundedExample":"An occupied building and an unaffixed mobile-home variant.","concepts":["fee simple","encumbrance","vacant possession"],"beats":["read deed effect","preserve easements","meet the occupant boundary","branch to mobile home"],
-      "newCoreTerms":[{"term":"fee simple","problemBeforeName":"The listener needs a name for the ownership estate the tax deed says it vests."},{"term":"encumbrance","problemBeforeName":"Other registered or legal interests may burden land before the tax deed operates."},{"term":"vacant possession","problemBeforeName":"A deed does not physically empty a building or resolve every lawful occupancy."}],
-      "audioLoad":{"temporaryValues":0,"symbolicChainSteps":0,"calculationTreatment":"none","focusedLessonMinutes":0,"concreteReset":"Ask three separate questions: what do you own, what burdens it, and who is there?"},
-      "teachingInfrastructure":{"narrativeConnection":"The occupied composite refuses to behave like an empty parcel on a spreadsheet.","realWorldApplication":"MGA deed effect, CBRM occupied-property warning and Residential Tenancies resources."}
+      "file": "ch07.md",
+      "purpose": "Investigate physical and environmental uncertainty.",
+      "prerequisites": [
+        "lawful exterior research",
+        "intended use"
+      ],
+      "knowledgeDelta": "Interpret positive, negative and missing environmental records without overclaiming.",
+      "groundedExample": "A coastal former workshop with an estimated well point and no old septic file.",
+      "concepts": [
+        "contaminated site",
+        "well log",
+        "hazard map"
+      ],
+      "beats": [
+        "reconstruct prior use",
+        "read a well record",
+        "check scenario maps",
+        "state residual unknowns"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "contaminated site",
+          "problemBeforeName": "Historic use or a spill may create responsibility invisible from the road."
+        },
+        {
+          "term": "well log",
+          "problemBeforeName": "A rural parcel needs evidence about how water was reached and what was recorded."
+        },
+        {
+          "term": "hazard map",
+          "problemBeforeName": "The researcher needs a screening view of future or geological risk without pretending it is an inspection."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to what one database row can and cannot prove about one parcel."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The parcel's biography moves below ground and into future climate scenarios.",
+        "realWorldApplication": "Environmental Registry, Well Logs, Coastal Hazard Map and abandoned-mine inventory."
+      }
     },
     {
-      "file":"ch08.md","purpose":"Build an all-in uncertainty budget and maximum.","prerequisites":["access risk","condition risk","possession risk"],"knowledgeDelta":"Separate recovery minimum, total exposure and written bid ceiling.","groundedExample":"Inverness County's published 2025 bid rows, with CBRM and Richmond comparison samples, plus one composite cost stack.","concepts":["all-in cost","uncertainty reserve","maximum bid"],"beats":["read observed ratios","stack costs","branch taxes","set ceiling"],
-      "newCoreTerms":[{"term":"all-in cost","problemBeforeName":"The winning bid omits many costs required to reach a usable outcome."},{"term":"uncertainty reserve","problemBeforeName":"Some unresolved risks cannot be quoted exactly before access or deed."},{"term":"maximum bid","problemBeforeName":"Auction pressure needs a precommitted stopping rule tied to evidence."}],
-      "audioLoad":{"temporaryValues":3,"symbolicChainSteps":3,"calculationTreatment":"brief-spoken","focusedLessonMinutes":0,"concreteReset":"Return to bid, known costs and one uncertainty reserve."},
-      "teachingInfrastructure":{"narrativeConnection":"The researcher explains the cost categories while the fictional bidder retains authority over the written number.","realWorldApplication":"Inverness, CBRM and Richmond result samples; the municipal tax-sale-deed exemption; possible provincial non-resident tax; and case-specific HST."}
+      "file": "ch08.md",
+      "purpose": "Separate title from possession and handle occupied/mobile branches safely.",
+      "prerequisites": [
+        "tax deed",
+        "right-of-way",
+        "title search"
+      ],
+      "knowledgeDelta": "Ask distinct questions about title interest, continuing burdens and people or goods in possession.",
+      "groundedExample": "An occupied building and an unaffixed mobile-home variant.",
+      "concepts": [
+        "fee simple",
+        "encumbrance",
+        "vacant possession"
+      ],
+      "beats": [
+        "read deed effect",
+        "preserve easements",
+        "meet the occupant boundary",
+        "branch to mobile home"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "fee simple",
+          "problemBeforeName": "The listener needs a name for the ownership estate the tax deed says it vests."
+        },
+        {
+          "term": "encumbrance",
+          "problemBeforeName": "Other registered or legal interests may burden land before the tax deed operates."
+        },
+        {
+          "term": "vacant possession",
+          "problemBeforeName": "A deed does not physically empty a building or resolve every lawful occupancy."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Ask three separate questions: what do you own, what burdens it, and who is there?"
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The occupied composite refuses to behave like an empty parcel on a spreadsheet.",
+        "realWorldApplication": "MGA deed effect, CBRM occupied-property warning and Residential Tenancies resources."
+      }
     },
     {
-      "file":"ch09.md","purpose":"Rehearse auction and tender execution, including the branches where the expected sale does not complete.","prerequisites":["maximum bid","payment clock"],"knowledgeDelta":"Participate, decline or respond to no-bid, rescheduling and payment-default outcomes without improvising facts, funds or price.","groundedExample":"Inverness open-outcry format contrasted with Pictou and Annapolis tender procedures, followed by a failed immediate payment and re-advertisement branch.","concepts":["open-outcry auction","public tender","deposit","no sufficient bidder","payment default"],"beats":["register lawful authority","compare formats","refresh lots and event status","execute payment or walk","trace re-offer and resale branches"],
-      "newCoreTerms":[{"term":"open-outcry auction","problemBeforeName":"Competing bids need a public live mechanism for determining the highest accepted offer."},{"term":"public tender","problemBeforeName":"A municipality may collect confidential bids and open them through a defined public process."},{"term":"deposit","problemBeforeName":"A successful bid needs immediate financial performance before the remaining balance clock begins."}],
-      "audioLoad":{"temporaryValues":2,"symbolicChainSteps":1,"calculationTreatment":"brief-spoken","focusedLessonMinutes":0,"concreteReset":"Return to one bidding card, one ceiling and one ready bank draft."},
-      "teachingInfrastructure":{"narrativeConnection":"The opening scene returns with a completed evidence file that informs but does not make the bid; the process remains intelligible even when the sale does not complete.","realWorldApplication":"Inverness auction instructions, Pictou/Annapolis tender procedures, statutory conflict rules, municipal purchase, re-advertisement and payment default."}
+      "file": "ch09.md",
+      "purpose": "Build an all-in uncertainty budget and maximum.",
+      "prerequisites": [
+        "access risk",
+        "condition risk",
+        "possession risk"
+      ],
+      "knowledgeDelta": "Separate recovery minimum, total exposure and written bid ceiling.",
+      "groundedExample": "Inverness County's published 2025 bid rows, with CBRM and Richmond comparison samples, plus one composite cost stack.",
+      "concepts": [
+        "all-in cost",
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "beats": [
+        "read observed ratios",
+        "stack costs",
+        "branch taxes",
+        "set ceiling"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "all-in cost",
+          "problemBeforeName": "The winning bid omits many costs required to reach a usable outcome."
+        },
+        {
+          "term": "uncertainty reserve",
+          "problemBeforeName": "Some unresolved risks cannot be quoted exactly before access or deed."
+        },
+        {
+          "term": "maximum bid",
+          "problemBeforeName": "Auction pressure needs a precommitted stopping rule tied to evidence."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "brief-spoken",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to bid, known costs and one uncertainty reserve."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The researcher explains the cost categories while the fictional bidder retains authority over the written number.",
+        "realWorldApplication": "Inverness, CBRM and Richmond result samples; the municipal tax-sale-deed exemption; possible provincial non-resident tax; and case-specific HST."
+      }
     },
     {
-      "file":"ch10.md","purpose":"Operate during the certificate/redemption period.","prerequisites":["certificate of sale","redemption","vacant possession"],"knowledgeDelta":"Protect, seek actual insurance and account for taxes, income and approved costs without diminishing, developing or using self-help.","groundedExample":"A redeemable vacant building whose certificate holder seeks specialty coverage, receives one refusal and documents one treasurer-approved repair.","concepts":["insurable interest","underwriting availability","necessary repair","certificate of discharge","sale expenses"],"beats":["register certificate","seek and document insurance responses","track taxes, income and approved repair costs","itemize local sale-expense categories","close on redemption"],
-      "newCoreTerms":[{"term":"insurable interest","problemBeforeName":"The certificate holder must protect a building before final deed ownership is certain."},{"term":"necessary repair","problemBeforeName":"Damage prevention may require work whose reimbursement depends on written approval."},{"term":"certificate of discharge","problemBeforeName":"A redeemed sale needs a registered record ending the certificate interest."}],
-      "audioLoad":{"temporaryValues":3,"symbolicChainSteps":2,"calculationTreatment":"brief-spoken","focusedLessonMinutes":0,"concreteReset":"Return to one approved repair receipt and the treasurer's file."},
-      "teachingInfrastructure":{"narrativeConnection":"The successful bidder waits actively but within narrow statutory lanes and without assuming the insurance market will solve the statutory duty.","realWorldApplication":"MGA/HRMC purchaser-rights and redemption accounting, insurer vacancy guidance and Halifax's clearly labelled local fee schedule."}
+      "file": "ch10.md",
+      "purpose": "Rehearse auction and tender execution, including the branches where the expected sale does not complete.",
+      "prerequisites": [
+        "maximum bid",
+        "payment clock"
+      ],
+      "knowledgeDelta": "Participate, decline or respond to no-bid, rescheduling and payment-default outcomes without improvising facts, funds or price.",
+      "groundedExample": "Inverness open-outcry format contrasted with Pictou and Annapolis tender procedures, followed by a failed immediate payment and re-advertisement branch.",
+      "concepts": [
+        "open-outcry auction",
+        "public tender",
+        "deposit",
+        "no sufficient bidder",
+        "payment default"
+      ],
+      "beats": [
+        "register lawful authority",
+        "compare formats",
+        "refresh lots and event status",
+        "execute payment or walk",
+        "trace re-offer and resale branches"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "open-outcry auction",
+          "problemBeforeName": "Competing bids need a public live mechanism for determining the highest accepted offer."
+        },
+        {
+          "term": "public tender",
+          "problemBeforeName": "A municipality may collect confidential bids and open them through a defined public process."
+        },
+        {
+          "term": "deposit",
+          "problemBeforeName": "A successful bid needs immediate financial performance before the remaining balance clock begins."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 1,
+        "calculationTreatment": "brief-spoken",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to one bidding card, one ceiling and one ready bank draft."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The opening scene returns with a completed evidence file that informs but does not make the bid; the process remains intelligible even when the sale does not complete.",
+        "realWorldApplication": "Inverness auction instructions, Pictou/Annapolis tender procedures, statutory conflict rules, municipal purchase, re-advertisement and payment default."
+      }
     },
     {
-      "file":"ch11.md","purpose":"Transition from tax deed to lawful ownership operations while preserving the former interest-holder and contested-sale routes.","prerequisites":["tax deed","vacant possession","all-in cost"],"knowledgeDelta":"Recognize which questions close at deed, which owner questions reopen, how surplus is claimed and why deed registration starts a separate contestability window.","groundedExample":"The unredeemed composite gets a deed and changed development decision while a separate fictional prior interest holder follows surplus proceeds and counsel evaluates a claimed sale defect.","concepts":["deed registration","tax-sale surplus account","contestability window","municipal clearance","post-deed due diligence"],"beats":["request and register deed","start the deed-registration clock","trace surplus and set-aside branches","resolve possession","reinspect and re-decide"],
-      "newCoreTerms":[{"term":"deed registration","problemBeforeName":"The delivered tax deed must enter the land-record system to complete the documented transfer and start the contestability clock."},{"term":"tax-sale surplus account","problemBeforeName":"Money left after the statutory municipal applications needs a protected account and a defined claimant route."},{"term":"post-deed due diligence","problemBeforeName":"New lawful access can reveal facts that were impossible to verify before the bid."}],
-      "audioLoad":{"temporaryValues":2,"symbolicChainSteps":2,"calculationTreatment":"brief-spoken","focusedLessonMinutes":0,"concreteReset":"Return to the registered deed, the surplus account and the two separate legal clocks."},
-      "teachingInfrastructure":{"narrativeConnection":"The apparent finish line becomes a handoff into ordinary ownership systems and a possible court-supervised dispute path.","realWorldApplication":"Land Registry, Marketable Titles Act, tax-sale surplus applications, municipal clearance, insurance and environmental follow-up."}
+      "file": "ch11.md",
+      "purpose": "Operate during the certificate/redemption period.",
+      "prerequisites": [
+        "certificate of sale",
+        "redemption",
+        "vacant possession"
+      ],
+      "knowledgeDelta": "Protect, seek actual insurance and account for taxes, income and approved costs without diminishing, developing or using self-help.",
+      "groundedExample": "A redeemable vacant building whose certificate holder seeks specialty coverage, receives one refusal and documents one treasurer-approved repair.",
+      "concepts": [
+        "insurable interest",
+        "underwriting availability",
+        "necessary repair",
+        "certificate of discharge",
+        "sale expenses"
+      ],
+      "beats": [
+        "register certificate",
+        "seek and document insurance responses",
+        "track taxes, income and approved repair costs",
+        "itemize local sale-expense categories",
+        "close on redemption"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "insurable interest",
+          "problemBeforeName": "The certificate holder must protect a building before final deed ownership is certain."
+        },
+        {
+          "term": "necessary repair",
+          "problemBeforeName": "Damage prevention may require work whose reimbursement depends on written approval."
+        },
+        {
+          "term": "certificate of discharge",
+          "problemBeforeName": "A redeemed sale needs a registered record ending the certificate interest."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "brief-spoken",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to one approved repair receipt and the treasurer's file."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The successful bidder waits actively but within narrow statutory lanes and without assuming the insurance market will solve the statutory duty.",
+        "realWorldApplication": "MGA/HRMC purchaser-rights and redemption accounting, insurer vacancy guidance and Halifax's clearly labelled local fee schedule."
+      }
     },
     {
-      "file":"ch12.md","purpose":"Retrieve the entire method and leave a repeatable public research and professional-handoff record.","prerequisites":["all prior concepts"],"knowledgeDelta":"Classify three fresh parcel files by what is known, unresolved and reserved for professional or bidder authority.","groundedExample":"Landlocked sliver, occupied former workshop and coherent-but-bounded vacant-parcel evidence file.","concepts":[],"beats":["identify known facts","preserve unresolved risks","assign professional authority","return to the packet"],
-      "newCoreTerms":[],
-      "audioLoad":{"temporaryValues":3,"symbolicChainSteps":3,"calculationTreatment":"brief-spoken","focusedLessonMinutes":0,"concreteReset":"For each parcel, name the verified fact, unresolved risk and decision."},
-      "teachingInfrastructure":{"narrativeConnection":"Three case files test what survived the journey without requiring a purchase or service sale.","realWorldApplication":"A reusable Nova Scotia tax-sale public research and professional-handoff record."}
+      "file": "ch12.md",
+      "purpose": "Transition from tax deed to lawful ownership operations while preserving the former interest-holder and contested-sale routes.",
+      "prerequisites": [
+        "tax deed",
+        "vacant possession",
+        "all-in cost"
+      ],
+      "knowledgeDelta": "Recognize which questions close at deed, which owner questions reopen, how surplus is claimed and why deed registration starts a separate contestability window.",
+      "groundedExample": "The unredeemed composite gets a deed and changed development decision while a separate fictional prior interest holder follows surplus proceeds and counsel evaluates a claimed sale defect.",
+      "concepts": [
+        "deed registration",
+        "tax-sale surplus account",
+        "contestability window",
+        "municipal clearance",
+        "post-deed due diligence"
+      ],
+      "beats": [
+        "request and register deed",
+        "start the deed-registration clock",
+        "trace surplus and set-aside branches",
+        "resolve possession",
+        "reinspect and re-decide"
+      ],
+      "newCoreTerms": [
+        {
+          "term": "deed registration",
+          "problemBeforeName": "The delivered tax deed must enter the land-record system to complete the documented transfer and start the contestability clock."
+        },
+        {
+          "term": "tax-sale surplus account",
+          "problemBeforeName": "Money left after the statutory municipal applications needs a protected account and a defined claimant route."
+        },
+        {
+          "term": "post-deed due diligence",
+          "problemBeforeName": "New lawful access can reveal facts that were impossible to verify before the bid."
+        }
+      ],
+      "audioLoad": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "brief-spoken",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "Return to the registered deed, the surplus account and the two separate legal clocks."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "The apparent finish line becomes a handoff into ordinary ownership systems and a possible court-supervised dispute path.",
+        "realWorldApplication": "Land Registry, Marketable Titles Act, tax-sale surplus applications, municipal clearance, insurance and environmental follow-up."
+      }
+    },
+    {
+      "file": "ch13.md",
+      "purpose": "Retrieve the entire method and leave a repeatable public research and professional-handoff record.",
+      "prerequisites": [
+        "all prior concepts"
+      ],
+      "knowledgeDelta": "Classify three fresh parcel files by what is known, unresolved and reserved for professional or bidder authority.",
+      "groundedExample": "Landlocked sliver, occupied former workshop and coherent-but-bounded vacant-parcel evidence file.",
+      "concepts": [
+        "evidence classification",
+        "staged responsibility"
+      ],
+      "beats": [
+        "identify known facts",
+        "preserve unresolved risks",
+        "assign professional authority",
+        "return to the packet"
+      ],
+      "newCoreTerms": [],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "brief-spoken",
+        "focusedLessonMinutes": 0,
+        "concreteReset": "For each parcel, name the verified fact, unresolved risk and decision."
+      },
+      "teachingInfrastructure": {
+        "narrativeConnection": "Three case files test what survived the journey without requiring a purchase or service sale.",
+        "realWorldApplication": "A reusable Nova Scotia tax-sale public research and professional-handoff record."
+      }
     }
   ]
 }

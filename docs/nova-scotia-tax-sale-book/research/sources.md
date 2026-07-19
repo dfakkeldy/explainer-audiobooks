@@ -78,7 +78,7 @@ control; explanatory sources are labelled separately.
 
 44. Province of Nova Scotia, [NSPRD ArcGIS map service](https://nsgiwa2.novascotia.ca/arcgis/rest/services/PLAN/PLAN_NSPRD_WM84/MapServer), which displays property boundaries and limited attribution.
 45. Province of Nova Scotia, NS Orthophotomap Database service at `https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer`.
-46. NS Marks The Spot's public [web implementation at `92f1261e5`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/92f1261e5/web), plus its bundled `ProvinceRestrictedGeographicServicesLicense.md` and `LayerCatalog.swift`, checked 2026-07-19. The licence permits viewing in any medium for lawful purposes with its required attribution and disclaimer; the project displays both NS Aerial and NSPRD under that licence.
+46. NS Marks The Spot [pull request 89](https://github.com/dfakkeldy/ns-marks-the-spot/pull/89), source commit [`1ee76d15b`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/1ee76d15b2466d40674e62113ac9f1e9044421c1/web), and [live public map](https://kinnokilabs.com/apps/nsmarksthespot/map/), checked 2026-07-19. The build adds current CBRM/Inverness event catalogues, approximate mapped acreage, exact mapped road/trail and water intersections, honest empty/error states, and seven Province-data toggles. Its bundled `ProvinceRestrictedGeographicServicesLicense.md` and layer catalogue preserve the required attribution and disclaimer. These are screening tools, not title, survey, access or environmental opinions.
 47. Nova Scotia, [Open Government Licence](https://support.novascotia.ca/services/open-data-portal-licence).
 
 ## Confidence

@@ -73,13 +73,20 @@ package.
   voice exemplar and authorizes representative pilot development. It does not
   record a narrated-pilot `continue` verdict, authorize the remaining
   manuscript, accept pronunciations, or authorize publication.
+- **Map-resource chapter and screenshots:** “Look at the work done on the map.
+  Let's add a chapter about using this resource. Work is still being done on it,
+  but let's plan out the chapter and we'll make a bunch of screenshots showing
+  how to turn the layers on and off, what each layer shows. How to use it to
+  research the tax sale.” This authorizes planning the new chapter and creating
+  review screenshots. Because it expands the approved direction to thirteen
+  chapters and 51 figures, revised outline/figure approval remains pending.
 
 ## Gate status
 
-The revised twelve-chapter argument outline, added failure paths and forty-figure
-direction are approved for pilot development. The three-card atlas prototype
-direction is also accepted against its exact rendered hashes. The first-section
-voice exemplar is accepted against its exact text hash. The narrated
+The prior twelve-chapter argument outline and forty-figure direction remain the
+last approved pilot scope. The three-card atlas direction and exact first-section
+voice exemplar are separately accepted against their hashes. A
+thirteen-chapter/51-figure revision is proposed and awaiting review. The narrated
 comprehension-pilot verdict, canonical full drafting, pronunciation acceptance,
 actual Echo/video-stage prototype proof, atlas batch authorization, final figure
 acceptance, and publication remain downstream gates.

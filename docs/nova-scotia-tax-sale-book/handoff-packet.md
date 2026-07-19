@@ -1,18 +1,18 @@
 # Beyond the Tax-Sale Packet — handoff packet
 
-**Status: pilot development authorized — not authorized for canonical full-book
-production.** Human outline approval is recorded. First-section acceptance and
-a narrated comprehension-pilot decision remain absent. A separate owner-free
-Inverness Packet Atlas is proposed outside the forty-figure manifest.
+**Status: revised outline approval pending — not authorized for canonical
+full-book production.** The prior twelve-chapter/forty-figure pilot direction
+was approved, but a thirteenth map-method chapter and eleven additional figures
+are now proposed. First-section acceptance and a narrated comprehension-pilot
+decision remain absent. A separate owner-free Inverness Packet Atlas remains
+outside both figure directions.
 
 ## Production request
 
-Use `$custom-learning-audiobook` to develop the governed first section and
-narrated pilot, then pause for the remaining human gates before turning
-this public-safe plan into a spoken-first Nova Scotia learning book. Preserve
-the forty-figure Echo slideshow/video direction, make the narration complete
-without a screen, and keep every live-property reference educational and
-unranked.
+Pause new governed drafting until the revised thirteen-chapter/51-figure
+direction is approved. Then use `$custom-learning-audiobook` to develop the
+governed first section and narrated pilot. Make the narration complete without
+a screen, and keep every live-property reference educational and unranked.
 
 ## Status
 
@@ -23,9 +23,9 @@ unranked.
   the public package without written authorization for the precise reuse.
 - Permission to publish: yes for the eventual public book; this is not finished
   publication authorization.
-- Length target: 42,800 words, estimated range 40,000–45,000.
+- Length target: 46,200 words, estimated range 44,000–49,000.
 - Original target: 22,000 words.
-- Target history and approval evidence: six dated verbatim directions in
+- Target history and approval evidence: seven dated verbatim directions in
   `research/learning-brief.json` and `research/conversation-log.md`.
 - Audience: curious beginner; no purchase intent is assumed.
 - Prior knowledge: ordinary real-estate-listing familiarity, but no assumed tax
@@ -38,10 +38,11 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- User approval status: revised outline and forty-figure direction approved for
-  pilot development at 2026-07-19T11:56:49-03:00. The exact quote is preserved
-  in `research/learning-outline.json`, `research/comprehension-pilot.json`, and
-  `research/conversation-log.md`.
+- User approval status: the prior twelve-chapter/forty-figure direction was
+  approved for pilot development at 2026-07-19T11:56:49-03:00. The proposed
+  thirteen-chapter/51-figure revision is pending review; both the prior approval
+  and new direction are preserved in `research/learning-outline.json`,
+  `research/comprehension-pilot.json`, and `research/conversation-log.md`.
 
 ## Core promise
 
@@ -70,18 +71,15 @@ under the HRM Charter parallel rather than silently folded into the MGA.
 ## Learning outline
 
 - Curriculum pattern: end-to-end trace.
-- Governing question, twelve-chapter argument map, section claims and repetition
+- Governing question, proposed thirteen-chapter argument map, section claims and repetition
   limits: `research/learning-outline.json` and `research/outline.md`.
-- Durable outcomes: ten, including a distinct payment-performance outcome and a
-  separate staged-responsibility explanation path.
+- Durable outcomes: ten, with the map method strengthening the lawful evidence-file outcome alongside a distinct payment-performance outcome and a separate staged-responsibility explanation path.
 - New failure-path spine: no sufficient bidder, re-advertisement, payment
   default, event rescheduling boundary, prohibited bidders, set-aside effect and
   the tax-deed contestability window.
-- Authorization: **approved for pilot development** by Dan Fakkeldy at
-  2026-07-19T11:56:49-03:00: “I approve the revised twelve-chapter outline and
-  forty-figure visual direction for pilot development.” This does not authorize
-  full manuscript drafting, full narration, final figure acceptance, or
-  finished-audiobook publication.
+- Authorization: **pending for the revised direction**. Dan Fakkeldy's prior
+  2026-07-19 approval covers the twelve-chapter/forty-figure pilot scope. It does
+  not automatically approve the new Chapter 5 or figures 41–51.
 
 The structured outline is authoritative for the chapter and argument-level
 tables; duplicating all section rows here would create a second drifting copy.
@@ -96,8 +94,9 @@ outcome by copy and paste.
 
 ## Road-book review and pilot
 
-- Human outline checkpoint: complete; the revised argument-level outline and
-  forty-figure direction are approved for pilot development.
+- Human outline checkpoint: reopened; the thirteen-chapter/51-figure revision
+  is pending review. The prior twelve-chapter/forty-figure approval remains
+  recorded as history.
 - First-section checkpoint: **accepted** by Dan Fakkeldy at
   2026-07-19T16:17:07-03:00 with “Let’s go for the voice.” The exact
   project-authored opening is preserved as `research/voice-exemplar.md`,
@@ -133,16 +132,19 @@ expanded spoken forms. Candidate readings are not acceptance evidence.
 
 ## Figure plan
 
-`research/visuals.md` is the forty-row manifest and safety authority. Figures
-03–08 plus the Chapter 9 payment-readiness clock and Chapter 11 surplus-proceeds
-route are deterministic review candidates. The county overview is a QGIS 4
+`research/visuals.md` is the proposed 51-row manifest and safety authority.
+Figures 41–51 are version-stamped NS Marks The Spot walkthrough candidates;
+their source and hashes are in
+`figures/map-chapter-screenshot-receipt.json`. Figures 03–08 plus the Chapter 10
+payment-readiness clock and Chapter 12 surplus-proceeds route are deterministic
+review candidates. The county overview is a QGIS 4
 halo-marker orientation view; the real Lien 1 aerial remains a pre-gate
 development specimen and cannot enter canonical chapters before its separate
 source, rights, event-status, public-safety and Echo-stage review.
 
 `research/inverness-packet-atlas-plan.md` proposes 45 lien cards plus overview
 and comparison frames as a separate appendix/slideshow companion. It does not
-alter the approved forty figures. Its source-rights ledger, three-card
+alter either chapter-figure direction. Its source-rights ledger, three-card
 prototype, full render and live-event-status refresh each require separate
 approval.
 

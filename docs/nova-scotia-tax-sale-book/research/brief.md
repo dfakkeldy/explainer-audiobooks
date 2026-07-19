@@ -5,7 +5,7 @@
 - Request: A long, plain-language public learning audiobook about Nova Scotia municipal tax sales: terminology, legal framework, property research, auction behaviour, purchaser responsibilities and the boundaries of a possible property-research service.
 - Production mode: `governed-final`
 - Listening mode: `road-book`, designed for a curious beginner listening while driving and delivering mail.
-- Planned scale: deep book, approximately 40,000–45,000 words. Word count is an estimate, not a packaging floor.
+- Planned scale: deep book, approximately 44,000–49,000 words. Word count is an estimate, not a packaging floor.
 - Research mode: deep, live-source research led by current statutes, government services, municipal procedures and results, with secondary public legal education used to explain risk.
 - Safety classification: sensitive/high-stakes, narrowed to an educational overview and a decision framework. The book will not recommend a property, calculate a personalized bid, replace a Nova Scotia property lawyer, or promise investment returns.
 - Privacy/publication: the intended finished book is public-safe. On 2026-07-19,
@@ -18,7 +18,7 @@
 - Current-law boundary: core official sources were refreshed on 2026-07-19 and
   must be checked again before a later edition or before relying on a live-sale
   detail.
-- Visual-listening target: a figure-rich Echo slideshow and video-export edition. The current plan contains 40 purposeful figures—15 QGIS map plates across three fictional/composite five-map case files, 22 diagrams/charts, two original editorial scene illustrations and one final retrieval aid. Narration must still work with the screen unavailable.
+- Visual-listening target: a figure-rich Echo slideshow and video-export edition. The proposed revision contains 51 purposeful figures: the previously approved 40-figure direction plus eleven version-stamped NS Marks The Spot walkthrough screenshots. Narration must still work with the screen unavailable.
 
 ## Editorial stance
 
@@ -41,6 +41,20 @@ The book's value does not depend on converting readers into clients. Its primary
 - Treat the municipality's own 139-page packet as the baseline: it already includes an account/parcel summary, aerial and Property Online mapping, and a legal description. The public companion must add reconciliation, planning, terrain, environmental/geological screening, source limits and professional handoffs rather than merely repackaging those pages.
 - Keep commercial-service pricing and internal positioning analysis outside the
   public development packet.
+
+## Interactive-map chapter update
+
+- Add a proposed Chapter 5, **The Map Is a Question Machine**, after the parcel
+  biography and before the access/environmental case studies.
+- Teach one repeatable pass: verify the official event, search one exact PID,
+  activate one layer at a time, record a bounded observation, and name the next
+  authoritative source or professional.
+- Cover NS Aerial, NS Property Boundaries, Crown Lands, Flood Risk Areas,
+  Waterfalls, Water features, and Roads/trails/culverts. State explicitly that
+  proximity and mapped intersection are screening results, not legal access,
+  survey, flood, wetland, title or site-condition conclusions.
+- Treat figures 41–51 as source-versioned review candidates. Refresh them after
+  the app stabilizes and again before publication.
 
 ## Visual and video direction
 

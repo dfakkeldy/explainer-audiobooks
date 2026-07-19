@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "status": "review-candidates",
+  "capturedAt": "2026-07-19",
+  "captureSource": {
+    "application": "NS Marks The Spot web map",
+    "repository": "https://github.com/dfakkeldy/ns-marks-the-spot",
+    "sourceCommit": "1ee76d15b2466d40674e62113ac9f1e9044421c1",
+    "pullRequest": "https://github.com/dfakkeldy/ns-marks-the-spot/pull/89",
+    "captureURL": "http://127.0.0.1:5173/",
+    "viewport": "1920x1080",
+    "outputSize": "2560x1440"
+  },
+  "publicationBoundary": {
+    "acceptedFinalFigures": false,
+    "livePropertyRecommendation": false,
+    "refreshBeforePublication": true,
+    "notes": "Interface states and returned intersections are dated screening evidence. Refresh against the live municipal source and current production app before publication."
+  },
+  "outputs": [
+    {
+      "file": "chapters/images/figure-41-map-layer-overview.png",
+      "sha256": "439e768b667b02aaf87216f887d3428a3e8cc03c7b20624a1091317e31b6a306"
+    },
+    {
+      "file": "chapters/images/figure-42-province-data-licence.png",
+      "sha256": "b7a64a7eb8500e2117e2facf2ba6efdfbbefda56ad5184a53af85f04b77fe1f0"
+    },
+    {
+      "file": "chapters/images/figure-43-tax-sale-notice-filter.png",
+      "sha256": "85edfa0b1460bac4683b97ac03826b3752fb7d5dd3dd535ae5df7bbdb50cec87"
+    },
+    {
+      "file": "chapters/images/figure-44-pid-search-parcel-inspector.png",
+      "sha256": "38f5dba01d12439d23fe3c8c770c5def5eedf82dcb094a78b9f6b00fe5dd3108"
+    },
+    {
+      "file": "chapters/images/figure-45-aerial-and-property-boundaries.png",
+      "sha256": "f3dc7f01fdd981f1399de345e3b4e0dc35c864ba60b098d086538a8206347d09"
+    },
+    {
+      "file": "chapters/images/figure-46-roads-trails-culverts.png",
+      "sha256": "7b0713318790892e96591248627100b7a24594667eeba464b3623d6405867b83"
+    },
+    {
+      "file": "chapters/images/figure-47-water-features.png",
+      "sha256": "c558b0ba9f06a01473283d7ef2cae356c980bfc31dc982cf2d4ca794932a5e04"
+    },
+    {
+      "file": "chapters/images/figure-48-crown-lands.png",
+      "sha256": "e3b8ac3426e665e214facd581717946bc0c0835535e3640424abf911d595f5d2"
+    },
+    {
+      "file": "chapters/images/figure-49-flood-risk-areas.png",
+      "sha256": "9c7851389cdf5de1010b81a749d62a3a9dae65b067292adb836c05472a1adc55"
+    },
+    {
+      "file": "chapters/images/figure-50-waterfalls-overview.png",
+      "sha256": "24b184eb856e2df137bb54f6d22c8b1feeac97712385d87e3d5e9008466545b7"
+    },
+    {
+      "file": "chapters/images/figure-51-combined-parcel-research.png",
+      "sha256": "7b4e8871e38b221c58353f943de6504996ea03df70faf10f02ac4e665989ee5b"
+    },
+    {
+      "file": "figures/map-chapter-screenshots-contact-sheet.png",
+      "sha256": "d6d8e0c91da2a2f56259853c8c4132a3ffc181b1aaa9dc617f6ee4d7718886f8"
+    }
+  ]
+}

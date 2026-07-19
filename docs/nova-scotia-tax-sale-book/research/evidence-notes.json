@@ -2,69 +2,556 @@
   "schemaVersion": 2,
   "claimPolicy": "traceable-only",
   "notesPath": "research/evidence-notes.md",
-  "notesSHA256": "328ece4ecd63f7b6143ad79afc276271aac9288fdaffc9f9a7300b6e0e49cc3e",
+  "notesSHA256": "4ad78b44fcd275cc3babcea822fd91e26a624bacf0ee7fe16fbfd12674ddd43e",
   "claims": [
-    {"id":"LAW-001","claim":"Municipal real-property taxes are a first-priority lien that need not be registered.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.133; HRMC s.147","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-002","claim":"Proceedings may begin after the statutory one-year timing point and property must be put up after three preceding fiscal years, subject to exceptions and deferral.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.134; HRMC s.148","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-003","claim":"The process includes preliminary notice, title search, possible survey and a sixty-day notice of intent to owners and interest holders.","source":"Nova Scotia MGA and HRMC","locator":"MGA ss.137-140; HRMC ss.151-155","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-004","claim":"The sale or tender receives at least thirty days of qualifying public notice.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.142; HRMC s.157","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-005","claim":"Public auction is the default; council may consent to tenders and may define an acceptable minimum.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.141; HRMC s.156","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-006","claim":"The statute controls payment forms, requires an immediate price or recovery deposit and gives three business days for any balance.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.148; HRMC s.163","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-015","claim":"If no sufficient bid is received, the municipality may buy for the recovery amount or re-advertise for a later auction or tender; payment default can also trigger immediate re-offer or later resale with resale expenses deducted from the deposit.","source":"Nova Scotia MGA and HRMC","locator":"MGA ss.143,148-149; HRMC ss.158-159,163-164","verificationStatus":"verified","verificationNote":"Current statutory unhappy path; municipality- and event-specific terms still require refresh."},
-    {"id":"LAW-016","claim":"Selling-municipality council members and employees, specified village equivalents, their spouses and majority-owned companies may not purchase directly or through an agent.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.144; HRMC s.159","verificationStatus":"verified","verificationNote":"Statutory conflict prohibition only; live registration rules may impose further requirements."},
-    {"id":"OPS-006","claim":"The sale notice must state date, time and place, but the reviewed tax-sale sections provide no general bidder-facing adjournment rule; postponement or rescheduling must be verified from the municipality's current notice.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.142(2A) and tax-sale ss.133-157; HRMC s.157(2A) and ss.147-172","verificationStatus":"verified","verificationNote":"Verified statutory boundary, not an opinion on the validity of a particular scheduling change."},
-    {"id":"OPS-001","claim":"CBRM's July 2026 event uses in-person registration, bidding cards, immediate minimum-plus-fee payment and a three-business-day balance.","source":"CBRM Tax Sales","locator":"Auction Process and Payment Options","verificationStatus":"verified","verificationNote":"Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"OPS-002","claim":"Municipalities may use public tenders, and Kings policy contemplates livestreamed opening.","source":"MGA and Kings County FIN-05-024","locator":"MGA s.141(2); policy s.4.3","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"OPS-003","claim":"A listed parcel may be paid, redeemed, removed or deferred before or during the event.","source":"CBRM Tax Sales","locator":"Results legend and FAQ","verificationStatus":"verified","verificationNote":"Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"OPS-004","claim":"Inverness's August 11, 2026 Port Hood auction requires immediate recovery-amount plus $200 registration payment and a three-business-day balance.","source":"Inverness County Tax Sales","locator":"current page, August packet and December 2025 FAQ","verificationStatus":"verified","verificationNote":"Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"OPS-005","claim":"Dated Nova Scotia examples use open auction, sealed tender, post-auction tender and no-sale-year practices within the statutory framework.","source":"Official Inverness, Richmond, Pictou, Annapolis, Kings and Chester sources","locator":"research/municipality-comparison.md","verificationStatus":"verified","verificationNote":"Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"OPS-007","claim":"Halifax uses the parallel HRM Charter framework, and its Administrative Order 18 itemizes possible tax-sale expenses including notice, title search, survey, certificate, deed, registration, closing and redemption administration.","source":"Halifax Regional Municipality","locator":"HRMC ss.147-172; Property Tax Sales; Administrative Order 18 Schedule 1","verificationStatus":"verified","verificationNote":"Halifax-specific legal and fee comparison; fee amounts and event status are perishable."},
-    {"id":"DATA-001","claim":"Minimum bid is a recovery number; 24 CBRM March 2026 sales had a median winning/minimum ratio of 3.17.","source":"CBRM March 10 2026 results","locator":"official result PDF and research/auction-result-analysis.md","verificationStatus":"verified","verificationNote":"Normalized from verified-sample; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"DATA-002","claim":"Inverness's August 2026 summary lists 45 liens, 27 redeemable and 18 non-redeemable; its 44 detail sheets omit lien 6 and differ from the summary on two amounts.","source":"Inverness August 11, 2026 property packet","locator":"research/inverness-county-dossier.md","verificationStatus":"verified","verificationNote":"Normalized from verified-sample; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"DATA-005","claim":"Inverness's detailed entries already provide a parcel/account table, aerial overlay, Property Online map and registry legal description, while disclaiming survey status and encouraging title research.","source":"Inverness August 11, 2026 property packet","locator":"representative visual review of detailed entry pages","verificationStatus":"verified","verificationNote":"Normalized from verified-document-structure; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"DATA-003","claim":"Inverness council minutes report 35 of 50 advertised May 2025 properties sold and 15 removed, while the public results sheet contains 31 bid rows with a median bid/recovery ratio of 4.53.","source":"Inverness official advertisement, results and June 19, 2025 council minutes","locator":"research/inverness-county-dossier.md","verificationStatus":"verified","verificationNote":"Normalized from verified-sample-conflict-preserved; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"DATA-004","claim":"Richmond's June 2026 results publish three sold rows at approximately 1.33, 6.59 and 6.28 times listed charges.","source":"Richmond County Tax Sales","locator":"June 2026 result table","verificationStatus":"verified","verificationNote":"Normalized from verified-sample; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"LAW-007","claim":"Full payment produces a certificate of sale that the treasurer registers.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.150; HRMC s.165","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-008","claim":"The certificate holder may protect and non-diminishingly use the land, may collect rent, must avoid injury and tree cutting and must insure insurable buildings.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.151; HRMC s.166","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-009","claim":"Redemption normally lasts six months, but no right exists when taxes were more than six years in arrears at sale.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.152(1),155; HRMC s.167(1),170","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-010","claim":"Redemption uses a statutory formula including purchase price, ten-percent annual interest and specified approved costs and offsets.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.152(2)-(4); HRMC s.167(2)-(4)","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-011","claim":"On full redemption payment, the purchaser is repaid under the statute and loses rights in the land.","source":"Nova Scotia MGA and HRMC","locator":"MGA ss.153-154; HRMC ss.168-169","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-012","claim":"The tax deed vests fee-simple title free of encumbrances, subject to the statute's continuing easement and right-of-way treatment.","source":"Nova Scotia MGA and HRMC","locator":"MGA ss.155-156; HRMC ss.170-171","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-013","claim":"A treasurer may obtain a court order defining arrears, interests, notice and protected sale terms.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.139A; HRMC s.154","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-014","claim":"Surplus proceeds enter a municipal account and prior interest holders may apply to Supreme Court after redemption and before twenty years.","source":"Nova Scotia MGA and HRMC","locator":"MGA ss.146-147; HRMC ss.161-162","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAW-017","claim":"If a tax sale is set aside, the municipal tax lien is not discharged.","source":"Nova Scotia MGA and HRMC","locator":"MGA s.133(4); HRMC s.147(4)","verificationStatus":"verified","verificationNote":"Statutory consequence only; defects and remedies require property-specific legal advice."},
-    {"id":"LAW-018","claim":"A tax deed generally may be set aside only during the six years after registration, subject to the Marketable Titles Act exceptions and preserved damages remedy.","source":"Nova Scotia Marketable Titles Act","locator":"s.6(2)-(6), standalone consolidation dated 2015-09-01","verificationStatus":"verified","verificationNote":"Run date starts at deed registration; refresh section numbering and obtain legal advice for any actual contest."},
-    {"id":"INS-001","claim":"The certificate holder's statutory insurable interest and duty to insure an insurable building do not compel an insurer to offer coverage; vacant buildings may require specialized underwriting.","source":"Nova Scotia MGA and HRMC; Intact Insurance","locator":"MGA s.151(c); HRMC s.166(c); vacant-home and non-standard-property pages","verificationStatus":"verified","verificationNote":"Statutory duty is high confidence; insurer pages are a market-practice illustration, not an availability promise."},
-    {"id":"LAND-001","claim":"AAN identifies the assessment account and PID identifies the parcel; neither proves boundaries, access or permitted use.","source":"Nova Scotia land-registration and deed-transfer materials","locator":"PID definition and Affidavit of Value information","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAND-002","claim":"Property Online contains ownership, parcel mapping and registry information and supports PID, owner, AAN and address queries.","source":"Nova Scotia Property Online","locator":"service page, user guide and LR Administration Regulations s.3(8)","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAND-003","claim":"PVSC assessment supports taxation but does not establish physical condition, legal access, auction value or a safe maximum bid.","source":"PVSC and CBRM","locator":"PVSC home page; CBRM due-diligence warning","verificationStatus":"verified","verificationNote":"Normalized from verified-inference; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"LAND-004","claim":"Parcel maps orient research but are not boundary surveys.","source":"GeoNOVA, MGA and CBRM","locator":"mapping products; MGA s.139; CBRM map disclaimer","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAND-005","claim":"Visible approach is not proof of legal access, frontage or a registered right-of-way.","source":"CBRM and Nova Scotia registry law","locator":"land-locked guidance; deed easement provisions","verificationStatus":"verified","verificationNote":"Normalized from verified-risk-boundary; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"LAND-006","claim":"Zoning is only one part of development feasibility, alongside frontage, lot status, services, setbacks and municipal compliance.","source":"CBRM and Nova Scotia Municipal Affairs","locator":"Tax Sales, clearance service and planning guide","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAND-007","claim":"Municipalities cannot authorize bidders to enter listed private property.","source":"CBRM Tax Sales","locator":"Before You Bid and FAQ","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"LAND-008","claim":"Plan Inverness municipality-wide planning controls took effect on September 11, 2025 and EDPC administers planning and permitting services.","source":"Inverness County and Eastern District Planning Commission","locator":"Municipal Planning Strategy and Land Use By-law notice","verificationStatus":"verified","verificationNote":"Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"GIS-001","claim":"The checked Province geographic-services licence permits lawful public viewing of covered NS Aerial and NSPRD information in any medium, subject to its conditions.","source":"Province Restricted Geographic Services License and NS Marks The Spot","locator":"license version 1.0 and LayerCatalog.swift","verificationStatus":"verified","verificationNote":"Normalized from verified-license; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"GIS-002","claim":"Public rendered views from covered Province services require the specified Province attribution/disclaimer and access to the licence.","source":"Province Restricted Geographic Services License","locator":"version 1.0 attribution and application terms","verificationStatus":"verified","verificationNote":"Normalized from verified-license; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"ENV-001","claim":"Environmental registry and contaminated-site records are research inputs, and absence from a search is not proof of cleanliness.","source":"Nova Scotia Environment","locator":"Environmental Registry and Contaminated Sites pages","verificationStatus":"verified","verificationNote":"Normalized from verified-risk-boundary; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"ENV-002","claim":"Well-log data includes depth, yield and construction but carries completeness, accuracy and geolocation limitations.","source":"Nova Scotia Well Logs","locator":"database page, manual and map notes","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"ENV-003","claim":"Older properties may lack provincial on-site sewage records, so a missing record does not prove a compliant system.","source":"Nova Scotia ERMS","locator":"service warning","verificationStatus":"verified","verificationNote":"Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"ENV-004","claim":"The Coastal Hazard Map depicts a stated 2100 scenario and is not a parcel-specific engineering or insurance conclusion.","source":"Nova Scotia Coastal Hazard Map User Guide","locator":"Introduction","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"ENV-005","claim":"The abandoned-mine inventory is expressly incomplete, excludes surface expressions of subsidence, and its 2024 metadata says private-land positions can be inaccurate by up to approximately 50 metres.","source":"Nova Scotia Abandoned Mine Openings Database","locator":"database description; DP ME 10 Version 9 metadata positional-accuracy report","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; a mapped point remains a screening record rather than a parcel-specific hazard boundary."},
-    {"id":"OCC-001","claim":"Occupied properties may be sold, but the municipality does not remove residents or provide access; possession and tenancy require separate legal handling.","source":"CBRM and Nova Scotia Residential Tenancies","locator":"CBRM FAQ; tenancy resources","verificationStatus":"verified","verificationNote":"Normalized from verified-boundary; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"TAX-001","claim":"A tax-sale deed is exempt from municipal deed transfer tax under MGA s.109(4), while applicable Affidavit of Value registration information is still required.","source":"Nova Scotia MGA, Inverness County and Land Registration","locator":"MGA s.109(4); Inverness FAQ; deed-transfer service","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."},
-    {"id":"TAX-002","claim":"The qualifying Nova Scotia non-resident deed transfer tax is ten percent of the greater of price or assessment times transferred non-resident interest, subject to exemptions.","source":"Nova Scotia Finance","locator":"Non-resident Provincial Deed Transfer Tax service","verificationStatus":"verified","verificationNote":"Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"TAX-003","claim":"HST on real property is transaction-specific despite simplified municipal event wording.","source":"CRA and CBRM","locator":"CRA GI-003, Memorandum 19.1 and CBRM FAQ","verificationStatus":"verified","verificationNote":"Normalized from verified-conflict-preserved; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"ELIG-001","claim":"Federal non-Canadian purchase restrictions run to 2027-01-01 and have geographic and property/use exceptions including vacant land and genuine development.","source":"Finance Canada, federal regulations and CMHC","locator":"extension notice; Regulations s.4; CMHC FAQ","verificationStatus":"verified","verificationNote":"Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."},
-    {"id":"MOB-001","claim":"Mobile-home tax sales interact with specific regulations, personal-property security and land-lease rules.","source":"Nova Scotia regulations and service guidance","locator":"Selling Mobile Homes regulations; PPR; land-lease guidance","verificationStatus":"verified","verificationNote":"Directly verified against the cited source; refresh perishable details before publication."}
+    {
+      "id": "LAW-001",
+      "claim": "Municipal real-property taxes are a first-priority lien that need not be registered.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.133; HRMC s.147",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-002",
+      "claim": "Proceedings may begin after the statutory one-year timing point and property must be put up after three preceding fiscal years, subject to exceptions and deferral.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.134; HRMC s.148",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-003",
+      "claim": "The process includes preliminary notice, title search, possible survey and a sixty-day notice of intent to owners and interest holders.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA ss.137-140; HRMC ss.151-155",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-004",
+      "claim": "The sale or tender receives at least thirty days of qualifying public notice.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.142; HRMC s.157",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-005",
+      "claim": "Public auction is the default; council may consent to tenders and may define an acceptable minimum.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.141; HRMC s.156",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-006",
+      "claim": "The statute controls payment forms, requires an immediate price or recovery deposit and gives three business days for any balance.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.148; HRMC s.163",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-015",
+      "claim": "If no sufficient bid is received, the municipality may buy for the recovery amount or re-advertise for a later auction or tender; payment default can also trigger immediate re-offer or later resale with resale expenses deducted from the deposit.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA ss.143,148-149; HRMC ss.158-159,163-164",
+      "verificationStatus": "verified",
+      "verificationNote": "Current statutory unhappy path; municipality- and event-specific terms still require refresh."
+    },
+    {
+      "id": "LAW-016",
+      "claim": "Selling-municipality council members and employees, specified village equivalents, their spouses and majority-owned companies may not purchase directly or through an agent.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.144; HRMC s.159",
+      "verificationStatus": "verified",
+      "verificationNote": "Statutory conflict prohibition only; live registration rules may impose further requirements."
+    },
+    {
+      "id": "OPS-006",
+      "claim": "The sale notice must state date, time and place, but the reviewed tax-sale sections provide no general bidder-facing adjournment rule; postponement or rescheduling must be verified from the municipality's current notice.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.142(2A) and tax-sale ss.133-157; HRMC s.157(2A) and ss.147-172",
+      "verificationStatus": "verified",
+      "verificationNote": "Verified statutory boundary, not an opinion on the validity of a particular scheduling change."
+    },
+    {
+      "id": "OPS-001",
+      "claim": "CBRM's July 2026 event uses in-person registration, bidding cards, immediate minimum-plus-fee payment and a three-business-day balance.",
+      "source": "CBRM Tax Sales",
+      "locator": "Auction Process and Payment Options",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "OPS-002",
+      "claim": "Municipalities may use public tenders, and Kings policy contemplates livestreamed opening.",
+      "source": "MGA and Kings County FIN-05-024",
+      "locator": "MGA s.141(2); policy s.4.3",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "OPS-003",
+      "claim": "A listed parcel may be paid, redeemed, removed or deferred before or during the event.",
+      "source": "CBRM Tax Sales",
+      "locator": "Results legend and FAQ",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "OPS-004",
+      "claim": "Inverness's August 11, 2026 Port Hood auction requires immediate recovery-amount plus $200 registration payment and a three-business-day balance.",
+      "source": "Inverness County Tax Sales",
+      "locator": "current page, August packet and December 2025 FAQ",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "OPS-005",
+      "claim": "Dated Nova Scotia examples use open auction, sealed tender, post-auction tender and no-sale-year practices within the statutory framework.",
+      "source": "Official Inverness, Richmond, Pictou, Annapolis, Kings and Chester sources",
+      "locator": "research/municipality-comparison.md",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "OPS-007",
+      "claim": "Halifax uses the parallel HRM Charter framework, and its Administrative Order 18 itemizes possible tax-sale expenses including notice, title search, survey, certificate, deed, registration, closing and redemption administration.",
+      "source": "Halifax Regional Municipality",
+      "locator": "HRMC ss.147-172; Property Tax Sales; Administrative Order 18 Schedule 1",
+      "verificationStatus": "verified",
+      "verificationNote": "Halifax-specific legal and fee comparison; fee amounts and event status are perishable."
+    },
+    {
+      "id": "DATA-001",
+      "claim": "Minimum bid is a recovery number; 24 CBRM March 2026 sales had a median winning/minimum ratio of 3.17.",
+      "source": "CBRM March 10 2026 results",
+      "locator": "official result PDF and research/auction-result-analysis.md",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-sample; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "DATA-002",
+      "claim": "Inverness's August 2026 summary lists 45 liens, 27 redeemable and 18 non-redeemable; its 44 detail sheets omit lien 6 and differ from the summary on two amounts.",
+      "source": "Inverness August 11, 2026 property packet",
+      "locator": "research/inverness-county-dossier.md",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-sample; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "DATA-005",
+      "claim": "Inverness's detailed entries already provide a parcel/account table, aerial overlay, Property Online map and registry legal description, while disclaiming survey status and encouraging title research.",
+      "source": "Inverness August 11, 2026 property packet",
+      "locator": "representative visual review of detailed entry pages",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-document-structure; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "DATA-003",
+      "claim": "Inverness council minutes report 35 of 50 advertised May 2025 properties sold and 15 removed, while the public results sheet contains 31 bid rows with a median bid/recovery ratio of 4.53.",
+      "source": "Inverness official advertisement, results and June 19, 2025 council minutes",
+      "locator": "research/inverness-county-dossier.md",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-sample-conflict-preserved; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "DATA-004",
+      "claim": "Richmond's June 2026 results publish three sold rows at approximately 1.33, 6.59 and 6.28 times listed charges.",
+      "source": "Richmond County Tax Sales",
+      "locator": "June 2026 result table",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-sample; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "LAW-007",
+      "claim": "Full payment produces a certificate of sale that the treasurer registers.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.150; HRMC s.165",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-008",
+      "claim": "The certificate holder may protect and non-diminishingly use the land, may collect rent, must avoid injury and tree cutting and must insure insurable buildings.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.151; HRMC s.166",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-009",
+      "claim": "Redemption normally lasts six months, but no right exists when taxes were more than six years in arrears at sale.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.152(1),155; HRMC s.167(1),170",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-010",
+      "claim": "Redemption uses a statutory formula including purchase price, ten-percent annual interest and specified approved costs and offsets.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.152(2)-(4); HRMC s.167(2)-(4)",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-011",
+      "claim": "On full redemption payment, the purchaser is repaid under the statute and loses rights in the land.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA ss.153-154; HRMC ss.168-169",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-012",
+      "claim": "The tax deed vests fee-simple title free of encumbrances, subject to the statute's continuing easement and right-of-way treatment.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA ss.155-156; HRMC ss.170-171",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-013",
+      "claim": "A treasurer may obtain a court order defining arrears, interests, notice and protected sale terms.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.139A; HRMC s.154",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-014",
+      "claim": "Surplus proceeds enter a municipal account and prior interest holders may apply to Supreme Court after redemption and before twenty years.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA ss.146-147; HRMC ss.161-162",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAW-017",
+      "claim": "If a tax sale is set aside, the municipal tax lien is not discharged.",
+      "source": "Nova Scotia MGA and HRMC",
+      "locator": "MGA s.133(4); HRMC s.147(4)",
+      "verificationStatus": "verified",
+      "verificationNote": "Statutory consequence only; defects and remedies require property-specific legal advice."
+    },
+    {
+      "id": "LAW-018",
+      "claim": "A tax deed generally may be set aside only during the six years after registration, subject to the Marketable Titles Act exceptions and preserved damages remedy.",
+      "source": "Nova Scotia Marketable Titles Act",
+      "locator": "s.6(2)-(6), standalone consolidation dated 2015-09-01",
+      "verificationStatus": "verified",
+      "verificationNote": "Run date starts at deed registration; refresh section numbering and obtain legal advice for any actual contest."
+    },
+    {
+      "id": "INS-001",
+      "claim": "The certificate holder's statutory insurable interest and duty to insure an insurable building do not compel an insurer to offer coverage; vacant buildings may require specialized underwriting.",
+      "source": "Nova Scotia MGA and HRMC; Intact Insurance",
+      "locator": "MGA s.151(c); HRMC s.166(c); vacant-home and non-standard-property pages",
+      "verificationStatus": "verified",
+      "verificationNote": "Statutory duty is high confidence; insurer pages are a market-practice illustration, not an availability promise."
+    },
+    {
+      "id": "LAND-001",
+      "claim": "AAN identifies the assessment account and PID identifies the parcel; neither proves boundaries, access or permitted use.",
+      "source": "Nova Scotia land-registration and deed-transfer materials",
+      "locator": "PID definition and Affidavit of Value information",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAND-002",
+      "claim": "Property Online contains ownership, parcel mapping and registry information and supports PID, owner, AAN and address queries.",
+      "source": "Nova Scotia Property Online",
+      "locator": "service page, user guide and LR Administration Regulations s.3(8)",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAND-003",
+      "claim": "PVSC assessment supports taxation but does not establish physical condition, legal access, auction value or a safe maximum bid.",
+      "source": "PVSC and CBRM",
+      "locator": "PVSC home page; CBRM due-diligence warning",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-inference; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "LAND-004",
+      "claim": "Parcel maps orient research but are not boundary surveys.",
+      "source": "GeoNOVA, MGA and CBRM",
+      "locator": "mapping products; MGA s.139; CBRM map disclaimer",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAND-005",
+      "claim": "Visible approach is not proof of legal access, frontage or a registered right-of-way.",
+      "source": "CBRM and Nova Scotia registry law",
+      "locator": "land-locked guidance; deed easement provisions",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-risk-boundary; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "LAND-006",
+      "claim": "Zoning is only one part of development feasibility, alongside frontage, lot status, services, setbacks and municipal compliance.",
+      "source": "CBRM and Nova Scotia Municipal Affairs",
+      "locator": "Tax Sales, clearance service and planning guide",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAND-007",
+      "claim": "Municipalities cannot authorize bidders to enter listed private property.",
+      "source": "CBRM Tax Sales",
+      "locator": "Before You Bid and FAQ",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "LAND-008",
+      "claim": "Plan Inverness municipality-wide planning controls took effect on September 11, 2025 and EDPC administers planning and permitting services.",
+      "source": "Inverness County and Eastern District Planning Commission",
+      "locator": "Municipal Planning Strategy and Land Use By-law notice",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "GIS-001",
+      "claim": "The checked Province geographic-services licence permits lawful public viewing of covered NS Aerial and NSPRD information in any medium, subject to its conditions.",
+      "source": "Province Restricted Geographic Services License and NS Marks The Spot",
+      "locator": "license version 1.0 and LayerCatalog.swift",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-license; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "GIS-002",
+      "claim": "Public rendered views from covered Province services require the specified Province attribution/disclaimer and access to the licence.",
+      "source": "Province Restricted Geographic Services License",
+      "locator": "version 1.0 attribution and application terms",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-license; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "ENV-001",
+      "claim": "Environmental registry and contaminated-site records are research inputs, and absence from a search is not proof of cleanliness.",
+      "source": "Nova Scotia Environment",
+      "locator": "Environmental Registry and Contaminated Sites pages",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-risk-boundary; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "ENV-002",
+      "claim": "Well-log data includes depth, yield and construction but carries completeness, accuracy and geolocation limitations.",
+      "source": "Nova Scotia Well Logs",
+      "locator": "database page, manual and map notes",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "ENV-003",
+      "claim": "Older properties may lack provincial on-site sewage records, so a missing record does not prove a compliant system.",
+      "source": "Nova Scotia ERMS",
+      "locator": "service warning",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "ENV-004",
+      "claim": "The Coastal Hazard Map depicts a stated 2100 scenario and is not a parcel-specific engineering or insurance conclusion.",
+      "source": "Nova Scotia Coastal Hazard Map User Guide",
+      "locator": "Introduction",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "ENV-005",
+      "claim": "The abandoned-mine inventory is expressly incomplete, excludes surface expressions of subsidence, and its 2024 metadata says private-land positions can be inaccurate by up to approximately 50 metres.",
+      "source": "Nova Scotia Abandoned Mine Openings Database",
+      "locator": "database description; DP ME 10 Version 9 metadata positional-accuracy report",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; a mapped point remains a screening record rather than a parcel-specific hazard boundary."
+    },
+    {
+      "id": "OCC-001",
+      "claim": "Occupied properties may be sold, but the municipality does not remove residents or provide access; possession and tenancy require separate legal handling.",
+      "source": "CBRM and Nova Scotia Residential Tenancies",
+      "locator": "CBRM FAQ; tenancy resources",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-boundary; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "TAX-001",
+      "claim": "A tax-sale deed is exempt from municipal deed transfer tax under MGA s.109(4), while applicable Affidavit of Value registration information is still required.",
+      "source": "Nova Scotia MGA, Inverness County and Land Registration",
+      "locator": "MGA s.109(4); Inverness FAQ; deed-transfer service",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "TAX-002",
+      "claim": "The qualifying Nova Scotia non-resident deed transfer tax is ten percent of the greater of price or assessment times transferred non-resident interest, subject to exemptions.",
+      "source": "Nova Scotia Finance",
+      "locator": "Non-resident Provincial Deed Transfer Tax service",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "TAX-003",
+      "claim": "HST on real property is transaction-specific despite simplified municipal event wording.",
+      "source": "CRA and CBRM",
+      "locator": "CRA GI-003, Memorandum 19.1 and CBRM FAQ",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-conflict-preserved; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "ELIG-001",
+      "claim": "Federal non-Canadian purchase restrictions run to 2027-01-01 and have geographic and property/use exceptions including vacant land and genuine development.",
+      "source": "Finance Canada, federal regulations and CMHC",
+      "locator": "extension notice; Regulations s.4; CMHC FAQ",
+      "verificationStatus": "verified",
+      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+    },
+    {
+      "id": "MOB-001",
+      "claim": "Mobile-home tax sales interact with specific regulations, personal-property security and land-lease rules.",
+      "source": "Nova Scotia regulations and service guidance",
+      "locator": "Selling Mobile Homes regulations; PPR; land-lease guidance",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+    },
+    {
+      "id": "MAP-001",
+      "claim": "The checked map source adds approximate NSPRD acreage, exact mapped road/trail and water intersections, and honest empty/error states.",
+      "source": "NS Marks The Spot pull request 89 and source commit 1ee76d15b",
+      "locator": "web parcel inspector and PR summary",
+      "verificationStatus": "verified",
+      "verificationNote": "Verified against the checked source commit; refresh before publication."
+    },
+    {
+      "id": "MAP-002",
+      "claim": "The checked build exposes seven Province-data layers and keeps Fletcher historical mapping disabled while display rights remain unresolved.",
+      "source": "NS Marks The Spot layer catalogue and captured interface",
+      "locator": "map layer controls",
+      "verificationStatus": "verified",
+      "verificationNote": "Verified for the dated build; layer availability is perishable."
+    },
+    {
+      "id": "MAP-003",
+      "claim": "The checked event catalogue covers CBRM July 21 and Inverness August 11, 2026 with municipality, event, redemption and exact-PID controls across 115 unique PIDs.",
+      "source": "NS Marks The Spot event catalogue and captured interface",
+      "locator": "tax-sale notice controls",
+      "verificationStatus": "verified",
+      "verificationNote": "Dated catalogue snapshot; the direct municipality remains authoritative."
+    },
+    {
+      "id": "MAP-004",
+      "claim": "The 2026-07-19 public deployment was reachable and its bundle contained the current map-layer and parcel-context interface labels.",
+      "source": "NS Marks The Spot live public map",
+      "locator": "assets/index-CCMc9yKR.js",
+      "verificationStatus": "verified",
+      "verificationNote": "Dated deployment receipt; upstream services and later builds remain perishable."
+    },
+    {
+      "id": "MAP-005",
+      "claim": "The captured PID 50308311 interface state reports about 5.12 mapped acres, mapped River Denys water intersections and no mapped road/trail intersection.",
+      "source": "NS Marks The Spot source commit 1ee76d15b and figure 51 receipt",
+      "locator": "figure-51-combined-parcel-research.png",
+      "verificationStatus": "verified",
+      "verificationNote": "Interface demonstration only; refresh before publication and do not interpret as access or environmental proof."
+    }
   ],
   "unresolvedConflicts": [
-    {"id":"CONFLICT-001","question":"When does HST apply?","claimIds":["TAX-003"],"conflict":"CBRM states an event-level rule for vacant/commercial property while CRA treatment depends on transaction facts.","status":"preserve-and-require-property-specific-tax-advice"},
-    {"id":"CONFLICT-002","question":"What can a purchaser do with an occupied property?","claimIds":["LAW-008","OCC-001"],"conflict":"The certificate statute grants protective and rent powers, but possession and tenancy consequences depend on facts and separate law.","status":"no-self-help-instruction"},
-    {"id":"CONFLICT-003","question":"What interests survive a tax deed?","claimIds":["LAW-012","LAW-013"],"conflict":"Provincial deed-effect language is broad but unexamined federal, Indigenous, environmental, utility or statutory interests cannot be resolved generically.","status":"lawyer-title-opinion-required"},
-    {"id":"CONFLICT-004","question":"What does immediate deed mean?","claimIds":["LAW-009","LAW-012","OCC-001"],"conflict":"It removes the six-month statutory redemption period but does not establish immediate possession, insurance, development permission or physical certainty.","status":"use-narrow-definition"},
-    {"id":"CONFLICT-005","question":"How many Inverness properties sold in May 2025?","claimIds":["DATA-003"],"conflict":"Council minutes report 35 sold, while the public result sheet contains 31 bid rows.","status":"preserve-both-and-do-not-invent-missing-results"},
-    {"id":"CONFLICT-006","question":"Which values control in the Inverness August 2026 packet?","claimIds":["DATA-002"],"conflict":"The summary and details differ on two amounts and one listed lien has no detail sheet.","status":"require-current-municipal-confirmation"},
-    {"id":"CONFLICT-007","question":"Can the certificate holder obtain the required insurance?","claimIds":["LAW-008","INS-001"],"conflict":"The statute creates an insurable interest and duty for an insurable building, but it does not require any insurer to accept the risk.","status":"obtain-property-specific-underwriting-before-bid"},
-    {"id":"CONFLICT-008","question":"What happens when an advertised event is postponed or rescheduled?","claimIds":["LAW-004","OPS-006"],"conflict":"The statute requires advertised date, time and place, but the reviewed tax-sale sections provide no generic bidder-facing adjournment procedure.","status":"verify-live-municipal-notice-and-require-legal-advice-for-dispute"}
+    {
+      "id": "CONFLICT-001",
+      "question": "When does HST apply?",
+      "claimIds": [
+        "TAX-003"
+      ],
+      "conflict": "CBRM states an event-level rule for vacant/commercial property while CRA treatment depends on transaction facts.",
+      "status": "preserve-and-require-property-specific-tax-advice"
+    },
+    {
+      "id": "CONFLICT-002",
+      "question": "What can a purchaser do with an occupied property?",
+      "claimIds": [
+        "LAW-008",
+        "OCC-001"
+      ],
+      "conflict": "The certificate statute grants protective and rent powers, but possession and tenancy consequences depend on facts and separate law.",
+      "status": "no-self-help-instruction"
+    },
+    {
+      "id": "CONFLICT-003",
+      "question": "What interests survive a tax deed?",
+      "claimIds": [
+        "LAW-012",
+        "LAW-013"
+      ],
+      "conflict": "Provincial deed-effect language is broad but unexamined federal, Indigenous, environmental, utility or statutory interests cannot be resolved generically.",
+      "status": "lawyer-title-opinion-required"
+    },
+    {
+      "id": "CONFLICT-004",
+      "question": "What does immediate deed mean?",
+      "claimIds": [
+        "LAW-009",
+        "LAW-012",
+        "OCC-001"
+      ],
+      "conflict": "It removes the six-month statutory redemption period but does not establish immediate possession, insurance, development permission or physical certainty.",
+      "status": "use-narrow-definition"
+    },
+    {
+      "id": "CONFLICT-005",
+      "question": "How many Inverness properties sold in May 2025?",
+      "claimIds": [
+        "DATA-003"
+      ],
+      "conflict": "Council minutes report 35 sold, while the public result sheet contains 31 bid rows.",
+      "status": "preserve-both-and-do-not-invent-missing-results"
+    },
+    {
+      "id": "CONFLICT-006",
+      "question": "Which values control in the Inverness August 2026 packet?",
+      "claimIds": [
+        "DATA-002"
+      ],
+      "conflict": "The summary and details differ on two amounts and one listed lien has no detail sheet.",
+      "status": "require-current-municipal-confirmation"
+    },
+    {
+      "id": "CONFLICT-007",
+      "question": "Can the certificate holder obtain the required insurance?",
+      "claimIds": [
+        "LAW-008",
+        "INS-001"
+      ],
+      "conflict": "The statute creates an insurable interest and duty for an insurable building, but it does not require any insurer to accept the risk.",
+      "status": "obtain-property-specific-underwriting-before-bid"
+    },
+    {
+      "id": "CONFLICT-008",
+      "question": "What happens when an advertised event is postponed or rescheduled?",
+      "claimIds": [
+        "LAW-004",
+        "OPS-006"
+      ],
+      "conflict": "The statute requires advertised date, time and place, but the reviewed tax-sale sections provide no generic bidder-facing adjournment procedure.",
+      "status": "verify-live-municipal-notice-and-require-legal-advice-for-dispute"
+    },
+    {
+      "id": "CONFLICT-009",
+      "question": "What does a visible or returned map overlap prove?",
+      "claimIds": [
+        "MAP-001",
+        "MAP-002",
+        "MAP-005",
+        "LAND-004",
+        "LAND-005"
+      ],
+      "conflict": "Visual proximity, exact service intersection and legal or physical reality are different claims with different sources and limits.",
+      "status": "record-layer-date-limitation-and-next-authority"
+    }
   ]
 }

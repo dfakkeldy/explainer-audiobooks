@@ -23,7 +23,9 @@ By the end, the listener should be able to:
 1. Explain why a municipality can sell property and reconstruct the statutory sequence.
 2. Translate auction, tender, minimum bid, immediate deed, redemption, certificate of sale and tax deed into practical consequences.
 3. Distinguish an AAN, PID, civic address, assessment, parcel map, legal description, survey and parcel register.
-4. Build a lawful pre-bid evidence file without entering private property.
+4. Build a lawful pre-bid evidence file without entering private property,
+   including a dated layer-by-layer map screen whose overlaps and empty results
+   remain bounded observations rather than proof.
 5. Test legal access, intended use, zoning, services, boundaries and municipal compliance separately.
 6. Recognize physical and environmental unknowns that records can reveal, narrow or fail to answer.
 7. Separate title, encumbrances, easements, occupancy and vacant possession.
@@ -57,60 +59,77 @@ Start by inventorying what Inverness already supplies. Then build the value-adde
 
 Claims: `LAND-001`–`LAND-007`, `LAW-003`, `LAW-013`, `GIS-001`, `GIS-002`, `DATA-005`.
 
-### 5. The Driveway That May Not Be a Right-of-Way — failure case, planning — 3,600 words
+### 5. The Map Is a Question Machine — interactive research method — 3,400 words
+
+Open NS Marks The Spot with the source and licence boundary visible, select the
+correct municipality and dated sale, and search one exact PID. Turn the
+available provincial layers on one at a time: aerial, graphical property
+boundaries, Crown Lands, flood-risk areas, waterfalls, water features, and
+roads/trails/culverts. Teach the difference between visual proximity and an
+exact mapped intersection, then convert each observation into a dated research
+note with its limitation, next authoritative source and professional handoff.
+Use Southside River Denys as a dated interface demonstration: mapped water
+features intersect while no mapped road/trail intersection is returned. Neither
+result is a legal-access, flood, wetland or condition conclusion.
+
+Claims: `MAP-001`–`MAP-005`, `GIS-001`, `GIS-002`, `DATA-002`, `DATA-005`,
+`LAND-004`.
+
+### 6. The Driveway That May Not Be a Right-of-Way — failure case, planning — 3,600 words
 
 Use the landlocked sliver to separate physical approach, legal access, road frontage and development permission. Add the Plan Inverness framework that came into effect in September 2025, zoning, lot creation, setbacks, services and Eastern District Planning Commission confirmation. Land the chapter on a powerful no-go: a parcel can be real, owned and still useless for the listener's intended job.
 
 Claims: `LAND-004`–`LAND-006`, `LAND-008`, `LAW-012`.
 
-### 6. The Things a Map Cannot Smell — physical and environmental uncertainty — 3,800 words
+### 7. The Things a Map Cannot Smell — physical and environmental uncertainty — 3,800 words
 
 Move beneath the parcel: oil and industrial history, well and septic, coastal hazard, mines, unstable or wet ground, derelict structures. Teach what a negative database search means—and does not mean. Introduce environmental and building professionals as uncertainty reducers, not box-checkers.
 
 Claims: `ENV-001`–`ENV-005`, `LAND-006`, `LAND-007`.
 
-### 7. Title Is Not Possession — legal interpretation and human consequence — 3,800 words
+### 8. Title Is Not Possession — legal interpretation and human consequence — 3,800 words
 
 Separate fee-simple title, encumbrances, continuing easements, title quality, actual occupancy and tenancy. Use an occupied composite building to show why locks, rent, eviction, abandoned goods and vacant possession require advice rather than self-help. Branch for mobile/manufactured homes.
 
 Claims: `LAW-008`, `LAW-012`–`LAW-014`, `OCC-001`, `MOB-001`.
 
-### 8. The Number You Decide Before the Room — economics and boundaries — 3,900 words
+### 9. The Number You Decide Before the Room — economics and boundaries — 3,900 words
 
 Explain why assessment and the advertised recovery amount are not value. Lead with Inverness's 2025 evidence—50 advertised, council reporting 35 sold and 15 removed, a public result sheet containing 31 bid rows, and a 4.53× median bid/recovery ratio within those rows—then compare CBRM and Richmond. Build an all-in cost stack including possible HST and provincial non-resident tax, legal work, survey, insurance, carrying, repair, remediation, possession and a reserve for unresolved uncertainty. Explain the MGA municipal deed-transfer-tax exemption for tax-sale deeds without confusing it with those separate tax questions or turning the book into tax advice.
 
 Claims: `DATA-001`, `DATA-003`, `DATA-004`, `LAND-003`, `TAX-001`–`TAX-003`, `ELIG-001`.
 
-### 9. When the Card Goes Up — auction scene and behavioural discipline — 3,200 words
+### 10. When the Card Goes Up — auction scene and behavioural discipline — 3,200 words
 
 Return to Port Hood. Compare Inverness open-outcry bidding with Pictou and Annapolis tenders and Kings's policy choices. Cover registration, statutory conflicts on who may not buy, authority to bid, accepted funds, immediate recovery payment, the $200 Inverness registration amount, the three-business-day balance, withdrawn lots, jump bids and the written walk-away number. Then rehearse the unhappy branches: no sufficient bidder, municipal purchase, re-advertisement, immediate re-offer after failed payment, deposit deductions after later resale, and a postponed or rescheduled event that must be verified from the live municipal notice rather than an old advertisement. A fictional bidder—not the researcher-author—supplies the dramatic payoff by choosing not to bid.
 
 Claims: `LAW-005`, `LAW-006`, `LAW-015`, `LAW-016`, `OPS-002`–`OPS-006`, `DATA-002`.
 
-### 10. The Certificate-Holder Months — post-sale operations — 3,400 words
+### 11. The Certificate-Holder Months — post-sale operations — 3,400 words
 
 Follow the successful bidder through certificate registration, insurer outreach, new tax bills, protective repairs, rent records and possible redemption. Separate the statutory duty to insure an insurable building from an insurer's willingness to write a vacant or otherwise non-standard risk. Walk the redemption arithmetic categories: later taxes and interest, certificate-of-discharge registration, fire-insurance premiums, treasurer-approved necessary repairs, surplus offsets and rent or other income. Use Halifax Administrative Order 18 as a clearly labelled local example of what notice, title-search, survey, certificate, deed, registration, closing and redemption-administration expenses can contain. Explain why every dollar and authorization needs documentation and why the purchaser may have fourteen days to provide the requested insurance-and-repair statement. Keep human safety and lawful communication central.
 
 Claims: `LAW-007`–`LAW-011`, `INS-001`, `OPS-007`, `OCC-001`.
 
-### 11. The Deed Is a Beginning — ownership, cleanup, exit — 3,400 words
+### 12. The Deed Is a Beginning — ownership, cleanup, exit — 3,400 words
 
 If no redemption occurs, request and register the deed, revisit title and insurance, resolve possession lawfully, and repeat planning/physical due diligence before repair, development, rental or resale. Explain surplus proceeds from the former interest-holder's side: the municipal payment order, the redemption-period hold, the later Supreme Court application window and the twenty-year endpoint. Then teach the contested branch. A defective sale may be set aside without discharging the tax lien, while the Marketable Titles Act generally limits attacks on a registered tax deed to the following six years, subject to its stated exceptions and possible damages remedy. Make the clock start at deed registration, not auction day, and hand every actual contest to counsel.
 
 Claims: `LAW-012`–`LAW-014`, `LAW-017`, `LAW-018`, `LAND-005`, `LAND-006`, `ENV-001`, `OCC-001`, `TAX-001`.
 
-### 12. Three Case Files Marked Known, Unresolved and Professional — retrieval and decision framework — 3,400 words
+### 13. Three Case Files Marked Known, Unresolved and Professional — retrieval and decision framework — 3,400 words
 
 Run three fictional composite parcels through the complete method. One fails on legal access, one pauses on occupancy/environmental uncertainty, and one produces a coherent evidence file while still leaving the actual bid decision outside the researcher's authority. End with the listener's repeatable research record and professional handoff questions—not a promise that buying is the right outcome or that a research business must follow.
 
 Claims: all families, with no new law.
 
-Estimated total: approximately 42,800 words before editorial compression.
+Estimated total: approximately 46,200 words before editorial compression.
 
 ## Visual-listening route
 
-The book is planned as a figure-rich Echo slideshow and video-export title with
-40 purposeful figures. `visuals.md` is the detailed manifest and provenance
+The proposed revision is planned as a figure-rich Echo slideshow and
+video-export title with 51 purposeful figures. `visuals.md` is the detailed
+manifest and provenance
 authority. The chapter-level route is:
 
 - Chapter 1: auction-morning editorial scene, Nova Scotia municipal-method map,
@@ -121,18 +140,21 @@ authority. The chapter-level route is:
   `figure-08`).
 - Chapter 4: evidence-desk scene, source-authority ladder, beyond-the-packet
   delta and five evidence labels (`figure-09`–`figure-12`).
-- Chapters 5–6: the five-map Case A packet, with a focused apparent-versus-legal
+- Chapter 5: eleven version-stamped NS Marks The Spot screenshots covering the
+  event controls, PID search, each provincial layer and one combined research
+  record (`figure-41`–`figure-51`).
+- Chapters 6–7: the five-map Case A packet, with a focused apparent-versus-legal
   access story (`figure-13`–`figure-17`).
-- Chapters 6–7: the five-map Case B occupied-building packet plus negative-search
+- Chapters 7–8: the five-map Case B occupied-building packet plus negative-search
   and possession boundaries (`figure-18`–`figure-25`).
-- Chapter 8: Inverness 2025 ratio distribution, 50/35/31 source reconciliation,
+- Chapter 9: Inverness 2025 ratio distribution, 50/35/31 source reconciliation,
   municipal comparison and all-in cost stack (`figure-26`–`figure-29`).
-- Chapter 9: open auction versus sealed tender plus payment readiness and the
+- Chapter 10: open auction versus sealed tender plus payment readiness and the
   three-business-day default branches (`figure-30` and `figure-39`).
-- Chapter 10: certificate-holder calendar (`figure-31`).
-- Chapter 11: deed-to-next-work handoff plus the surplus-proceeds route
+- Chapter 11: certificate-holder calendar (`figure-31`).
+- Chapter 12: deed-to-next-work handoff plus the surplus-proceeds route
   (`figure-32` and `figure-40`).
-- Chapter 12: the five-map Case C coherent-file packet and final
+- Chapter 13: the five-map Case C coherent-file packet and final
   known/unresolved/professional retrieval sheet (`figure-33`–`figure-38`).
 
 The narration must explain every conclusion without requiring sight of a
@@ -144,7 +166,7 @@ they do not carry essential legal qualifications silently.
 - Municipality-by-municipality live tax-sale finder and refresh date.
 - Inverness County statistical appendix and dated August 2026 packet reconciliation exercise.
 - Sample property research record and maximum-bid worksheet.
-- Rights-safe QGIS project template, five-map packet specification, open-data catalogue, and attributed NS Aerial/NSPRD rendered views under the Province's Restricted Geographic Services License.
+- Rights-safe QGIS project template, five-map packet specification, open-data catalogue, attributed NS Aerial/NSPRD rendered views under the Province's Restricted Geographic Services License, and a versioned NS Marks The Spot walkthrough.
 - Statutory section map for MGA and HRMC equivalents.
 - Property Online search fields and document-order notes.
 - Professional question lists for lawyer, surveyor, planner, insurer, accountant, environmental professional, inspector/contractor and tenancy adviser.

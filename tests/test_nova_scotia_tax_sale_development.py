@@ -52,15 +52,20 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
 
         self.assertEqual(brief["originalTargetWords"], 22000)
-        self.assertEqual(brief["currentTargetWords"], 42800)
+        self.assertEqual(brief["currentTargetWords"], 46200)
         self.assertTrue(brief["draftingStarted"])
-        self.assertEqual(len(brief["scopeHistory"]), 6)
+        self.assertEqual(len(brief["scopeHistory"]), 7)
         for decision in brief["scopeHistory"]:
             self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19)T")
             self.assertTrue(decision["verbatimQuote"])
             self.assertEqual(decision["evidence"], decision["verbatimQuote"])
 
-    def test_outline_gate_records_exact_user_approval_for_pilot_only(self) -> None:
+        self.assertIn(
+            "Let's add a chapter about using this resource",
+            brief["scopeHistory"][-1]["verbatimQuote"],
+        )
+
+    def test_outline_gate_preserves_prior_approval_and_reopens_for_map_revision(self) -> None:
         outline = json.loads(
             (RESEARCH_ROOT / "learning-outline.json").read_text(encoding="utf-8")
         )
@@ -72,23 +77,32 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             "visual direction for pilot development."
         )
 
-        self.assertEqual(outline["authorization"]["status"], "approved")
-        self.assertEqual(outline["authorization"]["approvedBy"], "Dan Fakkeldy")
+        self.assertEqual(outline["authorization"]["status"], "pending")
+        self.assertEqual(outline["authorization"]["requestedBy"], "Dan Fakkeldy")
+        self.assertEqual(
+            outline["authorization"]["scope"],
+            "revised-thirteen-chapter-outline-and-fifty-one-figure-direction",
+        )
+        prior = outline["authorization"]["priorAuthorization"]
+        self.assertEqual(prior["status"], "approved")
+        self.assertEqual(prior["approvedBy"], "Dan Fakkeldy")
         self.assertRegex(
-            outline["authorization"]["approvedAt"],
+            prior["approvedAt"],
             r"^2026-07-19T\d{2}:\d{2}:\d{2}-03:00$",
         )
-        self.assertEqual(outline["authorization"]["verbatimQuote"], approval_quote)
-        self.assertEqual(outline["authorization"]["evidence"], approval_quote)
-        self.assertEqual(outline["authorization"]["scope"], "pilot-development")
+        self.assertEqual(prior["verbatimQuote"], approval_quote)
+        self.assertEqual(prior["evidence"], approval_quote)
+        self.assertEqual(prior["scope"], "pilot-development")
         excluded_actions = " ".join(outline["authorization"]["doesNotAuthorize"])
         self.assertIn("full manuscript", excluded_actions)
         self.assertIn("publication", excluded_actions)
 
         outline_checkpoint = pilot["humanCheckpoints"]["outline"]
-        self.assertEqual(outline_checkpoint["status"], "approved")
+        self.assertEqual(outline_checkpoint["status"], "pending")
         self.assertEqual(outline_checkpoint["reviewer"], "Dan Fakkeldy")
-        self.assertEqual(outline_checkpoint["evidence"], approval_quote)
+        self.assertEqual(
+            outline_checkpoint["priorApproval"]["evidence"], approval_quote
+        )
         self.assertTrue(outline_checkpoint["recordedBeforePilotDraft"])
 
     def test_required_planning_handoff_artifacts_exist(self) -> None:
@@ -104,11 +118,12 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertTrue(
             {"Mabou", "Whycocomagh", "Judique", "AAN", "PID", "NSPRD", "MGA"} <= terms
         )
-        self.assertIn("pilot development authorized", handoff)
+        self.assertIn("revised outline approval pending", handoff)
         self.assertIn(
             "I approve the revised twelve-chapter outline and forty-figure",
             conversation,
         )
+        self.assertIn("Let's add a chapter about using this resource", conversation)
 
     def test_first_section_voice_acceptance_binds_exact_candidate(self) -> None:
         continuity = json.loads(
@@ -166,7 +181,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("45 lien entries", atlas)
         self.assertIn("47 unique PIDs", atlas)
         self.assertIn("53 NSPRD polygon features", atlas)
-        self.assertIn("outside the approved forty-figure manifest", atlas.lower())
+        self.assertIn("outside both the previously approved forty-figure", atlas.lower())
         self.assertIn("No assessed-owner names", atlas)
         self.assertIn("not legal access", atlas.lower())
         self.assertIn("not a wetland determination", atlas.lower())
@@ -178,7 +193,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             " ".join(conversation.split()),
         )
         self.assertIn("Inverness Packet Atlas", visuals)
-        self.assertIn("does not change the forty canonical figures", visuals)
+        self.assertIn("does not add the atlas to the 51-figure", visuals)
 
     def test_inverness_atlas_visual_approval_binds_exact_prototype_set(self) -> None:
         receipt = json.loads(ATLAS_RECEIPT_PATH.read_text(encoding="utf-8"))
@@ -244,7 +259,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertIn("Halifax Regional Municipality", comparison)
 
-    def test_visual_category_math_matches_the_forty_row_manifest(self) -> None:
+    def test_visual_category_math_matches_the_proposed_fifty_one_row_manifest(self) -> None:
         visuals = (RESEARCH_ROOT / "visuals.md").read_text(encoding="utf-8")
         ids = {
             int(match.group(1))
@@ -253,13 +268,56 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         map_ids = set(range(13, 23)) | set(range(33, 38))
         editorial_ids = {1, 9}
         retrieval_ids = {38}
-        diagram_ids = ids - map_ids - editorial_ids - retrieval_ids
+        screenshot_ids = set(range(41, 52))
+        diagram_ids = ids - map_ids - editorial_ids - retrieval_ids - screenshot_ids
 
-        self.assertEqual(ids, set(range(1, 41)))
+        self.assertEqual(ids, set(range(1, 52)))
         self.assertEqual(
-            (len(map_ids), len(diagram_ids), len(editorial_ids), len(retrieval_ids)),
-            (15, 22, 2, 1),
+            (
+                len(map_ids),
+                len(diagram_ids),
+                len(editorial_ids),
+                len(retrieval_ids),
+                len(screenshot_ids),
+            ),
+            (15, 22, 2, 1, 11),
         )
+
+    def test_map_chapter_plan_and_screenshot_receipt_are_review_only(self) -> None:
+        plan = (RESEARCH_ROOT / "map-chapter-plan.md").read_text(encoding="utf-8")
+        receipt = json.loads(
+            (PACKET_ROOT / "figures/map-chapter-screenshot-receipt.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        evidence = json.loads(
+            (RESEARCH_ROOT / "evidence-notes.json").read_text(encoding="utf-8")
+        )
+
+        self.assertIn("The Map Is a Question Machine", plan)
+        self.assertIn("one parcel, one toggle and one note", plan.lower())
+        self.assertIn("not a verdict machine", plan.lower())
+        self.assertEqual(receipt["status"], "review-candidates")
+        self.assertFalse(receipt["publicationBoundary"]["acceptedFinalFigures"])
+        self.assertTrue(receipt["publicationBoundary"]["refreshBeforePublication"])
+        self.assertEqual(len(receipt["outputs"]), 12)
+        self.assertEqual(
+            receipt["captureSource"]["sourceCommit"],
+            "1ee76d15b2466d40674e62113ac9f1e9044421c1",
+        )
+        self.assertEqual(
+            {claim["id"] for claim in evidence["claims"] if claim["id"].startswith("MAP-")},
+            {"MAP-001", "MAP-002", "MAP-003", "MAP-004", "MAP-005"},
+        )
+
+        for output in receipt["outputs"]:
+            with self.subTest(file=output["file"]):
+                path = PACKET_ROOT / output["file"]
+                self.assertTrue(path.is_file())
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), output["sha256"])
+                data = path.read_bytes()[:24]
+                self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+                self.assertEqual(struct.unpack(">II", data[16:24]), (2560, 1440))
 
     def test_public_listing_is_owner_free_and_complete(self) -> None:
         payload = json.loads(LISTING_PATH.read_text(encoding="utf-8"))

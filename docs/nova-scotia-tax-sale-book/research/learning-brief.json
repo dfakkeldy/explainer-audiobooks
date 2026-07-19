@@ -29,9 +29,9 @@
     "route": "Move from the municipal packet backward to arrears and notice, then forward through evidence-file construction, auction mechanics, certificate, redemption and deed."
   },
   "originalTargetWords": 22000,
-  "currentTargetWords": 42800,
-  "estimatedMinimumWords": 40000,
-  "estimatedMaximumWords": 45000,
+  "currentTargetWords": 46200,
+  "estimatedMinimumWords": 44000,
+  "estimatedMaximumWords": 49000,
   "draftingStarted": true,
   "scopeHistory": [
     {
@@ -99,6 +99,17 @@
       "approvalSource": "user",
       "verbatimQuote": "I did the website from my nS marks the spot repo. \n\nCould you pr the work so far on this book?",
       "evidence": "I did the website from my nS marks the spot repo. \n\nCould you pr the work so far on this book?"
+    },
+    {
+      "date": "2026-07-19",
+      "recordedAt": "2026-07-19T15:00:00-03:00",
+      "oldTargetWords": 42800,
+      "newTargetWords": 46200,
+      "reason": "The user requested a new chapter teaching the NS Marks The Spot map, including layer-by-layer screenshots and a tax-sale research workflow. This expands the governed outline and visual manifest and therefore requires revised outline/figure approval before pilot drafting continues.",
+      "approvalStatus": "recorded-user-direction; revised-outline-approval-pending",
+      "approvalSource": "user",
+      "verbatimQuote": "Look at the work done on the map. Let's add a chapter about using this resource. Work is still being done on it, but let's plan out the chapter and we'll make a bunch of screenshots showing how to turn the layers on and off, what each layer shows. How to use it to research the tax sale.",
+      "evidence": "Look at the work done on the map. Let's add a chapter about using this resource. Work is still being done on it, but let's plan out the chapter and we'll make a bunch of screenshots showing how to turn the layers on and off, what each layer shows. How to use it to research the tax sale."
     }
   ],
   "safety": {
