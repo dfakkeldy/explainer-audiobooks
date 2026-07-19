@@ -1,0 +1,15 @@
+{
+  "schema_version":2,"variant":"portrait","candidate":{"id":"application-keeps-key","direction_name":"The Application Keeps the Key"},
+  "canvas":{"width":1600,"height":2560,"background":"#080B0C","safe_margin":96},
+  "art":{"path":"source-art.png","mode":"bleed","box":[0,0,1600,2560],"anchor":"center","opacity":1,"blend_mode":"normal"},
+  "layers":[
+    {"kind":"scrim","box":[0,0,1150,1550],"fill":{"kind":"linear-gradient","start":[0,0],"end":[1150,1550],"stops":[{"offset":0,"colour":"#080B0C","opacity":0.99},{"offset":0.78,"colour":"#080B0C","opacity":0.82},{"offset":1,"colour":"#080B0C","opacity":0}]},"opacity":1,"blend_mode":"normal","purpose":"black title field"},
+    {"kind":"text","role":"label","text":"AUDIOBOOK","font_id":"technical-mono","size":28,"line_height":30,"tracking":4,"colour":"#E0B25A","contrast_against":"#080B0C","opacity":1,"box":[100,100,900,48],"align":"left","rotation":0,"baseline_shift":0},
+    {"kind":"text","role":"title","text":"GIVING\nCLAUDE\nTOOLS","font_id":"geometric-sans","size":150,"line_height":155,"tracking":0,"colour":"#EAF4ED","contrast_against":"#080B0C","opacity":1,"box":[100,170,960,620],"align":"left","rotation":0,"baseline_shift":0,"title_order":1},
+    {"kind":"line","start":[100,850],"end":[650,850],"width":8,"colour":"#E24D3A","opacity":1,"purpose":"series accent"},
+    {"kind":"text","role":"subtitle","text":"CONTRACTS, AGENT LOOPS,\nAND CONTROLLED ACTION","font_id":"geometric-sans","size":42,"line_height":48,"tracking":1,"colour":"#EAF4ED","contrast_against":"#080B0C","opacity":1,"box":[100,890,920,150],"align":"left","rotation":0,"baseline_shift":0},
+    {"kind":"field","box":[0,2315,1600,245],"fill":{"kind":"solid","colour":"#080B0C"},"opacity":0.94,"blend_mode":"normal","purpose":"author rail"},
+    {"kind":"text","role":"author","text":"DAN FAKKELDY","font_id":"technical-mono","size":36,"line_height":38,"tracking":3,"colour":"#EAF4ED","contrast_against":"#080B0C","opacity":1,"box":[100,2390,1400,60],"align":"left","rotation":0,"baseline_shift":0}
+  ],
+  "metadata":{"title":"Giving Claude Tools","subtitle":"Contracts, Agent Loops, and Controlled Action","author":"Dan Fakkeldy","label":"AUDIOBOOK"}
+}
