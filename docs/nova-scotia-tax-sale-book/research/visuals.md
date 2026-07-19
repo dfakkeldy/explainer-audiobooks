@@ -1,0 +1,239 @@
+# Visual-listening figure plan
+
+Status: planned, with two QGIS 4 development proofs rendered but not approved
+as book figures. This register is the authority for interior figures in the
+public edition. Finished assets will live under `chapters/images/` and will be
+embedded as standalone Markdown figures only after the governed outline and
+figure direction are approved.
+
+## QGIS 4 development proof — 2026-07-18
+
+The local map workspace now contains an editable QGIS project and two
+2560-by-1440 proofs built with QGIS 4.0.2 (`4.0.2-Norrköping` in the saved
+project metadata):
+
+- `maps/qgis/inverness-tax-sale-2026-08-11.qgz` contains NS Aerial and all
+  current Inverness auction parcels;
+- `maps/exports/inverness-all-properties-orientation.png` is a county-scale
+  orientation proof;
+- `maps/exports/inverness-lien-01-aerial.png` is a close aerial-and-parcel proof
+  for Lien 1; and
+- `maps/data/inverness-tax-sale-2026-08-11.json` is the owner-free listing
+  dataset that can also drive an interactive companion.
+
+The municipal schedule contains 45 liens and 47 unique PIDs. All 47 PIDs
+resolved through NSPRD to 53 polygon features; the higher polygon count is
+expected because several PIDs have more than one mapped feature. Owner names
+were deliberately omitted from the derived listing and map attributes.
+
+These are development evidence, not accepted book plates. The county-scale
+proof establishes coverage and symbology but needs a cleaner overview basemap,
+label strategy and layout treatment before publication. The Lien 1 detail is a
+strong style proof for the proposed public-current-list showcase, subject to
+final source, safety, caption and Echo-stage checks.
+
+## Purpose
+
+This book should be a strong Echo Visual Listening and video-export title, not
+an audio book with a few incidental illustrations. The main narration must
+remain complete with the screen unavailable, while the visual track should make
+spatial, procedural and numerical relationships easier to retrieve.
+
+The current target is **38 purposeful figures**:
+
+- 15 QGIS map plates: three fictional/composite case files, each using the
+  five-map packet structure;
+- 19 diagrams and charts that explain law, source authority, reconciliation,
+  auction behaviour and post-sale responsibility;
+- 2 original editorial illustrations that establish the auction-room and
+  research-desk story settings; and
+- 2 final retrieval/decision aids.
+
+At an estimated 42,800 narrated words, this gives roughly one new figure every
+7–9 minutes. Echo's karaoke subtitles provide motion between figure changes, so
+the book does not need decorative filler or artificial animation.
+
+## Echo and video production contract
+
+Checked against the live Echo source and approved export design on 2026-07-18:
+
+- Echo selects image blocks from the EPUB and aligns them to nearby narrated
+  text through `VisualListeningCueResolver`.
+- The live stage and video export use the same cue decisions.
+- Whole-book export is designed for 1920 by 1080 H.264/AAC video with burned-in
+  subtitles, a sidecar SRT and a chapter timestamp file.
+- The renderer aspect-fits the figure on a dark stage, puts the figure caption
+  beneath it and reserves the bottom band for subtitles.
+- A missing or unreadable figure falls back to the cover rather than aborting a
+  long export.
+
+Production implications:
+
+1. Master raster figures at 2560 by 1440 pixels in sRGB PNG. Retain the QGIS,
+   SVG or chart source so text and line weights can be revised.
+2. Use a central safe area. Put no essential label within 8 percent of an edge.
+3. Use one teaching idea per frame, large labels, high contrast and no table
+   that requires pinching or pausing to decode.
+4. Keep image-internal titles short because Echo already displays a caption and
+   subtitle. Never bake the narrated paragraph into the image.
+5. Design for a 1920 by 1080 export, a smaller phone stage and an EPUB page at
+   the same time. Minimum final-master text target: 40 pixels for normal labels,
+   52 pixels for primary labels and 30 pixels for unavoidable source footers.
+6. Time each figure to the paragraph that teaches it. If a chapter needs a
+   longer display interval, place a second related figure rather than letting a
+   single dense plate carry several ideas.
+
+Echo production references reviewed in the separate Echo repository:
+
+- `Shared/VisualListeningCueResolver.swift`
+- `EchoCore/Services/Export/SlideshowFrameRenderer.swift`
+- `docs/superpowers/specs/2026-07-18-slideshow-video-export-design.md`
+
+## Rights and public-safety rules
+
+- Maps may use self-created vectors, user-created QGIS layouts, public-domain
+  material, Nova Scotia Open Government Licence data and properly attributed
+  rendered NS Aerial or NSPRD service views.
+- Every figure using open provincial data carries: `Contains information
+  licensed under the Open Government Licence – Nova Scotia.`
+- Every figure using a rendered restricted-service view carries the exact
+  required statement inside the exported image so it survives EPUB, Echo and
+  video reuse: `Contains information obtained under license from the Province
+  of Nova Scotia which is provided without warranty or liability for errors or
+  omissions.`
+- Do not package raw restricted-service tiles, a reusable parcel database or a
+  bulk cache. A rendered map view is the planned publication unit.
+- Property Online plans and registry documents remain out of public figures
+  until their separate reproduction terms are confirmed. Recreated teaching
+  diagrams may explain their fields without reproducing a document.
+- The fifteen instructional case maps use fictional composite parcel IDs and
+  geometry. A separate authentic current-list orientation/demo may show the
+  municipality-published lien, PID and location fields to demonstrate the
+  research method, but only after a separate public-safety review, with no
+  assessed-owner name, score, ranking, maximum bid or implied recommendation.
+- No live parcel gets a score, rank, maximum bid or visual treatment that turns
+  an identifiable owner or occupant into entertainment.
+- The two scene illustrations are original editorial artwork, clearly
+  illustrative rather than a documentary depiction of a specific venue or
+  person.
+
+## Visual grammar
+
+- **Municipal fact:** navy.
+- **Verified added public record:** teal.
+- **Map-screening clue or visual interpretation:** amber.
+- **Unresolved or professional verification needed:** magenta.
+- **No-go until resolved:** red.
+- **Process complete or source reconciled:** green.
+- Maps use a consistent legend order, north arrow, scale, CRS, retrieval date,
+  map ID and `not a survey or title opinion` note.
+- Charts label sample size and completeness directly on the frame. Ratio charts
+  always say that advertised recovery is not value.
+
+## Figure manifest
+
+Captions and alt text below are working copy. Each must be rechecked against the
+final visual and narration before packaging.
+
+| ID / filename | Ch. | Teaching job and visual form | Planned source / provenance | Working caption | Working alt text |
+|---|---:|---|---|---|---|
+| `figure-01-auction-morning.png` | 1 | Establish the Port Hood auction setting without glamorizing a distressed-property sale; original editorial illustration. | Original generated or commissioned art; no exact venue likeness and no identifiable people. | A tax sale begins as municipal collection work, not a treasure hunt. | Editorial illustration of a quiet Cape Breton community hall on an auction morning, with folders and bidder cards visible through the entrance. |
+| `figure-02-nova-scotia-municipal-methods.png` | 1 | Orient Inverness inside Nova Scotia and distinguish open auction, tender and no-current-sale comparison municipalities. | Self-created QGIS map from open municipal boundaries; dated municipal method research. | Municipal procedure varies even though the provincial legal framework is shared. | Map of Nova Scotia highlighting Inverness, CBRM, Richmond, Pictou, Annapolis, Kings and Chester with symbols for auction, tender or no current sale. |
+| `figure-03-two-clocks.png` | 1 | Show the municipal pre-sale sequence and purchaser post-sale sequence as two connected clocks. | Self-created vector diagram from MGA/HRM Charter evidence notes. | The sale connects two legal clocks; it does not end either one instantly. | Two horizontal timelines meet at auction day: arrears, notices and advertisement before it; certificate, possible redemption and deed after it. |
+| `figure-04-packet-anatomy.png` | 2 | Teach the fields in an Inverness-style parcel sheet without reproducing owner data or a Property Online document. | Self-created fictional packet page based on observed public field structure. | Every field is an identifier or claim to verify, not a promise about the parcel. | Annotated fictional tax-sale packet page pointing to lien number, AAN, PID, recovery amount, assessment, redemption marker, map and legal-description areas. |
+| `figure-05-identifiers-not-promises.png` | 2 | Separate lien, AAN, PID, civic address, assessment, map and legal description. | Self-created ladder diagram grounded in LAND-001 through LAND-004. | Identifiers help records meet; none alone proves boundaries, access, condition or value. | Seven labelled record cards form a ladder from tax-sale lien to legal description, with the unsupported conclusions crossed out beside each card. |
+| `figure-06-reconcile-the-packet.png` | 2 | Show why summary list, detail page, live webpage, registry research, results and council record must remain separate. | Self-created reconciliation diagram using anonymized August 2026 and May 2025 discrepancies. | A careful file preserves disagreement instead of silently choosing a convenient number. | Six source boxes feed a comparison table; mismatched amount, missing detail page and differing result counts are highlighted in amber. |
+| `figure-07-redeemable-route.png` | 3 | Isolate the ordinary six-month redemption route. | Self-created statutory process diagram; current-law refresh required. | A winning bid may begin a six-month certificate-holder period rather than immediate ownership. | Timeline from auction to certificate, insurance and record keeping, possible redemption, and tax deed if no redemption occurs. |
+| `figure-08-nonredeemable-route.png` | 3 | Isolate the immediate-deed route while showing what the marker does not settle. | Self-created statutory process diagram; current-law refresh required. | Immediate deed changes the redemption route, not possession, access, title quality or buildability. | Short route from auction to deed beside four unresolved branches labelled possession, access, title and intended use. |
+| `figure-09-evidence-desk.png` | 4 | Establish the recurring researcher role and show multiple source classes meeting in one evidence file. | Original generated or commissioned editorial art; fictional records only. | The researcher's product is a traceable evidence file, not a verdict. | Overhead editorial illustration of a desk with a municipal packet, map layers, statute, source log and three folders marked known, unresolved and professional. |
+| `figure-10-source-authority-ladder.png` | 4 | Rank statute, municipal terms, registry records, plans, maps, imagery and inference by the question each can answer. | Self-created hierarchy from the evidence and GIS specifications. | A stronger source is one authorized to answer the particular question—not simply one that looks official. | Stacked source cards rise from imagery and screening clues to municipal records, registry evidence and governing law, with different question icons beside them. |
+| `figure-11-beyond-the-packet-delta.png` | 4 | Credit the substantial Inverness packet and show the genuinely added research layer. | Self-created comparison from DATA-005 and the GIS packet specification. | The value-add begins after the municipality's facts, map and legal description—not by repackaging them. | Two-column stack comparing municipal packet contents with reconciliation, planning, terrain, environmental screening, uncertainty labels and professional handoffs. |
+| `figure-12-five-evidence-labels.png` | 4 | Teach verified record, map-screening clue, visual interpretation, professional verification and no-go-until-resolved. | Self-created classification card. | Good research labels the strength and authority of each observation. | Five colour-coded evidence cards progress from verified record to unresolved no-go, each with a one-sentence example. |
+| `figure-13-case-a-orientation.png` | 5 | Case A map 1: orient the fictional landlocked sliver in community, road and water context. | QGIS; fictional geometry over rights-clear open or rendered provincial layers. | Case A begins with location, not with a conclusion about access. | Wide map locating fictional Parcel A among communities, public roads and water, with scale and north arrow. |
+| `figure-14-case-a-identity.png` | 5 | Case A map 2: reconcile fictional parcel ID, tax account and graphical boundary while stating that the boundary is not a survey. | QGIS; fictional IDs and teaching geometry; any NSPRD rendered view separately attributed. | The graphical outline identifies the research target; it does not settle the legal boundary. | Parcel A highlighted with three fictional record identifiers and a prominent not-a-survey warning. |
+| `figure-15-case-a-access-terrain.png` | 5 | Case A map 3: compare apparent approach, public road, contours, watercourses and the unanswered right-of-way question. | QGIS; open roads, terrain and hydrography plus fictional access marks. | A visible track can be a clue without being a legal right of access. | Terrain map showing Parcel A, a nearby public road, a dashed visible track, steep contours and a question mark where legal access would need proof. |
+| `figure-16-case-a-planning-services.png` | 5 | Case A map 4: show zone, frontage, service assumptions and questions for Eastern District Planning. | QGIS; recreated teaching zone geometry unless municipal embedding rights are confirmed. | Planning controls and servicing are separate tests from parcel identity. | Map of fictional Parcel A with zoning colour, frontage dimension, well and septic question icons, and a planner-confirmation callout. |
+| `figure-17-case-a-physical-screening.png` | 6 | Case A map 5: combine aerial context, wet ground, coast, geology and mines without claiming causation or cleanliness. | QGIS; open data and attributed rendered NS Aerial view. | A screening map tells you where to ask harder questions; it is not an environmental opinion. | Aerial-style map of Parcel A with wet-ground, coastal, geology and mine-opening screening layers and an unresolved-evidence legend. |
+| `figure-18-case-b-orientation.png` | 6 | Case B map 1: orient the fictional occupied-building case. | QGIS; fictional geometry over rights-clear base layers. | An occupied-looking building changes the question set before anyone discusses possession. | Map locating fictional Parcel B in a serviced community with a building footprint and nearby streets. |
+| `figure-19-case-b-identity.png` | 6 | Case B map 2: separate land parcel, building footprint and possible manufactured-home record. | QGIS; fictional identifiers and self-created symbols. | Land, buildings and a manufactured home may not share one simple record story. | Parcel B outline contains a building footprint and a separate manufactured-home question card tied to different fictional records. |
+| `figure-20-case-b-access-terrain.png` | 6 | Case B map 3: show lawful exterior observations, driveway geometry and drainage clues. | QGIS; fictional case geometry and rights-clear terrain/road layers. | Exterior observation can narrow questions without entry, confrontation or trespass. | Street-and-terrain map of Parcel B showing a driveway, drainage path and public observation points outside the parcel boundary. |
+| `figure-21-case-b-planning-services.png` | 7 | Case B map 4: map zone, existing-use questions, water/sewer context and occupancy-related municipal checks. | QGIS; recreated planning symbology unless embedding terms are confirmed. | Existing occupation does not prove lawful use, services or vacant possession. | Planning map of Parcel B with zone, water and sewer lines, use-confirmation icon and a separate occupancy warning. |
+| `figure-22-case-b-physical-screening.png` | 7 | Case B map 5: show former-use and environmental-registry clues around the occupied composite. | QGIS; open public screening data and fictional site history. | A mapped historical clue is a lead for professional review, not a contamination finding. | Parcel B map with a former-use symbol, nearby registry point and arrows to records and environmental-professional questions. |
+| `figure-23-negative-search-beam.png` | 6 | Explain why a database with limited time, geography or category coverage cannot issue a clean bill of health. | Self-created beam/coverage diagram. | “No result” means only that this search, in this source, found no matching record. | A flashlight beam covers part of a dark field labelled by time, location and record type; hazards outside the beam remain unknown. |
+| `figure-24-title-encumbrance-possession.png` | 7 | Keep title, continuing rights and actual possession in three separate columns. | Self-created legal-concept diagram with lawyer-review boundary. | Title, encumbrances and possession are related, but none is a synonym for the others. | Three parallel columns labelled ownership interest, rights and burdens, and people or property on site, joined by dotted rather than equal signs. |
+| `figure-25-occupied-property-handoff.png` | 7 | Show the researcher's stop points and the lawful professional handoff for tenancy, locks, rent and abandoned goods. | Self-created decision-boundary diagram; educational only. | Occupancy questions move from observation to legal advice—not to self-help. | Flowchart starts with lawful exterior observation and records, then stops at lawyer or tenancy advice before contact, entry, lock changes or goods handling. |
+| `figure-26-inverness-ratio-distribution.png` | 8 | Plot the 31 published 2025 bid/recovery ratios and the 4.53-times median without implying the set is all 35 sales. | Self-created chart from the official results rows; analysis file retained. | In the 31 published rows, competition often carried bids far above the recovery amount. | Dot plot of 31 bid-to-recovery ratios from 1.00 to 21.62, with the 4.53 median marked and a 31-row completeness caveat. |
+| `figure-27-fifty-thirtyfive-thirtyone.png` | 8 | Preserve the 50 advertised, 35 sold and 31 published-row counts as different official measures. | Self-created funnel/waterfall from packet, council minutes and results PDF. | Advertised, sold and published-result counts answer different questions and do not silently collapse into one number. | Three large count cards show 50 advertised, 35 reported sold and 31 published result rows, with 15 removals and a four-row unresolved gap. |
+| `figure-28-municipal-result-comparison.png` | 8 | Compare Inverness, CBRM and Richmond results only where definitions and row coverage can be stated. | Self-created small multiples from dated municipal result sources. | Cross-municipal numbers are useful only when sample size, procedure and denominator travel with them. | Three small charts compare dated municipal result sets, each labelled with auction type, number of rows and a warning against treating recovery as value. |
+| `figure-29-all-in-cost-stack.png` | 8 | Show bid plus legal, tax, insurance, survey, carrying, repair, remediation, possession and uncertainty reserve. | Self-created generic cost-stack diagram; no personalized amounts. | The winning bid is one layer in the acquisition's uncertainty budget. | Layered stack begins with bid price and adds taxes, legal work, insurance, survey, carrying costs, repairs, remediation, possession and reserve. |
+| `figure-30-auction-versus-tender.png` | 9 | Compare open-outcry auction and sealed-tender information flow and decision pressure. | Self-created side-by-side process diagram from municipal procedures. | Open bidding reveals competitors in real time; a tender hides them, but both reward a prewritten limit. | Parallel timelines compare registration and live bidding with sealed submission and opening, both ending at the same written walk-away rule. |
+| `figure-31-certificate-holder-calendar.png` | 10 | Organize the six-month stewardship period: certificate, registration, insurance attempts, taxes, protective work, records and redemption. | Self-created calendar from current statutory and municipal research. | The certificate-holder months are an operations period, not dead time. | Six-month calendar with recurring record-keeping and insurance tasks, new-tax markers, protective-work limits and a possible redemption event. |
+| `figure-32-deed-is-a-beginning.png` | 11 | Show deed registration followed by title, possession, planning, condition, insurance and intended-use work. | Self-created handoff diagram. | A tax deed changes the file's legal stage; it does not finish the property work. | Tax deed at the centre sends six arrows to lawyer, possession, planning, survey, condition and insurance workstreams. |
+| `figure-33-case-c-orientation.png` | 12 | Case C map 1: orient the coherent-but-not-recommended fictional parcel. | QGIS; fictional geometry over rights-clear layers. | Case C is the strongest file, not a recommendation to buy. | Regional map locates fictional Parcel C near a public road and community services with a green evidence-file label and no bid score. |
+| `figure-34-case-c-identity.png` | 12 | Case C map 2: show consistent fictional identifiers and a graphical parcel outline with survey/title caveat. | QGIS; fictional IDs and teaching geometry; any NSPRD rendered view separately attributed. | Consistent records reduce one uncertainty without eliminating the rest. | Parcel C outline beside matching fictional lien, AAN and PID cards and a not-a-survey note. |
+| `figure-35-case-c-access-terrain.png` | 12 | Case C map 3: show apparent public-road contact, manageable terrain and the remaining legal-access confirmation. | QGIS; open road/terrain data and fictional geometry. | Strong map evidence can support a focused legal question; it cannot answer it. | Parcel C touches a mapped public road and gentle contours, with a lawyer-confirmation icon at the frontage. |
+| `figure-36-case-c-planning-services.png` | 12 | Case C map 4: show a plausible intended-use path and exact planner/service questions. | QGIS; recreated planning geometry unless embedding terms are confirmed. | A coherent file names the confirmations still required before an intended use is credible. | Parcel C planning map shows zone, frontage, well and septic assumptions and three written questions for municipal planning staff. |
+| `figure-37-case-c-physical-screening.png` | 12 | Case C map 5: show no found screening overlap while preserving database and site-inspection limits. | QGIS; open screening data and attributed rendered imagery. | “No mapped overlap found” is a bounded result, not a clean bill of health. | Physical-screening map for Parcel C shows searched layers, no highlighted overlap, coverage limits and an inspection handoff. |
+| `figure-38-known-unresolved-professional.png` | 12 | End with the reusable three-column evidence record and decision boundary. | Self-created retrieval sheet based on the three composite cases. | A responsible file ends by separating what is known, what remains unresolved and who is authorized to answer next. | Final summary sheet with columns for known facts, unresolved questions and professional handoffs, plus a separate box stating that the bidder owns the decision. |
+
+## Map-pack source record
+
+Each of the fifteen map plates needs its own provenance row before rendering:
+
+| Field | Required value |
+|---|---|
+| Figure ID | Stable `figure-XX` identifier. |
+| QGIS project/layout | Versioned local source path and layout name. |
+| Geometry status | Fictional composite, neutral public demonstration or approved completed-sale example. |
+| Layer sources | Publisher, dataset/service title, URL or endpoint, retrieval date and licence. |
+| CRS and scale | Printed on the map and in this register. |
+| Interpretation status | Verified record, screening clue, visual interpretation, professional verification or no-go. |
+| Attribution | Exact open-data and/or restricted-service statement, rendered into the image. |
+| Safety check | No owner name, live recommendation, hidden personal information, provincial mark or implied endorsement. |
+
+## Creation order
+
+1. Approve the argument outline and this visual direction.
+2. Create one **style proof**, preferably `figure-15-case-a-access-terrain.png`,
+   because it tests QGIS labels, colour semantics, attribution, phone legibility
+   and Echo's 16:9 video stage at once.
+3. Export the style proof to PNG, embed it in a tiny test EPUB and inspect it in
+   Echo on phone-size and desktop-size stages.
+4. Export a 60–90 second video range in Karaoke and Simple modes. Check figure,
+   caption, subtitle band, attribution legibility and SRT timing.
+5. Lock the template, then batch the remaining map families and diagrams.
+6. Generate the two editorial illustrations only after the visual grammar is
+   stable; they should feel like the same book, not unrelated AI art.
+7. Insert figures into chapter Markdown only after the matching narration and
+   placement paragraph are stable.
+
+## Figure QC and acceptance
+
+Every finished figure must pass:
+
+- rights/provenance record complete;
+- public-safety scan complete;
+- factual values and labels checked against the cited source;
+- meaningful alt text and standalone caption;
+- figure understandable at 1920 by 1080 video scale and a phone-size Echo stage;
+- attribution legible in the exported MP4 frame, not only in an EPUB appendix;
+- colour meaning survives grayscale and common colour-vision differences;
+- map never described as a survey, title opinion, access proof, environmental
+  conclusion, appraisal or recommendation;
+- narration remains understandable when the figure is unseen;
+- Echo cue appears during the intended paragraph and falls back cleanly at the
+  chapter boundary; and
+- a human watches at least the short proof export before the figure system is
+  accepted for the whole book.
+
+## Future export set
+
+When the final aligned package exists, produce and verify:
+
+- whole-book 1920 by 1080 Karaoke MP4;
+- whole-book SRT and chapter timestamp sidecars;
+- whole-book Simple-mode MP4 if Karaoke render time or visual intensity is poor;
+- a short public demo range containing one map, one chart and one legal-process
+  diagram; and
+- later, only if requested, vertical or square clips from the same 16:9 masters
+  using layouts revised for those aspect ratios rather than automatic cropping.
