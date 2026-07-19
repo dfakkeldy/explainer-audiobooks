@@ -148,6 +148,47 @@ class PronunciationProbeReelTests(unittest.TestCase):
         )
         self.assertGreater(float(probe.stdout.strip()), 0)
 
+    def test_matches_underscored_identifier_to_echo_rendered_token(self) -> None:
+        (self.research / "pronunciation-plan.json").write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "terms": [
+                        {
+                            "term": "get_project_status",
+                            "variants": ["get project status"],
+                            "source": "author",
+                            "reason": "Probe the technical name and its spoken form.",
+                            "expectedChapters": ["ch01.md"],
+                            "required": True,
+                            "status": "planned",
+                            "decision": None,
+                            "evidence": None,
+                        }
+                    ],
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        self.write_anchor(
+            words=[
+                {"word": "getprojectstatus", "start": 0.25, "end": 1.25},
+                {"word": "get", "start": 1.5, "end": 1.75},
+                {"word": "project", "start": 1.75, "end": 2.25},
+                {"word": "status", "start": 2.25, "end": 2.75},
+            ]
+        )
+
+        result = self.module().build_reel(self.root, self.work, self.out, self.evidence)
+
+        self.assertEqual(
+            ["get_project_status", "get project status"],
+            [clip["variantHeard"] for clip in result["clips"]],
+        )
+
     def test_rejects_capture_whose_hash_does_not_match_identity(self) -> None:
         self.write_anchor(audio_hash="0" * 64)
         with self.assertRaisesRegex(ValueError, "capture SHA-256"):

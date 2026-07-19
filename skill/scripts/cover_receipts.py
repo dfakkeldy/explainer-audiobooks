@@ -29,7 +29,12 @@ EXPECTED_DIMENSIONS = (1600, 2560)
 PAIRED_DIMENSIONS = {"portrait": (1600, 2560), "square": (2400, 2400)}
 SELECTION_SOURCES = frozenset({"explicit-user-choice", "requested-mix"})
 PAIRED_SELECTION_SOURCES = frozenset(
-    {"user", "requested-mix", "editorial-autoselection"}
+    {
+        "user",
+        "requested-mix",
+        "editorial-autoselection",
+        "delegated-editorial-choice",
+    }
 )
 CLASSIFICATIONS = frozenset({"public-safe", "private", "sensitive"})
 PUBLICATION_PERMISSIONS = frozenset({"granted", "denied", "not-requested"})

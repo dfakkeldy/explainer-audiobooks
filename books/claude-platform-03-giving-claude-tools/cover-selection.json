@@ -1,0 +1,41 @@
+{
+  "book_slug": "claude-platform-03-giving-claude-tools",
+  "candidate": {
+    "direction_name": "The Application Keeps the Key",
+    "id": "application-keeps-key"
+  },
+  "edition_id": "public-first-listen-2026-07-18",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-19T03:12:40Z",
+  "selection_source": "delegated-editorial-choice",
+  "source_art_sha256": "d809920729552349f57a5bd79d858b76e71691552c26e889a9f12ede1139bbc5",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "4d68ef7fa713061307c650790e0985e3c5bc7cc5ec6822149732f48882161627",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "d666f1970320d99eb038825e208210d5367e2e7a00011314da8b3f487ba66b2f",
+      "specification_sha256": "f12fe0fc3dc321fa3f6cd915971cb4b7b7745012a7f5e97136bd037a545664b9",
+      "subtitle_included": true,
+      "thumbnail_sha256": "4199712940a5946ff1d804c5d237ba1a60b68f1dfc4fadb47dbf6dbb81ff7a9b"
+    },
+    "square": {
+      "cover_sha256": "0dc552e4384c332e3504012cc11dbbf17058893f8d3ddcd7833b9eb51d6e0afe",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "005dbcd3b36f72a0ba525a4ab507c3cc93aac1d0ba832f2c4da406c61daa6766",
+      "specification_sha256": "edb11ef663284598a153571dd7649e002af681e97f7eec518c814f4d34ee91a1",
+      "subtitle_included": false,
+      "thumbnail_sha256": "62331e8d3a0c1f693819c027c1faa08ec3941311de00ffe7ad209c8ab76c2327"
+    }
+  }
+}

@@ -40,7 +40,10 @@ def load_json(path: Path, label: str) -> dict[str, Any]:
 
 
 def normalized_word(value: str) -> str:
-    return re.sub(r"^[^\w]+|[^\w]+$", "", value, flags=re.UNICODE).casefold()
+    # Echo speaks identifier underscores without emitting them in timed words
+    # (for example, get_project_status becomes getprojectstatus). Preserve the
+    # source spelling in evidence while matching the renderer's spoken token.
+    return re.sub(r"^[^\w]+|[^\w]+$", "", value, flags=re.UNICODE).replace("_", "").casefold()
 
 
 def source_words(value: str) -> list[str]:

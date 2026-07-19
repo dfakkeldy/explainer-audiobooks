@@ -680,6 +680,46 @@ class LearningDesignGateTests(LearningDesignFixture):
         self.assertTrue(receipt["learningAuthority"]["receiptDoesNotCertifyTransfer"])
         self.assertEqual(receipt, module.verify_learning_receipt(self.chapters, receipt_path))
 
+    def test_explicitly_authorized_public_first_listen_keeps_human_authority_pending(self) -> None:
+        self.enable_unattended_first_listen()
+        decisions_path = self.research / "unattended-decisions.json"
+        decisions = self.read_json("unattended-decisions.json")
+        decisions.update(
+            {
+                "privacy": "public-safe",
+                "permissionToPublish": True,
+                "deliveryIntent": "public-repository-and-listening-room-no-icloud",
+                "publicationAuthorization": {
+                    "status": "granted",
+                    "authorizedBy": "Dan Fakkeldy",
+                    "authorizedAt": "2026-07-18T12:00:00-03:00",
+                    "evidence": "User explicitly authorized public publication after every non-human gate passes.",
+                    "publicationStatus": "public-first-listen",
+                    "disclosure": (
+                        "This edition has passed package and audio checks. "
+                        "The creator's full listening review is still underway."
+                    ),
+                },
+            }
+        )
+        self.write_json("unattended-decisions.json", decisions)
+        brief = self.read_json("learning-brief.json")
+        brief["productionMode"]["decisionsSHA256"] = sha256(decisions_path)
+        self.write_json("learning-brief.json", brief)
+
+        module = self.module()
+        receipt_path = self.research / "learning-design-receipt.json"
+        receipt = module.write_receipt(self.root, receipt_path)
+
+        self.assertEqual("first-listen", receipt["status"])
+        self.assertEqual("pending", receipt["gates"]["humanComprehensionPilot"])
+        self.assertEqual(
+            "human-listener-pending", receipt["learningAuthority"]["holder"]
+        )
+        self.assertEqual(
+            "public-first-listen", receipt["publicationAuthorization"]["status"]
+        )
+
     def test_unattended_first_listen_requires_bound_decisions_receipt(self) -> None:
         self.enable_unattended_first_listen()
         brief = self.read_json("learning-brief.json")

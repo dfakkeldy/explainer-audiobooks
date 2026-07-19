@@ -14,10 +14,11 @@ chapters directory. Produces:
   <out-dir>/<slug>.md     a single combined Markdown copy
 
 An optional Markdown file passed with ``--non-narrated-appendix`` is included
-in both reading formats and their tables of contents, but its EPUB spine item
-is marked ``linear="no"`` so Echo excludes it from narration. Its words are not
-included in the narrated word count. The appendix filename must not start with
-``ch``; that prefix is reserved for narrated chapters.
+in both reading formats and their tables of contents, but is omitted from the
+EPUB spine so Echo excludes it from narration even when a renderer ignores the
+EPUB ``linear="no"`` hint. Its words are not included in the narrated word count.
+The appendix filename must not start with ``ch``; that prefix is reserved for
+narrated chapters.
 
 Standard library only. Designed for the explainer-audiobook skill.
 
@@ -323,7 +324,6 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
         manifest.append(
             '<item id="appendix" href="appendix.xhtml" media-type="application/xhtml+xml"/>'
         )
-        spine.append('<itemref idref="appendix" linear="no"/>')
     for j, name in enumerate(sorted(figures)):
         manifest.append('<item id="fig%03d" href="images/%s" media-type="%s"/>'
                         % (j, name, img_exts[os.path.splitext(name)[1].lower()]))

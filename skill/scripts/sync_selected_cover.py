@@ -75,7 +75,13 @@ def classify_destination(
         raise ValueError("cover receipt conflict: book or edition differs")
     if intent != "supersede":
         raise ValueError("cover receipt conflict: explicit supersede intent required")
-    if source.selection_source not in {"explicit-user-choice", "requested-mix", "user", "mixed"}:
+    if source.selection_source not in {
+        "explicit-user-choice",
+        "requested-mix",
+        "user",
+        "mixed",
+        "delegated-editorial-choice",
+    }:
         raise ValueError("cover receipt conflict: source selection is not explicit")
     if datetime.fromisoformat(source.selected_at) <= datetime.fromisoformat(
         destination.selected_at

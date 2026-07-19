@@ -59,7 +59,11 @@ render_cover_pair(
 )
 ```
 
-After human review selects one pair, run the complete governed sequence:
+After the mode-authorized reviewer selects one pair, run the complete governed
+sequence. Use `selection_source=user` for a direct user choice,
+`requested-mix` for a requested mix, `editorial-autoselection` only for the
+private non-publishing unattended lane, or `delegated-editorial-choice` when
+the user explicitly delegates editorial selection for the named edition:
 
 ```bash
 PAIR="$DIST/candidate-$SELECTED"
@@ -322,7 +326,11 @@ A mix becomes a new specification and render.
 Use `cover_receipts.py select-pair` as described by the universal rule. A paired
 user choice uses `selection_source=user`; a requested mix uses `requested-mix`;
 and a private, non-publishing unattended choice uses
-`editorial-autoselection`. The receipt validator rejects editorial
+`editorial-autoselection`. When the user explicitly delegates the choice for a
+named public-safe edition, use `delegated-editorial-choice` and record the
+rubric rationale in the unattended decisions receipt. That choice is not
+publication permission; the receipt still requires separate authorized
+public-safe classification and permission fields. The receipt validator rejects editorial
 auto-selection unless classification is private and publication permission is
 false. The renderer itself never selects automatically.
 The old single-render receipt and title/art/accent/tone/layout paths are

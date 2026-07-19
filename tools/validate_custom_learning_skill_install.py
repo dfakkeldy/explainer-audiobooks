@@ -37,7 +37,7 @@ class ManifestEntry:
 
 SKILL_MANIFEST = {
     Path("SKILL.md"): ManifestEntry(
-        "file", 0o644, "b93a291071170883ce44795ffb11d48fa5930505199e1f965e07e402b6ee96e4"
+        "file", 0o644, "4990a97819087d00f6a13676401d3b4c44b9eb65e627237c08afc9684f8f7fc5"
     ),
     Path("agents"): ManifestEntry("directory", 0o755),
     Path("agents/openai.yaml"): ManifestEntry(
@@ -61,7 +61,7 @@ SKILL_MANIFEST = {
         "file", 0o644, "27c00cb8ececc8d6c158000ef84edbe40ee09202a9acb660f0785f21911f40f2"
     ),
     Path("references/package-and-qc.md"): ManifestEntry(
-        "file", 0o644, "67a59067e65cdf3feed097ee47ef47ca0ad8f12d10beaa7bf79b9f712104e0c9"
+        "file", 0o644, "5425a444bc30eb0e280dc781cf5407c4f2bfb4af65d634514cb8c51a76de9610"
     ),
     Path("scripts"): ManifestEntry("directory", 0o755),
     Path("scripts/echo_installed_renderer.py"): ManifestEntry(

@@ -22,7 +22,8 @@ pilot, pronunciation, cover, delivery, and package-or-blocker rules. Never infer
 permission to publish. After a verified package exists, only explicit publication
 authorization may promote a public-safe package to `public-first-listen`; keep
 `humanListeningStatus: pending` and use the shared contract's exact public
-disclosure while the creator's full listening review is still underway.
+disclosure. Bind the user's grant in `publicationAuthorization`; the public
+surface must say: “This edition has passed package and audio checks. The creator's full listening review is still underway.”
 
 Keep these states separate: `unattended-first-listen` is a private package that
 is never automatically published; `public-first-listen` is explicitly
@@ -38,8 +39,11 @@ Use `render_cover_pair(...)` in `skill/scripts/cover_pairs.py` to produce
 `cover.png` at 1600×2560 and `m4b-cover.png` at 2400×2400 plus thumbnails and
 receipts. Require review and explicit pair selection: human review in
 governed-final or editorial rubric review for a private unattended-first-listen
-package. Then use `cover_receipts.py select-pair --selection-source user` (or
-`requested-mix`) for the paired receipt. Build with `build_book.py --cover ...
+package. Use `cover_receipts.py select-pair --selection-source user` for a direct
+choice, `requested-mix` for a requested mix, `editorial-autoselection` only in
+the private non-publishing unattended lane, or `delegated-editorial-choice`
+when the user explicitly delegates the editorial choice for the named edition.
+Build with `build_book.py --cover ...
 --m4b-cover ... --cover-selection ...`. Echo resolves the OPF-declared cover
 before export and binds the exact resulting M4B bytes into the pronunciation
 audit. Never run `replace_m4b_cover.py` or otherwise mutate an audited Echo M4B
@@ -303,8 +307,11 @@ than retyping it from memory.
    through 3. Human-review every full-size portrait and square render and
    generated 160-pixel thumbnail with its art-and-type brief, font/palette note,
    and warnings. The renderer never selects automatically; a requested mix
-   becomes a new specification and render. Record the human choice with
-   `selection_source=user` (or `requested-mix`), but defer the
+   becomes a new specification and render. Record a direct human choice with
+   `selection_source=user`, a requested mix with `requested-mix`, a private
+   unattended choice with `editorial-autoselection`, or—only when the user
+   explicitly delegates the editorial choice for this named edition—with
+   `delegated-editorial-choice`. Defer the
    `cover-selection.json` command and governed EPUB build until the canonical
    Markdown finishes humanization, prose QC, frontier-author acceptance, and
    every substantive repair.
