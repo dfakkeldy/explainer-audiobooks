@@ -63,11 +63,18 @@ package.
   mine-screening and three-PID prototype cards for review. It does not accept
   the resulting cards, authorize the remaining 42 lien cards, change the forty
   canonical figures or authorize narration or publication.
+- **15:39:47 — three-card atlas visual direction accepted:** “I like them.”
+  This accepts the exact rendered Liens 1, 8 and 11 prototype set and its
+  evidence-card visual direction. It does not prove actual Echo/video-stage
+  playback, authorize batch rendering of the remaining 42 lien cards, add the
+  atlas to the forty canonical figures, or authorize publication.
 
 ## Gate status
 
 The revised twelve-chapter argument outline, added failure paths and forty-figure
-direction are approved for pilot development. The first-section voice exemplar,
-narrated comprehension-pilot verdict, canonical full drafting, pronunciation
-acceptance, prototype-atlas visual acceptance, final figure acceptance, and
-publication remain downstream gates.
+direction are approved for pilot development. The three-card atlas prototype
+direction is also accepted against its exact rendered hashes. The first-section
+voice exemplar, narrated comprehension-pilot verdict, canonical full drafting,
+pronunciation acceptance, actual Echo/video-stage prototype proof, atlas batch
+authorization, final figure acceptance, and publication remain downstream
+gates.

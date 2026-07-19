@@ -229,8 +229,9 @@ The atlas can advance after four distinct decisions:
 
 Dan replied “let's do it” to the proposed next step of producing three
 deliberately contrasting prototype cards. That authorizes prototype development
-for Liens 1, 8 and 11. The cards have been rendered and machine-checked, but the
-reply is not recorded as visual acceptance. Gate 3 therefore remains pending
-Dan's review of the resulting full-size/phone cards and a later actual Echo
-stage proof. Gates 1, 2 and 4 remain separate; the other 42 lien cards are not
-authorized for batch rendering.
+for Liens 1, 8 and 11. After receiving the full-size cards and phone-stage
+contact sheet, Dan replied “I like them.” at 2026-07-19T15:39:47-03:00. The
+exact rendered prototype set and its visual direction are therefore accepted
+and hash-bound in `maps/atlas-prototypes/human-visual-approval.json`. Actual
+Echo/video-stage playback remains unproven. Gates 1, 2 and 4 remain separate;
+the other 42 lien cards are not authorized for batch rendering.

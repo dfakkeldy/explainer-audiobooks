@@ -10,7 +10,13 @@
   "amoArchiveSHA256": "058e7e344849dade89e0c10a199e4795b51a27d711e2069849ebb37a2857d147",
   "canonicalFigureManifestChanged": false,
   "propertyOnlineUsed": false,
-  "humanAcceptance": "pending",
+  "humanAcceptance": {
+    "status": "accepted-prototype-direction",
+    "acceptedBy": "Dan Fakkeldy",
+    "acceptedAt": "2026-07-19T15:39:47-03:00",
+    "verbatimQuote": "I like them.",
+    "approvalReceipt": "human-visual-approval.json"
+  },
   "files": [
     {
       "lien": 1,
