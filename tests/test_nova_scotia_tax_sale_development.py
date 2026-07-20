@@ -54,14 +54,14 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(brief["originalTargetWords"], 22000)
         self.assertEqual(brief["currentTargetWords"], 46200)
         self.assertTrue(brief["draftingStarted"])
-        self.assertEqual(len(brief["scopeHistory"]), 7)
+        self.assertEqual(len(brief["scopeHistory"]), 8)
         for decision in brief["scopeHistory"]:
-            self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19)T")
+            self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19|20)T")
             self.assertTrue(decision["verbatimQuote"])
             self.assertEqual(decision["evidence"], decision["verbatimQuote"])
 
         self.assertIn(
-            "Let's add a chapter about using this resource",
+            "Okay. Let’s do that",
             brief["scopeHistory"][-1]["verbatimQuote"],
         )
 
@@ -303,11 +303,11 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(len(receipt["outputs"]), 12)
         self.assertEqual(
             receipt["captureSource"]["sourceCommit"],
-            "1ee76d15b2466d40674e62113ac9f1e9044421c1",
+            "d3114b5cfc907d85f8b2c1f015d5476719b53586",
         )
         self.assertEqual(
             {claim["id"] for claim in evidence["claims"] if claim["id"].startswith("MAP-")},
-            {"MAP-001", "MAP-002", "MAP-003", "MAP-004", "MAP-005"},
+            {"MAP-001", "MAP-002", "MAP-003", "MAP-004", "MAP-005", "MAP-006", "MAP-007"},
         )
 
         for output in receipt["outputs"]:

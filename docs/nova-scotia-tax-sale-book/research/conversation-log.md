@@ -81,12 +81,25 @@ package.
   review screenshots. Because it expands the approved direction to thirteen
   chapters and 51 figures, revised outline/figure approval remains pending.
 
+## 2026-07-20
+
+- **Production-map-led book redesign:** “Okay. Let’s do that” This authorizes
+  the proposed redesign after reviewing how the new production tools should
+  change the book. Chapter 5 now teaches notice → parcel → context → unknowns →
+  handoff; Chapters 2, 4, 6, 7, 9 and 13 receive targeted integrations; and the
+  eleven obsolete layer-tour screenshots are replaced with production captures
+  covering current and historical modes, authoritative civic search, Plus
+  Codes, road/water context and geology/resources. This authorizes the design
+  and review assets, not the revised outline verdict, canonical full-book
+  drafting, narration, final-figure acceptance or publication.
+
 ## Gate status
 
 The prior twelve-chapter argument outline and forty-figure direction remain the
 last approved pilot scope. The three-card atlas direction and exact first-section
 voice exemplar are separately accepted against their hashes. A
-thirteen-chapter/51-figure revision is proposed and awaiting review. The narrated
+thirteen-chapter/51-figure revision has been redesigned against the production
+map and is awaiting its explicit outline/figure verdict. The narrated
 comprehension-pilot verdict, canonical full drafting, pronunciation acceptance,
 actual Echo/video-stage prototype proof, atlas batch authorization, final figure
 acceptance, and publication remain downstream gates.

@@ -110,6 +110,17 @@
       "approvalSource": "user",
       "verbatimQuote": "Look at the work done on the map. Let's add a chapter about using this resource. Work is still being done on it, but let's plan out the chapter and we'll make a bunch of screenshots showing how to turn the layers on and off, what each layer shows. How to use it to research the tax sale.",
       "evidence": "Look at the work done on the map. Let's add a chapter about using this resource. Work is still being done on it, but let's plan out the chapter and we'll make a bunch of screenshots showing how to turn the layers on and off, what each layer shows. How to use it to research the tax sale."
+    },
+    {
+      "date": "2026-07-20",
+      "recordedAt": "2026-07-20T07:24:06-03:00",
+      "oldTargetWords": 46200,
+      "newTargetWords": 46200,
+      "reason": "After reviewing the new production map tools, the user authorized the proposed book and screenshot redesign for review. The change replaces a layer-catalogue tour with a notice-to-parcel research chain while preserving the pending revised-outline verdict.",
+      "approvalStatus": "recorded-user-direction; redesign-authorized; revised-outline-approval-pending",
+      "approvalSource": "user",
+      "verbatimQuote": "Okay. Let’s do that",
+      "evidence": "Okay. Let’s do that"
     }
   ],
   "safety": {

@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "claimPolicy": "traceable-only",
   "notesPath": "research/evidence-notes.md",
-  "notesSHA256": "4ad78b44fcd275cc3babcea822fd91e26a624bacf0ee7fe16fbfd12674ddd43e",
+  "notesSHA256": "94556f775ff5b7ca58635fe2263efa2158e5645bd8db4e406f6f3f5d1ea09701",
   "claims": [
     {
       "id": "LAW-001",
@@ -422,43 +422,59 @@
     },
     {
       "id": "MAP-001",
-      "claim": "The checked map source adds approximate NSPRD acreage, exact mapped road/trail and water intersections, and honest empty/error states.",
-      "source": "NS Marks The Spot pull request 89 and source commit 1ee76d15b",
-      "locator": "web parcel inspector and PR summary",
+      "claim": "The checked production source combines current and historical tax-sale records with exact-PID selection, approximate NSPRD area, civic points, Plus Codes, road/water context and honest loading, empty and error states.",
+      "source": "NS Marks The Spot source commit d3114b5cfc907d85f8b2c1f015d5476719b53586",
+      "locator": "web/src/App.tsx and parcel/civic service tests",
       "verificationStatus": "verified",
-      "verificationNote": "Verified against the checked source commit; refresh before publication."
+      "verificationNote": "Verified against the checked source and production captures; the combined record remains bounded screening evidence."
     },
     {
       "id": "MAP-002",
-      "claim": "The checked build exposes seven Province-data layers and keeps Fletcher historical mapping disabled while display rights remain unresolved.",
-      "source": "NS Marks The Spot layer catalogue and captured interface",
-      "locator": "map layer controls",
+      "claim": "The checked build uses an authoritative provincial civic-address result to open its containing parcel and separately lists mapped civic points and Plus Codes with explicit limits.",
+      "source": "NS Marks The Spot source commit d3114b5c and production captures",
+      "locator": "web/src/services/civicAddresses.ts; figures 44-45",
       "verificationStatus": "verified",
-      "verificationNote": "Verified for the dated build; layer availability is perishable."
+      "verificationNote": "Verified for the dated build; do not substitute nearest or interpolated address matching or treat a civic point as access, occupancy or ownership proof."
     },
     {
       "id": "MAP-003",
-      "claim": "The checked event catalogue covers CBRM July 21 and Inverness August 11, 2026 with municipality, event, redemption and exact-PID controls across 115 unique PIDs.",
-      "source": "NS Marks The Spot event catalogue and captured interface",
-      "locator": "tax-sale notice controls",
+      "claim": "The checked current-notice catalogue covers the CBRM July 21 and Inverness August 11, 2026 events with municipality, event and redemption controls plus direct official-source links.",
+      "source": "NS Marks The Spot source commit d3114b5c and production capture",
+      "locator": "web/src/data/taxSaleCatalog.ts; figure 43",
       "verificationStatus": "verified",
       "verificationNote": "Dated catalogue snapshot; the direct municipality remains authoritative."
     },
     {
       "id": "MAP-004",
-      "claim": "The 2026-07-19 public deployment was reachable and its bundle contained the current map-layer and parcel-context interface labels.",
-      "source": "NS Marks The Spot live public map",
-      "locator": "assets/index-CCMc9yKR.js",
+      "claim": "The 2026-07-20 production source receipt identifies NS Marks The Spot commit d3114b5cfc907d85f8b2c1f015d5476719b53586 and public path /apps/nsmarksthespot/map/.",
+      "source": "NS Marks The Spot production source receipt",
+      "locator": "https://kinnokilabs.com/apps/nsmarksthespot/map/source.json retrieved and reverified 2026-07-20T10:31:39Z",
       "verificationStatus": "verified",
       "verificationNote": "Dated deployment receipt; upstream services and later builds remain perishable."
     },
     {
       "id": "MAP-005",
-      "claim": "The captured PID 50308311 interface state reports about 5.12 mapped acres, mapped River Denys water intersections and no mapped road/trail intersection.",
-      "source": "NS Marks The Spot source commit 1ee76d15b and figure 51 receipt",
-      "locator": "figure-51-combined-parcel-research.png",
+      "claim": "The captured current-notice PID 50308311 state reports about 5.12 mapped acres, mapped River Denys water intersections and no mapped road/trail intersection while transportation context remains visible nearby.",
+      "source": "NS Marks The Spot source commit d3114b5c and production screenshot receipt",
+      "locator": "figure-47-roads-water-context.png",
       "verificationStatus": "verified",
       "verificationNote": "Interface demonstration only; refresh before publication and do not interpret as access or environmental proof."
+    },
+    {
+      "id": "MAP-006",
+      "claim": "The checked build exposes bedrock geology, mineral occurrences, mineral tenure and abandoned-mine-opening layers alongside the parcel workflow.",
+      "source": "NS Marks The Spot source commit d3114b5c and production capture",
+      "locator": "web/src/layers/layerCatalog.ts; figure 48",
+      "verificationStatus": "verified",
+      "verificationNote": "Verified for the checked catalogue; resource layers are screening sources, not evidence of reserves, rights, contamination, safety, value or absence."
+    },
+    {
+      "id": "MAP-007",
+      "claim": "The checked build keeps verified historical outcomes off by default, filters them by municipality, year and outcome, links official sources and labels selected records as historical rather than current.",
+      "source": "NS Marks The Spot source commit d3114b5c and production captures",
+      "locator": "web/src/data/historicalTaxSales.ts; web/src/data/historicalSourceLedger.json; figures 49-50",
+      "verificationStatus": "verified",
+      "verificationNote": "Verified for the checked source ledger; historical amounts describe recorded events and are not current values, comparables, bid instructions or forecasts."
     }
   ],
   "unresolvedConflicts": [
@@ -547,10 +563,12 @@
         "MAP-001",
         "MAP-002",
         "MAP-005",
+        "MAP-006",
+        "MAP-007",
         "LAND-004",
         "LAND-005"
       ],
-      "conflict": "Visual proximity, exact service intersection and legal or physical reality are different claims with different sources and limits.",
+      "conflict": "Civic points, visual proximity, exact service intersections, resource overlays, historical outcomes and legal or physical reality are different claims with different sources and limits.",
       "status": "record-layer-date-limitation-and-next-authority"
     }
   ]

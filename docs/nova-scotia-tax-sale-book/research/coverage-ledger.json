@@ -214,12 +214,14 @@
       "definition": "A result saying that the current geometry from one mapped service crosses the selected parcel polygon.",
       "reason": "Visual proximity is easy to overread, while even an exact geometry result inherits the source service’s scale, currency, coverage and legal limits.",
       "mechanism": "The app sends the selected PID geometry and a named service layer through an intersection query, then reports matched mapped features or an honest empty/error state.",
-      "concreteCase": "For PID 50308311, the captured build returns River Denys water features and no mapped road/trail intersection, creating separate water and access questions.",
-      "problemBeforeName": "The listener sees a line near a parcel and needs language more precise than “there is a road” or “there is water.”",
+      "concreteCase": "For PID 50308311, the production capture returns River Denys water features and no mapped road/trail intersection while transportation remains visible nearby; a separate Halifax sheet demonstrates a dated historical result rather than a current property.",
+      "problemBeforeName": "The listener sees a civic point, line, layer or historical amount and needs language more precise than “this is the address,” “there is a road,” “there is water” or “this is what it is worth.”",
       "realWorldApplications": [
         "NS Marks The Spot parcel inspector",
+        "authoritative civic-address containment",
         "public water-feature screening",
-        "public road/trail screening"
+        "public road/trail and geology/resource screening",
+        "verified historical-outcome context"
       ],
       "analogy": {
         "name": "transparent sheets over one outline",
@@ -231,10 +233,10 @@
         "limit": "The sheets do not create legal access, survey accuracy, physical condition or complete real-world coverage."
       },
       "analogyNotApplicableReason": "",
-      "boundary": "A mapped intersection is not a survey, title opinion, legal right-of-way, wetland delineation, flood opinion, inspection or development approval.",
+      "boundary": "A civic point, Plus Code, mapped intersection, resource overlay or historical result is not a survey, title opinion, legal right-of-way, ownership or occupancy proof, wetland delineation, flood opinion, inspection, valuation, forecast or development approval.",
       "boundaryNotApplicableReason": "",
       "misconception": "A visible or returned overlap proves the real-world feature and its legal consequence; an empty result proves absence.",
-      "expectedAbility": "State the layer, returned result, retrieval date, limitation and next authoritative question for one parcel.",
+      "expectedAbility": "Carry one record through notice, parcel, context, unknown and handoff while stating the source, retrieval date, returned result, limitation and next authoritative question.",
       "chapterUses": [
         {
           "chapter": "ch05.md",

@@ -24,8 +24,9 @@ By the end, the listener should be able to:
 2. Translate auction, tender, minimum bid, immediate deed, redemption, certificate of sale and tax deed into practical consequences.
 3. Distinguish an AAN, PID, civic address, assessment, parcel map, legal description, survey and parcel register.
 4. Build a lawful pre-bid evidence file without entering private property,
-   including a dated layer-by-layer map screen whose overlaps and empty results
-   remain bounded observations rather than proof.
+   carrying a dated map record from notice through parcel and context to
+   explicit unknowns and handoff without turning civic points, overlays,
+   historical results or empty states into proof.
 5. Test legal access, intended use, zoning, services, boundaries and municipal compliance separately.
 6. Recognize physical and environmental unknowns that records can reveal, narrow or fail to answer.
 7. Separate title, encumbrances, easements, occupancy and vacant possession.
@@ -43,7 +44,7 @@ Claims: `LAW-001`–`LAW-006`, `OPS-004`, `OPS-005`, `OPS-007`, `DATA-002`, `DAT
 
 ### 2. What the Notice Says—and Does Not Say — document-reading and terminology — 3,500 words
 
-Walk the August 2026 Inverness packet field by field: lien number, assessed owner, AAN, PID, address, location, land/building, recovery amount and redemption marker. Make “identifier, not promise” the chapter's reusable test. Use the missing lien-6 detail sheet and the packet's amount inconsistencies to teach reconciliation without speculating about the properties. Show how properties vanish from a list.
+Walk the August 2026 Inverness packet field by field: lien number, assessed owner, AAN, PID, address, location, land/building, recovery amount and redemption marker. Make “identifier, not promise” the chapter's reusable test. Use the missing lien-6 detail sheet and the packet's amount inconsistencies to teach reconciliation without speculating about the properties. Show how properties vanish from a list. End with the current-parcel browser as an owner-free way to carry the event and exact PID into the research file, while keeping the municipal notice authoritative.
 
 Claims: `OPS-003`, `LAND-001`–`LAND-004`, `DATA-002`.
 
@@ -55,35 +56,36 @@ Claims: `LAW-007`–`LAW-012`.
 
 ### 4. Give the Parcel a Biography — research method — 3,800 words
 
-Start by inventorying what Inverness already supplies. Then build the value-added evidence file from PID outward: source reconciliation, Property Online records, parcel register and documents, planning, assessment context, QGIS layers and municipal records. Teach source hierarchy, licence boundaries and uncertainty labels. Introduce the property lawyer before any reader becomes attached to a parcel. Separate a public educational companion from client-specific or live-sale research.
+Start by inventorying what Inverness already supplies. Then build the value-added evidence file from PID outward: source reconciliation, Property Online records, parcel register and documents, planning, assessment context, public layers and municipal records. Introduce the map's exact-PID and authoritative civic-address routes, keeping civic points and Plus Codes as orientation aids rather than identity, access or occupancy proof. Teach source hierarchy, licence boundaries and uncertainty labels. Introduce the property lawyer before any reader becomes attached to a parcel. Separate a public educational companion from client-specific or live-sale research.
 
 Claims: `LAND-001`–`LAND-007`, `LAW-003`, `LAW-013`, `GIS-001`, `GIS-002`, `DATA-005`.
 
 ### 5. The Map Is a Question Machine — interactive research method — 3,400 words
 
-Open NS Marks The Spot with the source and licence boundary visible, select the
-correct municipality and dated sale, and search one exact PID. Turn the
-available provincial layers on one at a time: aerial, graphical property
-boundaries, Crown Lands, flood-risk areas, waterfalls, water features, and
-roads/trails/culverts. Teach the difference between visual proximity and an
-exact mapped intersection, then convert each observation into a dated research
-note with its limitation, next authoritative source and professional handoff.
-Use Southside River Denys as a dated interface demonstration: mapped water
-features intersect while no mapped road/trail intersection is returned. Neither
-result is a legal-access, flood, wetland or condition conclusion.
+Teach the production map as a five-step chain: **notice → parcel → context →
+unknowns → handoff**. Keep current notices separate from verified historical
+outcomes; follow the direct municipal source before treating a parcel as live.
+Find one parcel by exact PID or authoritative civic-point containment, then read
+the parcel sheet's mapped area, civic results, Plus Code and limitations before
+zooming into imagery. Ask one source-sized question at a time with aerial,
+graphical boundaries, road/water and geology/resource layers. Use Southside
+River Denys to compare nearby transportation with returned road/water results,
+and use one Halifax historical sheet to show why a dated result is not current
+value or a forecast. Convert every useful observation into a record containing
+source, retrieval, limitation, unknown, next authority and professional handoff.
 
-Claims: `MAP-001`–`MAP-005`, `GIS-001`, `GIS-002`, `DATA-002`, `DATA-005`,
+Claims: `MAP-001`–`MAP-007`, `GIS-001`, `GIS-002`, `DATA-002`, `DATA-005`,
 `LAND-004`.
 
 ### 6. The Driveway That May Not Be a Right-of-Way — failure case, planning — 3,600 words
 
-Use the landlocked sliver to separate physical approach, legal access, road frontage and development permission. Add the Plan Inverness framework that came into effect in September 2025, zoning, lot creation, setbacks, services and Eastern District Planning Commission confirmation. Land the chapter on a powerful no-go: a parcel can be real, owned and still useless for the listener's intended job.
+Use the landlocked sliver to separate physical approach, legal access, road frontage and development permission. Retrieve the Chapter 5 map note: a nearby road, mapped intersection or civic point is a clue to the next record, never the right itself. Add the Plan Inverness framework that came into effect in September 2025, zoning, lot creation, setbacks, services and Eastern District Planning Commission confirmation. Land the chapter on a powerful no-go: a parcel can be real, owned and still useless for the listener's intended job.
 
 Claims: `LAND-004`–`LAND-006`, `LAND-008`, `LAW-012`.
 
 ### 7. The Things a Map Cannot Smell — physical and environmental uncertainty — 3,800 words
 
-Move beneath the parcel: oil and industrial history, well and septic, coastal hazard, mines, unstable or wet ground, derelict structures. Teach what a negative database search means—and does not mean. Introduce environmental and building professionals as uncertainty reducers, not box-checkers.
+Move beneath the parcel: oil and industrial history, well and septic, coastal hazard, mines, unstable or wet ground, derelict structures. Retrieve the map's geology, mineral, abandoned-mine and water layers as first-pass screens, then route them to their named datasets and professional questions. Teach what a negative database search or blank viewport means—and does not mean. Introduce environmental and building professionals as uncertainty reducers, not box-checkers.
 
 Claims: `ENV-001`–`ENV-005`, `LAND-006`, `LAND-007`.
 
@@ -95,7 +97,7 @@ Claims: `LAW-008`, `LAW-012`–`LAW-014`, `OCC-001`, `MOB-001`.
 
 ### 9. The Number You Decide Before the Room — economics and boundaries — 3,900 words
 
-Explain why assessment and the advertised recovery amount are not value. Lead with Inverness's 2025 evidence—50 advertised, council reporting 35 sold and 15 removed, a public result sheet containing 31 bid rows, and a 4.53× median bid/recovery ratio within those rows—then compare CBRM and Richmond. Build an all-in cost stack including possible HST and provincial non-resident tax, legal work, survey, insurance, carrying, repair, remediation, possession and a reserve for unresolved uncertainty. Explain the MGA municipal deed-transfer-tax exemption for tax-sale deeds without confusing it with those separate tax questions or turning the book into tax advice.
+Explain why assessment and the advertised recovery amount are not value. Lead with Inverness's 2025 evidence—50 advertised, council reporting 35 sold and 15 removed, a public result sheet containing 31 bid rows, and a 4.53× median bid/recovery ratio within those rows—then compare CBRM and Richmond. Use the map's historical outcome sheets only as source-linked access to dated rows; never treat one historical result as current value, a comparable sale or a forecast. Build an all-in cost stack including possible HST and provincial non-resident tax, legal work, survey, insurance, carrying, repair, remediation, possession and a reserve for unresolved uncertainty. Explain the MGA municipal deed-transfer-tax exemption for tax-sale deeds without confusing it with those separate tax questions or turning the book into tax advice.
 
 Claims: `DATA-001`, `DATA-003`, `DATA-004`, `LAND-003`, `TAX-001`–`TAX-003`, `ELIG-001`.
 
@@ -119,7 +121,7 @@ Claims: `LAW-012`–`LAW-014`, `LAW-017`, `LAW-018`, `LAND-005`, `LAND-006`, `EN
 
 ### 13. Three Case Files Marked Known, Unresolved and Professional — retrieval and decision framework — 3,400 words
 
-Run three fictional composite parcels through the complete method. One fails on legal access, one pauses on occupancy/environmental uncertainty, and one produces a coherent evidence file while still leaving the actual bid decision outside the researcher's authority. End with the listener's repeatable research record and professional handoff questions—not a promise that buying is the right outcome or that a research business must follow.
+Run three fictional composite parcels through the complete method. Each map pass must follow the same notice → parcel → context → unknowns → handoff chain, including a separate current-versus-historical check and no inferred address or access. One fails on legal access, one pauses on occupancy/environmental uncertainty, and one produces a coherent evidence file while still leaving the actual bid decision outside the researcher's authority. End with the listener's repeatable research record and professional handoff questions—not a promise that buying is the right outcome or that a research business must follow.
 
 Claims: all families, with no new law.
 
@@ -140,8 +142,9 @@ authority. The chapter-level route is:
   `figure-08`).
 - Chapter 4: evidence-desk scene, source-authority ladder, beyond-the-packet
   delta and five evidence labels (`figure-09`–`figure-12`).
-- Chapter 5: eleven version-stamped NS Marks The Spot screenshots covering the
-  event controls, PID search, each provincial layer and one combined research
+- Chapter 5: eleven version-stamped production screenshots covering current
+  notice, exact parcel, civic search, parcel evidence, aerial/boundaries,
+  road/water, geology/resources, historical outcomes and a combined research
   record (`figure-41`–`figure-51`).
 - Chapters 6–7: the five-map Case A packet, with a focused apparent-versus-legal
   access story (`figure-13`–`figure-17`).

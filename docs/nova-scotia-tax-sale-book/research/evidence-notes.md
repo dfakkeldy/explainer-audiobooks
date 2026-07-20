@@ -235,35 +235,47 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 
 ## Interactive map research method
 
-### MAP-001 — current integrated map capabilities
-- Supported wording: NS Marks The Spot source commit `1ee76d15b` adds approximate NSPRD mapped acreage, exact mapped road/trail and water-feature intersection results, and explicit loading, empty and error states to the parcel inspector.
-- Source: NS Marks The Spot pull request 89 and source commit `1ee76d15b2466d40674e62113ac9f1e9044421c1`.
-- Confidence: high for the checked source version; perishable as the app evolves.
-- Boundary: Approximate mapped acreage is not deed area or survey area. A service intersection is not a legal-access, environmental or physical-condition conclusion.
+### MAP-001 — integrated parcel research record
+- Supported wording: NS Marks The Spot source commit `d3114b5c` combines current and verified historical tax-sale records with exact-PID parcel selection, approximate NSPRD mapped area, mapped civic points, Plus Codes, road/water context and explicit loading, empty and error states.
+- Source: NS Marks The Spot source commit `d3114b5cfc907d85f8b2c1f015d5476719b53586`; `web/src/App.tsx`, `web/src/services/civicAddresses.ts`, `web/src/services/parcelContext.ts` and their tests.
+- Confidence: high for the checked source and production capture; perishable as the app evolves.
+- Boundary: The combined sheet is a screening record, not a survey, title opinion, access opinion, inspection, valuation or development approval.
 
-### MAP-002 — current Province-data layer catalogue
-- Supported wording: The checked public build offers NS Aerial, NS Property Boundaries, Crown Lands, Flood Risk Areas, Waterfalls, Water features, and Roads/trails/culverts. Fletcher historical mapping is listed but disabled while display rights remain unresolved.
-- Source: NS Marks The Spot layer catalogue and the 2026-07-19 captured interface.
-- Confidence: high for the checked build; refresh before publication.
-- Boundary: Each service has its own scale, currency, coverage and question. Layer availability does not make every layer relevant to every parcel.
+### MAP-002 — authoritative civic-address lookup
+- Supported wording: The checked build searches Nova Scotia civic addresses through the provincial civic-address service and opens the parcel that contains the returned civic point; the parcel sheet lists mapped civic points and Plus Codes with explicit limits.
+- Source: NS Marks The Spot source commit `d3114b5c`; `web/src/services/civicAddresses.ts`, `web/src/App.tsx` and figure 44–45 captures.
+- Confidence: high for the checked implementation and captured examples; service availability and address records remain perishable.
+- Boundary: Do not substitute nearest or interpolated addresses. A civic point or Plus Code is location context, not proof of ownership, occupancy, legal access, a parcel's mailing address or permission to enter.
 
-### MAP-003 — event-aware notice catalogue
-- Supported wording: The checked build organizes the CBRM July 21, 2026 and Inverness August 11, 2026 notices, supports municipality/event and redemption-category filtering, and searches across 115 unique notice PIDs.
-- Source: NS Marks The Spot pull request 89, current catalogue source and captured overview/filter states.
+### MAP-003 — event-aware current-notice catalogue
+- Supported wording: The checked production build organizes the CBRM July 21, 2026 and Inverness August 11, 2026 notices, supports municipality/event and redemption-category filtering, and exposes direct official-source links.
+- Source: NS Marks The Spot source commit `d3114b5c`; `web/src/data/taxSaleCatalog.ts`, `web/src/components/TaxSalePropertyList.tsx` and figure 43.
 - Confidence: high for the dated snapshot; perishable.
-- Boundary: The catalogue is a dated research index. The municipality's current notice controls whether an event or parcel remains live.
+- Boundary: The catalogue is a research index. The municipality's current notice controls whether an event or parcel remains live, withdrawn, postponed or changed.
 
-### MAP-004 — production deployment contains the chapter features
-- Supported wording: On 2026-07-19 the public map returned HTTP 200 and its deployed JavaScript bundle contained the current layer names, “Mapped area,” and the exact road/trail and water intersection interface labels.
-- Source: `https://kinnokilabs.com/apps/nsmarksthespot/map/`; deployed asset `assets/index-CCMc9yKR.js`, checked 2026-07-19. HTML SHA-256 `627783c024f18dbfa013ab68a77aff0c43cbbfd4cae6a30fc1b4f6ec99eb1c70`; JavaScript SHA-256 `a9485a657493d0d0e2bf0e667095abf314e59106241a109cc8db65455dd219fc`.
-- Confidence: high for the dated deployment receipt; perishable.
-- Boundary: HTTP reachability and bundled labels do not prove every upstream map service is available at every later visit.
+### MAP-004 — exact production deployment receipt
+- Supported wording: On 2026-07-20 the production map's public `source.json` identified repository `dfakkeldy/ns-marks-the-spot`, commit `d3114b5cfc907d85f8b2c1f015d5476719b53586` and public path `/apps/nsmarksthespot/map/`; the production interface was captured at 2560 by 1440 without browser console warnings or errors.
+- Source: `https://kinnokilabs.com/apps/nsmarksthespot/map/source.json`, retrieved and reverified `2026-07-20T10:31:39Z`; `figures/map-chapter-screenshot-receipt.json`.
+- Confidence: high for the dated deployment receipt.
+- Boundary: Deployment provenance and a clean capture do not prove later reachability or the availability, completeness or currency of every upstream service.
 
-### MAP-005 — River Denys screenshot demonstration
-- Supported wording: In the version-stamped capture for PID `50308311`, the parcel inspector reports approximately 5.12 mapped acres, returns mapped River Denys water features, and reports no mapped road/trail intersection.
-- Source: NS Marks The Spot source commit `1ee76d15b`; `figure-51-combined-parcel-research.png`; screenshot receipt.
+### MAP-005 — River Denys road/water demonstration
+- Supported wording: In the 2026-07-20 production capture for current-notice PID `50308311`, the parcel sheet reports approximately 5.12 mapped acres, returns River Denys water intersections and reports no mapped road/trail intersection while transportation context remains visible nearby.
+- Source: NS Marks The Spot source commit `d3114b5c`; `figure-47-roads-water-context.png`; screenshot receipt.
 - Confidence: high for the captured interface state; refresh the parcel, notice and services before publication.
-- Boundary: The result is an interface demonstration, not a property recommendation. It proves neither legal access nor no access, and it is not a wetland, flood, survey, title or site-condition opinion.
+- Boundary: The result is an interface demonstration, not a property recommendation. It proves neither legal access nor no access and is not a wetland, flood, survey, title or site-condition opinion.
+
+### MAP-006 — geology and resource screening
+- Supported wording: The checked build exposes bedrock geology, mineral occurrences, mineral tenure and abandoned-mine-opening layers alongside the parcel workflow.
+- Source: NS Marks The Spot source commit `d3114b5c`; `web/src/layers/layerCatalog.ts`, `web/src/App.tsx` and figure 48.
+- Confidence: high for the checked layer catalogue; individual service coverage and availability are perishable.
+- Boundary: Visible points, nearby features, overlays and empty views do not establish reserves, mineral rights, contamination, safety, economic potential or absence. Each result must be routed to the named source and appropriate professional review.
+
+### MAP-007 — verified historical outcome context
+- Supported wording: The checked build keeps verified historical tax-sale outcomes off by default, filters them by municipality, year and outcome, links result sheets to official notice/result sources, and labels a selected record as historical rather than currently available.
+- Source: NS Marks The Spot source commit `d3114b5c`; `web/src/data/historicalTaxSales.ts`, `web/src/data/historicalSourceLedger.json`, `web/src/App.tsx` and figures 49–50.
+- Confidence: high for the checked ledger and production capture; source coverage is bounded by the app's displayed completeness statements.
+- Boundary: A historical opening amount, winning amount, difference or ratio describes that recorded event. It is not current value, a comparable sale, a bid instruction or a forecast for another auction.
 
 ## Physical and environmental uncertainty
 

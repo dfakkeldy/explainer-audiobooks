@@ -5,7 +5,9 @@
     "source": "user",
     "requestedBy": "Dan Fakkeldy",
     "proposedAt": "2026-07-19",
-    "evidence": "Look at the work done on the map. Let's add a chapter about using this resource. Work is still being done on it, but let's plan out the chapter and we'll make a bunch of screenshots showing how to turn the layers on and off, what each layer shows. How to use it to research the tax sale.",
+    "evidence": "Okay. Let’s do that",
+    "redesignAuthorizedAt": "2026-07-20",
+    "redesignAuthorization": "The user authorized the production-map-led chapter and screenshot redesign for review after asking how much of the book should change. This is not the revised-outline approval verdict.",
     "scope": "revised-thirteen-chapter-outline-and-fifty-one-figure-direction",
     "priorAuthorization": {
       "status": "approved",
@@ -290,7 +292,7 @@
     },
     {
       "file": "ch05.md",
-      "purpose": "Teach a bounded, repeatable NS Marks The Spot research pass without treating map proximity, overlap or absence as legal or physical proof.",
+      "purpose": "Teach a bounded NS Marks The Spot chain from current notice through exact parcel, mapped context, preserved unknowns and professional handoff without treating location, overlap, historical result or absence as proof.",
       "prerequisites": [
         "parcel biography",
         "source hierarchy",
@@ -300,19 +302,20 @@
       "sections": [
         {
           "id": "ch05-s01",
-          "job": "Verify the event, notice snapshot and Province-data boundary before exploring one exact PID.",
-          "argument": "The interactive map organizes dated municipal notice facts and map services, but the direct municipal source remains authoritative for current sale status.",
+          "job": "Keep current notices separate from historical outcomes, verify the direct municipal source and establish one parcel by exact PID or authoritative civic-point containment.",
+          "argument": "The map organizes dated notice and result records, but the direct municipality remains authoritative for current status and a civic point or Plus Code remains location context rather than access, occupancy or ownership proof.",
           "specificClaims": [
             "MAP-001",
             "MAP-002",
             "MAP-003",
+            "MAP-004",
             "DATA-002",
             "DATA-005",
             "GIS-001",
             "GIS-002"
           ],
-          "throughlineAdvance": "Turn source hierarchy into an interface habit: event first, PID second, imagery later.",
-          "payoff": "The listener can open the correct event and search one parcel without mistaking the app for the municipality.",
+          "throughlineAdvance": "Turn source hierarchy into an interface habit: mode and notice first, parcel identity second, imagery later.",
+          "payoff": "The listener can open the correct event and establish one parcel without mistaking the app, civic point or Plus Code for an authoritative property conclusion.",
           "landingBeat": "The map is ready to generate questions, not conclusions.",
           "mustNotRepeat": [
             "Do not re-teach every notice identifier.",
@@ -321,20 +324,23 @@
         },
         {
           "id": "ch05-s02",
-          "job": "Turn on one layer at a time, compare visual context with exact mapped intersections and write a bounded research note.",
-          "argument": "A layer or returned polygon intersection can narrow the next question only when its source, date, coverage, limitation and authoritative handoff travel with the observation.",
+          "job": "Use road/water and geology/resource layers one question at a time, bound one historical result, then write the unknown and professional handoff.",
+          "argument": "A layer, returned intersection or historical outcome can narrow the next question only when its source, date, coverage, limitation, unknown and authoritative handoff travel with the observation.",
           "specificClaims": [
             "MAP-002",
             "MAP-004",
             "MAP-005",
+            "MAP-006",
+            "MAP-007",
             "LAND-004"
           ],
           "throughlineAdvance": "Convert attractive map pixels into traceable evidence classifications and next actions.",
-          "payoff": "The listener can use the River Denys example to say what the app returned and what remains unknown.",
-          "landingBeat": "One parcel, one toggle and one note becomes the repeatable method.",
+          "payoff": "The listener can use River Denys and one historical Halifax result to say what the app reports, what it does not establish and where the next question belongs.",
+          "landingBeat": "Notice, parcel, context, unknowns and handoff becomes the repeatable method.",
           "mustNotRepeat": [
             "Do not infer legal access from road linework.",
             "Do not infer a clean site from an empty result.",
+            "Do not infer current value or future bidding from a historical outcome.",
             "Do not turn the live example into a recommendation."
           ]
         }

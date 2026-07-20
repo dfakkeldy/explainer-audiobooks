@@ -1,20 +1,49 @@
 # Proposed Chapter 5 — The Map Is a Question Machine
 
-Status: **outline and screenshot candidates for review**. This chapter expands
-the previously approved twelve-chapter/forty-figure direction. It is not yet an
-approved chapter, and the screenshots are not final publication assets.
+Status: **redesigned outline and production screenshot candidates for review**.
+The user authorized this redesign on 2026-07-20 after the production map gained
+parcel browsing, authoritative civic-address search, current and historical
+tax-sale records, per-parcel road/water context, Plus Codes and additional
+geology/resource layers. This does not yet accept the revised thirteen-chapter,
+51-figure direction or authorize canonical full-book drafting.
+
+## Editorial decision: how much of the book changes
+
+The new map warrants **one major chapter rewrite and five targeted integrations,
+not a whole-book restart**.
+
+- Chapter 5 changes substantially: it becomes a five-step research workflow,
+  rather than a tour of layer switches.
+- Chapters 2 and 4 gain short bridges from municipal notice identifiers to the
+  app's current-parcel browser, exact PID search and authoritative civic-address
+  containment result.
+- Chapters 6 and 7 retrieve the map record for access, water, aerial,
+  geology/resource and other physical-screening questions.
+- Chapter 9 uses historical outcomes as dated descriptive evidence, never a
+  valuation model or prediction.
+- Chapter 13 retrieves the complete notice → parcel → context → unknowns →
+  handoff record on a fresh case.
+- Chapters 1, 3, 8, 10, 11 and 12 keep their existing legal and operational
+  teaching jobs. Their facts do not need to be rewritten around the app.
+- Figures 41–51 are replaced as a complete sequence. The prior layer-catalogue
+  screenshots are obsolete review evidence.
+
+The accepted opening and voice exemplar remain unchanged. The separate
+Inverness Packet Atlas prototypes remain valid development evidence, but the
+remaining 42-card batch should stay paused until review decides whether the
+live map now carries most of the orientation job more usefully.
 
 ## Chapter job
 
-Teach a listener to use the public NS Marks The Spot map as a disciplined first
-research pass for a Nova Scotia tax-sale parcel: select the right event, find one
-PID, turn on one layer at a time, write down bounded observations, and route each
-new question to the source or professional capable of answering it.
+Teach a listener to turn a dated municipal notice into a bounded parcel research
+record with the public NS Marks The Spot map:
 
-The chapter belongs after **Give the Parcel a Biography** and before the
-access and environmental case studies. That placement lets the listener first
-understand source hierarchy, then practise it in the map, then see where the map
-fails in the landlocked and environmental cases.
+> **Notice → Parcel → Context → Unknowns → Handoff**
+
+The chapter belongs after **Give the Parcel a Biography** and before the access
+and environmental case studies. The listener first learns source hierarchy,
+then practises it in the map, then sees the method challenged by access and
+physical-condition cases.
 
 Proposed length: approximately **3,400 words**. The revised book would contain
 thirteen chapters and approximately 46,200 words before editorial compression.
@@ -23,143 +52,196 @@ thirteen chapters and approximately 46,200 words before editorial compression.
 
 By the end, the listener should be able to:
 
-1. verify the municipal event and notice snapshot before exploring parcels;
-2. search an exact PID and distinguish notice facts from mapped context;
-3. explain what each available layer can show and what it cannot establish;
-4. compare apparent proximity with the map's exact intersection result without
-   turning either result into a legal or environmental conclusion; and
-5. leave a dated research note containing the observation, limitation, next
-   authoritative source and professional handoff.
+1. verify a municipality, sale date and direct notice before treating a parcel
+   as current;
+2. distinguish current notice records from completed historical outcomes;
+3. search an exact PID or authoritative civic address and explain what the
+   returned parcel relationship does and does not establish;
+4. record road, water, aerial, boundary and geology/resource results as dated
+   screening observations rather than legal or physical conclusions;
+5. use a historical result sheet descriptively without turning it into value,
+   forecasting or a live-property recommendation; and
+6. leave a research note containing the source, observation, limitation,
+   unknown, next authority and professional handoff.
 
-New core terms are limited to **layer** and **mapped intersection**. The
-road-book reset is always one parcel, one toggle and one note.
+New core terms remain limited to **layer** and **mapped intersection**. The
+road-book reset is still one parcel, one toggle and one note; the visual route
+is the five-step chain above.
 
 ## Throughline
 
 The map is not a verdict machine. It is a question machine.
 
-An overlap does not prove ownership, access, buildability, flooding or site
-condition. An empty result does not prove the feature is absent. Each screen
-state is a dated view of municipal notice data and provincial map services whose
-coverage, scale, currency and legal authority differ.
+An overlap does not prove ownership, access, buildability, flooding, mineral
+potential or site condition. An empty result does not prove absence. A civic
+address or Plus Code identifies a mapped point useful for orientation; neither
+proves legal access, a parcel's mailing address, occupancy or permission to
+enter. A historical sale result describes one dated event, not present value or
+future bidding behaviour.
 
-## Argument and scene plan
+Every screen state is a dated view assembled from municipal notices and public
+map services whose coverage, scale, currency and legal authority differ.
 
-### 1. Start with the notice, not the imagery
+## Five-part argument and scene plan
 
-- Open the Province-data explanation before using restricted geographic
-  services. Explain why licence, attribution and service limits belong inside
-  the research record.
-- Choose the correct municipality and sale date. Read the notice snapshot date,
-  then open the direct official source to confirm that the sale and parcel are
-  still current.
-- Use the redemption filter only to organize the notice. It does not change or
-  interpret the legal status of a parcel.
+### 1. Notice — establish currency before geography
 
-Landing beat: the map helps the listener find a municipal record; it does not
-replace the municipality.
+- Keep current notices and historical results as visibly separate research
+  modes.
+- Choose the municipality and sale date, read the snapshot date, then follow
+  the direct official source to confirm the event and parcel remain current.
+- Browse or filter the current notice catalogue to find one record. Redemption
+  filters organize published fields; they do not interpret the law.
+- Open the Province-data explanation before relying on restricted geographic
+  services. Licence, attribution and service limitations belong in the record.
 
-### 2. Find one PID and change one layer at a time
+Landing beat: the app can index the notice; only the municipality controls the
+live notice.
 
-- Search the exact PID and read the parcel inspector before zooming into visual
-  detail.
-- Keep the modern map as orientation. Treat Fletcher historical mapping as
-  unavailable while public-web display rights remain unresolved.
-- Turn layers on one at a time. Say aloud what changed and what did not.
-- Treat approximate mapped acreage as an NSPRD geometry calculation rather than
-  a survey or deed area.
-- Compare nearby linework with the exact intersection lists. A feature that
-  appears nearby may not intersect the selected polygon; a returned intersection
-  is a map-service result, not proof of legal access or physical condition.
+### 2. Parcel — establish the object being researched
 
-Landing beat: visual confidence falls as the research note becomes more precise.
+- Search the exact PID when one is supplied.
+- When starting from a civic address, use the authoritative civic point and
+  parcel-containment lookup; do not substitute nearest-address guessing.
+- Read the parcel sheet before zooming into imagery: notice facts, approximate
+  mapped acreage, civic-address results, Plus Code, source links and explicit
+  limitations.
+- Treat mapped acreage and graphical boundaries as screening geometry, not deed
+  area, a legal description or a survey.
 
-### 3. Turn pixels into a research record
+Landing beat: the parcel sheet makes the app's claims narrower as the map feels
+more specific.
 
-For every useful observation, record:
+### 3. Context — ask one source-sized question at a time
+
+- Use modern map and aerial imagery for orientation and dated visible clues.
+- Use property boundaries to hold the selected screening geometry steady.
+- Compare road/trail/culvert and water linework with the parcel sheet's exact
+  mapped-intersection results.
+- Use geology, mineral occurrences, mineral tenure and abandoned-mine-opening
+  layers as regional screening sources. A visible point, nearby feature or
+  overlap starts a records question; it does not establish reserves, rights,
+  contamination, safety or economic potential.
+- Choose layers by the parcel question. The live map should carry the full
+  current layer catalogue; the spoken chapter should teach the method, not
+  recite every checkbox.
+
+Landing beat: one parcel, one toggle and one note produces a usable observation.
+
+### 4. Unknowns — preserve what the map cannot answer
+
+For each observation, ask:
+
+- Was the result a municipal notice field, civic point, visual proximity,
+  service intersection, historical record or absence/error state?
+- What date, scale, coverage and authority limits travel with it?
+- What could still be true even if the result is accurate?
+- Would a current official record, title document, survey, planning response,
+  field inspection or professional opinion answer the next question?
+
+The expected output is not a score. It is a short known/unknown boundary.
+
+### 5. Handoff — turn the screen into a research record
 
 | Field | What to write |
 |---|---|
-| Question | The parcel-specific uncertainty being investigated. |
-| Source/layer | Exact layer or municipal notice used. |
-| Observation | Neutral wording such as “mapped water feature intersects.” |
-| Retrieval | Event snapshot date, access date and, for production, app version. |
-| Limitation | Scale, currency, coverage or authority boundary. |
-| Next source | Municipal notice, Property Online, survey, planning record or other authoritative record. |
-| Handoff | Lawyer, surveyor, planner, environmental professional or other qualified reviewer when required. |
+| Notice | Municipality, event date, snapshot date and direct official source. |
+| Parcel | Exact PID and how it was found; note any authoritative civic point separately. |
+| Context | Neutral wording such as “mapped River feature intersects” or “mineral-occurrence points visible in the current viewport.” |
+| Retrieval | Access time, production source commit and relevant source/layer. |
+| Limitation | Scale, currency, coverage, geometry, authority or historical-result boundary. |
+| Unknown | The parcel-specific question the screen cannot answer. |
+| Next authority | Municipal notice, Property Online, registry instrument, survey, planning record, environmental record or other authoritative source. |
+| Handoff | Lawyer, surveyor, planner, environmental professional, insurer, accountant or other qualified reviewer when required. |
 
-### Worked example: Southside River Denys
+## Worked current-notice example: Southside River Denys
 
-Use PID `50308311` only as a dated interface demonstration, not as a property
-recommendation. In the captured build the parcel inspector reports approximately
-5.12 mapped acres, returns mapped water-feature intersections including River
-Denys, and returns no mapped road/trail intersection. The visible transportation
-line nearby and the empty intersection result create an access question; they
-do not establish either access or no access. The water result creates a physical
-and environmental research question; it is not a wetland determination, flood
-opinion or site inspection.
+Use PID `50308311` only as a dated interface demonstration, not a property
+recommendation. In the 2026-07-20 production capture, the parcel sheet reports
+approximately 5.12 mapped acres, returns River Denys among mapped water
+intersections, and returns no mapped road/trail intersection. A nearby
+transportation line remains visible. Together those results create separate
+access and water questions; they establish neither access nor its absence, and
+they are not a wetland determination, flood opinion or site inspection.
 
-Before publication, refresh this example against the live municipal notice and
-current map build. If the parcel leaves the sale or the service result changes,
-replace it with a fictionalized or completed-sale example while preserving the
-same research method.
+Before publication, refresh the example against the direct municipal notice
+and current production build. If the parcel leaves the sale or the service
+result changes, replace it with a completed-sale or fictionalized example while
+preserving the method.
 
-## What each layer contributes
+## Worked historical example: one outcome, not a model
 
-| Map control | Useful for | Must not be narrated as |
-|---|---|---|
-| Modern map | Community, road and place-name orientation. | Current legal access, boundary or official property fact. |
-| Fletcher historical map | Historical context if rights become available. | Available for public use in the current build; it is intentionally disabled. |
-| NS Aerial | Visible land-cover, building, shoreline and approach clues at the imagery date. | Current condition, lawful access, boundary, occupancy or inspection. |
-| NS Property Boundaries | Locating the selected NSPRD geometry and comparing nearby mapped parcels. | A survey, legal description, title opinion or guaranteed area. |
-| Crown Lands | Screening nearby mapped Crown-land context. | Proof that the selected parcel is Crown land or that public access exists. |
-| Flood Risk Areas | Watershed-scale flood-risk screening where the service has coverage. | A parcel-specific flood certificate, insurance decision or future-condition guarantee. |
-| Waterfalls | Regional landscape and named-feature orientation. | Core parcel due diligence or proof of water on the selected parcel. |
-| Water features | Mapped rivers, lakes, wetlands and water linework; exact polygon intersections where returned. | A current wetland delineation, water quality result, setback decision or site condition. |
-| Roads, trails & culverts | Mapped transportation classes, proximity and exact polygon intersections where returned. | Legal right-of-way, maintained frontage, passability, culvert condition or permission to enter. |
-
-The current public build deliberately does not offer well or septic layers. The
-available public records have different locations, dates and precision, so those
-questions remain in the records-and-professionals part of the book.
+Use the captured Halifax PID `00542589` sheet only to demonstrate how the app
+separates a verified historical result from current notices. The interface
+shows a March 8, 2022 result with official notice/result links and labelled
+opening and winning amounts. The chapter may compare those two amounts for that
+event. It must also say that one result does not establish current parcel value,
+today's condition, a comparable sale, or a prediction for another auction.
 
 ## Screenshot sequence
 
-The eleven 2560-by-1440 candidates live in `chapters/images/`. They were captured
-from NS Marks The Spot source commit `1ee76d15b2466d40674e62113ac9f1e9044421c1`
-on 2026-07-19 and are review evidence, not accepted final figures.
+The eleven 2560-by-1440 production candidates live in `chapters/images/`. They
+were captured from the public app backed by source commit
+`d3114b5cfc907d85f8b2c1f015d5476719b53586` on 2026-07-20. They are dated
+review evidence, not accepted final figures.
 
 | Figure | Teaching job | Planned narration cue |
 |---|---|---|
-| 41 — map-layer overview | Establish the control panel and all available toggles in their off state. | “Before we add information, notice what the map is already claiming—and what it is not.” |
-| 42 — Province-data licence | Explain the source/licence boundary before activating provincial services. | “The permission and disclaimer travel with the picture.” |
-| 43 — tax-sale notice filter | Choose municipality/event and isolate the redeemable category. | “This filter organizes the notice; it does not decide the law.” |
-| 44 — PID search and inspector | Search PID `50203256` and separate notice fields, mapped area and intersection results. | “Read the words before trusting the shape.” |
-| 45 — aerial plus boundaries | Show how imagery and parcel linework answer different questions. | “Two layers can align beautifully and still not become a survey.” |
-| 46 — roads, trails and culverts | Reveal transportation classes and the legend. | “A road-coloured line is a clue, not a right-of-way.” |
-| 47 — water features | Reveal mapped hydrography and wetlands. | “Blue linework starts a water question; it does not finish one.” |
-| 48 — Crown Lands | Show public-land context near the selected area. | “Neighbouring Crown context says nothing by itself about this parcel's ownership or access.” |
-| 49 — flood-risk areas | Show watershed-scale screening and service coverage. | “The layer speaks at its own scale, not the scale of your hopes.” |
-| 50 — waterfalls overview | Demonstrate a regional context layer and why not every layer belongs in every parcel file. | “Useful maps are selected by the question, not by novelty.” |
-| 51 — combined River Denys research | Combine boundaries, water and transport with exact inspector results. | “Now write the discrepancy down: water intersects; mapped road does not.” |
+| 41 — production overview | Establish current defaults, source boundary and main research modes. | “Before choosing a parcel, name the mode, the notice and the question.” |
+| 42 — Province-data licence | Put service rights and limitations before map interpretation. | “The permission and disclaimer travel with the picture.” |
+| 43 — current parcel browser | Browse a current event and filter a published redemption field. | “This list organizes the notice; it does not decide the law.” |
+| 44 — civic-address search | Show authoritative civic search returning a contained parcel. | “An exact civic point can find a parcel without becoming proof of access or occupancy.” |
+| 45 — current parcel evidence | Read PID, mapped area, civic point, Plus Code, roads/water and limitations together. | “Read the bounded words before trusting the shape.” |
+| 46 — aerial and boundaries | Compare dated imagery with graphical property geometry. | “Two layers can align beautifully and still not become a survey.” |
+| 47 — road and water context | Compare nearby transportation with exact road/water intersection results. | “A line beside the parcel and a returned overlap are different kinds of clue.” |
+| 48 — geology and resources | Screen geology, mineral occurrences, tenure and mine openings. | “A resource layer starts a records question; it does not find a mine or value a parcel.” |
+| 49 — historical outcomes | Switch out of current notices into a clearly dated completed-result catalogue. | “Past results are evidence about past events, not a forecast.” |
+| 50 — historical result sheet | Read one exact-PID outcome and its official sources and disclaimers. | “One opening amount and one winning bid describe one day.” |
+| 51 — combined research record | Close with a current notice, exact parcel, civic aids, road/water and resource layers together. | “Now separate what the screen reports from what still belongs in records and professional hands.” |
 
 ## Screenshot production rules
 
-- Keep all masters at 2560 by 1440 with the full app header, control panel,
-  attribution footer and any open inspector visible.
-- Add a small book-owned title card or callout only after the interface settles;
-  do not cover source attribution or imply the book owns provincial data.
-- Refresh every screen after the map implementation is declared stable and
-  again immediately before publication.
-- Preserve figure IDs 41–51 when replacing screenshots so chapter cues and Echo
-  timelines remain stable.
-- The narration must remain complete when the screen is unavailable. Do not
-  recite every checkbox; teach the repeatable method and use the images as
-  spatial reinforcement.
+- Keep all masters at 2560 by 1440 with app header, control panel, attribution
+  footer and relevant parcel sheet visible.
+- Do not cover source attribution or imply that the book owns provincial data.
+- Refresh current-notice and historical examples immediately before publication.
+- Preserve figure IDs 41–51 so chapter cues and future Echo timelines stay
+  stable even when the interface is recaptured.
+- Narration must remain complete with the screen unavailable. The living layer
+  catalogue belongs in the app; the book teaches the durable research method.
+- Final figures require phone-size legibility and Echo slideshow/video checks.
+
+## Map-product feedback discovered during the capture
+
+These are improvements to the map product, not prerequisites for this book
+redesign:
+
+1. **Make current and historical modes mutually unmistakable.** A segmented
+   mode control should replace independent current/historical toggles or warn
+   when both modes are active.
+2. **Collapse long result lists after selection.** Current and historical
+   browse lists consume most of the control rail; auto-collapse the list when a
+   parcel sheet opens and preserve an obvious “Back to results” action.
+3. **Add a shareable research state.** Encode PID, event, selected layers and
+   map position in the URL so a dated note can reopen the same screen state.
+4. **Export a source-linked evidence note.** A copy/download action could emit
+   the notice, PID, civic result, Plus Code, layer results, timestamps,
+   limitations and official links—without scoring the parcel.
+5. **Summarize resource-layer intersections in the parcel sheet.** Geology and
+   mineral layers are currently powerful visual screens; bounded loading,
+   matched, empty and error states would make them as auditable as road/water
+   queries.
+6. **Show layer readiness and scale limits beside each toggle.** A visible
+   loading/error state, source date and zoom/coverage hint would reduce the
+   chance that a blank viewport is narrated as absence.
+7. **Keep authoritative address language prominent.** Continue to distinguish
+   civic-point containment from nearest or interpolated address matching and
+   keep the “not ownership/access/occupancy proof” boundary adjacent to results.
 
 ## Publication and safety gate
 
-This proposal changes the approved outline from twelve chapters/forty figures
-to thirteen chapters/fifty-one figures. Pilot drafting can continue only after
-the revised outline and screenshot direction receive explicit approval. Final
-screens require a fresh source/version receipt, public-safety scan, phone-size
-legibility review and an Echo slideshow/video check.
+The redesigned proposal still changes the last approved outline from twelve
+chapters/forty figures to thirteen chapters/fifty-one figures. The 2026-07-20
+direction authorized this redesign and capture pass for review; it did not
+record the revised outline verdict. Canonical full-book drafting remains paused
+until that verdict and the narrated comprehension-pilot decision are recorded.

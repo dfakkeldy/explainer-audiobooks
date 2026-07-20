@@ -24,7 +24,7 @@ This is a chapter-facing selection from `evidence-notes.md`; the stable claim ID
 
 ## 5. Use the map as a question machine
 
-- `MAP-001` through `MAP-005`, `GIS-001`, `GIS-002`, `LAND-004`: verify the
+- `MAP-001` through `MAP-007`, `GIS-001`, `GIS-002`, `LAND-004`: verify the
   municipal event, search one exact PID, turn on one layer at a time, and record
   source/date/limitation before interpreting proximity or an exact mapped
   intersection.

@@ -2,10 +2,11 @@
 
 **Status: revised outline approval pending — not authorized for canonical
 full-book production.** The prior twelve-chapter/forty-figure pilot direction
-was approved, but a thirteenth map-method chapter and eleven additional figures
-are now proposed. First-section acceptance and a narrated comprehension-pilot
-decision remain absent. A separate owner-free Inverness Packet Atlas remains
-outside both figure directions.
+was approved; the proposed thirteenth map-method chapter and eleven additional
+figures were redesigned against the production map on 2026-07-20 and remain
+awaiting an explicit outline/figure verdict. The first-section voice is accepted,
+but a narrated comprehension-pilot decision remains absent. A separate
+owner-free Inverness Packet Atlas remains outside both figure directions.
 
 ## Production request
 
@@ -25,7 +26,7 @@ a screen, and keep every live-property reference educational and unranked.
   publication authorization.
 - Length target: 46,200 words, estimated range 44,000–49,000.
 - Original target: 22,000 words.
-- Target history and approval evidence: seven dated verbatim directions in
+- Target history and approval evidence: eight dated verbatim directions in
   `research/learning-brief.json` and `research/conversation-log.md`.
 - Audience: curious beginner; no purchase intent is assumed.
 - Prior knowledge: ordinary real-estate-listing familiarity, but no assumed tax
@@ -40,8 +41,10 @@ a screen, and keep every live-property reference educational and unranked.
 - Source confidence: deep, with perishable event and fee details dated.
 - User approval status: the prior twelve-chapter/forty-figure direction was
   approved for pilot development at 2026-07-19T11:56:49-03:00. The proposed
-  thirteen-chapter/51-figure revision is pending review; both the prior approval
-  and new direction are preserved in `research/learning-outline.json`,
+  thirteen-chapter/51-figure revision was redesigned for review under the
+  user's 2026-07-20 “Okay. Let’s do that” direction and still awaits its
+  explicit verdict; both the prior approval and new direction are preserved in
+  `research/learning-outline.json`,
   `research/comprehension-pilot.json`, and `research/conversation-log.md`.
 
 ## Core promise
@@ -133,8 +136,9 @@ expanded spoken forms. Candidate readings are not acceptance evidence.
 ## Figure plan
 
 `research/visuals.md` is the proposed 51-row manifest and safety authority.
-Figures 41–51 are version-stamped NS Marks The Spot walkthrough candidates;
-their source and hashes are in
+Figures 41–51 are version-stamped NS Marks The Spot production research-chain
+candidates covering current notice, parcel, civic search, context, historical
+outcomes and handoff; their source and hashes are in
 `figures/map-chapter-screenshot-receipt.json`. Figures 03–08 plus the Chapter 10
 payment-readiness clock and Chapter 12 surplus-proceeds route are deterministic
 review candidates. The county overview is a QGIS 4
@@ -154,7 +158,9 @@ Dan authorized development of the three-card prototype on 2026-07-19 with
 sheets. Dan then accepted the exact three-card visual direction with “I like
 them.” at 2026-07-19T15:39:47-03:00; the hash-bound human receipt lives beside
 the render receipt. Actual Echo-stage proof, batch rendering of the remaining
-42 cards and publication remain unapproved.
+42 cards and publication remain unapproved. Keep that batch paused until review
+decides how much orientation work now belongs in the living map rather than
+static cards.
 
 ## Style notes
 

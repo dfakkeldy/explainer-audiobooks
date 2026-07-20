@@ -46,15 +46,18 @@ The book's value does not depend on converting readers into clients. Its primary
 
 - Add a proposed Chapter 5, **The Map Is a Question Machine**, after the parcel
   biography and before the access/environmental case studies.
-- Teach one repeatable pass: verify the official event, search one exact PID,
-  activate one layer at a time, record a bounded observation, and name the next
-  authoritative source or professional.
-- Cover NS Aerial, NS Property Boundaries, Crown Lands, Flood Risk Areas,
-  Waterfalls, Water features, and Roads/trails/culverts. State explicitly that
-  proximity and mapped intersection are screening results, not legal access,
-  survey, flood, wetland, title or site-condition conclusions.
-- Treat figures 41–51 as source-versioned review candidates. Refresh them after
-  the app stabilizes and again before publication.
+- Teach one repeatable chain: notice → parcel → context → unknowns → handoff.
+  Keep current notices separate from verified historical outcomes, verify the
+  direct official event, and establish one parcel by exact PID or authoritative
+  civic-point containment before interpreting imagery.
+- Use civic results, Plus Codes, aerial, property boundaries, road/water results
+  and geology/resource layers only for source-sized questions. State explicitly
+  that location aids, proximity, mapped intersections, resource overlays,
+  historical results and empty states are screening evidence—not access,
+  occupancy, ownership, survey, flood, wetland, title, condition, value or
+  forecast conclusions.
+- Treat figures 41–51 as source-versioned production review candidates. Refresh
+  current and historical records again immediately before publication.
 
 ## Visual and video direction
 

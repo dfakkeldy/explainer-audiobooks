@@ -184,25 +184,26 @@
     },
     {
       "file": "ch05.md",
-      "purpose": "Use NS Marks The Spot as a question-generating research screen rather than a property verdict.",
+      "purpose": "Use NS Marks The Spot to carry one record from notice through parcel and mapped context to explicit unknowns and professional handoff rather than a property verdict.",
       "prerequisites": [
         "PID",
         "municipal event source",
         "source hierarchy",
         "map limitation"
       ],
-      "knowledgeDelta": "Run a layer-by-layer parcel screening pass and leave a dated research note containing the observation, limitation, next source and professional handoff.",
-      "groundedExample": "A version-stamped Southside River Denys interface demonstration in which mapped water intersects and no mapped road/trail intersection is returned.",
+      "knowledgeDelta": "Separate current from historical, establish one exact parcel, run question-sized context screens and leave a dated record containing the observation, limitation, unknown, next source and professional handoff.",
+      "groundedExample": "Production captures of Southside River Denys road/water context and one verified Halifax historical outcome, both used as bounded interface demonstrations.",
       "concepts": [
         "layer",
         "mapped intersection"
       ],
       "beats": [
-        "verify the event",
-        "search one PID",
-        "toggle one layer",
-        "compare proximity with intersection",
-        "write the next question"
+        "separate current from historical",
+        "verify the notice",
+        "establish one parcel",
+        "screen one context question",
+        "preserve the unknown",
+        "write the handoff"
       ],
       "newCoreTerms": [
         {
@@ -219,11 +220,11 @@
         "symbolicChainSteps": 0,
         "calculationTreatment": "none",
         "focusedLessonMinutes": 0,
-        "concreteReset": "Return to one parcel, one toggle and one note."
+        "concreteReset": "Return to notice, parcel, context, unknowns and handoff."
       },
       "teachingInfrastructure": {
         "narrativeConnection": "The parcel biography becomes an interactive research record before the access and environmental failure cases.",
-        "realWorldApplication": "NS Marks The Spot event catalogues, provincial map services and exact mapped road/water intersection results."
+        "realWorldApplication": "NS Marks The Spot current and historical catalogues, authoritative civic search, Plus Codes, provincial road/water and geology/resource services, and exact mapped intersections."
       }
     },
     {
@@ -287,6 +288,7 @@
         "hazard map"
       ],
       "beats": [
+        "retrieve the bounded map screen",
         "reconstruct prior use",
         "read a well record",
         "check scenario maps",
@@ -374,13 +376,14 @@
         "possession risk"
       ],
       "knowledgeDelta": "Separate recovery minimum, total exposure and written bid ceiling.",
-      "groundedExample": "Inverness County's published 2025 bid rows, with CBRM and Richmond comparison samples, plus one composite cost stack.",
+      "groundedExample": "Inverness County's published 2025 bid rows, CBRM and Richmond comparison samples, one source-linked historical map sheet used only as a dated result, and one composite cost stack.",
       "concepts": [
         "all-in cost",
         "uncertainty reserve",
         "maximum bid"
       ],
       "beats": [
+        "bound each historical result",
         "read observed ratios",
         "stack costs",
         "branch taxes",
@@ -574,6 +577,7 @@
         "staged responsibility"
       ],
       "beats": [
+        "repeat notice to parcel to context",
         "identify known facts",
         "preserve unresolved risks",
         "assign professional authority",
