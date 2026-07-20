@@ -1,4 +1,4 @@
-# Proposed argument-level outline
+# Approved argument-level outline for pilot development
 
 ## Working title
 
@@ -129,7 +129,7 @@ Estimated total: approximately 46,200 words before editorial compression.
 
 ## Visual-listening route
 
-The proposed revision is planned as a figure-rich Echo slideshow and
+The approved-for-pilot revision is planned as a figure-rich Echo slideshow and
 video-export title with 51 purposeful figures. `visuals.md` is the detailed
 manifest and provenance
 authority. The chapter-level route is:

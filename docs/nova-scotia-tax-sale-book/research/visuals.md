@@ -1,6 +1,6 @@
 # Visual-listening figure plan
 
-Status: proposed 51-figure direction, with two QGIS 4 development proofs, eight
+Status: 51-figure direction approved for pilot development, with two QGIS 4 development proofs, eight
 legal/process diagrams and eleven NS Marks The Spot screenshots rendered as
 review candidates. This register is the authority for interior figures in the
 public edition. Candidate assets live under `chapters/images/` and will be
@@ -10,7 +10,7 @@ placement and Echo proof are approved.
 ## Interactive-map research-chain batch — 2026-07-20
 
 Figures 41 through 51 are version-stamped 2560-by-1440 review candidates for
-the proposed Chapter 5. They now teach one complete chain—notice, parcel,
+the approved-for-pilot Chapter 5. They now teach one complete chain—notice, parcel,
 context, unknowns and handoff—using the production app's current parcel browser,
 authoritative civic-address search, Plus Codes, road/water results,
 geology/resource screening and verified historical outcomes. Their source
@@ -103,7 +103,7 @@ municipal packet facts with rights-checked public mapping, clearly separated
 screening observations and professional handoffs. Property Online screenshots,
 documents, owner information and subscription-derived extracts are excluded.
 
-This proposal **does not add the atlas to the 51-figure chapter direction**.
+This direction **does not add the atlas to the 51-figure chapter direction**.
 The atlas stays outside the proposed manifest until its card structure, source-and-rights
 ledger, three-card prototype, live-event-status refresh and complete rendered
 set each pass a separate approval gate. The existing Lien 1 aerial is only a
@@ -134,7 +134,7 @@ an audio book with a few incidental illustrations. The main narration must
 remain complete with the screen unavailable, while the visual track should make
 spatial, procedural and numerical relationships easier to retrieve.
 
-The proposed target is **51 purposeful figures**:
+The approved-for-pilot target is **51 purposeful figures**:
 
 - 15 QGIS map plates: three fictional/composite case files, each using the
   five-map packet structure;
@@ -306,7 +306,7 @@ Each of the fifteen map plates needs its own provenance row before rendering:
    evidence created under the user's explicit requests to work on maps and
    slideshow figures. None may be promoted into canonical chapter placement by
    that fact alone.
-2. Approve the proposed thirteen-chapter argument outline and 51-figure visual direction.
+2. Preserve the approved thirteen-chapter argument outline and 51-figure visual direction while final figures remain separately gated.
 3. Use figures 03–08 and 39–40 as the diagram-system proof, then create one **map style
    proof**, preferably `figure-15-case-a-access-terrain.png`, because it tests
    QGIS labels, colour semantics, attribution, phone legibility and Echo's 16:9

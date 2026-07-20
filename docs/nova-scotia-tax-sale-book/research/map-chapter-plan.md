@@ -1,11 +1,13 @@
 # Proposed Chapter 5 — The Map Is a Question Machine
 
-Status: **redesigned outline and production screenshot candidates for review**.
+Status: **chapter direction approved for pilot development; production
+screenshot candidates remain review-only**.
 The user authorized this redesign on 2026-07-20 after the production map gained
 parcel browsing, authoritative civic-address search, current and historical
 tax-sale records, per-parcel road/water context, Plus Codes and additional
-geology/resource layers. This does not yet accept the revised thirteen-chapter,
-51-figure direction or authorize canonical full-book drafting.
+geology/resource layers. The user explicitly approved the revised thirteen-
+chapter/51-figure direction on 2026-07-20. That approval does not accept the
+narrated pilot, final screenshots or canonical full-book drafting.
 
 ## Editorial decision: how much of the book changes
 
@@ -240,8 +242,8 @@ redesign:
 
 ## Publication and safety gate
 
-The redesigned proposal still changes the last approved outline from twelve
-chapters/forty figures to thirteen chapters/fifty-one figures. The 2026-07-20
-direction authorized this redesign and capture pass for review; it did not
-record the revised outline verdict. Canonical full-book drafting remains paused
-until that verdict and the narrated comprehension-pilot decision are recorded.
+The 2026-07-20 direction explicitly approves thirteen chapters and fifty-one
+figures for pilot development. Canonical full-book drafting remains paused
+until the separate narrated comprehension-pilot decision is recorded. Final
+screens still require source refresh, phone/Echo review and explicit figure
+promotion.

@@ -26,6 +26,55 @@
       "acceptedAt": "2026-07-19T16:17:07-03:00",
       "authorizationPath": "research/learning-outline.json",
       "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch01-s02-pilot",
+      "status": "drafted-for-narrated-pilot",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "previousSectionTextOrSummary": "The accepted opening credits the Inverness packet, uses the fictional Harbour Road parcel to separate records from conclusions, reconciles conflicting packet details, assigns unanswered questions to the right authorities and ends by asking why a municipality is selling land rather than marketing it.",
+      "sectionJob": "Trace the pre-sale clock from tax lien through notice and advertisement.",
+      "specificClaims": [
+        "LAW-001",
+        "LAW-002",
+        "LAW-003",
+        "LAW-004",
+        "LAW-005",
+        "OPS-005",
+        "OPS-007"
+      ],
+      "throughlineAdvance": "Introduce the first of two clocks and the treasurer's limited institutional job.",
+      "payoff": "The auction room now has a legal backstory and human participants outside the room.",
+      "landingBeat": "The listener can state why the municipality is there and why it is not acting like a realtor.",
+      "mustNotRepeat": [
+        "Do not reteach the municipal packet's source limitations.",
+        "Do not teach auction payment mechanics yet."
+      ],
+      "draftPath": "pilot/first-technical-passage.md",
+      "draftSHA256": "8cf03fb648988d681a072665875fd6905d0c3fe85b00b44cba622018e1035d65",
+      "wordCount": 1042,
+      "draftedAt": "2026-07-20T08:27:17-03:00",
+      "termsDefined": [
+        "tax lien",
+        "notice of intent",
+        "tax sale"
+      ],
+      "retrievalPrompt": "Choose the controlling source for a Halifax event from an Inverness packet, a map marker and Halifax's current notice under its own Charter framework.",
+      "retrievalAnswer": "Halifax's current notice controls; the packet teaches a method and the map routes the listener, but neither replaces the event authority.",
+      "runningSummary": "The municipality reaches sale through a priority lien, elapsed statutory time, preliminary and sixty-day notices, title work and at least thirty days of public notice. Municipal event practices vary, Halifax uses a parallel Charter, and the current authority-owned notice controls over another municipality's packet or a map marker.",
+      "unresolvedPromises": [
+        "Explain what the amount owing does and does not mean before bidding.",
+        "Return to the second clock after a successful bid.",
+        "Apply the authority-routing method to the Chapter 5 map workflow."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "humanOutlineApprovalEvidence": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction.",
+      "approvedAt": "2026-07-20T08:21:03-03:00",
+      "authorizationPath": "research/learning-outline.json",
+      "recordedBeforeDraft": true
     }
   ],
   "checkpoints": []

@@ -121,6 +121,17 @@
       "approvalSource": "user",
       "verbatimQuote": "Okay. Let’s do that",
       "evidence": "Okay. Let’s do that"
+    },
+    {
+      "date": "2026-07-20",
+      "recordedAt": "2026-07-20T08:21:03-03:00",
+      "oldTargetWords": 46200,
+      "newTargetWords": 46200,
+      "reason": "The user explicitly approved the production-map-led thirteen-chapter and 51-figure direction for pilot development, with one major Chapter 5 rewrite and targeted integrations in Chapters 2, 4, 6, 7, 9 and 13.",
+      "approvalStatus": "approved-for-pilot-development",
+      "approvalSource": "user",
+      "verbatimQuote": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction.",
+      "evidence": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction."
     }
   ],
   "safety": {

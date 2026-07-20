@@ -92,14 +92,22 @@ package.
   Codes, road/water context and geology/resources. This authorizes the design
   and review assets, not the revised outline verdict, canonical full-book
   drafting, narration, final-figure acceptance or publication.
+- **Thirteen-chapter/51-figure direction approved for pilot development:**
+  “The new map warrants one major Chapter 5 rewrite plus targeted changes to
+  Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures
+  direction.” This closes the reopened argument-outline and visual-direction
+  checkpoint. It authorizes the representative pilot and later section-by-
+  section drafting only after the separate narrated-pilot verdict. It does not
+  promote screenshot candidates to final figures or authorize full narration,
+  finished-audiobook publication, or the remaining 42-card atlas batch.
 
 ## Gate status
 
 The prior twelve-chapter argument outline and forty-figure direction remain the
-last approved pilot scope. The three-card atlas direction and exact first-section
-voice exemplar are separately accepted against their hashes. A
-thirteen-chapter/51-figure revision has been redesigned against the production
-map and is awaiting its explicit outline/figure verdict. The narrated
+historical approval. The three-card atlas direction and exact first-section
+voice exemplar are separately accepted against their hashes. The production-
+map-led thirteen-chapter/51-figure direction is now approved for pilot
+development. The narrated
 comprehension-pilot verdict, canonical full drafting, pronunciation acceptance,
 actual Echo/video-stage prototype proof, atlas batch authorization, final figure
 acceptance, and publication remain downstream gates.

@@ -19,3 +19,27 @@
   voice.” at 2026-07-19T16:17:07-03:00. No chapter checkpoint may be added
   until the complete Chapter 1 draft exists; the narrated pilot verdict remains
   pending.
+
+## Before `ch01-s02-pilot`
+
+- Status: authorized pilot draft after explicit approval of the thirteen-chapter
+  outline and 51-figure direction.
+- Previous section: the accepted opening credits the Inverness packet, separates
+  records from conclusions through fictional Harbour Road, and ends by asking
+  why the municipality is selling rather than marketing property.
+- Job: travel backward from the Port Hood auction through the lien, eligibility,
+  notice, title-search and advertisement stages.
+- Allowed evidence claims: `LAW-001` through `LAW-005`, `OPS-005`, and `OPS-007`.
+- Teaching boundary: define only `tax lien`, `notice of intent`, and `tax sale`;
+  demonstrate municipal variation without implying that one event notice governs
+  another municipality.
+- Repetition boundary: do not reteach packet limitations and do not introduce
+  auction payment mechanics.
+- Retrieval boundary: require the listener to distinguish an advertisement from
+  marketing copy and apply that distinction to a fresh municipal example.
+- Visual boundary: the passage must remain comprehensible without a figure while
+  establishing why later map lookups begin with an authoritative municipal event.
+- Draft target: `pilot/first-technical-passage.md`.
+- Authorization evidence: Dan’s 2026-07-20 direction to proceed with the major
+  Chapter 5 rewrite, targeted chapter changes, and 51-figure direction, scoped
+  to pilot development by the governed workflow.

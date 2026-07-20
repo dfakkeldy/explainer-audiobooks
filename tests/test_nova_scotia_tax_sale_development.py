@@ -54,18 +54,18 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(brief["originalTargetWords"], 22000)
         self.assertEqual(brief["currentTargetWords"], 46200)
         self.assertTrue(brief["draftingStarted"])
-        self.assertEqual(len(brief["scopeHistory"]), 8)
+        self.assertEqual(len(brief["scopeHistory"]), 9)
         for decision in brief["scopeHistory"]:
             self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19|20)T")
             self.assertTrue(decision["verbatimQuote"])
             self.assertEqual(decision["evidence"], decision["verbatimQuote"])
 
         self.assertIn(
-            "Okay. Let’s do that",
+            "51 figures direction",
             brief["scopeHistory"][-1]["verbatimQuote"],
         )
 
-    def test_outline_gate_preserves_prior_approval_and_reopens_for_map_revision(self) -> None:
+    def test_outline_gate_records_map_revision_approval_for_pilot_only(self) -> None:
         outline = json.loads(
             (RESEARCH_ROOT / "learning-outline.json").read_text(encoding="utf-8")
         )
@@ -77,8 +77,20 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             "visual direction for pilot development."
         )
 
-        self.assertEqual(outline["authorization"]["status"], "pending")
+        approval = (
+            "The new map warrants one major Chapter 5 rewrite plus targeted "
+            "changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with "
+            "the 51 figures direction."
+        )
+
+        self.assertEqual(outline["authorization"]["status"], "approved")
         self.assertEqual(outline["authorization"]["requestedBy"], "Dan Fakkeldy")
+        self.assertEqual(outline["authorization"]["approvedBy"], "Dan Fakkeldy")
+        self.assertEqual(outline["authorization"]["verbatimQuote"], approval)
+        self.assertEqual(outline["authorization"]["evidence"], approval)
+        self.assertEqual(
+            outline["authorization"]["approvalScope"], "pilot-development"
+        )
         self.assertEqual(
             outline["authorization"]["scope"],
             "revised-thirteen-chapter-outline-and-fifty-one-figure-direction",
@@ -98,8 +110,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("publication", excluded_actions)
 
         outline_checkpoint = pilot["humanCheckpoints"]["outline"]
-        self.assertEqual(outline_checkpoint["status"], "pending")
+        self.assertEqual(outline_checkpoint["status"], "approved")
         self.assertEqual(outline_checkpoint["reviewer"], "Dan Fakkeldy")
+        self.assertEqual(outline_checkpoint["evidence"], approval)
         self.assertEqual(
             outline_checkpoint["priorApproval"]["evidence"], approval_quote
         )
@@ -118,7 +131,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertTrue(
             {"Mabou", "Whycocomagh", "Judique", "AAN", "PID", "NSPRD", "MGA"} <= terms
         )
-        self.assertIn("revised outline approval pending", handoff)
+        self.assertIn("approved for pilot development", handoff)
         self.assertIn(
             "I approve the revised twelve-chapter outline and forty-figure",
             conversation,
@@ -138,8 +151,12 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         candidate = candidate_path.read_text(encoding="utf-8")
 
         self.assertEqual(continuity["checkpoints"], [])
-        self.assertEqual(len(continuity["draftContexts"]), 1)
-        context = continuity["draftContexts"][0]
+        self.assertEqual(len(continuity["draftContexts"]), 2)
+        context = next(
+            item
+            for item in continuity["draftContexts"]
+            if item["section"] == "ch01-s01"
+        )
         self.assertEqual(context["section"], "ch01-s01")
         self.assertEqual(context["specificClaims"], ["OPS-004", "DATA-002", "DATA-005"])
         self.assertEqual(context["status"], "accepted-first-section-voice-exemplar")
@@ -156,7 +173,16 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
 
         self.assertIn("accepted", pilot_readme.lower())
-        self.assertIn("no pilot audio", pilot_readme.lower())
+        self.assertIn("14:27", pilot_readme)
+        self.assertTrue(pilot["audioRendered"])
+        self.assertEqual(
+            pilot["audioSHA256"],
+            "c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c",
+        )
+        self.assertGreaterEqual(pilot["actualDurationSeconds"], 600)
+        self.assertLessEqual(pilot["actualDurationSeconds"], 900)
+        self.assertEqual(pilot["render"]["pronunciationAuditStatus"], "clean")
+        self.assertEqual(pilot["decision"]["verdict"], "pending")
         self.assertTrue(candidate.startswith("## Chapter 1 — The Last Scene First"))
         self.assertGreaterEqual(len(candidate.split()), 800)
         self.assertLessEqual(len(candidate.split()), 1500)
@@ -164,6 +190,23 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertNotRegex(
             candidate.lower(),
             r"tattoo this|burn this into|let that land|the honest answer|the whole point",
+        )
+
+        technical = next(
+            item
+            for item in continuity["draftContexts"]
+            if item["section"] == "ch01-s02-pilot"
+        )
+        technical_path = PACKET_ROOT / technical["draftPath"]
+        self.assertEqual(technical["status"], "drafted-for-narrated-pilot")
+        self.assertEqual(technical["wordCount"], 1042)
+        self.assertEqual(
+            technical["draftSHA256"],
+            hashlib.sha256(technical_path.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            technical["voiceExemplarSHA256"],
+            checkpoint["voiceExemplarSHA256"],
         )
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
