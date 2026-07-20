@@ -1,6 +1,10 @@
 # Grounded evidence notes
 
-Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-law source snapshots are the Nova Scotia Municipal Government Act consolidated to 2026-04-09 and the Halifax Regional Municipality Charter consolidated to 2026-05-01.
+Claim policy: `traceable-only`. Retrieved and checked 2026-07-19, with the
+auction, tender, payment and failed-sale claims refreshed 2026-07-20. The
+current-law source snapshots are the Nova Scotia Municipal Government Act
+consolidated to 2026-04-09 and the Halifax Regional Municipality Charter
+consolidated to 2026-05-01.
 
 ## Why a property reaches sale
 
@@ -32,55 +36,65 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Supported wording: The default sale mechanism is public auction, but with council consent the treasurer may call tenders instead. Council may define an acceptable minimum when the property might not recover taxes, interest and expenses.
 - Source: MGA s. 141; HRMC s. 156; Kings County tax-sale policy.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation dated 2026-04-09 and the official Pictou and Annapolis event records.
 
 ### LAW-006 — payment clock
 - Supported wording: Permitted statutory payment forms include cash, certified cheque, money order, bank draft, irrevocable letter of credit and lawyer's trust cheque; a council may authorize another legal-tender delivery method. The purchaser must immediately pay the price or at least the recovery amount, and any remaining balance is due within three business days.
 - Source: MGA s. 148; HRMC s. 163, both amended in 2025; CBRM auction instructions.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation, current Inverness August 11 terms and CBRM event instructions.
 - Boundary: The exact methods a municipality will accept at a particular event must be checked in that sale's current terms.
 
 ### LAW-015 — no sufficient bidder and resale
 - Supported wording: If no sufficient bid is received, the treasurer may bid the taxes, interest and expenses for the municipality. If the municipality does not buy, it may advertise again and sell later by auction for the best obtainable price or by highest tender, subject to any council-set acceptable minimum. A winning bidder who does not make the immediate payment loses that attempt to an immediate re-offer; failure to pay the balance within three business days leads to re-advertisement and resale, with resale expenses deducted from the deposit.
 - Source: MGA ss. 143, 148–149; HRMC ss. 158–159, 163–164.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation, current CBRM failed-payment instructions, Pictou tender notice and Annapolis event records.
 - Boundary: “No bidder” does not mean the parcel becomes privately available on whatever terms an observer proposes.
 
 ### LAW-016 — people prohibited from buying
 - Supported wording: A council member or municipal employee of the selling municipality, the specified village equivalents, their spouses, and a company majority-owned by one of those people may not buy the land directly or through an agent. The statute attaches a $5,000 summary-conviction penalty and possible office or employment forfeiture.
 - Source: MGA s. 144; HRMC s. 159.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation dated 2026-04-09.
 - Boundary: Event registration rules may impose additional authority, identification or representation requirements; this claim lists the statutory conflict prohibition, not every bidder-eligibility rule.
 
 ### OPS-006 — postponement or adjournment is a live-event question
 - Supported wording: The statutory sale notice must state the advertised date, time and place, but the reviewed MGA and HRMC tax-sale sections do not provide a general bidder-facing “adjournment” rule. A postponed, cancelled or rescheduled event must therefore be treated as a live municipal-status question and checked against the municipality's current notice rather than inferred from an old advertisement.
 - Source: MGA s. 142(2A); HRMC s. 157(2A); reviewed tax-sale sections 133–157 and 147–172 respectively.
 - Confidence: high for the notice requirement and for the bounded statutory review.
+- Refreshed: 2026-07-20 against the official MGA consolidation and current municipal event pages.
 - Boundary: This is not an opinion that every scheduling change is valid or invalid. The governing notice and legal advice control a disputed event.
 
 ### OPS-001 — live in-person auction example
 - Supported wording: CBRM's July 21, 2026 sale requires in-person registration with photo identification, uses numbered bidding cards, requires immediate payment of the minimum plus its administrative fee, and gives three business days for the balance.
 - Source: CBRM Tax Sales page, lines 155–174 and 203–223 in the retrieved page.
 - Confidence: high for this event; perishable.
+- Refreshed: 2026-07-20 against the current CBRM event page.
 
 ### OPS-002 — tender example
 - Supported wording: Nova Scotia municipalities can use sealed/public tenders rather than voice bidding; Kings County policy says it will endeavour to livestream the opening when it uses public tender.
 - Source: MGA s. 141(2); Kings County policy FIN-05-024 s. 4.3 in 2025-02-04 Council agenda; Inverness FAQ.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation and the official Pictou and Annapolis 2026 tender records.
 
 ### OPS-003 — a listing can disappear
 - Supported wording: A listed parcel may be paid, redeemed, removed or deferred before or around the event; a bidder should expect the live list to shrink and must re-check it.
 - Source: CBRM Tax Sales FAQ and result legend; Chester process; statutory ability to stop sale when arrears are paid.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the current CBRM event page and Inverness sale page.
 
 ### OPS-004 — current Inverness auction mechanics
 - Supported wording: Inverness County's current August 11, 2026 sale is an in-person public auction in Port Hood. Its terms require immediate payment of the taxes, interest and expenses plus the stated $200 registration amount, with any remaining purchase price due within three business days using the accepted forms listed for the event.
 - Source: Inverness Property Tax Sales page; August 11, 2026 property packet; December 2025 FAQ.
 - Confidence: high for this event; perishable.
+- Refreshed: 2026-07-20; the FAQ and August packet retain the recorded payment terms and exact prior snapshot hashes.
 
 ### OPS-005 — municipality practice varies within the statute
-- Supported wording: Current Nova Scotia examples include Inverness and Richmond open auctions, Pictou sealed tender, Annapolis auction followed by tender treatment for unsold property, Kings's annual process, and Chester's statement that it will not hold a 2026 sale.
+- Supported wording: Current Nova Scotia examples include Inverness and Richmond open auctions, Pictou sealed tender, Annapolis March tax-sale results followed by June tender results, Kings's annual process, and Chester's statement that it will not hold a 2026 sale.
 - Source: official municipal pages and notices collected in `municipality-comparison.md`.
 - Confidence: high for the dated examples; perishable.
+- Refreshed: 2026-07-20 against the current Inverness and Annapolis pages and the official Pictou notice.
 
 ### OPS-007 — Halifax practice and itemized tax-sale expenses
 - Supported wording: Halifax operates under the parallel Halifax Regional Municipality Charter rather than the MGA tax-sale division. Its current tax-sale page is event-specific, while Administrative Order 18 itemizes possible process charges such as advance notice, internal or external title search, survey at actual cost, notice of intention, certificate preparation, deed preparation, registration at actual cost, closing and redemption administration.

@@ -150,8 +150,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(len(continuity["checkpoints"]), 9)
-        self.assertEqual(len(continuity["draftContexts"]), 18)
+        self.assertEqual(len(continuity["checkpoints"]), 10)
+        self.assertEqual(len(continuity["draftContexts"]), 21)
         context = next(
             item
             for item in continuity["draftContexts"]
@@ -438,6 +438,38 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("thirty-five sold", chapter_nine_flat)
         self.assertIn("thirty-one bid rows", chapter_nine_flat)
         self.assertIn("lowers the card", chapter_nine_flat)
+
+        chapter_ten_path = PACKET_ROOT / "chapters/ch10.md"
+        chapter_ten = chapter_ten_path.read_text(encoding="utf-8")
+        chapter_ten_checkpoint = continuity["checkpoints"][9]
+        self.assertEqual(chapter_ten_checkpoint["chapter"], "ch10")
+        self.assertEqual(chapter_ten_checkpoint["wordCount"], 2696)
+        self.assertEqual(
+            chapter_ten_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_ten_path.read_bytes()).hexdigest(),
+        )
+        chapter_ten_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch10-")
+        }
+        self.assertEqual(
+            set(chapter_ten_contexts), {"ch10-s01", "ch10-s02", "ch10-s03"}
+        )
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_ten_contexts.values()
+            )
+        )
+        self.assertIn("open-outcry auction", chapter_ten)
+        self.assertIn("public tender", chapter_ten)
+        self.assertIn("deposit", chapter_ten)
+        chapter_ten_flat = " ".join(chapter_ten.split())
+        self.assertIn("three business days", chapter_ten_flat)
+        self.assertIn("put the land up for sale again forthwith", chapter_ten_flat)
+        self.assertIn("current municipal source", chapter_ten_flat)
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
         self,

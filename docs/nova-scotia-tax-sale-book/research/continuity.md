@@ -565,3 +565,66 @@
   without replaying Chapter 9's distributions or definitions.
 - Completion boundary: canonical draft only. Independent learning, factual,
   prose, humanizer, figure, and narration gates remain pending.
+
+## Before `ch10-s01`
+
+- Job: compare open-outcry auction with sealed or public tender and identify the
+  statutory conflict group that may not buy.
+- Allowed evidence: `LAW-005`, `LAW-016`, `OPS-001`, `OPS-002`, `OPS-004`, and
+  `OPS-005`; coverage setup for payment performance and staged responsibility.
+- New-term budget: `open-outcry auction`, `public tender`, and `deposit` across
+  the chapter.
+- No-repeat boundary: do not rebuild Chapter 9's cost stack or result
+  distributions, universalize a municipal registration practice, or begin the
+  complete default state machine.
+- Landing: a card and a tender envelope carry the same evidence-bound ceiling,
+  conflict prohibition, and lawful-authority requirement.
+
+## Before `ch10-s02`
+
+- Job: refresh the live list, execute the written ceiling, and distinguish a
+  leading offer from immediate and three-business-day payment performance.
+- Allowed evidence: `LAW-006`, `LAW-015`, `OPS-003`, `OPS-004`, and `DATA-002`;
+  coverage concepts `payment performance` and all-in-cost retrieval.
+- New-term budget remaining: `deposit`.
+- No-repeat boundary: do not recite the format comparison, imply that statutory
+  payment forms are accepted at every event, universalize a municipal fee, or
+  enter certificate-period accounting.
+- Audio reset: one bidding card, one ceiling, and one ready bank draft.
+
+## Before `ch10-s03`
+
+- Job: rehearse no sufficient bid, municipal purchase, immediate payment
+  failure, later balance failure, re-advertisement, resale-expense, and changed-
+  event branches.
+- Allowed evidence: `LAW-015` and `OPS-006`; retrieval of the tax-sale sequence
+  and payment-performance outcome.
+- No-repeat boundary: no property-specific refund calculation, compulsory-
+  municipal-purchase inference, private-sale implication, or legal opinion on
+  a disputed schedule change.
+- Landing: name the observed state and refresh the current municipal authority
+  instead of relying on memory or proposing private terms.
+
+## After Chapter 10
+
+- Canonical path: `chapters/ch10.md`, SHA-256
+  `5d4f3b52774a74f98293d36c26ea1913db22084bb6d571eb2523a08c1b4cb130`,
+  2,696 Markdown words.
+- Terms defined: `open-outcry auction`, `public tender`, and `deposit`.
+- Mechanism: current-list verification, bidder authority, an unchanged written
+  ceiling, accepted immediate funds, and any three-business-day balance path
+  together make a bid operational.
+- Analogy: the finish line beyond the hammer, limited because payment still
+  precedes certificate, redemption, and deed stages.
+- Failure branches: no sufficient bid may lead to municipal purchase or a later
+  advertised sale; immediate default leads to re-offer; later default leads to
+  re-advertisement and resale-expense treatment; a schedule change demands a
+  fresh municipal-source check.
+- Retrievals: keep the ceiling fixed across card and envelope, classify a
+  fundable-price-without-accepted-funds case as not ready, and name the broken
+  process state before seeking its next authority.
+- Next no-repeat boundary: Chapter 11 starts after payment and operates the
+  certificate-holder calendar without replaying registration, payment forms,
+  or the failed-sale state machine.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure, and narration gates remain pending.

@@ -2,9 +2,10 @@
 
 Retrieved 2026-07-18 unless noted; core law, Inverness event, and provincial
 map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access,
-Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, and Chapter 9
-auction-result/tax/eligibility sources were refreshed on 2026-07-20. Primary
-and official sources control; explanatory sources are labelled separately.
+Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, Chapter 9
+auction-result/tax/eligibility, and Chapter 10 auction/tender/payment sources
+were refreshed on 2026-07-20. Primary and official sources control;
+explanatory sources are labelled separately.
 
 ## Controlling law
 
@@ -20,7 +21,7 @@ and official sources control; explanatory sources are labelled separately.
 7. Cape Breton Regional Municipality, [Tax Sales](https://cbrm.ns.ca/business/property-sales-management/tax-sales/), including auction, payment, redemption, occupied-property, access, HST and due-diligence notices; refreshed 2026-07-20. CBRM states that occupied properties can be sold and that the municipality neither removes residents nor provides access; its current event FAQ also states that HST applies to vacant land and commercially assessed property, a municipal instruction the book does not generalize beyond that event.
 8. CBRM, [July 21, 2026 tax-sale advertisement](https://cbrm.ns.ca/wp-content/uploads/2026/06/JULY-21-2026-2nd-Ad.pdf). Research snapshot SHA-256 `5435e9b89df5ac15f63097c0935661b5616e7b6bdc8b04fd4e8811ba6d457566`; snapshot intentionally not committed.
 9. CBRM, [March 10, 2026 sold-property results](https://cbrm.ns.ca/wp-content/uploads/2026/03/Sold-Properties-March-10-2026-Tax-Sale.pdf). Research snapshot SHA-256 `ed0dbc1dcc09a7fb9a063b716784cb1b3ba18306f9984013791e4b250f667dc4`; snapshot intentionally not committed.
-10. Municipality of the County of Inverness, [Property Tax Sales](https://invernesscounty.ca/services/finance-taxation/tax-sales/) and [December 2025 FAQ](https://invernesscounty.ca/wp-content/uploads/2026/01/Property-Tax-Sales-FAQ.pdf).
+10. Municipality of the County of Inverness, [Property Tax Sales](https://invernesscounty.ca/services/finance-taxation/tax-sales/) and [December 2025 FAQ](https://invernesscounty.ca/wp-content/uploads/2026/01/Property-Tax-Sales-FAQ.pdf), refreshed 2026-07-20. The current page still identifies the August 11, 2026 Port Hood public auction; the FAQ retains the immediate recovery payment, $200 registration amount and three-business-day balance. FAQ snapshot SHA-256: `5f20a56b058bfec5bc4f7a5677084812d6e6817a93a99b734dcbc15698253908`.
 11. Municipality of the District of Chester, [Tax Sales](https://chester.ca/government/property-taxes-and-rates/tax-sales).
 12. Municipality of the County of Kings, [Tax Sales](https://www.countyofkings.ca/business/tax-sales) and public-tender policy material in the [2025-02-04 Council agenda](https://www.countyofkings.ca/upload/All_Uploads/COUNCIL/Meeting_Documents/COUNCIL/2025/2025-02-04%20COUNCIL/agenda/2025-02-04%20Council%20Agenda.pdf).
 13. Halifax Regional Municipality, [Property Tax Sales](https://www.halifax.ca/home-property/property-taxes/tax-sale).
@@ -74,8 +75,8 @@ and official sources control; explanatory sources are labelled separately.
 ## Cross-municipality practice and results
 
 42. Municipality of the County of Richmond, [Tax Sales and June 12, 2026 results](https://www.richmondcounty.ca/tax-sales.html), refreshed 2026-07-20; the current table publishes three sold rows and supports only a compact descriptive comparison.
-43. Municipality of the County of Pictou, [2026-01 sealed-tender advertisement](https://munpict.ca/assets/Tax-Sale-2026-01-Final-Advertisement-Posted-revised-April-10.pdf).
-44. Municipality of the County of Annapolis, [Tax Sale page](https://annapoliscounty.ca/tax-finance/tax-sale), [March 2026 auction](https://www.annapoliscounty.ca/tax-finance/tax-sale/2271-march-2026-tax-sale), and 2026 council treatment of unsold properties.
+43. Municipality of the County of Pictou, [2026-01 sealed-tender advertisement](https://munpict.ca/assets/Tax-Sale-2026-01-Final-Advertisement-Posted-revised-April-10.pdf), refreshed 2026-07-20. It requires one municipal bid form per property, no fax or email bids, and full payment within three days of successful-bid notification. Research snapshot SHA-256: `9ee824de63bf9aa97a932f48c88709775b072890e9e7308b0162ff24f046c19b`; snapshot intentionally not committed.
+44. Municipality of the County of Annapolis, [Tax Sale page](https://annapoliscounty.ca/tax-finance/tax-sale), [March 5, 2026 sale results](https://annapoliscounty.ca/tax-finance/tax-sale/1997-2024-tax-sale-results), [June 8, 2026 tender results](https://annapoliscounty.ca/tax-finance/tax-sale/2363-june-2026-tax-sale-by-tender-2), and [Tax Sale Information](https://annapoliscounty.ca/tax-finance/tax-sale/311-tax-sale-information), refreshed 2026-07-20. The current index preserves the March sale results followed by the June sale-by-tender results, while the information page describes both auction and tender routes. This is a dated procedural example, not a current invitation to bid. The owner-bearing March result image was checked but is intentionally not committed; snapshot SHA-256: `078c4557c9c38f5256942a4bce9c9101f9c3d1114d4450caeb017fdd52d6e046`.
 45. Municipality of the County of Kings, [Tax Sales](https://www.countyofkings.ca/business/sales.aspx), and Municipality of Chester, [Tax Sales](https://chester.ca/government/property-taxes-and-rates/tax-sales).
 
 ## GIS rights and public implementation

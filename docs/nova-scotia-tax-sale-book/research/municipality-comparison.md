@@ -11,7 +11,7 @@ Checked 2026-07-19. The Municipal Government Act supplies the common legal frame
 | Chester | Public process page, but municipality states it is not holding a 2026 sale | Process explanation and current no-sale notice | Demonstrates that a statutory system does not mean every municipality has a sale every year |
 | Pictou County | 2026 sale by sealed tender; separate form per property; council-set minimums can be below taxes and expenses | Historical April notice has 19 rows/PIDs, three marked withdrawn and two leading-zero PID extraction hazards | Strong historical map contrast after every PID is visually verified; never label it current |
 | Richmond County | June 2026 public auction with itemized results | Three historical sold rows with PIDs, charges and successful bids | Compact historical result layer: roughly 1.33×, 6.59× and 6.28× the listed charges |
-| Annapolis County | March 2026 public auction followed by tender treatment for unsold parcels | March and June results exist as embedded images on the current site | Shows auction-to-tender movement, but parcel mapping is blocked until a visually verified PID extraction exists |
+| Annapolis County | March 2026 tax-sale results followed by June sale-by-tender results | March and June results exist as embedded images on the current site; the municipality's information page describes both auction and tender routes | Shows dated movement into a tender event, but parcel mapping is blocked until a visually verified PID extraction exists |
 
 ## Sources
 

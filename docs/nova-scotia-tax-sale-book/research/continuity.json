@@ -1198,6 +1198,225 @@
         "Execute the written ceiling and payment clock under open-outcry and tender pressure in Chapter 10.",
         "Retrieve the all-in cost structure in the final Chapter 13 parcel file."
       ]
+    },
+    {
+      "section": "ch10-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 9 separates recovery, assessment and historical winning bid from present value, builds all-in cost from a defined use and ends with a written maximum that cannot rise merely because another bidder raises a card.",
+      "sectionJob": "Compare open-outcry auction with sealed or public tender and identify who may not buy.",
+      "specificClaims": [
+        "LAW-005",
+        "LAW-016",
+        "OPS-001",
+        "OPS-002",
+        "OPS-004",
+        "OPS-005"
+      ],
+      "coverageConcepts": [
+        "payment performance setup",
+        "staged responsibility setup"
+      ],
+      "throughlineAdvance": "Make procedure operational rather than theatrical while keeping the researcher outside the bidder's decision.",
+      "payoff": "The listener can rehearse registration, authority and bid submission without rehearsing excitement.",
+      "landingBeat": "A tender envelope and a bidding card obey the same precommitted ceiling and statutory conflict rules.",
+      "mustNotRepeat": [
+        "Do not re-explain the pre-sale statutory clock or why the sale is lawful.",
+        "Do not redefine all-in cost, uncertainty reserve or maximum bid.",
+        "Do not replay historical result distributions or imply that a format predicts price.",
+        "Do not turn municipal registration examples into province-wide universal rules.",
+        "Do not begin the full payment-default and resale state machine reserved for later sections."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch10.md",
+      "termsBudget": [
+        "open-outcry auction",
+        "public tender",
+        "deposit"
+      ],
+      "audioLoad": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 1,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to one bidding card, one ceiling and one ready bank draft."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T18:17:17-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "511dc64af4292c610a8c88d9ec167ba07dace136812f681589c288385386b2ef",
+      "sectionWordCount": 868,
+      "draftedAt": "2026-07-20T18:18:26-03:00",
+      "termsDefined": [
+        "open-outcry auction",
+        "public tender"
+      ],
+      "retrievalPrompt": "For a bidding card and a tender envelope, identify what changes with format and what remains fixed from the evidence file.",
+      "retrievalAnswer": "Submission mechanics and pressure change; the written maximum, statutory conflict rules, lawful bidder authority and parcel evidence do not.",
+      "runningSummary": "Inverness and CBRM illustrate live public-auction mechanics while dated Pictou and Annapolis records show tender use. Event instructions remain municipal and current-source specific. Open-outcry and tender pressure differ, but neither alters the evidence-bound ceiling or substitutes event registration for complete eligibility and authority.",
+      "unresolvedPromises": [
+        "Walk the current-list refresh, immediate payment and three-business-day balance.",
+        "Trace no-bid, failed-payment and rescheduled-event branches without informal shortcuts."
+      ]
+    },
+    {
+      "section": "ch10-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Open-outcry and tender formats create different pressure and submission mechanics. Inverness and CBRM illustrate live auctions; dated Pictou and Annapolis records illustrate tender use. The written ceiling, conflict prohibition, eligibility and lawful authority remain fixed across formats.",
+      "sectionJob": "Walk the live event, list refresh, withdrawal and immediate payment.",
+      "specificClaims": [
+        "LAW-006",
+        "LAW-015",
+        "OPS-003",
+        "OPS-004",
+        "DATA-002"
+      ],
+      "coverageConcepts": [
+        "payment performance",
+        "all-in cost retrieval"
+      ],
+      "throughlineAdvance": "Redefine a leading bid as an intermediate state that must survive exact event payment rules.",
+      "payoff": "The listener can rehearse the payment path before bidding and can lower the card without treating discipline as a loss.",
+      "landingBeat": "No new fact discovered in adrenaline is allowed to raise the maximum or manufacture ready funds.",
+      "mustNotRepeat": [
+        "Do not reteach the format comparison or full statutory conflict list.",
+        "Do not calculate a redemption amount or begin certificate-period accounting.",
+        "Do not imply that accepted statutory methods are all accepted at every event.",
+        "Do not turn the current Inverness or CBRM administrative amount into a province-wide fee.",
+        "Do not describe a leading bid as completed ownership."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch10.md",
+      "termsBudgetRemaining": [
+        "deposit"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 1,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to one bidding card, one ceiling and one ready bank draft."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T18:18:26-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "47afc460f3ee8c3fa4f138184be13dd330f9673c9535e960917862a8a29ebd59",
+      "sectionWordCount": 900,
+      "draftedAt": "2026-07-20T18:19:42-03:00",
+      "termsDefined": [
+        "deposit"
+      ],
+      "analogyUsed": {
+        "name": "finish line beyond the hammer",
+        "purpose": "Separate the leading offer from exact payment performance.",
+        "limit": "Certificate, redemption and deed stages continue after payment, so the auction is not a complete race to ownership."
+      },
+      "retrievalPrompt": "When the live bid crosses the written ceiling, identify whether any parcel or payment fact changed; when a parcel remains affordable but accepted funds are unavailable, classify readiness.",
+      "retrievalAnswer": "Competition changes no parcel fact and cannot raise authority; unavailable accepted funds make the bidder not ready even below the maximum.",
+      "runningSummary": "Auction morning begins by refreshing the live municipal list. A leading offer must still survive event-specific accepted-payment rules, the immediate statutory payment and any three-business-day balance. Payment performance is planned per parcel before bidding; tender acceptance moves the trigger but does not create an ordinary financing condition.",
+      "unresolvedPromises": [
+        "Trace the immediate re-offer, later re-advertisement and deposit-deduction branches.",
+        "Separate no sufficient bidder, municipal purchase and later sale from informal availability.",
+        "Treat postponement or rescheduling as a current-source question."
+      ]
+    },
+    {
+      "section": "ch10-s03",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "The live list is refreshed before bidding. The written ceiling governs every increment, while payment performance requires event-specific accepted funds for the immediate obligation and a verified path for any three-business-day balance. A leading offer is not a completed sale.",
+      "sectionJob": "Rehearse the no-bid, payment-default and rescheduled-event branches.",
+      "specificClaims": [
+        "LAW-015",
+        "OPS-006"
+      ],
+      "coverageConcepts": [
+        "payment performance",
+        "tax-sale sequence retrieval"
+      ],
+      "throughlineAdvance": "Turn a broken happy path into a bounded state transition whose next authority is the current municipal source.",
+      "payoff": "The listener knows what to watch when no sufficient bid, failed payment or an event change interrupts the expected sequence.",
+      "landingBeat": "A changed event or failed sale is a reason to refresh the municipal source, not to rely on memory or propose private terms.",
+      "mustNotRepeat": [
+        "Do not repeat the full payment-form list, format comparison or Cedar Street maximum construction.",
+        "Do not calculate redemption, resale expenses or a property-specific deposit refund.",
+        "Do not imply that municipal purchase is mandatory when there is no sufficient bidder.",
+        "Do not describe an unsold parcel as privately available.",
+        "Do not give a legal opinion on a disputed postponement, cancellation or resale."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch10.md",
+      "termsBudgetRemaining": [],
+      "audioLoadRemaining": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "concreteReset": "Return to one bidding card, one ceiling and one ready bank draft."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T18:19:42-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "5d4f3b52774a74f98293d36c26ea1913db22084bb6d571eb2523a08c1b4cb130",
+      "sectionWordCount": 928,
+      "draftedAt": "2026-07-20T18:20:58-03:00",
+      "termsDefined": [],
+      "stateBranches": [
+        "no sufficient bid may lead to municipal purchase or later advertised sale",
+        "failed immediate payment leads to immediate re-offer",
+        "failed three-business-day balance leads to re-advertisement and resale with expenses deducted from the deposit",
+        "postponement, cancellation or rescheduling requires a fresh current municipal source check"
+      ],
+      "retrievalPrompt": "When the expected hammer-and-payment sequence breaks, name the observed state and the authority for the next step without inventing private terms.",
+      "retrievalAnswer": "Classify the branch from the current municipal record and governing law, then refresh the source; an unsold or changed event does not become an informal sale opportunity.",
+      "runningSummary": "No sufficient bid, municipal purchase, failed immediate payment, failed later balance and event changes are distinct process states. The governing law and current municipal source define the next step. None makes an unsold parcel privately available, enlarges the written ceiling or permits a remembered schedule to replace current notice.",
+      "unresolvedPromises": [
+        "Operate the certificate-holder calendar, records, insurance and redemption responsibilities in Chapter 11.",
+        "Retrieve payment readiness and state classification in the final Chapter 13 parcel file."
+      ]
     }
   ],
   "checkpoints": [
@@ -1559,6 +1778,45 @@
         "Do not redefine all-in cost, uncertainty reserve or maximum bid.",
         "Do not replay the Inverness, CBRM or Richmond distributions.",
         "Chapter 10 retrieves the ceiling as an action rule and adds format, payment and failure branches."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch10",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch10.md",
+      "draftSHA256": "5d4f3b52774a74f98293d36c26ea1913db22084bb6d571eb2523a08c1b4cb130",
+      "wordCount": 2696,
+      "completedAt": "2026-07-20T18:20:58-03:00",
+      "termsDefined": [
+        "open-outcry auction",
+        "public tender",
+        "deposit"
+      ],
+      "examplesUsed": [
+        "current Inverness August 2026 Port Hood open-auction terms",
+        "current CBRM registration and failed-payment instructions",
+        "dated Pictou April 2026 sealed-tender procedure",
+        "dated Annapolis March sale and later tender result records",
+        "fictional Maya and Cedar Street execution branches"
+      ],
+      "analogyUsed": "The finish line beyond the hammer separates a leading offer from payment performance, limited because certificate, redemption and deed stages still follow.",
+      "retrievals": [
+        "Keep the evidence-bound maximum fixed across a bidding card and tender envelope.",
+        "Classify an affordable bid without accepted funds as not ready.",
+        "Name the failed-sale state and return to governing law plus the current municipal source."
+      ],
+      "listenerLoad": "Three new core terms, no arithmetic, three municipal format examples, one fictional bidder, four failed-sale branches and no visual dependence.",
+      "runningSummary": "Open auction and public tender change submission mechanics and pressure without changing lawful authority or the written ceiling. Payment performance requires current-list verification, accepted immediate funds and any three-business-day balance path before bidding. No-bid, municipal-purchase, default and event-change branches remain governed municipal processes rather than informal opportunities.",
+      "unresolvedPromises": [
+        "Operate certificate-period accounting, insurance, maintenance, rent and redemption records in Chapter 11.",
+        "Carry the certificate-versus-possession distinction into the deed transition in Chapter 12.",
+        "Retrieve payment readiness and the complete evidence file in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine open-outcry auction, public tender or deposit.",
+        "Do not replay the full registration, payment-form or default state machine.",
+        "Chapter 11 begins only after complete payment and operates the certificate-holder calendar."
       ],
       "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
     }
