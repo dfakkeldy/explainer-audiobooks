@@ -46,7 +46,8 @@ Claims: `LAW-001`–`LAW-006`, `OPS-004`, `OPS-005`, `OPS-007`, `DATA-002`, `DAT
 
 Walk the August 2026 Inverness packet field by field: lien number, assessed owner, AAN, PID, address, location, land/building, recovery amount and redemption marker. Make “identifier, not promise” the chapter's reusable test. Use the missing lien-6 detail sheet and the packet's amount inconsistencies to teach reconciliation without speculating about the properties. Show how properties vanish from a list. End with the current-parcel browser as an owner-free way to carry the event and exact PID into the research file, while keeping the municipal notice authoritative.
 
-Claims: `OPS-003`, `LAND-001`–`LAND-004`, `DATA-002`.
+Claims: `OPS-003`, `LAND-001`–`LAND-004`, `DATA-001`, `DATA-002`, `MAP-003`,
+`MAP-007`.
 
 ### 3. The Six-Month Door — mechanism, comparison, legal clock — 3,700 words
 

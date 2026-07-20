@@ -39,6 +39,8 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
+- Canonical drafting: Chapters 1–3 complete at 6,968 Markdown words; Chapter 4
+  is next. These are draft checkpoints, not final reviewed manuscript prose.
 - User approval status: the prior twelve-chapter/forty-figure direction was
   approved for pilot development at 2026-07-19T11:56:49-03:00. The proposed
   thirteen-chapter/51-figure revision was explicitly approved for pilot

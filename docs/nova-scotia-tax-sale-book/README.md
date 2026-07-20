@@ -35,7 +35,9 @@ ranking, or an advertisement disguised as education.
   workflow;
 - `figures/`: the deterministic diagram renderer, teaching/provenance
   specifications, contact sheets and hash-bound receipt for figures 03–08, 39
-  and 40; and
+  and 40;
+- `chapters/`: canonical Chapters 1–3, drafted sequentially from the accepted
+  pilot and approved argument outline; and
 - `chapters/images/`: eight legal/process candidates plus eleven
   2560-by-1440 NS Marks The Spot walkthrough screenshots; none is yet accepted
   or embedded in a manuscript.
@@ -60,9 +62,9 @@ individual lien labels at that scale. NS Aerial remains the detail basemap.
 - Property Online plans, registry documents, or subscription-derived material;
 - live-property scores, rankings, maximum bids, or recommendations;
 - internal pricing and possible-service planning notes; and
-- canonical manuscript chapters, covers or governed full-book package; the
-  ignored `.build` tree contains only the nonpackage narrated pilot and its
-  machine receipts, with no claim of human listening acceptance.
+- complete canonical manuscript, covers or governed full-book package; the
+  ignored `.build` tree contains only the accepted nonpackage narrated pilot
+  and its machine receipts, not a final audiobook or delivery package.
 
 The interactive implementation remains in the
 [NS Marks The Spot repository](https://github.com/dfakkeldy/ns-marks-the-spot)
@@ -74,7 +76,7 @@ chapter screenshots.
 
 ## Current production gates
 
-The project is in `governed-final` pilot development. Dan approved the prior
+The project is in `governed-final` canonical manuscript drafting. Dan approved the prior
 twelve-chapter outline and forty-figure visual direction on 2026-07-19, accepted
 the exact three-card Inverness Packet Atlas direction with “I like them,” and
 accepted the exact first-section teaching and voice with “Let’s go for the
@@ -95,6 +97,9 @@ alignment and a clean pronunciation audit. Its exact SHA-256 is
 Dan accepted that exact pilot for continued drafting with “continue” at
 2026-07-20T08:55:51-03:00. Sequential canonical drafting is now authorized;
 final figures, full narration, packaging and publication remain separate.
+Canonical Chapters 1–3 now total 6,968 Markdown words. They remain draft prose
+until the complete manuscript clears independent learning, factual, prose,
+humanizer and rendered ear-pass review.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the

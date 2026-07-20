@@ -150,8 +150,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(continuity["checkpoints"], [])
-        self.assertEqual(len(continuity["draftContexts"]), 2)
+        self.assertEqual(len(continuity["checkpoints"]), 3)
+        self.assertEqual(len(continuity["draftContexts"]), 6)
         context = next(
             item
             for item in continuity["draftContexts"]
@@ -159,7 +159,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertEqual(context["section"], "ch01-s01")
         self.assertEqual(context["specificClaims"], ["OPS-004", "DATA-002", "DATA-005"])
-        self.assertEqual(context["status"], "accepted-first-section-voice-exemplar")
+        self.assertEqual(context["status"], "accepted-and-promoted-to-canonical")
 
         checkpoint = pilot["humanCheckpoints"]["firstSection"]
         self.assertEqual(checkpoint["status"], "accepted")
@@ -204,7 +204,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             if item["section"] == "ch01-s02-pilot"
         )
         technical_path = PACKET_ROOT / technical["draftPath"]
-        self.assertEqual(technical["status"], "drafted-for-narrated-pilot")
+        self.assertEqual(
+            technical["status"], "accepted-pilot-passage-promoted-to-canonical"
+        )
         self.assertEqual(technical["wordCount"], 1042)
         self.assertEqual(
             technical["draftSHA256"],
@@ -213,6 +215,64 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(
             technical["voiceExemplarSHA256"],
             checkpoint["voiceExemplarSHA256"],
+        )
+
+        canonical_path = PACKET_ROOT / "chapters/ch01.md"
+        canonical = canonical_path.read_text(encoding="utf-8")
+        expected = candidate.rstrip("\n") + "\n\n" + technical_path.read_text(
+            encoding="utf-8"
+        ).rstrip("\n") + "\n"
+        self.assertEqual(canonical, expected)
+        chapter_checkpoint = continuity["checkpoints"][0]
+        self.assertEqual(chapter_checkpoint["chapter"], "ch01")
+        self.assertTrue(chapter_checkpoint["sourceSectionsPromotedExactly"])
+        self.assertEqual(
+            chapter_checkpoint["draftSHA256"],
+            hashlib.sha256(canonical_path.read_bytes()).hexdigest(),
+        )
+
+        chapter_two_path = PACKET_ROOT / "chapters/ch02.md"
+        chapter_two_checkpoint = continuity["checkpoints"][1]
+        self.assertEqual(chapter_two_checkpoint["chapter"], "ch02")
+        self.assertEqual(chapter_two_checkpoint["wordCount"], 2977)
+        self.assertEqual(
+            chapter_two_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_two_path.read_bytes()).hexdigest(),
+        )
+        chapter_two_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch02-")
+        }
+        self.assertEqual(set(chapter_two_contexts), {"ch02-s01", "ch02-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_two_contexts.values()
+            )
+        )
+
+        chapter_three_path = PACKET_ROOT / "chapters/ch03.md"
+        chapter_three_checkpoint = continuity["checkpoints"][2]
+        self.assertEqual(chapter_three_checkpoint["chapter"], "ch03")
+        self.assertEqual(chapter_three_checkpoint["wordCount"], 1927)
+        self.assertEqual(
+            chapter_three_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_three_path.read_bytes()).hexdigest(),
+        )
+        chapter_three_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch03-")
+        }
+        self.assertEqual(set(chapter_three_contexts), {"ch03-s01", "ch03-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_three_contexts.values()
+            )
         )
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(

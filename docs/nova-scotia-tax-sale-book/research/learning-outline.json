@@ -192,8 +192,11 @@
           "argument": "The two most emotionally powerful fields are administrative signals, not guarantees about value or outcome.",
           "specificClaims": [
             "OPS-003",
+            "DATA-001",
             "DATA-002",
-            "LAW-009"
+            "LAW-009",
+            "MAP-003",
+            "MAP-007"
           ],
           "throughlineAdvance": "Foreshadow the second clock and establish list-refresh discipline.",
           "payoff": "A withdrawn lot feels normal rather than like lost opportunity.",

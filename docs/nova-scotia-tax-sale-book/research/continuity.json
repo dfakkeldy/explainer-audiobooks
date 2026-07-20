@@ -3,7 +3,7 @@
   "draftContexts": [
     {
       "section": "ch01-s01",
-      "status": "accepted-first-section-voice-exemplar",
+      "status": "accepted-and-promoted-to-canonical",
       "fullOutlinePath": "research/learning-outline.json",
       "evidenceNotesPath": "research/evidence-notes.md",
       "factPackPath": "research/fact-pack.md",
@@ -20,6 +20,9 @@
       "landingBeat": "The listener wants to know why the parcel is being sold and what each source can actually establish.",
       "mustNotRepeat": [],
       "draftPath": "pilot/first-section-candidate.md",
+      "canonicalDraftPath": "chapters/ch01.md",
+      "canonicalSectionSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "promotedAt": "2026-07-20T08:55:51-03:00",
       "voiceExemplarPath": "research/voice-exemplar.md",
       "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
       "humanAcceptanceEvidence": "Let’s go for the voice.",
@@ -29,7 +32,7 @@
     },
     {
       "section": "ch01-s02-pilot",
-      "status": "drafted-for-narrated-pilot",
+      "status": "accepted-pilot-passage-promoted-to-canonical",
       "fullOutlinePath": "research/learning-outline.json",
       "evidenceNotesPath": "research/evidence-notes.md",
       "factPackPath": "research/fact-pack.md",
@@ -53,6 +56,9 @@
         "Do not teach auction payment mechanics yet."
       ],
       "draftPath": "pilot/first-technical-passage.md",
+      "canonicalDraftPath": "chapters/ch01.md",
+      "canonicalSectionSHA256": "8cf03fb648988d681a072665875fd6905d0c3fe85b00b44cba622018e1035d65",
+      "promotedAt": "2026-07-20T08:55:51-03:00",
       "draftSHA256": "8cf03fb648988d681a072665875fd6905d0c3fe85b00b44cba622018e1035d65",
       "wordCount": 1042,
       "draftedAt": "2026-07-20T08:27:17-03:00",
@@ -75,7 +81,392 @@
       "approvedAt": "2026-07-20T08:21:03-03:00",
       "authorizationPath": "research/learning-outline.json",
       "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch02-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 1 establishes the Inverness packet as a strong starting source, follows the pre-sale clock from priority tax lien through notices and advertisement, and ends with the current authority-owned notice controlling over another municipality's packet or the map.",
+      "sectionJob": "Decode lien number, assessed owner, AAN, PID, address and land/building fields.",
+      "specificClaims": [
+        "LAND-001",
+        "LAND-002",
+        "LAND-003",
+        "DATA-002"
+      ],
+      "coverageConcepts": [
+        "notice identifiers"
+      ],
+      "throughlineAdvance": "Begin separating property identity, assessment and title.",
+      "payoff": "The listener can route each identifier to the correct source.",
+      "landingBeat": "A notice becomes the first index card in a research file.",
+      "mustNotRepeat": [
+        "Do not re-explain tax-lien priority.",
+        "Do not repeat the full packet limitation inventory from Chapter 1.",
+        "Do not identify assessed owners or turn a live row into a recommendation.",
+        "Do not teach the recovery amount, redemption mechanics or current-list refresh yet."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch02.md",
+      "sectionDraftSHA256": "819e81f47ef4b35ad2e71a2f3306fc4696ac29415f66d2d290ad0a100cecbdf4",
+      "sectionWordCount": 1410,
+      "draftedAt": "2026-07-20T09:02:52-03:00",
+      "termsDefined": [
+        "Assessment Account Number (AAN)",
+        "Parcel Identification Number (PID)",
+        "assessment"
+      ],
+      "analogyUsed": {
+        "name": "two catalogue keys",
+        "purpose": "AAN routes to the assessment account while PID routes to the mapped parcel and related land records.",
+        "limit": "Land records create and evidence legal interests; they are not merely descriptions of a book already understood."
+      },
+      "retrievalPrompt": "Route an address-PID disagreement to civic or municipal sources, parcel records, survey evidence and legal interpretation instead of choosing the more plausible picture.",
+      "runningSummary": "A sale row bundles references to several systems. The lien number identifies the event entry; AAN identifies the assessment account; PID identifies the mapped parcel; address supplies orientation; assessment fields support taxation; and Property Online can connect authorized land-record research without becoming public source material.",
+      "unresolvedPromises": [
+        "Explain why the recovery amount is not value.",
+        "Explain what the redemption marker changes without teaching the full post-sale mechanism.",
+        "Show why the current municipal list must be refreshed before the event."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:00:45-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch02-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "The first section turns each packet field into a source-routing handle: lien number for the event, AAN for the assessment account, PID for the mapped parcel, address for orientation, assessment fields for taxation and authorized land records for ownership or registry questions. It ends with Harbour Road as the first index card in a traceable file.",
+      "sectionJob": "Explain the recovery amount and redemption markers plus the fluid live list.",
+      "specificClaims": [
+        "OPS-003",
+        "DATA-001",
+        "DATA-002",
+        "LAW-009",
+        "MAP-003",
+        "MAP-007"
+      ],
+      "coverageConcepts": [
+        "notice identifiers",
+        "redemption clock"
+      ],
+      "throughlineAdvance": "Foreshadow the second clock and establish list-refresh discipline.",
+      "payoff": "A withdrawn lot feels normal rather than like lost opportunity.",
+      "landingBeat": "The listener refuses to infer a bargain from typography.",
+      "mustNotRepeat": [
+        "Do not define AAN, PID or assessment again.",
+        "Do not teach the full redemption formula, certificate-holder duties or auction payment mechanics.",
+        "Do not use a historical result as value evidence or a bidding forecast.",
+        "Do not teach the full Chapter 5 map workflow."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch02.md",
+      "sectionDraftSHA256": "835711d7cfb5efda8b5da027ee4d74da3b2f52247edd1861be0cc902c8b63e5e",
+      "sectionWordCount": 1567,
+      "draftedAt": "2026-07-20T09:05:42-03:00",
+      "termsRetrieved": [
+        "AAN",
+        "PID",
+        "assessment"
+      ],
+      "packetLabelsExplained": [
+        "recovery amount",
+        "redeemable",
+        "non-redeemable"
+      ],
+      "retrievalPrompt": "After an interruption, identify the parcel handle, assessment-account handle, current event authority and bounded meaning of a non-redeemable marker.",
+      "retrievalAnswer": "PID, AAN, the municipality's current notice or confirmation, and the absence of the normal six-month statutory redemption right without any promise about possession, condition, title or use.",
+      "runningSummary": "The recovery amount is a dated municipal collection figure rather than an appraisal; the redemption marker routes the row toward a later legal branch; and paid, redeemed, removed or deferred rows can change the live list. The map shortens the route to the direct municipal source while current notices and historical outcomes remain separate record families.",
+      "unresolvedPromises": [
+        "Explain certificate, redemption and immediate-deed consequences in Chapter 3.",
+        "Deepen recovery amount versus value and all-in cost in Chapter 9.",
+        "Teach the complete map research chain in Chapter 5."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:02:52-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch03-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 2 separates event, assessment, parcel, address, recovery and redemption fields, establishes the municipality's current notice as the event-status authority, and leaves the redemption marker as an unopened post-sale branch.",
+      "sectionJob": "Follow the redeemable parcel from payment to certificate-holder status.",
+      "specificClaims": [
+        "LAW-007",
+        "LAW-008",
+        "LAW-009"
+      ],
+      "coverageConcepts": [
+        "redemption clock",
+        "staged responsibility"
+      ],
+      "throughlineAdvance": "Winning transfers responsibility before it necessarily transfers final title.",
+      "payoff": "The certificate holder is neither an ordinary prospective buyer nor an unrestricted final owner.",
+      "landingBeat": "The listener can name what may and may not be done during six months.",
+      "mustNotRepeat": [
+        "Do not redefine the redemption marker, AAN, PID, assessment or recovery amount.",
+        "Do not explain title-research tools, possession law or the full redemption accounting yet.",
+        "Do not promise that the statutory insurance duty guarantees available coverage.",
+        "Do not turn protective powers into permission for trespass, development or self-help."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch03.md",
+      "sectionDraftSHA256": "a0777d278b0314b7f09452791a5e33053c279d459b7b871b609f8465311cb973",
+      "sectionWordCount": 967,
+      "draftedAt": "2026-07-20T09:08:34-03:00",
+      "termsDefined": [
+        "certificate of sale",
+        "certificate holder"
+      ],
+      "analogyUsed": {
+        "name": "relay baton",
+        "purpose": "Documents identify the current stage and permitted job.",
+        "limit": "The same purchaser may hold every stage and legal rights are not literally passed between runners."
+      },
+      "retrievalPrompt": "Before acting during redemption, identify the current document, supporting power or duty, continuing boundary and record the file will need.",
+      "runningSummary": "Full payment on a redeemable property leads to a registered certificate of sale. The certificate holder may protect and non-diminishingly use the property and collect rent, while avoiding injury and tree cutting and insuring insurable buildings. Those powers remain bounded by redemption, occupancy, planning, safety and professional-authority questions.",
+      "unresolvedPromises": [
+        "Explain the redemption payment, purchaser repayment and loss of rights.",
+        "Explain the immediate-deed and unredeemed-certificate branch without equating deed with possession."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:07:09-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch03-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "A paid redeemable sale creates a registered certificate and a conditional middle state. Harbour Road's certificate holder protects and insures an insurable building, documents necessary work and reaches month four when a qualifying owner brings the redemption funds.",
+      "sectionJob": "Explain redemption money, discharge, repayment and the deed branch.",
+      "specificClaims": [
+        "LAW-010",
+        "LAW-011",
+        "LAW-012"
+      ],
+      "coverageConcepts": [
+        "redemption clock",
+        "staged responsibility"
+      ],
+      "throughlineAdvance": "Documents and clocks now control the transition of responsibility.",
+      "payoff": "Immediate deed is stripped of its misleading promise of immediate certainty.",
+      "landingBeat": "The listener can narrate both endings without confusing deed with possession.",
+      "mustNotRepeat": [
+        "Do not repeat the certificate-holder power and duty catalogue.",
+        "Do not itemize the future all-in bid cost stack.",
+        "Do not teach possession, occupancy, title-contest or post-deed due diligence in full.",
+        "Do not imply that certificate discharge or deed registration erases every practical uncertainty."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch03.md",
+      "sectionDraftSHA256": "cafefd3160fded385f2a91996c081856d0620e6ad6e0e1c8d686747ad8679896",
+      "sectionWordCount": 960,
+      "draftedAt": "2026-07-20T09:10:05-03:00",
+      "termsDefined": [
+        "discharge",
+        "tax deed"
+      ],
+      "mechanismExplained": "A qualifying full redemption payment repays the purchaser under the statutory categories and ends the purchaser's rights through discharge; expiry without redemption or the older-arrears exception permits the deed route.",
+      "retrievalPrompt": "Narrate the different endings for redeemable Harbour Road and older-arrears Quarry Lane without inferring possession, condition, access, insurability or suitability.",
+      "runningSummary": "The certificate period can end through statutory repayment and discharge, which ends the purchaser's rights, or through the deed route after expiry without redemption or the older-arrears exception. A tax deed vests fee-simple title under the statute while continuing easement and right-of-way treatment and practical ownership questions remain.",
+      "unresolvedPromises": [
+        "Build the source-ordered parcel biography before attachment to a property.",
+        "Return to operating the certificate-holder ledger in Chapter 11.",
+        "Return to possession, title contest and post-deed work in Chapters 8 and 12."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:08:34-03:00",
+      "recordedBeforeDraft": true
     }
   ],
-  "checkpoints": []
+  "checkpoints": [
+    {
+      "chapter": "ch01",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch01.md",
+      "draftSHA256": "3162d971afaf4b70c50fd5184338a886eb47e2ee708bb52f9b71eb61d2fa08ab",
+      "wordCount": 2064,
+      "completedAt": "2026-07-20T08:55:51-03:00",
+      "sourceSections": [
+        "pilot/first-section-candidate.md",
+        "pilot/first-technical-passage.md"
+      ],
+      "sourceSectionsPromotedExactly": true,
+      "termsDefined": [
+        "tax lien",
+        "notice of intent",
+        "tax sale"
+      ],
+      "examplesUsed": [
+        "fictional composite Harbour Road parcel",
+        "Inverness packet reconciliation",
+        "Inverness and Halifax source-authority retrieval"
+      ],
+      "deliberateCallbacks": [
+        "Port Hood auction room",
+        "record versus conclusion",
+        "municipal notice as authority and map as router"
+      ],
+      "retrievals": [
+        "Choose Halifax's current notice over an Inverness packet or provincial map marker for a Halifax event."
+      ],
+      "listenerLoad": "Three defined core terms, no calculation and one source-authority retrieval.",
+      "runningSummary": "The Inverness packet is a strong starting source rather than a purchase decision. A tax sale reaches public view only after a priority lien, elapsed statutory time, title work and notices. Municipal practices vary, Halifax uses its own Charter framework, and the current authority-owned notice controls over another municipality's packet or the map.",
+      "unresolvedPromises": [
+        "Decode the packet's individual fields without treating them as promises.",
+        "Explain the purchaser's post-sale clock after the notice and auction vocabulary are stable.",
+        "Apply the source-authority habit to the full Chapter 5 map method."
+      ],
+      "mustNotRepeatNext": [
+        "Do not re-explain tax-lien priority.",
+        "Do not repeat the full municipal-packet limitation inventory.",
+        "Do not teach redemption or payment mechanics until their planned chapters."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch02",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch02.md",
+      "draftSHA256": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
+      "wordCount": 2977,
+      "completedAt": "2026-07-20T09:05:42-03:00",
+      "termsDefined": [
+        "Assessment Account Number (AAN)",
+        "Parcel Identification Number (PID)",
+        "assessment"
+      ],
+      "packetLabelsExplained": [
+        "lien number",
+        "assessed owner",
+        "address or location",
+        "land and building assessment fields",
+        "recovery amount",
+        "redemption marker"
+      ],
+      "examplesUsed": [
+        "fictional Harbour Road source-routing file",
+        "Inverness missing detail sheet and amount conflicts",
+        "interruption-safe four-question retrieval",
+        "current municipal notice versus saved packet, map snapshot and historical outcome"
+      ],
+      "analogyUsed": "AAN and PID as two catalogue keys, with an explicit legal-record limit.",
+      "retrievals": [
+        "Route an address-PID disagreement to the proper source families.",
+        "Recover parcel, assessment, event-status and redemption-marker meanings after an interruption."
+      ],
+      "listenerLoad": "Three new core terms, no calculation, two applied retrievals and no visual dependence.",
+      "runningSummary": "A notice is a dated routing record, not a miniature property description. AAN, PID, address, assessment, recovery and redemption fields answer different questions. The municipality's current notice controls live event status; map catalogues and historical results remain bounded secondary records.",
+      "unresolvedPromises": [
+        "Open the purchaser's post-sale clock in Chapter 3.",
+        "Build the complete source-ordered parcel biography in Chapter 4.",
+        "Teach the map's notice-to-handoff method in Chapter 5.",
+        "Deepen the economics of the recovery amount in Chapter 9."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine AAN, PID or assessment.",
+        "Do not repeat the packet reconciliation as a full scene.",
+        "Do not use the recovery amount as value or a historical result as a forecast."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch03",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch03.md",
+      "draftSHA256": "5e5ce834655e8d0027021d98a16d0b666321352e4e4c07c673f1b2c79716c1a3",
+      "wordCount": 1927,
+      "completedAt": "2026-07-20T09:10:05-03:00",
+      "termsDefined": [
+        "certificate of sale",
+        "certificate holder",
+        "discharge",
+        "tax deed"
+      ],
+      "examplesUsed": [
+        "Harbour Road leaking-roof protection during redemption",
+        "Harbour Road redemption and discharge",
+        "Quarry Lane older-arrears deed branch"
+      ],
+      "analogyUsed": "Stage documents as a relay baton, with an explicit same-holder and legal-rights limit.",
+      "retrievals": [
+        "Identify document, power or duty, boundary and required record before acting.",
+        "Narrate the different Harbour Road and Quarry Lane endings without inferring possession or usability."
+      ],
+      "listenerLoad": "Four linked stage terms, no spoken calculation, two fictional outcomes and two applied retrievals.",
+      "runningSummary": "A paid redeemable sale creates a registered certificate and conditional certificate-holder powers and duties. Redemption repays the purchaser and ends rights through discharge; expiry without redemption or the older-arrears branch permits a tax deed. Each document changes the current job but leaves practical and professional questions open.",
+      "unresolvedPromises": [
+        "Build the parcel biography in Chapter 4.",
+        "Operate certificate-period accounting and insurance in Chapter 11.",
+        "Resolve possession and post-deed work in Chapters 8 and 12."
+      ],
+      "mustNotRepeatNext": [
+        "Do not repeat the full certificate-holder powers and duties.",
+        "Do not reteach the redemption/deed fork before its operational retrievals.",
+        "Do not treat tax deed as possession, access, condition or uncontestable title."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    }
+  ]
 }
