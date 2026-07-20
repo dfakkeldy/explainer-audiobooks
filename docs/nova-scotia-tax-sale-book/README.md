@@ -36,8 +36,9 @@ ranking, or an advertisement disguised as education.
 - `figures/`: the deterministic diagram renderer, teaching/provenance
   specifications, contact sheets and hash-bound receipt for figures 03–08, 39
   and 40;
-- `chapters/`: canonical Chapters 1–3, drafted sequentially from the accepted
-  pilot and approved argument outline; and
+- `chapters/`: canonical Chapters 1–5, drafted sequentially from the accepted
+  pilot and approved argument outline, including the major map-method rewrite;
+  and
 - `chapters/images/`: eight legal/process candidates plus eleven
   2560-by-1440 NS Marks The Spot walkthrough screenshots; none is yet accepted
   or embedded in a manuscript.
@@ -97,7 +98,7 @@ alignment and a clean pronunciation audit. Its exact SHA-256 is
 Dan accepted that exact pilot for continued drafting with “continue” at
 2026-07-20T08:55:51-03:00. Sequential canonical drafting is now authorized;
 final figures, full narration, packaging and publication remain separate.
-Canonical Chapters 1–3 now total 6,968 Markdown words. They remain draft prose
+Canonical Chapters 1–5 now total 12,041 Markdown words. They remain draft prose
 until the complete manuscript clears independent learning, factual, prose,
 humanizer and rendered ear-pass review.
 

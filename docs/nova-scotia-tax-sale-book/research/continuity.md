@@ -69,6 +69,135 @@
 - Completion boundary: canonical draft only. Independent learning, factual,
   prose, humanizer, figure and narration gates remain pending.
 
+## Before `ch05-s01`
+
+- Job: keep current notices separate from historical outcomes, verify the direct
+  municipal source, and establish one parcel by exact PID or authoritative civic-
+  point containment before opening imagery or context layers.
+- Allowed evidence: `MAP-001`–`MAP-004`, `DATA-002`, `DATA-005`, `GIS-001`, and
+  `GIS-002`.
+- Interface order: mode, municipality/event, direct notice, exact parcel, then
+  mapped context.
+- New-term budget: `civic point` and `Plus Code`; PID and source hierarchy are
+  retrieved rather than redefined.
+- No-repeat boundary: no land-record definitions, uncertainty checklist, layer
+  catalogue recital, nearest/interpolated address, or map-derived ownership,
+  access, occupancy, boundary, value, or entry permission.
+
+## After `ch05-s01`
+
+- Draft: 1,243 words in `chapters/ch05.md`, section-state SHA-256
+  `dce68df56be24a043362541150263bd3396036852daafea84f3e6facc72d7840`.
+- Terms defined: `civic point` and `Plus Code`, each limited to mapped location
+  context.
+- Interface sequence: record family, municipality/event, direct source, exact
+  parcel, then imagery or contextual layers.
+- Retrieval: recover those first four elements after an interruption before
+  allowing a memorable map shape to supply identity.
+- Open promise: use one context question at a time and close with an explicit
+  unknown and professional handoff.
+
+## Before `ch05-s02`
+
+- Job: operate road/water and geology/resource screens one question at a time,
+  bound one historical result, then preserve source, date, limitation, unknown,
+  next record, and professional handoff.
+- Allowed evidence: `MAP-002`, `MAP-004`–`MAP-007`, and `LAND-004`.
+- New-term budget: `layer` and `mapped intersection`.
+- Grounded cases: current-notice PID `50308311` at Southside River Denys and
+  historical Halifax PID `00542589`; both are interface demonstrations only.
+- No-repeat boundary: no access, wetland, flood, clean-site, resource-rights,
+  contamination, value, comparable-sale, forecast, or recommendation inference.
+
+## After Chapter 5
+
+- Canonical path: `chapters/ch05.md`, SHA-256
+  `c76530d7d1a9592fa46ffaa46244826b09ff4df08a65fd385a10232939482c32`,
+  2,649 Markdown words.
+- Terms defined: `civic point`, `Plus Code`, `layer`, and `mapped intersection`.
+- Method: notice → parcel → context → unknowns → handoff.
+- Grounded demonstrations: current-notice PID `50308311` at Southside River
+  Denys and historical Halifax PID `00542589`; neither is a recommendation,
+  value model, access conclusion, or site opinion.
+- Retrievals: recover record family/direct source/exact parcel; state source,
+  date, observation, limitation, unknown, and handoff; name historical mode
+  before repeating an amount.
+- Prose inventory: the strict drafting-time gate passes across Chapters 1–5
+  with zero hard-banned matches and every rhetorical family below its density
+  limit. Repetition candidates remain for the later single-job review.
+- Next no-repeat boundary: Chapters 6 and 7 retrieve only the relevant map note
+  to stress-test access and physical/environmental uncertainty. They do not
+  repeat the interface tour.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure and narration gates remain pending.
+
+## Before `ch04-s01`
+
+- Job: inventory the useful municipal baseline, then build an additional
+  source-traceable evidence file without republishing private registry material.
+- Allowed evidence: `DATA-005`, `LAND-001`, `LAND-002`, `LAND-004`, `LAW-003`,
+  `GIS-001`, and `GIS-002`.
+- Previous state: stage documents are distinct, but certificate, discharge and
+  deed still do not establish boundary, access, possession, condition or use.
+- New-term budget: `parcel register`, `legal description`, and `title search`.
+- Public/private boundary: Property Online may route authorized private research;
+  no screenshot, registry document, owner information or subscription-derived
+  extract enters the public manuscript. Public parcel/aerial views are attributed
+  screening exhibits, never survey or title evidence.
+- No-repeat boundary: no identifier definitions, certificate catalogue,
+  redemption fork, environmental database lesson or full interactive-map method.
+
+## After `ch04-s01`
+
+- Draft: 1,335 words in `chapters/ch04.md`, section-state SHA-256
+  `6da671f62f22718220e265bab943aa3f7e44ccba01bef2b51dbc7dc63c6ac815`
+  after the recorded targeted map bridge.
+- Terms defined: `parcel register`, `legal description`, and `title search`.
+- Public/private result: the manuscript teaches the routing role of authorized
+  registry research without reproducing subscription material; Province parcel
+  and aerial views remain attributed screening exhibits.
+- Retrieval: separate municipal event record, authorized land-record question,
+  legal description, and public screening view for one exact PID.
+- Open promise: classify what remains before operating the Chapter 5 map method.
+
+## Before `ch04-s02`
+
+- Job: classify residual uncertainty and target lawyer, surveyor, and planner
+  questions without turning professional roles into a checklist recital.
+- Allowed evidence: `LAND-003`, `LAND-004`, and `LAW-013`.
+- Classification budget: verified fact, professionally verifiable uncertainty,
+  priceable uncertainty, and no-go uncertainty.
+- No-repeat boundary: no land-record term definitions, full access/zoning/
+  environmental lessons, or assumption that every gap can be priced or cured.
+
+## After Chapter 4
+
+- Canonical path: `chapters/ch04.md`, SHA-256
+  `557c3a25db431b535f56f15949e23e541fc7f1de262179f79dab6ed4f8d63eb9`,
+  2,424 Markdown words.
+- Terms defined: `parcel register`, `legal description`, and `title search`.
+- Classification: verified fact, professionally verifiable uncertainty,
+  priceable uncertainty, and no-go uncertainty.
+- Public/private boundary: authorized registry research remains private; public
+  parcel and aerial views retain Province attribution and screening limits.
+- Retrievals: separate the record families for one PID; route or stop on one
+  residual gap according to evidence, professional authority, priceability, and
+  project consequence.
+- Next no-repeat boundary: Chapter 5 operates the interface method without
+  redefining land-record terms or converting pixels into conclusions.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure and narration gates remain pending.
+
+## Before the targeted Chapter 4 map bridge
+
+- Job: name exact-PID and authoritative civic-point containment as the living
+  map's two bounded entry routes into a public parcel biography.
+- Allowed evidence: `MAP-001` and `MAP-002`.
+- No-repeat boundary: no current/historical lesson, layer workflow, five-step
+  method, or map-derived ownership, occupancy, access, boundary, or entry claim.
+- Result: exact-PID selection and authoritative civic-point containment now
+  appear as bounded public-map entry routes; Chapter 5 retains the full method.
+
 ## Before `ch03-s01`
 
 - Job: open the purchaser's second clock by following a fully paid redeemable

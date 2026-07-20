@@ -338,6 +338,305 @@
       "pilotDecisionEvidence": "continue",
       "recordedAt": "2026-07-20T09:08:34-03:00",
       "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch04-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 3 ends with Harbour Road discharged after redemption and Quarry Lane entering the deed branch. The listener can distinguish stage documents but still cannot infer parcel identity, boundary, access, condition, possession or usability from any of them.",
+      "sectionJob": "Inventory the municipal baseline, then build the additional evidence file from source records and public layers.",
+      "specificClaims": [
+        "DATA-005",
+        "LAND-001",
+        "LAND-002",
+        "LAND-004",
+        "LAW-003",
+        "GIS-001",
+        "GIS-002"
+      ],
+      "coverageConcepts": [
+        "parcel biography",
+        "source hierarchy",
+        "public map limitation"
+      ],
+      "throughlineAdvance": "Separate reused municipal facts, new research, legal or professional interpretation and residual uncertainty.",
+      "payoff": "The fictional parcel acquires a traceable biography rather than a repackaged listing sheet.",
+      "landingBeat": "The listener knows what useful work remains before asking a lawyer a precise question.",
+      "mustNotRepeat": [
+        "Do not redefine AAN, PID or tax deed.",
+        "Do not replay the certificate-holder powers or redemption fork.",
+        "Do not publish Property Online screenshots, registry documents, owner information or subscription-derived extracts.",
+        "Do not teach environmental databases or the interactive map workflow yet.",
+        "Do not treat public parcel geometry or aerial imagery as a survey, title opinion or access proof."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch04.md",
+      "sectionDraftSHA256": "6da671f62f22718220e265bab943aa3f7e44ccba01bef2b51dbc7dc63c6ac815",
+      "sectionWordCount": 1335,
+      "draftedAt": "2026-07-20T09:17:12-03:00",
+      "mapBridgeRevision": {
+        "status": "targeted-map-bridge-applied",
+        "job": "Name exact-PID and authoritative civic-point containment as bounded public-map entry routes without teaching the Chapter 5 workflow.",
+        "specificClaims": [
+          "MAP-001",
+          "MAP-002"
+        ],
+        "mustNotRepeat": [
+          "Do not teach current-versus-historical mode, context layers or the five-step map method.",
+          "Do not imply that either entry route proves ownership, occupancy, access, boundary or permission to enter."
+        ],
+        "recordedAt": "2026-07-20T09:30:18-03:00",
+        "recordedBeforeRevision": true,
+        "revisedAt": "2026-07-20T09:31:02-03:00",
+        "revisedSectionSHA256": "6da671f62f22718220e265bab943aa3f7e44ccba01bef2b51dbc7dc63c6ac815"
+      },
+      "termsDefined": [
+        "parcel register",
+        "legal description",
+        "title search"
+      ],
+      "retrievalPrompt": "For one exact PID, separate the municipal event record, authorized land-record questions, legal description, and attributed public screening views without turning any one source into a survey or title opinion.",
+      "runningSummary": "A parcel biography starts by crediting and inventorying the municipal baseline, then records each source, date, observation and limitation. Authorized Property Online research routes registry questions without entering the public manuscript; public NSPRD and aerial views remain attributed screening exhibits; and title search, legal description and survey questions go to the professionals who can answer them.",
+      "unresolvedPromises": [
+        "Classify residual uncertainty and target lawyer, surveyor and planner questions.",
+        "Operate the interactive notice-to-handoff workflow in Chapter 5."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:14:40-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch04-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Birch Point Road now has a source ledger that credits the municipality, routes authorized private registry research without republishing it, preserves Province attribution on public views, and separates parcel register, legal description, title search and survey questions.",
+      "sectionJob": "Introduce uncertainty labels and the lawyer, surveyor and planner division of labour.",
+      "specificClaims": [
+        "LAND-003",
+        "LAND-004",
+        "LAW-013"
+      ],
+      "coverageConcepts": [
+        "verified fact",
+        "professionally verifiable uncertainty",
+        "priceable uncertainty",
+        "no-go uncertainty"
+      ],
+      "throughlineAdvance": "Introduce verified, professionally verifiable, priceable uncertainty and no-go classifications.",
+      "payoff": "Professional fees become targeted uncertainty reduction rather than generic closing overhead.",
+      "landingBeat": "Attachment to a parcel is delayed until its evidence file survives first review.",
+      "mustNotRepeat": [
+        "Do not redefine the three land-record terms from the first section.",
+        "Do not turn professional roles into a checklist recital.",
+        "Do not teach zoning, access or environmental mechanisms in full.",
+        "Do not imply that every uncertainty can be priced or resolved before sale.",
+        "Do not treat a court-directed sale as a routine cure for a weak research file."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch04.md",
+      "sectionDraftSHA256": "909daaf5d5ced8151a98757d418491c9d23ae415428cb5ed83d4aadc5055abe0",
+      "sectionWordCount": 1089,
+      "draftedAt": "2026-07-20T09:19:58-03:00",
+      "classificationsExplained": [
+        "verified fact",
+        "professionally verifiable uncertainty",
+        "priceable uncertainty",
+        "no-go uncertainty"
+      ],
+      "professionalHandoffs": [
+        "lawyer for registered interests, legal access and court-order effect",
+        "surveyor for boundary or plan-location evidence",
+        "planner for current municipal requirements applied to the proposed use"
+      ],
+      "retrievalPrompt": "Classify a remaining gap by what the source verifies, who can answer it, whether a documented answer can enter the budget, and whether an essential unresolved fact must stop the project.",
+      "runningSummary": "The parcel biography keeps facts and gaps together. Verified facts remain bounded by their source; professionally verifiable questions receive specific evidence and handoffs; priceable uncertainty enters the budget only from documented amounts; and an essential unresolved fact becomes a no-go for the stated project. Court-directed sale is a municipality-and-court mechanism, not an assumed cure.",
+      "unresolvedPromises": [
+        "Operate the live map as a question machine while preserving source, date, limitation, unknown and handoff."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:17:12-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch05-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 4 gives fictional Birch Point Road a source-traceable biography, keeps subscription material private, bounds public parcel and aerial views, and classifies residual gaps by professional route, priceability and stop condition.",
+      "sectionJob": "Keep current notices separate from historical outcomes, verify the direct municipal source and establish one parcel by exact PID or authoritative civic-point containment.",
+      "specificClaims": [
+        "MAP-001",
+        "MAP-002",
+        "MAP-003",
+        "MAP-004",
+        "DATA-002",
+        "DATA-005",
+        "GIS-001",
+        "GIS-002"
+      ],
+      "coverageConcepts": [
+        "current versus historical mode",
+        "direct municipal authority",
+        "exact parcel establishment",
+        "civic point",
+        "Plus Code"
+      ],
+      "throughlineAdvance": "Turn source hierarchy into an interface habit: mode and notice first, parcel identity second, imagery later.",
+      "payoff": "The listener can open the correct event and establish one parcel without mistaking the app, civic point or Plus Code for an authoritative property conclusion.",
+      "landingBeat": "The map is ready to generate questions, not conclusions.",
+      "mustNotRepeat": [
+        "Do not redefine AAN, PID, parcel register, legal description or title search.",
+        "Do not repeat the complete Chapter 4 uncertainty classification.",
+        "Do not recite the full layer catalogue in audio.",
+        "Do not substitute nearest or interpolated civic addresses.",
+        "Do not treat the app, civic point, Plus Code, parcel geometry or imagery as ownership, occupancy, legal access, boundary or permission-to-enter evidence."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch05.md",
+      "sectionDraftSHA256": "dce68df56be24a043362541150263bd3396036852daafea84f3e6facc72d7840",
+      "sectionWordCount": 1243,
+      "draftedAt": "2026-07-20T09:23:44-03:00",
+      "termsDefined": [
+        "civic point",
+        "Plus Code"
+      ],
+      "interfaceSequence": [
+        "choose current or historical record family",
+        "select municipality and dated event",
+        "verify the direct municipal source",
+        "establish the parcel by exact PID or authoritative civic-point containment",
+        "open imagery or context only after identity is stable"
+      ],
+      "retrievalPrompt": "After an interruption, recover record family, municipality and event, direct-source confirmation, and exact parcel establishment before returning to imagery.",
+      "runningSummary": "The production map is a dated research index. Current notices and verified historical outcomes remain separate; the direct municipality owns live event status; exact PID or authoritative civic-point containment establishes a parcel for research; civic points, Plus Codes, mapped area, boundary geometry and imagery remain bounded orientation context.",
+      "unresolvedPromises": [
+        "Use road, water and resource layers one question at a time.",
+        "Bound one historical result and write the unknown plus professional handoff."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:21:11-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch05-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "The map workflow now begins with current versus historical mode, municipality and dated event, direct-source confirmation, and exact parcel establishment by PID or authoritative civic-point containment. Imagery, geometry, mapped area, civic points and Plus Codes remain bounded orientation context.",
+      "sectionJob": "Use road, water and geology or resource layers one question at a time, bound one historical result, then write the unknown and professional handoff.",
+      "specificClaims": [
+        "MAP-002",
+        "MAP-004",
+        "MAP-005",
+        "MAP-006",
+        "MAP-007",
+        "LAND-004"
+      ],
+      "coverageConcepts": [
+        "layer",
+        "mapped intersection",
+        "source-date-limitation-unknown-handoff note",
+        "historical outcome boundary"
+      ],
+      "throughlineAdvance": "Convert attractive map pixels into traceable evidence classifications and next actions.",
+      "payoff": "The listener can use River Denys and one historical Halifax result to say what the app reports, what it does not establish and where the next question belongs.",
+      "landingBeat": "Notice, parcel, context, unknowns and handoff becomes the repeatable method.",
+      "mustNotRepeat": [
+        "Do not repeat the current-source and parcel-establishment sequence in full.",
+        "Do not infer legal access from visible transportation or road linework.",
+        "Do not infer wetlands, flood status or clean site conditions from water or empty layer results.",
+        "Do not infer reserves, mineral rights, contamination, safety or economic value from resource layers.",
+        "Do not infer current value or future bidding from a historical outcome.",
+        "Do not turn either real PID into a recommendation."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch05.md",
+      "sectionDraftSHA256": "83f6a2660979841491188c35bcbf04cb9a3e94a204854fbab66bfe03930d8609",
+      "sectionWordCount": 1406,
+      "draftedAt": "2026-07-20T09:27:36-03:00",
+      "termsDefined": [
+        "layer",
+        "mapped intersection"
+      ],
+      "groundedExamples": [
+        "current-notice PID 50308311 Southside River Denys road and water context",
+        "historical Halifax PID 00542589 March 8 2022 outcome"
+      ],
+      "method": [
+        "notice",
+        "parcel",
+        "context",
+        "unknowns",
+        "handoff"
+      ],
+      "retrievalPrompt": "State source, date, observation, limitation, unknown and handoff for one mapped result, then name the record family before repeating any historical amount.",
+      "runningSummary": "A layer isolates one source-sized context question. A mapped intersection reports a relationship between current service geometry and current parcel geometry without becoming a real-world legal or physical conclusion. River Denys demonstrates road/water limits; the Halifax result demonstrates historical limits; and the full method preserves notice, parcel, context, unknowns and handoff.",
+      "unresolvedPromises": [
+        "Stress-test road proximity against legal access in Chapter 6.",
+        "Stress-test empty or returned environmental records in Chapter 7.",
+        "Retrieve the historical-result boundary in Chapter 9 and the full method in Chapter 13."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:23:44-03:00",
+      "recordedBeforeDraft": true
     }
   ],
   "checkpoints": [
@@ -465,6 +764,92 @@
         "Do not repeat the full certificate-holder powers and duties.",
         "Do not reteach the redemption/deed fork before its operational retrievals.",
         "Do not treat tax deed as possession, access, condition or uncontestable title."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch04",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch04.md",
+      "draftSHA256": "557c3a25db431b535f56f15949e23e541fc7f1de262179f79dab6ed4f8d63eb9",
+      "wordCount": 2424,
+      "completedAt": "2026-07-20T09:19:58-03:00",
+      "termsDefined": [
+        "parcel register",
+        "legal description",
+        "title search"
+      ],
+      "classificationsExplained": [
+        "verified fact",
+        "professionally verifiable uncertainty",
+        "priceable uncertainty",
+        "no-go uncertainty"
+      ],
+      "examplesUsed": [
+        "fictional composite Birch Point Road source ledger",
+        "Inverness packet baseline and reconciliation",
+        "targeted lawyer, surveyor and planner handoffs"
+      ],
+      "retrievals": [
+        "Separate municipal, registry, legal-description and public-screening records for one PID.",
+        "Classify a remaining gap by verification route, priceability and stop condition."
+      ],
+      "listenerLoad": "Three land-record terms, four uncertainty destinations, no calculation and two applied retrievals.",
+      "runningSummary": "A parcel biography credits the municipal baseline, preserves source/date/limitation, keeps subscription material private, treats public maps as attributed screening exhibits and routes precise questions to the right professionals. Essential unresolved uncertainty can govern the process even when several other facts are comfortable.",
+      "unresolvedPromises": [
+        "Operate the full notice-to-parcel-to-context-to-unknowns-to-handoff map method in Chapter 5.",
+        "Apply access, planning and environmental failure cases in Chapters 6 and 7."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine parcel register, legal description or title search.",
+        "Do not repeat the four uncertainty categories as a checklist.",
+        "Do not let interface output become survey, title, access, condition or value evidence."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch05",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch05.md",
+      "draftSHA256": "c76530d7d1a9592fa46ffaa46244826b09ff4df08a65fd385a10232939482c32",
+      "wordCount": 2649,
+      "completedAt": "2026-07-20T09:27:36-03:00",
+      "termsDefined": [
+        "civic point",
+        "Plus Code",
+        "layer",
+        "mapped intersection"
+      ],
+      "method": [
+        "notice",
+        "parcel",
+        "context",
+        "unknowns",
+        "handoff"
+      ],
+      "examplesUsed": [
+        "fictional Birch Point Road combined research state",
+        "current-notice PID 50308311 Southside River Denys road and water context",
+        "historical Halifax PID 00542589 March 8 2022 outcome"
+      ],
+      "retrievals": [
+        "Recover record family, municipality and event, direct source and exact parcel after an interruption.",
+        "State source, date, observation, limitation, unknown and handoff for a mapped result.",
+        "Name the historical record family before repeating an amount."
+      ],
+      "listenerLoad": "Four map terms, no calculation, one five-word method, two real bounded interface demonstrations and three applied retrievals.",
+      "runningSummary": "The map organizes dated record families and shortens the route from a direct municipal notice to an exact research parcel. Civic, boundary, imagery, road, water, resource and historical results remain source-bounded observations. Notice, parcel, context, unknowns and handoff turns the interface into a question machine rather than a property verdict.",
+      "unresolvedPromises": [
+        "Challenge mapped road context with the Chapter 6 legal-access failure case.",
+        "Challenge resource and empty-result discipline with Chapter 7 environmental evidence.",
+        "Retrieve the historical-result boundary in Chapter 9.",
+        "Retrieve the full method in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not re-tour the interface or recite its layer catalogue.",
+        "Do not redefine civic point, Plus Code, layer or mapped intersection.",
+        "Retrieve only the map note needed for the next failure case.",
+        "Do not let current or historical demonstrations become recommendations, values or forecasts."
       ],
       "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
     }

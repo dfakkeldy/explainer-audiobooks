@@ -269,7 +269,9 @@
             "LAND-004",
             "LAW-003",
             "GIS-001",
-            "GIS-002"
+            "GIS-002",
+            "MAP-001",
+            "MAP-002"
           ],
           "throughlineAdvance": "Separate reused municipal facts, new research, legal/professional interpretation and residual uncertainty.",
           "payoff": "The fictional parcel acquires a traceable biography rather than a repackaged listing sheet.",

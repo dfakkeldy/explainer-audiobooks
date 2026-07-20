@@ -150,8 +150,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(len(continuity["checkpoints"]), 3)
-        self.assertEqual(len(continuity["draftContexts"]), 6)
+        self.assertEqual(len(continuity["checkpoints"]), 5)
+        self.assertEqual(len(continuity["draftContexts"]), 10)
         context = next(
             item
             for item in continuity["draftContexts"]
@@ -274,6 +274,57 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
                 for item in chapter_three_contexts.values()
             )
         )
+
+        chapter_four_path = PACKET_ROOT / "chapters/ch04.md"
+        chapter_four_checkpoint = continuity["checkpoints"][3]
+        self.assertEqual(chapter_four_checkpoint["chapter"], "ch04")
+        self.assertEqual(chapter_four_checkpoint["wordCount"], 2424)
+        self.assertEqual(
+            chapter_four_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_four_path.read_bytes()).hexdigest(),
+        )
+        chapter_four_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch04-")
+        }
+        self.assertEqual(set(chapter_four_contexts), {"ch04-s01", "ch04-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_four_contexts.values()
+            )
+        )
+
+        chapter_five_path = PACKET_ROOT / "chapters/ch05.md"
+        chapter_five = chapter_five_path.read_text(encoding="utf-8")
+        chapter_five_checkpoint = continuity["checkpoints"][4]
+        self.assertEqual(chapter_five_checkpoint["chapter"], "ch05")
+        self.assertEqual(chapter_five_checkpoint["wordCount"], 2649)
+        self.assertEqual(
+            chapter_five_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_five_path.read_bytes()).hexdigest(),
+        )
+        chapter_five_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch05-")
+        }
+        self.assertEqual(set(chapter_five_contexts), {"ch05-s01", "ch05-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_five_contexts.values()
+            )
+        )
+        self.assertEqual(
+            chapter_five_checkpoint["method"],
+            ["notice", "parcel", "context", "unknowns", "handoff"],
+        )
+        self.assertIn("current or historical mode", chapter_five)
+        self.assertIn("not a recommendation", chapter_five)
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
         self,
