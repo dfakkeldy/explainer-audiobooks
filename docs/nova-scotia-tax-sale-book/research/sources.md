@@ -2,9 +2,9 @@
 
 Retrieved 2026-07-18 unless noted; core law, Inverness event, and provincial
 map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access,
-Chapter 7 environmental, and Chapter 8 title/occupancy/mobile-home sources were
-refreshed on 2026-07-20. Primary and official sources control; explanatory
-sources are labelled separately.
+Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, and Chapter 9
+auction-result/tax/eligibility sources were refreshed on 2026-07-20. Primary
+and official sources control; explanatory sources are labelled separately.
 
 ## Controlling law
 
@@ -13,11 +13,11 @@ sources are labelled separately.
 3. Nova Scotia Legislature, [Marketable Titles Act](https://nslegislature.ca/sites/default/files/legc/statutes/marketable%20titles.pdf), standalone consolidation dated 2015-09-01, especially the tax-deed contestability and exceptions in s. 6. Research snapshot SHA-256: `20c3c10c29aad0a4f686b23ec6c08d622a91ea94d70e3df74a9bc03d94d1d942`; snapshot intentionally not committed.
 4. Nova Scotia, [Selling Mobile Homes at Tax Sale Definitions Regulations](https://novascotia.ca/JUST/regulations/regs/mgmohodf.htm), refreshed 2026-07-20.
 5. Nova Scotia, [Selling Mobile Homes at Tax Sale Forms](https://novascotia.ca/just/REGULATIONS/regs/mgmohofm.htm), refreshed 2026-07-20. The prescribed forms separately contemplate a certificate of sale, discharge, and agreement for sale for a mobile home; the electronic consolidation warns that it is unofficial.
-6. Canada, [Prohibition on the Purchase of Residential Property by Non-Canadians Regulations](https://laws-lois.justice.gc.ca/eng/regulations/SOR-2022-250/section-4.html), current to 2026-05-26.
+6. Canada, [Prohibition on the Purchase of Residential Property by Non-Canadians Act](https://laws-lois.justice.gc.ca/eng/acts/P-25.2/section-4.html) and [Regulations](https://laws-lois.justice.gc.ca/eng/regulations/SOR-2022-250/section-4.html), refreshed 2026-07-20 against official consolidations current into 2026.
 
 ## Municipal procedure and actual-sale evidence
 
-7. Cape Breton Regional Municipality, [Tax Sales](https://cbrm.ns.ca/business/property-sales-management/tax-sales/), including auction, payment, redemption, occupied-property, access, HST and due-diligence notices; refreshed 2026-07-20. CBRM states that occupied properties can be sold and that the municipality neither removes residents nor provides access.
+7. Cape Breton Regional Municipality, [Tax Sales](https://cbrm.ns.ca/business/property-sales-management/tax-sales/), including auction, payment, redemption, occupied-property, access, HST and due-diligence notices; refreshed 2026-07-20. CBRM states that occupied properties can be sold and that the municipality neither removes residents nor provides access; its current event FAQ also states that HST applies to vacant land and commercially assessed property, a municipal instruction the book does not generalize beyond that event.
 8. CBRM, [July 21, 2026 tax-sale advertisement](https://cbrm.ns.ca/wp-content/uploads/2026/06/JULY-21-2026-2nd-Ad.pdf). Research snapshot SHA-256 `5435e9b89df5ac15f63097c0935661b5616e7b6bdc8b04fd4e8811ba6d457566`; snapshot intentionally not committed.
 9. CBRM, [March 10, 2026 sold-property results](https://cbrm.ns.ca/wp-content/uploads/2026/03/Sold-Properties-March-10-2026-Tax-Sale.pdf). Research snapshot SHA-256 `ed0dbc1dcc09a7fb9a063b716784cb1b3ba18306f9984013791e4b250f667dc4`; snapshot intentionally not committed.
 10. Municipality of the County of Inverness, [Property Tax Sales](https://invernesscounty.ca/services/finance-taxation/tax-sales/) and [December 2025 FAQ](https://invernesscounty.ca/wp-content/uploads/2026/01/Property-Tax-Sales-FAQ.pdf).
@@ -45,11 +45,11 @@ sources are labelled separately.
 
 ## Transfer taxes, sales taxes and eligibility
 
-26. Nova Scotia, [Municipal deed transfer and property tax](https://www.novascotia.ca/municipal-deed-transfer-and-property-tax) and [June 2025 municipal rates](https://www.novascotia.ca/sns/pdf/ans-property-dtt-rates.pdf).
-27. Nova Scotia, [Non-resident Provincial Deed Transfer Tax](https://www.novascotia.ca/non-resident-provincial-deed-transfer-tax).
-28. Canada Revenue Agency, [Sales of Vacant Land by Individuals](https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/gi-003/sales-vacant-land-individuals.html) and [Real Property and the GST/HST](https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/19-1/real-property-gst-hst.html).
-29. Department of Finance Canada, [foreign-buyer prohibition extended to 2027](https://www.canada.ca/en/department-finance/news/2024/02/government-announces-two-year-extension-to-ban-on-foreign-ownership-of-canadian-housing.html).
-30. CMHC, [Prohibition on the Purchase of Residential Property by Non-Canadians Act FAQ](https://www.cmhc-schl.gc.ca/professionals/housing-markets-data-and-research/housing-research/consultations/prohibition-purchase-residential-property-non-canadians-act/faq).
+26. Nova Scotia, [Municipal deed transfer and property tax](https://www.novascotia.ca/municipal-deed-transfer-and-property-tax) and [June 2025 municipal rates](https://www.novascotia.ca/sns/pdf/ans-property-dtt-rates.pdf), refreshed 2026-07-20 together with MGA s. 109(4), which exempts a deed given pursuant to a tax sale from municipal deed transfer tax.
+27. Nova Scotia, [Non-resident Provincial Deed Transfer Tax](https://www.novascotia.ca/non-resident-provincial-deed-transfer-tax), refreshed 2026-07-20. The current page states a 10% rate for qualifying post-2025-03-31 transfers, calculated on the transferred non-resident interest and the higher of purchase price or assessed value, subject to exemptions.
+28. Canada Revenue Agency, [Sales of Vacant Land by Individuals](https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/gi-003/sales-vacant-land-individuals.html) and [Real Property and the GST/HST](https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/19-1/real-property-gst-hst.html), refreshed 2026-07-20. CRA's examples confirm that real-property treatment depends on the seller, use, property and transaction rather than a universal vacant-land rule.
+29. Department of Finance Canada, [foreign-buyer prohibition extended to 2027](https://www.canada.ca/en/department-finance/news/2024/02/government-announces-two-year-extension-to-ban-on-foreign-ownership-of-canadian-housing.html), refreshed 2026-07-20 and checked with the current federal Act and Regulations.
+30. CMHC, [Prohibition on the Purchase of Residential Property by Non-Canadians Act FAQ](https://www.cmhc-schl.gc.ca/professionals/housing-markets-data-and-research/housing-research/consultations/prohibition-purchase-residential-property-non-canadians-act/faq), refreshed 2026-07-20 for the geography, vacant-land and genuine-development exception explanations; the current Act, Regulations and Finance extension control timing.
 
 ## Insurance availability boundary
 
@@ -66,14 +66,14 @@ sources are labelled separately.
 
 36. Municipality of the County of Inverness, [August 11, 2026 property packet](https://invernesscounty.ca/wp-content/uploads/2026/07/Tax-Sale_August-11.pdf), 139 pages. Research snapshot SHA-256: `bd202d018b87e3fb8b871df4eb10ac7b966138df3c8ae29c98c91e7f2b3afaac`; the owner-bearing snapshot is intentionally not committed. Text extraction plus representative visual review confirmed that detailed entries already contain the core fact table, aerial overlay, Property Online map/disclaimer and registry legal description.
 37. Inverness County, [May 27, 2025 property packet](https://invernesscounty.ca/wp-content/uploads/2025/04/Tax-Sale-Information-2.pdf). Research snapshot SHA-256: `d82beede28d8bdab2cae21894d6e731696cdddcc4fcf93e286f261863a9dabd5`; snapshot intentionally not committed.
-38. Inverness County, [2025 property-tax results](https://invernesscounty.ca/wp-content/uploads/2026/03/2025-Property-Tax-Results.pdf). Research snapshot SHA-256: `b830a727e4ffa6b498ee8eda241db7127ccbbb4ebb56de87a83a2a8c217f5f08`; snapshot intentionally not committed.
+38. Inverness County, [2025 property-tax results](https://invernesscounty.ca/wp-content/uploads/2026/03/2025-Property-Tax-Results.pdf), refreshed through the municipality's current tax-sale results page on 2026-07-20. Research snapshot SHA-256: `b830a727e4ffa6b498ee8eda241db7127ccbbb4ebb56de87a83a2a8c217f5f08`; snapshot intentionally not committed.
 39. Inverness County, [Property Tax Sales FAQ](https://invernesscounty.ca/wp-content/uploads/2026/01/Property-Tax-Sales-FAQ.pdf), prepared December 2025. Research snapshot SHA-256: `5f20a56b058bfec5bc4f7a5677084812d6e6817a93a99b734dcbc15698253908`; snapshot intentionally not committed.
-40. Inverness County, [June 19, 2025 Committee of the Whole minutes](https://invernesscounty.ca/wp-content/uploads/2025/07/Minutes_COW_June_19_2025_post.pdf), especially page 4: 50 advertised, 35 sold, 15 removed, and $608,693.21 reported surplus.
+40. Inverness County, [June 19, 2025 Committee of the Whole minutes](https://invernesscounty.ca/wp-content/uploads/2025/07/Minutes_COW_June_19_2025_post.pdf), refreshed 2026-07-20, especially page 4: 50 advertised, 35 sold, 15 removed, and $608,693.21 reported surplus.
 41. Inverness County, [Plan Inverness Municipal Planning Strategy and Land Use By-law in effect](https://invernesscounty.ca/municipal-planning-strategy-land-use-bylaw-in-effect/), effective 2025-09-11, with administration through Eastern District Planning Commission; refreshed 2026-07-20.
 
 ## Cross-municipality practice and results
 
-42. Municipality of the County of Richmond, [Tax Sales and June 12, 2026 results](https://www.richmondcounty.ca/tax-sales.html).
+42. Municipality of the County of Richmond, [Tax Sales and June 12, 2026 results](https://www.richmondcounty.ca/tax-sales.html), refreshed 2026-07-20; the current table publishes three sold rows and supports only a compact descriptive comparison.
 43. Municipality of the County of Pictou, [2026-01 sealed-tender advertisement](https://munpict.ca/assets/Tax-Sale-2026-01-Final-Advertisement-Posted-revised-April-10.pdf).
 44. Municipality of the County of Annapolis, [Tax Sale page](https://annapoliscounty.ca/tax-finance/tax-sale), [March 2026 auction](https://www.annapoliscounty.ca/tax-finance/tax-sale/2271-march-2026-tax-sale), and 2026 council treatment of unsold properties.
 45. Municipality of the County of Kings, [Tax Sales](https://www.countyofkings.ca/business/sales.aspx), and Municipality of Chester, [Tax Sales](https://chester.ca/government/property-taxes-and-rates/tax-sales).

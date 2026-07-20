@@ -39,11 +39,13 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- Canonical drafting: Chapters 1–8 complete at 19,063 Markdown words; Chapter 9
+- Canonical drafting: Chapters 1–9 complete at 21,374 Markdown words; Chapter 10
   is next. Chapter 5 carries the major notice → parcel → context → unknowns →
   handoff rewrite. Chapters 6 and 7 stress-test it against legal access,
   intended use, and bounded environmental records; Chapter 8 separates title,
   continuing interests, occupancy, possession, and mobile-home record systems.
+  Chapter 9 separates historical competition from value and builds a bounded
+  all-in cost, tax/eligibility branch, uncertainty reserve, and written maximum.
   These are draft checkpoints, not final reviewed manuscript prose.
 - User approval status: the prior twelve-chapter/forty-figure direction was
   approved for pilot development at 2026-07-19T11:56:49-03:00. The proposed

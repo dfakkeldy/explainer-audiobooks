@@ -110,12 +110,14 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Supported wording: Inverness advertised 50 properties for May 27, 2025. Council minutes say 35 sold, 15 were removed before sale, and $608,693.21 in surplus was collected. The public results PDF contains 31 bid rows totalling $691,383.05; within those rows the median bid was 4.53 times the advertised recovery amount, 15 were at least five times and seven at least ten times.
 - Source: Inverness May 2025 packet, 2025 result sheet, June 19, 2025 Committee of the Whole minutes; `inverness-county-dossier.md`.
 - Confidence: high for each official measure and the reproducible 31-row calculation.
+- Refreshed: 2026-07-20 against the municipality's current results page and official June 19, 2025 minutes.
 - Boundary: The four-row difference between the minutes and public result sheet is unresolved. The ratio sample is not a valuation model or forecast.
 
 ### DATA-004 — Richmond compact comparison
 - Supported wording: Richmond County's June 12, 2026 results publish three sold rows at approximately 1.33, 6.59 and 6.28 times their listed taxes, interest and charges.
 - Source: Richmond County Tax Sales page and June 2026 results table.
 - Confidence: high for the dated three-row sample.
+- Refreshed: 2026-07-20 against Richmond County's current results table.
 
 ## Certificate, redemption and deed
 
@@ -320,22 +322,26 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Supported wording: A deed given pursuant to a tax sale is exempt from municipal deed transfer tax under MGA s. 109(4). The land-registration process still requires the applicable Affidavit of Value information even when no municipal deed transfer tax is payable.
 - Source: MGA s. 109(4); Inverness Property Tax Sales FAQ; Nova Scotia Municipal deed transfer and property tax service.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation dated 2026-04-09 and the current provincial deed-transfer service.
 - Boundary: This municipal exemption does not decide HST or the separate provincial non-resident deed transfer tax.
 
 ### TAX-002 — Nova Scotia non-resident deed transfer tax
 - Supported wording: Since 2025-04-01, Nova Scotia's provincial tax on qualifying non-residents acquiring residential property is ten percent of the transferred non-resident interest times the greater of purchase price or assessed value, subject to exemptions such as qualifying individuals moving to Nova Scotia within six months.
 - Source: Nova Scotia Non-resident Provincial Deed Transfer Tax page.
 - Confidence: high; refresh before reliance.
+- Refreshed: 2026-07-20. The current provincial page confirms the 10% rate and higher-of-price-or-assessment basis for qualifying transfers after 2025-03-31, subject to transferred interest and exemptions.
 
 ### TAX-003 — HST is fact-specific
 - Supported wording: CBRM tells its bidders HST applies to vacant land and commercially assessed property, but federal GST/HST rules make the treatment of real property depend on the seller, use, property and transaction. A bidder must obtain property-specific tax advice rather than apply a universal “vacant land equals HST” rule outside the event's terms.
 - Source: CBRM Tax Sales FAQ; CRA Sales of Vacant Land by Individuals; CRA Real Property and the GST/HST.
 - Confidence: high for the need for case-specific analysis.
+- Refreshed: 2026-07-20 against CBRM's current event FAQ and current CRA guidance.
 
 ### ELIG-001 — non-Canadian purchase restrictions
 - Supported wording: The federal prohibition is extended to 2027-01-01 and can cover direct or indirect acquisition of qualifying residential property in specified population areas. Current regulations and CMHC guidance include exceptions, including vacant land and genuine development, and properties outside census metropolitan areas or census agglomerations fall outside the geographic scope.
 - Source: Department of Finance extension notice; federal regulations s. 4; CMHC FAQ.
 - Confidence: high; refresh before reliance.
+- Refreshed: 2026-07-20 against the current federal Act and Regulations, the Finance extension, and CMHC's exception explanations.
 
 ### MOB-001 — manufactured/mobile homes need a separate branch
 - Supported wording: Nova Scotia regulations include mobile homes in defined tax-sale provisions, but an unaffixed manufactured home can also involve personal-property security and land-lease questions. A PID-only land search is not enough for that asset type.

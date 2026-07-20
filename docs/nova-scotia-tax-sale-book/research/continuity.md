@@ -494,3 +494,74 @@
   mobile-home scenes.
 - Completion boundary: canonical draft only. Independent learning, factual,
   prose, humanizer, figure, and narration gates remain pending.
+
+## Before `ch09-s01`
+
+- Job: use dated official auction results to separate recovery amount,
+  assessment, winning bid, and property value.
+- Allowed evidence: `DATA-003`, `DATA-001`, `DATA-004`, and `LAND-003`;
+  coverage concepts `all-in cost` setup and the historical-result boundary.
+- Grounding: Inverness May 2025's 50 advertised, 35 reported sold, 15 removed,
+  and 31 published bid rows; bounded CBRM March 2026 and Richmond June 2026
+  comparisons.
+- New-term budget for Chapter 9: `all-in cost`, `uncertainty reserve`, and
+  `maximum bid`.
+- Audio budget: at most three temporary values and three symbolic steps, with a
+  reset to bid, known costs, and one reserve.
+- No-repeat boundary: no opening-auction replay, owner identification, live
+  ranking, historical result as value/profit/forecast, hidden row-count gap,
+  denominator-free municipal comparison, or detailed tax/ceiling branch before
+  the second section.
+
+## After `ch09-s01`
+
+- Draft: 1,085 words in `chapters/ch09.md`, section-state SHA-256
+  `b793d1e05bed89c4a3580084235c41550dbe6bafb27e6cf8f86bbf867c83809a`.
+- Term defined: `all-in cost`.
+- Applications: Inverness's 50/35/31 source chain, bounded CBRM and Richmond
+  samples, a source-linked historical map result, and fictional Cedar Street's
+  incomplete economic file.
+- Analogy: the visible bid as an iceberg tip, limited because proportions vary
+  and researchable costs should be estimated.
+- Retrieval: separate recovery, assessment, and dated bid, then name the
+  missing evidence before any present-value conclusion.
+- Open promise: build the cost stack backward and branch taxes, eligibility,
+  payment readiness, reserves, and the written ceiling.
+
+## Before `ch09-s02`
+
+- Job: build Cedar Street's cost stack and branch municipal exemption,
+  provincial non-resident tax, transaction-specific HST, federal eligibility,
+  and payment readiness before setting a written maximum.
+- Allowed evidence: `TAX-001`, `TAX-002`, `TAX-003`, `ELIG-001`, and `LAW-006`;
+  coverage concepts `all-in cost` and payment-performance setup.
+- New-term budget remaining: `uncertainty reserve` and `maximum bid`.
+- Audio budget remaining: one brief spoken calculation with no more than three
+  temporary values and three symbolic steps, then reset to bid, known costs,
+  and reserve.
+- No-repeat boundary: no result-distribution replay, personalized returns or
+  advice, province-wide CBRM HST generalization, exemption-as-no-tax inference,
+  reserve used to override no-go uncertainty, or full Chapter 10 execution
+  sequence.
+
+## After Chapter 9
+
+- Canonical path: `chapters/ch09.md`, SHA-256
+  `8f49968b6690eea98dfcc65e163105ffc20118de4f545e6d7d381a226c160a18`,
+  2,311 Markdown words.
+- Terms defined: `all-in cost`, `uncertainty reserve`, and `maximum bid`.
+- Mechanism: dated results describe competition but do not establish value;
+  a defined use turns legal, carrying, physical, tax, eligibility, payment, and
+  uncertainty questions into sourced costs, bounded reserves, or stop
+  conditions before a written ceiling is set.
+- Analogy: the visible bid as an iceberg tip, limited because proportions vary
+  and researchable costs should be estimated.
+- Calculation: one three-input fictional example adds bid, known non-bid costs,
+  and uncertainty reserve, then resets to those three categories.
+- Retrievals: separate recovery, assessment, and historical bid from present
+  value; lower the card when competition changes but parcel evidence does not.
+- Next no-repeat boundary: Chapter 10 retrieves the written ceiling as an
+  action rule and adds auction/tender format, payment, and failed-sale branches
+  without replaying Chapter 9's distributions or definitions.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure, and narration gates remain pending.

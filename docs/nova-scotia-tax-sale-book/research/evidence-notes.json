@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "claimPolicy": "traceable-only",
   "notesPath": "research/evidence-notes.md",
-  "notesSHA256": "b28645a73eb7aff035a3123edc0569587749b5d18ed3c67d0bf81229ba98aeab",
+  "notesSHA256": "931ac60cf1862cbe2624bef2994fb2abf42bdb56ce459374e1b4126b1eae59bf",
   "claims": [
     {
       "id": "LAW-001",
@@ -154,7 +154,7 @@
       "source": "Inverness official advertisement, results and June 19, 2025 council minutes",
       "locator": "research/inverness-county-dossier.md",
       "verificationStatus": "verified",
-      "verificationNote": "Normalized from verified-sample-conflict-preserved; retain this qualifier when interpreting or refreshing the claim."
+      "verificationNote": "Refreshed 2026-07-20 against the municipality's current results page and official June 19, 2025 minutes; preserve the unresolved 35-sale versus 31-row difference."
     },
     {
       "id": "DATA-004",
@@ -162,7 +162,7 @@
       "source": "Richmond County Tax Sales",
       "locator": "June 2026 result table",
       "verificationStatus": "verified",
-      "verificationNote": "Normalized from verified-sample; retain this qualifier when interpreting or refreshing the claim."
+      "verificationNote": "Refreshed 2026-07-20 against Richmond County's current June 2026 results table; the three rows are a descriptive sample only."
     },
     {
       "id": "LAW-007",
@@ -386,7 +386,7 @@
       "source": "Nova Scotia MGA, Inverness County and Land Registration",
       "locator": "MGA s.109(4); Inverness FAQ; deed-transfer service",
       "verificationStatus": "verified",
-      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+      "verificationNote": "Refreshed 2026-07-20 against MGA s.109(4) in the official 2026-04-09 consolidation and the current provincial deed-transfer service; the exemption does not decide other taxes."
     },
     {
       "id": "TAX-002",
@@ -394,7 +394,7 @@
       "source": "Nova Scotia Finance",
       "locator": "Non-resident Provincial Deed Transfer Tax service",
       "verificationStatus": "verified",
-      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+      "verificationNote": "Refreshed 2026-07-20 against the current provincial service; qualifying transfers after 2025-03-31 use the 10% rate, transferred non-resident interest and higher of price or assessment, subject to exemptions."
     },
     {
       "id": "TAX-003",
@@ -402,7 +402,7 @@
       "source": "CRA and CBRM",
       "locator": "CRA GI-003, Memorandum 19.1 and CBRM FAQ",
       "verificationStatus": "verified",
-      "verificationNote": "Normalized from verified-conflict-preserved; retain this qualifier when interpreting or refreshing the claim."
+      "verificationNote": "Refreshed 2026-07-20 against CBRM's current event FAQ and CRA guidance; retain the conflict boundary and require case-specific advice."
     },
     {
       "id": "ELIG-001",
@@ -410,7 +410,7 @@
       "source": "Finance Canada, federal regulations and CMHC",
       "locator": "extension notice; Regulations s.4; CMHC FAQ",
       "verificationStatus": "verified",
-      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+      "verificationNote": "Refreshed 2026-07-20 against the current federal Act and Regulations, the Finance extension to 2027-01-01 and CMHC's exception explanations; refresh before reliance."
     },
     {
       "id": "MOB-001",

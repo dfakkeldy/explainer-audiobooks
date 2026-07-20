@@ -1039,6 +1039,165 @@
         "Retrieve the title-possession distinction if rent arrives during redemption in Chapter 11.",
         "Reconcile deed, lawful access and actual post-deed condition in Chapter 12."
       ]
+    },
+    {
+      "section": "ch09-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 8 gives the tax deed its real statutory title effect while separating continuing interests, actual occupancy and vacant possession. Its mobile-home branch keeps land title, the home, personal-property security and land-lease status in their proper record systems. Those unresolved dependencies now enter the economic file.",
+      "sectionJob": "Use dated official auction results to sever the recovery amount, assessment and winning bid from property value.",
+      "specificClaims": [
+        "DATA-003",
+        "DATA-001",
+        "DATA-004",
+        "LAND-003"
+      ],
+      "coverageConcepts": [
+        "all-in cost setup",
+        "historical result boundary"
+      ],
+      "throughlineAdvance": "Treat price as one input inside responsibility rather than evidence of opportunity, value or profit.",
+      "payoff": "The Inverness distribution and bounded CBRM/Richmond comparisons replace auction folklore with observed but non-predictive behaviour.",
+      "landingBeat": "The listener calculates from intended use and risk backward rather than from the recovery amount upward.",
+      "mustNotRepeat": [
+        "Do not replay the Chapter 1 opening auction scene or Chapter 2 recovery-amount definition at full length.",
+        "Do not identify assessed owners, rank a live parcel or turn a historical result into a recommendation.",
+        "Do not describe a winning bid as market value, a comparable sale, profit or later redemption outcome.",
+        "Do not hide the unresolved difference between 35 reported Inverness sales and 31 published result rows.",
+        "Do not compare municipalities without carrying event date, procedure, denominator and sample size.",
+        "Do not begin the detailed tax, eligibility or written-ceiling branches reserved for the second section."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch09.md",
+      "termsBudget": [
+        "all-in cost",
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to bid, known costs and one uncertainty reserve."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T17:50:22-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "b793d1e05bed89c4a3580084235c41550dbe6bafb27e6cf8f86bbf867c83809a",
+      "sectionWordCount": 1085,
+      "draftedAt": "2026-07-20T17:52:14-03:00",
+      "termsDefined": [
+        "all-in cost"
+      ],
+      "analogyUsed": {
+        "name": "iceberg cost stack",
+        "purpose": "The visible winning bid may be smaller than the legal, tax, carrying, condition, possession and uncertainty costs needed to reach an intended use.",
+        "limit": "The submerged proportion is not fixed, and researchable costs should be estimated rather than treated as unknowable danger."
+      },
+      "retrievalPrompt": "Separate the municipal recovery amount, tax assessment and dated winning bid, then name the missing evidence required before any could support a present value conclusion.",
+      "runningSummary": "Inverness, CBRM and Richmond result sets show varied competition without creating a valuation or forecasting model. Every result keeps its event, row count, denominator and completeness limit. Assessment, recovery and winning bid answer different questions; all-in cost begins with a defined use and includes the responsibilities beneath the visible bid.",
+      "unresolvedPromises": [
+        "Convert known cost categories and unresolved dependencies into a bounded fictional cost stack.",
+        "Separate the municipal deed-transfer-tax exemption from provincial non-resident tax and transaction-specific HST.",
+        "Create a written maximum and preserve it under auction pressure in Chapter 10."
+      ]
+    },
+    {
+      "section": "ch09-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Dated Inverness, CBRM and Richmond outcomes show that competition can move far beyond municipal recovery numbers but do not establish value, profit or a future multiplier. Assessment, recovery and winning bid remain distinct. The fictional Cedar Street case introduces all-in cost as the exposure required to reach a defined use, with the visible bid as only the tip of the cost stack.",
+      "sectionJob": "Build the cost stack and branch the municipal exemption, provincial non-resident tax, transaction-specific HST, federal eligibility and payment readiness before setting a written ceiling.",
+      "specificClaims": [
+        "TAX-001",
+        "TAX-002",
+        "TAX-003",
+        "ELIG-001",
+        "LAW-006"
+      ],
+      "coverageConcepts": [
+        "all-in cost",
+        "payment performance setup"
+      ],
+      "throughlineAdvance": "Convert uncertainty into a sourced cost, professional question, reserve or no-bid decision before auction pressure begins.",
+      "payoff": "The fictional bidder retains authority over one written number and walking away becomes successful execution rather than loss.",
+      "landingBeat": "The card lowers when the live bid crosses the evidence-bound maximum, with no new parcel fact entering the file.",
+      "mustNotRepeat": [
+        "Do not replay the historical-result distributions or assessment boundary from the first section.",
+        "Do not provide a personalized return target, investment recommendation, tax conclusion or maximum bid.",
+        "Do not generalize CBRM's event-specific HST statement into a province-wide rule.",
+        "Do not imply that the municipal deed-transfer-tax exemption removes provincial tax, HST, registration or advice costs.",
+        "Do not treat an uncertainty reserve as permission to bid through a no-go condition that cannot be priced.",
+        "Do not teach the full auction, tender, payment-default or resale sequence reserved for Chapter 10."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch09.md",
+      "termsBudgetRemaining": [
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to bid, known costs and one uncertainty reserve."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T17:52:14-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "8f49968b6690eea98dfcc65e163105ffc20118de4f545e6d7d381a226c160a18",
+      "sectionWordCount": 1226,
+      "draftedAt": "2026-07-20T17:53:58-03:00",
+      "termsDefined": [
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "calculationUsed": {
+        "inputs": [
+          "thirty-thousand-dollar fictional bid",
+          "forty thousand dollars of known non-bid costs",
+          "twenty-thousand-dollar uncertainty reserve"
+        ],
+        "result": "ninety-thousand-dollar all-in exposure",
+        "concreteReset": "bid, known costs, reserve"
+      },
+      "retrievalPrompt": "When the live bid crosses the written ceiling, identify whether any new parcel fact changed title, access, condition, possession, tax, eligibility or payment evidence.",
+      "retrievalAnswer": "Another bidder's willingness to pay is the only new fact, so the evidence-bound authority does not increase and the card lowers.",
+      "runningSummary": "A defined use turns legal, carrying, physical, tax, eligibility and payment questions into sourced costs, bounded reserves or stop conditions. The municipal tax-sale-deed exemption does not decide provincial non-resident tax or HST. A maximum bid is written from supported use and exposure evidence before the room and does not rise with competition.",
+      "unresolvedPromises": [
+        "Execute the written ceiling and payment clock under open-outcry and tender pressure in Chapter 10.",
+        "Retrieve the all-in cost structure in the final Chapter 13 parcel file."
+      ]
     }
   ],
   "checkpoints": [
@@ -1362,6 +1521,44 @@
         "Do not redefine fee simple, encumbrance or vacant possession.",
         "Do not replay the complete occupied-building or mobile-home branch.",
         "Use possession uncertainty as one bounded cost dependency rather than a dramatic occupant story."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch09",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch09.md",
+      "draftSHA256": "8f49968b6690eea98dfcc65e163105ffc20118de4f545e6d7d381a226c160a18",
+      "wordCount": 2311,
+      "completedAt": "2026-07-20T17:53:58-03:00",
+      "termsDefined": [
+        "all-in cost",
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "examplesUsed": [
+        "Inverness May 2025 50-advertised, 35-reported-sold and 31-published-row source chain",
+        "bounded CBRM March 2026 and Richmond June 2026 descriptive comparisons",
+        "source-linked historical map result used only as a dated outcome",
+        "fictional Cedar Street cost stack and written ceiling"
+      ],
+      "analogyUsed": "The visible bid as the tip of an iceberg, limited because cost proportions vary and researchable costs should be estimated.",
+      "calculationUsed": "One brief three-input fictional calculation: bid plus known non-bid costs plus uncertainty reserve equals all-in exposure.",
+      "retrievals": [
+        "Separate recovery amount, assessment and dated winning bid from present value evidence.",
+        "When competition crosses the written ceiling, identify that no new parcel evidence entered the file and lower the card."
+      ],
+      "listenerLoad": "Three new core terms, one brief three-input calculation, three dated descriptive result samples, one fictional cost stack and no visual dependence.",
+      "runningSummary": "Historical results describe competition only when event, sample, denominator and completeness limits stay attached. All-in cost starts from a defined use and includes bid, applicable taxes, professional work, carrying, condition, possession and bounded uncertainty. Tax and eligibility branches are current and case-specific; a written maximum is an evidence-bound stopping rule that does not rise in the room.",
+      "unresolvedPromises": [
+        "Execute the ceiling, registration, payment and failed-sale branches in Chapter 10.",
+        "Operate certificate-period accounting and insurance in Chapter 11.",
+        "Retrieve the complete uncertainty budget in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine all-in cost, uncertainty reserve or maximum bid.",
+        "Do not replay the Inverness, CBRM or Richmond distributions.",
+        "Chapter 10 retrieves the ceiling as an action rule and adds format, payment and failure branches."
       ],
       "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
     }
