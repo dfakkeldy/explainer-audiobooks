@@ -150,17 +150,20 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Supported wording: After the applicable wait, the purchaser may request and pay the fee for a municipal deed. The deed is statutory evidence of compliance and vests fee-simple title free of encumbrances, while appurtenant and burdening easements or rights-of-way continue as the statute specifies.
 - Source: MGA ss. 155–156; HRMC ss. 170–171.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation dated 2026-04-09; snapshot SHA-256 `dad414bba48b09ecff008638787c4e9df6be9f385732a1a97585117ba08d7f2c`.
 - Boundary: “Free of encumbrances” is not “free of every practical or legal problem”; easements, boundaries, possession, regulation, condition and property-specific statutory questions remain.
 
 ### LAW-013 — court-directed sale
 - Supported wording: A municipal treasurer may seek a court order about arrears, interests conveyed, notice and the manner of sale; a sale under such an order has the protected effect described in the order and MGA s. 139A.
 - Source: MGA s. 139A; HRMC s. 154.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation dated 2026-04-09.
 
 ### LAW-014 — surplus proceeds
 - Supported wording: Sale proceeds first pay specified municipal amounts; a balance goes to the tax-sale surplus account. A person with a prior interest may apply to the Nova Scotia Supreme Court for a proportional payment after redemption expires and before twenty years pass.
 - Source: MGA ss. 146–147; HRMC ss. 161–162.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official MGA consolidation dated 2026-04-09.
 
 ### LAW-017 — setting aside a sale does not erase the tax lien
 - Supported wording: The MGA and HRMC expressly contemplate that a tax sale can be set aside and provide that, when this happens, the municipal tax lien is not discharged.
@@ -311,6 +314,7 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Supported wording: An occupied property may still be sold. The municipality does not remove residents or provide access, and the purchaser needs property/tenancy advice before changing possession arrangements.
 - Source: CBRM Tax Sales FAQ; Nova Scotia Residential Tenancies resources.
 - Confidence: high for municipal non-assistance; property-specific legal treatment is unresolved until counsel reviews it.
+- Refreshed: 2026-07-20 against CBRM's current tax-sale page and Nova Scotia's Residential Tenancies resources.
 
 ### TAX-001 — municipal deed transfer tax exemption for tax-sale deeds
 - Supported wording: A deed given pursuant to a tax sale is exempt from municipal deed transfer tax under MGA s. 109(4). The land-registration process still requires the applicable Affidavit of Value information even when no municipal deed transfer tax is payable.
@@ -337,6 +341,7 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Supported wording: Nova Scotia regulations include mobile homes in defined tax-sale provisions, but an unaffixed manufactured home can also involve personal-property security and land-lease questions. A PID-only land search is not enough for that asset type.
 - Source: Selling Mobile Homes at Tax Sale Definitions and Forms Regulations; Nova Scotia Personal Property Registry guidance; Residential Tenancies land-lease guidance.
 - Confidence: high.
+- Refreshed: 2026-07-20 against the official mobile-home forms, Personal Property Registry, and land-lease-community guidance.
 
 ## Unresolved conflicts and safe wording
 

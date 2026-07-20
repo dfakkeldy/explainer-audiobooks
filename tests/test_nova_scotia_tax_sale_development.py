@@ -150,8 +150,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(len(continuity["checkpoints"]), 7)
-        self.assertEqual(len(continuity["draftContexts"]), 14)
+        self.assertEqual(len(continuity["checkpoints"]), 8)
+        self.assertEqual(len(continuity["draftContexts"]), 16)
         context = next(
             item
             for item in continuity["draftContexts"]
@@ -379,6 +379,34 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("well log", chapter_seven)
         self.assertIn("hazard map", chapter_seven)
         self.assertIn("positive, negative, and error states", chapter_seven)
+
+        chapter_eight_path = PACKET_ROOT / "chapters/ch08.md"
+        chapter_eight = chapter_eight_path.read_text(encoding="utf-8")
+        chapter_eight_checkpoint = continuity["checkpoints"][7]
+        self.assertEqual(chapter_eight_checkpoint["chapter"], "ch08")
+        self.assertEqual(chapter_eight_checkpoint["wordCount"], 2251)
+        self.assertEqual(
+            chapter_eight_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_eight_path.read_bytes()).hexdigest(),
+        )
+        chapter_eight_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch08-")
+        }
+        self.assertEqual(set(chapter_eight_contexts), {"ch08-s01", "ch08-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_eight_contexts.values()
+            )
+        )
+        self.assertIn("fee simple", chapter_eight)
+        self.assertIn("encumbrance", chapter_eight)
+        self.assertIn("vacant possession", chapter_eight)
+        self.assertIn("Personal Property Registry", chapter_eight)
+        self.assertIn("No locks are changed", " ".join(chapter_eight.split()))
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
         self,

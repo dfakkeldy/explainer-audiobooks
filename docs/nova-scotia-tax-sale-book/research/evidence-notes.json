@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "claimPolicy": "traceable-only",
   "notesPath": "research/evidence-notes.md",
-  "notesSHA256": "2fc10de73eda0febc61525f0b4d7b142e121a411b85e297ad6318b276bc4d740",
+  "notesSHA256": "b28645a73eb7aff035a3123edc0569587749b5d18ed3c67d0bf81229ba98aeab",
   "claims": [
     {
       "id": "LAW-001",
@@ -210,7 +210,7 @@
       "source": "Nova Scotia MGA and HRMC",
       "locator": "MGA ss.155-156; HRMC ss.170-171",
       "verificationStatus": "verified",
-      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+      "verificationNote": "Refreshed 2026-07-20 against the official MGA consolidation dated 2026-04-09; preserve the continuing easement and right-of-way qualification."
     },
     {
       "id": "LAW-013",
@@ -218,7 +218,7 @@
       "source": "Nova Scotia MGA and HRMC",
       "locator": "MGA s.139A; HRMC s.154",
       "verificationStatus": "verified",
-      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+      "verificationNote": "Refreshed 2026-07-20 against the official MGA consolidation dated 2026-04-09; any actual court order must be read for its exceptions, exclusions and partial interests."
     },
     {
       "id": "LAW-014",
@@ -226,7 +226,7 @@
       "source": "Nova Scotia MGA and HRMC",
       "locator": "MGA ss.146-147; HRMC ss.161-162",
       "verificationStatus": "verified",
-      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+      "verificationNote": "Refreshed 2026-07-20 against the official MGA consolidation dated 2026-04-09; a surplus claim is a proceeds route rather than an automatic continuing burden on the land."
     },
     {
       "id": "LAW-017",
@@ -378,7 +378,7 @@
       "source": "CBRM and Nova Scotia Residential Tenancies",
       "locator": "CBRM FAQ; tenancy resources",
       "verificationStatus": "verified",
-      "verificationNote": "Normalized from verified-boundary; retain this qualifier when interpreting or refreshing the claim."
+      "verificationNote": "Refreshed 2026-07-20 against CBRM's current tax-sale page and Nova Scotia Residential Tenancies resources; do not prescribe a property-specific possession process."
     },
     {
       "id": "TAX-001",
@@ -418,7 +418,7 @@
       "source": "Nova Scotia regulations and service guidance",
       "locator": "Selling Mobile Homes regulations; PPR; land-lease guidance",
       "verificationStatus": "verified",
-      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+      "verificationNote": "Refreshed 2026-07-20 against the official mobile-home forms, Personal Property Registry service and land-lease-community guidance; a PID-only search is insufficient."
     },
     {
       "id": "MAP-001",

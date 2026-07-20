@@ -906,6 +906,139 @@
         "Retrieve environmental record limitations after lawful post-deed inspection in Chapter 12.",
         "Use the bounded environmental summary in the final Chapter 13 parcel-file retrieval."
       ]
+    },
+    {
+      "section": "ch08-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 7 keeps environmental and infrastructure records bounded by source, search state, coverage, geolocation, retention and present-condition limits. It ends by preserving positive, negative and error states rather than treating mapped context as a parcel verdict.",
+      "sectionJob": "Interpret the deed-effect rule without turning it into a universal cleanliness or possession claim.",
+      "specificClaims": [
+        "LAW-012",
+        "LAW-013",
+        "LAW-014"
+      ],
+      "coverageConcepts": [
+        "legal access retrieval",
+        "title versus possession"
+      ],
+      "throughlineAdvance": "Narrow legal title to what the deed, governing statute, any court order and property-specific legal review actually resolve.",
+      "payoff": "The phrase clear title loses its false all-purpose meaning without diminishing the deed's real legal effect.",
+      "landingBeat": "The listener asks a lawyer which interests, continuing easements, order terms and qualifications apply to the exact PID.",
+      "mustNotRepeat": [
+        "Do not repeat the full certificate, redemption or deed timeline from Chapter 3.",
+        "Do not replay Chapter 6's visible-route or planning failure case.",
+        "Do not imply that free of encumbrances means free of every practical, regulatory, possession or property-specific legal problem.",
+        "Do not speculate about the treatment of an unexamined federal, Crown, Indigenous, environmental, utility or statutory interest.",
+        "Do not use a fictional title finding as a live-property title opinion.",
+        "Do not begin the occupancy, abandoned-goods or mobile-home process reserved for the second section."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch08.md",
+      "termsBudget": [
+        "fee simple",
+        "encumbrance",
+        "vacant possession"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T16:22:05-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "aa22ce4a223c9a23d89be36e8559b7d7011313e5ff110ecdfe4d478c39ebf498",
+      "sectionWordCount": 1094,
+      "draftedAt": "2026-07-20T16:24:35-03:00",
+      "termsDefined": [
+        "fee simple",
+        "encumbrance"
+      ],
+      "retrievalPrompt": "For a tax-deeded parcel, identify the interest conveyed, a continuing easement or right-of-way, any court-order qualifications and the conclusion that still requires a property-specific legal opinion.",
+      "runningSummary": "The statutory tax deed has real title effect, but its free-of-encumbrances language must be read with continuing easements and rights-of-way, any court order, the deed and the exact property record. A prior interest holder's possible surplus claim is a money route rather than an automatic continuing parcel burden.",
+      "unresolvedPromises": [
+        "Separate the title interest from occupied premises, tenancy, abandoned goods and actual possession.",
+        "Branch an unaffixed mobile or manufactured home into land-title, personal-property and land-lease questions."
+      ]
+    },
+    {
+      "section": "ch08-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Foundry Street's tax deed changes the legal interest without becoming a universal-cleanliness claim. Fee simple and free-of-encumbrances language remain tied to the statute, continuing easements or rights-of-way, any court order, source instruments and a lawyer's exact-PID interpretation. The building remains visibly occupied.",
+      "sectionJob": "Use an occupied building and mobile-home branch to teach the boundary between title, occupancy and lawful possession.",
+      "specificClaims": [
+        "LAW-008",
+        "OCC-001",
+        "MOB-001"
+      ],
+      "coverageConcepts": [
+        "title versus possession",
+        "staged responsibility retrieval"
+      ],
+      "throughlineAdvance": "Extend purchaser responsibility to lawful treatment of people and personal property without converting a deed or certificate into self-help authority.",
+      "payoff": "The listener avoids locks, confrontation, improvised eviction and disposal of goods while routing each factual branch to the right legal system.",
+      "landingBeat": "Vacant possession becomes a separately researched outcome rather than an assumed effect of the deed.",
+      "mustNotRepeat": [
+        "Do not repeat the deed-effect, court-order or surplus explanation from the first section.",
+        "Do not prescribe a tenancy notice, eviction, lockout, rent-demand or abandoned-goods process.",
+        "Do not assume that visible occupancy identifies an owner, tenant, guest or lawful status.",
+        "Do not turn certificate-holder protective or rent-collection powers into authority for confrontation or self-help.",
+        "Do not assume a PID search identifies ownership or security interests in an unaffixed mobile or manufactured home.",
+        "Do not rank or recommend a live occupied tax-sale property."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch08.md",
+      "termsBudgetRemaining": [
+        "vacant possession"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T16:24:35-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "112ed6f910175a4b2e807c13ed5aae0d2829c2d3586ce31f49c6577fd619a5a0",
+      "sectionWordCount": 1157,
+      "draftedAt": "2026-07-20T16:26:03-03:00",
+      "termsDefined": [
+        "vacant possession"
+      ],
+      "analogyUsed": {
+        "name": "coat-check ticket versus coat in hand",
+        "purpose": "Documented legal entitlement and actual physical possession remain distinct.",
+        "limit": "Real-property possession and tenancy are far more complex, and the analogy supplies no self-help authority."
+      },
+      "retrievalPrompt": "For an occupied or mobile-home tax sale, ask what is owned, what burdens or benefits it, who or what is present and which land-title, personal-property, tenancy or possession process governs each part.",
+      "runningSummary": "A deed changes title without physically emptying premises. Occupant status, tenancy, abandoned goods and vacant possession require fact-specific lawful handling, while a mobile home can split the research among the sale documents, land title, personal-property security and land-lease rules.",
+      "unresolvedPromises": [
+        "Carry possession risk into the all-in uncertainty budget in Chapter 9.",
+        "Retrieve the title-possession distinction if rent arrives during redemption in Chapter 11.",
+        "Reconcile deed, lawful access and actual post-deed condition in Chapter 12."
+      ]
     }
   ],
   "checkpoints": [
@@ -1192,6 +1325,43 @@
         "Do not redefine contaminated site, well log or hazard map.",
         "Do not replay every database limitation as a catalogue.",
         "Retrieve the no-record boundary only when a fresh decision requires it."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch08",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch08.md",
+      "draftSHA256": "112ed6f910175a4b2e807c13ed5aae0d2829c2d3586ce31f49c6577fd619a5a0",
+      "wordCount": 2251,
+      "completedAt": "2026-07-20T16:26:03-03:00",
+      "termsDefined": [
+        "fee simple",
+        "encumbrance",
+        "vacant possession"
+      ],
+      "examplesUsed": [
+        "fictional occupied Foundry Street building",
+        "continuing registered right-of-way and court-order title branch",
+        "prior interest holder's separate surplus route",
+        "fictional Harbour Park manufactured-home asset split"
+      ],
+      "analogyUsed": "A coat-check ticket versus the coat in hand, limited because real-property and tenancy law is more complex and the analogy supplies no self-help authority.",
+      "retrievals": [
+        "Identify the deeded interest, continuing access relationship, court-order qualification and exact-PID lawyer question.",
+        "Separate title, occupants, goods, land, a mobile home, personal-property security and land-lease status into their governing records and processes."
+      ],
+      "listenerLoad": "Three new core terms, no calculation, one occupied-property case, one mobile-home branch, two applied retrievals and no visual dependence.",
+      "runningSummary": "The tax deed has real statutory title effect without becoming a universal guarantee of cleanliness, possession, condition or permission. Continuing easements, court-order terms and exact documents shape the title opinion; occupancy, tenancy, abandoned goods and vacant possession require separate lawful handling; and an unaffixed mobile home can require land, personal-property and land-lease research.",
+      "unresolvedPromises": [
+        "Price possession and title uncertainty without pretending it has disappeared in Chapter 9.",
+        "Apply the distinction when rent or an occupant appears during redemption in Chapter 11.",
+        "Reconcile pre-bid title and occupancy assumptions with lawful post-deed evidence in Chapter 12."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine fee simple, encumbrance or vacant possession.",
+        "Do not replay the complete occupied-building or mobile-home branch.",
+        "Use possession uncertainty as one bounded cost dependency rather than a dramatic occupant story."
       ],
       "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
     }

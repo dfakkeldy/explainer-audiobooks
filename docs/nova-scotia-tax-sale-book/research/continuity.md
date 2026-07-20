@@ -432,3 +432,65 @@
   interests without replaying the environmental database catalogue.
 - Completion boundary: canonical draft only. Independent learning, factual,
   prose, humanizer, figure, and narration gates remain pending.
+
+## Before `ch08-s01`
+
+- Job: interpret the deed-effect rule without inflating it into a universal
+  title-cleanliness, possession, condition, or permission claim.
+- Allowed evidence: `LAW-012`, `LAW-013`, and `LAW-014`; coverage concepts
+  `legal access` retrieval and `title versus possession` setup.
+- Grounded case: a fictional tax-deeded building whose title review preserves
+  a neighbour's registered right-of-way and checks whether a court order shaped
+  the conveyed interests.
+- New-term budget for Chapter 8: `fee simple`, `encumbrance`, and `vacant
+  possession`.
+- Concrete reset: ask what the deed conveys, what still burdens or benefits the
+  land, and which question belongs in a property-specific legal opinion.
+- No-repeat boundary: no full deed timeline, access or planning replay,
+  speculative treatment of unexamined statutory interests, live-property title
+  opinion, or occupancy/mobile-home process before the second section.
+
+## After `ch08-s01`
+
+- Draft: 1,094 words in `chapters/ch08.md`, section-state SHA-256
+  `aa22ce4a223c9a23d89be36e8559b7d7011313e5ff110ecdfe4d478c39ebf498`.
+- Terms defined: `fee simple` and `encumbrance`.
+- Applications: a continuing right-of-way retrieves Chapter 6 from the burdened
+  parcel's side; a possible court order and a prior interest holder's surplus
+  route remain separate document questions.
+- Retrieval: identify the conveyed interest, continuing access relationship,
+  order-specific qualification, and property-specific lawyer question.
+- Open promise: separate the deed from the still-occupied human scene.
+
+## Before `ch08-s02`
+
+- Job: use the occupied Foundry Street building and a mobile-home branch to
+  separate title, occupancy, tenancy, goods, and lawful possession.
+- Allowed evidence: `LAW-008`, `OCC-001`, and `MOB-001`; coverage concepts
+  `title versus possession` and staged-responsibility retrieval.
+- New-term budget remaining: `vacant possession`.
+- Concrete reset: ask what is owned, what burdens it, who or what is present,
+  and which legal process governs the next step.
+- No-repeat boundary: no deed-effect replay, tenancy or eviction recipe,
+  occupant-status inference, certificate-period self-help, PID-only mobile-home
+  conclusion, or live-property recommendation.
+
+## After Chapter 8
+
+- Canonical path: `chapters/ch08.md`, SHA-256
+  `112ed6f910175a4b2e807c13ed5aae0d2829c2d3586ce31f49c6577fd619a5a0`,
+  2,251 Markdown words.
+- Terms defined: `fee simple`, `encumbrance`, and `vacant possession`.
+- Mechanism: the deed and title opinion address conveyed and continuing land
+  interests; occupant facts and applicable law determine the lawful possession
+  route; a manufactured home may add personal-property and land-lease systems.
+- Analogy: a coat-check ticket and coat in hand separate entitlement from
+  control, with an explicit limit against inferring self-help.
+- Retrievals: identify the deeded interest, continuing access relationship,
+  order qualification, and lawyer question; then separate occupants, goods,
+  land, home, security interests, and lease status by governing source.
+- Next no-repeat boundary: Chapter 9 prices possession and title uncertainty as
+  bounded cost dependencies without replaying the occupied-building or
+  mobile-home scenes.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure, and narration gates remain pending.
