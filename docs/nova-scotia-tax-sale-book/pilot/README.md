@@ -21,7 +21,8 @@ Its ignored, nonpackage M4B is:
 
 SHA-256:
 `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`.
-The alignment sidecar verified, the pronunciation audit is clean, and the
-immutable renderer receipt still records listener acceptance as pending. The
-next gate is Dan's separate `continue` or `revise` verdict against this exact
-audio; no remaining manuscript drafting is authorized before that verdict.
+The alignment sidecar verified and the pronunciation audit is clean. Dan
+accepted the exact pilot for continued drafting with “continue” at
+2026-07-20T08:55:51-03:00. This unlocks sequential canonical manuscript
+drafting; it does not accept final figures, full narration, the final package or
+publication.

@@ -1,20 +1,19 @@
 # Beyond the Tax-Sale Packet — handoff packet
 
-**Status: thirteen-chapter/51-figure direction approved for pilot development —
-not authorized for canonical full-book production.** The production-map-led
+**Status: sequential canonical manuscript drafting authorized — final figures,
+narration, packaging and publication remain gated.** The production-map-led
 direction was approved by Dan Fakkeldy on 2026-07-20. The first-section voice is
-accepted and the governed 14:27 pilot is rendered, but Dan's comprehension-pilot
-decision remains absent. A separate
+accepted, and Dan accepted the governed 14:27 comprehension pilot with
+“continue” at 2026-07-20T08:55:51-03:00. A separate
 owner-free Inverness Packet Atlas remains outside the canonical figure direction.
 
 ## Production request
 
-Present the governed narrated pilot and pause remaining section-by-section
-drafting until Dan records `continue` or `revise` against its exact audio hash.
-On `continue`, begin canonical section drafting from the accepted voice and
-approved outline; on `revise`, return only to the gate identified by the
-listener's evidence. Keep narration complete without a screen and every
-live-property reference educational and unranked.
+Begin canonical section-by-section drafting from the accepted voice and approved
+outline. Preserve the exact opening and the pilot's source-authority teaching
+contract; update continuity before and after every section. Keep narration
+complete without a screen and every live-property reference educational and
+unranked.
 
 ## Status
 
@@ -83,8 +82,9 @@ under the HRM Charter parallel rather than silently folded into the MGA.
   the tax-deed contestability window.
 - Authorization: **approved for pilot development**. Dan Fakkeldy's 2026-07-20
   direction covers the production-map-led thirteen chapters and 51 figures. It
-  does not accept the narrated pilot, final screenshots, remaining manuscript,
-  full narration or publication.
+  is now paired with the accepted narrated pilot and authorizes sequential
+  manuscript drafting. It does not accept final screenshots, full narration,
+  packaging or publication.
 
 The structured outline is authoritative for the chapter and argument-level
 tables; duplicating all section rows here would create a second drifting copy.
@@ -113,7 +113,9 @@ outcome by copy and paste.
   `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`;
   alignment verified and its pronunciation audit is clean.
 - Representative listen: driving/delivering only when safe.
-- Decision record: `research/comprehension-pilot.json`; status remains pending.
+- Decision record: `research/comprehension-pilot.json`; **accepted** with
+  listener verdict `continue` against the exact audio hash at
+  2026-07-20T08:55:51-03:00.
 - Blind review: manuscript only, sequential, recording mental model, confusion,
   unstable terms and exact lost points before full production.
 
@@ -179,9 +181,7 @@ static cards.
 
 ## Open questions
 
-1. Does the first narrated pilot remain understandable during the stated road
-   context?
-2. Which locally authoritative pronunciations should win the later full-book
+1. Which locally authoritative pronunciations should win the later full-book
    governed reel?
 
 ## Acceptance criteria

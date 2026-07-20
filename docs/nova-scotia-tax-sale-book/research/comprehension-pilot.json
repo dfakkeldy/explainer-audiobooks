@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "status": "pending",
+  "status": "accepted",
   "listener": "Dan Fakkeldy",
   "listeningContext": "Driving and delivering mail",
   "representativeMinutes": 12,
@@ -28,7 +28,9 @@
     "echoSourceSHA": "58cf8c2b8d02d883704413f9bb487a296ddddd63",
     "rendererManifestSHA256": "31ee5c0bf7291ab67e27301f5e8e214095843a0bbc6bf2de7f9674998e734ee0",
     "modelBytesAttested": false,
-    "listenerAcceptance": "pending"
+    "listenerAcceptance": "accepted",
+    "listenerAcceptanceEvidence": "continue",
+    "listenerAcceptanceRecordedAt": "2026-07-20T08:55:51-03:00"
   },
   "listenerNotes": "",
   "humanCheckpoints": {
@@ -65,9 +67,11 @@
     }
   },
   "decision": {
-    "verdict": "pending",
+    "verdict": "continue",
     "authority": "listener",
-    "evidence": "",
-    "recordedBeforeFullDraft": false
+    "evidence": "continue",
+    "recordedAt": "2026-07-20T08:55:51-03:00",
+    "audioSHA256": "c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c",
+    "recordedBeforeFullDraft": true
   }
 }

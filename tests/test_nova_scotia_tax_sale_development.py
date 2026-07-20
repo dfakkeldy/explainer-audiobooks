@@ -182,7 +182,13 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertGreaterEqual(pilot["actualDurationSeconds"], 600)
         self.assertLessEqual(pilot["actualDurationSeconds"], 900)
         self.assertEqual(pilot["render"]["pronunciationAuditStatus"], "clean")
-        self.assertEqual(pilot["decision"]["verdict"], "pending")
+        self.assertEqual(pilot["status"], "accepted")
+        self.assertEqual(pilot["decision"]["verdict"], "continue")
+        self.assertEqual(pilot["decision"]["evidence"], "continue")
+        self.assertTrue(pilot["decision"]["recordedBeforeFullDraft"])
+        self.assertEqual(
+            pilot["decision"]["audioSHA256"], pilot["audioSHA256"]
+        )
         self.assertTrue(candidate.startswith("## Chapter 1 — The Last Scene First"))
         self.assertGreaterEqual(len(candidate.split()), 800)
         self.assertLessEqual(len(candidate.split()), 1500)

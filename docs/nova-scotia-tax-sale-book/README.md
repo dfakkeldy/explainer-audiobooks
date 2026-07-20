@@ -84,15 +84,17 @@ unknowns → handoff, then explicitly approved that thirteen-chapter, 51-figure
 direction for pilot development. Deep research,
 structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
 diagram candidates and three accepted-direction atlas prototypes exist. The
-human comprehension-pilot verdict, actual Echo/video-stage atlas proof,
-atlas batch authorization, full manuscript, independent learning and prose
+actual Echo/video-stage atlas proof, atlas batch authorization, full manuscript,
+independent learning and prose
 review, accepted final figures, cover selection, EPUB, Echo narration, public package
 verification, and full listening all remain pending.
 
 The governed nonpackage pilot rendered on 2026-07-20 at 14:27 with verified
 alignment and a clean pronunciation audit. Its exact SHA-256 is
 `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`;
-Dan's `continue` or `revise` listening verdict remains pending.
+Dan accepted that exact pilot for continued drafting with “continue” at
+2026-07-20T08:55:51-03:00. Sequential canonical drafting is now authorized;
+final figures, full narration, packaging and publication remain separate.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the

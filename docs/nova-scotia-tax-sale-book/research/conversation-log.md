@@ -100,14 +100,21 @@ package.
   section drafting only after the separate narrated-pilot verdict. It does not
   promote screenshot candidates to final figures or authorize full narration,
   finished-audiobook publication, or the remaining 42-card atlas batch.
+- **Narrated comprehension pilot accepted:** “continue”. Dan recorded the
+  listener verdict at 2026-07-20T08:55:51-03:00 against the exact governed
+  14:27 pilot, SHA-256
+  `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`.
+  This authorizes sequential canonical manuscript drafting from the accepted
+  voice and approved thirteen-chapter outline. It does not accept final figures,
+  full narration, the final package or publication.
 
 ## Gate status
 
 The prior twelve-chapter argument outline and forty-figure direction remain the
 historical approval. The three-card atlas direction and exact first-section
 voice exemplar are separately accepted against their hashes. The production-
-map-led thirteen-chapter/51-figure direction is now approved for pilot
-development. The narrated
-comprehension-pilot verdict, canonical full drafting, pronunciation acceptance,
+map-led thirteen-chapter/51-figure direction and narrated comprehension pilot
+are accepted for sequential canonical drafting. Pronunciation acceptance,
 actual Echo/video-stage prototype proof, atlas batch authorization, final figure
-acceptance, and publication remain downstream gates.
+acceptance, full narration, package verification and publication remain
+downstream gates.
