@@ -1561,6 +1561,225 @@
         "Follow the unredeemed branch into deed request, registration and a second due-diligence wave in Chapter 12.",
         "Retrieve the complete certificate and redemption record in Chapter 13."
       ]
+    },
+    {
+      "section": "ch12-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 11 closes the redeemed Cedar Street branch when full payment to the treasurer ends Maya's rights and the registered discharge records that ending. Chapter 12 follows the separate unredeemed branch and returns to Foundry Street, whose deed, continuing right-of-way and occupied premises were introduced in Chapter 8.",
+      "sectionJob": "Request and register the deed, then reopen title, tax, insurance, access and possession files under the new document.",
+      "specificClaims": [
+        "LAW-012",
+        "LAW-018",
+        "OCC-001",
+        "TAX-001",
+        "LAND-005"
+      ],
+      "coverageConcepts": [
+        "deed registration",
+        "deed effect retrieval",
+        "title versus possession",
+        "two legal clocks"
+      ],
+      "throughlineAdvance": "The final tax-sale document hands responsibility into ordinary ownership systems rather than closing every property question.",
+      "payoff": "The immediate-deed and six-month deed paths converge on one exact registered document, one registration-triggered contestability clock and several separate owner files.",
+      "landingBeat": "Possession and first physical work proceed only through lawful, insured and professionally supported steps.",
+      "mustNotRepeat": [
+        "Do not redefine fee simple, encumbrance or vacant possession.",
+        "Do not replay Chapter 8's complete deed-effect, occupied-building or mobile-home lesson.",
+        "Do not replay Chapter 11's certificate-holder insurance and repair ledger.",
+        "Do not imply that registration itself supplies access, keys, boundaries, condition, insurance or project approval.",
+        "Do not present the six-year period as immunity, litigation advice or a reason to defer current legal review."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch12.md",
+      "termsBudget": [
+        "deed registration",
+        "tax-sale surplus account",
+        "post-deed due diligence"
+      ],
+      "audioLoad": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "none",
+        "concreteReset": "Return to the delivered deed, its registration date and the lawful possession file."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:22:13-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "84b8753be15993ff35544dbaf9dfad593d2016c79a595517325bad9b54723ff8",
+      "sectionWordCount": 1093,
+      "draftedAt": "2026-07-20T19:23:54-03:00",
+      "termsDefined": [
+        "deed registration"
+      ],
+      "retrievalPrompt": "After an unredeemed sale, identify the deed-request route, registered instrument, registration date, legal interpretation, insurance response and separate lawful-possession file.",
+      "retrievalAnswer": "The delivered deed must be registered against the correct parcel and interpreted with the current land record. Registration starts the separate six-year period but does not supply possession, access, condition, insurance or permission.",
+      "runningSummary": "The unredeemed branch proceeds through a purchaser request, municipal deed and Land Registry requirements. Deed registration creates the searchable instrument and begins a six-year Marketable Titles Act period distinct from redemption, while title opinion, insurance, continuing rights-of-way and lawful possession remain separate files.",
+      "unresolvedPromises": [
+        "Repeat intended-use and condition gates after lawful access makes stronger evidence available.",
+        "Separate a prior interest holder's surplus route from a challenge to the sale."
+      ]
+    },
+    {
+      "section": "ch12-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Foundry Street's deed has been requested and registered against the correct PID. The registration date starts a six-year period distinct from redemption, while title interpretation, insurance, continuing rights-of-way and lawful possession remain separate files.",
+      "sectionJob": "Repeat intended-use, condition, cost and permission gates after lawful access makes stronger post-deed evidence available.",
+      "specificClaims": [
+        "LAND-003",
+        "LAND-006",
+        "ENV-001",
+        "ENV-002",
+        "ENV-003",
+        "ENV-004",
+        "ENV-005"
+      ],
+      "coverageConcepts": [
+        "post-deed due diligence",
+        "dated assessment context",
+        "source-bounded condition evidence",
+        "intended-use recheck"
+      ],
+      "throughlineAdvance": "A deed improves lawful access to evidence but does not bind the owner to the pre-bid project story.",
+      "payoff": "Foundry Street's rehabilitation plan can narrow, pause or change when municipal, assessment, inspection, insurance and environmental evidence becomes stronger.",
+      "landingBeat": "The updated decision record states the use, evidence dates, unknowns, professional handoffs and next authorized expenditure.",
+      "mustNotRepeat": [
+        "Do not replay the source catalog from Chapters 5 through 7.",
+        "Do not describe public assessment as present market value, appraisal, condition evidence or a bid ceiling.",
+        "Do not treat a zoning or clearance letter as a permit, inspection or universal approval.",
+        "Do not diagnose contamination, structural failure, service status, legal access or boundaries from a map layer.",
+        "Do not imply that ownership obliges the purchaser to complete the pre-bid project."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch12.md",
+      "termsBudgetRemaining": [
+        "post-deed due diligence",
+        "tax-sale surplus account"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "none",
+        "concreteReset": "Return to Foundry Street's intended use, one municipal response and the updated decision record."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:22:13-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "937e0024457043b27cb2b18343a7a6bb6b39a454ef90282f5b410b7ce16d8802",
+      "sectionWordCount": 940,
+      "draftedAt": "2026-07-20T19:25:41-03:00",
+      "termsDefined": [
+        "post-deed due diligence"
+      ],
+      "retrievalPrompt": "When lawful post-deed access improves the evidence, restate the intended use and assign assessment, zoning, clearance, inspection, insurance, environmental, service, survey and market sources only the questions each can answer.",
+      "retrievalAnswer": "Public assessment is dated taxation context, municipal letters are bounded record responses, and qualified inspections or professional opinions answer different condition and permission questions. The updated evidence may responsibly change the project.",
+      "runningSummary": "Post-deed due diligence repeats the intended-use, cost, condition and permission gates with stronger lawfully obtained evidence. Public assessed and taxable values remain dated context; municipal letters, inspections, registry instruments, surveys, insurer responses and environmental work each retain their own evidentiary bounds.",
+      "unresolvedPromises": [
+        "Route any surplus to the statutory proceeds process rather than the deed holder.",
+        "Distinguish the sale-date surplus clock from the registration-date tax-deed clock."
+      ]
+    },
+    {
+      "section": "ch12-s03",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Foundry Street has repeated the intended-use and evidence gates after lawful access. Its public assessment, municipal letters, qualified inspections, registry record, insurer responses and environmental questions remain bounded, and the rehabilitation plan may change.",
+      "sectionJob": "Separate surplus proceeds, a prior interest holder's application and a claimed defective-sale route from the deed holder's ordinary ownership file.",
+      "specificClaims": [
+        "LAW-014",
+        "LAW-017",
+        "LAW-018"
+      ],
+      "coverageConcepts": [
+        "tax-sale surplus account",
+        "prior-interest proceeds route",
+        "defective-sale handoff",
+        "two legal clocks"
+      ],
+      "throughlineAdvance": "The deed holder's ownership, another person's proceeds claim and a challenge to the sale travel through separate records and legal processes.",
+      "payoff": "A former co-owner can preserve a possible proportional surplus claim without treating it as possession or a continuing parcel lien, while any sale challenge goes to counsel and the court record.",
+      "landingBeat": "Chapter 13 can retrieve the right record and professional handoff from any stage in the complete tax-sale method.",
+      "mustNotRepeat": [
+        "Do not promise standing, a proportional award or any other result to the fictional prior interest holder.",
+        "Do not treat surplus as purchaser income or a continuing land burden.",
+        "Do not collapse the sale-date twenty-year period into the registration-date six-year period.",
+        "Do not diagnose fraud, breach of trust, excluded land, damages or an invalid sale from the map.",
+        "Do not describe the passage of six years as universal immunity."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch12.md",
+      "termsBudgetRemaining": [
+        "tax-sale surplus account"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "statutory order and deadline distinction only",
+        "concreteReset": "Return to the registered deed, surplus account and two separately labelled dates."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:22:13-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "11662b533638f40ac299d311b57278d1e6230ea3140a8a35f2f86f25b3f4ff2e",
+      "sectionWordCount": 876,
+      "draftedAt": "2026-07-20T19:26:42-03:00",
+      "termsDefined": [
+        "tax-sale surplus account"
+      ],
+      "retrievalPrompt": "For money remaining after a tax sale or a claimed sale defect, identify the statutory application order, surplus account, claimant route, sale date, registration date and legal decision-maker.",
+      "retrievalAnswer": "The municipality applies purchase money in the statutory order and holds any balance in the surplus process. A claimant may apply after redemption and before twenty years from sale; the tax-deed challenge period generally runs six years from registration, with specific qualifications and preserved remedies requiring counsel.",
+      "runningSummary": "Ownership, surplus and challenge records remain distinct. A tax-sale surplus account holds the balance after statutory applications, with a court application route for a qualifying interested person after redemption and before twenty years from sale. A tax-deed challenge follows a separate registration-based period and legal process, and a set-aside sale does not discharge the tax lien.",
+      "unresolvedPromises": [
+        "Retrieve the complete notice-to-post-deed evidence method in Chapter 13.",
+        "Keep every map output inside a discovery, unknowns and professional-handoff boundary."
+      ]
     }
   ],
   "checkpoints": [
@@ -1999,6 +2218,43 @@
         "Do not redefine insurable interest, necessary repair or certificate of discharge.",
         "Do not replay the full insurer outreach, repair-approval or redemption ledger.",
         "Chapter 12 begins only with the unredeemed deed branch and its new evidence responsibilities."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch12",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch12.md",
+      "draftSHA256": "11662b533638f40ac299d311b57278d1e6230ea3140a8a35f2f86f25b3f4ff2e",
+      "wordCount": 2909,
+      "completedAt": "2026-07-20T19:26:42-03:00",
+      "termsDefined": [
+        "deed registration",
+        "post-deed due diligence",
+        "tax-sale surplus account"
+      ],
+      "examplesUsed": [
+        "fictional Foundry Street deed registration, continuing right-of-way and occupied-building file",
+        "current Land Registry and Affidavit of Value requirements",
+        "current public PVSC assessment search and assessed-versus-taxable-value distinction",
+        "current CBRM zoning-confirmation and municipal-clearance distinction",
+        "fictional former co-owner Elena's possible surplus application route"
+      ],
+      "retrievals": [
+        "Separate the registered deed, legal interpretation and lawful-possession file.",
+        "Repeat intended-use and condition gates when stronger post-deed evidence becomes available.",
+        "Distinguish the surplus proceeds route and sale-date clock from the deed-challenge route and registration-date clock."
+      ],
+      "listenerLoad": "Three new core terms, no arithmetic, one recurring deeded property, one fictional prior interest holder, two separately labelled legal periods and no visual dependence.",
+      "runningSummary": "The tax deed begins ordinary ownership work rather than ending due diligence. Registration creates the recorded instrument and starts a separate six-year period while title, possession, insurance, access and condition remain separate files. Stronger post-deed evidence may change the intended use. Any surplus and claimed sale defect follow their own statutory records, dates and legal routes.",
+      "unresolvedPromises": [
+        "Retrieve the complete notice, parcel, context, unknowns and handoff method in Chapter 13.",
+        "Return every legal, physical, financial and environmental branch to the correct live source and professional decision-maker."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine deed registration, post-deed due diligence or tax-sale surplus account.",
+        "Do not replay Foundry Street's full registration, assessment, condition or surplus story.",
+        "Chapter 13 should retrieve the complete method through applied decisions rather than summarize every chapter in order."
       ],
       "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
     }

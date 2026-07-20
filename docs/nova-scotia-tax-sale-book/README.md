@@ -36,7 +36,7 @@ ranking, or an advertisement disguised as education.
 - `figures/`: the deterministic diagram renderer, teaching/provenance
   specifications, contact sheets and hash-bound receipt for figures 03–08, 39
   and 40;
-- `chapters/`: canonical Chapters 1–11, drafted sequentially from the accepted
+- `chapters/`: canonical Chapters 1–12, drafted sequentially from the accepted
   pilot and approved argument outline, including the major map-method rewrite
   and its access, intended-use, environmental, title, cost, auction, tender,
   payment, and failed-sale branches;
@@ -100,7 +100,7 @@ alignment and a clean pronunciation audit. Its exact SHA-256 is
 Dan accepted that exact pilot for continued drafting with “continue” at
 2026-07-20T08:55:51-03:00. Sequential canonical drafting is now authorized;
 final figures, full narration, packaging and publication remain separate.
-Canonical Chapters 1–11 now total 26,848 Markdown words. They remain draft prose
+Canonical Chapters 1–12 now total 29,757 Markdown words. They remain draft prose
 until the complete manuscript clears independent learning, factual, prose,
 humanizer and rendered ear-pass review.
 

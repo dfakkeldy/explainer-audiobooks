@@ -150,8 +150,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(len(continuity["checkpoints"]), 11)
-        self.assertEqual(len(continuity["draftContexts"]), 23)
+        self.assertEqual(len(continuity["checkpoints"]), 12)
+        self.assertEqual(len(continuity["draftContexts"]), 26)
         context = next(
             item
             for item in continuity["draftContexts"]
@@ -502,6 +502,40 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("fourteen days", chapter_eleven_flat)
         self.assertIn("full redemption amount is paid to the treasurer", chapter_eleven_flat)
         self.assertIn("not a Nova Scotia tariff", chapter_eleven_flat)
+
+        chapter_twelve_path = PACKET_ROOT / "chapters/ch12.md"
+        chapter_twelve = chapter_twelve_path.read_text(encoding="utf-8")
+        chapter_twelve_checkpoint = continuity["checkpoints"][11]
+        self.assertEqual(chapter_twelve_checkpoint["chapter"], "ch12")
+        self.assertEqual(chapter_twelve_checkpoint["wordCount"], 2909)
+        self.assertEqual(
+            chapter_twelve_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_twelve_path.read_bytes()).hexdigest(),
+        )
+        chapter_twelve_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch12-")
+        }
+        self.assertEqual(
+            set(chapter_twelve_contexts),
+            {"ch12-s01", "ch12-s02", "ch12-s03"},
+        )
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_twelve_contexts.values()
+            )
+        )
+        chapter_twelve_lower = chapter_twelve.lower()
+        self.assertIn("deed registration", chapter_twelve_lower)
+        self.assertIn("post-deed due diligence", chapter_twelve_lower)
+        self.assertIn("tax-sale surplus account", chapter_twelve_lower)
+        chapter_twelve_flat = " ".join(chapter_twelve.split())
+        self.assertIn("six years following its registration", chapter_twelve_flat)
+        self.assertIn("before twenty years have passed from the sale", chapter_twelve_flat)
+        self.assertIn("assessed value is a dated mass-appraisal estimate", chapter_twelve_flat)
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
         self,

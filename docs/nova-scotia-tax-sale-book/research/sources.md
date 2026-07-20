@@ -3,8 +3,9 @@
 Retrieved 2026-07-18 unless noted; core law, Inverness event, and provincial
 map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access,
 Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, Chapter 9
-auction-result/tax/eligibility, Chapter 10 auction/tender/payment, and Chapter 11
-certificate/redemption/insurance sources were refreshed on 2026-07-20. Primary and official sources control;
+auction-result/tax/eligibility, Chapter 10 auction/tender/payment, Chapter 11
+certificate/redemption/insurance, and Chapter 12 deed/surplus/contestability/
+post-deed sources were refreshed on 2026-07-20. Primary and official sources control;
 explanatory sources are labelled separately.
 
 ## Controlling law
@@ -31,8 +32,8 @@ explanatory sources are labelled separately.
 
 15. Nova Scotia, [Sign in to Property Online](https://www.novascotia.ca/sign-property-online) and [Property Online User Guide](https://novascotia.ca/sns/access/land/property-online-user-guide.asp).
 16. Nova Scotia, [Land Registration Administration Regulations](https://novascotia.ca/just/Regulations/regs/LRAdminRegs.htm).
-17. Property Valuation Services Corporation, [property search and assessment service](https://www.pvsc.ca/).
-18. Nova Scotia, [Land Registry fees](https://www.novascotia.ca/land-registry-fees).
+17. Property Valuation Services Corporation, [Find an Assessment](https://www.pvsc.ca/find-assessment), [2026 assessment-notice guidance](https://www.pvsc.ca/your-property-assessment-notice) and [datazONE assessed-value history](https://www.thedatazone.ca/Assessment/Assessed-Value-and-Taxable-Assessed-Value-History/bt58-qu28), refreshed 2026-07-20. Public search supports address, AAN and advanced criteria, while the open history distinguishes assessed from taxable assessed values; the book treats both as dated mass-appraisal and taxation context rather than current sale value or condition evidence.
+18. Nova Scotia, [Land Registry fees](https://www.novascotia.ca/land-registry-fees), refreshed 2026-07-20; the current page states that fees are due at registration, recording or filing and lists the current document-registration fee. The chapter treats the amount as perishable and does not generalize exemptions.
 19. GeoNOVA, [mapping products](https://geonova.novascotia.ca/browse-our-mapping-products).
 
 ## Land-use, physical and environmental research
@@ -42,7 +43,7 @@ explanatory sources are labelled separately.
 22. Nova Scotia, [Coastal Hazard Map User Guide](https://www.novascotia.ca/coastal-climate-change/docs/coastal-hazard-map-user-guide.pdf), refreshed 2026-07-20.
 23. Nova Scotia Natural Resources, [Abandoned Mine Openings Database](https://novascotia.ca/natr/meb/geoscience-online/about-database-amo.asp), [DP ME 10 Version 9 download](https://novascotia.ca/natr/meb/download/dp010.asp), and [2024 metadata](https://novascotia.ca/natr/meb/download/dp010md.asp), refreshed 2026-07-20. The product is under the Nova Scotia Open Government Licence; the inventory is incomplete, excludes surface expressions of subsidence, and reports that private-land positions can be inaccurate by up to approximately 50 metres. Downloaded archive SHA-256: `058e7e344849dade89e0c10a199e4795b51a27d711e2069849ebb37a2857d147`; the full source archive remains an ignored local build input.
 24. Nova Scotia Municipal Affairs, [municipal planning strategy and land-use by-law guide](https://www.novascotia.ca/documents/developing-municipal-planning-strategy-and-land-use-law-guide-municipalities).
-25. CBRM, [Zoning Confirmation and Municipal Clearance](https://cbrm.ns.ca/home-property/building-development/zoning-confirmation-municipal-clearance/).
+25. CBRM, [Zoning Confirmation and Municipal Clearance](https://cbrm.ns.ca/home-property/building-development/zoning-confirmation-municipal-clearance/), refreshed 2026-07-20. The current page distinguishes a zoning letter identifying applicable land-use-by-law provisions from a clearance letter reporting outstanding building-code orders, by-law orders and fire-code violations; neither is a permit or physical inspection.
 
 ## Transfer taxes, sales taxes and eligibility
 

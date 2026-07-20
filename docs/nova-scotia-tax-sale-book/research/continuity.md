@@ -704,3 +704,109 @@
   intended-use evidence without replaying the certificate ledger.
 - Completion boundary: canonical draft only. Independent learning, factual,
   prose, humanizer, figure, and narration gates remain pending.
+
+## Before `ch12-s01`
+
+- Job: follow the unredeemed branch from deed request through registration,
+  then reopen title, tax, insurance, access, and lawful-possession files under
+  the new document.
+- Allowed evidence: `LAW-012`, `LAW-018`, `OCC-001`, `TAX-001`, and
+  `LAND-005`; retrieval of Foundry Street's continuing right-of-way and
+  occupied-premises boundary from Chapter 8.
+- Grounding: rewind the fictional Foundry Street case to the municipality's
+  deed delivery, then return to the exact registered deed and PID rather than
+  treating the certificate, map, or anticipated project as ownership evidence.
+- New-term budget for Chapter 12: `deed registration`, `tax-sale surplus
+  account`, and `post-deed due diligence`.
+- Audio reset: the delivered deed, its registration date, and a separate lawful
+  possession file.
+- No-repeat boundary: do not redefine fee simple, encumbrance, vacant
+  possession, or the entire deed-effect rule; do not replay Chapter 11's
+  certificate ledger; and do not imply that registration supplies keys,
+  insurance, boundaries, permission, condition, or immunity from challenge.
+
+## After `ch12-s01`
+
+- Draft: 1,093 words in `chapters/ch12.md`, section-state SHA-256
+  `84b8753be15993ff35544dbaf9dfad593d2016c79a595517325bad9b54723ff8`.
+- Term defined: `deed registration`.
+- Grounded sequence: Foundry Street's purchaser requests the deed, meets current
+  registration requirements, records the correct parcel instrument and keeps
+  title interpretation, insurance and lawful possession in separate files.
+- Clock distinction: the six-month redemption period and the general six-year
+  period following deed registration govern different questions.
+- Retrieval: return to the registered deed, its registration date, the legal
+  interpretation and the lawful-possession file.
+- Open promise: repeat intended-use and condition gates with stronger evidence,
+  then separate surplus proceeds from a challenged-sale route.
+
+## Before `ch12-s02`
+
+- Job: repeat intended-use, condition, cost and permission gates after lawful
+  access makes stronger evidence available.
+- Allowed evidence: `LAND-003`, `LAND-006`, and `ENV-001` through `ENV-005`;
+  retrieval of the source-bounded map method from Chapters 5 through 7.
+- Grounding: Foundry Street's proposed rental rehabilitation encounters current
+  municipal letters, public assessment context, qualified condition evidence,
+  insurance terms and property-specific environmental questions.
+- New-term budget remaining: `post-deed due diligence` and `tax-sale surplus
+  account`.
+- Audio reset: the intended use, one dated source response and the updated
+  decision record.
+- No-repeat boundary: no source catalog replay, assessment-as-appraisal claim,
+  municipal-letter-as-permit claim, map-based condition diagnosis or obligation
+  to complete the pre-bid project.
+
+## After `ch12-s02`
+
+- Draft: 940 additional words; cumulative section-state SHA-256
+  `937e0024457043b27cb2b18343a7a6bb6b39a454ef90282f5b410b7ce16d8802`.
+- Term defined: `post-deed due diligence`.
+- Evidence distinction: PVSC assessed and taxable assessed values are publicly
+  searchable, dated mass-appraisal and taxation context—not current sale value,
+  condition evidence, rehabilitation cost or a bid ceiling.
+- Applications: zoning confirmation, municipal clearance, inspection, survey,
+  title instruments, insurer response and environmental work each answer a
+  bounded question.
+- Retrieval: restate intended use, identify the source and evidence date, record
+  remaining unknowns, and allow better evidence to change the project.
+- Open promise: route any balance to the statutory surplus process and keep its
+  sale-date clock separate from the deed's registration-date clock.
+
+## Before `ch12-s03`
+
+- Job: separate the municipality's sale-proceeds accounting, a prior interest
+  holder's possible surplus application and a claimed defective-sale route from
+  the deed holder's ordinary ownership file.
+- Allowed evidence: `LAW-014`, `LAW-017`, and `LAW-018`.
+- Grounding: fictional former co-owner Elena takes her possible surplus claim to
+  counsel; Foundry Street's ownership file remains separate.
+- New-term budget remaining: `tax-sale surplus account`.
+- Audio reset: the registered deed, the surplus account and two separately
+  labelled dates.
+- No-repeat boundary: no promised standing or award, no surplus-as-purchaser-
+  income or land-lien claim, no collapsed deadlines, no map diagnosis of a sale
+  defect and no universal six-year immunity claim.
+
+## After Chapter 12
+
+- Canonical path: `chapters/ch12.md`, SHA-256
+  `11662b533638f40ac299d311b57278d1e6230ea3140a8a35f2f86f25b3f4ff2e`,
+  2,909 Markdown words.
+- Terms defined: `deed registration`, `post-deed due diligence`, and `tax-sale
+  surplus account`.
+- Mechanism: the deed is registered against the correct parcel, then title,
+  possession, insurance, access, condition, intended use and project economics
+  reopen under stronger evidence.
+- Public-assessment boundary: current PVSC search and open history expose dated
+  assessed and taxable assessed values; neither is treated as present condition,
+  current sale value, rehabilitation cost or a safe bid ceiling.
+- Two-clock retrieval: a possible surplus application runs after redemption and
+  before twenty years from sale, while the general tax-deed set-aside period runs
+  six years from registration and retains statutory qualifications and remedies.
+- File distinction: Foundry Street's ownership decisions, Elena's possible
+  surplus claim and any challenged-sale record remain separate.
+- Next no-repeat boundary: Chapter 13 retrieves the complete method through
+  applied decisions without replaying the chapter as a linear summary.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure, and narration gates remain pending.

@@ -189,9 +189,10 @@ consolidated to 2026-05-01.
 - Boundary: The provisions do not provide a do-it-yourself test for defects or a guaranteed remedy; a contested sale is a lawyer-and-court matter.
 
 ### LAW-018 — six-year tax-deed contestability window
-- Supported wording: Under the Marketable Titles Act, a tax deed generally may be set aside only during the six years following its registration. After that period it is generally binding and conclusive, subject to the section's exceptions for mistakenly included land and participation by the current owner in fraud or breach of trust; the section also preserves a possible damages action for wrongful tax sale.
+- Supported wording: Under the Marketable Titles Act, a tax deed generally may be set aside only during the six years following its registration. After that period it is generally binding and conclusive, subject to the section's specific land-exclusion rule where its assessment, interest and arrears conditions are met and its exception where the current owner participated in fraud or breach of trust; the section also preserves any cause of action a person may have for damages for wrongful tax sale.
 - Source: Marketable Titles Act s. 6(2)–(6), standalone consolidation dated 2015-09-01.
 - Confidence: high for the cited consolidation.
+- Refreshed: 2026-07-20 against the official consolidation; snapshot SHA-256 `20c3c10c29aad0a4f686b23ec6c08d622a91ea94d70e3df74a9bc03d94d1d942`.
 - Boundary: The six years run from registration of the tax deed, not auction day. The exception and damages provisions require property-specific legal advice, and the section number should be refreshed against the edition used in production.
 
 ### INS-001 — statutory duty does not guarantee insurance availability
@@ -213,9 +214,10 @@ consolidated to 2026-05-01.
 - Confidence: high.
 
 ### LAND-003 — assessment is a lead, not a bid instruction
-- Supported wording: PVSC assessments support municipal taxation. The assessed value, classification and account data are research leads but do not establish physical condition, legal access, auction value or a safe maximum bid.
-- Source: PVSC home/search page; CBRM due-diligence disclaimer.
-- Confidence: high for purpose; the valuation warning is an inference from differing functions.
+- Supported wording: PVSC makes property assessments publicly searchable by civic address, AAN and broader criteria, and its open assessment-history data distinguishes assessed from taxable assessed value. These are dated mass-appraisal and taxation records; they do not establish present physical condition, legal access, current sale value, rehabilitation cost or a safe maximum bid.
+- Source: PVSC Find an Assessment, 2026 assessment-notice guidance and datazONE assessed-value history; CBRM due-diligence disclaimer.
+- Confidence: high for public availability and stated purpose; the limits on other property questions follow from the differing functions of those sources.
+- Refreshed: 2026-07-20. Current PVSC search options include address, AAN, advanced criteria and assessment range; current notice guidance identifies separate assessed and taxable assessed values and their valuation or condition dates.
 
 ### LAND-004 — map is not survey
 - Supported wording: Provincial and municipal parcel maps are useful orientation tools but do not certify the precise boundary on the ground. A legal description and, when needed, a surveyor's work answer different questions.
@@ -231,6 +233,7 @@ consolidated to 2026-05-01.
 - Supported wording: Zoning is one input. Development can also depend on frontage, lot creation, setbacks, servicing, building/fire/by-law status, environmental constraints and permit history. CBRM offers a paid zoning confirmation and municipal-clearance process for some of these municipal records.
 - Source: CBRM Tax Sales and Zoning Confirmation/Municipal Clearance pages; Nova Scotia municipal planning guide.
 - Confidence: high.
+- Refreshed: 2026-07-20. CBRM's current page says a Zoning Confirmation Letter identifies current zoning and applicable land-use-by-law provisions, while a Municipal Clearance Letter reports outstanding building-code orders, by-law orders and fire-code violations; neither is a property inspection or project approval.
 
 ### LAND-007 — exterior research only before sale
 - Supported wording: The municipality does not own listed properties and cannot authorize a bidder to enter. Pre-sale observation must stay on public land or other places where the researcher has permission.

@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "claimPolicy": "traceable-only",
   "notesPath": "research/evidence-notes.md",
-  "notesSHA256": "81b0d2f247bdabfc721384a4d98b8f403ed626e7b02aba8402d19282ccdbc510",
+  "notesSHA256": "e5015e1be40adeb519c5be495d75041c9540cf1c87dfa02fad367a77b70ada39",
   "claims": [
     {
       "id": "LAW-001",
@@ -238,11 +238,11 @@
     },
     {
       "id": "LAW-018",
-      "claim": "A tax deed generally may be set aside only during the six years after registration, subject to the Marketable Titles Act exceptions and preserved damages remedy.",
+      "claim": "A tax deed generally may be set aside only during the six years after registration, subject to the Marketable Titles Act's specific land-exclusion conditions, current-owner fraud or breach-of-trust exception, and preserved damages remedy.",
       "source": "Nova Scotia Marketable Titles Act",
       "locator": "s.6(2)-(6), standalone consolidation dated 2015-09-01",
       "verificationStatus": "verified",
-      "verificationNote": "Run date starts at deed registration; refresh section numbering and obtain legal advice for any actual contest."
+      "verificationNote": "Refreshed 2026-07-20 against official snapshot SHA-256 20c3c10c29aad0a4f686b23ec6c08d622a91ea94d70e3df74a9bc03d94d1d942; the clock starts at deed registration and every actual contest requires legal advice."
     },
     {
       "id": "INS-001",
@@ -270,11 +270,11 @@
     },
     {
       "id": "LAND-003",
-      "claim": "PVSC assessment supports taxation but does not establish physical condition, legal access, auction value or a safe maximum bid.",
-      "source": "PVSC and CBRM",
-      "locator": "PVSC home page; CBRM due-diligence warning",
+      "claim": "PVSC makes assessed and taxable assessed values publicly searchable, but those dated mass-appraisal and taxation records do not establish present condition, legal access, current sale value, rehabilitation cost or a safe maximum bid.",
+      "source": "PVSC Find an Assessment, assessment-notice guidance and datazONE; CBRM",
+      "locator": "PVSC search options, 2026 assessment notice fields and assessed-value history; CBRM due-diligence warning",
       "verificationStatus": "verified",
-      "verificationNote": "Normalized from verified-inference; retain this qualifier when interpreting or refreshing the claim."
+      "verificationNote": "Refreshed 2026-07-20: public PVSC search supports address, AAN and advanced criteria including assessment range; the notice and open history distinguish assessed from taxable assessed value and supply dated context rather than present condition or sale value."
     },
     {
       "id": "LAND-004",
@@ -298,7 +298,7 @@
       "source": "CBRM and Nova Scotia Municipal Affairs",
       "locator": "Tax Sales, clearance service and planning guide",
       "verificationStatus": "verified",
-      "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
+      "verificationNote": "Refreshed 2026-07-20 against CBRM's current Zoning Confirmation and Municipal Clearance page; the two letters answer different municipal-record questions and neither establishes full buildability or project approval."
     },
     {
       "id": "LAND-007",
