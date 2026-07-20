@@ -150,8 +150,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(len(continuity["checkpoints"]), 12)
-        self.assertEqual(len(continuity["draftContexts"]), 26)
+        self.assertEqual(len(continuity["checkpoints"]), 13)
+        self.assertEqual(len(continuity["draftContexts"]), 28)
         context = next(
             item
             for item in continuity["draftContexts"]
@@ -536,6 +536,41 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("six years following its registration", chapter_twelve_flat)
         self.assertIn("before twenty years have passed from the sale", chapter_twelve_flat)
         self.assertIn("assessed value is a dated mass-appraisal estimate", chapter_twelve_flat)
+
+        chapter_thirteen_path = PACKET_ROOT / "chapters/ch13.md"
+        chapter_thirteen = chapter_thirteen_path.read_text(encoding="utf-8")
+        chapter_thirteen_checkpoint = continuity["checkpoints"][12]
+        self.assertEqual(chapter_thirteen_checkpoint["chapter"], "ch13")
+        self.assertEqual(chapter_thirteen_checkpoint["wordCount"], 2810)
+        self.assertEqual(
+            chapter_thirteen_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_thirteen_path.read_bytes()).hexdigest(),
+        )
+        chapter_thirteen_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch13-")
+        }
+        self.assertEqual(
+            set(chapter_thirteen_contexts),
+            {"ch13-s01", "ch13-s02"},
+        )
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_thirteen_contexts.values()
+            )
+        )
+        chapter_thirteen_flat = " ".join(chapter_thirteen.split())
+        self.assertIn("No-go until legal access is resolved", chapter_thirteen_flat)
+        self.assertIn("It does not mean best property", chapter_thirteen_flat)
+        self.assertIn(
+            "A researched parcel without compliant payment readiness is not ready to bid",
+            chapter_thirteen_flat,
+        )
+        self.assertIn("The public map remains owner-free and parcel-first", chapter_thirteen_flat)
+        self.assertIn("without a sales pitch", chapter_thirteen_flat)
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
         self,

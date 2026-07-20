@@ -810,3 +810,81 @@
   applied decisions without replaying the chapter as a linear summary.
 - Completion boundary: canonical draft only. Independent learning, factual,
   prose, humanizer, figure, and narration gates remain pending.
+
+## Before `ch13-s01`
+
+- Job: test the complete method across three fresh composite parcel files by
+  separating verified facts, unresolved risks, professional handoffs and the
+  decision that remains with the bidder.
+- Allowed evidence: `DATA-005`, `LAND-005`, `LAND-006`, `ENV-001`, `OCC-001`,
+  `TAX-003`, and `DATA-003`; retrieval of the mapped-intersection, record-limit,
+  title-versus-possession and all-in-cost boundaries already taught.
+- Grounding: a landlocked sliver, an occupied former workshop and a coherent-
+  but-bounded vacant parcel are fictional composites, not live-property
+  recommendations.
+- New-term budget: none. Every key term is a retrieval after a gap.
+- Audio reset: for each parcel, return to one verified fact, one unresolved risk
+  and the person who owns the next decision.
+- No-repeat boundary: do not summarize the prior twelve chapters in order,
+  redefine established terms, turn a negative screen into reassurance, infer
+  possession or access from imagery, use historical bids as valuation, or
+  supply a personalized maximum.
+
+## After `ch13-s01`
+
+- Draft: 1,547 words in `chapters/ch13.md`, section-state SHA-256
+  `67dcb9e7cdd7e7ef9a748637d3028ac692c84031642366bfd7e3f69f877cc736`.
+- Terms defined: none; the section retrieves established concepts after a gap.
+- Case endings: Alder Spur stops until legal access is resolved; Union Workshop
+  preserves interacting occupancy, former-use, condition, insurance and tax
+  unknowns; Meadow Line reaches a coherent evidence and payment-readiness file
+  without becoming a recommendation.
+- Retrieval: each case returns to one verified fact, one unresolved risk, the
+  authority for the next answer and the decision retained by the bidder.
+- Public-assessment boundary: assessed value and classification remain dated
+  mass-appraisal and taxation context, not condition, appraisal, auction
+  forecast or bid instruction.
+- Open promise: turn the three cases into a reusable public research record that
+  survives withdrawal, payment, certificate, redemption and deed-stage changes.
+
+## Before `ch13-s02`
+
+- Job: close with the reusable public research record and professional handoffs
+  while retrieving event verification, payment readiness and staged
+  responsibility.
+- Allowed evidence: `LAW-006`, `LAW-009`, `LAW-012`, `LAND-001`, `LAND-002`,
+  and `ELIG-001`; retrieval of current-notice authority and the certificate,
+  redemption and deed branches.
+- Grounding: one portable record for source, locator, retrieval date, returned
+  result, limitation, unresolved question, authority, decision consequence and
+  current stage.
+- New-term budget: none.
+- Audio reset: current stage, controlling document, next authorized action and
+  terminating event.
+- No-repeat boundary: no generic checklist ending, statutory-process recital,
+  investment encouragement, service pitch, public Property Online material,
+  claim of transfer measurement or complete-manuscript acceptance.
+
+## After Chapter 13
+
+- Canonical path: `chapters/ch13.md`, SHA-256
+  `c27d6b9aff2b545d1d3a82da12e72e9ec1b2456652dbf67a7924d7969ece8171`,
+  2,810 Markdown words.
+- Terms defined: none; the chapter retrieves the established vocabulary and
+  method after a gap.
+- Three-case transfer: Alder Spur stops until access is resolved; Union
+  Workshop preserves interacting occupancy, former-use and condition unknowns;
+  Meadow Line reaches a coherent evidence and payment file without becoming a
+  recommendation.
+- Durable record: source, locator, retrieval date, returned result, limitation,
+  unresolved question, authority, decision consequence and current stage
+  remain connected as the event changes.
+- Map retrieval: notice → parcel → context → unknowns → handoff supports public
+  discovery and screening while refusing scores, predicted value, invented
+  civic addresses, implied access and ambiguous empty results.
+- Stage retrieval: live notice and payment plan govern before bidding;
+  certificate and treasurer process govern during redemption; discharge closes
+  redemption; registered deed reopens ordinary ownership evidence.
+- Manuscript boundary: all thirteen canonical draft chapters now exist, but
+  independent structure, blind beginner, claim, prose, humanizer, rendered ear,
+  figure, narration, package, listening and publication gates remain pending.

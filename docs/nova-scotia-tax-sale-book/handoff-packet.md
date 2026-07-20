@@ -39,8 +39,9 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- Canonical drafting: Chapters 1–12 complete at 29,757 Markdown words; Chapter 13
-  is next. Chapter 5 carries the major notice → parcel → context → unknowns →
+- Canonical drafting: Chapters 1–13 complete at 32,567 Markdown words; the
+  complete canonical first draft now exists and whole-manuscript review is next.
+  Chapter 5 carries the major notice → parcel → context → unknowns →
   handoff rewrite. Chapters 6 and 7 stress-test it against legal access,
   intended use, and bounded environmental records; Chapter 8 separates title,
   continuing interests, occupancy, possession, and mobile-home record systems.

@@ -1780,6 +1780,147 @@
         "Retrieve the complete notice-to-post-deed evidence method in Chapter 13.",
         "Keep every map output inside a discovery, unknowns and professional-handoff boundary."
       ]
+    },
+    {
+      "section": "ch13-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 12 ends with three separate records: Foundry Street's registered-deed and post-deed evidence file, Elena's possible surplus route, and any challenged-sale file for counsel. Chapter 13 must retrieve the complete method without replaying those examples as a summary.",
+      "sectionJob": "Run three fresh composite parcels through verified, unresolved, professional-handoff and bidder-decision states.",
+      "specificClaims": [
+        "DATA-005",
+        "LAND-005",
+        "LAND-006",
+        "ENV-001",
+        "OCC-001",
+        "TAX-003",
+        "DATA-003"
+      ],
+      "coverageConcepts": [
+        "evidence classification",
+        "mapped intersection",
+        "record limitation",
+        "title versus possession",
+        "all-in cost"
+      ],
+      "throughlineAdvance": "The notice-to-parcel-to-context-to-unknowns-to-handoff method must survive three new fact patterns and still stop short of a recommendation.",
+      "payoff": "The listener can classify the landlocked, occupied and coherent files before the prose supplies each boundary.",
+      "landingBeat": "A well-supported no-go or unresolved file is as complete a research result as a coherent file that proceeds to bidder judgment.",
+      "mustNotRepeat": [
+        "Do not summarize Chapters 1 through 12 in order or redefine their core terms.",
+        "Do not infer legal access, boundaries, occupancy status, contamination, services or permission from map appearance.",
+        "Do not turn a negative database search into a clean bill of health.",
+        "Do not use historical bid ratios or assessed value as a valuation model, forecast or personalized maximum.",
+        "Do not identify, rank or recommend a live tax-sale property."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch13.md",
+      "termsBudget": [],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "none",
+        "concreteReset": "For each parcel, return to one verified fact, one unresolved risk and the person who owns the next decision."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:45:53-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "67dcb9e7cdd7e7ef9a748637d3028ac692c84031642366bfd7e3f69f877cc736",
+      "sectionWordCount": 1547,
+      "draftedAt": "2026-07-20T19:47:24-03:00",
+      "termsDefined": [],
+      "retrievalPrompt": "For a fresh parcel, name one verified fact, one unresolved decision-critical risk, the authority able to answer next and the decision that remains with the bidder.",
+      "retrievalAnswer": "Alder Spur stops on unresolved legal access; Union Workshop preserves occupancy, former-use, condition, insurance and tax unknowns; Meadow Line reaches a coherent evidence and payment-readiness file without becoming a recommendation.",
+      "runningSummary": "Three fictional parcel files retrieve the complete source-bounded method. Exact identity and map returns can support research while access, occupancy, environmental condition, permission, value and tax treatment stay with their proper records and professionals. A no-go, unresolved file or coherent file can each be a complete result.",
+      "unresolvedPromises": [
+        "Convert the three-case method into one reusable public research record.",
+        "Retrieve event verification and staged responsibility without reciting the statute or prior chapters."
+      ]
+    },
+    {
+      "section": "ch13-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Alder Spur stops on unresolved access, Union Workshop preserves interacting occupancy and former-use unknowns, and Meadow Line reaches a coherent evidence file without becoming a recommendation. Each case records one supported fact, the decision-critical unknown, the next authority and the bidder's retained decision.",
+      "sectionJob": "Close with one reusable public research record and retrieve event verification, payment readiness and staged responsibility.",
+      "specificClaims": [
+        "LAW-006",
+        "LAW-009",
+        "LAW-012",
+        "LAND-001",
+        "LAND-002",
+        "ELIG-001"
+      ],
+      "coverageConcepts": [
+        "notice identifiers",
+        "payment performance",
+        "redemption clock",
+        "staged responsibility",
+        "tax-sale sequence"
+      ],
+      "throughlineAdvance": "The durable public artifact is a source-traceable record that changes stage without ever becoming a title opinion, survey, appraisal or recommendation.",
+      "payoff": "The listener can reopen a parcel file after withdrawal, payment, redemption or deed and immediately identify the controlling source, current stage and next authorized action.",
+      "landingBeat": "Helpful public explanation is complete when the evidence and authority boundaries are clear, whether or not anyone buys land or hires a researcher.",
+      "mustNotRepeat": [
+        "Do not end with a generic checklist or retell the statutory sequence in full.",
+        "Do not publish subscriber-only Property Online material or imply its registry content is public web data.",
+        "Do not treat non-Canadian eligibility, HST or deed-transfer tax as a universal yes-or-no field.",
+        "Do not imply that a leading bid is complete before current accepted payment requirements are met.",
+        "Do not claim the complete manuscript, figures, narration, package, learning transfer or publication has passed a downstream gate."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch13.md",
+      "termsBudget": [],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "none",
+        "concreteReset": "Return to the current stage, controlling document, next authorized action and terminating event."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:47:24-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "c27d6b9aff2b545d1d3a82da12e72e9ec1b2456652dbf67a7924d7969ece8171",
+      "sectionWordCount": 1263,
+      "draftedAt": "2026-07-20T19:49:00-03:00",
+      "termsDefined": [],
+      "retrievalPrompt": "When a parcel file changes through withdrawal, payment, redemption or deed, identify the current source and stage, controlling document, next authorized action and terminating event.",
+      "retrievalAnswer": "The live notice, evidence file, written maximum and payment plan govern before bidding; the certificate and treasurer process govern redemption; a discharge closes the purchaser's right; an unredeemed registered deed opens title, possession, condition and intended-use work.",
+      "runningSummary": "A reusable public research record keeps source, locator, date, returned result, limitation, unresolved question, authority, decision consequence and current stage connected. It preserves private registry material, refreshes perishable event and eligibility rules, and survives withdrawal, payment, redemption and deed without becoming a professional opinion or purchase recommendation.",
+      "unresolvedPromises": [
+        "Complete independent whole-manuscript structure, blind beginner, claim, prose and humanizer review.",
+        "Keep figures, full narration, package, human listening and publication behind their remaining gates."
+      ]
     }
   ],
   "checkpoints": [
@@ -2257,6 +2398,40 @@
         "Chapter 13 should retrieve the complete method through applied decisions rather than summarize every chapter in order."
       ],
       "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch13",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch13.md",
+      "draftSHA256": "c27d6b9aff2b545d1d3a82da12e72e9ec1b2456652dbf67a7924d7969ece8171",
+      "wordCount": 2810,
+      "completedAt": "2026-07-20T19:49:00-03:00",
+      "termsDefined": [],
+      "examplesUsed": [
+        "fictional Alder Spur access stop condition",
+        "fictional occupied former-workshop uncertainty file",
+        "fictional Meadow Line coherent-but-not-recommended evidence file",
+        "withdrawal, payment, redemption and registered-deed stage changes",
+        "owner-free public research record and professional handoffs"
+      ],
+      "retrievals": [
+        "Classify one verified fact, unresolved risk, next authority and bidder-owned decision for each fresh parcel.",
+        "Keep notice, parcel, context, unknowns and handoff connected in one source-traceable record.",
+        "Identify current stage, controlling document, next authorized action and terminating event after the file changes."
+      ],
+      "listenerLoad": "No new core terms, three fictional parcel files, four possible stage changes, no arithmetic and no visual dependence.",
+      "runningSummary": "The final chapter retrieves the whole method through three fresh parcels and a record that survives event changes. A no-go, unresolved file and coherent file can each be complete. The public map supports discovery and screening; professional opinions and the bidder's final decision remain outside it.",
+      "unresolvedPromises": [
+        "Run independent whole-manuscript structure, blind beginner and claim-traceability review.",
+        "Complete narrow revision, humanizer, final prose and rendered ear passes.",
+        "Review and accept final figures before any governed package or narration claim."
+      ],
+      "mustNotRepeatNext": [
+        "Do not reopen canonical drafting merely to inflate the word count.",
+        "Do not treat a complete first draft as an accepted, narrated or publishable manuscript.",
+        "Downstream work begins with whole-manuscript evidence-led review rather than packaging."
+      ],
+      "completionBoundary": "All thirteen canonical draft chapters exist; final learning, claim, prose, humanizer, rendered ear, figure, narration, package, listening and publication gates remain pending."
     }
   ]
 }
