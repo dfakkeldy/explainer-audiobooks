@@ -150,8 +150,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(len(continuity["checkpoints"]), 5)
-        self.assertEqual(len(continuity["draftContexts"]), 10)
+        self.assertEqual(len(continuity["checkpoints"]), 7)
+        self.assertEqual(len(continuity["draftContexts"]), 14)
         context = next(
             item
             for item in continuity["draftContexts"]
@@ -325,6 +325,60 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertIn("current or historical mode", chapter_five)
         self.assertIn("not a recommendation", chapter_five)
+
+        chapter_six_path = PACKET_ROOT / "chapters/ch06.md"
+        chapter_six = chapter_six_path.read_text(encoding="utf-8")
+        chapter_six_checkpoint = continuity["checkpoints"][5]
+        self.assertEqual(chapter_six_checkpoint["chapter"], "ch06")
+        self.assertEqual(chapter_six_checkpoint["wordCount"], 2335)
+        self.assertEqual(
+            chapter_six_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_six_path.read_bytes()).hexdigest(),
+        )
+        chapter_six_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch06-")
+        }
+        self.assertEqual(set(chapter_six_contexts), {"ch06-s01", "ch06-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_six_contexts.values()
+            )
+        )
+        self.assertIn("right-of-way", chapter_six)
+        self.assertIn("road frontage", chapter_six)
+        self.assertIn("zoning", chapter_six)
+        self.assertIn("rational no", chapter_six)
+
+        chapter_seven_path = PACKET_ROOT / "chapters/ch07.md"
+        chapter_seven = chapter_seven_path.read_text(encoding="utf-8")
+        chapter_seven_checkpoint = continuity["checkpoints"][6]
+        self.assertEqual(chapter_seven_checkpoint["chapter"], "ch07")
+        self.assertEqual(chapter_seven_checkpoint["wordCount"], 2436)
+        self.assertEqual(
+            chapter_seven_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_seven_path.read_bytes()).hexdigest(),
+        )
+        chapter_seven_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch07-")
+        }
+        self.assertEqual(set(chapter_seven_contexts), {"ch07-s01", "ch07-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_seven_contexts.values()
+            )
+        )
+        self.assertIn("contaminated site", chapter_seven)
+        self.assertIn("well log", chapter_seven)
+        self.assertIn("hazard map", chapter_seven)
+        self.assertIn("positive, negative, and error states", chapter_seven)
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
         self,

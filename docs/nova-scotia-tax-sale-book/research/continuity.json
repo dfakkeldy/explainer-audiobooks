@@ -637,6 +637,275 @@
       "pilotDecisionEvidence": "continue",
       "recordedAt": "2026-07-20T09:23:44-03:00",
       "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch06-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 5 establishes notice, parcel, context, unknowns and handoff as a source-bounded map method. Its River Denys demonstration reports transportation nearby and no mapped road or trail intersection without treating either result as legal access evidence.",
+      "sectionJob": "Stress-test a visible driveway-like route by separating physical approach from a legally supportable right to reach a fictional roadside sliver.",
+      "specificClaims": [
+        "LAND-004",
+        "LAND-005",
+        "LAW-012",
+        "LAND-008"
+      ],
+      "coverageConcepts": [
+        "mapped intersection retrieval",
+        "legal access",
+        "right-of-way"
+      ],
+      "throughlineAdvance": "Move from a bounded spatial observation to the title, plan, survey and legal questions that can establish or defeat access.",
+      "payoff": "The listener can explain why getting near land and having a right to reach it are different achievements.",
+      "landingBeat": "A beautiful apparent route remains a no-go until the required access is supported by the proper records and professional interpretation.",
+      "mustNotRepeat": [
+        "Do not re-tour the interface or redefine mapped intersection.",
+        "Do not redefine PID, parcel register, legal description or title search.",
+        "Do not infer a boundary, easement or public road from imagery or graphical parcel geometry.",
+        "Do not imply a deed itself creates missing access or permission to cross neighbouring land.",
+        "Do not authorize entry onto listed private property."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch06.md",
+      "termsBudget": [
+        "right-of-way",
+        "road frontage",
+        "zoning"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T15:44:55-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "3e3d7f4cdb0993b9b9c3cbb896969292090b76631ae7d26c3bdd36d9d39d0684",
+      "sectionWordCount": 1128,
+      "draftedAt": "2026-07-20T15:46:11-03:00",
+      "termsDefined": [
+        "right-of-way"
+      ],
+      "analogyUsed": {
+        "name": "door and key",
+        "purpose": "The visible driveway is a physical opening while sufficient access evidence may authorize passage.",
+        "limit": "A right-of-way has particular scope and obligations rather than operating as a universal key."
+      },
+      "retrievalPrompt": "A driveway-like line appears to reach a parcel. State the bounded observation and identify the title, plan, survey, road and legal questions required before calling it access.",
+      "runningSummary": "A visible route, nearby road or apparent parcel contact can orient access research but cannot establish a boundary, public-road relationship or right to pass. A right-of-way must be supported and interpreted for the exact parcel and intended passage; physical capability and regulatory suitability remain separate.",
+      "unresolvedPromises": [
+        "Test road frontage, zoning, lot status, setbacks, services and municipal compliance separately.",
+        "Reach the project-specific no-go without treating one zone label as approval."
+      ]
+    },
+    {
+      "section": "ch06-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Maple Ridge's visible driveway-like route does not establish a public-road relationship or a legally supportable right to pass. The fictional bidder needs title, plan, survey, legal and road evidence for the exact parcel, and access remains a no-go if the intended project depends on a right that cannot be supported before bidding.",
+      "sectionJob": "Test the intended use separately against road frontage, zoning, lot status, setbacks, services and current municipal compliance.",
+      "specificClaims": [
+        "LAND-006",
+        "LAND-007",
+        "LAND-008"
+      ],
+      "coverageConcepts": [
+        "road frontage",
+        "zoning",
+        "intended-use feasibility"
+      ],
+      "throughlineAdvance": "Show that even supported passage does not establish a buildable lot or permission for a proposed use.",
+      "payoff": "The listener can ask a planner a project-specific question without treating the zone code as the whole answer.",
+      "landingBeat": "Maple Ridge remains a rational no because the evidence required by the project is absent before the bid decision.",
+      "mustNotRepeat": [
+        "Do not re-explain the visible-route and right-of-way distinction.",
+        "Do not repeat the Chapter 4 land-record or uncertainty classifications.",
+        "Do not treat zoning as a building permit or guarantee of service, access, setbacks, lot status or construction feasibility.",
+        "Do not enter the property or convert an exterior observation into a condition claim.",
+        "Do not begin the contamination, well, sewage or hazard lesson reserved for Chapter 7."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch06.md",
+      "termsBudgetRemaining": [
+        "road frontage",
+        "zoning"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T15:46:11-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "7fb9ea5a7eafc884b6ba568a0d9b6e43a823d422e25a66c8ddc472b1659b7ad6",
+      "sectionWordCount": 1207,
+      "draftedAt": "2026-07-20T15:47:45-03:00",
+      "termsDefined": [
+        "road frontage",
+        "zoning"
+      ],
+      "retrievalPrompt": "For a proposed year-round dwelling, separate the supported access evidence from road frontage, zoning, lot status, setbacks, services and permit questions, then state the bid stop condition.",
+      "runningSummary": "A right of passage can improve an access file without establishing road frontage, a buildable lot or a permitted project. Zoning opens a parcel-specific planning inquiry; current lot status, setbacks, services, route capability and required approvals remain separate dependencies tied to the intended use.",
+      "unresolvedPromises": [
+        "Investigate environmental and infrastructure records without turning a missing record into reassurance.",
+        "Return to access burdens when Chapter 8 separates title from possession and continuing interests."
+      ]
+    },
+    {
+      "section": "ch07-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 6 separates visible approach, legally supportable passage, road frontage, zoning and project approval. Maple Ridge produces a rational no because the intended dwelling depends on evidence that cannot be supported before the auction deadline, without any entry or physical-condition inference.",
+      "sectionJob": "Move from lawful exterior observation to contaminated-site, well and sewage records while preserving the difference between an absent record and an absent condition.",
+      "specificClaims": [
+        "ENV-001",
+        "ENV-002",
+        "ENV-003",
+        "LAND-007"
+      ],
+      "coverageConcepts": [
+        "record limitation",
+        "contaminated site",
+        "well log",
+        "lawful exterior research"
+      ],
+      "throughlineAdvance": "Move the parcel biography below the visible surface while making every returned or missing record carry its coverage and uncertainty.",
+      "payoff": "The listener can distinguish an old oil-tank clue, a missing sewage file and an estimated well point without turning any one of them into a site verdict.",
+      "landingBeat": "The record file identifies the next lawful investigation without impersonating an inspection.",
+      "mustNotRepeat": [
+        "Do not replay the Chapter 6 access, frontage or zoning failure case.",
+        "Do not authorize entry or describe a municipal listing as permission to inspect.",
+        "Do not treat registry absence as proof of a clean site.",
+        "Do not treat a well-log point as a surveyed well location or a water-quality result.",
+        "Do not treat a missing older sewage record as proof that no system exists or that a system complies.",
+        "Do not discuss HST, maximum bids or auction arithmetic."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch07.md",
+      "termsBudget": [
+        "contaminated site",
+        "well log",
+        "hazard map"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T15:48:32-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "47c7f954dccef13262f919808ff0c533b778e93d2b2ee40d14a53a18061d0f14",
+      "sectionWordCount": 1218,
+      "draftedAt": "2026-07-20T15:49:57-03:00",
+      "termsDefined": [
+        "contaminated site",
+        "well log"
+      ],
+      "retrievalPrompt": "For a former workshop, classify an old oil-tank clue, a negative contaminated-site search, an estimated well-log point and a missing older sewage file by supported finding and residual uncertainty.",
+      "runningSummary": "Lawful exterior clues and environmental or infrastructure records can sharpen questions without diagnosing the site. Registry absence does not establish cleanliness; a well log does not establish current location, water quality or serviceability; and a missing older sewage file must be read with the source's retention limit.",
+      "unresolvedPromises": [
+        "Apply the same record-limitation discipline to coastal scenarios and abandoned-mine data.",
+        "End with positive, negative and error-state language that remains useful without becoming reassurance."
+      ]
+    },
+    {
+      "section": "ch07-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Breakwater Lane's former workshop history creates an environmental clue rather than a diagnosis. A negative registry search, an estimated well-log point and a missing older sewage file each carry different coverage, geolocation, retention and present-condition limits; none authorizes entry or substitutes for lawful assessment.",
+      "sectionJob": "Interpret coastal scenario and abandoned-mine records as bounded screening evidence, including both returned and empty results.",
+      "specificClaims": [
+        "ENV-004",
+        "ENV-005",
+        "LAND-004"
+      ],
+      "coverageConcepts": [
+        "record limitation",
+        "hazard map",
+        "positive-negative-error states"
+      ],
+      "throughlineAdvance": "Extend evidence discipline from buried infrastructure into future coastal scenarios and incomplete geological inventories.",
+      "payoff": "The listener can state what a positive or negative hazard-map result supports and what remains for site-specific professional work.",
+      "landingBeat": "A limitation defines a source's useful claim instead of making the source either conclusive or useless.",
+      "mustNotRepeat": [
+        "Do not repeat the contaminated-site, well-log or sewage-record lesson.",
+        "Do not re-explain parcel-boundary or layer mechanics from Chapters 4 and 5.",
+        "Do not turn a coastal scenario into a parcel-specific engineering, insurance or development conclusion.",
+        "Do not turn an abandoned-mine point into a surveyed opening or an empty result into proof of no hazard.",
+        "Do not use the case to rank or recommend a live tax-sale parcel."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch07.md",
+      "termsBudgetRemaining": [
+        "hazard map"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T15:49:57-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "0087874d5733034f5ce8e52543edfc2743590d52e24707134a297dfc008a991b",
+      "sectionWordCount": 1218,
+      "draftedAt": "2026-07-20T15:51:33-03:00",
+      "termsDefined": [
+        "hazard map"
+      ],
+      "analogyUsed": {
+        "name": "flashlight in a dark barn",
+        "purpose": "A source illuminates the part of a risk field covered by its records and methods without proving the unlit remainder empty.",
+        "limit": "Databases have systematic scope and evidence rather than random beams, and different sources are not equally weak."
+      },
+      "retrievalPrompt": "After an interruption, recover the selected coastal scenario, its stated meaning, the mine query's positive, negative or error state, each source limitation and the next property-specific question.",
+      "runningSummary": "Coastal hazard mapping depicts defined current or future scenarios rather than parcel-specific outcomes. The abandoned-mine inventory can reveal known records but is incomplete, omits surface expressions of subsidence and carries positional uncertainty. Positive, negative and error states support different claims.",
+      "unresolvedPromises": [
+        "Retrieve environmental record limitations after lawful post-deed inspection in Chapter 12.",
+        "Use the bounded environmental summary in the final Chapter 13 parcel-file retrieval."
+      ]
     }
   ],
   "checkpoints": [
@@ -850,6 +1119,79 @@
         "Do not redefine civic point, Plus Code, layer or mapped intersection.",
         "Retrieve only the map note needed for the next failure case.",
         "Do not let current or historical demonstrations become recommendations, values or forecasts."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch06",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch06.md",
+      "draftSHA256": "5ad516149a8346d5b4042a1e722662914a01025a7b15a5c1f3280fbe12cd5576",
+      "wordCount": 2335,
+      "completedAt": "2026-07-20T15:47:45-03:00",
+      "termsDefined": [
+        "right-of-way",
+        "road frontage",
+        "zoning"
+      ],
+      "examplesUsed": [
+        "fictional Maple Ridge roadside sliver and driveway-like route",
+        "registered-passage improvement without project approval",
+        "Plan Inverness and Eastern District Planning Commission project-specific handoff"
+      ],
+      "analogyUsed": "A visible driveway as a door and sufficient access evidence as the particular key, with an explicit scope-and-obligations limit.",
+      "retrievals": [
+        "Turn a driveway-like line into a bounded observation and the required title, plan, survey, road and legal questions.",
+        "Separate access evidence from frontage, zoning, lot status, setbacks, services and permits for a year-round dwelling."
+      ],
+      "listenerLoad": "Three new core terms, no calculation, one fictional failure case, two applied retrievals and no visual dependence.",
+      "runningSummary": "A visible route, nearby road or apparent graphical contact does not establish a right to pass. A supported right-of-way still does not establish road frontage, a buildable lot, service feasibility or development approval. Each conclusion is tied to the exact parcel, intended use, current authority and appropriate professional evidence.",
+      "unresolvedPromises": [
+        "Interpret contaminated-site, well, sewage, coastal and mine records in Chapter 7.",
+        "Retrieve continuing access relationships in Chapter 8.",
+        "Recheck access and project dependencies after deed in Chapter 12."
+      ],
+      "mustNotRepeatNext": [
+        "Do not replay the full visible-route and planning failure case.",
+        "Do not redefine right-of-way, road frontage or zoning.",
+        "Do not let a missing environmental record repair an access or feasibility gap."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch07",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch07.md",
+      "draftSHA256": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
+      "wordCount": 2436,
+      "completedAt": "2026-07-20T15:51:33-03:00",
+      "termsDefined": [
+        "contaminated site",
+        "well log",
+        "hazard map"
+      ],
+      "examplesUsed": [
+        "fictional coastal former workshop at Breakwater Lane",
+        "negative contaminated-site search and missing older sewage file",
+        "estimated well-log point",
+        "2100 coastal scenario and abandoned-mine positive, negative and error states"
+      ],
+      "analogyUsed": "A database as a flashlight in a dark barn, limited because data sources have systematic scope and evidence rather than random beams.",
+      "retrievals": [
+        "Classify a former-use clue, registry search, well log and missing sewage file by supported finding and residual uncertainty.",
+        "Recover the coastal scenario, mine query state, source limitations and next property-specific question after an interruption."
+      ],
+      "listenerLoad": "Three new core terms, no calculation, one fictional property, two applied retrievals and one three-state classification.",
+      "runningSummary": "Environmental and infrastructure records illuminate bounded parts of a parcel's history and future exposure. Registry absence does not prove cleanliness; well and sewage records carry geolocation, retention and present-condition limits; coastal maps depict scenarios; and the incomplete abandoned-mine inventory must retain its coverage and positional limits. Positive, negative and error states remain distinct.",
+      "unresolvedPromises": [
+        "Separate title from possession and continuing burdens in Chapter 8.",
+        "Reconcile pre-bid records with lawful post-deed inspection in Chapter 12.",
+        "Retrieve the complete bounded parcel file in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine contaminated site, well log or hazard map.",
+        "Do not replay every database limitation as a catalogue.",
+        "Retrieve the no-record boundary only when a fresh decision requires it."
       ],
       "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
     }

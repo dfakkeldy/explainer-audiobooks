@@ -317,3 +317,118 @@
   method and all-in economics.
 - Completion boundary: canonical draft only. Independent learning, factual,
   prose, humanizer, figure and narration gates remain pending.
+
+## Before `ch06-s01`
+
+- Job: stress-test a visible driveway-like route by separating physical approach
+  from a legally supportable right to reach a fictional roadside sliver.
+- Allowed evidence: `LAND-004`, `LAND-005`, `LAW-012`, and `LAND-008`; coverage
+  concepts `mapped intersection` retrieval and `legal access`.
+- Previous state: Chapter 5 reports transportation nearby and no mapped road or
+  trail intersection as bounded observations, then routes the file toward title,
+  plan, survey, and municipal road questions.
+- New-term budget for Chapter 6: `right-of-way`, `road frontage`, and `zoning`.
+- Concrete reset: stand conceptually at the road edge and ask which legal fact
+  gets the researcher onto the parcel.
+- No-repeat boundary: no interface tour, identifier or land-record definitions,
+  pixel-derived boundary or easement, deed-created access, or permission to
+  enter listed private property.
+
+## After `ch06-s01`
+
+- Draft: 1,128 words in `chapters/ch06.md`, section-state SHA-256
+  `3e3d7f4cdb0993b9b9c3cbb896969292090b76631ae7d26c3bdd36d9d39d0684`.
+- Term defined: `right-of-way`.
+- Analogy used: visible driveway as door and sufficient access evidence as key,
+  limited because a real right-of-way has particular scope and obligations.
+- Retrieval: turn a driveway-like line into bounded observation plus title,
+  plan, survey, road, and legal questions for the exact parcel.
+- Open promise: test the intended project against planning and development
+  requirements separately.
+
+## Before `ch06-s02`
+
+- Job: test the intended use against road frontage, zoning, lot status,
+  setbacks, services, and current municipal compliance.
+- Allowed evidence: `LAND-006`, `LAND-007`, and `LAND-008`.
+- New-term budget remaining: `road frontage` and `zoning`.
+- Current-source boundary: Plan Inverness controls took effect September 11,
+  2025, and the Eastern District Planning Commission administers planning and
+  permitting services; current official confirmation still belongs in a live
+  project file.
+- No-repeat boundary: no access replay, land-record lesson, zoning-as-permit,
+  property entry, condition inference, or Chapter 7 contamination, well,
+  sewage, and hazard material.
+
+## After Chapter 6
+
+- Canonical path: `chapters/ch06.md`, SHA-256
+  `5ad516149a8346d5b4042a1e722662914a01025a7b15a5c1f3280fbe12cd5576`,
+  2,335 Markdown words.
+- Terms defined: `right-of-way`, `road frontage`, and `zoning`.
+- Mechanism: visible approach routes the file toward legal-access evidence; a
+  supported right still leaves frontage, lot, setback, service, route-capacity,
+  and approval questions tied to the intended use.
+- Retrievals: convert a driveway-like line into bounded access questions; test
+  a year-round dwelling against independent development gates and state the bid
+  stop condition.
+- Next no-repeat boundary: Chapter 7 does not replay access or planning and does
+  not let a missing physical or environmental record cure those gaps.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure, and narration gates remain pending.
+
+## Before `ch07-s01`
+
+- Job: move from lawful exterior observation to contaminated-site, well, and
+  sewage records while keeping an absent record separate from an absent
+  condition.
+- Allowed evidence: `ENV-001`, `ENV-002`, `ENV-003`, and `LAND-007`; coverage
+  concept `record limitation`.
+- Grounded case: a fictional coastal former workshop with an old oil-tank clue,
+  an estimated well point, and no older provincial sewage file.
+- New-term budget for Chapter 7: `contaminated site`, `well log`, and `hazard
+  map`.
+- No-repeat boundary: no access or zoning replay, entry, registry-cleanliness
+  inference, surveyed well or water-quality inference, sewage-compliance
+  inference, or bid arithmetic.
+
+## After `ch07-s01`
+
+- Draft: 1,218 words in `chapters/ch07.md`, section-state SHA-256
+  `47c7f954dccef13262f919808ff0c533b778e93d2b2ee40d14a53a18061d0f14`.
+- Terms defined: `contaminated site` and `well log`.
+- Applications: former-use clue, bounded negative registry search, estimated
+  well point, and missing older sewage file with a central retention limit.
+- Retrieval: classify each record by supported finding and residual uncertainty
+  instead of flattening results into yes or no.
+- Open promise: apply the same discipline to coastal and geological hazards.
+
+## Before `ch07-s02`
+
+- Job: interpret coastal scenario and abandoned-mine records as bounded
+  screening evidence, including returned and empty results.
+- Allowed evidence: `ENV-004`, `ENV-005`, and `LAND-004`; coverage concept
+  `record limitation`.
+- New-term budget remaining: `hazard map`.
+- No-repeat boundary: no infrastructure replay, parcel-boundary or layer
+  mechanics, parcel-specific engineering or insurance conclusion, surveyed mine
+  opening, empty-result reassurance, or live-property recommendation.
+
+## After Chapter 7
+
+- Canonical path: `chapters/ch07.md`, SHA-256
+  `16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d`,
+  2,436 Markdown words.
+- Terms defined: `contaminated site`, `well log`, and `hazard map`.
+- Mechanism: every returned, empty, or failed record keeps its source, search
+  state, coverage, geolocation or retention limit, present-condition unknown,
+  and next property-specific question.
+- Analogy: a source as a flashlight in a dark barn, limited because databases
+  have systematic scope and evidence rather than random beams.
+- Retrievals: classify four physical-record results by supported finding and
+  residual uncertainty; recover coastal scenario and mine-query state after an
+  interruption.
+- Next no-repeat boundary: Chapter 8 moves to title, possession, and continuing
+  interests without replaying the environmental database catalogue.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure, and narration gates remain pending.

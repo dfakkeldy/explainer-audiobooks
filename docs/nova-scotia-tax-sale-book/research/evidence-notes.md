@@ -291,13 +291,13 @@ Claim policy: `traceable-only`. Retrieved and checked 2026-07-19. The current-la
 - Confidence: high.
 
 ### ENV-003 — on-site sewage records may be absent
-- Supported wording: The provincial records service warns it may not hold on-site sewage records for older properties. Missing records therefore cannot be treated as evidence that a system exists or complies.
-- Source: Nova Scotia Environmental Records Management System page.
-- Confidence: medium; service-page statement should be refreshed when used.
+- Supported wording: The provincial records service warns that it is unlikely to hold an on-site sewage record for a property more than seven years old, and its process information says these records are retained for seven years before destruction. Missing records therefore cannot be treated as evidence that a system exists, was approved, complies, or functions now.
+- Source: Nova Scotia Environmental Records Management System page and Environmental Registry process information sheet; refreshed 2026-07-20.
+- Confidence: high for the stated records-retention boundary; current property conditions and other possible records remain unresolved.
 
 ### ENV-004 — coastal mapping is scenario information
-- Supported wording: The Coastal Hazard Map supports address or PID searches and depicts a stated 2100 high-tide, storm-surge and sea-level-rise scenario; it is a planning clue rather than a parcel-specific engineering or insurance conclusion.
-- Source: Nova Scotia Coastal Hazard Map User Guide.
+- Supported wording: The Coastal Hazard Map supports community, address, or PID searches and current, 2050, and 2100 scenario selection. Its 2100 worst-case coastal flooding scenario combines the highest high tide, a one-in-one-hundred-year storm surge, and projected sea-level rise. It is a planning clue rather than a parcel-specific engineering, insurance, or development conclusion.
+- Source: Nova Scotia Coastal Hazard Map User Guide; refreshed 2026-07-20.
 - Confidence: high.
 
 ### ENV-005 — abandoned-mine inventory is incomplete

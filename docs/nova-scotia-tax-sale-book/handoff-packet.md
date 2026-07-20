@@ -39,10 +39,11 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- Canonical drafting: Chapters 1–5 complete at 12,041 Markdown words; Chapter 6
-  is next. Chapter 5 now carries the major notice → parcel → context → unknowns
-  → handoff rewrite. These are draft checkpoints, not final reviewed manuscript
-  prose.
+- Canonical drafting: Chapters 1–7 complete at 16,812 Markdown words; Chapter 8
+  is next. Chapter 5 carries the major notice → parcel → context → unknowns →
+  handoff rewrite. Chapters 6 and 7 stress-test it against legal access,
+  intended use, and bounded environmental records. These are draft checkpoints,
+  not final reviewed manuscript prose.
 - User approval status: the prior twelve-chapter/forty-figure direction was
   approved for pilot development at 2026-07-19T11:56:49-03:00. The proposed
   thirteen-chapter/51-figure revision was explicitly approved for pilot

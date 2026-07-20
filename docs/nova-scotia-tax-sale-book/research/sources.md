@@ -1,8 +1,9 @@
 # Source shelf
 
 Retrieved 2026-07-18 unless noted; core law, Inverness event, and provincial
-map-service sources were refreshed on 2026-07-19. Primary and official sources
-control; explanatory sources are labelled separately.
+map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access and
+Chapter 7 environmental sources were refreshed on 2026-07-20. Primary and
+official sources control; explanatory sources are labelled separately.
 
 ## Controlling law
 
@@ -34,10 +35,10 @@ control; explanatory sources are labelled separately.
 
 ## Land-use, physical and environmental research
 
-20. Nova Scotia Environment and Climate Change, [Environmental Registry](https://novascotia.ca/nse/dept/envregistry.asp) and [Contaminated Sites](https://www.novascotia.ca/nse/contaminatedsites/).
-21. Nova Scotia, [Well Logs Database](https://novascotia.ca/nse/groundwater/welldatabase.asp) and [Private Wells in Real Estate Transactions](https://novascotia.ca/nse/water/docs/private-wells-in-real-estate-transactions.pdf).
-22. Nova Scotia, [Coastal Hazard Map User Guide](https://www.novascotia.ca/coastal-climate-change/docs/coastal-hazard-map-user-guide.pdf).
-23. Nova Scotia Natural Resources, [Abandoned Mine Openings Database](https://novascotia.ca/natr/meb/geoscience-online/about-database-amo.asp), [DP ME 10 Version 9 download](https://novascotia.ca/natr/meb/download/dp010.asp), and [2024 metadata](https://novascotia.ca/natr/meb/download/dp010md.asp), refreshed 2026-07-19. The product is under the Nova Scotia Open Government Licence; the inventory is incomplete, excludes surface expressions of subsidence, and reports that private-land positions can be inaccurate by up to approximately 50 metres. Downloaded archive SHA-256: `058e7e344849dade89e0c10a199e4795b51a27d711e2069849ebb37a2857d147`; the full source archive remains an ignored local build input.
+20. Nova Scotia Environment and Climate Change, [Environmental Registry](https://novascotia.ca/nse/dept/envregistry.asp), [Contaminated Sites](https://www.novascotia.ca/nse/contaminatedsites/), [Environmental Records Management System](https://novascotia.ca/nse/erms/), and [Environmental Registry process information](https://novascotia.ca/nse/dept/docs/FOIPOP_EnvRegistryProcess.pdf), refreshed 2026-07-20.
+21. Nova Scotia, [Well Logs Database](https://novascotia.ca/nse/groundwater/welldatabase.asp) and [Private Wells in Real Estate Transactions](https://novascotia.ca/nse/water/docs/private-wells-in-real-estate-transactions.pdf), refreshed 2026-07-20.
+22. Nova Scotia, [Coastal Hazard Map User Guide](https://www.novascotia.ca/coastal-climate-change/docs/coastal-hazard-map-user-guide.pdf), refreshed 2026-07-20.
+23. Nova Scotia Natural Resources, [Abandoned Mine Openings Database](https://novascotia.ca/natr/meb/geoscience-online/about-database-amo.asp), [DP ME 10 Version 9 download](https://novascotia.ca/natr/meb/download/dp010.asp), and [2024 metadata](https://novascotia.ca/natr/meb/download/dp010md.asp), refreshed 2026-07-20. The product is under the Nova Scotia Open Government Licence; the inventory is incomplete, excludes surface expressions of subsidence, and reports that private-land positions can be inaccurate by up to approximately 50 metres. Downloaded archive SHA-256: `058e7e344849dade89e0c10a199e4795b51a27d711e2069849ebb37a2857d147`; the full source archive remains an ignored local build input.
 24. Nova Scotia Municipal Affairs, [municipal planning strategy and land-use by-law guide](https://www.novascotia.ca/documents/developing-municipal-planning-strategy-and-land-use-law-guide-municipalities).
 25. CBRM, [Zoning Confirmation and Municipal Clearance](https://cbrm.ns.ca/home-property/building-development/zoning-confirmation-municipal-clearance/).
 
@@ -65,7 +66,7 @@ control; explanatory sources are labelled separately.
 36. Inverness County, [2025 property-tax results](https://invernesscounty.ca/wp-content/uploads/2026/03/2025-Property-Tax-Results.pdf). Research snapshot SHA-256: `b830a727e4ffa6b498ee8eda241db7127ccbbb4ebb56de87a83a2a8c217f5f08`; snapshot intentionally not committed.
 37. Inverness County, [Property Tax Sales FAQ](https://invernesscounty.ca/wp-content/uploads/2026/01/Property-Tax-Sales-FAQ.pdf), prepared December 2025. Research snapshot SHA-256: `5f20a56b058bfec5bc4f7a5677084812d6e6817a93a99b734dcbc15698253908`; snapshot intentionally not committed.
 38. Inverness County, [June 19, 2025 Committee of the Whole minutes](https://invernesscounty.ca/wp-content/uploads/2025/07/Minutes_COW_June_19_2025_post.pdf), especially page 4: 50 advertised, 35 sold, 15 removed, and $608,693.21 reported surplus.
-39. Inverness County, [Plan Inverness Municipal Planning Strategy and Land Use By-law in effect](https://invernesscounty.ca/municipal-planning-strategy-land-use-bylaw-in-effect/), effective 2025-09-11, with administration through Eastern District Planning Commission.
+39. Inverness County, [Plan Inverness Municipal Planning Strategy and Land Use By-law in effect](https://invernesscounty.ca/municipal-planning-strategy-land-use-bylaw-in-effect/), effective 2025-09-11, with administration through Eastern District Planning Commission; refreshed 2026-07-20.
 
 ## Cross-municipality practice and results
 

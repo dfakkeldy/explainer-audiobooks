@@ -36,8 +36,9 @@ ranking, or an advertisement disguised as education.
 - `figures/`: the deterministic diagram renderer, teaching/provenance
   specifications, contact sheets and hash-bound receipt for figures 03–08, 39
   and 40;
-- `chapters/`: canonical Chapters 1–5, drafted sequentially from the accepted
-  pilot and approved argument outline, including the major map-method rewrite;
+- `chapters/`: canonical Chapters 1–7, drafted sequentially from the accepted
+  pilot and approved argument outline, including the major map-method rewrite
+  and its access, intended-use, and environmental failure cases;
   and
 - `chapters/images/`: eight legal/process candidates plus eleven
   2560-by-1440 NS Marks The Spot walkthrough screenshots; none is yet accepted
@@ -98,7 +99,7 @@ alignment and a clean pronunciation audit. Its exact SHA-256 is
 Dan accepted that exact pilot for continued drafting with “continue” at
 2026-07-20T08:55:51-03:00. Sequential canonical drafting is now authorized;
 final figures, full narration, packaging and publication remain separate.
-Canonical Chapters 1–5 now total 12,041 Markdown words. They remain draft prose
+Canonical Chapters 1–7 now total 16,812 Markdown words. They remain draft prose
 until the complete manuscript clears independent learning, factual, prose,
 humanizer and rendered ear-pass review.
 
@@ -112,7 +113,8 @@ usefully than a static owner-free atlas.
 This material is educational only. It is not legal, tax, investment, title,
 surveying, appraisal, access, environmental, insurance, planning, tenancy, or
 construction advice. Municipal lists and procedures change. The legal and
-event research was refreshed against official sources on 2026-07-19; readers
+event research was refreshed against official sources on 2026-07-19, and the
+Chapter 6–7 planning, access, and environmental sources on 2026-07-20; readers
 must consult the current statute, live municipal list, auction terms, and their
 own qualified professionals before relying on a live-sale detail.
 

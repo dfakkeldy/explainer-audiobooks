@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "claimPolicy": "traceable-only",
   "notesPath": "research/evidence-notes.md",
-  "notesSHA256": "94556f775ff5b7ca58635fe2263efa2158e5645bd8db4e406f6f3f5d1ea09701",
+  "notesSHA256": "2fc10de73eda0febc61525f0b4d7b142e121a411b85e297ad6318b276bc4d740",
   "claims": [
     {
       "id": "LAW-001",
@@ -350,17 +350,17 @@
     },
     {
       "id": "ENV-003",
-      "claim": "Older properties may lack provincial on-site sewage records, so a missing record does not prove a compliant system.",
+      "claim": "The provincial service says on-site sewage records are unlikely for properties more than seven years old and are retained for seven years, so a missing record does not prove a system exists, was approved, complies or functions now.",
       "source": "Nova Scotia ERMS",
-      "locator": "service warning",
+      "locator": "service warning and Environmental Registry process information sheet",
       "verificationStatus": "verified",
-      "verificationNote": "Normalized from verified-perishable; retain this qualifier when interpreting or refreshing the claim."
+      "verificationNote": "Directly verified against the official service page and process information on 2026-07-20; refresh the retention statement before publication."
     },
     {
       "id": "ENV-004",
-      "claim": "The Coastal Hazard Map depicts a stated 2100 scenario and is not a parcel-specific engineering or insurance conclusion.",
+      "claim": "The Coastal Hazard Map supports current, 2050 and 2100 scenarios; its 2100 worst-case flooding view combines highest high tide, a one-in-one-hundred-year storm surge and projected sea-level rise without becoming a parcel-specific engineering, insurance or development conclusion.",
       "source": "Nova Scotia Coastal Hazard Map User Guide",
-      "locator": "Introduction",
+      "locator": "Introduction and scenario controls",
       "verificationStatus": "verified",
       "verificationNote": "Directly verified against the cited source; refresh perishable details before publication."
     },
