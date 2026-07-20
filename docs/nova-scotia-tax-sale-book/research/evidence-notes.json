@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "claimPolicy": "traceable-only",
   "notesPath": "research/evidence-notes.md",
-  "notesSHA256": "fc2edfef471ee40c4b42915c695020c60457588fba653c949f76593a4e0d33b1",
+  "notesSHA256": "81b0d2f247bdabfc721384a4d98b8f403ed626e7b02aba8402d19282ccdbc510",
   "claims": [
     {
       "id": "LAW-001",
@@ -118,11 +118,11 @@
     },
     {
       "id": "OPS-007",
-      "claim": "Halifax uses the parallel HRM Charter framework, and its Administrative Order 18 itemizes possible tax-sale expenses including notice, title search, survey, certificate, deed, registration, closing and redemption administration.",
+      "claim": "Halifax uses the parallel HRM Charter framework, and the July 2026 Administrative Order 18 snapshot itemizes possible tax-sale expenses including notice, title search, survey, deed, registration, closing and redemption administration.",
       "source": "Halifax Regional Municipality",
       "locator": "HRMC ss.147-172; Property Tax Sales; Administrative Order 18 Schedule 1",
       "verificationStatus": "verified",
-      "verificationNote": "Halifax-specific legal and fee comparison; fee amounts and event status are perishable."
+      "verificationNote": "Refreshed 2026-07-20; Halifax-specific legal and fee comparison from snapshot SHA-256 6a5900a77dae78453b37209c88baf52024c59b346c0be2110d76fb5dbd1bbb8b; amounts and event status are perishable."
     },
     {
       "id": "DATA-001",

@@ -150,8 +150,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(len(continuity["checkpoints"]), 10)
-        self.assertEqual(len(continuity["draftContexts"]), 21)
+        self.assertEqual(len(continuity["checkpoints"]), 11)
+        self.assertEqual(len(continuity["draftContexts"]), 23)
         context = next(
             item
             for item in continuity["draftContexts"]
@@ -470,6 +470,38 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("three business days", chapter_ten_flat)
         self.assertIn("put the land up for sale again forthwith", chapter_ten_flat)
         self.assertIn("current municipal source", chapter_ten_flat)
+
+        chapter_eleven_path = PACKET_ROOT / "chapters/ch11.md"
+        chapter_eleven = chapter_eleven_path.read_text(encoding="utf-8")
+        chapter_eleven_checkpoint = continuity["checkpoints"][10]
+        self.assertEqual(chapter_eleven_checkpoint["chapter"], "ch11")
+        self.assertEqual(chapter_eleven_checkpoint["wordCount"], 2778)
+        self.assertEqual(
+            chapter_eleven_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_eleven_path.read_bytes()).hexdigest(),
+        )
+        chapter_eleven_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch11-")
+        }
+        self.assertEqual(
+            set(chapter_eleven_contexts), {"ch11-s01", "ch11-s02"}
+        )
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_eleven_contexts.values()
+            )
+        )
+        self.assertIn("insurable interest", chapter_eleven)
+        self.assertIn("necessary repair", chapter_eleven)
+        self.assertIn("certificate of discharge", chapter_eleven)
+        chapter_eleven_flat = " ".join(chapter_eleven.split())
+        self.assertIn("fourteen days", chapter_eleven_flat)
+        self.assertIn("full redemption amount is paid to the treasurer", chapter_eleven_flat)
+        self.assertIn("not a Nova Scotia tariff", chapter_eleven_flat)
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
         self,

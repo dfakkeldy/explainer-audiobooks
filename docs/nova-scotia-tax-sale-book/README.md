@@ -36,7 +36,7 @@ ranking, or an advertisement disguised as education.
 - `figures/`: the deterministic diagram renderer, teaching/provenance
   specifications, contact sheets and hash-bound receipt for figures 03–08, 39
   and 40;
-- `chapters/`: canonical Chapters 1–10, drafted sequentially from the accepted
+- `chapters/`: canonical Chapters 1–11, drafted sequentially from the accepted
   pilot and approved argument outline, including the major map-method rewrite
   and its access, intended-use, environmental, title, cost, auction, tender,
   payment, and failed-sale branches;
@@ -100,7 +100,7 @@ alignment and a clean pronunciation audit. Its exact SHA-256 is
 Dan accepted that exact pilot for continued drafting with “continue” at
 2026-07-20T08:55:51-03:00. Sequential canonical drafting is now authorized;
 final figures, full narration, packaging and publication remain separate.
-Canonical Chapters 1–10 now total 24,070 Markdown words. They remain draft prose
+Canonical Chapters 1–11 now total 26,848 Markdown words. They remain draft prose
 until the complete manuscript clears independent learning, factual, prose,
 humanizer and rendered ear-pass review.
 
@@ -115,11 +115,11 @@ This material is educational only. It is not legal, tax, investment, title,
 surveying, appraisal, access, environmental, insurance, planning, tenancy, or
 construction advice. Municipal lists and procedures change. The legal and
 event research was refreshed against official sources on 2026-07-19, and the
-Chapter 6–10 planning, access, environmental, title, occupancy, mobile-home,
-auction-result, tax, eligibility, auction/tender, payment, and failed-sale
-sources on 2026-07-20; readers must consult the current statute, live municipal
-list, auction terms, and their own qualified professionals before relying on a
-live-sale detail.
+Chapter 6–11 planning, access, environmental, title, occupancy, mobile-home,
+auction-result, tax, eligibility, auction/tender, payment, failed-sale,
+certificate, redemption, and insurance sources on 2026-07-20; readers must
+consult the current statute, live municipal list, auction terms, and their own
+qualified professionals before relying on a live-sale detail.
 
 Principal current sources include the [Nova Scotia Municipal Government
 Act](https://nslegislature.ca/sites/default/files/legc/statutes/municipal%20government.pdf),

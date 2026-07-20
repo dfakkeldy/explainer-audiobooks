@@ -97,9 +97,10 @@ consolidated to 2026-05-01.
 - Refreshed: 2026-07-20 against the current Inverness and Annapolis pages and the official Pictou notice.
 
 ### OPS-007 — Halifax practice and itemized tax-sale expenses
-- Supported wording: Halifax operates under the parallel Halifax Regional Municipality Charter rather than the MGA tax-sale division. Its current tax-sale page is event-specific, while Administrative Order 18 itemizes possible process charges such as advance notice, internal or external title search, survey at actual cost, notice of intention, certificate preparation, deed preparation, registration at actual cost, closing and redemption administration.
+- Supported wording: Halifax operates under the parallel Halifax Regional Municipality Charter rather than the MGA tax-sale division. Its current tax-sale page is event-specific, while the July 2026 Administrative Order 18 snapshot itemizes advance notice, internal or external title search, survey at actual cost, notice of intention, deed preparation and replacement, registration at actual cost, closing and redemption administration.
 - Source: HRMC ss. 147–172; Halifax Property Tax Sales; Halifax Administrative Order 18, Schedule 1.
 - Confidence: high for the legal distinction and dated fee schedule.
+- Refreshed: 2026-07-20; snapshot SHA-256 `6a5900a77dae78453b37209c88baf52024c59b346c0be2110d76fb5dbd1bbb8b`.
 - Boundary: Halifax's fee categories illustrate what sale expenses can include; they are not a province-wide price list and must be refreshed before use.
 
 ### DATA-001 — minimum bid is not market value

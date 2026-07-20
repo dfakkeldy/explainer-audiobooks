@@ -3,8 +3,8 @@
 Retrieved 2026-07-18 unless noted; core law, Inverness event, and provincial
 map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access,
 Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, Chapter 9
-auction-result/tax/eligibility, and Chapter 10 auction/tender/payment sources
-were refreshed on 2026-07-20. Primary and official sources control;
+auction-result/tax/eligibility, Chapter 10 auction/tender/payment, and Chapter 11
+certificate/redemption/insurance sources were refreshed on 2026-07-20. Primary and official sources control;
 explanatory sources are labelled separately.
 
 ## Controlling law
@@ -25,7 +25,7 @@ explanatory sources are labelled separately.
 11. Municipality of the District of Chester, [Tax Sales](https://chester.ca/government/property-taxes-and-rates/tax-sales).
 12. Municipality of the County of Kings, [Tax Sales](https://www.countyofkings.ca/business/tax-sales) and public-tender policy material in the [2025-02-04 Council agenda](https://www.countyofkings.ca/upload/All_Uploads/COUNCIL/Meeting_Documents/COUNCIL/2025/2025-02-04%20COUNCIL/agenda/2025-02-04%20Council%20Agenda.pdf).
 13. Halifax Regional Municipality, [Property Tax Sales](https://www.halifax.ca/home-property/property-taxes/tax-sale).
-14. Halifax Regional Municipality, [Administrative Order 18 Respecting Revenue Collections](https://www.halifax.ca/sites/default/files/documents/city-hall/legislation-by-laws/ao18.pdf), including Schedule 1 tax-sale administration fees; refreshed 2026-07-19.
+14. Halifax Regional Municipality, [Administrative Order 18 Respecting Revenue Collections](https://www.halifax.ca/sites/default/files/documents/city-hall/legislation-by-laws/ao18.pdf), including Schedule 1 tax-sale administration fees; refreshed 2026-07-20. Research snapshot SHA-256: `6a5900a77dae78453b37209c88baf52024c59b346c0be2110d76fb5dbd1bbb8b`; snapshot intentionally not committed.
 
 ## Property identity, title and assessment
 
@@ -54,7 +54,7 @@ explanatory sources are labelled separately.
 
 ## Insurance availability boundary
 
-31. Intact Insurance, [Vacant Home Insurance](https://www.intact.ca/en/personal-insurance/home/house-insurance/vacant-home-insurance) and [Non-Standard Property](https://www.intact.ca/en/business-insurance/specialty/non-standard-property), used only to illustrate that vacancy can require specialized underwriting. These pages do not promise coverage for a tax-sale certificate holder or a particular property.
+31. Intact Insurance, [Vacant Home Insurance](https://www.intact.ca/en/personal-insurance/home/house-insurance/vacant-home-insurance) and [Non-Standard Property](https://www.intact.ca/en/business-insurance/specialty/non-standard-property), refreshed 2026-07-20 and used only to illustrate that vacancy can require specialized underwriting. These pages do not promise coverage for a tax-sale certificate holder or a particular property.
 
 ## Explanatory legal education
 

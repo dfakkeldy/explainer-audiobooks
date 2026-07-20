@@ -628,3 +628,79 @@
   or the failed-sale state machine.
 - Completion boundary: canonical draft only. Independent learning, factual,
   prose, humanizer, figure, and narration gates remain pending.
+
+## Before `ch11-s01`
+
+- Job: begin after full payment and operate registration, insurance, new-tax,
+  protection, safety, and authorization tasks during a redeemable certificate
+  period.
+- Allowed evidence: `LAW-007`, `LAW-008`, `LAW-010`, and `INS-001`; retrieval
+  of the certificate-versus-possession boundary from Chapters 3 and 8.
+- Grounding: fictional Maya now holds the registered certificate for Cedar
+  Street, receives one specialty-underwriting refusal, and seeks written
+  treasurer approval for one necessary protective repair.
+- New-term budget for Chapter 11: `insurable interest`, `necessary repair`, and
+  `certificate of discharge`.
+- Audio reset: return to one insurer response, one written municipal approval,
+  and one repair receipt.
+- No-repeat boundary: no auction registration or payment replay, no early
+  renovation, no self-help possession, no guarantee that an insurer will issue
+  coverage, and no assumption that an unapproved cost will be reimbursed.
+
+## After `ch11-s01`
+
+- Draft: 1,343 words in `chapters/ch11.md`, section-state SHA-256
+  `20840071fc65ffaecc1fb83f4075369caeb5060188c51ece95e18a1c3a9bcdb8`.
+- Terms defined: `insurable interest` and `necessary repair`.
+- Applications: Maya's registered Cedar Street certificate, one underwriting
+  refusal, one conditional specialty-coverage route, one written
+  treasurer-approved temporary repair, and a dated receipt chain.
+- Retrieval: separate a statutory interest from policy availability, and
+  connect any protective cost to condition evidence, written approval, lawful
+  access, exact scope, invoice, and payment.
+- Open promise: close the redemption branch through the statutory categories,
+  purchaser statement, repayment, cessation of rights, and registered discharge.
+
+## Before `ch11-s02`
+
+- Job: resolve redemption humanely and financially without treating the former
+  owner's return as a failed investment or ten-percent interest as promised
+  profit.
+- Allowed evidence: `LAW-010`, `LAW-011`, `OPS-007`, and `OCC-001`; retrieval
+  of the exact certificate-period ledger established in the first section.
+- Grounding: Cedar Street is redeemed after Maya has paid a new tax bill,
+  premium, and approved repair while receiving no rent; Halifax's current
+  Administrative Order 18 supplies a clearly local fee-category example.
+- New-term budget remaining: `certificate of discharge`.
+- Audio budget: name the statutory additions and offsets, then reset to the
+  approved repair receipt and treasurer's file rather than calculate a return.
+- No-repeat boundary: no detailed occupant process, no reimbursement promise,
+  no province-wide Halifax tariff, no personalized redemption calculation, and
+  no deed-stage lesson reserved for Chapter 12.
+
+## After Chapter 11
+
+- Canonical path: `chapters/ch11.md`, SHA-256
+  `f20e5d60bd090a121cce89275da264185c00ea9c59857957b158e5c238e5c5b8`,
+  2,778 Markdown words.
+- Terms defined: `insurable interest`, `necessary repair`, and `certificate of
+  discharge`.
+- Mechanism: a registered certificate creates conditional protective powers,
+  insurance and accounting duties, while possession, underwriting, repair
+  authority, safety, and development remain separate questions.
+- Grounded sequence: Maya documents one insurance refusal, a conditional
+  specialty policy, current taxes, one written treasurer-approved temporary
+  repair, no rent, the requested purchaser statement, repayment, and discharge.
+- Redemption categories: purchase sum, statutory interest, qualifying taxes,
+  recording fee, fire-insurance premiums, approved necessary repairs, surplus
+  offset, and rent or other income offset stay distinct in the treasurer's file.
+- Local comparison: Halifax Administrative Order 18's July 2026 schedule makes
+  fee categories visible without becoming an Inverness or province-wide tariff.
+- Retrievals: distinguish insurable interest from policy availability; tie a
+  repair to actual condition, written approval and payment; stop certificate-
+  holder action when full redemption payment ends the right.
+- Next no-repeat boundary: Chapter 12 begins only on the unredeemed branch,
+  requests and registers the deed, and reopens title, possession, condition and
+  intended-use evidence without replaying the certificate ledger.
+- Completion boundary: canonical draft only. Independent learning, factual,
+  prose, humanizer, figure, and narration gates remain pending.

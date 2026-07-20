@@ -1417,6 +1417,150 @@
         "Operate the certificate-holder calendar, records, insurance and redemption responsibilities in Chapter 11.",
         "Retrieve payment readiness and state classification in the final Chapter 13 parcel file."
       ]
+    },
+    {
+      "section": "ch11-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 10 ends after complete purchase payment produces a certificate of sale. The written ceiling, event payment and failed-sale branches are finished; the purchaser has not yet received a deed or automatic possession.",
+      "sectionJob": "Follow registration, insurance, new-tax, protection, safety and authorization tasks during the certificate period.",
+      "specificClaims": [
+        "LAW-007",
+        "LAW-008",
+        "LAW-010",
+        "INS-001"
+      ],
+      "coverageConcepts": [
+        "staged responsibility",
+        "certificate versus possession",
+        "documented protective work"
+      ],
+      "throughlineAdvance": "Responsibility arrives before deed certainty and every protective action needs a bounded authority and durable record.",
+      "payoff": "One insurer refusal and one treasurer-approved repair show why a statutory duty, market availability and reimbursement are separate questions.",
+      "landingBeat": "The listener can distinguish protection from development and statutory insurable interest from guaranteed underwriting.",
+      "mustNotRepeat": [
+        "Do not replay auction registration, payment forms or the default state machine.",
+        "Do not describe the certificate as a deed or as automatic vacant possession.",
+        "Do not prescribe entry, lock changes, occupant contact or other self-help.",
+        "Do not imply that an insurer must accept the applicant or the property.",
+        "Do not imply that an unapproved repair is reimbursable on redemption."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch11.md",
+      "termsBudget": [
+        "insurable interest",
+        "necessary repair",
+        "certificate of discharge"
+      ],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to one insurer response, one written municipal approval and one repair receipt."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T18:59:04-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "20840071fc65ffaecc1fb83f4075369caeb5060188c51ece95e18a1c3a9bcdb8",
+      "sectionWordCount": 1343,
+      "draftedAt": "2026-07-20T19:00:49-03:00",
+      "termsDefined": [
+        "insurable interest",
+        "necessary repair"
+      ],
+      "retrievalPrompt": "For a protective repair during the redemption period, identify the legal interest, insurance status, actual condition, written authority, lawful access, exact scope and durable payment record.",
+      "retrievalAnswer": "The certificate supplies a bounded protective interest; policy availability, possession, safety and repair authorization remain separate. Reimbursement depends on the statutory category and written treasurer approval, supported by the actual scope and payment record.",
+      "runningSummary": "A registered certificate creates conditional responsibility before deed certainty. The holder may protect and non-diminishingly use the land, collect rent and seek insurance while avoiding injury and tree cutting. Insurable interest does not guarantee underwriting, apparent vacancy does not establish possession, and a qualifying necessary repair requires written treasurer approval plus a complete evidence chain.",
+      "unresolvedPromises": [
+        "Walk the statutory redemption additions and offsets without calculating promised profit.",
+        "Close Maya's rights through full payment to the treasurer and the registered certificate of discharge."
+      ]
+    },
+    {
+      "section": "ch11-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Maya holds Cedar Street's registered certificate, routes possession and safety questions lawfully, documents one insurer refusal and a conditional specialty policy, pays current taxes, and completes only a written treasurer-approved temporary repair with a full receipt chain.",
+      "sectionJob": "Resolve the redemption branch humanely and financially through statutory additions, offsets, purchaser statement, repayment, cessation of rights and discharge.",
+      "specificClaims": [
+        "LAW-010",
+        "LAW-011",
+        "OPS-007",
+        "OCC-001"
+      ],
+      "coverageConcepts": [
+        "redemption accounting",
+        "local sale-expense visibility",
+        "lawful close-out"
+      ],
+      "throughlineAdvance": "Treat redemption as a lawful completion that repays supported categories and restores the former interest without winner-loser narration.",
+      "payoff": "Maya can deliver the requested statement, reconcile the treasurer's amount and close the file when full redemption ends her rights.",
+      "landingBeat": "The registered certificate of discharge records the ending; the deed branch remains for Chapter 12 only if redemption does not occur.",
+      "mustNotRepeat": [
+        "Do not replay the entire insurance or repair-approval story.",
+        "Do not describe ten-percent annual interest as guaranteed profit or calculate a personalized return.",
+        "Do not universalize Halifax fee names or amounts across Nova Scotia.",
+        "Do not prescribe an occupant communication, tenancy or possession process.",
+        "Do not begin the tax-deed, surplus or contestability lesson reserved for Chapter 12."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch11.md",
+      "termsBudgetRemaining": [
+        "certificate of discharge"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "category walkthrough only",
+        "concreteReset": "Return to one approved repair receipt and the treasurer's file."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:00:49-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "f20e5d60bd090a121cce89275da264185c00ea9c59857957b158e5c238e5c5b8",
+      "sectionWordCount": 1435,
+      "draftedAt": "2026-07-20T19:03:31-03:00",
+      "termsDefined": [
+        "certificate of discharge"
+      ],
+      "localFeeExample": "Halifax Administrative Order 18 Schedule 1 refreshed 2026-07-20 and explicitly bounded to Halifax",
+      "retrievalPrompt": "When a qualifying person intends to redeem, identify the purchaser records, statutory additions, offsets, response deadline, exact cessation event and registered close-out instrument.",
+      "retrievalAnswer": "Provide the requested insurance-and-approved-repair statement within fourteen days, preserve taxes and income in their proper categories, reconcile the official repayment, stop when full redemption payment reaches the treasurer, and record the certificate of discharge.",
+      "runningSummary": "Redemption is a statutory completion rather than a failed investment. The treasurer administers purchase sum, interest, qualifying taxes, recording fee, premiums, approved repairs, surplus and income offsets. The purchaser supplies the requested premium-and-repair statement within fourteen days, loses rights on full payment to the treasurer and closes the registered record through a certificate of discharge.",
+      "unresolvedPromises": [
+        "Follow the unredeemed branch into deed request, registration and a second due-diligence wave in Chapter 12.",
+        "Retrieve the complete certificate and redemption record in Chapter 13."
+      ]
     }
   ],
   "checkpoints": [
@@ -1817,6 +1961,44 @@
         "Do not redefine open-outcry auction, public tender or deposit.",
         "Do not replay the full registration, payment-form or default state machine.",
         "Chapter 11 begins only after complete payment and operates the certificate-holder calendar."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
+    },
+    {
+      "chapter": "ch11",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch11.md",
+      "draftSHA256": "f20e5d60bd090a121cce89275da264185c00ea9c59857957b158e5c238e5c5b8",
+      "wordCount": 2778,
+      "completedAt": "2026-07-20T19:03:31-03:00",
+      "termsDefined": [
+        "insurable interest",
+        "necessary repair",
+        "certificate of discharge"
+      ],
+      "examplesUsed": [
+        "fictional Maya and redeemable Cedar Street building",
+        "one specialty-underwriting refusal and one conditional coverage route",
+        "one written treasurer-approved temporary weatherproofing repair",
+        "current Halifax Administrative Order 18 fee-category comparison",
+        "fourth-month redemption, purchaser statement, repayment and discharge"
+      ],
+      "retrievals": [
+        "Separate statutory insurable interest from actual policy availability and terms.",
+        "Tie protective work to condition evidence, written treasurer approval, lawful access, exact scope and payment.",
+        "Close the ledger when full redemption payment ends the certificate-holder right and the discharge is registered."
+      ],
+      "listenerLoad": "Three new core terms, no personalized arithmetic, one fictional certificate holder, one insurance refusal, one approved repair, one local fee comparison and two applied retrievals.",
+      "runningSummary": "The certificate period is active, bounded stewardship. The holder protects without diminishing, seeks actual coverage, handles taxes and income, obtains written treasurer approval before a reimbursable necessary repair and preserves every record. Redemption uses statutory categories and offsets; the purchaser responds with the requested statement, rights cease on full payment to the treasurer and the registered discharge records the ending.",
+      "unresolvedPromises": [
+        "Request and register the deed on the unredeemed branch in Chapter 12.",
+        "Reopen title, possession, condition and intended-use evidence after the document changes.",
+        "Retrieve the complete certificate-holder ledger in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine insurable interest, necessary repair or certificate of discharge.",
+        "Do not replay the full insurer outreach, repair-approval or redemption ledger.",
+        "Chapter 12 begins only with the unredeemed deed branch and its new evidence responsibilities."
       ],
       "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending."
     }

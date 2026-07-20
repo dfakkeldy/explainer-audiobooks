@@ -39,7 +39,7 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- Canonical drafting: Chapters 1–10 complete at 24,070 Markdown words; Chapter 11
+- Canonical drafting: Chapters 1–11 complete at 26,848 Markdown words; Chapter 12
   is next. Chapter 5 carries the major notice → parcel → context → unknowns →
   handoff rewrite. Chapters 6 and 7 stress-test it against legal access,
   intended use, and bounded environmental records; Chapter 8 separates title,
@@ -48,8 +48,10 @@ unranked.
   all-in cost, tax/eligibility branch, uncertainty reserve, and written maximum.
   Chapter 10 executes that ceiling across open auction and tender, then traces
   payment readiness, no-bid, default, re-advertisement, and current-event
-  refresh branches. These are draft checkpoints, not final reviewed manuscript
-  prose.
+  refresh branches. Chapter 11 operates the redeemable certificate period through
+  insurer outreach, bounded protective work, taxes, income, the purchaser
+  statement, redemption repayment, and registered discharge. These are draft
+  checkpoints, not final reviewed manuscript prose.
 - User approval status: the prior twelve-chapter/forty-figure direction was
   approved for pilot development at 2026-07-19T11:56:49-03:00. The proposed
   thirteen-chapter/51-figure revision was explicitly approved for pilot
