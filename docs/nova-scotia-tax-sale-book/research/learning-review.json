@@ -1,17 +1,96 @@
 {
   "schemaVersion": 2,
-  "reviewedChapterSHA256": {},
+  "reviewedChapterSHA256": {
+    "ch01.md": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
+    "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
+    "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
+    "ch04.md": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
+    "ch05.md": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+    "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
+    "ch07.md": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
+    "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
+    "ch09.md": "13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42",
+    "ch10.md": "a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9",
+    "ch11.md": "89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611",
+    "ch12.md": "e4904a3fc012f9dea5d150f0bce11043546fe46ac563c3aa4f240f9207c07dcd",
+    "ch13.md": "9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b"
+  },
   "structure": {
-    "reviewer": "unassigned-structure-reviewer",
-    "verdict": "pending",
-    "findings": []
+    "reviewer": "codex-final-hash-structure-reviewer-2026-07-21",
+    "verdict": "pass",
+    "findings": [
+      {
+        "id": "STR-01",
+        "location": "ch01.md, The Last Scene First and The First Clock",
+        "category": "orientation",
+        "evidence": "The opening replaces the bargain-listing model with the governing question, states notice to parcel to context to unknowns to handoff, names the staged case portfolio and establishes the first statutory clock.",
+        "decision": "accepted",
+        "reason": "The listener receives the route and branch structure before later terminology depends on it."
+      },
+      {
+        "id": "STR-02",
+        "location": "ch02.md through ch05.md",
+        "category": "progression and prerequisites",
+        "evidence": "The notice identifiers and source authority precede certificate mechanics; those identifiers then support the evidence file and bounded map workflow.",
+        "decision": "accepted",
+        "reason": "Each chapter consumes distinctions already introduced and changes the teaching job rather than repeating a layer tour."
+      },
+      {
+        "id": "STR-03",
+        "location": "ch06.md through ch08.md and ch12.md",
+        "category": "application and chronology",
+        "evidence": "Access and environmental chapters pressure-test the map method in separate domains. Chapter 8 labels its deed lesson as a flash-forward and Chapter 12 re-enters the deed branch in sequence for ownership operations.",
+        "decision": "accepted",
+        "reason": "The applications preserve prerequisites and the deliberate chronology is explicitly oriented."
+      },
+      {
+        "id": "STR-04",
+        "location": "ch09.md through ch12.md",
+        "category": "stage continuity",
+        "evidence": "The written ceiling is derived before the event, retrieved under auction pressure, and carried through payment, certificate, redemption or discharge, deed, surplus and challenge as distinct files and clocks.",
+        "decision": "accepted",
+        "reason": "The staged-responsibility throughline remains coherent without collapsing event formats or legal outcomes."
+      },
+      {
+        "id": "STR-05",
+        "location": "ch13.md, Alder Crossing through The Durable Record",
+        "category": "retrieval and resolved promises",
+        "evidence": "Fresh cases require the listener to classify verified facts, unknowns, next authorities and consequences before answers are supplied, then return to the opening scene without ranking properties.",
+        "decision": "accepted",
+        "reason": "The ending resolves the book through transfer and every material forward promise lands at its intended stage."
+      }
+    ]
   },
   "blindSequentialBeginner": {
-    "reviewer": "unassigned-blind-beginner-listener",
-    "verdict": "pending",
+    "reviewer": "blind-sequential-beginner-v1-2026-07-21",
+    "verdict": "pass",
     "reviewMode": "manuscript-only-sequential",
     "intentionMaterialsWithheld": true,
-    "chapterAssessments": [],
-    "findings": []
+    "chapterAssessments": [
+      {"afterChapter": "ch01.md", "plausibleMentalModel": "A tax sale is municipal debt enforcement, not a bargain listing; the packet contains dated sources with limited jobs and the route begins with notice, clocks and authority.", "confusions": ["The June 30 threshold, three-year backstop and two-year municipal trigger require a slow first listen."], "unstableTerms": ["eligible after two years", "three preceding fiscal years", "tax lien priority"], "lostAt": ["The First Clock briefly loads three timing rules; the next paragraph restores the sequence."]},
+      {"afterChapter": "ch02.md", "plausibleMentalModel": "A notice row routes the event through lien number, AAN, PID, civic area, assessment, recovery amount and redemption marker, while the current municipality controls live status.", "confusions": ["Withdrawal has several possible causes and therefore a deliberately narrow public meaning."], "unstableTerms": ["recovery amount", "current", "withdrawn", "non-redeemable"], "lostAt": []},
+      {"afterChapter": "ch03.md", "plausibleMentalModel": "A redeemable payment creates a certificate-holder middle state, while redemption and deed are separate endings with separate documents.", "confusions": ["Immediate deed describes redemption timing and can momentarily sound more automatic than it is."], "unstableTerms": ["immediate deed", "insurable", "necessary repairs", "non-diminishing use"], "lostAt": ["The first redemption-category list is dense; the evidence-ledger explanation restores the model."]},
+      {"afterChapter": "ch04.md", "plausibleMentalModel": "A parcel biography is a dated source ledger that preserves unknowns and routes them to the proper source or professional.", "confusions": ["The four destinations for an unknown can overlap in practice."], "unstableTerms": ["verified", "professionally verifiable", "priceable uncertainty", "no-go uncertainty", "parcel register"], "lostAt": ["The court-order branch arrives abruptly; its risk-free warning restores orientation."]},
+      {"afterChapter": "ch05.md", "plausibleMentalModel": "Choose current or historical records, confirm the municipal source, establish an exact parcel, ask one source-sized context question, record unknowns and hand off.", "confusions": ["The transition from fictional Birch Point Road to the real PID demonstration briefly changes the active case."], "unstableTerms": ["current mode", "historical mode", "production receipt", "mapped intersection"], "lostAt": ["The real-PID road-and-water demonstration creates a short case-switch; the method remains clear."]},
+      {"afterChapter": "ch06.md", "plausibleMentalModel": "Visible approach, legal passage, physical access, frontage, zoning and approval are independent project gates.", "confusions": ["A registered passage right still requires survey and planning confirmation."], "unstableTerms": ["right-of-way", "road frontage", "permitted use", "buildable lot"], "lostAt": []},
+      {"afterChapter": "ch07.md", "plausibleMentalModel": "Historical use, environmental, well, sewage, hazard and mine records illuminate different slices of physical uncertainty without replacing inspection.", "confusions": ["A well point can lie inside a polygon without being associated with the parcel."], "unstableTerms": ["contaminated site", "worst-case", "hazard map", "no feature shown"], "lostAt": ["The move from coastal scenarios to incomplete mine inventory requires a mental reset."]},
+      {"afterChapter": "ch08.md", "plausibleMentalModel": "A tax deed changes title but does not automatically create vacant possession, erase every easement, grant entry, establish condition or merge a manufactured home with the land.", "confusions": ["The manufactured-home branch introduces land, personal-property and tenancy systems together."], "unstableTerms": ["fee simple", "encumbrance", "vacant possession", "affixed"], "lostAt": ["The manufactured-home scenario briefly feels like a new chapter before its asset-identity purpose becomes clear."]},
+      {"afterChapter": "ch09.md", "plausibleMentalModel": "Historical ratios are not value; a maximum bid is built backward from a supported use-specific value boundary less known costs and bounded uncertainty, subject to stop conditions.", "confusions": ["The supported value boundary remains the most judgment-dependent input."], "unstableTerms": ["all-in cost", "uncertainty reserve", "supported value boundary", "maximum bid"], "lostAt": ["The tax and eligibility branches interrupt the arithmetic; the four-question summary restores it."]},
+      {"afterChapter": "ch10.md", "plausibleMentalModel": "Auction and tender are different execution formats for the same evidence-bound decision; readiness includes refreshed status, authority, a fixed maximum and two payment paths.", "confusions": ["Deposit may mean the entire purchase price or a recovery-related immediate amount."], "unstableTerms": ["deposit", "leading bidder", "purchaser", "unsold"], "lostAt": ["Immediate-payment failure and later balance failure are dense but separate clearly once their consequences are stated."]},
+      {"afterChapter": "ch11.md", "plausibleMentalModel": "A certificate holder protects rather than develops the property, obtains written approval for necessary work, and maintains evidence for redemption or a later deed.", "confusions": ["The total municipal redemption amount and purchaser repayment overlap without being identical."], "unstableTerms": ["insurable interest", "necessary repairs", "protective", "full redemption amount"], "lostAt": ["The redemption accounting distinction is the densest passage and resolves in the following ledger explanation."]},
+      {"afterChapter": "ch12.md", "plausibleMentalModel": "The purchaser requests and registers the deed, then reopens title, possession, insurance, physical, planning and cost work; surplus and challenge follow separate files and clocks.", "confusions": ["The statutory exception paragraph is intentionally not enough for independent legal application."], "unstableTerms": ["marketable title", "binding and conclusive", "wrongful tax sale"], "lostAt": ["The exception paragraph is dense; the three-file summary restores the distinction."]},
+      {"afterChapter": "ch13.md", "plausibleMentalModel": "The same evidence method can properly end in a stop, an unresolved file or conditional readiness while preserving dated stage records as the external process changes.", "confusions": ["Research-ready is relative and is not a recommendation."], "unstableTerms": ["research-ready", "coherent bounded evidence file", "decision-critical uncertainty"], "lostAt": []}
+    ],
+    "findings": [
+      {"id": "BB-01", "location": "ch03.md, Two Endings, Two Documents", "category": "terminology", "evidence": "Immediate deed can momentarily sound automatic, but the chapter expressly limits the word to redemption timing and Chapter 12 supplies the request, delivery and registration sequence.", "decision": "rejected", "reason": "The existing limiting sentence and later retrieval resolve the potential confusion; changing approved text is not warranted."},
+      {"id": "BB-02", "location": "ch04.md, Four Places an Unknown Can Go", "category": "classification", "evidence": "The four destinations can overlap as dimensions even though the spoken organization initially sounds exclusive.", "decision": "rejected", "reason": "The categories perform distinct evidence-routing jobs and the case examples prevent an exclusive legal taxonomy reading."},
+      {"id": "BB-03", "location": "ch05.md, One Question at a Time", "category": "case transition", "evidence": "The fictional-to-real-PID switch causes a brief orientation cost but the live interface demonstration and its source boundary are explicit.", "decision": "rejected", "reason": "The short switch does not destabilize the durable method and the reviewer recovered without a manuscript change."},
+      {"id": "BB-04", "location": "ch08.md, The House Does Not Empty on Paper", "category": "safety boundary", "evidence": "Deed, occupancy, vacant possession, entry, utilities, goods and legal process remain distinct without amateur self-help instructions.", "decision": "accepted", "reason": "Preserve substantially as written."},
+      {"id": "BB-05", "location": "ch09.md, Build the Number Backward", "category": "value boundary", "evidence": "The supported value boundary is intentionally evidence- and use-specific; the chapter defines what it cannot be and routes unsupported inputs to a stop.", "decision": "rejected", "reason": "A generic evidence ladder would risk becoming valuation advice and would weaken the present professional-authority boundary."},
+      {"id": "BB-06", "location": "ch10.md, The Finish Line Beyond the Hammer", "category": "payment terminology", "evidence": "Deposit has event-specific meanings and the chapter warns the listener to read the current terms rather than assume a fixed sum.", "decision": "rejected", "reason": "Replacing the municipality's operative term would reduce fidelity; the explicit warning is the safer teaching choice."},
+      {"id": "BB-07", "location": "ch11.md, Closing the Ledger When the Property Is Redeemed", "category": "accounting density", "evidence": "The full municipal calculation and purchaser repayment overlap without being identical; the following evidence ledger supplies the spoken reset.", "decision": "rejected", "reason": "The distinction is legally important, passes sequential review and should not be simplified into an inaccurate equivalence."},
+      {"id": "BB-08", "location": "ch12.md, The Money and the Challenge Take Different Roads", "category": "clock separation", "evidence": "The twenty-year surplus route and six-year deed-challenge period remain in separate files with different claimants and consequences.", "decision": "accepted", "reason": "Preserve the separate-file and separate-clock treatment."},
+      {"id": "BB-09", "location": "ch13.md, three fresh files and durable record", "category": "transfer", "evidence": "The synthesis demonstrates that a stop, an unresolved file and conditional readiness can all be completed research outcomes without ranking property.", "decision": "accepted", "reason": "Preserve as the final transfer exercise."}
+    ]
   }
 }

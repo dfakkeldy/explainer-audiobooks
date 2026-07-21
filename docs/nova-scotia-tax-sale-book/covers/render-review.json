@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "status": "pair-selected",
+  "reviewedAt": "2026-07-21T16:48:41-03:00",
+  "reviewer": "Codex",
+  "generationMode": "built-in-imagegen",
+  "review": {
+    "fullSizePortraits": true,
+    "fullSizeSquares": true,
+    "portraitContactSheet": true,
+    "squareContactSheet": true,
+    "thumbnailLegibility": true,
+    "visibleGradientEdges": false
+  },
+  "candidates": [
+    {
+      "id": "packet-lifts",
+      "sourceArtSHA256": "bd8aa65d8172722bb38a352272e04445954bbeea271f0384581403118ddd85af",
+      "portraitSHA256": "fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6",
+      "squareSHA256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c"
+    },
+    {
+      "id": "raised-card",
+      "sourceArtSHA256": "6026127a4a7fed8abc39dc21a0bb377adf0e7307308aa37c28fde6cc3bd64968",
+      "portraitSHA256": "92ca76cf55e05fe1dd56fc055e30f87011e68c13001e12ed4703f38242db2b6f",
+      "squareSHA256": "d679dfebc9949e94798852a9570df0365633315903b4c6a9a5ccef5c478014df"
+    },
+    {
+      "id": "layers-of-uncertainty",
+      "sourceArtSHA256": "98c049e6e868a7240c0d4b1d4fdc709daa385c4eb92db2a21539109991e19aee",
+      "portraitSHA256": "f7294b3acd7bc8ebb2f6fa739c73468d7304f6497a9739525b69c7a6148dfba0",
+      "squareSHA256": "1426335fa0ad1dfe176655a539002d29b99defe8d2eb7807b8ca5250392ec620"
+    }
+  ],
+  "humanPairSelection": {
+    "status": "selected",
+    "selectedCandidate": "packet-lifts",
+    "selectedBy": "Dan Fakkeldy",
+    "selectedAt": "2026-07-21T16:48:41-03:00",
+    "selectionSource": "user",
+    "verbatimEvidence": "i'm going to go with image 1",
+    "receipt": "cover-selection.json"
+  }
+}

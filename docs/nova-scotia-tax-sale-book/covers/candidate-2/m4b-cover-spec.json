@@ -1,0 +1,18 @@
+{
+  "schema_version": 2,
+  "variant": "square",
+  "candidate": {"id": "raised-card", "direction_name": "The Raised Card"},
+  "metadata": {"title": "Beyond the Tax-Sale Packet", "subtitle": "", "author": "Dan Fakkeldy", "label": "Audiobook"},
+  "canvas": {"width": 2400, "height": 2400, "background": "#EAF6F4", "safe_margin": 120},
+  "art": {"path": "source-art.png", "mode": "bleed", "anchor": "right", "box": [0, 0, 2400, 2400], "opacity": 1, "blend_mode": "normal"},
+  "layers": [
+    {"kind": "scrim", "box": [0, 0, 2400, 2400], "fill": {"kind": "linear-gradient", "start": [0, 0], "end": [1700, 2100], "stops": [{"offset": 0, "colour": "#F7F2E7", "opacity": 0.98}, {"offset": 0.58, "colour": "#F7F2E7", "opacity": 0.85}, {"offset": 1, "colour": "#F7F2E7", "opacity": 0}]}, "opacity": 1, "blend_mode": "normal", "purpose": "square title field"},
+    {"kind": "text", "role": "label", "text": "AUDIOBOOK", "font_id": "technical-mono", "box": [135, 125, 900, 65], "size": 38, "line_height": 44, "tracking": 6, "align": "left", "colour": "#007B7D", "contrast_against": "#F7F2E7", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 1, "text": "BEYOND", "font_id": "geometric-sans", "box": [125, 275, 1250, 230], "size": 190, "line_height": 198, "tracking": 4, "align": "left", "colour": "#172C3D", "contrast_against": "#F7F2E7", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 2, "text": "THE TAX-SALE", "font_id": "display-condensed", "box": [125, 500, 1380, 270], "size": 190, "line_height": 200, "tracking": 1, "align": "left", "colour": "#D54C3F", "contrast_against": "#F7F2E7", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "text", "role": "title", "title_order": 3, "text": "PACKET", "font_id": "display-condensed", "box": [125, 730, 1250, 300], "size": 240, "line_height": 250, "tracking": 1, "align": "left", "colour": "#172C3D", "contrast_against": "#F7F2E7", "opacity": 1, "rotation": 0, "baseline_shift": 0},
+    {"kind": "line", "start": [135, 1090], "end": [820, 1090], "colour": "#00A7A5", "width": 12, "opacity": 1, "purpose": "bounded-question accent"},
+    {"kind": "text", "role": "author", "text": "DAN FAKKELDY", "font_id": "technical-mono", "box": [135, 2190, 1200, 80], "size": 52, "line_height": 58, "tracking": 4, "align": "left", "colour": "#F7F2E7", "contrast_against": "#172C3D", "opacity": 1, "rotation": 0, "baseline_shift": 0, "shadow": {"colour": "#172C3D", "dx": 2, "dy": 3, "blur": 10, "opacity": 0.9}},
+    {"kind": "brand_mark", "path": "brand-mark.png", "box": [2100, 125, 180, 180], "opacity": 0.9, "blend_mode": "normal", "purpose": "identify KinNoKi Labs as publisher"}
+  ]
+}

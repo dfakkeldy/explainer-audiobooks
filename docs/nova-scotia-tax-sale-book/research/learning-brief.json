@@ -29,9 +29,9 @@
     "route": "Move from the municipal packet backward to arrears and notice, then forward through evidence-file construction, auction mechanics, certificate, redemption and deed."
   },
   "originalTargetWords": 22000,
-  "currentTargetWords": 42800,
-  "estimatedMinimumWords": 40000,
-  "estimatedMaximumWords": 45000,
+  "currentTargetWords": 46200,
+  "estimatedMinimumWords": 44000,
+  "estimatedMaximumWords": 49000,
   "draftingStarted": true,
   "scopeHistory": [
     {
@@ -99,6 +99,61 @@
       "approvalSource": "user",
       "verbatimQuote": "I did the website from my nS marks the spot repo. \n\nCould you pr the work so far on this book?",
       "evidence": "I did the website from my nS marks the spot repo. \n\nCould you pr the work so far on this book?"
+    },
+    {
+      "date": "2026-07-19",
+      "recordedAt": "2026-07-19T15:00:00-03:00",
+      "oldTargetWords": 42800,
+      "newTargetWords": 46200,
+      "reason": "The user requested a new chapter teaching the NS Marks The Spot map, including layer-by-layer screenshots and a tax-sale research workflow. This expands the governed outline and visual manifest and therefore requires revised outline/figure approval before pilot drafting continues.",
+      "approvalStatus": "recorded-user-direction; revised-outline-approval-pending",
+      "approvalSource": "user",
+      "verbatimQuote": "Look at the work done on the map. Let's add a chapter about using this resource. Work is still being done on it, but let's plan out the chapter and we'll make a bunch of screenshots showing how to turn the layers on and off, what each layer shows. How to use it to research the tax sale.",
+      "evidence": "Look at the work done on the map. Let's add a chapter about using this resource. Work is still being done on it, but let's plan out the chapter and we'll make a bunch of screenshots showing how to turn the layers on and off, what each layer shows. How to use it to research the tax sale."
+    },
+    {
+      "date": "2026-07-20",
+      "recordedAt": "2026-07-20T07:24:06-03:00",
+      "oldTargetWords": 46200,
+      "newTargetWords": 46200,
+      "reason": "After reviewing the new production map tools, the user authorized the proposed book and screenshot redesign for review. The change replaces a layer-catalogue tour with a notice-to-parcel research chain while preserving the pending revised-outline verdict.",
+      "approvalStatus": "recorded-user-direction; redesign-authorized; revised-outline-approval-pending",
+      "approvalSource": "user",
+      "verbatimQuote": "Okay. Let’s do that",
+      "evidence": "Okay. Let’s do that"
+    },
+    {
+      "date": "2026-07-20",
+      "recordedAt": "2026-07-20T08:21:03-03:00",
+      "oldTargetWords": 46200,
+      "newTargetWords": 46200,
+      "reason": "The user explicitly approved the production-map-led thirteen-chapter and 51-figure direction for pilot development, with one major Chapter 5 rewrite and targeted integrations in Chapters 2, 4, 6, 7, 9 and 13.",
+      "approvalStatus": "approved-for-pilot-development",
+      "approvalSource": "user",
+      "verbatimQuote": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction.",
+      "evidence": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction."
+    },
+    {
+      "date": "2026-07-21",
+      "recordedAt": "2026-07-21T08:43:56-03:00",
+      "oldTargetWords": 46200,
+      "newTargetWords": 46200,
+      "reason": "The user completed his manuscript review, approved the exact thirteen-chapter EPUB text for public publication and clarified that cover work remains the current task.",
+      "approvalStatus": "epub-manuscript-text-approved; public-publication-authorized-pending-cover-and-package-gates",
+      "approvalSource": "user",
+      "verbatimQuote": "I meant the epub text was ready to publish.",
+      "evidence": "I have reviewed the book, it's good to publish. I meant the epub text was ready to publish."
+    },
+    {
+      "date": "2026-07-21",
+      "recordedAt": "2026-07-21T16:48:41-03:00",
+      "oldTargetWords": 46200,
+      "newTargetWords": 46200,
+      "reason": "The user selected Candidate 1, The Packet Lifts, as the coordinated portrait EPUB and square audiobook cover pair.",
+      "approvalStatus": "paired-cover-selected",
+      "approvalSource": "user",
+      "verbatimQuote": "i'm going to go with image 1",
+      "evidence": "After reviewing the displayed cover directions, the user selected Candidate 1 by replying: i'm going to go with image 1"
     }
   ],
   "safety": {
@@ -114,9 +169,9 @@
     ]
   },
   "privacy": {
-    "status": "public-safe-development",
+    "status": "public-safe-manuscript-approved",
     "permissionToPublish": true,
     "publicationIntent": "public",
-    "publicationActionStatus": "development-pr-authorized; finished-audiobook-publication-pending"
+    "publicationActionStatus": "epub-text-approved; finished-edition-publication-authorized-pending-cover-and-required-package-gates"
   }
 }

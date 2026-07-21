@@ -1,0 +1,66 @@
+{
+  "chapterSHA256": {
+    "ch01.md": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
+    "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
+    "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
+    "ch04.md": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
+    "ch05.md": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+    "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
+    "ch07.md": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
+    "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
+    "ch09.md": "13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42",
+    "ch10.md": "a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9",
+    "ch11.md": "89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611",
+    "ch12.md": "e4904a3fc012f9dea5d150f0bce11043546fe46ac563c3aa4f240f9207c07dcd",
+    "ch13.md": "9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b"
+  },
+  "gates": {
+    "analogyContract": "pass",
+    "argumentLevelOutline": "pass",
+    "audioWorkingMemory": "pass",
+    "blindSequentialBeginnerReview": "pass",
+    "chapterTeachingPlans": "pass",
+    "conceptBudget": "pass",
+    "continuity": "pass",
+    "earPass": "pass",
+    "explanationPaths": "pass",
+    "groundedEvidence": "pass",
+    "humanComprehensionPilot": "pass",
+    "learnerOrientation": "pass",
+    "narrowRevisionPasses": "pass",
+    "outlineAuthorization": "pass",
+    "problemBeforeName": "pass",
+    "realWorldGrounding": "pass",
+    "retrieval": "pass",
+    "sectionDraftContexts": "pass",
+    "structuralReview": "pass",
+    "voiceCalibration": "pass"
+  },
+  "learningAuthority": {
+    "holder": "human-listener",
+    "negativeVerdictOverridesReceipt": true,
+    "receiptDoesNotCertifyTransfer": true
+  },
+  "productionMode": "governed-final",
+  "recordSHA256": {
+    "brief": "b5e2cd3fd4e582e3031ca433360e293e6c526814a9755087ab376c3b91eace83",
+    "continuity": "c0ec09c98b2f8efc3b29c1b73cce496d917d4085bb411c39bcdee0ae7aaf0de9",
+    "coverage": "19c34cac196bc57a0e7a202af698a9c5af6aef835c494dbbf55ce7925df3cec9",
+    "evidence": "c4729f7cf41be63abda9e8c10b3352638e59136735c9ba7226774dc4c8d040d7",
+    "outline": "15b6ad3e0c36b8c82b1be9acfb96d81d7c798f66406e2fb0eebdada9fda04b2c",
+    "pilot": "350f475e1883af7ca439098723cbe9d859e601fcd3119536378ba96eb14ae24d",
+    "plans": "84cfa65a9d02b619b8d93a3fbf35231cfc58a79d179ef9bd086d098d8ded4863",
+    "review": "8d24a7644306bfc50ebb1fefcfe6aad1e2bf3e424aba6588b23b942733f73c3c",
+    "revisions": "f79c33fd526c20090ac00d21407bf4153eba91d3beb70f9dba2abb0c84654739"
+  },
+  "schemaVersion": 2,
+  "status": "pass",
+  "wordCount": {
+    "actualWords": 31824,
+    "currentTargetWords": 46200,
+    "estimatedMaximumWords": 49000,
+    "estimatedMinimumWords": 44000,
+    "originalTargetWords": 22000,
+    "withinEstimatedRange": false
+  }
+}

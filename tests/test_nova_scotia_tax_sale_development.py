@@ -52,15 +52,164 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
 
         self.assertEqual(brief["originalTargetWords"], 22000)
-        self.assertEqual(brief["currentTargetWords"], 42800)
+        self.assertEqual(brief["currentTargetWords"], 46200)
         self.assertTrue(brief["draftingStarted"])
-        self.assertEqual(len(brief["scopeHistory"]), 6)
+        self.assertEqual(len(brief["scopeHistory"]), 11)
         for decision in brief["scopeHistory"]:
-            self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19)T")
+            self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19|20|21)T")
             self.assertTrue(decision["verbatimQuote"])
-            self.assertEqual(decision["evidence"], decision["verbatimQuote"])
+            self.assertIn(decision["verbatimQuote"], decision["evidence"])
 
-    def test_outline_gate_records_exact_user_approval_for_pilot_only(self) -> None:
+        self.assertIn(
+            "51 figures direction",
+            brief["scopeHistory"][-3]["verbatimQuote"],
+        )
+        self.assertEqual(
+            brief["scopeHistory"][-2]["verbatimQuote"],
+            "I meant the epub text was ready to publish.",
+        )
+        self.assertEqual(
+            brief["scopeHistory"][-1]["verbatimQuote"],
+            "i'm going to go with image 1",
+        )
+
+    def test_epub_text_approval_is_bound_to_exact_chapter_hashes(self) -> None:
+        authorization = json.loads(
+            (RESEARCH_ROOT / "publication-authorization.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        chapter_dir = PACKET_ROOT / "chapters"
+        actual_hashes = {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(chapter_dir.glob("ch*.md"))
+        }
+
+        self.assertEqual(authorization["classification"], "public-safe")
+        self.assertEqual(
+            authorization["manuscriptTextApproval"]["status"], "approved"
+        )
+        self.assertEqual(
+            authorization["manuscriptTextApproval"]["reviewedChapterSHA256"],
+            actual_hashes,
+        )
+        self.assertTrue(
+            authorization["publicationAuthorization"]["permissionToPublish"]
+        )
+        self.assertEqual(
+            authorization["boundaries"]["coverSelection"],
+            "candidate-1-packet-lifts-selected",
+        )
+        self.assertEqual(authorization["boundaries"]["audioListeningStatus"], "pending")
+
+    def test_cover_review_has_three_complete_pairs_and_user_selection(self) -> None:
+        covers_root = PACKET_ROOT / "covers"
+        review = json.loads(
+            (covers_root / "render-review.json").read_text(encoding="utf-8")
+        )
+        candidate_dirs = sorted(covers_root.glob("candidate-[1-3]"))
+
+        self.assertEqual(len(candidate_dirs), 3)
+        self.assertEqual(review["status"], "pair-selected")
+        self.assertEqual(
+            review["humanPairSelection"]["selectedCandidate"], "packet-lifts"
+        )
+        self.assertEqual(
+            review["humanPairSelection"]["verbatimEvidence"],
+            "i'm going to go with image 1",
+        )
+
+        selection = json.loads(
+            (covers_root / "cover-selection.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(selection["candidate"]["id"], "packet-lifts")
+        self.assertEqual(selection["selection_source"], "user")
+        self.assertEqual(selection["privacy"]["classification"], "public-safe")
+        self.assertTrue(selection["privacy"]["permission_to_publish"])
+
+        reviewed = {item["id"]: item for item in review["candidates"]}
+        self.assertEqual(
+            set(reviewed),
+            {"packet-lifts", "raised-card", "layers-of-uncertainty"},
+        )
+        for candidate_dir in candidate_dirs:
+            portrait = json.loads(
+                (candidate_dir / "cover-render.json").read_text(encoding="utf-8")
+            )
+            square = json.loads(
+                (candidate_dir / "m4b-cover-render.json").read_text(encoding="utf-8")
+            )
+            candidate_id = portrait["candidate"]["id"]
+
+            portrait_spec = json.loads(
+                (candidate_dir / "cover-spec.json").read_text(encoding="utf-8")
+            )
+            square_spec = json.loads(
+                (candidate_dir / "m4b-cover-spec.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(portrait_spec["schema_version"], 2)
+            self.assertEqual(square_spec["schema_version"], 2)
+            self.assertEqual(square["candidate"]["id"], candidate_id)
+            self.assertEqual(
+                portrait["source_art_sha256"], square["source_art_sha256"]
+            )
+            self.assertEqual(portrait["dimensions"], [1600, 2560])
+            self.assertEqual(square["dimensions"], [2400, 2400])
+            self.assertEqual(
+                reviewed[candidate_id]["sourceArtSHA256"],
+                portrait["source_art_sha256"],
+            )
+            self.assertEqual(
+                reviewed[candidate_id]["portraitSHA256"],
+                portrait["output_sha256"],
+            )
+            self.assertEqual(
+                reviewed[candidate_id]["squareSHA256"],
+                square["output_sha256"],
+            )
+            self.assertTrue((candidate_dir / "brief.md").exists())
+
+    def test_public_epub_package_binds_approved_text_and_selected_cover(self) -> None:
+        public_root = REPO_ROOT / "books/beyond-the-tax-sale-packet"
+        publication = json.loads(
+            (public_root / "publication.json").read_text(encoding="utf-8")
+        )
+        learning_receipt = json.loads(
+            (RESEARCH_ROOT / "learning-design-receipt.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        authorization = json.loads(
+            (RESEARCH_ROOT / "publication-authorization.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual(publication["publicationStatus"], "public-epub")
+        self.assertTrue(publication["permissionToPublish"])
+        self.assertEqual(publication["selectedCover"], "packet-lifts")
+        self.assertEqual(publication["audioStatus"], "pending-not-included")
+        self.assertFalse((public_root / "beyond-the-tax-sale-packet.m4b").exists())
+
+        for artifact in publication["artifacts"].values():
+            path = public_root / artifact["file"]
+            self.assertTrue(path.is_file())
+            self.assertEqual(
+                artifact["sha256"], hashlib.sha256(path.read_bytes()).hexdigest()
+            )
+
+        self.assertEqual(learning_receipt["status"], "pass")
+        self.assertEqual(
+            learning_receipt["chapterSHA256"],
+            authorization["manuscriptTextApproval"]["reviewedChapterSHA256"],
+        )
+        with zipfile.ZipFile(public_root / "beyond-the-tax-sale-packet.epub") as epub:
+            self.assertEqual(
+                hashlib.sha256(epub.read("OEBPS/cover.png")).hexdigest(),
+                publication["artifacts"]["portraitCover"]["sha256"],
+            )
+
+    def test_outline_gate_records_map_revision_approval_for_pilot_only(self) -> None:
         outline = json.loads(
             (RESEARCH_ROOT / "learning-outline.json").read_text(encoding="utf-8")
         )
@@ -72,15 +221,34 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             "visual direction for pilot development."
         )
 
+        approval = (
+            "The new map warrants one major Chapter 5 rewrite plus targeted "
+            "changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with "
+            "the 51 figures direction."
+        )
+
         self.assertEqual(outline["authorization"]["status"], "approved")
+        self.assertEqual(outline["authorization"]["requestedBy"], "Dan Fakkeldy")
         self.assertEqual(outline["authorization"]["approvedBy"], "Dan Fakkeldy")
+        self.assertEqual(outline["authorization"]["verbatimQuote"], approval)
+        self.assertEqual(outline["authorization"]["evidence"], approval)
+        self.assertEqual(
+            outline["authorization"]["approvalScope"], "pilot-development"
+        )
+        self.assertEqual(
+            outline["authorization"]["scope"],
+            "revised-thirteen-chapter-outline-and-fifty-one-figure-direction",
+        )
+        prior = outline["authorization"]["priorAuthorization"]
+        self.assertEqual(prior["status"], "approved")
+        self.assertEqual(prior["approvedBy"], "Dan Fakkeldy")
         self.assertRegex(
-            outline["authorization"]["approvedAt"],
+            prior["approvedAt"],
             r"^2026-07-19T\d{2}:\d{2}:\d{2}-03:00$",
         )
-        self.assertEqual(outline["authorization"]["verbatimQuote"], approval_quote)
-        self.assertEqual(outline["authorization"]["evidence"], approval_quote)
-        self.assertEqual(outline["authorization"]["scope"], "pilot-development")
+        self.assertEqual(prior["verbatimQuote"], approval_quote)
+        self.assertEqual(prior["evidence"], approval_quote)
+        self.assertEqual(prior["scope"], "pilot-development")
         excluded_actions = " ".join(outline["authorization"]["doesNotAuthorize"])
         self.assertIn("full manuscript", excluded_actions)
         self.assertIn("publication", excluded_actions)
@@ -88,7 +256,10 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         outline_checkpoint = pilot["humanCheckpoints"]["outline"]
         self.assertEqual(outline_checkpoint["status"], "approved")
         self.assertEqual(outline_checkpoint["reviewer"], "Dan Fakkeldy")
-        self.assertEqual(outline_checkpoint["evidence"], approval_quote)
+        self.assertEqual(outline_checkpoint["evidence"], approval)
+        self.assertEqual(
+            outline_checkpoint["priorApproval"]["evidence"], approval_quote
+        )
         self.assertTrue(outline_checkpoint["recordedBeforePilotDraft"])
 
     def test_required_planning_handoff_artifacts_exist(self) -> None:
@@ -104,11 +275,12 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertTrue(
             {"Mabou", "Whycocomagh", "Judique", "AAN", "PID", "NSPRD", "MGA"} <= terms
         )
-        self.assertIn("pilot development authorized", handoff)
+        self.assertIn("approved for pilot development", handoff)
         self.assertIn(
             "I approve the revised twelve-chapter outline and forty-figure",
             conversation,
         )
+        self.assertIn("Let's add a chapter about using this resource", conversation)
 
     def test_first_section_voice_acceptance_binds_exact_candidate(self) -> None:
         continuity = json.loads(
@@ -122,12 +294,16 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         exemplar_path = RESEARCH_ROOT / "voice-exemplar.md"
         candidate = candidate_path.read_text(encoding="utf-8")
 
-        self.assertEqual(continuity["checkpoints"], [])
-        self.assertEqual(len(continuity["draftContexts"]), 1)
-        context = continuity["draftContexts"][0]
+        self.assertEqual(len(continuity["checkpoints"]), 13)
+        self.assertEqual(len(continuity["draftContexts"]), 28)
+        context = next(
+            item
+            for item in continuity["draftContexts"]
+            if item["section"] == "ch01-s01"
+        )
         self.assertEqual(context["section"], "ch01-s01")
         self.assertEqual(context["specificClaims"], ["OPS-004", "DATA-002", "DATA-005"])
-        self.assertEqual(context["status"], "accepted-first-section-voice-exemplar")
+        self.assertEqual(context["status"], "accepted-and-promoted-to-canonical")
 
         checkpoint = pilot["humanCheckpoints"]["firstSection"]
         self.assertEqual(checkpoint["status"], "accepted")
@@ -141,7 +317,22 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
 
         self.assertIn("accepted", pilot_readme.lower())
-        self.assertIn("no pilot audio", pilot_readme.lower())
+        self.assertIn("14:27", pilot_readme)
+        self.assertTrue(pilot["audioRendered"])
+        self.assertEqual(
+            pilot["audioSHA256"],
+            "c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c",
+        )
+        self.assertGreaterEqual(pilot["actualDurationSeconds"], 600)
+        self.assertLessEqual(pilot["actualDurationSeconds"], 900)
+        self.assertEqual(pilot["render"]["pronunciationAuditStatus"], "clean")
+        self.assertEqual(pilot["status"], "accepted")
+        self.assertEqual(pilot["decision"]["verdict"], "continue")
+        self.assertEqual(pilot["decision"]["evidence"], "continue")
+        self.assertTrue(pilot["decision"]["recordedBeforeFullDraft"])
+        self.assertEqual(
+            pilot["decision"]["audioSHA256"], pilot["audioSHA256"]
+        )
         self.assertTrue(candidate.startswith("## Chapter 1 — The Last Scene First"))
         self.assertGreaterEqual(len(candidate.split()), 800)
         self.assertLessEqual(len(candidate.split()), 1500)
@@ -150,6 +341,381 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             candidate.lower(),
             r"tattoo this|burn this into|let that land|the honest answer|the whole point",
         )
+
+        technical = next(
+            item
+            for item in continuity["draftContexts"]
+            if item["section"] == "ch01-s02"
+        )
+        technical_path = PACKET_ROOT / technical["draftPath"]
+        self.assertEqual(
+            technical["status"], "accepted-pilot-passage-promoted-to-canonical"
+        )
+        self.assertEqual(technical["wordCount"], 1042)
+        self.assertEqual(
+            technical["draftSHA256"],
+            hashlib.sha256(technical_path.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            technical["voiceExemplarSHA256"],
+            checkpoint["voiceExemplarSHA256"],
+        )
+
+        canonical_path = PACKET_ROOT / "chapters/ch01.md"
+        canonical = canonical_path.read_text(encoding="utf-8")
+        expected = candidate.rstrip("\n") + "\n\n" + technical_path.read_text(
+            encoding="utf-8"
+        ).rstrip("\n") + "\n"
+        self.assertNotEqual(canonical, expected)
+        chapter_checkpoint = continuity["checkpoints"][0]
+        self.assertEqual(chapter_checkpoint["chapter"], "ch01")
+        self.assertFalse(chapter_checkpoint["sourceSectionsPromotedExactly"])
+        self.assertTrue(chapter_checkpoint["acceptedSourceSectionsPreservedSeparately"])
+        self.assertEqual(
+            chapter_checkpoint["editorialReviewPath"], "research/editorial-review.md"
+        )
+        self.assertEqual(
+            chapter_checkpoint["draftSHA256"],
+            hashlib.sha256(canonical_path.read_bytes()).hexdigest(),
+        )
+
+        chapter_two_path = PACKET_ROOT / "chapters/ch02.md"
+        chapter_two_checkpoint = continuity["checkpoints"][1]
+        self.assertEqual(chapter_two_checkpoint["chapter"], "ch02")
+        self.assertEqual(chapter_two_checkpoint["wordCount"], 2977)
+        self.assertEqual(
+            chapter_two_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_two_path.read_bytes()).hexdigest(),
+        )
+        chapter_two_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch02-")
+        }
+        self.assertEqual(set(chapter_two_contexts), {"ch02-s01", "ch02-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_two_contexts.values()
+            )
+        )
+
+        chapter_three_path = PACKET_ROOT / "chapters/ch03.md"
+        chapter_three_checkpoint = continuity["checkpoints"][2]
+        self.assertEqual(chapter_three_checkpoint["chapter"], "ch03")
+        self.assertEqual(chapter_three_checkpoint["wordCount"], 1929)
+        self.assertEqual(
+            chapter_three_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_three_path.read_bytes()).hexdigest(),
+        )
+        chapter_three_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch03-")
+        }
+        self.assertEqual(set(chapter_three_contexts), {"ch03-s01", "ch03-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_three_contexts.values()
+            )
+        )
+
+        chapter_four_path = PACKET_ROOT / "chapters/ch04.md"
+        chapter_four_checkpoint = continuity["checkpoints"][3]
+        self.assertEqual(chapter_four_checkpoint["chapter"], "ch04")
+        self.assertEqual(chapter_four_checkpoint["wordCount"], 2427)
+        self.assertEqual(
+            chapter_four_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_four_path.read_bytes()).hexdigest(),
+        )
+        chapter_four_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch04-")
+        }
+        self.assertEqual(set(chapter_four_contexts), {"ch04-s01", "ch04-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_four_contexts.values()
+            )
+        )
+
+        chapter_five_path = PACKET_ROOT / "chapters/ch05.md"
+        chapter_five = chapter_five_path.read_text(encoding="utf-8")
+        chapter_five_checkpoint = continuity["checkpoints"][4]
+        self.assertEqual(chapter_five_checkpoint["chapter"], "ch05")
+        self.assertEqual(chapter_five_checkpoint["wordCount"], 2666)
+        self.assertEqual(
+            chapter_five_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_five_path.read_bytes()).hexdigest(),
+        )
+        chapter_five_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch05-")
+        }
+        self.assertEqual(set(chapter_five_contexts), {"ch05-s01", "ch05-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_five_contexts.values()
+            )
+        )
+        self.assertEqual(
+            chapter_five_checkpoint["method"],
+            ["notice", "parcel", "context", "unknowns", "handoff"],
+        )
+        self.assertIn("current or historical mode", chapter_five)
+        self.assertIn("not a recommendation", chapter_five)
+
+        chapter_six_path = PACKET_ROOT / "chapters/ch06.md"
+        chapter_six = chapter_six_path.read_text(encoding="utf-8")
+        chapter_six_checkpoint = continuity["checkpoints"][5]
+        self.assertEqual(chapter_six_checkpoint["chapter"], "ch06")
+        self.assertEqual(chapter_six_checkpoint["wordCount"], 2355)
+        self.assertEqual(
+            chapter_six_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_six_path.read_bytes()).hexdigest(),
+        )
+        chapter_six_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch06-")
+        }
+        self.assertEqual(set(chapter_six_contexts), {"ch06-s01", "ch06-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_six_contexts.values()
+            )
+        )
+        self.assertIn("right-of-way", chapter_six)
+        self.assertIn("road frontage", chapter_six)
+        self.assertIn("zoning", chapter_six)
+        self.assertIn("rational no", chapter_six)
+
+        chapter_seven_path = PACKET_ROOT / "chapters/ch07.md"
+        chapter_seven = chapter_seven_path.read_text(encoding="utf-8")
+        chapter_seven_checkpoint = continuity["checkpoints"][6]
+        self.assertEqual(chapter_seven_checkpoint["chapter"], "ch07")
+        self.assertEqual(chapter_seven_checkpoint["wordCount"], 2436)
+        self.assertEqual(
+            chapter_seven_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_seven_path.read_bytes()).hexdigest(),
+        )
+        chapter_seven_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch07-")
+        }
+        self.assertEqual(set(chapter_seven_contexts), {"ch07-s01", "ch07-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_seven_contexts.values()
+            )
+        )
+        self.assertIn("contaminated site", chapter_seven)
+        self.assertIn("well log", chapter_seven)
+        self.assertIn("hazard map", chapter_seven)
+        self.assertIn("positive, negative, and error states", chapter_seven)
+
+        chapter_eight_path = PACKET_ROOT / "chapters/ch08.md"
+        chapter_eight = chapter_eight_path.read_text(encoding="utf-8")
+        chapter_eight_checkpoint = continuity["checkpoints"][7]
+        self.assertEqual(chapter_eight_checkpoint["chapter"], "ch08")
+        self.assertEqual(chapter_eight_checkpoint["wordCount"], 2226)
+        self.assertEqual(
+            chapter_eight_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_eight_path.read_bytes()).hexdigest(),
+        )
+        chapter_eight_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch08-")
+        }
+        self.assertEqual(set(chapter_eight_contexts), {"ch08-s01", "ch08-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_eight_contexts.values()
+            )
+        )
+        self.assertIn("fee simple", chapter_eight)
+        self.assertIn("encumbrance", chapter_eight)
+        self.assertIn("vacant possession", chapter_eight)
+        self.assertIn("Personal Property Registry", chapter_eight)
+        self.assertIn("No locks are changed", " ".join(chapter_eight.split()))
+
+        chapter_nine_path = PACKET_ROOT / "chapters/ch09.md"
+        chapter_nine = chapter_nine_path.read_text(encoding="utf-8")
+        chapter_nine_checkpoint = continuity["checkpoints"][8]
+        self.assertEqual(chapter_nine_checkpoint["chapter"], "ch09")
+        self.assertEqual(chapter_nine_checkpoint["wordCount"], 2407)
+        self.assertEqual(
+            chapter_nine_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_nine_path.read_bytes()).hexdigest(),
+        )
+        chapter_nine_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch09-")
+        }
+        self.assertEqual(set(chapter_nine_contexts), {"ch09-s01", "ch09-s02"})
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_nine_contexts.values()
+            )
+        )
+        self.assertIn("all-in cost", chapter_nine)
+        self.assertIn("uncertainty reserve", chapter_nine)
+        self.assertIn("maximum bid", chapter_nine)
+        chapter_nine_flat = " ".join(chapter_nine.split())
+        self.assertIn("fifty properties", chapter_nine_flat)
+        self.assertIn("thirty-five sold", chapter_nine_flat)
+        self.assertIn("thirty-one bid rows", chapter_nine_flat)
+        self.assertIn("lowers the card", chapter_nine_flat)
+
+        chapter_ten_path = PACKET_ROOT / "chapters/ch10.md"
+        chapter_ten = chapter_ten_path.read_text(encoding="utf-8")
+        chapter_ten_checkpoint = continuity["checkpoints"][9]
+        self.assertEqual(chapter_ten_checkpoint["chapter"], "ch10")
+        self.assertEqual(chapter_ten_checkpoint["wordCount"], 2638)
+        self.assertEqual(
+            chapter_ten_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_ten_path.read_bytes()).hexdigest(),
+        )
+        chapter_ten_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch10-")
+        }
+        self.assertEqual(
+            set(chapter_ten_contexts), {"ch10-s01", "ch10-s02", "ch10-s03"}
+        )
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_ten_contexts.values()
+            )
+        )
+        self.assertIn("open-outcry auction", chapter_ten)
+        self.assertIn("public tender", chapter_ten)
+        self.assertIn("deposit", chapter_ten)
+        chapter_ten_flat = " ".join(chapter_ten.split())
+        self.assertIn("three business days", chapter_ten_flat)
+        self.assertIn("put the land up for sale again forthwith", chapter_ten_flat)
+        self.assertIn("current municipal source", chapter_ten_flat)
+
+        chapter_eleven_path = PACKET_ROOT / "chapters/ch11.md"
+        chapter_eleven = chapter_eleven_path.read_text(encoding="utf-8")
+        chapter_eleven_checkpoint = continuity["checkpoints"][10]
+        self.assertEqual(chapter_eleven_checkpoint["chapter"], "ch11")
+        self.assertEqual(chapter_eleven_checkpoint["wordCount"], 2617)
+        self.assertEqual(
+            chapter_eleven_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_eleven_path.read_bytes()).hexdigest(),
+        )
+        chapter_eleven_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch11-")
+        }
+        self.assertEqual(
+            set(chapter_eleven_contexts), {"ch11-s01", "ch11-s02"}
+        )
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_eleven_contexts.values()
+            )
+        )
+        self.assertIn("insurable interest", chapter_eleven)
+        self.assertIn("necessary repair", chapter_eleven)
+        self.assertIn("municipality's official close-out record", chapter_eleven)
+        chapter_eleven_flat = " ".join(chapter_eleven.split())
+        self.assertIn("requested purchaser statement", chapter_eleven_flat)
+        self.assertIn("full redemption amount is paid to the treasurer", chapter_eleven_flat)
+        self.assertIn("not a Nova Scotia tariff", chapter_eleven_flat)
+
+        chapter_twelve_path = PACKET_ROOT / "chapters/ch12.md"
+        chapter_twelve = chapter_twelve_path.read_text(encoding="utf-8")
+        chapter_twelve_checkpoint = continuity["checkpoints"][11]
+        self.assertEqual(chapter_twelve_checkpoint["chapter"], "ch12")
+        self.assertEqual(chapter_twelve_checkpoint["wordCount"], 2825)
+        self.assertEqual(
+            chapter_twelve_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_twelve_path.read_bytes()).hexdigest(),
+        )
+        chapter_twelve_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch12-")
+        }
+        self.assertEqual(
+            set(chapter_twelve_contexts),
+            {"ch12-s01", "ch12-s02", "ch12-s03"},
+        )
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_twelve_contexts.values()
+            )
+        )
+        chapter_twelve_lower = chapter_twelve.lower()
+        self.assertIn("deed registration", chapter_twelve_lower)
+        self.assertIn("post-deed due diligence", chapter_twelve_lower)
+        self.assertIn("tax-sale surplus account", chapter_twelve_lower)
+        chapter_twelve_flat = " ".join(chapter_twelve.split())
+        self.assertIn("six years following its registration", chapter_twelve_flat)
+        self.assertIn("before twenty years have passed from the sale", chapter_twelve_flat)
+        self.assertIn("assessed value is a dated mass-appraisal estimate", chapter_twelve_flat)
+
+        chapter_thirteen_path = PACKET_ROOT / "chapters/ch13.md"
+        chapter_thirteen = chapter_thirteen_path.read_text(encoding="utf-8")
+        chapter_thirteen_checkpoint = continuity["checkpoints"][12]
+        self.assertEqual(chapter_thirteen_checkpoint["chapter"], "ch13")
+        self.assertEqual(chapter_thirteen_checkpoint["wordCount"], 2176)
+        self.assertEqual(
+            chapter_thirteen_checkpoint["draftSHA256"],
+            hashlib.sha256(chapter_thirteen_path.read_bytes()).hexdigest(),
+        )
+        chapter_thirteen_contexts = {
+            item["section"]: item
+            for item in continuity["draftContexts"]
+            if item["section"].startswith("ch13-")
+        }
+        self.assertEqual(
+            set(chapter_thirteen_contexts),
+            {"ch13-s01", "ch13-s02"},
+        )
+        self.assertTrue(
+            all(
+                item["status"] == "canonical-section-drafted"
+                and item["recordedBeforeDraft"]
+                for item in chapter_thirteen_contexts.values()
+            )
+        )
+        chapter_thirteen_flat = " ".join(chapter_thirteen.split())
+        self.assertIn("Alder Crossing is a complete stop result", chapter_thirteen_flat)
+        self.assertIn("It is not a property ranking", chapter_thirteen_flat)
+        self.assertIn("Payment readiness remains a separate gate", chapter_thirteen_flat)
+        self.assertIn("The public map remains owner-free and parcel-first", chapter_thirteen_flat)
+        self.assertIn("without a sales pitch", chapter_thirteen_flat)
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
         self,
@@ -166,7 +732,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("45 lien entries", atlas)
         self.assertIn("47 unique PIDs", atlas)
         self.assertIn("53 NSPRD polygon features", atlas)
-        self.assertIn("outside the approved forty-figure manifest", atlas.lower())
+        self.assertIn("outside both the previously approved forty-figure", atlas.lower())
         self.assertIn("No assessed-owner names", atlas)
         self.assertIn("not legal access", atlas.lower())
         self.assertIn("not a wetland determination", atlas.lower())
@@ -178,7 +744,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             " ".join(conversation.split()),
         )
         self.assertIn("Inverness Packet Atlas", visuals)
-        self.assertIn("does not change the forty canonical figures", visuals)
+        self.assertIn("does not add the atlas to the 51-figure", visuals)
 
     def test_inverness_atlas_visual_approval_binds_exact_prototype_set(self) -> None:
         receipt = json.loads(ATLAS_RECEIPT_PATH.read_text(encoding="utf-8"))
@@ -244,7 +810,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertIn("Halifax Regional Municipality", comparison)
 
-    def test_visual_category_math_matches_the_forty_row_manifest(self) -> None:
+    def test_visual_category_math_matches_the_proposed_fifty_one_row_manifest(self) -> None:
         visuals = (RESEARCH_ROOT / "visuals.md").read_text(encoding="utf-8")
         ids = {
             int(match.group(1))
@@ -253,13 +819,56 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         map_ids = set(range(13, 23)) | set(range(33, 38))
         editorial_ids = {1, 9}
         retrieval_ids = {38}
-        diagram_ids = ids - map_ids - editorial_ids - retrieval_ids
+        screenshot_ids = set(range(41, 52))
+        diagram_ids = ids - map_ids - editorial_ids - retrieval_ids - screenshot_ids
 
-        self.assertEqual(ids, set(range(1, 41)))
+        self.assertEqual(ids, set(range(1, 52)))
         self.assertEqual(
-            (len(map_ids), len(diagram_ids), len(editorial_ids), len(retrieval_ids)),
-            (15, 22, 2, 1),
+            (
+                len(map_ids),
+                len(diagram_ids),
+                len(editorial_ids),
+                len(retrieval_ids),
+                len(screenshot_ids),
+            ),
+            (15, 22, 2, 1, 11),
         )
+
+    def test_map_chapter_plan_and_screenshot_receipt_are_review_only(self) -> None:
+        plan = (RESEARCH_ROOT / "map-chapter-plan.md").read_text(encoding="utf-8")
+        receipt = json.loads(
+            (PACKET_ROOT / "figures/map-chapter-screenshot-receipt.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        evidence = json.loads(
+            (RESEARCH_ROOT / "evidence-notes.json").read_text(encoding="utf-8")
+        )
+
+        self.assertIn("The Map Is a Question Machine", plan)
+        self.assertIn("one parcel, one toggle and one note", plan.lower())
+        self.assertIn("not a verdict machine", plan.lower())
+        self.assertEqual(receipt["status"], "review-candidates")
+        self.assertFalse(receipt["publicationBoundary"]["acceptedFinalFigures"])
+        self.assertTrue(receipt["publicationBoundary"]["refreshBeforePublication"])
+        self.assertEqual(len(receipt["outputs"]), 12)
+        self.assertEqual(
+            receipt["captureSource"]["sourceCommit"],
+            "d3114b5cfc907d85f8b2c1f015d5476719b53586",
+        )
+        self.assertEqual(
+            {claim["id"] for claim in evidence["claims"] if claim["id"].startswith("MAP-")},
+            {"MAP-001", "MAP-002", "MAP-003", "MAP-004", "MAP-005", "MAP-006", "MAP-007"},
+        )
+
+        for output in receipt["outputs"]:
+            with self.subTest(file=output["file"]):
+                path = PACKET_ROOT / output["file"]
+                self.assertTrue(path.is_file())
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), output["sha256"])
+                data = path.read_bytes()[:24]
+                self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+                self.assertEqual(struct.unpack(">II", data[16:24]), (2560, 1440))
 
     def test_public_listing_is_owner_free_and_complete(self) -> None:
         payload = json.loads(LISTING_PATH.read_text(encoding="utf-8"))

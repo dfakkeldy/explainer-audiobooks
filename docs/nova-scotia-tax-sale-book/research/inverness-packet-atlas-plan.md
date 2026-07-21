@@ -1,9 +1,9 @@
 # Inverness Packet Atlas — proposed appendix and slideshow companion
 
 Status: proposed public-safe development lane with three rendered review
-candidates. This atlas is **outside the approved forty-figure manifest**. It
-does not change the approved book outline,
-the forty canonical figures or the first-section voice gate. Promotion into the
+candidates. This atlas is **outside both the previously approved forty-figure
+direction and the proposed 51-figure revision**. It does not change either book
+direction or the first-section voice gate. Promotion into the
 book, Echo slideshow or video package needs a separate content, rights,
 live-event-status and human-legibility approval.
 

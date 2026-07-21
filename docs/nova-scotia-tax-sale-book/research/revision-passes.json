@@ -1,50 +1,160 @@
 {
   "schemaVersion": 2,
-  "reviewedChapterSHA256": {},
+  "reviewedChapterSHA256": {
+    "ch01.md": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
+    "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
+    "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
+    "ch04.md": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
+    "ch05.md": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+    "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
+    "ch07.md": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
+    "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
+    "ch09.md": "13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42",
+    "ch10.md": "a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9",
+    "ch11.md": "89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611",
+    "ch12.md": "e4904a3fc012f9dea5d150f0bce11043546fe46ac563c3aa4f240f9207c07dcd",
+    "ch13.md": "9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b"
+  },
   "passes": [
     {
       "name": "claim-traceability",
       "job": "Check every factual claim against the grounded evidence notes.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": []
+      "reviewer": "independent-claim-traceability-agent and frontier-lead-author",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "CT-01",
+          "location": "ch03.md, ch04.md, ch06.md, ch10.md, ch11.md, and ch12.md humanizer diff",
+          "category": "meaning preservation",
+          "evidence": "The accepted changes alter chapter navigation and sentence cadence only; no legal rule, date, amount, map behavior, source boundary, definition, or uncertainty classification changed.",
+          "decision": "accepted",
+          "reason": "The previous independent claim review remains applicable, and the post-edit Nova Scotia development tests pass against the continuity and evidence artifacts."
+        },
+        {
+          "id": "CT-02",
+          "location": "ch04.md, ch05.md, and ch11.md post-humanizer beginner repairs",
+          "category": "source and actor clarity",
+          "evidence": "Property Online remains the governed source for the parcel register, NSPRD is expanded at first use, and the summary now preserves the treasurer as the certificate-registration actor.",
+          "decision": "accepted",
+          "reason": "The repairs align the beginner model with LAND-002, GIS-001, and LAW-007 without broadening any claim."
+        }
+      ]
     },
     {
       "name": "tightening",
       "job": "Cut avoidable repetition and filler without reducing teaching depth.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": []
+      "reviewer": "frontier-lead-author",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "TI-01",
+          "location": "ch03.md and ch04.md",
+          "category": "generic signposting",
+          "evidence": "Four sentences named the earlier or next chapter where the notice, ledger, parcel biography, or living map could carry the connection directly.",
+          "decision": "accepted",
+          "reason": "The local replacements preserve the callbacks and remove unnecessary book navigation."
+        },
+        {
+          "id": "TI-02",
+          "location": "ch11.md and ch12.md endings",
+          "category": "redundant chapter preview",
+          "evidence": "The deed and retrieval transitions were already established by the surrounding paragraphs.",
+          "decision": "accepted",
+          "reason": "Removing the duplicate chapter announcements leaves the legal branch and retrieval task intact."
+        }
+      ]
     },
     {
       "name": "de-listification",
       "job": "Replace unearned list rhythm with connected spoken prose.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": []
+      "reviewer": "frontier-lead-author",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "DL-01",
+          "location": "Remaining short lists across ch02.md, ch03.md, ch04.md, ch05.md, ch07.md, ch09.md, and ch12.md",
+          "category": "earned parallel structure",
+          "evidence": "Each list distinguishes separate identifiers, stage questions, evidence states, tax branches, or legal files that the listener must retrieve independently.",
+          "decision": "rejected",
+          "reason": "Converting these lists to running prose would reduce lookup clarity and would treat useful structure as a stylistic defect."
+        }
+      ]
     },
     {
       "name": "sentence-rhythm",
       "job": "Vary sentence and paragraph shape while preserving the approved voice.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": []
+      "reviewer": "frontier-lead-author",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "SR-01",
+          "location": "ch06.md environmental-record transition",
+          "category": "spoken transition",
+          "evidence": "The prior sentence announced the next chapter rather than naming the parcel's next inquiry.",
+          "decision": "accepted",
+          "reason": "The revised sentence keeps the question sequence audible without changing its scope."
+        },
+        {
+          "id": "SR-02",
+          "location": "ch10.md completed-payment transition",
+          "category": "spoken transition",
+          "evidence": "Two chapter announcements surrounded the stronger concrete image of a certificate clock; post-edit structure review also found an immediate calendar echo at the Chapter 11 opening.",
+          "decision": "accepted",
+          "reason": "The new opening makes the state change carry the paragraph, and the redundant closing calendar sentence was removed."
+        },
+        {
+          "id": "SR-03",
+          "location": "ch01.md retrieval prompt and tax-lien explanation",
+          "category": "automated style candidates",
+          "evidence": "The prose gate flags 'Here is the' and 'hold that' once each, but the first begins a real retrieval and the second describes lien priority.",
+          "decision": "rejected",
+          "reason": "Neither match is the generic reader management that the style family is designed to catch."
+        }
+      ]
     },
     {
       "name": "ear-pass",
       "job": "Listen to rendered prose and repair each stumble or lost thread.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": [],
-      "renderer": "",
-      "listeningContext": "Driving and delivering mail",
+      "reviewer": "Codex full-render acoustic/alignment reviewer plus blind-sequential-beginner-v1",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "EP-01",
+          "location": "13-chapter rendered ear-pass",
+          "category": "render integrity",
+          "evidence": "Echo rv15 rendered 14257.408 seconds with 612 monotonic alignment anchors, 324 word-timed anchors, complete pronunciation coverage, zero pronunciation diagnostics and no silence of at least three seconds below -45 dB.",
+          "decision": "accepted",
+          "reason": "The completed audio-derived checks found no synthesis break requiring a chapter-byte change."
+        },
+        {
+          "id": "EP-02",
+          "location": "ch01.md, ch03.md, ch04.md, ch05.md, ch07.md through ch12.md",
+          "category": "momentary listener load",
+          "evidence": "The blind sequential review recorded short dense or case-switch moments, and also recorded the exact following explanation or summary that restored the mental model in every instance.",
+          "decision": "rejected",
+          "reason": "The final-hash beginner verdict is pass, the moments preserve necessary legal or evidence distinctions, and the user approved these exact chapter bytes. No text repair is warranted."
+        }
+      ],
+      "renderer": "Echo rv15 with am_michael; audio-derived acoustic, sidecar and pronunciation inspection",
+      "listeningContext": "Full road-book render inspection; human full-audio listening remains pending",
       "stumbles": [],
-      "lostThreadAt": []
+      "lostThreadAt": [
+        "ch01 The First Clock: recovered in the next paragraph",
+        "ch03 first redemption-category list: recovered in the evidence-ledger explanation",
+        "ch04 court-order branch: recovered by the risk-free warning",
+        "ch05 fictional-to-real PID demonstration: method remained stable",
+        "ch07 coast-to-mine transition: required a mental reset",
+        "ch08 manufactured-home branch: asset-identity purpose became clear",
+        "ch09 tax and eligibility branch: recovered in the four-question summary",
+        "ch10 two payment-failure branches: separated by their consequences",
+        "ch11 redemption accounting: recovered in the ledger explanation",
+        "ch12 statutory exceptions: recovered in the three-file summary"
+      ]
     }
   ]
 }

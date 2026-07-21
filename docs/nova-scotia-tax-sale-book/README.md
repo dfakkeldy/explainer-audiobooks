@@ -19,10 +19,11 @@ ranking, or an advertisement disguised as education.
 ## What is here
 
 - `research/`: the public-safe research brief, official-source register,
-  traceable evidence notes, fact pack, twelve-chapter argument outline,
+  traceable evidence notes, fact pack, approved thirteen-chapter argument outline,
   structured learning records, Inverness dossier, municipal comparison,
-  auction-result analysis, accepted voice exemplar, pronunciation plan,
-  conversation decision log, handoff packet, and 40-figure visual plan;
+  auction-result analysis, production-map research-chain plan and product
+  feedback, accepted voice exemplar, pronunciation plan,
+  conversation decision log, handoff packet, and approved-for-pilot 51-figure visual direction;
 - `maps/data/`: an owner-free snapshot of the municipality-published August
   2026 listing facts;
 - `maps/qgis/`: the editable QGIS 4.0.2 project used for the current proofs;
@@ -34,9 +35,15 @@ ranking, or an advertisement disguised as education.
   workflow;
 - `figures/`: the deterministic diagram renderer, teaching/provenance
   specifications, contact sheets and hash-bound receipt for figures 03–08, 39
-  and 40; and
-- `chapters/images/`: eight 2560-by-1440 legal/process review candidates that are
-  not yet accepted or embedded in a manuscript.
+  and 40;
+- `chapters/`: canonical Chapters 1–13, drafted sequentially from the accepted
+  pilot and approved argument outline, including the major map-method rewrite
+  and its access, intended-use, environmental, title, cost, auction, tender,
+  payment, and failed-sale branches;
+  and
+- `chapters/images/`: eight legal/process candidates plus eleven
+  2560-by-1440 NS Marks The Spot walkthrough screenshots; none is yet accepted
+  or embedded in a manuscript.
 
 ![Inverness County auction orientation proof](maps/exports/inverness-all-properties-orientation.png)
 
@@ -58,38 +65,74 @@ individual lien labels at that scale. NS Aerial remains the detail basemap.
 - Property Online plans, registry documents, or subscription-derived material;
 - live-property scores, rankings, maximum bids, or recommendations;
 - internal pricing and possible-service planning notes; and
-- manuscript chapters, covers, EPUB, M4B, read-along data, or any claim of
-  human listening acceptance.
+- complete canonical manuscript, covers or governed full-book package; the
+  ignored `.build` tree contains only the accepted nonpackage narrated pilot
+  and its machine receipts, not a final audiobook or delivery package.
 
-The interactive website implementation remains in [NS Marks The Spot at
-`92f1261e5`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/92f1261e5/web)
-rather than being duplicated here. This repository owns the book development
-packet and its reproducible QGIS proofs.
+The interactive implementation remains in the
+[NS Marks The Spot repository](https://github.com/dfakkeldy/ns-marks-the-spot)
+and [live map](https://kinnokilabs.com/apps/nsmarksthespot/map/) rather than
+being duplicated here. The 2026-07-20 screenshot receipt pins production source
+commit `d3114b5cfc907d85f8b2c1f015d5476719b53586`. This repository owns the
+book-development packet, its reproducible QGIS proofs and version-stamped
+chapter screenshots.
 
 ## Current production gates
 
-The project is in `governed-final` pilot development. Deep research, the
-approved argument outline, structured chapter plans, coverage ledger, forty-row
-figure manifest, two QGIS proofs, and eight reproducible diagram candidates
-exist. Three additional Inverness Packet Atlas cards are accepted
-prototype-direction frames outside the forty-figure manifest. Dan approved the revised
-twelve-chapter outline and forty-figure visual
-direction for pilot development on 2026-07-19, and later accepted the exact
-three-card atlas direction with “I like them.” Dan accepted the exact
-first-section teaching and voice with “Let’s go for the voice.” The narrated
-comprehension-pilot verdict, actual Echo/video-stage atlas proof, atlas batch
-authorization, full manuscript, independent learning and prose review, accepted
-final figures, cover selection, EPUB, Echo narration, public package
-verification, and full listening all remain pending.
+The project is in governed whole-manuscript review. Dan approved the prior
+twelve-chapter outline and forty-figure visual direction on 2026-07-19, accepted
+the exact three-card Inverness Packet Atlas direction with “I like them,” and
+accepted the exact first-section teaching and voice with “Let’s go for the
+voice.” On 2026-07-20 he authorized redesigning the map chapter and
+review figures around the production workflow: notice → parcel → context →
+unknowns → handoff, then explicitly approved that thirteen-chapter, 51-figure
+direction for pilot development. Deep research,
+structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
+diagram candidates and three accepted-direction atlas prototypes exist. The
+actual Echo/video-stage atlas proof, atlas batch authorization, accepted final
+figures, Echo narration, audiobook package verification and full listening all
+remain pending. The final-hash structure and blind sequential beginner reviews,
+bounded humanizer/tightening pass, rendered ear-pass diagnostics and governed
+text-only EPUB build are complete. The public reader package is under
+`books/beyond-the-tax-sale-packet/`; no M4B or video is claimed.
+
+The governed nonpackage pilot rendered on 2026-07-20 at 14:27 with verified
+alignment and a clean pronunciation audit. Its exact SHA-256 is
+`c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`;
+Dan accepted that exact pilot for continued drafting with “continue” at
+2026-07-20T08:55:51-03:00. Canonical Chapters 1–13 now total 31,824 Markdown
+words after the initial independent review and the bounded humanizer pass
+recorded in `research/editorial-review.md` and
+`research/humanizer-decisions.json`. Eight local style edits remove generic
+chapter navigation, and three post-edit beginner-review repairs clarify the
+parcel-register record, expand NSPRD at first use and preserve the treasurer as
+the certificate-registration actor.
+Dan approved the exact thirteen-chapter EPUB manuscript text for public
+publication on 2026-07-21. The approval is hash-bound in
+research/publication-authorization.json; any chapter-byte change requires a new
+manuscript verdict. Dan selected Candidate 1, *The Packet Lifts*, as the paired
+EPUB/audiobook cover on 2026-07-21; `covers/cover-selection.json` binds the
+portrait, square and source-art hashes. The remaining figure, ear-pass, package,
+full-narration and video gates remain separate. The governed public EPUB embeds
+the selected portrait cover byte-for-byte and is verified at SHA-256
+`40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0`.
+
+The three accepted-direction atlas prototypes remain development evidence, but
+the remaining 42-card batch is paused. Review should first decide whether the
+living map now performs most parcel-orientation work more accurately and
+usefully than a static owner-free atlas.
 
 ## Safety and currency
 
 This material is educational only. It is not legal, tax, investment, title,
 surveying, appraisal, access, environmental, insurance, planning, tenancy, or
 construction advice. Municipal lists and procedures change. The legal and
-event research was refreshed against official sources on 2026-07-19; readers
-must consult the current statute, live municipal list, auction terms, and their
-own qualified professionals before relying on a live-sale detail.
+event research was refreshed against official sources on 2026-07-19, and the
+Chapter 6–11 planning, access, environmental, title, occupancy, mobile-home,
+auction-result, tax, eligibility, auction/tender, payment, failed-sale,
+certificate, redemption, and insurance sources on 2026-07-20; readers must
+consult the current statute, live municipal list, auction terms, and their own
+qualified professionals before relying on a live-sale detail.
 
 Principal current sources include the [Nova Scotia Municipal Government
 Act](https://nslegislature.ca/sites/default/files/legc/statutes/municipal%20government.pdf),

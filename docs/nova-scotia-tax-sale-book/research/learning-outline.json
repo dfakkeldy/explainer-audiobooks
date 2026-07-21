@@ -3,24 +3,45 @@
   "authorization": {
     "status": "approved",
     "source": "user",
+    "requestedBy": "Dan Fakkeldy",
+    "proposedAt": "2026-07-19",
     "approvedBy": "Dan Fakkeldy",
-    "approvedAt": "2026-07-19T11:56:49-03:00",
-    "verbatimQuote": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
-    "evidence": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
-    "scope": "pilot-development",
+    "approvedAt": "2026-07-20T08:21:03-03:00",
+    "verbatimQuote": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction.",
+    "evidence": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction.",
+    "redesignAuthorizedAt": "2026-07-20",
+    "redesignAuthorization": "The user authorized the production-map-led chapter and screenshot redesign for review after asking how much of the book should change. This is not the revised-outline approval verdict.",
+    "scope": "revised-thirteen-chapter-outline-and-fifty-one-figure-direction",
+    "approvalScope": "pilot-development",
+    "priorAuthorization": {
+      "status": "approved",
+      "source": "user",
+      "approvedBy": "Dan Fakkeldy",
+      "approvedAt": "2026-07-19T11:56:49-03:00",
+      "verbatimQuote": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
+      "evidence": "I approve the revised twelve-chapter outline and forty-figure visual direction for pilot development.",
+      "scope": "pilot-development",
+      "doesNotAuthorize": [
+        "first-section voice acceptance",
+        "comprehension-pilot acceptance",
+        "full manuscript drafting",
+        "full narration",
+        "final figure acceptance",
+        "finished-audiobook publication"
+      ]
+    },
     "doesNotAuthorize": [
-      "first-section voice acceptance",
+      "promotion of screenshot candidates to final figures",
       "comprehension-pilot acceptance",
       "full manuscript drafting",
       "full narration",
-      "final figure acceptance",
       "finished-audiobook publication"
     ]
   },
   "curriculumPattern": {
     "name": "end-to-end-trace",
-    "reason": "The learner's main need is to follow one parcel through arrears, notice, auction, certificate, redemption and deed, opening each legal and research mechanism when its consequence becomes visible.",
-    "fitEvidence": "A road listener can retain two procedural clocks and one recurring parcel more reliably than an isolated terminology syllabus."
+    "reason": "The learner's main need is to follow the complete route while seeing mutually exclusive redemption and deed outcomes represented honestly by a small, explicitly named portfolio of composite files.",
+    "fitEvidence": "A road listener can retain two procedural clocks and a few stable case roles more reliably than an isolated terminology syllabus or one parcel forced through incompatible outcomes."
   },
   "throughlines": [
     "A tax sale is a municipal collection process, not a promise of a bargain.",
@@ -42,7 +63,7 @@
   ],
   "roadBookDesign": {
     "governingQuestion": "When a Nova Scotia municipality publishes a tax-sale packet, what does it establish, what remains unknown and how can careful research make the process understandable without pretending to supply legal certainty or a purchase recommendation?",
-    "narrativeSpine": "Begin with Inverness County's substantial municipal packet and follow a researcher turning it into a bounded evidence file for one fictional composite parcel, moving backward to arrears and forward through auction, certificate, redemption and deed while keeping every final purchase and professional decision outside the researcher's role.",
+    "narrativeSpine": "Begin with Inverness County's substantial municipal packet and follow a researcher through a deliberately named portfolio: Harbour Road opens the source problem, the map cases test evidence limits, Cedar Street carries the bid-to-redemption branch, and Foundry Street carries the separate deed-and-possession branch. Every final purchase and professional decision remains outside the researcher's role.",
     "peopleAndHistory": [
       "The municipal treasurer, whose statutory job is collection and notice rather than property marketing.",
       "The assessed owner and interest holders, whose payment and redemption rights keep the list and outcome fluid.",
@@ -50,10 +71,25 @@
       "The public-interest researcher, whose contribution is source reconciliation, careful mapping and useful questions rather than a recommendation.",
       "Nova Scotia's registry transition, which leaves bidders encountering both parcel-register and older document-chain research."
     ],
-    "chapterJobVariety": ["scene", "document reading", "mechanism", "research method", "failure case", "environmental investigation", "legal comparison", "economic model", "auction scene", "operations", "ownership transition", "retrieval lab"],
+    "chapterJobVariety": [
+      "scene",
+      "document reading",
+      "mechanism",
+      "research method",
+      "interactive map research",
+      "failure case",
+      "environmental investigation",
+      "legal comparison",
+      "economic model",
+      "auction scene",
+      "operations",
+      "ownership transition",
+      "retrieval lab"
+    ],
     "realWorldApplications": [
       "Inverness County's in-person August 2026 auction process and current public packet",
       "the difference between Inverness's free parcel packet and a source-traceable uncertainty file",
+      "a one-layer-at-a-time NS Marks The Spot parcel screening pass with a dated research note",
       "Pictou and Annapolis tender procedures, plus Kings, Richmond, Chester and CBRM comparisons",
       "Halifax's parallel HRM Charter framework and local Administrative Order 18 fee categories",
       "a landlocked vacant parcel",
@@ -63,94 +99,653 @@
     "optionalStudyBoundary": "Live municipality links, section crosswalks, detailed tax tables, Property Online instructions, research worksheets and professional question lists remain in a dated non-narrated appendix."
   },
   "referenceLayer": {
-    "items": ["municipality sale finder", "MGA-HRMC section crosswalk", "municipal-packet delta", "property research record", "all-in cost worksheet", "professional handoff questions", "dated fee and tax links", "figure provenance register", "editable three-case QGIS map pack"],
-    "formats": ["non-narrated Markdown appendix", "EPUB reference table", "printable worksheet", "Echo slideshow figure set", "whole-book MP4 with SRT and chapter timestamps"]
+    "items": [
+      "municipality sale finder",
+      "MGA-HRMC section crosswalk",
+      "municipal-packet delta",
+      "property research record",
+      "all-in cost worksheet",
+      "professional handoff questions",
+      "dated fee and tax links",
+      "figure provenance register",
+      "editable three-case QGIS map pack",
+      "Versioned NS Marks The Spot layer guide, screenshot receipt and pre-publication refresh record."
+    ],
+    "formats": [
+      "non-narrated Markdown appendix",
+      "EPUB reference table",
+      "printable worksheet",
+      "Echo slideshow figure set",
+      "whole-book MP4 with SRT and chapter timestamps"
+    ]
   },
   "chapters": [
     {
-      "file":"ch01.md","purpose":"Open the Inverness packet, identify the research gap and reveal the statutory collection story behind the auction room.","prerequisites":[],
-      "sections":[
-        {"id":"ch01-s01","job":"Open the municipal packet and establish the listener's governing question.","argument":"Inverness already supplies substantial parcel information, but neither its detailed pages nor the low recovery number answer title, use, condition, possession or purchase questions.","specificClaims":["OPS-004","DATA-002","DATA-005"],"throughlineAdvance":"Separate the municipal information product from a decision and from value before any terminology arrives.","payoff":"The research gap becomes visible without belittling the municipality's work.","landingBeat":"The listener wants to know why the parcel is being sold and what each source can actually establish.","mustNotRepeat":[]},
-        {"id":"ch01-s02","job":"Trace the pre-sale clock from tax lien through notice and advertisement.","argument":"A public auction is the last visible stage of a notice-heavy statutory process involving the owner and interest holders, but the operating details vary by municipality and Halifax uses a parallel Charter framework.","specificClaims":["LAW-001","LAW-002","LAW-003","LAW-004","LAW-005","OPS-005","OPS-007"],"throughlineAdvance":"Introduce the first of two clocks and the treasurer's limited institutional job.","payoff":"The auction room now has a legal backstory and human participants outside the room.","landingBeat":"The listener can state why the municipality is there and why it is not acting like a realtor.","mustNotRepeat":["Do not teach payment mechanics yet."]}
+      "file": "ch01.md",
+      "purpose": "Open the Inverness packet, identify the research gap and reveal the statutory collection story behind the auction room.",
+      "prerequisites": [],
+      "sections": [
+        {
+          "id": "ch01-s01",
+          "job": "Open the municipal packet and establish the listener's governing question.",
+          "argument": "Inverness already supplies substantial parcel information, but neither its detailed pages nor the low recovery number answer title, use, condition, possession or purchase questions.",
+          "specificClaims": [
+            "OPS-004",
+            "DATA-002",
+            "DATA-005"
+          ],
+          "throughlineAdvance": "Separate the municipal information product from a decision and from value before any terminology arrives.",
+          "payoff": "The research gap becomes visible without belittling the municipality's work.",
+          "landingBeat": "The listener wants to know why the parcel is being sold and what each source can actually establish.",
+          "mustNotRepeat": []
+        },
+        {
+          "id": "ch01-s02",
+          "job": "Trace the pre-sale clock from tax lien through notice and advertisement.",
+          "argument": "A public auction is the last visible stage of a notice-heavy statutory process involving the owner and interest holders, but the operating details vary by municipality and Halifax uses a parallel Charter framework.",
+          "specificClaims": [
+            "LAW-001",
+            "LAW-002",
+            "LAW-003",
+            "LAW-004",
+            "LAW-005",
+            "OPS-005",
+            "OPS-007"
+          ],
+          "throughlineAdvance": "Introduce the first of two clocks and the treasurer's limited institutional job.",
+          "payoff": "The auction room now has a legal backstory and human participants outside the room.",
+          "landingBeat": "The listener can state why the municipality is there and why it is not acting like a realtor.",
+          "mustNotRepeat": [
+            "Do not teach payment mechanics yet."
+          ]
+        }
       ]
     },
     {
-      "file":"ch02.md","purpose":"Teach the notice as a set of identifiers and warnings rather than a property description.","prerequisites":["tax lien","tax-sale sequence"],
-      "sections":[
-        {"id":"ch02-s01","job":"Decode lien number, assessed owner, AAN, PID, address and land/building fields.","argument":"Each field points to a record system; no field alone proves the object the bidder imagines, and summary/detail differences must be reconciled rather than guessed away.","specificClaims":["LAND-001","LAND-002","LAND-003","DATA-002"],"throughlineAdvance":"Begin separating property identity, assessment and title.","payoff":"The listener can route each identifier to the correct source.","landingBeat":"A notice becomes the first index card in a research file.","mustNotRepeat":["Do not re-explain lien priority."]},
-        {"id":"ch02-s02","job":"Explain the minimum and redemption markers plus the fluid live list.","argument":"The two most emotionally powerful fields are administrative signals, not guarantees about value or outcome.","specificClaims":["OPS-003","DATA-002","LAW-009"],"throughlineAdvance":"Foreshadow the second clock and establish list-refresh discipline.","payoff":"A withdrawn lot feels normal rather than like lost opportunity.","landingBeat":"The listener refuses to infer a bargain from typography.","mustNotRepeat":["Do not give the full redemption formula yet."]}
+      "file": "ch02.md",
+      "purpose": "Teach the notice as a set of identifiers and warnings rather than a property description.",
+      "prerequisites": [
+        "tax lien",
+        "tax-sale sequence"
+      ],
+      "sections": [
+        {
+          "id": "ch02-s01",
+          "job": "Decode lien number, assessed owner, AAN, PID, address and land/building fields.",
+          "argument": "Each field points to a record system; no field alone proves the object the bidder imagines, and summary/detail differences must be reconciled rather than guessed away.",
+          "specificClaims": [
+            "LAND-001",
+            "LAND-002",
+            "LAND-003",
+            "DATA-002"
+          ],
+          "throughlineAdvance": "Begin separating property identity, assessment and title.",
+          "payoff": "The listener can route each identifier to the correct source.",
+          "landingBeat": "A notice becomes the first index card in a research file.",
+          "mustNotRepeat": [
+            "Do not re-explain lien priority."
+          ]
+        },
+        {
+          "id": "ch02-s02",
+          "job": "Explain the minimum and redemption markers plus the fluid live list.",
+          "argument": "The two most emotionally powerful fields are administrative signals, not guarantees about value or outcome.",
+          "specificClaims": [
+            "OPS-003",
+            "DATA-001",
+            "DATA-002",
+            "LAW-009",
+            "MAP-003",
+            "MAP-007"
+          ],
+          "throughlineAdvance": "Foreshadow the second clock and establish list-refresh discipline.",
+          "payoff": "A withdrawn lot feels normal rather than like lost opportunity.",
+          "landingBeat": "The listener refuses to infer a bargain from typography.",
+          "mustNotRepeat": [
+            "Do not give the full redemption formula yet."
+          ]
+        }
       ]
     },
     {
-      "file":"ch03.md","purpose":"Explain certificate, redemption and immediate-deed paths as two post-sale clocks.","prerequisites":["minimum bid","redemption marker"],
-      "sections":[
-        {"id":"ch03-s01","job":"Follow the redeemable parcel from payment to certificate-holder status.","argument":"Winning a redeemable parcel purchases a conditional statutory position with protective powers, duties and a live right of redemption.","specificClaims":["LAW-007","LAW-008","LAW-009"],"throughlineAdvance":"Winning transfers responsibility before it necessarily transfers final title.","payoff":"The certificate holder is neither an ordinary prospective buyer nor an unrestricted final owner.","landingBeat":"The listener can name what may and may not be done during six months.","mustNotRepeat":["Do not explain title research tools here."]},
-        {"id":"ch03-s02","job":"Explain redemption money, discharge, repayment and the deed branch.","argument":"The two branches end through different documents, and every authorized cost or income matters to the accounting.","specificClaims":["LAW-010","LAW-011","LAW-012"],"throughlineAdvance":"Documents and clocks now control the transition of responsibility.","payoff":"Immediate deed is stripped of its misleading promise of immediate certainty.","landingBeat":"The listener can narrate both endings without confusing deed with possession.","mustNotRepeat":["Do not itemize future all-in bid costs."]}
+      "file": "ch03.md",
+      "purpose": "Explain certificate, redemption and immediate-deed paths as two post-sale clocks.",
+      "prerequisites": [
+        "minimum bid",
+        "redemption marker"
+      ],
+      "sections": [
+        {
+          "id": "ch03-s01",
+          "job": "Follow the redeemable parcel from payment to certificate-holder status.",
+          "argument": "Winning a redeemable parcel purchases a conditional statutory position with protective powers, duties and a live right of redemption.",
+          "specificClaims": [
+            "LAW-007",
+            "LAW-008",
+            "LAW-009"
+          ],
+          "throughlineAdvance": "Winning transfers responsibility before it necessarily transfers final title.",
+          "payoff": "The certificate holder is neither an ordinary prospective buyer nor an unrestricted final owner.",
+          "landingBeat": "The listener can name what may and may not be done during six months.",
+          "mustNotRepeat": [
+            "Do not explain title research tools here."
+          ]
+        },
+        {
+          "id": "ch03-s02",
+          "job": "Explain redemption money, discharge, repayment and the deed branch.",
+          "argument": "The two branches end through different documents, and every authorized cost or income matters to the accounting.",
+          "specificClaims": [
+            "LAW-010",
+            "LAW-011",
+            "LAW-012"
+          ],
+          "throughlineAdvance": "Documents and clocks now control the transition of responsibility.",
+          "payoff": "Immediate deed is stripped of its misleading promise of immediate certainty.",
+          "landingBeat": "The listener can narrate both endings without confusing deed with possession.",
+          "mustNotRepeat": [
+            "Do not itemize future all-in bid costs."
+          ]
+        }
       ]
     },
     {
-      "file":"ch04.md","purpose":"Move beyond the municipal baseline into a source-ordered parcel biography and professional research handoff.","prerequisites":["AAN","PID","certificate and deed paths"],
-      "sections":[
-        {"id":"ch04-s01","job":"Inventory the municipal baseline, then build the additional evidence file from source records and public layers.","argument":"Reliable research acknowledges what the municipality already provides, preserves the chain from identifier to record to interpretation and labels public map views as screening exhibits with their own licence conditions.","specificClaims":["DATA-005","LAND-001","LAND-002","LAND-004","LAW-003","GIS-001","GIS-002"],"throughlineAdvance":"Separate reused municipal facts, new research, legal/professional interpretation and residual uncertainty.","payoff":"The fictional parcel acquires a traceable biography rather than a repackaged listing sheet.","landingBeat":"The listener knows what useful work remains before asking a lawyer a precise question.","mustNotRepeat":["Do not teach environmental databases yet."]},
-        {"id":"ch04-s02","job":"Introduce uncertainty labels and the lawyer/surveyor/planner division of labour.","argument":"A good file says what is known, who can verify the next fact and what remains impossible to confirm before sale.","specificClaims":["LAND-003","LAND-004","LAW-013"],"throughlineAdvance":"Introduce verified, professionally verifiable, priceable uncertainty and no-go classifications.","payoff":"Professional fees become targeted uncertainty reduction rather than generic closing overhead.","landingBeat":"Attachment to a parcel is delayed until its evidence file survives first review.","mustNotRepeat":["Do not turn professional roles into a checklist recital."]}
+      "file": "ch04.md",
+      "purpose": "Move beyond the municipal baseline into a source-ordered parcel biography and professional research handoff.",
+      "prerequisites": [
+        "AAN",
+        "PID",
+        "certificate and deed paths"
+      ],
+      "sections": [
+        {
+          "id": "ch04-s01",
+          "job": "Inventory the municipal baseline, then build the additional evidence file from source records and public layers.",
+          "argument": "Reliable research acknowledges what the municipality already provides, preserves the chain from identifier to record to interpretation and labels public map views as screening exhibits with their own licence conditions.",
+          "specificClaims": [
+            "DATA-005",
+            "LAND-001",
+            "LAND-002",
+            "LAND-004",
+            "LAW-003",
+            "GIS-001",
+            "GIS-002",
+            "MAP-001",
+            "MAP-002"
+          ],
+          "throughlineAdvance": "Separate reused municipal facts, new research, legal/professional interpretation and residual uncertainty.",
+          "payoff": "The fictional parcel acquires a traceable biography rather than a repackaged listing sheet.",
+          "landingBeat": "The listener knows what useful work remains before asking a lawyer a precise question.",
+          "mustNotRepeat": [
+            "Do not teach environmental databases yet."
+          ]
+        },
+        {
+          "id": "ch04-s02",
+          "job": "Introduce uncertainty labels and the lawyer/surveyor/planner division of labour.",
+          "argument": "A good file says what is known, who can verify the next fact and what remains impossible to confirm before sale.",
+          "specificClaims": [
+            "LAND-003",
+            "LAND-004",
+            "LAW-013"
+          ],
+          "throughlineAdvance": "Introduce verified, professionally verifiable, priceable uncertainty and no-go classifications.",
+          "payoff": "Professional fees become targeted uncertainty reduction rather than generic closing overhead.",
+          "landingBeat": "Attachment to a parcel is delayed until its evidence file survives first review.",
+          "mustNotRepeat": [
+            "Do not turn professional roles into a checklist recital."
+          ]
+        }
       ]
     },
     {
-      "file":"ch05.md","purpose":"Test whether the parcel can lawfully and physically serve the intended use.","prerequisites":["parcel biography","legal description","map limitation"],
-      "sections":[
-        {"id":"ch05-s01","job":"Use a landlocked sliver to separate visual approach from legal access.","argument":"A driveway, road edge or map adjacency cannot substitute for frontage and registered access evidence.","specificClaims":["LAND-004","LAND-005","LAW-012","LAND-008"],"throughlineAdvance":"Title, boundary and practical use diverge in a memorable failure case.","payoff":"The listener spots the difference between getting near land and having the right to reach it.","landingBeat":"Legal access becomes an early no-bid gate.","mustNotRepeat":["Do not re-teach Property Online search fields."]},
-        {"id":"ch05-s02","job":"Layer zoning, lot status, setbacks, service and municipal compliance onto access.","argument":"A parcel is buildable or usable only relative to a stated project and several independent approvals and constraints.","specificClaims":["LAND-006","LAND-007","LAND-008"],"throughlineAdvance":"Permitted use becomes a multi-source mechanism rather than a zoning label.","payoff":"An attractive zone code no longer closes the research question.","landingBeat":"A real parcel can be a rational no despite clear ownership.","mustNotRepeat":["Do not cover physical contamination yet."]}
+      "file": "ch05.md",
+      "purpose": "Teach a bounded NS Marks The Spot chain from current notice through exact parcel, mapped context, preserved unknowns and professional handoff without treating location, overlap, historical result or absence as proof.",
+      "prerequisites": [
+        "parcel biography",
+        "source hierarchy",
+        "PID",
+        "map limitation"
+      ],
+      "sections": [
+        {
+          "id": "ch05-s01",
+          "job": "Keep current notices separate from historical outcomes, verify the direct municipal source and establish one parcel by exact PID or authoritative civic-point containment.",
+          "argument": "The map organizes dated notice and result records, but the direct municipality remains authoritative for current status and a civic point or Plus Code remains location context rather than access, occupancy or ownership proof.",
+          "specificClaims": [
+            "MAP-001",
+            "MAP-002",
+            "MAP-003",
+            "MAP-004",
+            "DATA-002",
+            "DATA-005",
+            "GIS-001",
+            "GIS-002"
+          ],
+          "throughlineAdvance": "Turn source hierarchy into an interface habit: mode and notice first, parcel identity second, imagery later.",
+          "payoff": "The listener can open the correct event and establish one parcel without mistaking the app, civic point or Plus Code for an authoritative property conclusion.",
+          "landingBeat": "The map is ready to generate questions, not conclusions.",
+          "mustNotRepeat": [
+            "Do not re-teach every notice identifier.",
+            "Do not recite the full layer catalogue in audio."
+          ]
+        },
+        {
+          "id": "ch05-s02",
+          "job": "Use road/water and geology/resource layers one question at a time, bound one historical result, then write the unknown and professional handoff.",
+          "argument": "A layer, returned intersection or historical outcome can narrow the next question only when its source, date, coverage, limitation, unknown and authoritative handoff travel with the observation.",
+          "specificClaims": [
+            "MAP-002",
+            "MAP-004",
+            "MAP-005",
+            "MAP-006",
+            "MAP-007",
+            "LAND-004"
+          ],
+          "throughlineAdvance": "Convert attractive map pixels into traceable evidence classifications and next actions.",
+          "payoff": "The listener can use River Denys and one historical Halifax result to say what the app reports, what it does not establish and where the next question belongs.",
+          "landingBeat": "Notice, parcel, context, unknowns and handoff becomes the repeatable method.",
+          "mustNotRepeat": [
+            "Do not infer legal access from road linework.",
+            "Do not infer a clean site from an empty result.",
+            "Do not infer current value or future bidding from a historical outcome.",
+            "Do not turn the live example into a recommendation."
+          ]
+        }
       ]
     },
     {
-      "file":"ch06.md","purpose":"Teach physical and environmental due diligence under severe inspection limits.","prerequisites":["lawful exterior observation","intended-use test"],
-      "sections":[
-        {"id":"ch06-s01","job":"Move from exterior observation into environmental and infrastructure records.","argument":"Records can reveal prior uses, known notices, wells and sewage clues, but absence of a record is not a clean bill of health.","specificClaims":["ENV-001","ENV-002","ENV-003","LAND-007"],"throughlineAdvance":"Unknown condition is classified rather than soothed by a negative search.","payoff":"The listener knows why an old oil tank, missing septic file and estimated well point are different uncertainties.","landingBeat":"No database is allowed to impersonate an inspection.","mustNotRepeat":["Do not discuss HST or bid arithmetic."]},
-        {"id":"ch06-s02","job":"Add coastal and geological hazards with explicit map limits.","argument":"Hazard maps are screening tools whose scenarios, scales and incompleteness determine what they can support.","specificClaims":["ENV-004","ENV-005","LAND-004"],"throughlineAdvance":"Source limitations become part of the finding itself.","payoff":"A map point near a parcel triggers a question, not a diagnosis.","landingBeat":"The listener can say what a negative or positive map result actually proves.","mustNotRepeat":["Do not re-explain parcel-map boundaries."]}
+      "file": "ch06.md",
+      "purpose": "Test whether the parcel can lawfully and physically serve the intended use.",
+      "prerequisites": [
+        "parcel biography",
+        "legal description",
+        "map limitation"
+      ],
+      "sections": [
+        {
+          "id": "ch06-s01",
+          "job": "Use a landlocked sliver to separate visual approach from legal access.",
+          "argument": "A driveway, road edge or map adjacency cannot substitute for frontage and registered access evidence.",
+          "specificClaims": [
+            "LAND-004",
+            "LAND-005",
+            "LAW-012",
+            "LAND-008"
+          ],
+          "throughlineAdvance": "Title, boundary and practical use diverge in a memorable failure case.",
+          "payoff": "The listener spots the difference between getting near land and having the right to reach it.",
+          "landingBeat": "Legal access becomes an early no-bid gate.",
+          "mustNotRepeat": [
+            "Do not re-teach Property Online search fields."
+          ]
+        },
+        {
+          "id": "ch06-s02",
+          "job": "Layer zoning, lot status, setbacks, service and municipal compliance onto access.",
+          "argument": "A parcel is buildable or usable only relative to a stated project and several independent approvals and constraints.",
+          "specificClaims": [
+            "LAND-006",
+            "LAND-007",
+            "LAND-008"
+          ],
+          "throughlineAdvance": "Permitted use becomes a multi-source mechanism rather than a zoning label.",
+          "payoff": "An attractive zone code no longer closes the research question.",
+          "landingBeat": "A real parcel can be a rational no despite clear ownership.",
+          "mustNotRepeat": [
+            "Do not cover physical contamination yet."
+          ]
+        }
       ]
     },
     {
-      "file":"ch07.md","purpose":"Separate title, continuing burdens, occupancy and possession.","prerequisites":["tax deed","easement","parcel evidence file"],
-      "sections":[
-        {"id":"ch07-s01","job":"Interpret the deed-effect rule without turning it into a universal-cleanliness claim.","argument":"Fee simple free of encumbrances answers a title question under the statute while easements, court orders and unexamined statutory interests require precise review.","specificClaims":["LAW-012","LAW-013","LAW-014"],"throughlineAdvance":"Legal title is narrowed to what the deed and applicable law actually resolve.","payoff":"The phrase clear title loses its false all-purpose meaning.","landingBeat":"The listener asks a lawyer which interests and qualifications apply to this PID.","mustNotRepeat":["Do not repeat the full deed timeline."]},
-        {"id":"ch07-s02","job":"Use an occupied building and mobile-home branch to teach possession boundaries.","argument":"A title interest, an occupant's situation, a tenancy, abandoned goods and an unaffixed mobile home can invoke different legal systems and cannot be handled by auction self-help.","specificClaims":["LAW-008","OCC-001","MOB-001"],"throughlineAdvance":"Winning responsibility now includes lawful treatment of people and personal property.","payoff":"The dramatic choice is to avoid locks, confrontation and improvised eviction.","landingBeat":"Vacant possession becomes a separately researched outcome.","mustNotRepeat":["Do not prescribe a tenancy notice or eviction process."]}
+      "file": "ch07.md",
+      "purpose": "Teach physical and environmental due diligence under severe inspection limits.",
+      "prerequisites": [
+        "lawful exterior observation",
+        "intended-use test"
+      ],
+      "sections": [
+        {
+          "id": "ch07-s01",
+          "job": "Move from exterior observation into environmental and infrastructure records.",
+          "argument": "Records can reveal prior uses, known notices, wells and sewage clues, but absence of a record is not a clean bill of health.",
+          "specificClaims": [
+            "ENV-001",
+            "ENV-002",
+            "ENV-003",
+            "LAND-007"
+          ],
+          "throughlineAdvance": "Unknown condition is classified rather than soothed by a negative search.",
+          "payoff": "The listener knows why an old oil tank, missing septic file and estimated well point are different uncertainties.",
+          "landingBeat": "No database is allowed to impersonate an inspection.",
+          "mustNotRepeat": [
+            "Do not discuss HST or bid arithmetic."
+          ]
+        },
+        {
+          "id": "ch07-s02",
+          "job": "Add coastal and geological hazards with explicit map limits.",
+          "argument": "Hazard maps are screening tools whose scenarios, scales and incompleteness determine what they can support.",
+          "specificClaims": [
+            "ENV-004",
+            "ENV-005",
+            "LAND-004"
+          ],
+          "throughlineAdvance": "Source limitations become part of the finding itself.",
+          "payoff": "A map point near a parcel triggers a question, not a diagnosis.",
+          "landingBeat": "The listener can say what a negative or positive map result actually proves.",
+          "mustNotRepeat": [
+            "Do not re-explain parcel-map boundaries."
+          ]
+        }
       ]
     },
     {
-      "file":"ch08.md","purpose":"Construct an all-in uncertainty budget and a precommitted maximum.","prerequisites":["condition risks","access/use risks","possession distinction"],
-      "sections":[
-        {"id":"ch08-s01","job":"Use actual auction results to sever minimum bid from value.","argument":"Competition can multiply the recovery number, while a low winning price can still be expensive after unresolved obligations; published result sets must be read with their completeness limits intact.","specificClaims":["DATA-003","DATA-001","DATA-004","LAND-003"],"throughlineAdvance":"Price is treated as one input inside responsibility rather than proof of opportunity.","payoff":"The Inverness distribution, with CBRM and Richmond comparisons, replaces folklore with observed auction behaviour.","landingBeat":"The listener will calculate from use and risk backward, not minimum bid upward.","mustNotRepeat":["Do not replay the opening auction scene."]},
-        {"id":"ch08-s02","job":"Build the cost stack and tax/eligibility branches.","argument":"The defensible ceiling must reserve for legal and registry work, survey, insurance, carrying, repair, remediation, possession and unknowns; tax-sale deeds are exempt from municipal deed transfer tax, while possible provincial non-resident tax and transaction-specific HST still require current case-specific advice.","specificClaims":["TAX-001","TAX-002","TAX-003","ELIG-001","LAW-006"],"throughlineAdvance":"Uncertainty is converted into professional questions, reserves or a no-bid decision.","payoff":"A written ceiling exists before social pressure begins.","landingBeat":"Walking away becomes the successful execution of prior research.","mustNotRepeat":["Do not provide personalized return targets or tax conclusions."]}
+      "file": "ch08.md",
+      "purpose": "Separate title, continuing burdens, occupancy and possession.",
+      "prerequisites": [
+        "tax deed",
+        "easement",
+        "parcel evidence file"
+      ],
+      "sections": [
+        {
+          "id": "ch08-s01",
+          "job": "Interpret the deed-effect rule without turning it into a universal-cleanliness claim.",
+          "argument": "Fee simple free of encumbrances answers a title question under the statute while easements, court orders and unexamined statutory interests require precise review.",
+          "specificClaims": [
+            "LAW-012",
+            "LAW-013",
+            "LAW-014"
+          ],
+          "throughlineAdvance": "Legal title is narrowed to what the deed and applicable law actually resolve.",
+          "payoff": "The phrase clear title loses its false all-purpose meaning.",
+          "landingBeat": "The listener asks a lawyer which interests and qualifications apply to this PID.",
+          "mustNotRepeat": [
+            "Do not repeat the full deed timeline."
+          ]
+        },
+        {
+          "id": "ch08-s02",
+          "job": "Use an occupied building and mobile-home branch to teach possession boundaries.",
+          "argument": "A title interest, an occupant's situation, a tenancy, abandoned goods and an unaffixed mobile home can invoke different legal systems and cannot be handled by auction self-help.",
+          "specificClaims": [
+            "LAW-008",
+            "OCC-001",
+            "MOB-001"
+          ],
+          "throughlineAdvance": "Winning responsibility now includes lawful treatment of people and personal property.",
+          "payoff": "The dramatic choice is to avoid locks, confrontation and improvised eviction.",
+          "landingBeat": "Vacant possession becomes a separately researched outcome.",
+          "mustNotRepeat": [
+            "Do not prescribe a tenancy notice or eviction process."
+          ]
+        }
       ]
     },
     {
-      "file":"ch09.md","purpose":"Make auction and tender mechanics predictable enough for disciplined action.","prerequisites":["written maximum","payment clock"],
-      "sections":[
-        {"id":"ch09-s01","job":"Compare open-outcry auction with sealed/public tender and identify who may not buy.","argument":"The formats create different pressure but neither changes the need for a complete bid file, lawful bidder authority and ready funds.","specificClaims":["LAW-005","LAW-016","OPS-001","OPS-002","OPS-004","OPS-005"],"throughlineAdvance":"Procedure becomes operational rather than theatrical.","payoff":"The listener can rehearse registration, authority and submission without rehearsing excitement.","landingBeat":"A tender envelope and a bidding card obey the same precommitted ceiling and conflict rules.","mustNotRepeat":["Do not re-explain why sale is lawful."]},
-        {"id":"ch09-s02","job":"Walk the live event, withdrawal and immediate payment.","argument":"A valid bid must survive current-list verification, identity/authority rules, immediate payment and the three-business-day balance; a leading bid that cannot perform becomes a resale problem rather than ownership.","specificClaims":["LAW-006","LAW-015","OPS-003","OPS-004","DATA-002"],"throughlineAdvance":"Winning is redefined as the bidder executing a researched decision within payment rules, not the researcher choosing for them.","payoff":"A fictional bidder declines after the price crosses the written line while the research file remains unchanged.","landingBeat":"No new fact discovered in adrenaline is allowed to raise the maximum.","mustNotRepeat":["Do not calculate the redemption amount here."]},
-        {"id":"ch09-s03","job":"Rehearse the no-bid, payment-default and rescheduled-event branches.","argument":"A called parcel can move to municipal purchase, later re-advertisement, immediate re-offer, deposit-reducing resale costs or a newly verified event notice; none of those branches permits the observer to improvise private terms.","specificClaims":["LAW-015","OPS-006"],"throughlineAdvance":"The auction becomes a state machine with recoverable exits rather than one happy-path performance.","payoff":"The beginner knows what to watch and which live fact to verify when the expected hammer-and-payment sequence breaks.","landingBeat":"An event change is a reason to refresh the municipal source, not to rely on memory.","mustNotRepeat":["Do not turn the failure branches into property-specific legal advice."]}
+      "file": "ch09.md",
+      "purpose": "Construct an all-in uncertainty budget and a precommitted maximum.",
+      "prerequisites": [
+        "condition risks",
+        "access/use risks",
+        "possession distinction"
+      ],
+      "sections": [
+        {
+          "id": "ch09-s01",
+          "job": "Use actual auction results to sever minimum bid from value.",
+          "argument": "Competition can multiply the recovery number, while a low winning price can still be expensive after unresolved obligations; published result sets must be read with their completeness limits intact.",
+          "specificClaims": [
+            "DATA-003",
+            "DATA-001",
+            "DATA-004",
+            "LAND-003"
+          ],
+          "throughlineAdvance": "Price is treated as one input inside responsibility rather than proof of opportunity.",
+          "payoff": "The Inverness distribution, with CBRM and Richmond comparisons, replaces folklore with observed auction behaviour.",
+          "landingBeat": "The listener will calculate from use and risk backward, not minimum bid upward.",
+          "mustNotRepeat": [
+            "Do not replay the opening auction scene."
+          ]
+        },
+        {
+          "id": "ch09-s02",
+          "job": "Build the cost stack and tax/eligibility branches.",
+          "argument": "The defensible ceiling must reserve for legal and registry work, survey, insurance, carrying, repair, remediation, possession and unknowns; tax-sale deeds are exempt from municipal deed transfer tax, while possible provincial non-resident tax and transaction-specific HST still require current case-specific advice.",
+          "specificClaims": [
+            "TAX-001",
+            "TAX-002",
+            "TAX-003",
+            "ELIG-001",
+            "LAW-006"
+          ],
+          "throughlineAdvance": "Uncertainty is converted into professional questions, reserves or a no-bid decision.",
+          "payoff": "A written ceiling exists before social pressure begins.",
+          "landingBeat": "Walking away becomes the successful execution of prior research.",
+          "mustNotRepeat": [
+            "Do not provide personalized return targets or tax conclusions."
+          ]
+        }
       ]
     },
     {
-      "file":"ch10.md","purpose":"Operate responsibly during the certificate and redemption period.","prerequisites":["certificate holder","redemption formula"],
-      "sections":[
-        {"id":"ch10-s01","job":"Follow registration, insurance, new tax and protection tasks.","argument":"The certificate period is active stewardship under limits, not a passive wait or an early renovation window, and the duty to insure does not guarantee an insurer will accept the risk.","specificClaims":["LAW-007","LAW-008","LAW-010","INS-001"],"throughlineAdvance":"Responsibility arrives before certainty and must be documented.","payoff":"One accepted specialty-coverage inquiry, one refusal and one approved repair show why readiness and authorization matter.","landingBeat":"The listener can distinguish statutory duty, market availability, protection and development.","mustNotRepeat":["Do not re-teach the original auction payment."]},
-        {"id":"ch10-s02","job":"Resolve the redemption branch humanely and financially.","argument":"Redemption is a statutory outcome, not a failed investment, and taxes, interest, insurance, approved repairs, surplus and income offsets must be documented; Halifax's itemized schedule shows how local sale-expense categories can be made visible without becoming a province-wide fee promise.","specificClaims":["LAW-010","LAW-011","OPS-007","OCC-001"],"throughlineAdvance":"A negative ownership outcome can still be a correctly handled process.","payoff":"The former owner's return and purchaser's repayment are narrated without a winner-loser caricature.","landingBeat":"The certificate file closes when the treasurer receives full redemption and the registered discharge records the ending.","mustNotRepeat":["Do not foreshadow profit on the ten-percent interest."]}
+      "file": "ch10.md",
+      "purpose": "Make auction and tender mechanics predictable enough for disciplined action.",
+      "prerequisites": [
+        "written maximum",
+        "payment clock"
+      ],
+      "sections": [
+        {
+          "id": "ch10-s01",
+          "job": "Compare open-outcry auction with sealed/public tender and identify who may not buy.",
+          "argument": "The formats create different pressure but neither changes the need for a complete bid file, lawful bidder authority and ready funds.",
+          "specificClaims": [
+            "LAW-005",
+            "LAW-016",
+            "OPS-001",
+            "OPS-002",
+            "OPS-004",
+            "OPS-005"
+          ],
+          "throughlineAdvance": "Procedure becomes operational rather than theatrical.",
+          "payoff": "The listener can rehearse registration, authority and submission without rehearsing excitement.",
+          "landingBeat": "A tender envelope and a bidding card obey the same precommitted ceiling and conflict rules.",
+          "mustNotRepeat": [
+            "Do not re-explain why sale is lawful."
+          ]
+        },
+        {
+          "id": "ch10-s02",
+          "job": "Walk the live event, withdrawal and immediate payment.",
+          "argument": "A valid bid must survive current-list verification, identity/authority rules, immediate payment and the three-business-day balance; a leading bid that cannot perform becomes a resale problem rather than ownership.",
+          "specificClaims": [
+            "LAW-006",
+            "LAW-015",
+            "OPS-003",
+            "OPS-004",
+            "DATA-002"
+          ],
+          "throughlineAdvance": "Winning is redefined as the bidder executing a researched decision within payment rules, not the researcher choosing for them.",
+          "payoff": "A fictional bidder declines after the price crosses the written line while the research file remains unchanged.",
+          "landingBeat": "No new fact discovered in adrenaline is allowed to raise the maximum.",
+          "mustNotRepeat": [
+            "Do not calculate the redemption amount here."
+          ]
+        },
+        {
+          "id": "ch10-s03",
+          "job": "Rehearse the no-bid, payment-default and rescheduled-event branches.",
+          "argument": "A called parcel can move to municipal purchase, later re-advertisement, immediate re-offer, deposit-reducing resale costs or a newly verified event notice; none of those branches permits the observer to improvise private terms.",
+          "specificClaims": [
+            "LAW-015",
+            "OPS-006"
+          ],
+          "throughlineAdvance": "The auction becomes a state machine with recoverable exits rather than one happy-path performance.",
+          "payoff": "The beginner knows what to watch and which live fact to verify when the expected hammer-and-payment sequence breaks.",
+          "landingBeat": "An event change is a reason to refresh the municipal source, not to rely on memory.",
+          "mustNotRepeat": [
+            "Do not turn the failure branches into property-specific legal advice."
+          ]
+        }
       ]
     },
     {
-      "file":"ch11.md","purpose":"Show that deed delivery begins ordinary and extraordinary ownership work.","prerequisites":["deed effect","possession boundary","use and condition research"],
-      "sections":[
-        {"id":"ch11-s01","job":"Request/register the deed and reopen title, insurance and possession files.","argument":"The deed closes the tax-sale conveyance stage but does not supply keys, insurance, boundaries, compliance or physical repair, and registration starts a separate six-year contestability clock under the Marketable Titles Act.","specificClaims":["LAW-012","LAW-018","OCC-001","TAX-001","LAND-005"],"throughlineAdvance":"The final legal document hands off to several owner systems rather than ending the story.","payoff":"Immediate deed and six-month deed paths converge on the same disciplined ownership questions.","landingBeat":"Possession and first work occur only through lawful, insured steps.","mustNotRepeat":["Do not repeat every environmental database."]},
-        {"id":"ch11-s02","job":"Re-run intended-use and condition gates before repair, rental, development or resale.","argument":"Post-deed access may enable new inspections, but discoveries can invalidate the original project and require a new decision.","specificClaims":["LAND-006","ENV-001","ENV-002","ENV-003","ENV-004","ENV-005"],"throughlineAdvance":"Due diligence becomes iterative rather than a one-time pre-bid ritual.","payoff":"The parcel is allowed to change category when better evidence arrives.","landingBeat":"Ownership does not oblige the buyer to pursue the fantasy that motivated the bid.","mustNotRepeat":["Do not introduce new hazard categories."]},
-        {"id":"ch11-s03","job":"Follow surplus proceeds and the defective-sale branch from the former interest-holder's side.","argument":"Surplus follows a statutory account and court-application route, while a sale set aside for a defect leaves the municipal tax lien alive and a registered deed is generally contestable only within the following six years subject to statutory exceptions.","specificClaims":["LAW-014","LAW-017","LAW-018"],"throughlineAdvance":"The tax sale remains a collection and adjudication system involving prior interests, not only a purchaser's acquisition story.","payoff":"The beginner sees both money and title disputes move into documented legal channels.","landingBeat":"A disputed deed is a counsel-and-court file, not a confident internet checklist.","mustNotRepeat":["Do not prescribe litigation strategy or promise surplus recovery."]}
+      "file": "ch11.md",
+      "purpose": "Operate responsibly during the certificate and redemption period.",
+      "prerequisites": [
+        "certificate holder",
+        "redemption formula"
+      ],
+      "sections": [
+        {
+          "id": "ch11-s01",
+          "job": "Follow registration, insurance, new tax and protection tasks.",
+          "argument": "The certificate period is active stewardship under limits, not a passive wait or an early renovation window, and the duty to insure does not guarantee an insurer will accept the risk.",
+          "specificClaims": [
+            "LAW-007",
+            "LAW-008",
+            "LAW-010",
+            "INS-001"
+          ],
+          "throughlineAdvance": "Responsibility arrives before certainty and must be documented.",
+          "payoff": "One accepted specialty-coverage inquiry, one refusal and one approved repair show why readiness and authorization matter.",
+          "landingBeat": "The listener can distinguish statutory duty, market availability, protection and development.",
+          "mustNotRepeat": [
+            "Do not re-teach the original auction payment."
+          ]
+        },
+        {
+          "id": "ch11-s02",
+          "job": "Resolve the redemption branch humanely and financially.",
+          "argument": "Redemption is a statutory outcome, not a failed investment, and taxes, interest, insurance, approved repairs, surplus and income offsets must be documented; Halifax's itemized schedule shows how local sale-expense categories can be made visible without becoming a province-wide fee promise.",
+          "specificClaims": [
+            "LAW-010",
+            "LAW-011",
+            "OPS-007",
+            "OCC-001"
+          ],
+          "throughlineAdvance": "A negative ownership outcome can still be a correctly handled process.",
+          "payoff": "The former owner's return and purchaser's repayment are narrated without a winner-loser caricature.",
+          "landingBeat": "The certificate file closes when the treasurer receives full redemption, the purchaser's rights end and the municipality's official record confirms close-out.",
+          "mustNotRepeat": [
+            "Do not foreshadow profit on the ten-percent interest."
+          ]
+        }
       ]
     },
     {
-      "file":"ch12.md","purpose":"Retrieve the whole method across three composite parcels and leave a repeatable public research and professional-handoff record.","prerequisites":["all prior outcomes"],
-      "sections":[
-        {"id":"ch12-s01","job":"Run three composite parcels through known, unresolved and professional-handoff states.","argument":"The same research method can expose a fatal access problem, preserve an occupancy/environmental uncertainty or produce a coherent evidence file without making the final bid decision.","specificClaims":["DATA-005","LAND-005","LAND-006","ENV-001","OCC-001","TAX-003","DATA-003"],"throughlineAdvance":"All four throughlines are retrieved in fresh property situations.","payoff":"The listener identifies what the researcher can responsibly conclude before the narration supplies the boundary.","landingBeat":"A useful evidence file is recognized as a complete result even when no purchase follows.","mustNotRepeat":["Use callbacks, not fresh definitions."]},
-        {"id":"ch12-s02","job":"Close with the reusable public research record and professional handoffs.","argument":"A responsible researcher can explain each claim, source, limitation, responsible professional and unresolved question without claiming a title opinion, survey, appraisal or investment recommendation.","specificClaims":["LAW-006","LAW-009","LAW-012","LAND-001","LAND-002","ELIG-001"],"throughlineAdvance":"The listener owns a method rather than a list of terms, while the public artifact demonstrates the author's care without a sales pitch.","payoff":"Return to the packet with a clear account of what is known and who owns each remaining decision.","landingBeat":"Helpful public explanation is the completed outcome; a purchase or service sale is optional.","mustNotRepeat":["Do not end with a generic checklist, investment encouragement or lead-generation pitch."]}
+      "file": "ch12.md",
+      "purpose": "Show that deed delivery begins ordinary and extraordinary ownership work.",
+      "prerequisites": [
+        "deed effect",
+        "possession boundary",
+        "use and condition research"
+      ],
+      "sections": [
+        {
+          "id": "ch12-s01",
+          "job": "Request/register the deed and reopen title, insurance and possession files.",
+          "argument": "The deed closes the tax-sale conveyance stage but does not supply keys, insurance, boundaries, compliance or physical repair, and registration starts a separate six-year contestability clock under the Marketable Titles Act.",
+          "specificClaims": [
+            "LAW-012",
+            "LAW-018",
+            "OCC-001",
+            "TAX-001",
+            "LAND-005"
+          ],
+          "throughlineAdvance": "The final legal document hands off to several owner systems rather than ending the story.",
+          "payoff": "Immediate deed and six-month deed paths converge on the same disciplined ownership questions.",
+          "landingBeat": "Possession and first work occur only through lawful, insured steps.",
+          "mustNotRepeat": [
+            "Do not repeat every environmental database."
+          ]
+        },
+        {
+          "id": "ch12-s02",
+          "job": "Re-run intended-use and condition gates before repair, rental, development or resale.",
+          "argument": "Post-deed access may enable new inspections, but discoveries can invalidate the original project and require a new decision.",
+          "specificClaims": [
+            "LAND-006",
+            "ENV-001",
+            "ENV-002",
+            "ENV-003",
+            "ENV-004",
+            "ENV-005"
+          ],
+          "throughlineAdvance": "Due diligence becomes iterative rather than a one-time pre-bid ritual.",
+          "payoff": "The parcel is allowed to change category when better evidence arrives.",
+          "landingBeat": "Ownership does not oblige the buyer to pursue the fantasy that motivated the bid.",
+          "mustNotRepeat": [
+            "Do not introduce new hazard categories."
+          ]
+        },
+        {
+          "id": "ch12-s03",
+          "job": "Follow surplus proceeds and the defective-sale branch from the former interest-holder's side.",
+          "argument": "Surplus follows a statutory account and court-application route, while a sale set aside for a defect leaves the municipal tax lien alive and a registered deed is generally contestable only within the following six years subject to statutory exceptions.",
+          "specificClaims": [
+            "LAW-014",
+            "LAW-017",
+            "LAW-018"
+          ],
+          "throughlineAdvance": "The tax sale remains a collection and adjudication system involving prior interests, not only a purchaser's acquisition story.",
+          "payoff": "The beginner sees both money and title disputes move into documented legal channels.",
+          "landingBeat": "A disputed deed is a counsel-and-court file, not a confident internet checklist.",
+          "mustNotRepeat": [
+            "Do not prescribe litigation strategy or promise surplus recovery."
+          ]
+        }
+      ]
+    },
+    {
+      "file": "ch13.md",
+      "purpose": "Retrieve the whole method across three composite parcels and leave a repeatable public research and professional-handoff record.",
+      "prerequisites": [
+        "all prior outcomes"
+      ],
+      "sections": [
+        {
+          "id": "ch13-s01",
+          "job": "Run three composite parcels through known, unresolved and professional-handoff states.",
+          "argument": "The same research method can stop on a two-PID identity conflict, preserve an occupancy/environmental uncertainty or produce a coherent evidence file without making the final bid decision.",
+          "specificClaims": [
+            "DATA-005",
+            "LAND-005",
+            "LAND-006",
+            "ENV-001",
+            "OCC-001",
+            "TAX-003",
+            "DATA-003"
+          ],
+          "throughlineAdvance": "All four throughlines are retrieved in fresh property situations.",
+          "payoff": "The listener identifies what the researcher can responsibly conclude before the narration supplies the boundary.",
+          "landingBeat": "A useful evidence file is recognized as a complete result even when no purchase follows.",
+          "mustNotRepeat": [
+            "Use callbacks, not fresh definitions."
+          ]
+        },
+        {
+          "id": "ch13-s02",
+          "job": "Close with the reusable public research record and professional handoffs.",
+          "argument": "A responsible researcher can explain each claim, source, limitation, responsible professional and unresolved question without claiming a title opinion, survey, appraisal or investment recommendation.",
+          "specificClaims": [
+            "LAW-006",
+            "LAW-009",
+            "LAW-012",
+            "LAND-001",
+            "LAND-002",
+            "ELIG-001"
+          ],
+          "throughlineAdvance": "The listener owns a method rather than a list of terms, while the public artifact demonstrates the author's care without a sales pitch.",
+          "payoff": "Return to the packet with a clear account of what is known and who owns each remaining decision.",
+          "landingBeat": "Helpful public explanation is the completed outcome; a purchase or service sale is optional.",
+          "mustNotRepeat": [
+            "Do not end with a generic checklist, investment encouragement or lead-generation pitch."
+          ]
+        }
       ]
     }
   ]

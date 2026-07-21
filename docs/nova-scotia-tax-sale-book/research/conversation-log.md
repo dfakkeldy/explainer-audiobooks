@@ -73,13 +73,65 @@ package.
   voice exemplar and authorizes representative pilot development. It does not
   record a narrated-pilot `continue` verdict, authorize the remaining
   manuscript, accept pronunciations, or authorize publication.
+- **Map-resource chapter and screenshots:** “Look at the work done on the map.
+  Let's add a chapter about using this resource. Work is still being done on it,
+  but let's plan out the chapter and we'll make a bunch of screenshots showing
+  how to turn the layers on and off, what each layer shows. How to use it to
+  research the tax sale.” This authorizes planning the new chapter and creating
+  review screenshots. Because it expands the approved direction to thirteen
+  chapters and 51 figures, revised outline/figure approval remains pending.
+
+## 2026-07-20
+
+- **Production-map-led book redesign:** “Okay. Let’s do that” This authorizes
+  the proposed redesign after reviewing how the new production tools should
+  change the book. Chapter 5 now teaches notice → parcel → context → unknowns →
+  handoff; Chapters 2, 4, 6, 7, 9 and 13 receive targeted integrations; and the
+  eleven obsolete layer-tour screenshots are replaced with production captures
+  covering current and historical modes, authoritative civic search, Plus
+  Codes, road/water context and geology/resources. This authorizes the design
+  and review assets, not the revised outline verdict, canonical full-book
+  drafting, narration, final-figure acceptance or publication.
+- **Thirteen-chapter/51-figure direction approved for pilot development:**
+  “The new map warrants one major Chapter 5 rewrite plus targeted changes to
+  Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures
+  direction.” This closes the reopened argument-outline and visual-direction
+  checkpoint. It authorizes the representative pilot and later section-by-
+  section drafting only after the separate narrated-pilot verdict. It does not
+  promote screenshot candidates to final figures or authorize full narration,
+  finished-audiobook publication, or the remaining 42-card atlas batch.
+- **Narrated comprehension pilot accepted:** “continue”. Dan recorded the
+  listener verdict at 2026-07-20T08:55:51-03:00 against the exact governed
+  14:27 pilot, SHA-256
+  `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`.
+  This authorizes sequential canonical manuscript drafting from the accepted
+  voice and approved thirteen-chapter outline. It does not accept final figures,
+  full narration, the final package or publication.
 
 ## Gate status
 
-The revised twelve-chapter argument outline, added failure paths and forty-figure
-direction are approved for pilot development. The three-card atlas prototype
-direction is also accepted against its exact rendered hashes. The first-section
-voice exemplar is accepted against its exact text hash. The narrated
-comprehension-pilot verdict, canonical full drafting, pronunciation acceptance,
+The prior twelve-chapter argument outline and forty-figure direction remain the
+historical approval. The three-card atlas direction and exact first-section
+voice exemplar are separately accepted against their hashes. The production-
+map-led thirteen-chapter/51-figure direction and narrated comprehension pilot
+are accepted for sequential canonical drafting. Pronunciation acceptance,
 actual Echo/video-stage prototype proof, atlas batch authorization, final figure
-acceptance, and publication remain downstream gates.
+acceptance, full narration, package verification and publication remain
+downstream gates.
+
+## 2026-07-21
+
+- **Exact EPUB manuscript text approved:** “I have reviewed the book, it's good
+  to publish.” Dan then clarified, “I meant the epub text was ready to publish.”
+  The approval is bound to all thirteen exact chapter hashes in
+  publication-authorization.json. It authorizes the public EPUB text edition
+  after cover selection and the remaining package gates. It does not claim
+  approval of unfinished cover, figures, ear-pass audio, pronunciation, full
+  narration or video.
+- **Paired cover selected:** “i'm going to go with image 1”. Dan selected
+  Candidate 1, *The Packet Lifts*,
+  as one coordinated pair: the 1600-by-2560 EPUB portrait and 2400-by-2400
+  audiobook square. The public-safe selection receipt records `selection_source:
+  user`, binds both exact image hashes and preserves the earlier publication
+  permission. This does not accept the remaining figures, rendered-ear-pass
+  findings, full narration, video or an unverified package.

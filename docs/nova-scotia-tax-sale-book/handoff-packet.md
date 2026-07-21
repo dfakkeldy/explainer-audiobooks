@@ -1,17 +1,18 @@
 # Beyond the Tax-Sale Packet — handoff packet
 
-**Status: pilot development authorized — not authorized for canonical full-book
-production.** Human outline approval is recorded. First-section acceptance and
-a narrated comprehension-pilot decision remain absent. A separate owner-free
-Inverness Packet Atlas is proposed outside the forty-figure manifest.
+**Status: sequential canonical manuscript drafting authorized — final figures,
+narration, packaging and publication remain gated.** The production-map-led
+direction was approved by Dan Fakkeldy on 2026-07-20. The first-section voice is
+accepted, and Dan accepted the governed 14:27 comprehension pilot with
+“continue” at 2026-07-20T08:55:51-03:00. A separate
+owner-free Inverness Packet Atlas remains outside the canonical figure direction.
 
 ## Production request
 
-Use `$custom-learning-audiobook` to develop the governed first section and
-narrated pilot, then pause for the remaining human gates before turning
-this public-safe plan into a spoken-first Nova Scotia learning book. Preserve
-the forty-figure Echo slideshow/video direction, make the narration complete
-without a screen, and keep every live-property reference educational and
+Begin canonical section-by-section drafting from the accepted voice and approved
+outline. Preserve the exact opening and the pilot's source-authority teaching
+contract; update continuity before and after every section. Keep narration
+complete without a screen and every live-property reference educational and
 unranked.
 
 ## Status
@@ -23,9 +24,9 @@ unranked.
   the public package without written authorization for the precise reuse.
 - Permission to publish: yes for the eventual public book; this is not finished
   publication authorization.
-- Length target: 42,800 words, estimated range 40,000–45,000.
+- Length target: 46,200 words, estimated range 44,000–49,000.
 - Original target: 22,000 words.
-- Target history and approval evidence: six dated verbatim directions in
+- Target history and approval evidence: nine dated verbatim directions in
   `research/learning-brief.json` and `research/conversation-log.md`.
 - Audience: curious beginner; no purchase intent is assumed.
 - Prior knowledge: ordinary real-estate-listing familiarity, but no assumed tax
@@ -38,10 +39,36 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- User approval status: revised outline and forty-figure direction approved for
-  pilot development at 2026-07-19T11:56:49-03:00. The exact quote is preserved
-  in `research/learning-outline.json`, `research/comprehension-pilot.json`, and
-  `research/conversation-log.md`.
+- Canonical manuscript: Chapters 1–13 now total 31,824 Markdown words after the
+  initial independent structure, blind beginner and claim-traceability review
+  plus a bounded humanizer/tightening pass. `research/editorial-review.md`
+  preserves the first-draft hashes, findings and lead-author decisions;
+  `research/humanizer-decisions.json` and
+  `research/prose-style-receipt.json` preserve eight accepted local style edits,
+  three rejected change classes, three post-edit beginner-review repairs and
+  current chapter hashes. The final
+  hash-bound learning review and rendered ear pass are next, and any ear-pass
+  text edit must regenerate the prose receipt.
+  Chapter 5 carries the major notice → parcel → context → unknowns →
+  handoff rewrite. Chapters 6 and 7 stress-test it against legal access,
+  intended use, and bounded environmental records; Chapter 8 separates title,
+  continuing interests, occupancy, possession, and mobile-home record systems.
+  Chapter 9 separates historical competition from value and builds a bounded
+  all-in cost, tax/eligibility branch, uncertainty reserve, and written maximum.
+  Chapter 10 executes that ceiling across open auction and tender, then traces
+  payment readiness, no-bid, default, re-advertisement, and current-event
+  refresh branches. Chapter 11 operates the redeemable certificate period
+  through insurer outreach, bounded protective work, taxes, income, the
+  purchaser statement, redemption repayment and the municipality's official
+  close-out record. These remain reviewed draft checkpoints, not final accepted
+  manuscript prose.
+- User approval status: the prior twelve-chapter/forty-figure direction was
+  approved for pilot development at 2026-07-19T11:56:49-03:00. The proposed
+  thirteen-chapter/51-figure revision was explicitly approved for pilot
+  development at 2026-07-20T08:21:03-03:00; both the prior approval and new
+  direction are preserved in
+  `research/learning-outline.json`,
+  `research/comprehension-pilot.json`, and `research/conversation-log.md`.
 
 ## Core promise
 
@@ -69,19 +96,20 @@ under the HRM Charter parallel rather than silently folded into the MGA.
 
 ## Learning outline
 
-- Curriculum pattern: end-to-end trace.
-- Governing question, twelve-chapter argument map, section claims and repetition
+- Curriculum pattern: staged portfolio trace. Harbour Road opens the source
+  problem, Cedar Street carries the redemption branch and Foundry Street carries
+  the separate deed-and-possession branch.
+- Governing question, approved thirteen-chapter argument map, section claims and repetition
   limits: `research/learning-outline.json` and `research/outline.md`.
-- Durable outcomes: ten, including a distinct payment-performance outcome and a
-  separate staged-responsibility explanation path.
+- Durable outcomes: ten, with the map method strengthening the lawful evidence-file outcome alongside a distinct payment-performance outcome and a separate staged-responsibility explanation path.
 - New failure-path spine: no sufficient bidder, re-advertisement, payment
   default, event rescheduling boundary, prohibited bidders, set-aside effect and
   the tax-deed contestability window.
-- Authorization: **approved for pilot development** by Dan Fakkeldy at
-  2026-07-19T11:56:49-03:00: “I approve the revised twelve-chapter outline and
-  forty-figure visual direction for pilot development.” This does not authorize
-  full manuscript drafting, full narration, final figure acceptance, or
-  finished-audiobook publication.
+- Authorization: **approved for pilot development**. Dan Fakkeldy's 2026-07-20
+  direction covers the production-map-led thirteen chapters and 51 figures. It
+  is now paired with the accepted narrated pilot and authorizes sequential
+  manuscript drafting. It does not accept final screenshots, full narration,
+  packaging or publication.
 
 The structured outline is authoritative for the chapter and argument-level
 tables; duplicating all section rows here would create a second drifting copy.
@@ -96,17 +124,23 @@ outcome by copy and paste.
 
 ## Road-book review and pilot
 
-- Human outline checkpoint: complete; the revised argument-level outline and
-  forty-figure direction are approved for pilot development.
+- Human outline checkpoint: **approved** for the thirteen-chapter/51-figure
+  direction at 2026-07-20T08:21:03-03:00. The prior twelve-chapter/forty-figure
+  approval remains recorded as history.
 - First-section checkpoint: **accepted** by Dan Fakkeldy at
   2026-07-19T16:17:07-03:00 with “Let’s go for the voice.” The exact
   project-authored opening is preserved as `research/voice-exemplar.md`,
   SHA-256
   `ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df`.
 - Pilot: 10–15 narrated minutes covering opening orientation and the first
-  technical passage with no more than three durable terms.
+  technical passage with no more than three durable terms. The exact pilot is
+  866.645333 seconds (14:27), SHA-256
+  `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`;
+  alignment verified and its pronunciation audit is clean.
 - Representative listen: driving/delivering only when safe.
-- Decision record: `research/comprehension-pilot.json`; status remains pending.
+- Decision record: `research/comprehension-pilot.json`; **accepted** with
+  listener verdict `continue` against the exact audio hash at
+  2026-07-20T08:55:51-03:00.
 - Blind review: manuscript only, sequential, recording mental model, confusion,
   unstable terms and exact lost points before full production.
 
@@ -123,7 +157,9 @@ Draft one approved section at a time with the full outline, exact claim IDs,
 prior-section context and must-not-repeat list. Before canonical production,
 create `research/continuity.json`, the accepted voice exemplar and separate
 claim-traceability, tightening, de-listification, sentence-rhythm and rendered
-ear-pass records. No general “make it better” rewrite counts as a governed pass.
+ear-pass records. The first three independent whole-manuscript reads are now
+recorded in `research/editorial-review.md`; the final hash-bound receipts remain
+pending. No general “make it better” rewrite counts as a governed pass.
 
 ## Pronunciation plan
 
@@ -133,16 +169,20 @@ expanded spoken forms. Candidate readings are not acceptance evidence.
 
 ## Figure plan
 
-`research/visuals.md` is the forty-row manifest and safety authority. Figures
-03–08 plus the Chapter 9 payment-readiness clock and Chapter 11 surplus-proceeds
-route are deterministic review candidates. The county overview is a QGIS 4
+`research/visuals.md` is the approved-for-pilot 51-row manifest and safety authority.
+Figures 41–51 are version-stamped NS Marks The Spot production research-chain
+candidates covering current notice, parcel, civic search, context, historical
+outcomes and handoff; their source and hashes are in
+`figures/map-chapter-screenshot-receipt.json`. Figures 03–08 plus the Chapter 10
+payment-readiness clock and Chapter 12 surplus-proceeds route are deterministic
+review candidates. The county overview is a QGIS 4
 halo-marker orientation view; the real Lien 1 aerial remains a pre-gate
 development specimen and cannot enter canonical chapters before its separate
 source, rights, event-status, public-safety and Echo-stage review.
 
 `research/inverness-packet-atlas-plan.md` proposes 45 lien cards plus overview
 and comparison frames as a separate appendix/slideshow companion. It does not
-alter the approved forty figures. Its source-rights ledger, three-card
+alter either chapter-figure direction. Its source-rights ledger, three-card
 prototype, full render and live-event-status refresh each require separate
 approval.
 
@@ -152,7 +192,9 @@ Dan authorized development of the three-card prototype on 2026-07-19 with
 sheets. Dan then accepted the exact three-card visual direction with “I like
 them.” at 2026-07-19T15:39:47-03:00; the hash-bound human receipt lives beside
 the render receipt. Actual Echo-stage proof, batch rendering of the remaining
-42 cards and publication remain unapproved.
+42 cards and publication remain unapproved. Keep that batch paused until review
+decides how much orientation work now belongs in the living map rather than
+static cards.
 
 ## Style notes
 
@@ -166,9 +208,8 @@ the render receipt. Actual Echo-stage proof, batch rendering of the remaining
 
 ## Open questions
 
-1. Which locally authoritative pronunciations should win the governed reel?
-2. Does the first narrated pilot remain understandable during the stated road
-   context?
+1. Which locally authoritative pronunciations should win the later full-book
+   governed reel?
 
 ## Acceptance criteria
 

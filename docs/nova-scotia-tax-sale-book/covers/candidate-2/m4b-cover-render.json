@@ -1,0 +1,41 @@
+{
+  "brand_mark": {
+    "source": "brand-mark.png",
+    "source_sha256": "240d17d0fd37d0611dd9557f1407134149cd0841b503aff56f369721934dfdde"
+  },
+  "candidate": {
+    "direction_name": "The Raised Card",
+    "id": "raised-card"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    2400,
+    2400
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+    "technical-mono": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
+  },
+  "output": "m4b-cover.png",
+  "output_sha256": "d679dfebc9949e94798852a9570df0365633315903b4c6a9a5ccef5c478014df",
+  "receipt_version": 1,
+  "renderer_version": 2,
+  "schema_version": 1,
+  "source_art": "source-art.png",
+  "source_art_sha256": "6026127a4a7fed8abc39dc21a0bb377adf0e7307308aa37c28fde6cc3bd64968",
+  "spec": "m4b-cover-spec.json",
+  "spec_sha256": "b1244c6b089c3fb1907647a54e421eb55d8ed2fe4c0a953794338f7c30a66eb3",
+  "thumbnail": "m4b-cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    160
+  ],
+  "thumbnail_sha256": "4af7ece1bba2740a43d82b6b4201c266c561eeb32c4a098231fbd336167e7ff8",
+  "variant": "square",
+  "warnings": [
+    "layer 4 advisory contrast ratio is 3.81:1"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "status": "render-and-acoustic-review-pass",
+  "completedAt": "2026-07-21T14:08:00-03:00",
+  "renderer": "Echo rv15",
+  "voice": "am_michael",
+  "chapterCount": 13,
+  "durationSeconds": 14257.408,
+  "audioSHA256": "1eaa015503f2f389182c5d5358350921695eec8e0ecba993b677ab4e833df320",
+  "sourceEpubSHA256": "acf8842c09bf50d70b3582907430b0d67c44627da270a5ac595171a42b17568e",
+  "alignmentSHA256": "0d1d9897552c2251286b66c02c7ce4cd91972d96572a0d08cc315efacaee6cc7",
+  "pronunciationAuditSHA256": "2f11a93eaf695ac39d54722ae809f4133fa649ba7c3b49244400f5ef07d3eaf0",
+  "pronunciationReelSHA256": "25b80285dc805220abc3ede7bbec05391743dd1da497b30eccb72385763edb0b",
+  "successReceiptSHA256": "b4a57e2d60c1580d858dca6021b8570d45c39f114145ed181f1dee51a29b8a2f",
+  "checks": {
+    "sidecar": "SIDECAR_OK",
+    "alignmentAnchors": 612,
+    "wordTimedAnchors": 324,
+    "alignmentMonotonic": true,
+    "pronunciationCoverage": "complete",
+    "pronunciationDiagnostics": 0,
+    "silenceAtLeastThreeSecondsBelowMinus45dB": 0,
+    "chapterHashesUnchanged": true
+  },
+  "reviewBoundary": "This receipt proves a complete render plus acoustic, alignment and pronunciation inspection. It does not claim that Dan completed a full-audio listen or accepted the final audiobook.",
+  "humanFullAudioListening": "pending",
+  "textRepairRequired": false
+}

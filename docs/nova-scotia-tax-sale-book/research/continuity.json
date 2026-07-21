@@ -3,7 +3,7 @@
   "draftContexts": [
     {
       "section": "ch01-s01",
-      "status": "accepted-first-section-voice-exemplar",
+      "status": "accepted-and-promoted-to-canonical",
       "fullOutlinePath": "research/learning-outline.json",
       "evidenceNotesPath": "research/evidence-notes.md",
       "factPackPath": "research/fact-pack.md",
@@ -20,13 +20,2722 @@
       "landingBeat": "The listener wants to know why the parcel is being sold and what each source can actually establish.",
       "mustNotRepeat": [],
       "draftPath": "pilot/first-section-candidate.md",
+      "canonicalDraftPath": "chapters/ch01.md",
+      "canonicalSectionSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "promotedAt": "2026-07-20T08:55:51-03:00",
       "voiceExemplarPath": "research/voice-exemplar.md",
       "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
       "humanAcceptanceEvidence": "Let’s go for the voice.",
       "acceptedAt": "2026-07-19T16:17:07-03:00",
       "authorizationPath": "research/learning-outline.json",
       "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch01-s02",
+      "status": "accepted-pilot-passage-promoted-to-canonical",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "previousSectionTextOrSummary": "The accepted opening credits the Inverness packet, uses the fictional Harbour Road parcel to separate records from conclusions, reconciles conflicting packet details, assigns unanswered questions to the right authorities and ends by asking why a municipality is selling land rather than marketing it.",
+      "sectionJob": "Trace the pre-sale clock from tax lien through notice and advertisement.",
+      "specificClaims": [
+        "LAW-001",
+        "LAW-002",
+        "LAW-003",
+        "LAW-004",
+        "LAW-005",
+        "OPS-005",
+        "OPS-007"
+      ],
+      "throughlineAdvance": "Introduce the first of two clocks and the treasurer's limited institutional job.",
+      "payoff": "The auction room now has a legal backstory and human participants outside the room.",
+      "landingBeat": "The listener can state why the municipality is there and why it is not acting like a realtor.",
+      "mustNotRepeat": [
+        "Do not reteach the municipal packet's source limitations.",
+        "Do not teach auction payment mechanics yet."
+      ],
+      "draftPath": "pilot/first-technical-passage.md",
+      "canonicalDraftPath": "chapters/ch01.md",
+      "canonicalSectionSHA256": "8cf03fb648988d681a072665875fd6905d0c3fe85b00b44cba622018e1035d65",
+      "promotedAt": "2026-07-20T08:55:51-03:00",
+      "draftSHA256": "8cf03fb648988d681a072665875fd6905d0c3fe85b00b44cba622018e1035d65",
+      "wordCount": 1042,
+      "draftedAt": "2026-07-20T08:27:17-03:00",
+      "termsDefined": [
+        "tax lien",
+        "notice of intent",
+        "tax sale"
+      ],
+      "retrievalPrompt": "Choose the controlling source for a Halifax event from an Inverness packet, a map marker and Halifax's current notice under its own Charter framework.",
+      "retrievalAnswer": "Halifax's current notice controls; the packet teaches a method and the map routes the listener, but neither replaces the event authority.",
+      "runningSummary": "The municipality reaches sale through a priority lien, elapsed statutory time, preliminary and sixty-day notices, title work and at least thirty days of public notice. Municipal event practices vary, Halifax uses a parallel Charter, and the current authority-owned notice controls over another municipality's packet or a map marker.",
+      "unresolvedPromises": [
+        "Explain what the amount owing does and does not mean before bidding.",
+        "Return to the second clock after a successful bid.",
+        "Apply the authority-routing method to the Chapter 5 map workflow."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "humanOutlineApprovalEvidence": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction.",
+      "approvedAt": "2026-07-20T08:21:03-03:00",
+      "authorizationPath": "research/learning-outline.json",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch02-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 1 establishes the Inverness packet as a strong starting source, follows the pre-sale clock from priority tax lien through notices and advertisement, and ends with the current authority-owned notice controlling over another municipality's packet or the map.",
+      "sectionJob": "Decode lien number, assessed owner, AAN, PID, address and land/building fields.",
+      "specificClaims": [
+        "LAND-001",
+        "LAND-002",
+        "LAND-003",
+        "DATA-002"
+      ],
+      "coverageConcepts": [
+        "notice identifiers"
+      ],
+      "throughlineAdvance": "Begin separating property identity, assessment and title.",
+      "payoff": "The listener can route each identifier to the correct source.",
+      "landingBeat": "A notice becomes the first index card in a research file.",
+      "mustNotRepeat": [
+        "Do not re-explain tax-lien priority.",
+        "Do not repeat the full packet limitation inventory from Chapter 1.",
+        "Do not identify assessed owners or turn a live row into a recommendation.",
+        "Do not teach the recovery amount, redemption mechanics or current-list refresh yet."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch02.md",
+      "sectionDraftSHA256": "819e81f47ef4b35ad2e71a2f3306fc4696ac29415f66d2d290ad0a100cecbdf4",
+      "sectionWordCount": 1410,
+      "draftedAt": "2026-07-20T09:02:52-03:00",
+      "termsDefined": [
+        "Assessment Account Number (AAN)",
+        "Parcel Identification Number (PID)",
+        "assessment"
+      ],
+      "analogyUsed": {
+        "name": "two catalogue keys",
+        "purpose": "AAN routes to the assessment account while PID routes to the mapped parcel and related land records.",
+        "limit": "Land records create and evidence legal interests; they are not merely descriptions of a book already understood."
+      },
+      "retrievalPrompt": "Route an address-PID disagreement to civic or municipal sources, parcel records, survey evidence and legal interpretation instead of choosing the more plausible picture.",
+      "runningSummary": "A sale row bundles references to several systems. The lien number identifies the event entry; AAN identifies the assessment account; PID identifies the mapped parcel; address supplies orientation; assessment fields support taxation; and Property Online can connect authorized land-record research without becoming public source material.",
+      "unresolvedPromises": [
+        "Explain why the recovery amount is not value.",
+        "Explain what the redemption marker changes without teaching the full post-sale mechanism.",
+        "Show why the current municipal list must be refreshed before the event."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:00:45-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch02-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "The first section turns each packet field into a source-routing handle: lien number for the event, AAN for the assessment account, PID for the mapped parcel, address for orientation, assessment fields for taxation and authorized land records for ownership or registry questions. It ends with Harbour Road as the first index card in a traceable file.",
+      "sectionJob": "Explain the recovery amount and redemption markers plus the fluid live list.",
+      "specificClaims": [
+        "OPS-003",
+        "DATA-001",
+        "DATA-002",
+        "LAW-009",
+        "MAP-003",
+        "MAP-007"
+      ],
+      "coverageConcepts": [
+        "notice identifiers",
+        "redemption clock"
+      ],
+      "throughlineAdvance": "Foreshadow the second clock and establish list-refresh discipline.",
+      "payoff": "A withdrawn lot feels normal rather than like lost opportunity.",
+      "landingBeat": "The listener refuses to infer a bargain from typography.",
+      "mustNotRepeat": [
+        "Do not define AAN, PID or assessment again.",
+        "Do not teach the full redemption formula, certificate-holder duties or auction payment mechanics.",
+        "Do not use a historical result as value evidence or a bidding forecast.",
+        "Do not teach the full Chapter 5 map workflow."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch02.md",
+      "sectionDraftSHA256": "835711d7cfb5efda8b5da027ee4d74da3b2f52247edd1861be0cc902c8b63e5e",
+      "sectionWordCount": 1567,
+      "draftedAt": "2026-07-20T09:05:42-03:00",
+      "termsRetrieved": [
+        "AAN",
+        "PID",
+        "assessment"
+      ],
+      "packetLabelsExplained": [
+        "recovery amount",
+        "redeemable",
+        "non-redeemable"
+      ],
+      "retrievalPrompt": "After an interruption, identify the parcel handle, assessment-account handle, current event authority and bounded meaning of a non-redeemable marker.",
+      "retrievalAnswer": "PID, AAN, the municipality's current notice or confirmation, and the absence of the normal six-month statutory redemption right without any promise about possession, condition, title or use.",
+      "runningSummary": "The recovery amount is a dated municipal collection figure rather than an appraisal; the redemption marker routes the row toward a later legal branch; and paid, redeemed, removed or deferred rows can change the live list. The map shortens the route to the direct municipal source while current notices and historical outcomes remain separate record families.",
+      "unresolvedPromises": [
+        "Explain certificate, redemption and immediate-deed consequences in Chapter 3.",
+        "Deepen recovery amount versus value and all-in cost in Chapter 9.",
+        "Teach the complete map research chain in Chapter 5."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:02:52-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch03-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 2 separates event, assessment, parcel, address, recovery and redemption fields, establishes the municipality's current notice as the event-status authority, and leaves the redemption marker as an unopened post-sale branch.",
+      "sectionJob": "Follow the redeemable parcel from payment to certificate-holder status.",
+      "specificClaims": [
+        "LAW-007",
+        "LAW-008",
+        "LAW-009"
+      ],
+      "coverageConcepts": [
+        "redemption clock",
+        "staged responsibility"
+      ],
+      "throughlineAdvance": "Winning transfers responsibility before it necessarily transfers final title.",
+      "payoff": "The certificate holder is neither an ordinary prospective buyer nor an unrestricted final owner.",
+      "landingBeat": "The listener can name what may and may not be done during six months.",
+      "mustNotRepeat": [
+        "Do not redefine the redemption marker, AAN, PID, assessment or recovery amount.",
+        "Do not explain title-research tools, possession law or the full redemption accounting yet.",
+        "Do not promise that the statutory insurance duty guarantees available coverage.",
+        "Do not turn protective powers into permission for trespass, development or self-help."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch03.md",
+      "sectionDraftSHA256": "a0777d278b0314b7f09452791a5e33053c279d459b7b871b609f8465311cb973",
+      "sectionWordCount": 967,
+      "draftedAt": "2026-07-20T09:08:34-03:00",
+      "termsDefined": [
+        "certificate of sale",
+        "certificate holder"
+      ],
+      "analogyUsed": {
+        "name": "relay baton",
+        "purpose": "Documents identify the current stage and permitted job.",
+        "limit": "The same purchaser may hold every stage and legal rights are not literally passed between runners."
+      },
+      "retrievalPrompt": "Before acting during redemption, identify the current document, supporting power or duty, continuing boundary and record the file will need.",
+      "runningSummary": "Full payment on a redeemable property leads to a registered certificate of sale. The certificate holder may protect and non-diminishingly use the property and collect rent, while avoiding injury and tree cutting and insuring insurable buildings. Those powers remain bounded by redemption, occupancy, planning, safety and professional-authority questions.",
+      "unresolvedPromises": [
+        "Explain the redemption payment, purchaser repayment and loss of rights.",
+        "Explain the immediate-deed and unredeemed-certificate branch without equating deed with possession."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:07:09-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch03-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "A paid redeemable sale creates a registered certificate and a conditional middle state. Harbour Road's certificate holder protects and insures an insurable building, documents necessary work and reaches month four when a qualifying owner brings the redemption funds.",
+      "sectionJob": "Explain redemption money, discharge, repayment and the deed branch.",
+      "specificClaims": [
+        "LAW-010",
+        "LAW-011",
+        "LAW-012"
+      ],
+      "coverageConcepts": [
+        "redemption clock",
+        "staged responsibility"
+      ],
+      "throughlineAdvance": "Documents and clocks now control the transition of responsibility.",
+      "payoff": "Immediate deed is stripped of its misleading promise of immediate certainty.",
+      "landingBeat": "The listener can narrate both endings without confusing deed with possession.",
+      "mustNotRepeat": [
+        "Do not repeat the certificate-holder power and duty catalogue.",
+        "Do not itemize the future all-in bid cost stack.",
+        "Do not teach possession, occupancy, title-contest or post-deed due diligence in full.",
+        "Do not imply that certificate discharge or deed registration erases every practical uncertainty."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch03.md",
+      "sectionDraftSHA256": "cafefd3160fded385f2a91996c081856d0620e6ad6e0e1c8d686747ad8679896",
+      "sectionWordCount": 960,
+      "draftedAt": "2026-07-20T09:10:05-03:00",
+      "termsDefined": [
+        "discharge",
+        "tax deed"
+      ],
+      "mechanismExplained": "A qualifying full redemption payment repays the purchaser under the statutory categories and ends the purchaser's rights through discharge; expiry without redemption or the older-arrears exception permits the deed route.",
+      "retrievalPrompt": "Narrate the different endings for redeemable Harbour Road and older-arrears Quarry Lane without inferring possession, condition, access, insurability or suitability.",
+      "runningSummary": "The certificate period can end through statutory repayment and discharge, which ends the purchaser's rights, or through the deed route after expiry without redemption or the older-arrears exception. A tax deed vests fee-simple title under the statute while continuing easement and right-of-way treatment and practical ownership questions remain.",
+      "unresolvedPromises": [
+        "Build the source-ordered parcel biography before attachment to a property.",
+        "Return to operating the certificate-holder ledger in Chapter 11.",
+        "Return to possession, title contest and post-deed work in Chapters 8 and 12."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:08:34-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch04-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 3 ends with Harbour Road discharged after redemption and Quarry Lane entering the deed branch. The listener can distinguish stage documents but still cannot infer parcel identity, boundary, access, condition, possession or usability from any of them.",
+      "sectionJob": "Inventory the municipal baseline, then build the additional evidence file from source records and public layers.",
+      "specificClaims": [
+        "DATA-005",
+        "LAND-001",
+        "LAND-002",
+        "LAND-004",
+        "LAW-003",
+        "GIS-001",
+        "GIS-002"
+      ],
+      "coverageConcepts": [
+        "parcel biography",
+        "source hierarchy",
+        "public map limitation"
+      ],
+      "throughlineAdvance": "Separate reused municipal facts, new research, legal or professional interpretation and residual uncertainty.",
+      "payoff": "The fictional parcel acquires a traceable biography rather than a repackaged listing sheet.",
+      "landingBeat": "The listener knows what useful work remains before asking a lawyer a precise question.",
+      "mustNotRepeat": [
+        "Do not redefine AAN, PID or tax deed.",
+        "Do not replay the certificate-holder powers or redemption fork.",
+        "Do not publish Property Online screenshots, registry documents, owner information or subscription-derived extracts.",
+        "Do not teach environmental databases or the interactive map workflow yet.",
+        "Do not treat public parcel geometry or aerial imagery as a survey, title opinion or access proof."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch04.md",
+      "sectionDraftSHA256": "6da671f62f22718220e265bab943aa3f7e44ccba01bef2b51dbc7dc63c6ac815",
+      "sectionWordCount": 1335,
+      "draftedAt": "2026-07-20T09:17:12-03:00",
+      "mapBridgeRevision": {
+        "status": "targeted-map-bridge-applied",
+        "job": "Name exact-PID and authoritative civic-point containment as bounded public-map entry routes without teaching the Chapter 5 workflow.",
+        "specificClaims": [
+          "MAP-001",
+          "MAP-002"
+        ],
+        "mustNotRepeat": [
+          "Do not teach current-versus-historical mode, context layers or the five-step map method.",
+          "Do not imply that either entry route proves ownership, occupancy, access, boundary or permission to enter."
+        ],
+        "recordedAt": "2026-07-20T09:30:18-03:00",
+        "recordedBeforeRevision": true,
+        "revisedAt": "2026-07-20T09:31:02-03:00",
+        "revisedSectionSHA256": "6da671f62f22718220e265bab943aa3f7e44ccba01bef2b51dbc7dc63c6ac815"
+      },
+      "termsDefined": [
+        "parcel register",
+        "legal description",
+        "title search"
+      ],
+      "retrievalPrompt": "For one exact PID, separate the municipal event record, authorized land-record questions, legal description, and attributed public screening views without turning any one source into a survey or title opinion.",
+      "runningSummary": "A parcel biography starts by crediting and inventorying the municipal baseline, then records each source, date, observation and limitation. Authorized Property Online research routes registry questions without entering the public manuscript; public NSPRD and aerial views remain attributed screening exhibits; and title search, legal description and survey questions go to the professionals who can answer them.",
+      "unresolvedPromises": [
+        "Classify residual uncertainty and target lawyer, surveyor and planner questions.",
+        "Operate the interactive notice-to-handoff workflow in Chapter 5."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:14:40-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch04-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Birch Point Road now has a source ledger that credits the municipality, routes authorized private registry research without republishing it, preserves Province attribution on public views, and separates parcel register, legal description, title search and survey questions.",
+      "sectionJob": "Introduce uncertainty labels and the lawyer, surveyor and planner division of labour.",
+      "specificClaims": [
+        "LAND-003",
+        "LAND-004",
+        "LAW-013"
+      ],
+      "coverageConcepts": [
+        "verified fact",
+        "professionally verifiable uncertainty",
+        "priceable uncertainty",
+        "no-go uncertainty"
+      ],
+      "throughlineAdvance": "Introduce verified, professionally verifiable, priceable uncertainty and no-go classifications.",
+      "payoff": "Professional fees become targeted uncertainty reduction rather than generic closing overhead.",
+      "landingBeat": "Attachment to a parcel is delayed until its evidence file survives first review.",
+      "mustNotRepeat": [
+        "Do not redefine the three land-record terms from the first section.",
+        "Do not turn professional roles into a checklist recital.",
+        "Do not teach zoning, access or environmental mechanisms in full.",
+        "Do not imply that every uncertainty can be priced or resolved before sale.",
+        "Do not treat a court-directed sale as a routine cure for a weak research file."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch04.md",
+      "sectionDraftSHA256": "909daaf5d5ced8151a98757d418491c9d23ae415428cb5ed83d4aadc5055abe0",
+      "sectionWordCount": 1089,
+      "draftedAt": "2026-07-20T09:19:58-03:00",
+      "classificationsExplained": [
+        "verified fact",
+        "professionally verifiable uncertainty",
+        "priceable uncertainty",
+        "no-go uncertainty"
+      ],
+      "professionalHandoffs": [
+        "lawyer for registered interests, legal access and court-order effect",
+        "surveyor for boundary or plan-location evidence",
+        "planner for current municipal requirements applied to the proposed use"
+      ],
+      "retrievalPrompt": "Classify a remaining gap by what the source verifies, who can answer it, whether a documented answer can enter the budget, and whether an essential unresolved fact must stop the project.",
+      "runningSummary": "The parcel biography keeps facts and gaps together. Verified facts remain bounded by their source; professionally verifiable questions receive specific evidence and handoffs; priceable uncertainty enters the budget only from documented amounts; and an essential unresolved fact becomes a no-go for the stated project. Court-directed sale is a municipality-and-court mechanism, not an assumed cure.",
+      "unresolvedPromises": [
+        "Operate the live map as a question machine while preserving source, date, limitation, unknown and handoff."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:17:12-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch05-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 4 gives fictional Birch Point Road a source-traceable biography, keeps subscription material private, bounds public parcel and aerial views, and classifies residual gaps by professional route, priceability and stop condition.",
+      "sectionJob": "Keep current notices separate from historical outcomes, verify the direct municipal source and establish one parcel by exact PID or authoritative civic-point containment.",
+      "specificClaims": [
+        "MAP-001",
+        "MAP-002",
+        "MAP-003",
+        "MAP-004",
+        "DATA-002",
+        "DATA-005",
+        "GIS-001",
+        "GIS-002"
+      ],
+      "coverageConcepts": [
+        "current versus historical mode",
+        "direct municipal authority",
+        "exact parcel establishment",
+        "civic point",
+        "Plus Code"
+      ],
+      "throughlineAdvance": "Turn source hierarchy into an interface habit: mode and notice first, parcel identity second, imagery later.",
+      "payoff": "The listener can open the correct event and establish one parcel without mistaking the app, civic point or Plus Code for an authoritative property conclusion.",
+      "landingBeat": "The map is ready to generate questions, not conclusions.",
+      "mustNotRepeat": [
+        "Do not redefine AAN, PID, parcel register, legal description or title search.",
+        "Do not repeat the complete Chapter 4 uncertainty classification.",
+        "Do not recite the full layer catalogue in audio.",
+        "Do not substitute nearest or interpolated civic addresses.",
+        "Do not treat the app, civic point, Plus Code, parcel geometry or imagery as ownership, occupancy, legal access, boundary or permission-to-enter evidence."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch05.md",
+      "sectionDraftSHA256": "dce68df56be24a043362541150263bd3396036852daafea84f3e6facc72d7840",
+      "sectionWordCount": 1243,
+      "draftedAt": "2026-07-20T09:23:44-03:00",
+      "termsDefined": [
+        "civic point",
+        "Plus Code"
+      ],
+      "interfaceSequence": [
+        "choose current or historical record family",
+        "select municipality and dated event",
+        "verify the direct municipal source",
+        "establish the parcel by exact PID or authoritative civic-point containment",
+        "open imagery or context only after identity is stable"
+      ],
+      "retrievalPrompt": "After an interruption, recover record family, municipality and event, direct-source confirmation, and exact parcel establishment before returning to imagery.",
+      "runningSummary": "The production map is a dated research index. Current notices and verified historical outcomes remain separate; the direct municipality owns live event status; exact PID or authoritative civic-point containment establishes a parcel for research; civic points, Plus Codes, mapped area, boundary geometry and imagery remain bounded orientation context.",
+      "unresolvedPromises": [
+        "Use road, water and resource layers one question at a time.",
+        "Bound one historical result and write the unknown plus professional handoff."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:21:11-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch05-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "The map workflow now begins with current versus historical mode, municipality and dated event, direct-source confirmation, and exact parcel establishment by PID or authoritative civic-point containment. Imagery, geometry, mapped area, civic points and Plus Codes remain bounded orientation context.",
+      "sectionJob": "Use road, water and geology or resource layers one question at a time, bound one historical result, then write the unknown and professional handoff.",
+      "specificClaims": [
+        "MAP-002",
+        "MAP-004",
+        "MAP-005",
+        "MAP-006",
+        "MAP-007",
+        "LAND-004"
+      ],
+      "coverageConcepts": [
+        "layer",
+        "mapped intersection",
+        "source-date-limitation-unknown-handoff note",
+        "historical outcome boundary"
+      ],
+      "throughlineAdvance": "Convert attractive map pixels into traceable evidence classifications and next actions.",
+      "payoff": "The listener can use River Denys and one historical Halifax result to say what the app reports, what it does not establish and where the next question belongs.",
+      "landingBeat": "Notice, parcel, context, unknowns and handoff becomes the repeatable method.",
+      "mustNotRepeat": [
+        "Do not repeat the current-source and parcel-establishment sequence in full.",
+        "Do not infer legal access from visible transportation or road linework.",
+        "Do not infer wetlands, flood status or clean site conditions from water or empty layer results.",
+        "Do not infer reserves, mineral rights, contamination, safety or economic value from resource layers.",
+        "Do not infer current value or future bidding from a historical outcome.",
+        "Do not turn either real PID into a recommendation."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch05.md",
+      "sectionDraftSHA256": "83f6a2660979841491188c35bcbf04cb9a3e94a204854fbab66bfe03930d8609",
+      "sectionWordCount": 1406,
+      "draftedAt": "2026-07-20T09:27:36-03:00",
+      "termsDefined": [
+        "layer",
+        "mapped intersection"
+      ],
+      "groundedExamples": [
+        "current-notice PID 50308311 Southside River Denys road and water context",
+        "historical Halifax PID 00542589 March 8 2022 outcome"
+      ],
+      "method": [
+        "notice",
+        "parcel",
+        "context",
+        "unknowns",
+        "handoff"
+      ],
+      "retrievalPrompt": "State source, date, observation, limitation, unknown and handoff for one mapped result, then name the record family before repeating any historical amount.",
+      "runningSummary": "A layer isolates one source-sized context question. A mapped intersection reports a relationship between current service geometry and current parcel geometry without becoming a real-world legal or physical conclusion. River Denys demonstrates road/water limits; the Halifax result demonstrates historical limits; and the full method preserves notice, parcel, context, unknowns and handoff.",
+      "unresolvedPromises": [
+        "Stress-test road proximity against legal access in Chapter 6.",
+        "Stress-test empty or returned environmental records in Chapter 7.",
+        "Retrieve the historical-result boundary in Chapter 9 and the full method in Chapter 13."
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T09:23:44-03:00",
+      "recordedBeforeDraft": true
+    },
+    {
+      "section": "ch06-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 5 establishes notice, parcel, context, unknowns and handoff as a source-bounded map method. Its River Denys demonstration reports transportation nearby and no mapped road or trail intersection without treating either result as legal access evidence.",
+      "sectionJob": "Stress-test a visible driveway-like route by separating physical approach from a legally supportable right to reach a fictional roadside sliver.",
+      "specificClaims": [
+        "LAND-004",
+        "LAND-005",
+        "LAW-012",
+        "LAND-008"
+      ],
+      "coverageConcepts": [
+        "mapped intersection retrieval",
+        "legal access",
+        "right-of-way"
+      ],
+      "throughlineAdvance": "Move from a bounded spatial observation to the title, plan, survey and legal questions that can establish or defeat access.",
+      "payoff": "The listener can explain why getting near land and having a right to reach it are different achievements.",
+      "landingBeat": "A beautiful apparent route remains a no-go until the required access is supported by the proper records and professional interpretation.",
+      "mustNotRepeat": [
+        "Do not re-tour the interface or redefine mapped intersection.",
+        "Do not redefine PID, parcel register, legal description or title search.",
+        "Do not infer a boundary, easement or public road from imagery or graphical parcel geometry.",
+        "Do not imply a deed itself creates missing access or permission to cross neighbouring land.",
+        "Do not authorize entry onto listed private property."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch06.md",
+      "termsBudget": [
+        "right-of-way",
+        "road frontage",
+        "zoning"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T15:44:55-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "3e3d7f4cdb0993b9b9c3cbb896969292090b76631ae7d26c3bdd36d9d39d0684",
+      "sectionWordCount": 1128,
+      "draftedAt": "2026-07-20T15:46:11-03:00",
+      "termsDefined": [
+        "right-of-way"
+      ],
+      "analogyUsed": {
+        "name": "door and key",
+        "purpose": "The visible driveway is a physical opening while sufficient access evidence may authorize passage.",
+        "limit": "A right-of-way has particular scope and obligations rather than operating as a universal key."
+      },
+      "retrievalPrompt": "A driveway-like line appears to reach a parcel. State the bounded observation and identify the title, plan, survey, road and legal questions required before calling it access.",
+      "runningSummary": "A visible route, nearby road or apparent parcel contact can orient access research but cannot establish a boundary, public-road relationship or right to pass. A right-of-way must be supported and interpreted for the exact parcel and intended passage; physical capability and regulatory suitability remain separate.",
+      "unresolvedPromises": [
+        "Test road frontage, zoning, lot status, setbacks, services and municipal compliance separately.",
+        "Reach the project-specific no-go without treating one zone label as approval."
+      ]
+    },
+    {
+      "section": "ch06-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Maple Ridge's visible driveway-like route does not establish a public-road relationship or a legally supportable right to pass. The fictional bidder needs title, plan, survey, legal and road evidence for the exact parcel, and access remains a no-go if the intended project depends on a right that cannot be supported before bidding.",
+      "sectionJob": "Test the intended use separately against road frontage, zoning, lot status, setbacks, services and current municipal compliance.",
+      "specificClaims": [
+        "LAND-006",
+        "LAND-007",
+        "LAND-008"
+      ],
+      "coverageConcepts": [
+        "road frontage",
+        "zoning",
+        "intended-use feasibility"
+      ],
+      "throughlineAdvance": "Show that even supported passage does not establish a buildable lot or permission for a proposed use.",
+      "payoff": "The listener can ask a planner a project-specific question without treating the zone code as the whole answer.",
+      "landingBeat": "Maple Ridge remains a rational no because the evidence required by the project is absent before the bid decision.",
+      "mustNotRepeat": [
+        "Do not re-explain the visible-route and right-of-way distinction.",
+        "Do not repeat the Chapter 4 land-record or uncertainty classifications.",
+        "Do not treat zoning as a building permit or guarantee of service, access, setbacks, lot status or construction feasibility.",
+        "Do not enter the property or convert an exterior observation into a condition claim.",
+        "Do not begin the contamination, well, sewage or hazard lesson reserved for Chapter 7."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch06.md",
+      "termsBudgetRemaining": [
+        "road frontage",
+        "zoning"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T15:46:11-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "7fb9ea5a7eafc884b6ba568a0d9b6e43a823d422e25a66c8ddc472b1659b7ad6",
+      "sectionWordCount": 1207,
+      "draftedAt": "2026-07-20T15:47:45-03:00",
+      "termsDefined": [
+        "road frontage",
+        "zoning"
+      ],
+      "retrievalPrompt": "For a proposed year-round dwelling, separate the supported access evidence from road frontage, zoning, lot status, setbacks, services and permit questions, then state the bid stop condition.",
+      "runningSummary": "A right of passage can improve an access file without establishing road frontage, a buildable lot or a permitted project. Zoning opens a parcel-specific planning inquiry; current lot status, setbacks, services, route capability and required approvals remain separate dependencies tied to the intended use.",
+      "unresolvedPromises": [
+        "Investigate environmental and infrastructure records without turning a missing record into reassurance.",
+        "Return to access burdens when Chapter 8 separates title from possession and continuing interests."
+      ]
+    },
+    {
+      "section": "ch07-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 6 separates visible approach, legally supportable passage, road frontage, zoning and project approval. Maple Ridge produces a rational no because the intended dwelling depends on evidence that cannot be supported before the auction deadline, without any entry or physical-condition inference.",
+      "sectionJob": "Move from lawful exterior observation to contaminated-site, well and sewage records while preserving the difference between an absent record and an absent condition.",
+      "specificClaims": [
+        "ENV-001",
+        "ENV-002",
+        "ENV-003",
+        "LAND-007"
+      ],
+      "coverageConcepts": [
+        "record limitation",
+        "contaminated site",
+        "well log",
+        "lawful exterior research"
+      ],
+      "throughlineAdvance": "Move the parcel biography below the visible surface while making every returned or missing record carry its coverage and uncertainty.",
+      "payoff": "The listener can distinguish an old oil-tank clue, a missing sewage file and an estimated well point without turning any one of them into a site verdict.",
+      "landingBeat": "The record file identifies the next lawful investigation without impersonating an inspection.",
+      "mustNotRepeat": [
+        "Do not replay the Chapter 6 access, frontage or zoning failure case.",
+        "Do not authorize entry or describe a municipal listing as permission to inspect.",
+        "Do not treat registry absence as proof of a clean site.",
+        "Do not treat a well-log point as a surveyed well location or a water-quality result.",
+        "Do not treat a missing older sewage record as proof that no system exists or that a system complies.",
+        "Do not discuss HST, maximum bids or auction arithmetic."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch07.md",
+      "termsBudget": [
+        "contaminated site",
+        "well log",
+        "hazard map"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T15:48:32-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "47c7f954dccef13262f919808ff0c533b778e93d2b2ee40d14a53a18061d0f14",
+      "sectionWordCount": 1218,
+      "draftedAt": "2026-07-20T15:49:57-03:00",
+      "termsDefined": [
+        "contaminated site",
+        "well log"
+      ],
+      "retrievalPrompt": "For a former workshop, classify an old oil-tank clue, a negative contaminated-site search, an estimated well-log point and a missing older sewage file by supported finding and residual uncertainty.",
+      "runningSummary": "Lawful exterior clues and environmental or infrastructure records can sharpen questions without diagnosing the site. Registry absence does not establish cleanliness; a well log does not establish current location, water quality or serviceability; and a missing older sewage file must be read with the source's retention limit.",
+      "unresolvedPromises": [
+        "Apply the same record-limitation discipline to coastal scenarios and abandoned-mine data.",
+        "End with positive, negative and error-state language that remains useful without becoming reassurance."
+      ]
+    },
+    {
+      "section": "ch07-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Breakwater Lane's former workshop history creates an environmental clue rather than a diagnosis. A negative registry search, an estimated well-log point and a missing older sewage file each carry different coverage, geolocation, retention and present-condition limits; none authorizes entry or substitutes for lawful assessment.",
+      "sectionJob": "Interpret coastal scenario and abandoned-mine records as bounded screening evidence, including both returned and empty results.",
+      "specificClaims": [
+        "ENV-004",
+        "ENV-005",
+        "LAND-004"
+      ],
+      "coverageConcepts": [
+        "record limitation",
+        "hazard map",
+        "positive-negative-error states"
+      ],
+      "throughlineAdvance": "Extend evidence discipline from buried infrastructure into future coastal scenarios and incomplete geological inventories.",
+      "payoff": "The listener can state what a positive or negative hazard-map result supports and what remains for site-specific professional work.",
+      "landingBeat": "A limitation defines a source's useful claim instead of making the source either conclusive or useless.",
+      "mustNotRepeat": [
+        "Do not repeat the contaminated-site, well-log or sewage-record lesson.",
+        "Do not re-explain parcel-boundary or layer mechanics from Chapters 4 and 5.",
+        "Do not turn a coastal scenario into a parcel-specific engineering, insurance or development conclusion.",
+        "Do not turn an abandoned-mine point into a surveyed opening or an empty result into proof of no hazard.",
+        "Do not use the case to rank or recommend a live tax-sale parcel."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch07.md",
+      "termsBudgetRemaining": [
+        "hazard map"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T15:49:57-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "0087874d5733034f5ce8e52543edfc2743590d52e24707134a297dfc008a991b",
+      "sectionWordCount": 1218,
+      "draftedAt": "2026-07-20T15:51:33-03:00",
+      "termsDefined": [
+        "hazard map"
+      ],
+      "analogyUsed": {
+        "name": "flashlight in a dark barn",
+        "purpose": "A source illuminates the part of a risk field covered by its records and methods without proving the unlit remainder empty.",
+        "limit": "Databases have systematic scope and evidence rather than random beams, and different sources are not equally weak."
+      },
+      "retrievalPrompt": "After an interruption, recover the selected coastal scenario, its stated meaning, the mine query's positive, negative or error state, each source limitation and the next property-specific question.",
+      "runningSummary": "Coastal hazard mapping depicts defined current or future scenarios rather than parcel-specific outcomes. The abandoned-mine inventory can reveal known records but is incomplete, omits surface expressions of subsidence and carries positional uncertainty. Positive, negative and error states support different claims.",
+      "unresolvedPromises": [
+        "Retrieve environmental record limitations after lawful post-deed inspection in Chapter 12.",
+        "Use the bounded environmental summary in the final Chapter 13 parcel-file retrieval."
+      ]
+    },
+    {
+      "section": "ch08-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 7 keeps environmental and infrastructure records bounded by source, search state, coverage, geolocation, retention and present-condition limits. It ends by preserving positive, negative and error states rather than treating mapped context as a parcel verdict.",
+      "sectionJob": "Interpret the deed-effect rule without turning it into a universal cleanliness or possession claim.",
+      "specificClaims": [
+        "LAW-012",
+        "LAW-013",
+        "LAW-014"
+      ],
+      "coverageConcepts": [
+        "legal access retrieval",
+        "title versus possession"
+      ],
+      "throughlineAdvance": "Narrow legal title to what the deed, governing statute, any court order and property-specific legal review actually resolve.",
+      "payoff": "The phrase clear title loses its false all-purpose meaning without diminishing the deed's real legal effect.",
+      "landingBeat": "The listener asks a lawyer which interests, continuing easements, order terms and qualifications apply to the exact PID.",
+      "mustNotRepeat": [
+        "Do not repeat the full certificate, redemption or deed timeline from Chapter 3.",
+        "Do not replay Chapter 6's visible-route or planning failure case.",
+        "Do not imply that free of encumbrances means free of every practical, regulatory, possession or property-specific legal problem.",
+        "Do not speculate about the treatment of an unexamined federal, Crown, Indigenous, environmental, utility or statutory interest.",
+        "Do not use a fictional title finding as a live-property title opinion.",
+        "Do not begin the occupancy, abandoned-goods or mobile-home process reserved for the second section."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch08.md",
+      "termsBudget": [
+        "fee simple",
+        "encumbrance",
+        "vacant possession"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T16:22:05-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "aa22ce4a223c9a23d89be36e8559b7d7011313e5ff110ecdfe4d478c39ebf498",
+      "sectionWordCount": 1094,
+      "draftedAt": "2026-07-20T16:24:35-03:00",
+      "termsDefined": [
+        "fee simple",
+        "encumbrance"
+      ],
+      "retrievalPrompt": "For a tax-deeded parcel, identify the interest conveyed, a continuing easement or right-of-way, any court-order qualifications and the conclusion that still requires a property-specific legal opinion.",
+      "runningSummary": "The statutory tax deed has real title effect, but its free-of-encumbrances language must be read with continuing easements and rights-of-way, any court order, the deed and the exact property record. A prior interest holder's possible surplus claim is a money route rather than an automatic continuing parcel burden.",
+      "unresolvedPromises": [
+        "Separate the title interest from occupied premises, tenancy, abandoned goods and actual possession.",
+        "Branch an unaffixed mobile or manufactured home into land-title, personal-property and land-lease questions."
+      ]
+    },
+    {
+      "section": "ch08-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Foundry Street's tax deed changes the legal interest without becoming a universal-cleanliness claim. Fee simple and free-of-encumbrances language remain tied to the statute, continuing easements or rights-of-way, any court order, source instruments and a lawyer's exact-PID interpretation. The building remains visibly occupied.",
+      "sectionJob": "Use an occupied building and mobile-home branch to teach the boundary between title, occupancy and lawful possession.",
+      "specificClaims": [
+        "LAW-008",
+        "OCC-001",
+        "MOB-001"
+      ],
+      "coverageConcepts": [
+        "title versus possession",
+        "staged responsibility retrieval"
+      ],
+      "throughlineAdvance": "Extend purchaser responsibility to lawful treatment of people and personal property without converting a deed or certificate into self-help authority.",
+      "payoff": "The listener avoids locks, confrontation, improvised eviction and disposal of goods while routing each factual branch to the right legal system.",
+      "landingBeat": "Vacant possession becomes a separately researched outcome rather than an assumed effect of the deed.",
+      "mustNotRepeat": [
+        "Do not repeat the deed-effect, court-order or surplus explanation from the first section.",
+        "Do not prescribe a tenancy notice, eviction, lockout, rent-demand or abandoned-goods process.",
+        "Do not assume that visible occupancy identifies an owner, tenant, guest or lawful status.",
+        "Do not turn certificate-holder protective or rent-collection powers into authority for confrontation or self-help.",
+        "Do not assume a PID search identifies ownership or security interests in an unaffixed mobile or manufactured home.",
+        "Do not rank or recommend a live occupied tax-sale property."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch08.md",
+      "termsBudgetRemaining": [
+        "vacant possession"
+      ],
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T16:24:35-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "112ed6f910175a4b2e807c13ed5aae0d2829c2d3586ce31f49c6577fd619a5a0",
+      "sectionWordCount": 1157,
+      "draftedAt": "2026-07-20T16:26:03-03:00",
+      "termsDefined": [
+        "vacant possession"
+      ],
+      "analogyUsed": {
+        "name": "coat-check ticket versus coat in hand",
+        "purpose": "Documented legal entitlement and actual physical possession remain distinct.",
+        "limit": "Real-property possession and tenancy are far more complex, and the analogy supplies no self-help authority."
+      },
+      "retrievalPrompt": "For an occupied or mobile-home tax sale, ask what is owned, what burdens or benefits it, who or what is present and which land-title, personal-property, tenancy or possession process governs each part.",
+      "runningSummary": "A deed changes title without physically emptying premises. Occupant status, tenancy, abandoned goods and vacant possession require fact-specific lawful handling, while a mobile home can split the research among the sale documents, land title, personal-property security and land-lease rules.",
+      "unresolvedPromises": [
+        "Carry possession risk into the all-in uncertainty budget in Chapter 9.",
+        "Retrieve the title-possession distinction if rent arrives during redemption in Chapter 11.",
+        "Reconcile deed, lawful access and actual post-deed condition in Chapter 12."
+      ]
+    },
+    {
+      "section": "ch09-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 8 gives the tax deed its real statutory title effect while separating continuing interests, actual occupancy and vacant possession. Its mobile-home branch keeps land title, the home, personal-property security and land-lease status in their proper record systems. Those unresolved dependencies now enter the economic file.",
+      "sectionJob": "Use dated official auction results to sever the recovery amount, assessment and winning bid from property value.",
+      "specificClaims": [
+        "DATA-003",
+        "DATA-001",
+        "DATA-004",
+        "LAND-003"
+      ],
+      "coverageConcepts": [
+        "all-in cost setup",
+        "historical result boundary"
+      ],
+      "throughlineAdvance": "Treat price as one input inside responsibility rather than evidence of opportunity, value or profit.",
+      "payoff": "The Inverness distribution and bounded CBRM/Richmond comparisons replace auction folklore with observed but non-predictive behaviour.",
+      "landingBeat": "The listener calculates from intended use and risk backward rather than from the recovery amount upward.",
+      "mustNotRepeat": [
+        "Do not replay the Chapter 1 opening auction scene or Chapter 2 recovery-amount definition at full length.",
+        "Do not identify assessed owners, rank a live parcel or turn a historical result into a recommendation.",
+        "Do not describe a winning bid as market value, a comparable sale, profit or later redemption outcome.",
+        "Do not hide the unresolved difference between 35 reported Inverness sales and 31 published result rows.",
+        "Do not compare municipalities without carrying event date, procedure, denominator and sample size.",
+        "Do not begin the detailed tax, eligibility or written-ceiling branches reserved for the second section."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch09.md",
+      "termsBudget": [
+        "all-in cost",
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to bid, known costs and one uncertainty reserve."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T17:50:22-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "b793d1e05bed89c4a3580084235c41550dbe6bafb27e6cf8f86bbf867c83809a",
+      "sectionWordCount": 1085,
+      "draftedAt": "2026-07-20T17:52:14-03:00",
+      "termsDefined": [
+        "all-in cost"
+      ],
+      "analogyUsed": {
+        "name": "iceberg cost stack",
+        "purpose": "The visible winning bid may be smaller than the legal, tax, carrying, condition, possession and uncertainty costs needed to reach an intended use.",
+        "limit": "The submerged proportion is not fixed, and researchable costs should be estimated rather than treated as unknowable danger."
+      },
+      "retrievalPrompt": "Separate the municipal recovery amount, tax assessment and dated winning bid, then name the missing evidence required before any could support a present value conclusion.",
+      "runningSummary": "Inverness, CBRM and Richmond result sets show varied competition without creating a valuation or forecasting model. Every result keeps its event, row count, denominator and completeness limit. Assessment, recovery and winning bid answer different questions; all-in cost begins with a defined use and includes the responsibilities beneath the visible bid.",
+      "unresolvedPromises": [
+        "Convert known cost categories and unresolved dependencies into a bounded fictional cost stack.",
+        "Separate the municipal deed-transfer-tax exemption from provincial non-resident tax and transaction-specific HST.",
+        "Create a written maximum and preserve it under auction pressure in Chapter 10."
+      ]
+    },
+    {
+      "section": "ch09-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Dated Inverness, CBRM and Richmond outcomes show that competition can move far beyond municipal recovery numbers but do not establish value, profit or a future multiplier. Assessment, recovery and winning bid remain distinct. The fictional Cedar Street case introduces all-in cost as the exposure required to reach a defined use, with the visible bid as only the tip of the cost stack.",
+      "sectionJob": "Build the cost stack and branch the municipal exemption, provincial non-resident tax, transaction-specific HST, federal eligibility and payment readiness before setting a written ceiling.",
+      "specificClaims": [
+        "TAX-001",
+        "TAX-002",
+        "TAX-003",
+        "ELIG-001",
+        "LAW-006"
+      ],
+      "coverageConcepts": [
+        "all-in cost",
+        "payment performance setup"
+      ],
+      "throughlineAdvance": "Convert uncertainty into a sourced cost, professional question, reserve or no-bid decision before auction pressure begins.",
+      "payoff": "The fictional bidder retains authority over one written number and walking away becomes successful execution rather than loss.",
+      "landingBeat": "The card lowers when the live bid crosses the evidence-bound maximum, with no new parcel fact entering the file.",
+      "mustNotRepeat": [
+        "Do not replay the historical-result distributions or assessment boundary from the first section.",
+        "Do not provide a personalized return target, investment recommendation, tax conclusion or maximum bid.",
+        "Do not generalize CBRM's event-specific HST statement into a province-wide rule.",
+        "Do not imply that the municipal deed-transfer-tax exemption removes provincial tax, HST, registration or advice costs.",
+        "Do not treat an uncertainty reserve as permission to bid through a no-go condition that cannot be priced.",
+        "Do not teach the full auction, tender, payment-default or resale sequence reserved for Chapter 10."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch09.md",
+      "termsBudgetRemaining": [
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to bid, known costs and one uncertainty reserve."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T17:52:14-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "8f49968b6690eea98dfcc65e163105ffc20118de4f545e6d7d381a226c160a18",
+      "sectionWordCount": 1226,
+      "draftedAt": "2026-07-20T17:53:58-03:00",
+      "termsDefined": [
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "calculationUsed": {
+        "inputs": [
+          "thirty-thousand-dollar fictional bid",
+          "forty thousand dollars of known non-bid costs",
+          "twenty-thousand-dollar uncertainty reserve"
+        ],
+        "result": "ninety-thousand-dollar all-in exposure",
+        "concreteReset": "bid, known costs, reserve"
+      },
+      "retrievalPrompt": "When the live bid crosses the written ceiling, identify whether any new parcel fact changed title, access, condition, possession, tax, eligibility or payment evidence.",
+      "retrievalAnswer": "Another bidder's willingness to pay is the only new fact, so the evidence-bound authority does not increase and the card lowers.",
+      "runningSummary": "A defined use turns legal, carrying, physical, tax, eligibility and payment questions into sourced costs, bounded reserves or stop conditions. The municipal tax-sale-deed exemption does not decide provincial non-resident tax or HST. A maximum bid is written from supported use and exposure evidence before the room and does not rise with competition.",
+      "unresolvedPromises": [
+        "Execute the written ceiling and payment clock under open-outcry and tender pressure in Chapter 10.",
+        "Retrieve the all-in cost structure in the final Chapter 13 parcel file."
+      ]
+    },
+    {
+      "section": "ch10-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 9 separates recovery, assessment and historical winning bid from present value, builds all-in cost from a defined use and ends with a written maximum that cannot rise merely because another bidder raises a card.",
+      "sectionJob": "Compare open-outcry auction with sealed or public tender and identify who may not buy.",
+      "specificClaims": [
+        "LAW-005",
+        "LAW-016",
+        "OPS-001",
+        "OPS-002",
+        "OPS-004",
+        "OPS-005"
+      ],
+      "coverageConcepts": [
+        "payment performance setup",
+        "staged responsibility setup"
+      ],
+      "throughlineAdvance": "Make procedure operational rather than theatrical while keeping the researcher outside the bidder's decision.",
+      "payoff": "The listener can rehearse registration, authority and bid submission without rehearsing excitement.",
+      "landingBeat": "A tender envelope and a bidding card obey the same precommitted ceiling and statutory conflict rules.",
+      "mustNotRepeat": [
+        "Do not re-explain the pre-sale statutory clock or why the sale is lawful.",
+        "Do not redefine all-in cost, uncertainty reserve or maximum bid.",
+        "Do not replay historical result distributions or imply that a format predicts price.",
+        "Do not turn municipal registration examples into province-wide universal rules.",
+        "Do not begin the full payment-default and resale state machine reserved for later sections."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch10.md",
+      "termsBudget": [
+        "open-outcry auction",
+        "public tender",
+        "deposit"
+      ],
+      "audioLoad": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 1,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to one bidding card, one ceiling and one ready bank draft."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T18:17:17-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "511dc64af4292c610a8c88d9ec167ba07dace136812f681589c288385386b2ef",
+      "sectionWordCount": 868,
+      "draftedAt": "2026-07-20T18:18:26-03:00",
+      "termsDefined": [
+        "open-outcry auction",
+        "public tender"
+      ],
+      "retrievalPrompt": "For a bidding card and a tender envelope, identify what changes with format and what remains fixed from the evidence file.",
+      "retrievalAnswer": "Submission mechanics and pressure change; the written maximum, statutory conflict rules, lawful bidder authority and parcel evidence do not.",
+      "runningSummary": "Inverness and CBRM illustrate live public-auction mechanics while dated Pictou and Annapolis records show tender use. Event instructions remain municipal and current-source specific. Open-outcry and tender pressure differ, but neither alters the evidence-bound ceiling or substitutes event registration for complete eligibility and authority.",
+      "unresolvedPromises": [
+        "Walk the current-list refresh, immediate payment and three-business-day balance.",
+        "Trace no-bid, failed-payment and rescheduled-event branches without informal shortcuts."
+      ]
+    },
+    {
+      "section": "ch10-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Open-outcry and tender formats create different pressure and submission mechanics. Inverness and CBRM illustrate live auctions; dated Pictou and Annapolis records illustrate tender use. The written ceiling, conflict prohibition, eligibility and lawful authority remain fixed across formats.",
+      "sectionJob": "Walk the live event, list refresh, withdrawal and immediate payment.",
+      "specificClaims": [
+        "LAW-006",
+        "LAW-015",
+        "OPS-003",
+        "OPS-004",
+        "DATA-002"
+      ],
+      "coverageConcepts": [
+        "payment performance",
+        "all-in cost retrieval"
+      ],
+      "throughlineAdvance": "Redefine a leading bid as an intermediate state that must survive exact event payment rules.",
+      "payoff": "The listener can rehearse the payment path before bidding and can lower the card without treating discipline as a loss.",
+      "landingBeat": "No new fact discovered in adrenaline is allowed to raise the maximum or manufacture ready funds.",
+      "mustNotRepeat": [
+        "Do not reteach the format comparison or full statutory conflict list.",
+        "Do not calculate a redemption amount or begin certificate-period accounting.",
+        "Do not imply that accepted statutory methods are all accepted at every event.",
+        "Do not turn the current Inverness or CBRM administrative amount into a province-wide fee.",
+        "Do not describe a leading bid as completed ownership."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch10.md",
+      "termsBudgetRemaining": [
+        "deposit"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 1,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to one bidding card, one ceiling and one ready bank draft."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T18:18:26-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "47afc460f3ee8c3fa4f138184be13dd330f9673c9535e960917862a8a29ebd59",
+      "sectionWordCount": 900,
+      "draftedAt": "2026-07-20T18:19:42-03:00",
+      "termsDefined": [
+        "deposit"
+      ],
+      "analogyUsed": {
+        "name": "finish line beyond the hammer",
+        "purpose": "Separate the leading offer from exact payment performance.",
+        "limit": "Certificate, redemption and deed stages continue after payment, so the auction is not a complete race to ownership."
+      },
+      "retrievalPrompt": "When the live bid crosses the written ceiling, identify whether any parcel or payment fact changed; when a parcel remains affordable but accepted funds are unavailable, classify readiness.",
+      "retrievalAnswer": "Competition changes no parcel fact and cannot raise authority; unavailable accepted funds make the bidder not ready even below the maximum.",
+      "runningSummary": "Auction morning begins by refreshing the live municipal list. A leading offer must still survive event-specific accepted-payment rules, the immediate statutory payment and any three-business-day balance. Payment performance is planned per parcel before bidding; tender acceptance moves the trigger but does not create an ordinary financing condition.",
+      "unresolvedPromises": [
+        "Trace the immediate re-offer, later re-advertisement and deposit-deduction branches.",
+        "Separate no sufficient bidder, municipal purchase and later sale from informal availability.",
+        "Treat postponement or rescheduling as a current-source question."
+      ]
+    },
+    {
+      "section": "ch10-s03",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "The live list is refreshed before bidding. The written ceiling governs every increment, while payment performance requires event-specific accepted funds for the immediate obligation and a verified path for any three-business-day balance. A leading offer is not a completed sale.",
+      "sectionJob": "Rehearse the no-bid, payment-default and rescheduled-event branches.",
+      "specificClaims": [
+        "LAW-015",
+        "OPS-006"
+      ],
+      "coverageConcepts": [
+        "payment performance",
+        "tax-sale sequence retrieval"
+      ],
+      "throughlineAdvance": "Turn a broken happy path into a bounded state transition whose next authority is the current municipal source.",
+      "payoff": "The listener knows what to watch when no sufficient bid, failed payment or an event change interrupts the expected sequence.",
+      "landingBeat": "A changed event or failed sale is a reason to refresh the municipal source, not to rely on memory or propose private terms.",
+      "mustNotRepeat": [
+        "Do not repeat the full payment-form list, format comparison or Cedar Street maximum construction.",
+        "Do not calculate redemption, resale expenses or a property-specific deposit refund.",
+        "Do not imply that municipal purchase is mandatory when there is no sufficient bidder.",
+        "Do not describe an unsold parcel as privately available.",
+        "Do not give a legal opinion on a disputed postponement, cancellation or resale."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch10.md",
+      "termsBudgetRemaining": [],
+      "audioLoadRemaining": {
+        "temporaryValues": 0,
+        "symbolicChainSteps": 0,
+        "calculationTreatment": "none",
+        "concreteReset": "Return to one bidding card, one ceiling and one ready bank draft."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T18:19:42-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "5d4f3b52774a74f98293d36c26ea1913db22084bb6d571eb2523a08c1b4cb130",
+      "sectionWordCount": 928,
+      "draftedAt": "2026-07-20T18:20:58-03:00",
+      "termsDefined": [],
+      "stateBranches": [
+        "no sufficient bid may lead to municipal purchase or later advertised sale",
+        "failed immediate payment leads to immediate re-offer",
+        "failed three-business-day balance leads to re-advertisement and resale with expenses deducted from the deposit",
+        "postponement, cancellation or rescheduling requires a fresh current municipal source check"
+      ],
+      "retrievalPrompt": "When the expected hammer-and-payment sequence breaks, name the observed state and the authority for the next step without inventing private terms.",
+      "retrievalAnswer": "Classify the branch from the current municipal record and governing law, then refresh the source; an unsold or changed event does not become an informal sale opportunity.",
+      "runningSummary": "No sufficient bid, municipal purchase, failed immediate payment, failed later balance and event changes are distinct process states. The governing law and current municipal source define the next step. None makes an unsold parcel privately available, enlarges the written ceiling or permits a remembered schedule to replace current notice.",
+      "unresolvedPromises": [
+        "Operate the certificate-holder calendar, records, insurance and redemption responsibilities in Chapter 11.",
+        "Retrieve payment readiness and state classification in the final Chapter 13 parcel file."
+      ]
+    },
+    {
+      "section": "ch11-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 10 ends after complete purchase payment produces a certificate of sale. The written ceiling, event payment and failed-sale branches are finished; the purchaser has not yet received a deed or automatic possession.",
+      "sectionJob": "Follow registration, insurance, new-tax, protection, safety and authorization tasks during the certificate period.",
+      "specificClaims": [
+        "LAW-007",
+        "LAW-008",
+        "LAW-010",
+        "INS-001"
+      ],
+      "coverageConcepts": [
+        "staged responsibility",
+        "certificate versus possession",
+        "documented protective work"
+      ],
+      "throughlineAdvance": "Responsibility arrives before deed certainty and every protective action needs a bounded authority and durable record.",
+      "payoff": "One insurer refusal and one treasurer-approved repair show why a statutory duty, market availability and reimbursement are separate questions.",
+      "landingBeat": "The listener can distinguish protection from development and statutory insurable interest from guaranteed underwriting.",
+      "mustNotRepeat": [
+        "Do not replay auction registration, payment forms or the default state machine.",
+        "Do not describe the certificate as a deed or as automatic vacant possession.",
+        "Do not prescribe entry, lock changes, occupant contact or other self-help.",
+        "Do not imply that an insurer must accept the applicant or the property.",
+        "Do not imply that an unapproved repair is reimbursable on redemption."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch11.md",
+      "termsBudget": [
+        "insurable interest",
+        "necessary repair"
+      ],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "brief-spoken",
+        "concreteReset": "Return to one insurer response, one written municipal approval and one repair receipt."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T18:59:04-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "20840071fc65ffaecc1fb83f4075369caeb5060188c51ece95e18a1c3a9bcdb8",
+      "sectionWordCount": 1343,
+      "draftedAt": "2026-07-20T19:00:49-03:00",
+      "termsDefined": [
+        "insurable interest",
+        "necessary repair"
+      ],
+      "retrievalPrompt": "For a protective repair during the redemption period, identify the legal interest, insurance status, actual condition, written authority, lawful access, exact scope and durable payment record.",
+      "retrievalAnswer": "The certificate supplies a bounded protective interest; policy availability, possession, safety and repair authorization remain separate. Reimbursement depends on the statutory category and written treasurer approval, supported by the actual scope and payment record.",
+      "runningSummary": "A registered certificate creates conditional responsibility before deed certainty. The holder may protect and non-diminishingly use the land, collect rent and seek insurance while avoiding injury and tree cutting. Insurable interest does not guarantee underwriting, apparent vacancy does not establish possession, and a qualifying necessary repair requires written treasurer approval plus a complete evidence chain.",
+      "unresolvedPromises": [
+        "Walk the statutory redemption additions and offsets without calculating promised profit.",
+        "Close Maya's rights through full payment to the treasurer and the municipality's official close-out record."
+      ]
+    },
+    {
+      "section": "ch11-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Maya holds Cedar Street's registered certificate, routes possession and safety questions lawfully, documents one insurer refusal and a conditional specialty policy, pays current taxes, and completes only a written treasurer-approved temporary repair with a full receipt chain.",
+      "sectionJob": "Resolve the redemption branch humanely and financially through supported statutory additions, offsets, purchaser statement, repayment, cessation of rights and municipal close-out.",
+      "specificClaims": [
+        "LAW-010",
+        "LAW-011",
+        "OPS-007",
+        "OCC-001"
+      ],
+      "coverageConcepts": [
+        "redemption accounting",
+        "local sale-expense visibility",
+        "lawful close-out"
+      ],
+      "throughlineAdvance": "Treat redemption as a lawful completion that repays supported categories and restores the former interest without winner-loser narration.",
+      "payoff": "Maya can deliver the requested statement, reconcile the treasurer's amount and close the file when full redemption ends her rights.",
+      "landingBeat": "Full redemption payment ends the purchaser's rights and the municipality's official record confirms close-out; the deed branch remains for Chapter 12 only if redemption does not occur.",
+      "mustNotRepeat": [
+        "Do not replay the entire insurance or repair-approval story.",
+        "Do not describe ten-percent annual interest as guaranteed profit or calculate a personalized return.",
+        "Do not universalize Halifax fee names or amounts across Nova Scotia.",
+        "Do not prescribe an occupant communication, tenancy or possession process.",
+        "Do not begin the tax-deed, surplus or contestability lesson reserved for Chapter 12."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch11.md",
+      "termsBudgetRemaining": [],
+      "audioLoadRemaining": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "category walkthrough only",
+        "concreteReset": "Return to one approved repair receipt and the treasurer's file."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:00:49-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "f20e5d60bd090a121cce89275da264185c00ea9c59857957b158e5c238e5c5b8",
+      "sectionWordCount": 1435,
+      "draftedAt": "2026-07-20T19:03:31-03:00",
+      "termsDefined": [],
+      "localFeeExample": "Halifax Administrative Order 18 Schedule 1 refreshed 2026-07-20 and explicitly bounded to Halifax",
+      "retrievalPrompt": "When a qualifying person intends to redeem, identify the purchaser records, supported statutory additions, offsets, exact cessation event and official municipal close-out record.",
+      "retrievalAnswer": "Provide the requested insurance-and-approved-repair statement, preserve taxes and income in their proper categories, reconcile the official repayment, stop when full redemption payment reaches the treasurer, and preserve the municipality's close-out record.",
+      "runningSummary": "Redemption is a statutory completion rather than a failed investment. The treasurer administers the supported statutory categories and offsets. The purchaser supplies the requested premium-and-repair statement, loses rights on full payment to the treasurer and preserves the municipality's official close-out record.",
+      "unresolvedPromises": [
+        "Follow the unredeemed branch into deed request, registration and a second due-diligence wave in Chapter 12.",
+        "Retrieve the complete certificate and redemption record in Chapter 13."
+      ]
+    },
+    {
+      "section": "ch12-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 11 closes the redeemed Cedar Street branch when full payment to the treasurer ends Maya's rights and the municipality's official record confirms close-out. Chapter 12 follows the separate unredeemed branch and returns to Foundry Street, whose deed, continuing right-of-way and occupied premises were introduced in Chapter 8.",
+      "sectionJob": "Request and register the deed, then reopen title, tax, insurance, access and possession files under the new document.",
+      "specificClaims": [
+        "LAW-012",
+        "LAW-018",
+        "OCC-001",
+        "TAX-001",
+        "LAND-005"
+      ],
+      "coverageConcepts": [
+        "deed registration",
+        "deed effect retrieval",
+        "title versus possession",
+        "two legal clocks"
+      ],
+      "throughlineAdvance": "The final tax-sale document hands responsibility into ordinary ownership systems rather than closing every property question.",
+      "payoff": "The immediate-deed and six-month deed paths converge on one exact registered document, one registration-triggered contestability clock and several separate owner files.",
+      "landingBeat": "Possession and first physical work proceed only through lawful, insured and professionally supported steps.",
+      "mustNotRepeat": [
+        "Do not redefine fee simple, encumbrance or vacant possession.",
+        "Do not replay Chapter 8's complete deed-effect, occupied-building or mobile-home lesson.",
+        "Do not replay Chapter 11's certificate-holder insurance and repair ledger.",
+        "Do not imply that registration itself supplies access, keys, boundaries, condition, insurance or project approval.",
+        "Do not present the six-year period as immunity, litigation advice or a reason to defer current legal review."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch12.md",
+      "termsBudget": [
+        "deed registration",
+        "tax-sale surplus account",
+        "post-deed due diligence"
+      ],
+      "audioLoad": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "none",
+        "concreteReset": "Return to the delivered deed, its registration date and the lawful possession file."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:22:13-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "84b8753be15993ff35544dbaf9dfad593d2016c79a595517325bad9b54723ff8",
+      "sectionWordCount": 1093,
+      "draftedAt": "2026-07-20T19:23:54-03:00",
+      "termsDefined": [
+        "deed registration"
+      ],
+      "retrievalPrompt": "After an unredeemed sale, identify the deed-request route, registered instrument, registration date, legal interpretation, insurance response and separate lawful-possession file.",
+      "retrievalAnswer": "The delivered deed must be registered against the correct parcel and interpreted with the current land record. Registration starts the separate six-year period but does not supply possession, access, condition, insurance or permission.",
+      "runningSummary": "The unredeemed branch proceeds through a purchaser request, municipal deed and Land Registry requirements. Deed registration creates the searchable instrument and begins a six-year Marketable Titles Act period distinct from redemption, while title opinion, insurance, continuing rights-of-way and lawful possession remain separate files.",
+      "unresolvedPromises": [
+        "Repeat intended-use and condition gates after lawful access makes stronger evidence available.",
+        "Separate a prior interest holder's surplus route from a challenge to the sale."
+      ]
+    },
+    {
+      "section": "ch12-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Foundry Street's deed has been requested and registered against the correct PID. The registration date starts a six-year period distinct from redemption, while title interpretation, insurance, continuing rights-of-way and lawful possession remain separate files.",
+      "sectionJob": "Repeat intended-use, condition, cost and permission gates after lawful access makes stronger post-deed evidence available.",
+      "specificClaims": [
+        "LAND-003",
+        "LAND-006",
+        "ENV-001",
+        "ENV-002",
+        "ENV-003",
+        "ENV-004",
+        "ENV-005"
+      ],
+      "coverageConcepts": [
+        "post-deed due diligence",
+        "dated assessment context",
+        "source-bounded condition evidence",
+        "intended-use recheck"
+      ],
+      "throughlineAdvance": "A deed improves lawful access to evidence but does not bind the owner to the pre-bid project story.",
+      "payoff": "Foundry Street's rehabilitation plan can narrow, pause or change when municipal, assessment, inspection, insurance and environmental evidence becomes stronger.",
+      "landingBeat": "The updated decision record states the use, evidence dates, unknowns, professional handoffs and next authorized expenditure.",
+      "mustNotRepeat": [
+        "Do not replay the source catalog from Chapters 5 through 7.",
+        "Do not describe public assessment as present market value, appraisal, condition evidence or a bid ceiling.",
+        "Do not treat a zoning or clearance letter as a permit, inspection or universal approval.",
+        "Do not diagnose contamination, structural failure, service status, legal access or boundaries from a map layer.",
+        "Do not imply that ownership obliges the purchaser to complete the pre-bid project."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch12.md",
+      "termsBudgetRemaining": [
+        "post-deed due diligence",
+        "tax-sale surplus account"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "none",
+        "concreteReset": "Return to Foundry Street's intended use, one municipal response and the updated decision record."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:22:13-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "937e0024457043b27cb2b18343a7a6bb6b39a454ef90282f5b410b7ce16d8802",
+      "sectionWordCount": 940,
+      "draftedAt": "2026-07-20T19:25:41-03:00",
+      "termsDefined": [
+        "post-deed due diligence"
+      ],
+      "retrievalPrompt": "When lawful post-deed access improves the evidence, restate the intended use and assign assessment, zoning, clearance, inspection, insurance, environmental, service, survey and market sources only the questions each can answer.",
+      "retrievalAnswer": "Public assessment is dated taxation context, municipal letters are bounded record responses, and qualified inspections or professional opinions answer different condition and permission questions. The updated evidence may responsibly change the project.",
+      "runningSummary": "Post-deed due diligence repeats the intended-use, cost, condition and permission gates with stronger lawfully obtained evidence. Public assessed and taxable values remain dated context; municipal letters, inspections, registry instruments, surveys, insurer responses and environmental work each retain their own evidentiary bounds.",
+      "unresolvedPromises": [
+        "Route any surplus to the statutory proceeds process rather than the deed holder.",
+        "Distinguish the sale-date surplus clock from the registration-date tax-deed clock."
+      ]
+    },
+    {
+      "section": "ch12-s03",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Foundry Street has repeated the intended-use and evidence gates after lawful access. Its public assessment, municipal letters, qualified inspections, registry record, insurer responses and environmental questions remain bounded, and the rehabilitation plan may change.",
+      "sectionJob": "Separate surplus proceeds, a prior interest holder's application and a claimed defective-sale route from the deed holder's ordinary ownership file.",
+      "specificClaims": [
+        "LAW-014",
+        "LAW-017",
+        "LAW-018"
+      ],
+      "coverageConcepts": [
+        "tax-sale surplus account",
+        "prior-interest proceeds route",
+        "defective-sale handoff",
+        "two legal clocks"
+      ],
+      "throughlineAdvance": "The deed holder's ownership, another person's proceeds claim and a challenge to the sale travel through separate records and legal processes.",
+      "payoff": "A former co-owner can preserve a possible proportional surplus claim without treating it as possession or a continuing parcel lien, while any sale challenge goes to counsel and the court record.",
+      "landingBeat": "Chapter 13 can retrieve the right record and professional handoff from any stage in the complete tax-sale method.",
+      "mustNotRepeat": [
+        "Do not promise standing, a proportional award or any other result to the fictional prior interest holder.",
+        "Do not treat surplus as purchaser income or a continuing land burden.",
+        "Do not collapse the sale-date twenty-year period into the registration-date six-year period.",
+        "Do not diagnose fraud, breach of trust, excluded land, damages or an invalid sale from the map.",
+        "Do not describe the passage of six years as universal immunity."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch12.md",
+      "termsBudgetRemaining": [
+        "tax-sale surplus account"
+      ],
+      "audioLoadRemaining": {
+        "temporaryValues": 2,
+        "symbolicChainSteps": 2,
+        "calculationTreatment": "statutory order and deadline distinction only",
+        "concreteReset": "Return to the registered deed, surplus account and two separately labelled dates."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:22:13-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "11662b533638f40ac299d311b57278d1e6230ea3140a8a35f2f86f25b3f4ff2e",
+      "sectionWordCount": 876,
+      "draftedAt": "2026-07-20T19:26:42-03:00",
+      "termsDefined": [
+        "tax-sale surplus account"
+      ],
+      "retrievalPrompt": "For money remaining after a tax sale or a claimed sale defect, identify the statutory application order, surplus account, claimant route, sale date, registration date and legal decision-maker.",
+      "retrievalAnswer": "The municipality applies purchase money in the statutory order and holds any balance in the surplus process. A claimant may apply after redemption and before twenty years from sale; the tax-deed challenge period generally runs six years from registration, with specific qualifications and preserved remedies requiring counsel.",
+      "runningSummary": "Ownership, surplus and challenge records remain distinct. A tax-sale surplus account holds the balance after statutory applications, with a court application route for a qualifying interested person after redemption and before twenty years from sale. A tax-deed challenge follows a separate registration-based period and legal process, and a set-aside sale does not discharge the tax lien.",
+      "unresolvedPromises": [
+        "Retrieve the complete notice-to-post-deed evidence method in Chapter 13.",
+        "Keep every map output inside a discovery, unknowns and professional-handoff boundary."
+      ]
+    },
+    {
+      "section": "ch13-s01",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Chapter 12 ends with three separate records: Foundry Street's registered-deed and post-deed evidence file, Elena's possible surplus route, and any challenged-sale file for counsel. Chapter 13 must retrieve the complete method without replaying those examples as a summary.",
+      "sectionJob": "Run three fresh composite parcels through verified, unresolved, professional-handoff and bidder-decision states.",
+      "specificClaims": [
+        "DATA-005",
+        "LAND-005",
+        "LAND-006",
+        "ENV-001",
+        "OCC-001",
+        "TAX-003",
+        "DATA-003"
+      ],
+      "coverageConcepts": [
+        "evidence classification",
+        "mapped intersection",
+        "record limitation",
+        "title versus possession",
+        "all-in cost"
+      ],
+      "throughlineAdvance": "The notice-to-parcel-to-context-to-unknowns-to-handoff method must survive three new fact patterns and still stop short of a recommendation.",
+      "payoff": "The listener can classify the landlocked, occupied and coherent files before the prose supplies each boundary.",
+      "landingBeat": "A well-supported no-go or unresolved file is as complete a research result as a coherent file that proceeds to bidder judgment.",
+      "mustNotRepeat": [
+        "Do not summarize Chapters 1 through 12 in order or redefine their core terms.",
+        "Do not infer legal access, boundaries, occupancy status, contamination, services or permission from map appearance.",
+        "Do not turn a negative database search into a clean bill of health.",
+        "Do not use historical bid ratios or assessed value as a valuation model, forecast or personalized maximum.",
+        "Do not identify, rank or recommend a live tax-sale property."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch13.md",
+      "termsBudget": [],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "none",
+        "concreteReset": "For each parcel, return to one verified fact, one unresolved risk and the person who owns the next decision."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:45:53-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "67dcb9e7cdd7e7ef9a748637d3028ac692c84031642366bfd7e3f69f877cc736",
+      "sectionWordCount": 1547,
+      "draftedAt": "2026-07-20T19:47:24-03:00",
+      "termsDefined": [],
+      "retrievalPrompt": "For a fresh parcel, name one verified fact, one unresolved decision-critical risk, the authority able to answer next and the decision that remains with the bidder.",
+      "retrievalAnswer": "Alder Crossing stops on an unresolved two-PID identity conflict; Union Workshop preserves occupancy, former-use, condition, insurance and tax unknowns; Meadow Line reaches a coherent evidence and payment-readiness file without becoming a recommendation.",
+      "runningSummary": "Three fictional parcel files retrieve the complete source-bounded method. Exact identity and map returns can support research while access, occupancy, environmental condition, permission, value and tax treatment stay with their proper records and professionals. A no-go, unresolved file or coherent file can each be a complete result.",
+      "unresolvedPromises": [
+        "Convert the three-case method into one reusable public research record.",
+        "Retrieve event verification and staged responsibility without reciting the statute or prior chapters."
+      ]
+    },
+    {
+      "section": "ch13-s02",
+      "status": "canonical-section-drafted",
+      "fullOutlinePath": "research/learning-outline.json",
+      "evidenceNotesPath": "research/evidence-notes.md",
+      "factPackPath": "research/fact-pack.md",
+      "coverageLedgerPath": "research/coverage-ledger.json",
+      "chapterPlanPath": "research/chapter-plans.json",
+      "styleGuidePath": "research/voice-source-profile.md",
+      "declaudificationPath": "../../skill/references/declaudification.md",
+      "previousSectionTextOrSummary": "Alder Crossing stops on an unresolved two-PID identity conflict, Union Workshop preserves interacting occupancy and former-use unknowns, and Meadow Line reaches a coherent evidence file without becoming a recommendation. Each case records one supported fact, the decision-critical unknown, the next authority and the bidder's retained decision.",
+      "sectionJob": "Close with one reusable public research record and retrieve event verification, payment readiness and staged responsibility.",
+      "specificClaims": [
+        "LAW-006",
+        "LAW-009",
+        "LAW-012",
+        "LAND-001",
+        "LAND-002",
+        "ELIG-001"
+      ],
+      "coverageConcepts": [
+        "notice identifiers",
+        "payment performance",
+        "redemption clock",
+        "staged responsibility",
+        "tax-sale sequence"
+      ],
+      "throughlineAdvance": "The durable public artifact is a source-traceable record that changes stage without ever becoming a title opinion, survey, appraisal or recommendation.",
+      "payoff": "The listener can reopen a parcel file after withdrawal, payment, redemption or deed and immediately identify the controlling source, current stage and next authorized action.",
+      "landingBeat": "Helpful public explanation is complete when the evidence and authority boundaries are clear, whether or not anyone buys land or hires a researcher.",
+      "mustNotRepeat": [
+        "Do not end with a generic checklist or retell the statutory sequence in full.",
+        "Do not publish subscriber-only Property Online material or imply its registry content is public web data.",
+        "Do not treat non-Canadian eligibility, HST or deed-transfer tax as a universal yes-or-no field.",
+        "Do not imply that a leading bid is complete before current accepted payment requirements are met.",
+        "Do not claim the complete manuscript, figures, narration, package, learning transfer or publication has passed a downstream gate."
+      ],
+      "aiWritingPatternsToAvoid": [
+        "reader-management imperatives",
+        "honesty announcements",
+        "reflexive not-X-but-Y frames",
+        "generic announced transitions",
+        "tidy three-part morals"
+      ],
+      "draftPath": "chapters/ch13.md",
+      "termsBudget": [],
+      "audioLoad": {
+        "temporaryValues": 3,
+        "symbolicChainSteps": 3,
+        "calculationTreatment": "none",
+        "concreteReset": "Return to the current stage, controlling document, next authorized action and terminating event."
+      },
+      "voiceExemplarPath": "research/voice-exemplar.md",
+      "voiceExemplarSHA256": "ee7c43ac59beafa462de4ec9d1135ccce78efa810dbbd2d5445274694213d5df",
+      "pilotDecisionPath": "research/comprehension-pilot.json",
+      "pilotDecisionEvidence": "continue",
+      "recordedAt": "2026-07-20T19:47:24-03:00",
+      "recordedBeforeDraft": true,
+      "sectionDraftSHA256": "c27d6b9aff2b545d1d3a82da12e72e9ec1b2456652dbf67a7924d7969ece8171",
+      "sectionWordCount": 1263,
+      "draftedAt": "2026-07-20T19:49:00-03:00",
+      "termsDefined": [],
+      "retrievalPrompt": "When a parcel file changes through withdrawal, payment, redemption or deed, identify the current source and stage, controlling document, next authorized action and terminating event.",
+      "retrievalAnswer": "The live notice, evidence file, written maximum and payment plan govern before bidding; the certificate and treasurer process govern redemption; a discharge closes the purchaser's right; an unredeemed registered deed opens title, possession, condition and intended-use work.",
+      "runningSummary": "A reusable public research record keeps source, locator, date, returned result, limitation, unresolved question, authority, decision consequence and current stage connected. It preserves private registry material, refreshes perishable event and eligibility rules, and survives withdrawal, payment, redemption and deed without becoming a professional opinion or purchase recommendation.",
+      "unresolvedPromises": [
+        "Complete independent whole-manuscript structure, blind beginner, claim, prose and humanizer review.",
+        "Keep figures, full narration, package, human listening and publication behind their remaining gates."
+      ]
     }
   ],
-  "checkpoints": []
+  "reviewRounds": [
+    {
+      "id": "whole-manuscript-round-1",
+      "status": "completed-with-revisions",
+      "reviewedAt": "2026-07-20T22:57:13-03:00",
+      "editorialReviewPath": "research/editorial-review.md",
+      "reviewers": [
+        "independent-structure-review-agent",
+        "blind-sequential-beginner-agent",
+        "independent-claim-traceability-agent",
+        "frontier-lead-author"
+      ],
+      "currentThroughline": "A deliberately named portfolio carries notice, parcel, context, unknowns and handoff through mutually exclusive redemption and deed outcomes without turning map screening into a recommendation.",
+      "resolvedBlockingFindings": [
+        "case-spine contract mismatch",
+        "Chapter 8 chronology and Chapter 12 overlap",
+        "Chapter 13 transfer weakness",
+        "unsupported legal and operational details"
+      ],
+      "remainingGates": [
+        "single-job humanizer and tightening passes",
+        "final hash-bound two-reviewer learning review",
+        "rendered ear pass",
+        "figure acceptance",
+        "narration, packaging, listening and publication"
+      ]
+    },
+    {
+      "id": "bounded-humanizer-round-2",
+      "status": "completed-with-revisions",
+      "reviewedAt": "2026-07-21T07:46:37-03:00",
+      "editorialReviewPath": "research/editorial-review.md",
+      "humanizerDecisionsPath": "research/humanizer-decisions.json",
+      "proseReceiptPath": "research/prose-style-receipt.json",
+      "reviewers": [
+        "frontier-lead-author",
+        "independent-structure-review-agent",
+        "blind-sequential-beginner-agent"
+      ],
+      "currentThroughline": "A source-bounded parcel file moves from notice to parcel, context, unknowns and handoff, then preserves the controlling document and authority through auction, redemption and deed stages.",
+      "resolvedBlockingFindings": [
+        "duplicate calendar image at the Chapter 10 and 11 boundary",
+        "parcel-register term introduced after it was needed",
+        "NSPRD acronym expanded after first use",
+        "certificate registration assigned to both treasurer and purchaser"
+      ],
+      "remainingGates": [
+        "rendered ear pass",
+        "final hash-bound two-reviewer learning and revision receipts",
+        "figure acceptance",
+        "narration, packaging, listening and publication"
+      ]
+    }
+  ],
+  "checkpoints": [
+    {
+      "chapter": "ch01",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch01.md",
+      "draftSHA256": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
+      "wordCount": 2145,
+      "completedAt": "2026-07-20T08:55:51-03:00",
+      "sourceSections": [
+        "pilot/first-section-candidate.md",
+        "pilot/first-technical-passage.md"
+      ],
+      "sourceSectionsPromotedExactly": false,
+      "acceptedSourceSectionsPreservedSeparately": true,
+      "editorialReviewPath": "research/editorial-review.md",
+      "termsDefined": [
+        "tax lien",
+        "notice of intent",
+        "tax sale"
+      ],
+      "examplesUsed": [
+        "fictional composite Harbour Road parcel",
+        "Inverness packet reconciliation",
+        "Inverness and Halifax source-authority retrieval"
+      ],
+      "deliberateCallbacks": [
+        "Port Hood auction room",
+        "record versus conclusion",
+        "municipal notice as authority and map as router"
+      ],
+      "retrievals": [
+        "Choose Halifax's current notice over an Inverness packet or provincial map marker for a Halifax event."
+      ],
+      "listenerLoad": "Three defined core terms, no calculation and one source-authority retrieval.",
+      "runningSummary": "The Inverness packet is a strong starting source rather than a purchase decision. A tax sale reaches public view only after a priority lien, elapsed statutory time, title work and notices. Municipal practices vary, Halifax uses its own Charter framework, and the current authority-owned notice controls over another municipality's packet or the map.",
+      "unresolvedPromises": [
+        "Decode the packet's individual fields without treating them as promises.",
+        "Explain the purchaser's post-sale clock after the notice and auction vocabulary are stable.",
+        "Apply the source-authority habit to the full Chapter 5 map method."
+      ],
+      "mustNotRepeatNext": [
+        "Do not re-explain tax-lien priority.",
+        "Do not repeat the full municipal-packet limitation inventory.",
+        "Do not teach redemption or payment mechanics until their planned chapters."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch01.md",
+      "callbacks": [
+        "Port Hood auction room",
+        "record versus conclusion",
+        "municipal notice as authority and map as router"
+      ],
+      "promises": [
+        "Decode the packet's individual fields without treating them as promises.",
+        "Explain the purchaser's post-sale clock after the notice and auction vocabulary are stable.",
+        "Apply the source-authority habit to the full Chapter 5 map method."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Choose Halifax's current notice over an Inverness packet or provincial map marker for a Halifax event."
+      ],
+      "listenerLoadNotes": "Three defined core terms, no calculation and one source-authority retrieval.",
+      "priorSectionSummary": "The Inverness packet is a strong starting source rather than a purchase decision. A tax sale reaches public view only after a priority lien, elapsed statutory time, title work and notices. Municipal practices vary, Halifax uses its own Charter framework, and the current authority-owned notice controls over another municipality's packet or the map.",
+      "doNotRepeat": [
+        "Do not re-explain tax-lien priority.",
+        "Do not repeat the full municipal-packet limitation inventory.",
+        "Do not teach redemption or payment mechanics until their planned chapters."
+      ]
+    },
+    {
+      "chapter": "ch02",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch02.md",
+      "draftSHA256": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
+      "wordCount": 2977,
+      "completedAt": "2026-07-20T09:05:42-03:00",
+      "termsDefined": [
+        "Assessment Account Number (AAN)",
+        "Parcel Identification Number (PID)",
+        "assessment"
+      ],
+      "packetLabelsExplained": [
+        "lien number",
+        "assessed owner",
+        "address or location",
+        "land and building assessment fields",
+        "recovery amount",
+        "redemption marker"
+      ],
+      "examplesUsed": [
+        "fictional Harbour Road source-routing file",
+        "Inverness missing detail sheet and amount conflicts",
+        "interruption-safe four-question retrieval",
+        "current municipal notice versus saved packet, map snapshot and historical outcome"
+      ],
+      "analogyUsed": "AAN and PID as two catalogue keys, with an explicit legal-record limit.",
+      "retrievals": [
+        "Route an address-PID disagreement to the proper source families.",
+        "Recover parcel, assessment, event-status and redemption-marker meanings after an interruption."
+      ],
+      "listenerLoad": "Three new core terms, no calculation, two applied retrievals and no visual dependence.",
+      "runningSummary": "A notice is a dated routing record, not a miniature property description. AAN, PID, address, assessment, recovery and redemption fields answer different questions. The municipality's current notice controls live event status; map catalogues and historical results remain bounded secondary records.",
+      "unresolvedPromises": [
+        "Open the purchaser's post-sale clock in Chapter 3.",
+        "Build the complete source-ordered parcel biography in Chapter 4.",
+        "Teach the map's notice-to-handoff method in Chapter 5.",
+        "Deepen the economics of the recovery amount in Chapter 9."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine AAN, PID or assessment.",
+        "Do not repeat the packet reconciliation as a full scene.",
+        "Do not use the recovery amount as value or a historical result as a forecast."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch02.md",
+      "callbacks": [],
+      "promises": [
+        "Open the purchaser's post-sale clock in Chapter 3.",
+        "Build the complete source-ordered parcel biography in Chapter 4.",
+        "Teach the map's notice-to-handoff method in Chapter 5.",
+        "Deepen the economics of the recovery amount in Chapter 9."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Route an address-PID disagreement to the proper source families.",
+        "Recover parcel, assessment, event-status and redemption-marker meanings after an interruption."
+      ],
+      "listenerLoadNotes": "Three new core terms, no calculation, two applied retrievals and no visual dependence.",
+      "priorSectionSummary": "A notice is a dated routing record, not a miniature property description. AAN, PID, address, assessment, recovery and redemption fields answer different questions. The municipality's current notice controls live event status; map catalogues and historical results remain bounded secondary records.",
+      "doNotRepeat": [
+        "Do not redefine AAN, PID or assessment.",
+        "Do not repeat the packet reconciliation as a full scene.",
+        "Do not use the recovery amount as value or a historical result as a forecast."
+      ]
+    },
+    {
+      "chapter": "ch03",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch03.md",
+      "draftSHA256": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
+      "wordCount": 1929,
+      "completedAt": "2026-07-20T09:10:05-03:00",
+      "termsDefined": [
+        "certificate of sale",
+        "certificate holder",
+        "discharge",
+        "tax deed"
+      ],
+      "examplesUsed": [
+        "Harbour Road leaking-roof protection during redemption",
+        "Harbour Road redemption and discharge",
+        "Quarry Lane older-arrears deed branch"
+      ],
+      "analogyUsed": "Stage documents as a relay baton, with an explicit same-holder and legal-rights limit.",
+      "retrievals": [
+        "Identify document, power or duty, boundary and required record before acting.",
+        "Narrate the different Harbour Road and Quarry Lane endings without inferring possession or usability."
+      ],
+      "listenerLoad": "Four linked stage terms, no spoken calculation, two fictional outcomes and two applied retrievals.",
+      "runningSummary": "A paid redeemable sale creates a registered certificate and conditional certificate-holder powers and duties. Redemption repays the purchaser and ends rights through discharge; expiry without redemption or the older-arrears branch permits a tax deed. Each document changes the current job but leaves practical and professional questions open.",
+      "unresolvedPromises": [
+        "Build the parcel biography in Chapter 4.",
+        "Operate certificate-period accounting and insurance in Chapter 11.",
+        "Resolve possession and post-deed work in Chapters 8 and 12."
+      ],
+      "mustNotRepeatNext": [
+        "Do not repeat the full certificate-holder powers and duties.",
+        "Do not reteach the redemption/deed fork before its operational retrievals.",
+        "Do not treat tax deed as possession, access, condition or uncontestable title."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch03.md",
+      "callbacks": [],
+      "promises": [
+        "Build the parcel biography in Chapter 4.",
+        "Operate certificate-period accounting and insurance in Chapter 11.",
+        "Resolve possession and post-deed work in Chapters 8 and 12."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Identify document, power or duty, boundary and required record before acting.",
+        "Narrate the different Harbour Road and Quarry Lane endings without inferring possession or usability."
+      ],
+      "listenerLoadNotes": "Four linked stage terms, no spoken calculation, two fictional outcomes and two applied retrievals.",
+      "priorSectionSummary": "A paid redeemable sale creates a registered certificate and conditional certificate-holder powers and duties. Redemption repays the purchaser and ends rights through discharge; expiry without redemption or the older-arrears branch permits a tax deed. Each document changes the current job but leaves practical and professional questions open.",
+      "doNotRepeat": [
+        "Do not repeat the full certificate-holder powers and duties.",
+        "Do not reteach the redemption/deed fork before its operational retrievals.",
+        "Do not treat tax deed as possession, access, condition or uncontestable title."
+      ]
+    },
+    {
+      "chapter": "ch04",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch04.md",
+      "draftSHA256": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
+      "wordCount": 2427,
+      "completedAt": "2026-07-20T09:19:58-03:00",
+      "termsDefined": [
+        "parcel register",
+        "legal description",
+        "title search"
+      ],
+      "classificationsExplained": [
+        "verified fact",
+        "professionally verifiable uncertainty",
+        "priceable uncertainty",
+        "no-go uncertainty"
+      ],
+      "examplesUsed": [
+        "fictional composite Birch Point Road source ledger",
+        "Inverness packet baseline and reconciliation",
+        "targeted lawyer, surveyor and planner handoffs"
+      ],
+      "retrievals": [
+        "Separate municipal, registry, legal-description and public-screening records for one PID.",
+        "Classify a remaining gap by verification route, priceability and stop condition."
+      ],
+      "listenerLoad": "Three land-record terms, four uncertainty destinations, no calculation and two applied retrievals.",
+      "runningSummary": "A parcel biography credits the municipal baseline, preserves source/date/limitation, keeps subscription material private, treats public maps as attributed screening exhibits and routes precise questions to the right professionals. Essential unresolved uncertainty can govern the process even when several other facts are comfortable.",
+      "unresolvedPromises": [
+        "Operate the full notice-to-parcel-to-context-to-unknowns-to-handoff map method in Chapter 5.",
+        "Apply access, planning and environmental failure cases in Chapters 6 and 7."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine parcel register, legal description or title search.",
+        "Do not repeat the four uncertainty categories as a checklist.",
+        "Do not let interface output become survey, title, access, condition or value evidence."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch04.md",
+      "callbacks": [],
+      "promises": [
+        "Operate the full notice-to-parcel-to-context-to-unknowns-to-handoff map method in Chapter 5.",
+        "Apply access, planning and environmental failure cases in Chapters 6 and 7."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Separate municipal, registry, legal-description and public-screening records for one PID.",
+        "Classify a remaining gap by verification route, priceability and stop condition."
+      ],
+      "listenerLoadNotes": "Three land-record terms, four uncertainty destinations, no calculation and two applied retrievals.",
+      "priorSectionSummary": "A parcel biography credits the municipal baseline, preserves source/date/limitation, keeps subscription material private, treats public maps as attributed screening exhibits and routes precise questions to the right professionals. Essential unresolved uncertainty can govern the process even when several other facts are comfortable.",
+      "doNotRepeat": [
+        "Do not redefine parcel register, legal description or title search.",
+        "Do not repeat the four uncertainty categories as a checklist.",
+        "Do not let interface output become survey, title, access, condition or value evidence."
+      ]
+    },
+    {
+      "chapter": "ch05",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch05.md",
+      "draftSHA256": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+      "wordCount": 2666,
+      "completedAt": "2026-07-20T09:27:36-03:00",
+      "termsDefined": [
+        "civic point",
+        "Plus Code",
+        "layer",
+        "mapped intersection"
+      ],
+      "method": [
+        "notice",
+        "parcel",
+        "context",
+        "unknowns",
+        "handoff"
+      ],
+      "examplesUsed": [
+        "fictional Birch Point Road combined research state",
+        "current-notice PID 50308311 Southside River Denys road and water context",
+        "historical Halifax PID 00542589 March 8 2022 outcome"
+      ],
+      "retrievals": [
+        "Recover record family, municipality and event, direct source and exact parcel after an interruption.",
+        "State source, date, observation, limitation, unknown and handoff for a mapped result.",
+        "Name the historical record family before repeating an amount."
+      ],
+      "listenerLoad": "Four map terms, no calculation, one five-word method, two real bounded interface demonstrations and three applied retrievals.",
+      "runningSummary": "The map organizes dated record families and shortens the route from a direct municipal notice to an exact research parcel. Civic, boundary, imagery, road, water, resource and historical results remain source-bounded observations. Notice, parcel, context, unknowns and handoff turns the interface into a question machine rather than a property verdict.",
+      "unresolvedPromises": [
+        "Challenge mapped road context with the Chapter 6 legal-access failure case.",
+        "Challenge resource and empty-result discipline with Chapter 7 environmental evidence.",
+        "Retrieve the historical-result boundary in Chapter 9.",
+        "Retrieve the full method in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not re-tour the interface or recite its layer catalogue.",
+        "Do not redefine civic point, Plus Code, layer or mapped intersection.",
+        "Retrieve only the map note needed for the next failure case.",
+        "Do not let current or historical demonstrations become recommendations, values or forecasts."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch05.md",
+      "callbacks": [],
+      "promises": [
+        "Challenge mapped road context with the Chapter 6 legal-access failure case.",
+        "Challenge resource and empty-result discipline with Chapter 7 environmental evidence.",
+        "Retrieve the historical-result boundary in Chapter 9.",
+        "Retrieve the full method in Chapter 13."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Recover record family, municipality and event, direct source and exact parcel after an interruption.",
+        "State source, date, observation, limitation, unknown and handoff for a mapped result.",
+        "Name the historical record family before repeating an amount."
+      ],
+      "listenerLoadNotes": "Four map terms, no calculation, one five-word method, two real bounded interface demonstrations and three applied retrievals.",
+      "priorSectionSummary": "The map organizes dated record families and shortens the route from a direct municipal notice to an exact research parcel. Civic, boundary, imagery, road, water, resource and historical results remain source-bounded observations. Notice, parcel, context, unknowns and handoff turns the interface into a question machine rather than a property verdict.",
+      "doNotRepeat": [
+        "Do not re-tour the interface or recite its layer catalogue.",
+        "Do not redefine civic point, Plus Code, layer or mapped intersection.",
+        "Retrieve only the map note needed for the next failure case.",
+        "Do not let current or historical demonstrations become recommendations, values or forecasts."
+      ]
+    },
+    {
+      "chapter": "ch06",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch06.md",
+      "draftSHA256": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
+      "wordCount": 2355,
+      "completedAt": "2026-07-20T15:47:45-03:00",
+      "termsDefined": [
+        "right-of-way",
+        "road frontage",
+        "zoning"
+      ],
+      "examplesUsed": [
+        "fictional Maple Ridge roadside sliver and driveway-like route",
+        "registered-passage improvement without project approval",
+        "Plan Inverness and Eastern District Planning Commission project-specific handoff"
+      ],
+      "analogyUsed": "A visible driveway as a door and sufficient access evidence as the particular key, with an explicit scope-and-obligations limit.",
+      "retrievals": [
+        "Turn a driveway-like line into a bounded observation and the required title, plan, survey, road and legal questions.",
+        "Separate access evidence from frontage, zoning, lot status, setbacks, services and permits for a year-round dwelling."
+      ],
+      "listenerLoad": "Three new core terms, no calculation, one fictional failure case, two applied retrievals and no visual dependence.",
+      "runningSummary": "A visible route, nearby road or apparent graphical contact does not establish a right to pass. A supported right-of-way still does not establish road frontage, a buildable lot, service feasibility or development approval. Each conclusion is tied to the exact parcel, intended use, current authority and appropriate professional evidence.",
+      "unresolvedPromises": [
+        "Interpret contaminated-site, well, sewage, coastal and mine records in Chapter 7.",
+        "Retrieve continuing access relationships in Chapter 8.",
+        "Recheck access and project dependencies after deed in Chapter 12."
+      ],
+      "mustNotRepeatNext": [
+        "Do not replay the full visible-route and planning failure case.",
+        "Do not redefine right-of-way, road frontage or zoning.",
+        "Do not let a missing environmental record repair an access or feasibility gap."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch06.md",
+      "callbacks": [],
+      "promises": [
+        "Interpret contaminated-site, well, sewage, coastal and mine records in Chapter 7.",
+        "Retrieve continuing access relationships in Chapter 8.",
+        "Recheck access and project dependencies after deed in Chapter 12."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Turn a driveway-like line into a bounded observation and the required title, plan, survey, road and legal questions.",
+        "Separate access evidence from frontage, zoning, lot status, setbacks, services and permits for a year-round dwelling."
+      ],
+      "listenerLoadNotes": "Three new core terms, no calculation, one fictional failure case, two applied retrievals and no visual dependence.",
+      "priorSectionSummary": "A visible route, nearby road or apparent graphical contact does not establish a right to pass. A supported right-of-way still does not establish road frontage, a buildable lot, service feasibility or development approval. Each conclusion is tied to the exact parcel, intended use, current authority and appropriate professional evidence.",
+      "doNotRepeat": [
+        "Do not replay the full visible-route and planning failure case.",
+        "Do not redefine right-of-way, road frontage or zoning.",
+        "Do not let a missing environmental record repair an access or feasibility gap."
+      ]
+    },
+    {
+      "chapter": "ch07",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch07.md",
+      "draftSHA256": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
+      "wordCount": 2436,
+      "completedAt": "2026-07-20T15:51:33-03:00",
+      "termsDefined": [
+        "contaminated site",
+        "well log",
+        "hazard map"
+      ],
+      "examplesUsed": [
+        "fictional coastal former workshop at Breakwater Lane",
+        "negative contaminated-site search and missing older sewage file",
+        "estimated well-log point",
+        "2100 coastal scenario and abandoned-mine positive, negative and error states"
+      ],
+      "analogyUsed": "A database as a flashlight in a dark barn, limited because data sources have systematic scope and evidence rather than random beams.",
+      "retrievals": [
+        "Classify a former-use clue, registry search, well log and missing sewage file by supported finding and residual uncertainty.",
+        "Recover the coastal scenario, mine query state, source limitations and next property-specific question after an interruption."
+      ],
+      "listenerLoad": "Three new core terms, no calculation, one fictional property, two applied retrievals and one three-state classification.",
+      "runningSummary": "Environmental and infrastructure records illuminate bounded parts of a parcel's history and future exposure. Registry absence does not prove cleanliness; well and sewage records carry geolocation, retention and present-condition limits; coastal maps depict scenarios; and the incomplete abandoned-mine inventory must retain its coverage and positional limits. Positive, negative and error states remain distinct.",
+      "unresolvedPromises": [
+        "Separate title from possession and continuing burdens in Chapter 8.",
+        "Reconcile pre-bid records with lawful post-deed inspection in Chapter 12.",
+        "Retrieve the complete bounded parcel file in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine contaminated site, well log or hazard map.",
+        "Do not replay every database limitation as a catalogue.",
+        "Retrieve the no-record boundary only when a fresh decision requires it."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch07.md",
+      "callbacks": [],
+      "promises": [
+        "Separate title from possession and continuing burdens in Chapter 8.",
+        "Reconcile pre-bid records with lawful post-deed inspection in Chapter 12.",
+        "Retrieve the complete bounded parcel file in Chapter 13."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Classify a former-use clue, registry search, well log and missing sewage file by supported finding and residual uncertainty.",
+        "Recover the coastal scenario, mine query state, source limitations and next property-specific question after an interruption."
+      ],
+      "listenerLoadNotes": "Three new core terms, no calculation, one fictional property, two applied retrievals and one three-state classification.",
+      "priorSectionSummary": "Environmental and infrastructure records illuminate bounded parts of a parcel's history and future exposure. Registry absence does not prove cleanliness; well and sewage records carry geolocation, retention and present-condition limits; coastal maps depict scenarios; and the incomplete abandoned-mine inventory must retain its coverage and positional limits. Positive, negative and error states remain distinct.",
+      "doNotRepeat": [
+        "Do not redefine contaminated site, well log or hazard map.",
+        "Do not replay every database limitation as a catalogue.",
+        "Retrieve the no-record boundary only when a fresh decision requires it."
+      ]
+    },
+    {
+      "chapter": "ch08",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch08.md",
+      "draftSHA256": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
+      "wordCount": 2226,
+      "completedAt": "2026-07-20T16:26:03-03:00",
+      "termsDefined": [
+        "fee simple",
+        "encumbrance",
+        "vacant possession"
+      ],
+      "examplesUsed": [
+        "fictional occupied Foundry Street building",
+        "continuing registered right-of-way and court-order title branch",
+        "prior interest holder's separate surplus route",
+        "fictional Harbour Park manufactured-home asset split"
+      ],
+      "analogyUsed": "A coat-check ticket versus the coat in hand, limited because real-property and tenancy law is more complex and the analogy supplies no self-help authority.",
+      "retrievals": [
+        "Identify the deeded interest, continuing access relationship, court-order qualification and exact-PID lawyer question.",
+        "Separate title, occupants, goods, land, a mobile home, personal-property security and land-lease status into their governing records and processes."
+      ],
+      "listenerLoad": "Three new core terms, no calculation, one occupied-property case, one mobile-home branch, two applied retrievals and no visual dependence.",
+      "runningSummary": "The tax deed has real statutory title effect without becoming a universal guarantee of cleanliness, possession, condition or permission. Continuing easements, court-order terms and exact documents shape the title opinion; occupancy, tenancy, abandoned goods and vacant possession require separate lawful handling; and an unaffixed mobile home can require land, personal-property and land-lease research.",
+      "unresolvedPromises": [
+        "Price possession and title uncertainty without pretending it has disappeared in Chapter 9.",
+        "Apply the distinction when rent or an occupant appears during redemption in Chapter 11.",
+        "Reconcile pre-bid title and occupancy assumptions with lawful post-deed evidence in Chapter 12."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine fee simple, encumbrance or vacant possession.",
+        "Do not replay the complete occupied-building or mobile-home branch.",
+        "Use possession uncertainty as one bounded cost dependency rather than a dramatic occupant story."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch08.md",
+      "callbacks": [],
+      "promises": [
+        "Price possession and title uncertainty without pretending it has disappeared in Chapter 9.",
+        "Apply the distinction when rent or an occupant appears during redemption in Chapter 11.",
+        "Reconcile pre-bid title and occupancy assumptions with lawful post-deed evidence in Chapter 12."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Identify the deeded interest, continuing access relationship, court-order qualification and exact-PID lawyer question.",
+        "Separate title, occupants, goods, land, a mobile home, personal-property security and land-lease status into their governing records and processes."
+      ],
+      "listenerLoadNotes": "Three new core terms, no calculation, one occupied-property case, one mobile-home branch, two applied retrievals and no visual dependence.",
+      "priorSectionSummary": "The tax deed has real statutory title effect without becoming a universal guarantee of cleanliness, possession, condition or permission. Continuing easements, court-order terms and exact documents shape the title opinion; occupancy, tenancy, abandoned goods and vacant possession require separate lawful handling; and an unaffixed mobile home can require land, personal-property and land-lease research.",
+      "doNotRepeat": [
+        "Do not redefine fee simple, encumbrance or vacant possession.",
+        "Do not replay the complete occupied-building or mobile-home branch.",
+        "Use possession uncertainty as one bounded cost dependency rather than a dramatic occupant story."
+      ]
+    },
+    {
+      "chapter": "ch09",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch09.md",
+      "draftSHA256": "13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42",
+      "wordCount": 2407,
+      "completedAt": "2026-07-20T17:53:58-03:00",
+      "termsDefined": [
+        "all-in cost",
+        "uncertainty reserve",
+        "maximum bid"
+      ],
+      "examplesUsed": [
+        "Inverness May 2025 50-advertised, 35-reported-sold and 31-published-row source chain",
+        "bounded CBRM March 2026 and Richmond June 2026 descriptive comparisons",
+        "source-linked historical map result used only as a dated outcome",
+        "fictional Cedar Street cost stack and written ceiling"
+      ],
+      "analogyUsed": "The visible bid as the tip of an iceberg, limited because cost proportions vary and researchable costs should be estimated.",
+      "calculationUsed": "One brief three-input fictional calculation: bid plus known non-bid costs plus uncertainty reserve equals all-in exposure.",
+      "retrievals": [
+        "Separate recovery amount, assessment and dated winning bid from present value evidence.",
+        "When competition crosses the written ceiling, identify that no new parcel evidence entered the file and lower the card."
+      ],
+      "listenerLoad": "Three new core terms, one brief three-input calculation, three dated descriptive result samples, one fictional cost stack and no visual dependence.",
+      "runningSummary": "Historical results describe competition only when event, sample, denominator and completeness limits stay attached. All-in cost starts from a defined use and includes bid, applicable taxes, professional work, carrying, condition, possession and bounded uncertainty. Tax and eligibility branches are current and case-specific; a written maximum is an evidence-bound stopping rule that does not rise in the room.",
+      "unresolvedPromises": [
+        "Execute the ceiling, registration, payment and failed-sale branches in Chapter 10.",
+        "Operate certificate-period accounting and insurance in Chapter 11.",
+        "Retrieve the complete uncertainty budget in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine all-in cost, uncertainty reserve or maximum bid.",
+        "Do not replay the Inverness, CBRM or Richmond distributions.",
+        "Chapter 10 retrieves the ceiling as an action rule and adds format, payment and failure branches."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch09.md",
+      "callbacks": [],
+      "promises": [
+        "Execute the ceiling, registration, payment and failed-sale branches in Chapter 10.",
+        "Operate certificate-period accounting and insurance in Chapter 11.",
+        "Retrieve the complete uncertainty budget in Chapter 13."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Separate recovery amount, assessment and dated winning bid from present value evidence.",
+        "When competition crosses the written ceiling, identify that no new parcel evidence entered the file and lower the card."
+      ],
+      "listenerLoadNotes": "Three new core terms, one brief three-input calculation, three dated descriptive result samples, one fictional cost stack and no visual dependence.",
+      "priorSectionSummary": "Historical results describe competition only when event, sample, denominator and completeness limits stay attached. All-in cost starts from a defined use and includes bid, applicable taxes, professional work, carrying, condition, possession and bounded uncertainty. Tax and eligibility branches are current and case-specific; a written maximum is an evidence-bound stopping rule that does not rise in the room.",
+      "doNotRepeat": [
+        "Do not redefine all-in cost, uncertainty reserve or maximum bid.",
+        "Do not replay the Inverness, CBRM or Richmond distributions.",
+        "Chapter 10 retrieves the ceiling as an action rule and adds format, payment and failure branches."
+      ]
+    },
+    {
+      "chapter": "ch10",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch10.md",
+      "draftSHA256": "a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9",
+      "wordCount": 2638,
+      "completedAt": "2026-07-20T18:20:58-03:00",
+      "termsDefined": [
+        "open-outcry auction",
+        "public tender",
+        "deposit"
+      ],
+      "examplesUsed": [
+        "current Inverness August 2026 Port Hood open-auction terms",
+        "current CBRM registration and failed-payment instructions",
+        "dated Pictou April 2026 sealed-tender procedure",
+        "dated Annapolis March sale and later tender result records",
+        "fictional Maya and Cedar Street execution branches"
+      ],
+      "analogyUsed": "The finish line beyond the hammer separates a leading offer from payment performance, limited because certificate, redemption and deed stages still follow.",
+      "retrievals": [
+        "Keep the evidence-bound maximum fixed across a bidding card and tender envelope.",
+        "Classify an affordable bid without accepted funds as not ready.",
+        "Name the failed-sale state and return to governing law plus the current municipal source."
+      ],
+      "listenerLoad": "Three new core terms, no arithmetic, three municipal format examples, one fictional bidder, four failed-sale branches and no visual dependence.",
+      "runningSummary": "Open auction and public tender change submission mechanics and pressure without changing lawful authority or the written ceiling. Payment performance requires current-list verification, accepted immediate funds and any three-business-day balance path before bidding. No-bid, municipal-purchase, default and event-change branches remain governed municipal processes rather than informal opportunities.",
+      "unresolvedPromises": [
+        "Operate certificate-period accounting, insurance, maintenance, rent and redemption records in Chapter 11.",
+        "Carry the certificate-versus-possession distinction into the deed transition in Chapter 12.",
+        "Retrieve payment readiness and the complete evidence file in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine open-outcry auction, public tender or deposit.",
+        "Do not replay the full registration, payment-form or default state machine.",
+        "Chapter 11 begins only after complete payment and operates the certificate-holder calendar."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch10.md",
+      "callbacks": [],
+      "promises": [
+        "Operate certificate-period accounting, insurance, maintenance, rent and redemption records in Chapter 11.",
+        "Carry the certificate-versus-possession distinction into the deed transition in Chapter 12.",
+        "Retrieve payment readiness and the complete evidence file in Chapter 13."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Keep the evidence-bound maximum fixed across a bidding card and tender envelope.",
+        "Classify an affordable bid without accepted funds as not ready.",
+        "Name the failed-sale state and return to governing law plus the current municipal source."
+      ],
+      "listenerLoadNotes": "Three new core terms, no arithmetic, three municipal format examples, one fictional bidder, four failed-sale branches and no visual dependence.",
+      "priorSectionSummary": "Open auction and public tender change submission mechanics and pressure without changing lawful authority or the written ceiling. Payment performance requires current-list verification, accepted immediate funds and any three-business-day balance path before bidding. No-bid, municipal-purchase, default and event-change branches remain governed municipal processes rather than informal opportunities.",
+      "doNotRepeat": [
+        "Do not redefine open-outcry auction, public tender or deposit.",
+        "Do not replay the full registration, payment-form or default state machine.",
+        "Chapter 11 begins only after complete payment and operates the certificate-holder calendar."
+      ]
+    },
+    {
+      "chapter": "ch11",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch11.md",
+      "draftSHA256": "89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611",
+      "wordCount": 2617,
+      "completedAt": "2026-07-20T19:03:31-03:00",
+      "termsDefined": [
+        "insurable interest",
+        "necessary repair"
+      ],
+      "examplesUsed": [
+        "fictional Maya and redeemable Cedar Street building",
+        "one specialty-underwriting refusal and one conditional coverage route",
+        "one written treasurer-approved temporary weatherproofing repair",
+        "dated Halifax Administrative Order 18 fee-category comparison",
+        "fourth-month redemption, purchaser statement, repayment and official close-out record"
+      ],
+      "retrievals": [
+        "Separate statutory insurable interest from actual policy availability and terms.",
+        "Tie protective work to condition evidence, written treasurer approval, lawful access, exact scope and payment.",
+        "Close the ledger when full redemption payment ends the certificate-holder right and the municipality confirms close-out."
+      ],
+      "listenerLoad": "Two core terms, no personalized arithmetic, one fictional certificate holder, one insurance refusal, one approved repair, one local fee-category comparison and two applied retrievals.",
+      "runningSummary": "The certificate period is active, bounded stewardship. The holder protects without diminishing, seeks actual coverage, handles taxes and income, obtains written treasurer approval before a reimbursable necessary repair and preserves every record. Redemption uses supported statutory categories and offsets; the purchaser responds with the requested statement, rights cease on full payment to the treasurer and the municipality's official record confirms close-out.",
+      "unresolvedPromises": [
+        "Request and register the deed on the unredeemed branch in Chapter 12.",
+        "Reopen title, possession, condition and intended-use evidence after the document changes.",
+        "Retrieve the complete certificate-holder ledger in Chapter 13."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine insurable interest or necessary repair.",
+        "Do not replay the full insurer outreach, repair-approval or redemption ledger.",
+        "Chapter 12 begins only with the unredeemed deed branch and its new evidence responsibilities."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch11.md",
+      "callbacks": [],
+      "promises": [
+        "Request and register the deed on the unredeemed branch in Chapter 12.",
+        "Reopen title, possession, condition and intended-use evidence after the document changes.",
+        "Retrieve the complete certificate-holder ledger in Chapter 13."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Separate statutory insurable interest from actual policy availability and terms.",
+        "Tie protective work to condition evidence, written treasurer approval, lawful access, exact scope and payment.",
+        "Close the ledger when full redemption payment ends the certificate-holder right and the municipality confirms close-out."
+      ],
+      "listenerLoadNotes": "Two core terms, no personalized arithmetic, one fictional certificate holder, one insurance refusal, one approved repair, one local fee-category comparison and two applied retrievals.",
+      "priorSectionSummary": "The certificate period is active, bounded stewardship. The holder protects without diminishing, seeks actual coverage, handles taxes and income, obtains written treasurer approval before a reimbursable necessary repair and preserves every record. Redemption uses supported statutory categories and offsets; the purchaser responds with the requested statement, rights cease on full payment to the treasurer and the municipality's official record confirms close-out.",
+      "doNotRepeat": [
+        "Do not redefine insurable interest or necessary repair.",
+        "Do not replay the full insurer outreach, repair-approval or redemption ledger.",
+        "Chapter 12 begins only with the unredeemed deed branch and its new evidence responsibilities."
+      ]
+    },
+    {
+      "chapter": "ch12",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch12.md",
+      "draftSHA256": "e4904a3fc012f9dea5d150f0bce11043546fe46ac563c3aa4f240f9207c07dcd",
+      "wordCount": 2825,
+      "completedAt": "2026-07-20T19:26:42-03:00",
+      "termsDefined": [
+        "deed registration",
+        "post-deed due diligence",
+        "tax-sale surplus account"
+      ],
+      "examplesUsed": [
+        "fictional Foundry Street deed registration, continuing right-of-way and occupied-building file",
+        "current Land Registry and Affidavit of Value requirements",
+        "current public PVSC assessment search and assessed-versus-taxable-value distinction",
+        "current CBRM zoning-confirmation and municipal-clearance distinction",
+        "fictional former co-owner Elena's possible surplus application route"
+      ],
+      "retrievals": [
+        "Separate the registered deed, legal interpretation and lawful-possession file.",
+        "Repeat intended-use and condition gates when stronger post-deed evidence becomes available.",
+        "Distinguish the surplus proceeds route and sale-date clock from the deed-challenge route and registration-date clock."
+      ],
+      "listenerLoad": "Three new core terms, no arithmetic, one recurring deeded property, one fictional prior interest holder, two separately labelled legal periods and no visual dependence.",
+      "runningSummary": "The tax deed begins ordinary ownership work rather than ending due diligence. Registration creates the recorded instrument and starts a separate six-year period while title, possession, insurance, access and condition remain separate files. Stronger post-deed evidence may change the intended use. Any surplus and claimed sale defect follow their own statutory records, dates and legal routes.",
+      "unresolvedPromises": [
+        "Retrieve the complete notice, parcel, context, unknowns and handoff method in Chapter 13.",
+        "Return every legal, physical, financial and environmental branch to the correct live source and professional decision-maker."
+      ],
+      "mustNotRepeatNext": [
+        "Do not redefine deed registration, post-deed due diligence or tax-sale surplus account.",
+        "Do not replay Foundry Street's full registration, assessment, condition or surplus story.",
+        "Chapter 13 should retrieve the complete method through applied decisions rather than summarize every chapter in order."
+      ],
+      "completionBoundary": "Canonical draft only; final claim, learning, prose, humanizer, figure and narration gates remain pending.",
+      "afterChapter": "ch12.md",
+      "callbacks": [],
+      "promises": [
+        "Retrieve the complete notice, parcel, context, unknowns and handoff method in Chapter 13.",
+        "Return every legal, physical, financial and environmental branch to the correct live source and professional decision-maker."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Separate the registered deed, legal interpretation and lawful-possession file.",
+        "Repeat intended-use and condition gates when stronger post-deed evidence becomes available.",
+        "Distinguish the surplus proceeds route and sale-date clock from the deed-challenge route and registration-date clock."
+      ],
+      "listenerLoadNotes": "Three new core terms, no arithmetic, one recurring deeded property, one fictional prior interest holder, two separately labelled legal periods and no visual dependence.",
+      "priorSectionSummary": "The tax deed begins ordinary ownership work rather than ending due diligence. Registration creates the recorded instrument and starts a separate six-year period while title, possession, insurance, access and condition remain separate files. Stronger post-deed evidence may change the intended use. Any surplus and claimed sale defect follow their own statutory records, dates and legal routes.",
+      "doNotRepeat": [
+        "Do not redefine deed registration, post-deed due diligence or tax-sale surplus account.",
+        "Do not replay Foundry Street's full registration, assessment, condition or surplus story.",
+        "Chapter 13 should retrieve the complete method through applied decisions rather than summarize every chapter in order."
+      ]
+    },
+    {
+      "chapter": "ch13",
+      "status": "canonical-draft-complete",
+      "draftPath": "chapters/ch13.md",
+      "draftSHA256": "9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b",
+      "wordCount": 2176,
+      "completedAt": "2026-07-20T19:49:00-03:00",
+      "termsDefined": [],
+      "examplesUsed": [
+        "fictional Alder Crossing two-PID identity stop condition",
+        "fictional occupied former-workshop uncertainty file",
+        "fictional Meadow Line coherent-but-not-recommended evidence file",
+        "withdrawal, payment, redemption and registered-deed stage changes",
+        "owner-free public research record and professional handoffs"
+      ],
+      "retrievals": [
+        "Classify one verified fact, unresolved risk, next authority and bidder-owned decision for each fresh parcel.",
+        "Keep notice, parcel, context, unknowns and handoff connected in one source-traceable record.",
+        "Identify current stage, controlling document, next authorized action and terminating event after the file changes."
+      ],
+      "listenerLoad": "No new core terms, three fictional parcel files, one listener-first transfer prompt, four possible stage changes, no arithmetic and no visual dependence.",
+      "runningSummary": "The final chapter retrieves the whole method through three fresh parcels and a compact record that survives event changes. A two-PID stop, unresolved file and coherent file can each be complete. The public map supports discovery and screening; professional opinions and the bidder's final decision remain outside it.",
+      "unresolvedPromises": [
+        "Complete the separate single-job humanizer, final prose and rendered ear passes.",
+        "Review and accept final figures before any governed package or narration claim."
+      ],
+      "mustNotRepeatNext": [
+        "Do not reopen canonical drafting merely to inflate the word count.",
+        "Do not treat a complete first draft as an accepted, narrated or publishable manuscript.",
+        "Downstream work begins with whole-manuscript evidence-led review rather than packaging."
+      ],
+      "completionBoundary": "All thirteen canonical draft chapters exist; final learning, claim, prose, humanizer, rendered ear, figure, narration, package, listening and publication gates remain pending.",
+      "afterChapter": "ch13.md",
+      "callbacks": [],
+      "promises": [
+        "Complete the separate single-job humanizer, final prose and rendered ear passes.",
+        "Review and accept final figures before any governed package or narration claim."
+      ],
+      "unresolvedQuestions": [],
+      "retrievalsCompleted": [
+        "Classify one verified fact, unresolved risk, next authority and bidder-owned decision for each fresh parcel.",
+        "Keep notice, parcel, context, unknowns and handoff connected in one source-traceable record.",
+        "Identify current stage, controlling document, next authorized action and terminating event after the file changes."
+      ],
+      "listenerLoadNotes": "No new core terms, three fictional parcel files, one listener-first transfer prompt, four possible stage changes, no arithmetic and no visual dependence.",
+      "priorSectionSummary": "The final chapter retrieves the whole method through three fresh parcels and a compact record that survives event changes. A two-PID stop, unresolved file and coherent file can each be complete. The public map supports discovery and screening; professional opinions and the bidder's final decision remain outside it.",
+      "doNotRepeat": [
+        "Do not reopen canonical drafting merely to inflate the word count.",
+        "Do not treat a complete first draft as an accepted, narrated or publishable manuscript.",
+        "Downstream work begins with whole-manuscript evidence-led review rather than packaging."
+      ]
+    }
+  ]
 }
