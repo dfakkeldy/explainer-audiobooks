@@ -39,9 +39,9 @@
     ]
   },
   "curriculumPattern": {
-    "name": "end-to-end-trace",
-    "reason": "The learner's main need is to follow one parcel through arrears, notice, auction, certificate, redemption and deed, opening each legal and research mechanism when its consequence becomes visible.",
-    "fitEvidence": "A road listener can retain two procedural clocks and one recurring parcel more reliably than an isolated terminology syllabus."
+    "name": "staged-portfolio-trace",
+    "reason": "The learner's main need is to follow the complete route while seeing mutually exclusive redemption and deed outcomes represented honestly by a small, explicitly named portfolio of composite files.",
+    "fitEvidence": "A road listener can retain two procedural clocks and a few stable case roles more reliably than an isolated terminology syllabus or one parcel forced through incompatible outcomes."
   },
   "throughlines": [
     "A tax sale is a municipal collection process, not a promise of a bargain.",
@@ -63,7 +63,7 @@
   ],
   "roadBookDesign": {
     "governingQuestion": "When a Nova Scotia municipality publishes a tax-sale packet, what does it establish, what remains unknown and how can careful research make the process understandable without pretending to supply legal certainty or a purchase recommendation?",
-    "narrativeSpine": "Begin with Inverness County's substantial municipal packet and follow a researcher turning it into a bounded evidence file for one fictional composite parcel, moving backward to arrears and forward through auction, certificate, redemption and deed while keeping every final purchase and professional decision outside the researcher's role.",
+    "narrativeSpine": "Begin with Inverness County's substantial municipal packet and follow a researcher through a deliberately named portfolio: Harbour Road opens the source problem, the map cases test evidence limits, Cedar Street carries the bid-to-redemption branch, and Foundry Street carries the separate deed-and-possession branch. Every final purchase and professional decision remains outside the researcher's role.",
     "peopleAndHistory": [
       "The municipal treasurer, whose statutory job is collection and notice rather than property marketing.",
       "The assessed owner and interest holders, whose payment and redemption rights keep the list and outcome fluid.",
@@ -629,7 +629,7 @@
           ],
           "throughlineAdvance": "A negative ownership outcome can still be a correctly handled process.",
           "payoff": "The former owner's return and purchaser's repayment are narrated without a winner-loser caricature.",
-          "landingBeat": "The certificate file closes when the treasurer receives full redemption and the registered discharge records the ending.",
+          "landingBeat": "The certificate file closes when the treasurer receives full redemption, the purchaser's rights end and the municipality's official record confirms close-out.",
           "mustNotRepeat": [
             "Do not foreshadow profit on the ten-percent interest."
           ]
@@ -710,7 +710,7 @@
         {
           "id": "ch13-s01",
           "job": "Run three composite parcels through known, unresolved and professional-handoff states.",
-          "argument": "The same research method can expose a fatal access problem, preserve an occupancy/environmental uncertainty or produce a coherent evidence file without making the final bid decision.",
+          "argument": "The same research method can stop on a two-PID identity conflict, preserve an occupancy/environmental uncertainty or produce a coherent evidence file without making the final bid decision.",
           "specificClaims": [
             "DATA-005",
             "LAND-005",

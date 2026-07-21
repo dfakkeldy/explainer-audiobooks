@@ -222,10 +222,14 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         expected = candidate.rstrip("\n") + "\n\n" + technical_path.read_text(
             encoding="utf-8"
         ).rstrip("\n") + "\n"
-        self.assertEqual(canonical, expected)
+        self.assertNotEqual(canonical, expected)
         chapter_checkpoint = continuity["checkpoints"][0]
         self.assertEqual(chapter_checkpoint["chapter"], "ch01")
-        self.assertTrue(chapter_checkpoint["sourceSectionsPromotedExactly"])
+        self.assertFalse(chapter_checkpoint["sourceSectionsPromotedExactly"])
+        self.assertTrue(chapter_checkpoint["acceptedSourceSectionsPreservedSeparately"])
+        self.assertEqual(
+            chapter_checkpoint["editorialReviewPath"], "research/editorial-review.md"
+        )
         self.assertEqual(
             chapter_checkpoint["draftSHA256"],
             hashlib.sha256(canonical_path.read_bytes()).hexdigest(),
@@ -278,7 +282,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_four_path = PACKET_ROOT / "chapters/ch04.md"
         chapter_four_checkpoint = continuity["checkpoints"][3]
         self.assertEqual(chapter_four_checkpoint["chapter"], "ch04")
-        self.assertEqual(chapter_four_checkpoint["wordCount"], 2424)
+        self.assertEqual(chapter_four_checkpoint["wordCount"], 2417)
         self.assertEqual(
             chapter_four_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_four_path.read_bytes()).hexdigest(),
@@ -301,7 +305,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_five = chapter_five_path.read_text(encoding="utf-8")
         chapter_five_checkpoint = continuity["checkpoints"][4]
         self.assertEqual(chapter_five_checkpoint["chapter"], "ch05")
-        self.assertEqual(chapter_five_checkpoint["wordCount"], 2649)
+        self.assertEqual(chapter_five_checkpoint["wordCount"], 2672)
         self.assertEqual(
             chapter_five_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_five_path.read_bytes()).hexdigest(),
@@ -330,7 +334,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_six = chapter_six_path.read_text(encoding="utf-8")
         chapter_six_checkpoint = continuity["checkpoints"][5]
         self.assertEqual(chapter_six_checkpoint["chapter"], "ch06")
-        self.assertEqual(chapter_six_checkpoint["wordCount"], 2335)
+        self.assertEqual(chapter_six_checkpoint["wordCount"], 2355)
         self.assertEqual(
             chapter_six_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_six_path.read_bytes()).hexdigest(),
@@ -384,7 +388,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_eight = chapter_eight_path.read_text(encoding="utf-8")
         chapter_eight_checkpoint = continuity["checkpoints"][7]
         self.assertEqual(chapter_eight_checkpoint["chapter"], "ch08")
-        self.assertEqual(chapter_eight_checkpoint["wordCount"], 2251)
+        self.assertEqual(chapter_eight_checkpoint["wordCount"], 2226)
         self.assertEqual(
             chapter_eight_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_eight_path.read_bytes()).hexdigest(),
@@ -412,7 +416,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_nine = chapter_nine_path.read_text(encoding="utf-8")
         chapter_nine_checkpoint = continuity["checkpoints"][8]
         self.assertEqual(chapter_nine_checkpoint["chapter"], "ch09")
-        self.assertEqual(chapter_nine_checkpoint["wordCount"], 2311)
+        self.assertEqual(chapter_nine_checkpoint["wordCount"], 2407)
         self.assertEqual(
             chapter_nine_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_nine_path.read_bytes()).hexdigest(),
@@ -443,7 +447,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_ten = chapter_ten_path.read_text(encoding="utf-8")
         chapter_ten_checkpoint = continuity["checkpoints"][9]
         self.assertEqual(chapter_ten_checkpoint["chapter"], "ch10")
-        self.assertEqual(chapter_ten_checkpoint["wordCount"], 2696)
+        self.assertEqual(chapter_ten_checkpoint["wordCount"], 2647)
         self.assertEqual(
             chapter_ten_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_ten_path.read_bytes()).hexdigest(),
@@ -475,7 +479,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_eleven = chapter_eleven_path.read_text(encoding="utf-8")
         chapter_eleven_checkpoint = continuity["checkpoints"][10]
         self.assertEqual(chapter_eleven_checkpoint["chapter"], "ch11")
-        self.assertEqual(chapter_eleven_checkpoint["wordCount"], 2778)
+        self.assertEqual(chapter_eleven_checkpoint["wordCount"], 2624)
         self.assertEqual(
             chapter_eleven_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_eleven_path.read_bytes()).hexdigest(),
@@ -497,9 +501,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertIn("insurable interest", chapter_eleven)
         self.assertIn("necessary repair", chapter_eleven)
-        self.assertIn("certificate of discharge", chapter_eleven)
+        self.assertIn("municipality's official close-out record", chapter_eleven)
         chapter_eleven_flat = " ".join(chapter_eleven.split())
-        self.assertIn("fourteen days", chapter_eleven_flat)
+        self.assertIn("requested purchaser statement", chapter_eleven_flat)
         self.assertIn("full redemption amount is paid to the treasurer", chapter_eleven_flat)
         self.assertIn("not a Nova Scotia tariff", chapter_eleven_flat)
 
@@ -507,7 +511,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_twelve = chapter_twelve_path.read_text(encoding="utf-8")
         chapter_twelve_checkpoint = continuity["checkpoints"][11]
         self.assertEqual(chapter_twelve_checkpoint["chapter"], "ch12")
-        self.assertEqual(chapter_twelve_checkpoint["wordCount"], 2909)
+        self.assertEqual(chapter_twelve_checkpoint["wordCount"], 2825)
         self.assertEqual(
             chapter_twelve_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_twelve_path.read_bytes()).hexdigest(),
@@ -541,7 +545,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_thirteen = chapter_thirteen_path.read_text(encoding="utf-8")
         chapter_thirteen_checkpoint = continuity["checkpoints"][12]
         self.assertEqual(chapter_thirteen_checkpoint["chapter"], "ch13")
-        self.assertEqual(chapter_thirteen_checkpoint["wordCount"], 2810)
+        self.assertEqual(chapter_thirteen_checkpoint["wordCount"], 2176)
         self.assertEqual(
             chapter_thirteen_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_thirteen_path.read_bytes()).hexdigest(),
@@ -563,12 +567,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
         )
         chapter_thirteen_flat = " ".join(chapter_thirteen.split())
-        self.assertIn("No-go until legal access is resolved", chapter_thirteen_flat)
-        self.assertIn("It does not mean best property", chapter_thirteen_flat)
-        self.assertIn(
-            "A researched parcel without compliant payment readiness is not ready to bid",
-            chapter_thirteen_flat,
-        )
+        self.assertIn("Alder Crossing is a complete stop result", chapter_thirteen_flat)
+        self.assertIn("It is not a property ranking", chapter_thirteen_flat)
+        self.assertIn("Payment readiness remains a separate gate", chapter_thirteen_flat)
         self.assertIn("The public map remains owner-free and parcel-first", chapter_thirteen_flat)
         self.assertIn("without a sales pitch", chapter_thirteen_flat)
 

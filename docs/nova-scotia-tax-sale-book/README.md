@@ -79,7 +79,7 @@ chapter screenshots.
 
 ## Current production gates
 
-The project is in `governed-final` canonical manuscript drafting. Dan approved the prior
+The project is in governed whole-manuscript review. Dan approved the prior
 twelve-chapter outline and forty-figure visual direction on 2026-07-19, accepted
 the exact three-card Inverness Packet Atlas direction with “I like them,” and
 accepted the exact first-section teaching and voice with “Let’s go for the
@@ -89,21 +89,22 @@ unknowns → handoff, then explicitly approved that thirteen-chapter, 51-figure
 direction for pilot development. Deep research,
 structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
 diagram candidates and three accepted-direction atlas prototypes exist. The
-actual Echo/video-stage atlas proof, atlas batch authorization, full manuscript,
-independent learning and prose
-review, accepted final figures, cover selection, EPUB, Echo narration, public package
-verification, and full listening all remain pending.
+actual Echo/video-stage atlas proof, atlas batch authorization, final hash-bound
+learning review, humanizer and rendered ear pass, accepted final figures, cover
+selection, EPUB, Echo narration, public package verification and full listening
+all remain pending.
 
 The governed nonpackage pilot rendered on 2026-07-20 at 14:27 with verified
 alignment and a clean pronunciation audit. Its exact SHA-256 is
 `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`;
 Dan accepted that exact pilot for continued drafting with “continue” at
-2026-07-20T08:55:51-03:00. Sequential canonical drafting is now authorized;
-final figures, full narration, packaging and publication remain separate.
-Canonical Chapters 1–13 now total 32,567 Markdown words. The complete canonical
-first draft now exists, but the chapters remain draft prose
-until the complete manuscript clears independent learning, factual, prose,
-humanizer and rendered ear-pass review.
+2026-07-20T08:55:51-03:00. Canonical Chapters 1–13 now total 31,834 Markdown
+words after the initial independent structure, blind beginner and claim-
+traceability review recorded in `research/editorial-review.md`. That round
+resolved its blocking findings, but the chapters remain draft prose until the
+single-job humanizer/tightening work, final hash-bound learning review and
+rendered ear pass are complete. Final figures, full narration, packaging and
+publication remain separate.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the

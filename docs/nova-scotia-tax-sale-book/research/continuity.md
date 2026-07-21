@@ -49,8 +49,8 @@
 - Status: canonical draft complete after Dan accepted the exact narrated pilot
   with “continue.”
 - Canonical path: `chapters/ch01.md`, SHA-256
-  `3162d971afaf4b70c50fd5184338a886eb47e2ee708bb52f9b71eb61d2fa08ab`,
-  2,064 Markdown words.
+  `58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47`,
+  2,145 Markdown words.
 - Provenance: exact mechanical assembly of the accepted 1,022-word opening and
   accepted-pilot 1,042-word technical passage; neither source passage changed.
 - Terms now defined: `tax lien`, `notice of intent`, and `tax sale`.
@@ -112,8 +112,8 @@
 ## After Chapter 5
 
 - Canonical path: `chapters/ch05.md`, SHA-256
-  `c76530d7d1a9592fa46ffaa46244826b09ff4df08a65fd385a10232939482c32`,
-  2,649 Markdown words.
+  `509967331ff7178285c897c54bed2a32e57a311074b91c0f3c42c21e3c1b1f97`,
+  2,672 Markdown words.
 - Terms defined: `civic point`, `Plus Code`, `layer`, and `mapped intersection`.
 - Method: notice → parcel → context → unknowns → handoff.
 - Grounded demonstrations: current-notice PID `50308311` at Southside River
@@ -173,8 +173,8 @@
 ## After Chapter 4
 
 - Canonical path: `chapters/ch04.md`, SHA-256
-  `557c3a25db431b535f56f15949e23e541fc7f1de262179f79dab6ed4f8d63eb9`,
-  2,424 Markdown words.
+  `e64333f5950dab1c60f12b2cf231c85aa73c947287b58c761de5573035facd39`,
+  2,417 Markdown words.
 - Terms defined: `parcel register`, `legal description`, and `title search`.
 - Classification: verified fact, professionally verifiable uncertainty,
   priceable uncertainty, and no-go uncertainty.
@@ -363,8 +363,8 @@
 ## After Chapter 6
 
 - Canonical path: `chapters/ch06.md`, SHA-256
-  `5ad516149a8346d5b4042a1e722662914a01025a7b15a5c1f3280fbe12cd5576`,
-  2,335 Markdown words.
+  `dc5bc65ce9c2167ea8af61c0f990c73ab3537129b6ab95d714da81acc9261f57`,
+  2,355 Markdown words.
 - Terms defined: `right-of-way`, `road frontage`, and `zoning`.
 - Mechanism: visible approach routes the file toward legal-access evidence; a
   supported right still leaves frontage, lot, setback, service, route-capacity,
@@ -478,8 +478,8 @@
 ## After Chapter 8
 
 - Canonical path: `chapters/ch08.md`, SHA-256
-  `112ed6f910175a4b2e807c13ed5aae0d2829c2d3586ce31f49c6577fd619a5a0`,
-  2,251 Markdown words.
+  `d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939`,
+  2,226 Markdown words.
 - Terms defined: `fee simple`, `encumbrance`, and `vacant possession`.
 - Mechanism: the deed and title opinion address conveyed and continuing land
   interests; occupant facts and applicable law determine the lawful possession
@@ -547,8 +547,8 @@
 ## After Chapter 9
 
 - Canonical path: `chapters/ch09.md`, SHA-256
-  `8f49968b6690eea98dfcc65e163105ffc20118de4f545e6d7d381a226c160a18`,
-  2,311 Markdown words.
+  `13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42`,
+  2,407 Markdown words.
 - Terms defined: `all-in cost`, `uncertainty reserve`, and `maximum bid`.
 - Mechanism: dated results describe competition but do not establish value;
   a defined use turns legal, carrying, physical, tax, eligibility, payment, and
@@ -608,8 +608,8 @@
 ## After Chapter 10
 
 - Canonical path: `chapters/ch10.md`, SHA-256
-  `5d4f3b52774a74f98293d36c26ea1913db22084bb6d571eb2523a08c1b4cb130`,
-  2,696 Markdown words.
+  `a6729affd3fccb58732d956da0fbfa1c5b00a1779fade1527366a5f155a89001`,
+  2,647 Markdown words.
 - Terms defined: `open-outcry auction`, `public tender`, and `deposit`.
 - Mechanism: current-list verification, bidder authority, an unchanged written
   ceiling, accepted immediate funds, and any three-business-day balance path
@@ -639,8 +639,7 @@
 - Grounding: fictional Maya now holds the registered certificate for Cedar
   Street, receives one specialty-underwriting refusal, and seeks written
   treasurer approval for one necessary protective repair.
-- New-term budget for Chapter 11: `insurable interest`, `necessary repair`, and
-  `certificate of discharge`.
+- New-term budget for Chapter 11: `insurable interest` and `necessary repair`.
 - Audio reset: return to one insurer response, one written municipal approval,
   and one repair receipt.
 - No-repeat boundary: no auction registration or payment replay, no early
@@ -658,8 +657,9 @@
 - Retrieval: separate a statutory interest from policy availability, and
   connect any protective cost to condition evidence, written approval, lawful
   access, exact scope, invoice, and payment.
-- Open promise: close the redemption branch through the statutory categories,
-  purchaser statement, repayment, cessation of rights, and registered discharge.
+- Open promise: close the redemption branch through the supported statutory
+  categories, purchaser statement, repayment, cessation of rights and the
+  municipality's official close-out record.
 
 ## Before `ch11-s02`
 
@@ -671,7 +671,7 @@
 - Grounding: Cedar Street is redeemed after Maya has paid a new tax bill,
   premium, and approved repair while receiving no rent; Halifax's current
   Administrative Order 18 supplies a clearly local fee-category example.
-- New-term budget remaining: `certificate of discharge`.
+- New-term budget remaining: none.
 - Audio budget: name the statutory additions and offsets, then reset to the
   approved repair receipt and treasurer's file rather than calculate a return.
 - No-repeat boundary: no detailed occupant process, no reimbursement promise,
@@ -681,16 +681,16 @@
 ## After Chapter 11
 
 - Canonical path: `chapters/ch11.md`, SHA-256
-  `f20e5d60bd090a121cce89275da264185c00ea9c59857957b158e5c238e5c5b8`,
-  2,778 Markdown words.
-- Terms defined: `insurable interest`, `necessary repair`, and `certificate of
-  discharge`.
+  `236b44471c5bd2ca3f924fcfcc00f9d6735c45a3b272aa31da7f237af071bbc2`,
+  2,624 Markdown words.
+- Terms defined: `insurable interest` and `necessary repair`.
 - Mechanism: a registered certificate creates conditional protective powers,
   insurance and accounting duties, while possession, underwriting, repair
   authority, safety, and development remain separate questions.
 - Grounded sequence: Maya documents one insurance refusal, a conditional
   specialty policy, current taxes, one written treasurer-approved temporary
-  repair, no rent, the requested purchaser statement, repayment, and discharge.
+  repair, no rent, the requested purchaser statement, repayment and the
+  municipality's official close-out record.
 - Redemption categories: purchase sum, statutory interest, qualifying taxes,
   recording fee, fire-insurance premiums, approved necessary repairs, surplus
   offset, and rent or other income offset stay distinct in the treasurer's file.
@@ -791,8 +791,8 @@
 ## After Chapter 12
 
 - Canonical path: `chapters/ch12.md`, SHA-256
-  `11662b533638f40ac299d311b57278d1e6230ea3140a8a35f2f86f25b3f4ff2e`,
-  2,909 Markdown words.
+  `fd1ffb3b607c29dea7b4500f65dc1b257fcd817dbeac73b9e056036ea2c828b0`,
+  2,825 Markdown words.
 - Terms defined: `deed registration`, `post-deed due diligence`, and `tax-sale
   surplus account`.
 - Mechanism: the deed is registered against the correct parcel, then title,
@@ -835,10 +835,10 @@
 - Draft: 1,547 words in `chapters/ch13.md`, section-state SHA-256
   `67dcb9e7cdd7e7ef9a748637d3028ac692c84031642366bfd7e3f69f877cc736`.
 - Terms defined: none; the section retrieves established concepts after a gap.
-- Case endings: Alder Spur stops until legal access is resolved; Union Workshop
-  preserves interacting occupancy, former-use, condition, insurance and tax
-  unknowns; Meadow Line reaches a coherent evidence and payment-readiness file
-  without becoming a recommendation.
+- Case endings: Alder Crossing stops on an unresolved two-PID identity conflict;
+  Union Workshop preserves interacting occupancy, former-use, condition,
+  insurance and tax unknowns; Meadow Line reaches a coherent evidence and
+  payment-readiness file without becoming a recommendation.
 - Retrieval: each case returns to one verified fact, one unresolved risk, the
   authority for the next answer and the decision retained by the bidder.
 - Public-assessment boundary: assessed value and classification remain dated
@@ -868,14 +868,14 @@
 ## After Chapter 13
 
 - Canonical path: `chapters/ch13.md`, SHA-256
-  `c27d6b9aff2b545d1d3a82da12e72e9ec1b2456652dbf67a7924d7969ece8171`,
-  2,810 Markdown words.
+  `9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b`,
+  2,176 Markdown words.
 - Terms defined: none; the chapter retrieves the established vocabulary and
   method after a gap.
-- Three-case transfer: Alder Spur stops until access is resolved; Union
-  Workshop preserves interacting occupancy, former-use and condition unknowns;
-  Meadow Line reaches a coherent evidence and payment file without becoming a
-  recommendation.
+- Three-case transfer: Alder Crossing stops on a two-PID identity conflict after
+  a listener-first classification prompt; Union Workshop preserves interacting
+  occupancy, former-use and condition unknowns; Meadow Line reaches a coherent
+  evidence and payment file without becoming a recommendation.
 - Durable record: source, locator, retrieval date, returned result, limitation,
   unresolved question, authority, decision consequence and current stage
   remain connected as the event changes.
@@ -883,8 +883,36 @@
   discovery and screening while refusing scores, predicted value, invented
   civic addresses, implied access and ambiguous empty results.
 - Stage retrieval: live notice and payment plan govern before bidding;
-  certificate and treasurer process govern during redemption; discharge closes
-  redemption; registered deed reopens ordinary ownership evidence.
+  certificate and treasurer process govern during redemption; full payment ends
+  the purchaser's rights; registered deed reopens ordinary ownership evidence.
 - Manuscript boundary: all thirteen canonical draft chapters now exist, but
   independent structure, blind beginner, claim, prose, humanizer, rendered ear,
   figure, narration, package, listening and publication gates remain pending.
+
+## After Whole-Manuscript Review Round 1
+
+- Review record: `research/editorial-review.md`.
+- Reviewers: independent structure, blind sequential beginner and independent
+  claim-traceability agents; the lead author alone resolved findings.
+- Current manuscript: 31,834 Markdown words across thirteen chapters.
+- Current structure: a declared case portfolio replaces the impossible promise
+  that one parcel will both redeem and proceed to an unredeemed deed. Harbour
+  Road opens the source problem, Cedar Street carries the redemption branch and
+  Foundry Street carries the deed-and-possession branch.
+- Transfer repair: Chapter 13 now opens with Alder Crossing's two-PID and civic-
+  point conflict and pauses for the listener's classification before giving the
+  answer. Its closing recap is compressed to a stable record core and stage-
+  change test.
+- Claim repair: unsupported legal deadlines, court procedure, surplus details,
+  exact Halifax fees and event-specific auction mechanics were removed or
+  narrowed to the evidence ledger. CBRM operational guidance remains explicitly
+  attributed to CBRM.
+- Prose status: pre- and post-revision candidate reports pass the rhetorical-
+  family gate with no hard bans, similar-paragraph candidates or formulaic
+  chapter openings/closings. This is not the later humanizer receipt.
+- Hash authority: current chapter hashes and word counts are in
+  `research/continuity.json`; the original first-draft hashes remain preserved
+  in `research/editorial-review.md`.
+- Remaining boundary: single-job humanizer/tightening, final two-reviewer
+  learning receipt, rendered ear pass, figure acceptance, narration, package,
+  listening and publication are still pending.

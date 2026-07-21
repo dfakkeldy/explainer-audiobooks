@@ -10,11 +10,23 @@ When a Nova Scotia municipality publishes a tax-sale packet, what does it actual
 
 ## Narrative spine
 
-We begin with Inverness County's unusually substantial 139-page packet and follow a researcher as he turns municipal source material into a bounded evidence file for one fictional composite parcel. The story moves backward to arrears and notice, then forward through a Port Hood auction, certificate of sale, redemption and—if it reaches that point—a tax deed. A landlocked sliver and an occupied building interrupt the main case. Other municipalities appear as controlled comparisons so Inverness practice is never mistaken for Nova Scotia law. The researcher never becomes a fictional bidder and never supplies the final legal, valuation or purchase decision.
+We begin with Inverness County's unusually substantial 139-page packet and
+follow a researcher turning municipal source material into bounded evidence
+files. Harbour Road introduces the source problem; Birch Point Road and the map
+cases build the research method; Cedar Street carries the bid-to-redemption
+branch; Foundry Street carries the separate deed-and-possession branch. The
+portfolio is deliberate because one parcel cannot both redeem and proceed to an
+unredeemed deed. Other municipalities appear as controlled comparisons so
+Inverness practice is never mistaken for Nova Scotia law. The researcher never
+becomes a fictional bidder and never supplies the final legal, valuation or
+purchase decision.
 
 ## Curriculum choice
 
-`end-to-end-trace`: the listener first sees the whole route, then opens each stage when its inputs and consequences are meaningful. The procedure's two clocks—before sale and after sale—keep legal terminology attached to events rather than presented as a glossary.
+`staged-portfolio-trace`: the listener first sees the whole route, then follows a
+small, explicitly named set of composite files through mutually exclusive
+branches. The procedure's two clocks—before sale and after sale—keep legal
+terminology attached to events rather than presented as a glossary.
 
 ## Durable outcomes
 
@@ -110,19 +122,45 @@ Claims: `LAW-005`, `LAW-006`, `LAW-015`, `LAW-016`, `OPS-002`–`OPS-006`, `DATA
 
 ### 11. The Certificate-Holder Months — post-sale operations — 3,400 words
 
-Follow the successful bidder through certificate registration, insurer outreach, new tax bills, protective repairs, rent records and possible redemption. Separate the statutory duty to insure an insurable building from an insurer's willingness to write a vacant or otherwise non-standard risk. Walk the redemption arithmetic categories: later taxes and interest, certificate-of-discharge registration, fire-insurance premiums, treasurer-approved necessary repairs, surplus offsets and rent or other income. Use Halifax Administrative Order 18 as a clearly labelled local example of what notice, title-search, survey, certificate, deed, registration, closing and redemption-administration expenses can contain. Explain why every dollar and authorization needs documentation and why the purchaser may have fourteen days to provide the requested insurance-and-repair statement. Keep human safety and lawful communication central.
+Follow the successful bidder through certificate registration, insurer outreach,
+new tax bills, protective repairs, rent records and possible redemption. Separate
+the statutory duty to insure an insurable building from an insurer's willingness
+to write a vacant or otherwise non-standard risk. Walk the supported redemption
+categories and offsets without adding an unbound response deadline or court
+procedure. Use Halifax Administrative Order 18 as a dated, clearly labelled
+example of expense categories, keeping exact perishable amounts in the reference
+layer. Explain why every dollar and authorization needs documentation. Keep
+human safety and lawful communication central.
 
 Claims: `LAW-007`–`LAW-011`, `INS-001`, `OPS-007`, `OCC-001`.
 
 ### 12. The Deed Is a Beginning — ownership, cleanup, exit — 3,400 words
 
-If no redemption occurs, request and register the deed, revisit title and insurance, resolve possession lawfully, and repeat planning/physical due diligence before repair, development, rental or resale. Explain surplus proceeds from the former interest-holder's side: the municipal payment order, the redemption-period hold, the later Supreme Court application window and the twenty-year endpoint. Then teach the contested branch. A defective sale may be set aside without discharging the tax lien, while the Marketable Titles Act generally limits attacks on a registered tax deed to the following six years, subject to its stated exceptions and possible damages remedy. Make the clock start at deed registration, not auction day, and hand every actual contest to counsel.
+If no redemption occurs, request and register the deed, revisit title and
+insurance, resolve possession lawfully, and repeat planning and physical due
+diligence before repair, development, rental or resale. Explain the supported
+surplus route from the former interest-holder's side: a separate Supreme Court
+application after redemption and before twenty years. Then teach the contested
+branch. A defective sale may be set aside without discharging the tax lien,
+while the Marketable Titles Act generally limits attacks on a registered tax
+deed to the following six years, subject to its stated exceptions and possible
+damages remedy. Make the clock start at deed registration, not auction day, and
+hand every actual contest to counsel.
 
 Claims: `LAW-012`–`LAW-014`, `LAW-017`, `LAW-018`, `LAND-005`, `LAND-006`, `ENV-001`, `OCC-001`, `TAX-001`.
 
 ### 13. Three Case Files Marked Known, Unresolved and Professional — retrieval and decision framework — 3,400 words
 
-Run three fictional composite parcels through the complete method. Each map pass must follow the same notice → parcel → context → unknowns → handoff chain, including a separate current-versus-historical check and no inferred address or access. One fails on legal access, one pauses on occupancy/environmental uncertainty, and one produces a coherent evidence file while still leaving the actual bid decision outside the researcher's authority. End with the listener's repeatable research record and professional handoff questions—not a promise that buying is the right outcome or that a research business must follow.
+Run three fictional composite parcels through the complete method. Each map pass
+must follow the same notice → parcel → context → unknowns → handoff chain,
+including a separate current-versus-historical check and no inferred address or
+access. One stops on a two-PID identity conflict, one pauses on
+occupancy/environmental uncertainty, and one produces a coherent evidence file
+while still leaving the actual bid decision outside the researcher's authority.
+Require the listener to classify the first case before revealing the answer.
+End with one compact stage-change record and professional handoff boundary—not
+a second chapter-by-chapter recap, a promise that buying is right, or a sales
+pitch.
 
 Claims: all families, with no new law.
 

@@ -1461,8 +1461,7 @@
       "draftPath": "chapters/ch11.md",
       "termsBudget": [
         "insurable interest",
-        "necessary repair",
-        "certificate of discharge"
+        "necessary repair"
       ],
       "audioLoad": {
         "temporaryValues": 3,
@@ -1488,7 +1487,7 @@
       "runningSummary": "A registered certificate creates conditional responsibility before deed certainty. The holder may protect and non-diminishingly use the land, collect rent and seek insurance while avoiding injury and tree cutting. Insurable interest does not guarantee underwriting, apparent vacancy does not establish possession, and a qualifying necessary repair requires written treasurer approval plus a complete evidence chain.",
       "unresolvedPromises": [
         "Walk the statutory redemption additions and offsets without calculating promised profit.",
-        "Close Maya's rights through full payment to the treasurer and the registered certificate of discharge."
+        "Close Maya's rights through full payment to the treasurer and the municipality's official close-out record."
       ]
     },
     {
@@ -1502,7 +1501,7 @@
       "styleGuidePath": "research/voice-source-profile.md",
       "declaudificationPath": "../../skill/references/declaudification.md",
       "previousSectionTextOrSummary": "Maya holds Cedar Street's registered certificate, routes possession and safety questions lawfully, documents one insurer refusal and a conditional specialty policy, pays current taxes, and completes only a written treasurer-approved temporary repair with a full receipt chain.",
-      "sectionJob": "Resolve the redemption branch humanely and financially through statutory additions, offsets, purchaser statement, repayment, cessation of rights and discharge.",
+      "sectionJob": "Resolve the redemption branch humanely and financially through supported statutory additions, offsets, purchaser statement, repayment, cessation of rights and municipal close-out.",
       "specificClaims": [
         "LAW-010",
         "LAW-011",
@@ -1516,7 +1515,7 @@
       ],
       "throughlineAdvance": "Treat redemption as a lawful completion that repays supported categories and restores the former interest without winner-loser narration.",
       "payoff": "Maya can deliver the requested statement, reconcile the treasurer's amount and close the file when full redemption ends her rights.",
-      "landingBeat": "The registered certificate of discharge records the ending; the deed branch remains for Chapter 12 only if redemption does not occur.",
+      "landingBeat": "Full redemption payment ends the purchaser's rights and the municipality's official record confirms close-out; the deed branch remains for Chapter 12 only if redemption does not occur.",
       "mustNotRepeat": [
         "Do not replay the entire insurance or repair-approval story.",
         "Do not describe ten-percent annual interest as guaranteed profit or calculate a personalized return.",
@@ -1532,9 +1531,7 @@
         "tidy three-part morals"
       ],
       "draftPath": "chapters/ch11.md",
-      "termsBudgetRemaining": [
-        "certificate of discharge"
-      ],
+      "termsBudgetRemaining": [],
       "audioLoadRemaining": {
         "temporaryValues": 3,
         "symbolicChainSteps": 2,
@@ -1550,13 +1547,11 @@
       "sectionDraftSHA256": "f20e5d60bd090a121cce89275da264185c00ea9c59857957b158e5c238e5c5b8",
       "sectionWordCount": 1435,
       "draftedAt": "2026-07-20T19:03:31-03:00",
-      "termsDefined": [
-        "certificate of discharge"
-      ],
+      "termsDefined": [],
       "localFeeExample": "Halifax Administrative Order 18 Schedule 1 refreshed 2026-07-20 and explicitly bounded to Halifax",
-      "retrievalPrompt": "When a qualifying person intends to redeem, identify the purchaser records, statutory additions, offsets, response deadline, exact cessation event and registered close-out instrument.",
-      "retrievalAnswer": "Provide the requested insurance-and-approved-repair statement within fourteen days, preserve taxes and income in their proper categories, reconcile the official repayment, stop when full redemption payment reaches the treasurer, and record the certificate of discharge.",
-      "runningSummary": "Redemption is a statutory completion rather than a failed investment. The treasurer administers purchase sum, interest, qualifying taxes, recording fee, premiums, approved repairs, surplus and income offsets. The purchaser supplies the requested premium-and-repair statement within fourteen days, loses rights on full payment to the treasurer and closes the registered record through a certificate of discharge.",
+      "retrievalPrompt": "When a qualifying person intends to redeem, identify the purchaser records, supported statutory additions, offsets, exact cessation event and official municipal close-out record.",
+      "retrievalAnswer": "Provide the requested insurance-and-approved-repair statement, preserve taxes and income in their proper categories, reconcile the official repayment, stop when full redemption payment reaches the treasurer, and preserve the municipality's close-out record.",
+      "runningSummary": "Redemption is a statutory completion rather than a failed investment. The treasurer administers the supported statutory categories and offsets. The purchaser supplies the requested premium-and-repair statement, loses rights on full payment to the treasurer and preserves the municipality's official close-out record.",
       "unresolvedPromises": [
         "Follow the unredeemed branch into deed request, registration and a second due-diligence wave in Chapter 12.",
         "Retrieve the complete certificate and redemption record in Chapter 13."
@@ -1572,7 +1567,7 @@
       "chapterPlanPath": "research/chapter-plans.json",
       "styleGuidePath": "research/voice-source-profile.md",
       "declaudificationPath": "../../skill/references/declaudification.md",
-      "previousSectionTextOrSummary": "Chapter 11 closes the redeemed Cedar Street branch when full payment to the treasurer ends Maya's rights and the registered discharge records that ending. Chapter 12 follows the separate unredeemed branch and returns to Foundry Street, whose deed, continuing right-of-way and occupied premises were introduced in Chapter 8.",
+      "previousSectionTextOrSummary": "Chapter 11 closes the redeemed Cedar Street branch when full payment to the treasurer ends Maya's rights and the municipality's official record confirms close-out. Chapter 12 follows the separate unredeemed branch and returns to Foundry Street, whose deed, continuing right-of-way and occupied premises were introduced in Chapter 8.",
       "sectionJob": "Request and register the deed, then reopen title, tax, insurance, access and possession files under the new document.",
       "specificClaims": [
         "LAW-012",
@@ -1845,7 +1840,7 @@
       "draftedAt": "2026-07-20T19:47:24-03:00",
       "termsDefined": [],
       "retrievalPrompt": "For a fresh parcel, name one verified fact, one unresolved decision-critical risk, the authority able to answer next and the decision that remains with the bidder.",
-      "retrievalAnswer": "Alder Spur stops on unresolved legal access; Union Workshop preserves occupancy, former-use, condition, insurance and tax unknowns; Meadow Line reaches a coherent evidence and payment-readiness file without becoming a recommendation.",
+      "retrievalAnswer": "Alder Crossing stops on an unresolved two-PID identity conflict; Union Workshop preserves occupancy, former-use, condition, insurance and tax unknowns; Meadow Line reaches a coherent evidence and payment-readiness file without becoming a recommendation.",
       "runningSummary": "Three fictional parcel files retrieve the complete source-bounded method. Exact identity and map returns can support research while access, occupancy, environmental condition, permission, value and tax treatment stay with their proper records and professionals. A no-go, unresolved file or coherent file can each be a complete result.",
       "unresolvedPromises": [
         "Convert the three-case method into one reusable public research record.",
@@ -1862,7 +1857,7 @@
       "chapterPlanPath": "research/chapter-plans.json",
       "styleGuidePath": "research/voice-source-profile.md",
       "declaudificationPath": "../../skill/references/declaudification.md",
-      "previousSectionTextOrSummary": "Alder Spur stops on unresolved access, Union Workshop preserves interacting occupancy and former-use unknowns, and Meadow Line reaches a coherent evidence file without becoming a recommendation. Each case records one supported fact, the decision-critical unknown, the next authority and the bidder's retained decision.",
+      "previousSectionTextOrSummary": "Alder Crossing stops on an unresolved two-PID identity conflict, Union Workshop preserves interacting occupancy and former-use unknowns, and Meadow Line reaches a coherent evidence file without becoming a recommendation. Each case records one supported fact, the decision-critical unknown, the next authority and the bidder's retained decision.",
       "sectionJob": "Close with one reusable public research record and retrieve event verification, payment readiness and staged responsibility.",
       "specificClaims": [
         "LAW-006",
@@ -1923,19 +1918,49 @@
       ]
     }
   ],
+  "reviewRounds": [
+    {
+      "id": "whole-manuscript-round-1",
+      "status": "completed-with-revisions",
+      "reviewedAt": "2026-07-20T22:57:13-03:00",
+      "editorialReviewPath": "research/editorial-review.md",
+      "reviewers": [
+        "independent-structure-review-agent",
+        "blind-sequential-beginner-agent",
+        "independent-claim-traceability-agent",
+        "frontier-lead-author"
+      ],
+      "currentThroughline": "A deliberately named portfolio carries notice, parcel, context, unknowns and handoff through mutually exclusive redemption and deed outcomes without turning map screening into a recommendation.",
+      "resolvedBlockingFindings": [
+        "case-spine contract mismatch",
+        "Chapter 8 chronology and Chapter 12 overlap",
+        "Chapter 13 transfer weakness",
+        "unsupported legal and operational details"
+      ],
+      "remainingGates": [
+        "single-job humanizer and tightening passes",
+        "final hash-bound two-reviewer learning review",
+        "rendered ear pass",
+        "figure acceptance",
+        "narration, packaging, listening and publication"
+      ]
+    }
+  ],
   "checkpoints": [
     {
       "chapter": "ch01",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch01.md",
-      "draftSHA256": "3162d971afaf4b70c50fd5184338a886eb47e2ee708bb52f9b71eb61d2fa08ab",
-      "wordCount": 2064,
+      "draftSHA256": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
+      "wordCount": 2145,
       "completedAt": "2026-07-20T08:55:51-03:00",
       "sourceSections": [
         "pilot/first-section-candidate.md",
         "pilot/first-technical-passage.md"
       ],
-      "sourceSectionsPromotedExactly": true,
+      "sourceSectionsPromotedExactly": false,
+      "acceptedSourceSectionsPreservedSeparately": true,
+      "editorialReviewPath": "research/editorial-review.md",
       "termsDefined": [
         "tax lien",
         "notice of intent",
@@ -2055,8 +2080,8 @@
       "chapter": "ch04",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch04.md",
-      "draftSHA256": "557c3a25db431b535f56f15949e23e541fc7f1de262179f79dab6ed4f8d63eb9",
-      "wordCount": 2424,
+      "draftSHA256": "e64333f5950dab1c60f12b2cf231c85aa73c947287b58c761de5573035facd39",
+      "wordCount": 2417,
       "completedAt": "2026-07-20T09:19:58-03:00",
       "termsDefined": [
         "parcel register",
@@ -2095,8 +2120,8 @@
       "chapter": "ch05",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch05.md",
-      "draftSHA256": "c76530d7d1a9592fa46ffaa46244826b09ff4df08a65fd385a10232939482c32",
-      "wordCount": 2649,
+      "draftSHA256": "509967331ff7178285c897c54bed2a32e57a311074b91c0f3c42c21e3c1b1f97",
+      "wordCount": 2672,
       "completedAt": "2026-07-20T09:27:36-03:00",
       "termsDefined": [
         "civic point",
@@ -2141,8 +2166,8 @@
       "chapter": "ch06",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch06.md",
-      "draftSHA256": "5ad516149a8346d5b4042a1e722662914a01025a7b15a5c1f3280fbe12cd5576",
-      "wordCount": 2335,
+      "draftSHA256": "dc5bc65ce9c2167ea8af61c0f990c73ab3537129b6ab95d714da81acc9261f57",
+      "wordCount": 2355,
       "completedAt": "2026-07-20T15:47:45-03:00",
       "termsDefined": [
         "right-of-way",
@@ -2214,8 +2239,8 @@
       "chapter": "ch08",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch08.md",
-      "draftSHA256": "112ed6f910175a4b2e807c13ed5aae0d2829c2d3586ce31f49c6577fd619a5a0",
-      "wordCount": 2251,
+      "draftSHA256": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
+      "wordCount": 2226,
       "completedAt": "2026-07-20T16:26:03-03:00",
       "termsDefined": [
         "fee simple",
@@ -2251,8 +2276,8 @@
       "chapter": "ch09",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch09.md",
-      "draftSHA256": "8f49968b6690eea98dfcc65e163105ffc20118de4f545e6d7d381a226c160a18",
-      "wordCount": 2311,
+      "draftSHA256": "13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42",
+      "wordCount": 2407,
       "completedAt": "2026-07-20T17:53:58-03:00",
       "termsDefined": [
         "all-in cost",
@@ -2289,8 +2314,8 @@
       "chapter": "ch10",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch10.md",
-      "draftSHA256": "5d4f3b52774a74f98293d36c26ea1913db22084bb6d571eb2523a08c1b4cb130",
-      "wordCount": 2696,
+      "draftSHA256": "a6729affd3fccb58732d956da0fbfa1c5b00a1779fade1527366a5f155a89001",
+      "wordCount": 2647,
       "completedAt": "2026-07-20T18:20:58-03:00",
       "termsDefined": [
         "open-outcry auction",
@@ -2328,35 +2353,34 @@
       "chapter": "ch11",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch11.md",
-      "draftSHA256": "f20e5d60bd090a121cce89275da264185c00ea9c59857957b158e5c238e5c5b8",
-      "wordCount": 2778,
+      "draftSHA256": "236b44471c5bd2ca3f924fcfcc00f9d6735c45a3b272aa31da7f237af071bbc2",
+      "wordCount": 2624,
       "completedAt": "2026-07-20T19:03:31-03:00",
       "termsDefined": [
         "insurable interest",
-        "necessary repair",
-        "certificate of discharge"
+        "necessary repair"
       ],
       "examplesUsed": [
         "fictional Maya and redeemable Cedar Street building",
         "one specialty-underwriting refusal and one conditional coverage route",
         "one written treasurer-approved temporary weatherproofing repair",
-        "current Halifax Administrative Order 18 fee-category comparison",
-        "fourth-month redemption, purchaser statement, repayment and discharge"
+        "dated Halifax Administrative Order 18 fee-category comparison",
+        "fourth-month redemption, purchaser statement, repayment and official close-out record"
       ],
       "retrievals": [
         "Separate statutory insurable interest from actual policy availability and terms.",
         "Tie protective work to condition evidence, written treasurer approval, lawful access, exact scope and payment.",
-        "Close the ledger when full redemption payment ends the certificate-holder right and the discharge is registered."
+        "Close the ledger when full redemption payment ends the certificate-holder right and the municipality confirms close-out."
       ],
-      "listenerLoad": "Three new core terms, no personalized arithmetic, one fictional certificate holder, one insurance refusal, one approved repair, one local fee comparison and two applied retrievals.",
-      "runningSummary": "The certificate period is active, bounded stewardship. The holder protects without diminishing, seeks actual coverage, handles taxes and income, obtains written treasurer approval before a reimbursable necessary repair and preserves every record. Redemption uses statutory categories and offsets; the purchaser responds with the requested statement, rights cease on full payment to the treasurer and the registered discharge records the ending.",
+      "listenerLoad": "Two core terms, no personalized arithmetic, one fictional certificate holder, one insurance refusal, one approved repair, one local fee-category comparison and two applied retrievals.",
+      "runningSummary": "The certificate period is active, bounded stewardship. The holder protects without diminishing, seeks actual coverage, handles taxes and income, obtains written treasurer approval before a reimbursable necessary repair and preserves every record. Redemption uses supported statutory categories and offsets; the purchaser responds with the requested statement, rights cease on full payment to the treasurer and the municipality's official record confirms close-out.",
       "unresolvedPromises": [
         "Request and register the deed on the unredeemed branch in Chapter 12.",
         "Reopen title, possession, condition and intended-use evidence after the document changes.",
         "Retrieve the complete certificate-holder ledger in Chapter 13."
       ],
       "mustNotRepeatNext": [
-        "Do not redefine insurable interest, necessary repair or certificate of discharge.",
+        "Do not redefine insurable interest or necessary repair.",
         "Do not replay the full insurer outreach, repair-approval or redemption ledger.",
         "Chapter 12 begins only with the unredeemed deed branch and its new evidence responsibilities."
       ],
@@ -2366,8 +2390,8 @@
       "chapter": "ch12",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch12.md",
-      "draftSHA256": "11662b533638f40ac299d311b57278d1e6230ea3140a8a35f2f86f25b3f4ff2e",
-      "wordCount": 2909,
+      "draftSHA256": "fd1ffb3b607c29dea7b4500f65dc1b257fcd817dbeac73b9e056036ea2c828b0",
+      "wordCount": 2825,
       "completedAt": "2026-07-20T19:26:42-03:00",
       "termsDefined": [
         "deed registration",
@@ -2403,12 +2427,12 @@
       "chapter": "ch13",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch13.md",
-      "draftSHA256": "c27d6b9aff2b545d1d3a82da12e72e9ec1b2456652dbf67a7924d7969ece8171",
-      "wordCount": 2810,
+      "draftSHA256": "9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b",
+      "wordCount": 2176,
       "completedAt": "2026-07-20T19:49:00-03:00",
       "termsDefined": [],
       "examplesUsed": [
-        "fictional Alder Spur access stop condition",
+        "fictional Alder Crossing two-PID identity stop condition",
         "fictional occupied former-workshop uncertainty file",
         "fictional Meadow Line coherent-but-not-recommended evidence file",
         "withdrawal, payment, redemption and registered-deed stage changes",
@@ -2419,11 +2443,10 @@
         "Keep notice, parcel, context, unknowns and handoff connected in one source-traceable record.",
         "Identify current stage, controlling document, next authorized action and terminating event after the file changes."
       ],
-      "listenerLoad": "No new core terms, three fictional parcel files, four possible stage changes, no arithmetic and no visual dependence.",
-      "runningSummary": "The final chapter retrieves the whole method through three fresh parcels and a record that survives event changes. A no-go, unresolved file and coherent file can each be complete. The public map supports discovery and screening; professional opinions and the bidder's final decision remain outside it.",
+      "listenerLoad": "No new core terms, three fictional parcel files, one listener-first transfer prompt, four possible stage changes, no arithmetic and no visual dependence.",
+      "runningSummary": "The final chapter retrieves the whole method through three fresh parcels and a compact record that survives event changes. A two-PID stop, unresolved file and coherent file can each be complete. The public map supports discovery and screening; professional opinions and the bidder's final decision remain outside it.",
       "unresolvedPromises": [
-        "Run independent whole-manuscript structure, blind beginner and claim-traceability review.",
-        "Complete narrow revision, humanizer, final prose and rendered ear passes.",
+        "Complete the separate single-job humanizer, final prose and rendered ear passes.",
         "Review and accept final figures before any governed package or narration claim."
       ],
       "mustNotRepeatNext": [

@@ -39,8 +39,11 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- Canonical drafting: Chapters 1–13 complete at 32,567 Markdown words; the
-  complete canonical first draft now exists and whole-manuscript review is next.
+- Canonical manuscript: Chapters 1–13 now total 31,834 Markdown words after the
+  initial independent structure, blind beginner and claim-traceability review.
+  `research/editorial-review.md` preserves the first-draft hashes, findings and
+  lead-author decisions. The separate humanizer/tightening, final hash-bound
+  learning review and rendered ear pass are next.
   Chapter 5 carries the major notice → parcel → context → unknowns →
   handoff rewrite. Chapters 6 and 7 stress-test it against legal access,
   intended use, and bounded environmental records; Chapter 8 separates title,
@@ -49,10 +52,11 @@ unranked.
   all-in cost, tax/eligibility branch, uncertainty reserve, and written maximum.
   Chapter 10 executes that ceiling across open auction and tender, then traces
   payment readiness, no-bid, default, re-advertisement, and current-event
-  refresh branches. Chapter 11 operates the redeemable certificate period through
-  insurer outreach, bounded protective work, taxes, income, the purchaser
-  statement, redemption repayment, and registered discharge. These are draft
-  checkpoints, not final reviewed manuscript prose.
+  refresh branches. Chapter 11 operates the redeemable certificate period
+  through insurer outreach, bounded protective work, taxes, income, the
+  purchaser statement, redemption repayment and the municipality's official
+  close-out record. These remain reviewed draft checkpoints, not final accepted
+  manuscript prose.
 - User approval status: the prior twelve-chapter/forty-figure direction was
   approved for pilot development at 2026-07-19T11:56:49-03:00. The proposed
   thirteen-chapter/51-figure revision was explicitly approved for pilot
@@ -87,7 +91,9 @@ under the HRM Charter parallel rather than silently folded into the MGA.
 
 ## Learning outline
 
-- Curriculum pattern: end-to-end trace.
+- Curriculum pattern: staged portfolio trace. Harbour Road opens the source
+  problem, Cedar Street carries the redemption branch and Foundry Street carries
+  the separate deed-and-possession branch.
 - Governing question, approved thirteen-chapter argument map, section claims and repetition
   limits: `research/learning-outline.json` and `research/outline.md`.
 - Durable outcomes: ten, with the map method strengthening the lawful evidence-file outcome alongside a distinct payment-performance outcome and a separate staged-responsibility explanation path.
@@ -146,7 +152,9 @@ Draft one approved section at a time with the full outline, exact claim IDs,
 prior-section context and must-not-repeat list. Before canonical production,
 create `research/continuity.json`, the accepted voice exemplar and separate
 claim-traceability, tightening, de-listification, sentence-rhythm and rendered
-ear-pass records. No general “make it better” rewrite counts as a governed pass.
+ear-pass records. The first three independent whole-manuscript reads are now
+recorded in `research/editorial-review.md`; the final hash-bound receipts remain
+pending. No general “make it better” rewrite counts as a governed pass.
 
 ## Pronunciation plan
 

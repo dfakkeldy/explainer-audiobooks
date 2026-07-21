@@ -429,7 +429,7 @@
       "durableOutcome": "Construct an all-in uncertainty budget and written maximum-bid rule without treating the minimum as value.",
       "definition": "The total exposure required to reach a defined use, including bid, taxes, professional work, carrying, condition, possession and uncertainty reserves.",
       "reason": "The auction price is only one cost and the minimum has no built-in allowance for defects or plans.",
-      "mechanism": "Start from a defined use and conservative value boundary, subtract known costs and reserves, then set a written maximum that cannot rise in the room.",
+      "mechanism": "Start from a defined use and a supported value boundary grounded in property-specific valuation evidence, subtract known costs and reserves, then set a written maximum that cannot rise in the room.",
       "concreteCase": "A low-minimum building requires HST/tax review, legal work, insurance, security, remediation and occupancy reserves before any rehabilitation budget.",
       "problemBeforeName": "The listener sees a four-figure minimum and compares it directly with ordinary house prices.",
       "realWorldApplications": [
