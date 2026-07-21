@@ -23,7 +23,8 @@ purchase decision.
 
 ## Curriculum choice
 
-`staged-portfolio-trace`: the listener first sees the whole route, then follows a
+`end-to-end-trace` (implemented here as a staged portfolio trace): the listener
+first sees the whole route, then follows a
 small, explicitly named set of composite files through mutually exclusive
 branches. The procedure's two clocks—before sale and after sale—keep legal
 terminology attached to events rather than presented as a glossary.

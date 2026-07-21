@@ -143,6 +143,17 @@
       "approvalSource": "user",
       "verbatimQuote": "I meant the epub text was ready to publish.",
       "evidence": "I have reviewed the book, it's good to publish. I meant the epub text was ready to publish."
+    },
+    {
+      "date": "2026-07-21",
+      "recordedAt": "2026-07-21T14:10:50-03:00",
+      "oldTargetWords": 46200,
+      "newTargetWords": 46200,
+      "reason": "The user selected Candidate 1, The Parcel File, as the coordinated portrait EPUB and square audiobook cover pair.",
+      "approvalStatus": "paired-cover-selected",
+      "approvalSource": "user",
+      "verbatimQuote": "1",
+      "evidence": "After reviewing all three portrait and square directions, the user selected Candidate 1 by replying: 1"
     }
   ],
   "safety": {

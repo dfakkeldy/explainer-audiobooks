@@ -89,11 +89,12 @@ unknowns → handoff, then explicitly approved that thirteen-chapter, 51-figure
 direction for pilot development. Deep research,
 structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
 diagram candidates and three accepted-direction atlas prototypes exist. The
-actual Echo/video-stage atlas proof, atlas batch authorization, final hash-bound
-learning review, rendered ear pass, accepted final figures, cover selection,
-EPUB, Echo narration, public package verification and full listening all remain
-pending. The bounded humanizer/tightening pass is complete and has a current
-hash-bound prose receipt; any later ear-pass edit must regenerate that receipt.
+actual Echo/video-stage atlas proof, atlas batch authorization, accepted final
+figures, Echo narration, audiobook package verification and full listening all
+remain pending. The final-hash structure and blind sequential beginner reviews,
+bounded humanizer/tightening pass, rendered ear-pass diagnostics and governed
+text-only EPUB build are complete. The public reader package is under
+`books/beyond-the-tax-sale-packet/`; no M4B or video is claimed.
 
 The governed nonpackage pilot rendered on 2026-07-20 at 14:27 with verified
 alignment and a clean pronunciation audit. Its exact SHA-256 is
@@ -109,8 +110,12 @@ the certificate-registration actor.
 Dan approved the exact thirteen-chapter EPUB manuscript text for public
 publication on 2026-07-21. The approval is hash-bound in
 research/publication-authorization.json; any chapter-byte change requires a new
-manuscript verdict. Cover selection and the remaining figure, ear-pass, package,
-full-narration and video gates remain separate.
+manuscript verdict. Dan selected Candidate 1, *The Parcel File*, as the paired
+EPUB/audiobook cover on 2026-07-21; `covers/cover-selection.json` binds the
+portrait, square and source-art hashes. The remaining figure, ear-pass, package,
+full-narration and video gates remain separate. The governed public EPUB embeds
+the selected portrait cover byte-for-byte and is verified at SHA-256
+`e39a7d3636d5a20bebe05c58480d53820d9f53e467b5664d7f7851aaeb8f6944`.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the

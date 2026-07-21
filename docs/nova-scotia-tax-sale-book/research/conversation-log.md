@@ -128,3 +128,9 @@ downstream gates.
   after cover selection and the remaining package gates. It does not claim
   approval of unfinished cover, figures, ear-pass audio, pronunciation, full
   narration or video.
+- **Paired cover selected:** “1”. Dan selected Candidate 1, *The Parcel File*,
+  as one coordinated pair: the 1600-by-2560 EPUB portrait and 2400-by-2400
+  audiobook square. The public-safe selection receipt records `selection_source:
+  user`, binds both exact image hashes and preserves the earlier publication
+  permission. This does not accept the remaining figures, rendered-ear-pass
+  findings, full narration, video or an unverified package.

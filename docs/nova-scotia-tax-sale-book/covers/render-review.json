@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "review-candidates-ready",
+  "status": "pair-selected",
   "reviewedAt": "2026-07-21T09:26:00-03:00",
   "reviewer": "Codex",
   "generationMode": "built-in-imagegen",
@@ -32,5 +32,13 @@
       "squareSHA256": "1426335fa0ad1dfe176655a539002d29b99defe8d2eb7807b8ca5250392ec620"
     }
   ],
-  "humanPairSelection": "pending"
+  "humanPairSelection": {
+    "status": "selected",
+    "selectedCandidate": "parcel-file",
+    "selectedBy": "Dan Fakkeldy",
+    "selectedAt": "2026-07-21T14:10:50-03:00",
+    "selectionSource": "user",
+    "verbatimEvidence": "1",
+    "receipt": "cover-selection.json"
+  }
 }

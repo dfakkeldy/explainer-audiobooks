@@ -54,7 +54,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(brief["originalTargetWords"], 22000)
         self.assertEqual(brief["currentTargetWords"], 46200)
         self.assertTrue(brief["draftingStarted"])
-        self.assertEqual(len(brief["scopeHistory"]), 10)
+        self.assertEqual(len(brief["scopeHistory"]), 11)
         for decision in brief["scopeHistory"]:
             self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19|20|21)T")
             self.assertTrue(decision["verbatimQuote"])
@@ -62,12 +62,13 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         self.assertIn(
             "51 figures direction",
-            brief["scopeHistory"][-2]["verbatimQuote"],
+            brief["scopeHistory"][-3]["verbatimQuote"],
         )
         self.assertEqual(
-            brief["scopeHistory"][-1]["verbatimQuote"],
+            brief["scopeHistory"][-2]["verbatimQuote"],
             "I meant the epub text was ready to publish.",
         )
+        self.assertEqual(brief["scopeHistory"][-1]["verbatimQuote"], "1")
 
     def test_epub_text_approval_is_bound_to_exact_chapter_hashes(self) -> None:
         authorization = json.loads(
@@ -92,10 +93,13 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertTrue(
             authorization["publicationAuthorization"]["permissionToPublish"]
         )
-        self.assertEqual(authorization["boundaries"]["coverSelection"], "pending")
+        self.assertEqual(
+            authorization["boundaries"]["coverSelection"],
+            "candidate-1-parcel-file-selected",
+        )
         self.assertEqual(authorization["boundaries"]["audioListeningStatus"], "pending")
 
-    def test_cover_review_has_three_complete_unselected_pairs(self) -> None:
+    def test_cover_review_has_three_complete_pairs_and_user_selection(self) -> None:
         covers_root = PACKET_ROOT / "covers"
         review = json.loads(
             (covers_root / "render-review.json").read_text(encoding="utf-8")
@@ -103,9 +107,19 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         candidate_dirs = sorted(covers_root.glob("candidate-[1-3]"))
 
         self.assertEqual(len(candidate_dirs), 3)
-        self.assertEqual(review["status"], "review-candidates-ready")
-        self.assertEqual(review["humanPairSelection"], "pending")
-        self.assertFalse((covers_root / "cover-selection.json").exists())
+        self.assertEqual(review["status"], "pair-selected")
+        self.assertEqual(
+            review["humanPairSelection"]["selectedCandidate"], "parcel-file"
+        )
+        self.assertEqual(review["humanPairSelection"]["verbatimEvidence"], "1")
+
+        selection = json.loads(
+            (covers_root / "cover-selection.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(selection["candidate"]["id"], "parcel-file")
+        self.assertEqual(selection["selection_source"], "user")
+        self.assertEqual(selection["privacy"]["classification"], "public-safe")
+        self.assertTrue(selection["privacy"]["permission_to_publish"])
 
         reviewed = {item["id"]: item for item in review["candidates"]}
         self.assertEqual(
@@ -148,6 +162,46 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
                 square["output_sha256"],
             )
             self.assertTrue((candidate_dir / "brief.md").exists())
+
+    def test_public_epub_package_binds_approved_text_and_selected_cover(self) -> None:
+        public_root = REPO_ROOT / "books/beyond-the-tax-sale-packet"
+        publication = json.loads(
+            (public_root / "publication.json").read_text(encoding="utf-8")
+        )
+        learning_receipt = json.loads(
+            (RESEARCH_ROOT / "learning-design-receipt.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        authorization = json.loads(
+            (RESEARCH_ROOT / "publication-authorization.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual(publication["publicationStatus"], "public-epub")
+        self.assertTrue(publication["permissionToPublish"])
+        self.assertEqual(publication["selectedCover"], "parcel-file")
+        self.assertEqual(publication["audioStatus"], "pending-not-included")
+        self.assertFalse((public_root / "beyond-the-tax-sale-packet.m4b").exists())
+
+        for artifact in publication["artifacts"].values():
+            path = public_root / artifact["file"]
+            self.assertTrue(path.is_file())
+            self.assertEqual(
+                artifact["sha256"], hashlib.sha256(path.read_bytes()).hexdigest()
+            )
+
+        self.assertEqual(learning_receipt["status"], "pass")
+        self.assertEqual(
+            learning_receipt["chapterSHA256"],
+            authorization["manuscriptTextApproval"]["reviewedChapterSHA256"],
+        )
+        with zipfile.ZipFile(public_root / "beyond-the-tax-sale-packet.epub") as epub:
+            self.assertEqual(
+                hashlib.sha256(epub.read("OEBPS/cover.png")).hexdigest(),
+                publication["artifacts"]["portraitCover"]["sha256"],
+            )
 
     def test_outline_gate_records_map_revision_approval_for_pilot_only(self) -> None:
         outline = json.loads(
@@ -285,7 +339,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         technical = next(
             item
             for item in continuity["draftContexts"]
-            if item["section"] == "ch01-s02-pilot"
+            if item["section"] == "ch01-s02"
         )
         technical_path = PACKET_ROOT / technical["draftPath"]
         self.assertEqual(

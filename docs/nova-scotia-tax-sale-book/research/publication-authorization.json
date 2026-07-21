@@ -38,12 +38,12 @@
     "evidence": "I have reviewed the book, it's good to publish."
   },
   "boundaries": {
-    "coverSelection": "pending",
+    "coverSelection": "candidate-1-parcel-file-selected",
     "finalFigureSet": "pending",
-    "renderedEarPass": "in-progress",
+    "renderedEarPass": "complete-no-text-change; human-full-audio-listening-pending",
     "audioListeningStatus": "pending",
     "fullNarration": "pending",
     "videoEdition": "pending",
-    "statement": "This approval covers the exact EPUB manuscript text and public publication intent. It does not claim acceptance of unfinished cover, figure, audio, pronunciation, package or video artifacts."
+    "statement": "This approval covers the exact EPUB manuscript text, the user-selected Parcel File cover pair and public publication intent. It does not claim acceptance of unfinished figures, ear-pass findings, audio, pronunciation, package or video artifacts."
   }
 }

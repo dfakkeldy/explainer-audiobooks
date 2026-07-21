@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "slug": "beyond-the-tax-sale-packet",
+  "editionId": "2026-public-epub",
+  "publicationStatus": "public-epub",
+  "classification": "public-safe",
+  "permissionToPublish": true,
+  "permissionGrantedAt": "2026-07-21T08:43:56-03:00",
+  "manuscriptTextReviewStatus": "approved",
+  "coverSelectionStatus": "user-selected",
+  "selectedCover": "parcel-file",
+  "figureCount": 0,
+  "audioStatus": "pending-not-included",
+  "humanFullAudioListening": "pending",
+  "disclosure": "This EPUB text edition has passed manuscript, cover and package checks. Audiobook production and full-audio listening remain separate and pending.",
+  "artifacts": {
+    "manuscript": {
+      "file": "beyond-the-tax-sale-packet.md",
+      "sha256": "595880f43cc43730b2190c54c55ce2036f374122d1b3bea83179f41364a0de10"
+    },
+    "epub": {
+      "file": "beyond-the-tax-sale-packet.epub",
+      "sha256": "e39a7d3636d5a20bebe05c58480d53820d9f53e467b5664d7f7851aaeb8f6944"
+    },
+    "portraitCover": {
+      "file": "cover.png",
+      "sha256": "9d450f18a9ed9b8ce8a2c36aeee78e178c8d0743b87848630e8a7c28ff5cb93f"
+    },
+    "squareCompanionCover": {
+      "file": "m4b-cover.png",
+      "sha256": "c48731c4780adc5c9f8ffe67198cfe99c15d106e2388ce46472f6d352ef9e849"
+    },
+    "coverSelection": {
+      "file": "cover-selection.json",
+      "sha256": "988b175256cad48f7c029421025edc82fa5b15bb072b7e519551c6499c0b1dc9"
+    }
+  },
+  "internalGateReceipts": {
+    "learningDesignSHA256": "f56a24ffaa8e7b908d64f1cfe3edfcccd9b0ce96353a18e6b8d18b2ebb0a0235",
+    "proseStyleSHA256": "6f16b7b8c1ab8033f979cb859f66670487ef55833ada43144ddeaeee5a424e77",
+    "earPassSHA256": "b1b0fbdb56042b10100db9ed40ba459e70e823d3e3ebdfc6bd14e3d895993e45"
+  }
+}
