@@ -8,7 +8,7 @@
   "permissionGrantedAt": "2026-07-21T08:43:56-03:00",
   "manuscriptTextReviewStatus": "approved",
   "coverSelectionStatus": "user-selected",
-  "selectedCover": "parcel-file",
+  "selectedCover": "packet-lifts",
   "figureCount": 0,
   "audioStatus": "pending-not-included",
   "humanFullAudioListening": "pending",
@@ -16,23 +16,23 @@
   "artifacts": {
     "manuscript": {
       "file": "beyond-the-tax-sale-packet.md",
-      "sha256": "595880f43cc43730b2190c54c55ce2036f374122d1b3bea83179f41364a0de10"
+      "sha256": "ec714ed85fff84670b2c2082dcba8d56850128e8642efc556e2a1a53266fb740"
     },
     "epub": {
       "file": "beyond-the-tax-sale-packet.epub",
-      "sha256": "e39a7d3636d5a20bebe05c58480d53820d9f53e467b5664d7f7851aaeb8f6944"
+      "sha256": "40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0"
     },
     "portraitCover": {
       "file": "cover.png",
-      "sha256": "9d450f18a9ed9b8ce8a2c36aeee78e178c8d0743b87848630e8a7c28ff5cb93f"
+      "sha256": "fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6"
     },
     "squareCompanionCover": {
       "file": "m4b-cover.png",
-      "sha256": "c48731c4780adc5c9f8ffe67198cfe99c15d106e2388ce46472f6d352ef9e849"
+      "sha256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c"
     },
     "coverSelection": {
       "file": "cover-selection.json",
-      "sha256": "988b175256cad48f7c029421025edc82fa5b15bb072b7e519551c6499c0b1dc9"
+      "sha256": "799e33994aa4b338bbcc1b5ceb916defd96ecf2f4fe5aa15ffdf6a96502f1b32"
     }
   },
   "internalGateReceipts": {

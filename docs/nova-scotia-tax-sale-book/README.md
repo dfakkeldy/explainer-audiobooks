@@ -110,12 +110,12 @@ the certificate-registration actor.
 Dan approved the exact thirteen-chapter EPUB manuscript text for public
 publication on 2026-07-21. The approval is hash-bound in
 research/publication-authorization.json; any chapter-byte change requires a new
-manuscript verdict. Dan selected Candidate 1, *The Parcel File*, as the paired
+manuscript verdict. Dan selected Candidate 1, *The Packet Lifts*, as the paired
 EPUB/audiobook cover on 2026-07-21; `covers/cover-selection.json` binds the
 portrait, square and source-art hashes. The remaining figure, ear-pass, package,
 full-narration and video gates remain separate. The governed public EPUB embeds
 the selected portrait cover byte-for-byte and is verified at SHA-256
-`e39a7d3636d5a20bebe05c58480d53820d9f53e467b5664d7f7851aaeb8f6944`.
+`40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0`.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the

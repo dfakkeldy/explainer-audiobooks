@@ -11,32 +11,29 @@ Each direction will produce a coordinated 1600-by-2560 EPUB portrait and
 watermark, interface or documentary claim. Typography and the KinNoKi publisher
 mark are reproducible compositor layers.
 
-## Candidate 1 — The Parcel File
+## Candidate 1 — The Packet Lifts
 
-**Audience promise:** careful civic explanation that turns a municipal notice
-into a disciplined evidence file.
+**Audience promise:** learn what a municipal packet tells you, what the parcel
+map adds, and where both stop.
 
-**Central metaphor:** one weathered municipal dossier opened to reveal nested
-parcel-map layers, with a single amber tab marking the unresolved question.
+**Central metaphor:** a single auction sheet curls back to reveal a coastal
+parcel-evidence layer beneath it.
 
-**Composition:** near top-down institutional still life. The dossier occupies
-the lower two-thirds; a calm cream title field sits above it in the portrait.
-The square crop gives the file more central weight and moves the title into an
-integrated upper-left field.
+**Composition:** the paper and parcel occupy the lower-right while a deep-navy
+upper-left field carries the title in both coordinated variants.
 
-**Material and palette:** archival paper, blind emboss, graphite map lines and
-restrained ink texture; cream, deep navy, teal and amber.
+**Material and palette:** cut paper and screen print in deep navy, warm paper,
+coral and cyan.
 
-**Anti-brief:** no readable government forms, owner names, seals, money,
-gavel, house keys, treasure imagery, legal-document imitation or live parcel.
+**Anti-brief:** no gavel, house, money, investment promise, real parcel or
+official-document claim.
 
-**Typography:** confident condensed sans title paired with a quiet humanist sans
-subtitle. Portrait line breaks: “BEYOND THE” / “TAX-SALE” / “PACKET”. The title
-occupies about the upper 34 percent and aligns left. Subtitle and author sit
-below the title; AUDIOBOOK is a small tracked label in the square.
+**Typography:** condensed uppercase title in three lines, a small monospaced
+guide label, and geometric subtitle and author text. Portrait line breaks:
+“BEYOND THE” / “TAX-SALE” / “PACKET”.
 
-**Relationship:** type feels like the dossier's editorial label while the art
-shows the deeper research layers underneath it.
+**Relationship:** the title sits on the apparently simple surface while the art
+physically reveals the deeper evidence.
 
 ## Candidate 2 — The Raised Card
 

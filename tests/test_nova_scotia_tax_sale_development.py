@@ -68,7 +68,10 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             brief["scopeHistory"][-2]["verbatimQuote"],
             "I meant the epub text was ready to publish.",
         )
-        self.assertEqual(brief["scopeHistory"][-1]["verbatimQuote"], "1")
+        self.assertEqual(
+            brief["scopeHistory"][-1]["verbatimQuote"],
+            "i'm going to go with image 1",
+        )
 
     def test_epub_text_approval_is_bound_to_exact_chapter_hashes(self) -> None:
         authorization = json.loads(
@@ -95,7 +98,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertEqual(
             authorization["boundaries"]["coverSelection"],
-            "candidate-1-parcel-file-selected",
+            "candidate-1-packet-lifts-selected",
         )
         self.assertEqual(authorization["boundaries"]["audioListeningStatus"], "pending")
 
@@ -109,14 +112,17 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(len(candidate_dirs), 3)
         self.assertEqual(review["status"], "pair-selected")
         self.assertEqual(
-            review["humanPairSelection"]["selectedCandidate"], "parcel-file"
+            review["humanPairSelection"]["selectedCandidate"], "packet-lifts"
         )
-        self.assertEqual(review["humanPairSelection"]["verbatimEvidence"], "1")
+        self.assertEqual(
+            review["humanPairSelection"]["verbatimEvidence"],
+            "i'm going to go with image 1",
+        )
 
         selection = json.loads(
             (covers_root / "cover-selection.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(selection["candidate"]["id"], "parcel-file")
+        self.assertEqual(selection["candidate"]["id"], "packet-lifts")
         self.assertEqual(selection["selection_source"], "user")
         self.assertEqual(selection["privacy"]["classification"], "public-safe")
         self.assertTrue(selection["privacy"]["permission_to_publish"])
@@ -124,7 +130,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         reviewed = {item["id"]: item for item in review["candidates"]}
         self.assertEqual(
             set(reviewed),
-            {"parcel-file", "raised-card", "layers-of-uncertainty"},
+            {"packet-lifts", "raised-card", "layers-of-uncertainty"},
         )
         for candidate_dir in candidate_dirs:
             portrait = json.loads(
@@ -181,7 +187,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         self.assertEqual(publication["publicationStatus"], "public-epub")
         self.assertTrue(publication["permissionToPublish"])
-        self.assertEqual(publication["selectedCover"], "parcel-file")
+        self.assertEqual(publication["selectedCover"], "packet-lifts")
         self.assertEqual(publication["audioStatus"], "pending-not-included")
         self.assertFalse((public_root / "beyond-the-tax-sale-packet.m4b").exists())
 

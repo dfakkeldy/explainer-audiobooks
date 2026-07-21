@@ -5,7 +5,7 @@
 By Dan Fakkeldy. Written, researched, reviewed and produced with OpenAI Codex
 (GPT-5), using official Nova Scotia and municipal sources.
 
-![The Parcel File cover](cover.png)
+![The Packet Lifts cover](cover.png)
 
 This public EPUB text edition explains Nova Scotia municipal tax sales as a
 source-disciplined research process. It follows **notice → parcel → context →
@@ -20,7 +20,7 @@ lawyer, surveyor, planner, inspector, insurer, accountant or bidder.
 - Classification: public-safe
 - Permission to publish: granted by Dan Fakkeldy on 2026-07-21
 - Exact manuscript text: reviewed and approved by Dan Fakkeldy
-- Cover: **The Parcel File**, selected by Dan as Candidate 1
+- Cover: **The Packet Lifts**, selected by Dan as Candidate 1
 - Chapters: 13
 - Canonical Markdown words: 31,824
 - Interior figures: none in this text edition
@@ -35,15 +35,15 @@ and pending.
 ## Reader artifact hashes
 
 - Markdown SHA-256:
-  `595880f43cc43730b2190c54c55ce2036f374122d1b3bea83179f41364a0de10`
+  `ec714ed85fff84670b2c2082dcba8d56850128e8642efc556e2a1a53266fb740`
 - EPUB SHA-256:
-  `e39a7d3636d5a20bebe05c58480d53820d9f53e467b5664d7f7851aaeb8f6944`
+  `40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0`
 - Portrait cover SHA-256:
-  `9d450f18a9ed9b8ce8a2c36aeee78e178c8d0743b87848630e8a7c28ff5cb93f`
+  `fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6`
 - Square companion cover SHA-256:
-  `c48731c4780adc5c9f8ffe67198cfe99c15d106e2388ce46472f6d352ef9e849`
+  `350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c`
 - Paired cover-selection receipt SHA-256:
-  `988b175256cad48f7c029421025edc82fa5b15bb072b7e519551c6499c0b1dc9`
+  `799e33994aa4b338bbcc1b5ceb916defd96ecf2f4fe5aa15ffdf6a96502f1b32`
 
 ## Verification boundary
 

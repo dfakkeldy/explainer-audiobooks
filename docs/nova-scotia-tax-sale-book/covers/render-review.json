@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "status": "pair-selected",
-  "reviewedAt": "2026-07-21T09:26:00-03:00",
+  "reviewedAt": "2026-07-21T16:48:41-03:00",
   "reviewer": "Codex",
   "generationMode": "built-in-imagegen",
   "review": {
@@ -14,10 +14,10 @@
   },
   "candidates": [
     {
-      "id": "parcel-file",
-      "sourceArtSHA256": "d81fcfa6051cca1a866b6630d7386fc4654fc6e2440198bdd4677baccc1ff5f7",
-      "portraitSHA256": "9d450f18a9ed9b8ce8a2c36aeee78e178c8d0743b87848630e8a7c28ff5cb93f",
-      "squareSHA256": "c48731c4780adc5c9f8ffe67198cfe99c15d106e2388ce46472f6d352ef9e849"
+      "id": "packet-lifts",
+      "sourceArtSHA256": "bd8aa65d8172722bb38a352272e04445954bbeea271f0384581403118ddd85af",
+      "portraitSHA256": "fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6",
+      "squareSHA256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c"
     },
     {
       "id": "raised-card",
@@ -34,11 +34,11 @@
   ],
   "humanPairSelection": {
     "status": "selected",
-    "selectedCandidate": "parcel-file",
+    "selectedCandidate": "packet-lifts",
     "selectedBy": "Dan Fakkeldy",
-    "selectedAt": "2026-07-21T14:10:50-03:00",
+    "selectedAt": "2026-07-21T16:48:41-03:00",
     "selectionSource": "user",
-    "verbatimEvidence": "1",
+    "verbatimEvidence": "i'm going to go with image 1",
     "receipt": "cover-selection.json"
   }
 }

@@ -4,8 +4,8 @@
     "source_sha256": "240d17d0fd37d0611dd9557f1407134149cd0841b503aff56f369721934dfdde"
   },
   "candidate": {
-    "direction_name": "The Parcel File",
-    "id": "parcel-file"
+    "direction_name": "The Packet Lifts",
+    "id": "packet-lifts"
   },
   "colour_mode": "RGB",
   "dimensions": [
@@ -19,22 +19,20 @@
     "technical-mono": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
   },
   "output": "m4b-cover.png",
-  "output_sha256": "c48731c4780adc5c9f8ffe67198cfe99c15d106e2388ce46472f6d352ef9e849",
+  "output_sha256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c",
   "receipt_version": 1,
   "renderer_version": 2,
   "schema_version": 1,
   "source_art": "source-art.png",
-  "source_art_sha256": "d81fcfa6051cca1a866b6630d7386fc4654fc6e2440198bdd4677baccc1ff5f7",
+  "source_art_sha256": "bd8aa65d8172722bb38a352272e04445954bbeea271f0384581403118ddd85af",
   "spec": "m4b-cover-spec.json",
-  "spec_sha256": "0dba420899af726f2675aa4338820cb39d8b27ec55d496c212f669843250d4d9",
+  "spec_sha256": "c6d4954f5acd8c99e44728075c7b11f9bdb8ae9697120333c2d3481719e24672",
   "thumbnail": "m4b-cover-thumbnail.png",
   "thumbnail_dimensions": [
     160,
     160
   ],
-  "thumbnail_sha256": "d58bfe19c4165a131636f6e075e7056b7b32b22dc212d6f705acd828917986a9",
+  "thumbnail_sha256": "df0a73f8de41ca08d6155b443284ce796c6421bdce489fff7eb07282078c309a",
   "variant": "square",
-  "warnings": [
-    "layer 4 advisory contrast ratio is 2.64:1"
-  ]
+  "warnings": []
 }

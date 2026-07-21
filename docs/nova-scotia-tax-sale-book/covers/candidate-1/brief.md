@@ -1,18 +1,10 @@
-# Candidate 1 — The Parcel File
+# The Packet Lifts
 
-This is the archival, evidence-first direction. A weathered dossier and nested
-parcel-map sheets turn the municipal packet into a research file; the amber tab
-marks the question that remains unresolved.
-
-- Source art: generated with the built-in image-generation tool from the
-  approved no-text/no-logo direction in `../cover-directions.md`.
-- Typography: bundled condensed display, geometric sans and technical mono.
-- Palette: cream, deep navy, teal and amber.
-- Rights/provenance: original generated source art; no external photograph,
-  live parcel, owner information, government seal or trademarked interface.
-- Review note: the renderer's advisory contrast warning applies to the orange
-  title accent. It was inspected at full size and thumbnail size and remains
-  clearly legible against the cream field.
-
-The portrait and square specifications share the exact source-art SHA-256
-recorded in their render receipts. The pair must be selected together.
+- **Audience promise:** Learn what a municipal packet tells you, what the parcel map adds, and where both stop.
+- **Central metaphor:** A single auction sheet curls back to reveal a coastal parcel evidence layer beneath it.
+- **Composition:** The paper and parcel occupy the lower-right; a deep-navy upper-left field carries the title.
+- **Material and palette:** Cut paper and screen print in navy, warm paper, coral, and cyan.
+- **Anti-brief:** No gavel, house, money, investment promise, real parcel, or official-document claim.
+- **Typography:** Condensed uppercase title in three lines; small monospaced guide label; geometric subtitle and author.
+- **Relationship:** The title sits on the apparently simple surface while the art physically reveals the deeper evidence.
+- **Branding:** KinNoKi Labs tree mark at the upper-right, kept separate from the generated art.
