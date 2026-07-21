@@ -1944,6 +1944,32 @@
         "figure acceptance",
         "narration, packaging, listening and publication"
       ]
+    },
+    {
+      "id": "bounded-humanizer-round-2",
+      "status": "completed-with-revisions",
+      "reviewedAt": "2026-07-21T07:46:37-03:00",
+      "editorialReviewPath": "research/editorial-review.md",
+      "humanizerDecisionsPath": "research/humanizer-decisions.json",
+      "proseReceiptPath": "research/prose-style-receipt.json",
+      "reviewers": [
+        "frontier-lead-author",
+        "independent-structure-review-agent",
+        "blind-sequential-beginner-agent"
+      ],
+      "currentThroughline": "A source-bounded parcel file moves from notice to parcel, context, unknowns and handoff, then preserves the controlling document and authority through auction, redemption and deed stages.",
+      "resolvedBlockingFindings": [
+        "duplicate calendar image at the Chapter 10 and 11 boundary",
+        "parcel-register term introduced after it was needed",
+        "NSPRD acronym expanded after first use",
+        "certificate registration assigned to both treasurer and purchaser"
+      ],
+      "remainingGates": [
+        "rendered ear pass",
+        "final hash-bound two-reviewer learning and revision receipts",
+        "figure acceptance",
+        "narration, packaging, listening and publication"
+      ]
     }
   ],
   "checkpoints": [
@@ -2043,8 +2069,8 @@
       "chapter": "ch03",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch03.md",
-      "draftSHA256": "5e5ce834655e8d0027021d98a16d0b666321352e4e4c07c673f1b2c79716c1a3",
-      "wordCount": 1927,
+      "draftSHA256": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
+      "wordCount": 1929,
       "completedAt": "2026-07-20T09:10:05-03:00",
       "termsDefined": [
         "certificate of sale",
@@ -2080,8 +2106,8 @@
       "chapter": "ch04",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch04.md",
-      "draftSHA256": "e64333f5950dab1c60f12b2cf231c85aa73c947287b58c761de5573035facd39",
-      "wordCount": 2417,
+      "draftSHA256": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
+      "wordCount": 2427,
       "completedAt": "2026-07-20T09:19:58-03:00",
       "termsDefined": [
         "parcel register",
@@ -2120,8 +2146,8 @@
       "chapter": "ch05",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch05.md",
-      "draftSHA256": "509967331ff7178285c897c54bed2a32e57a311074b91c0f3c42c21e3c1b1f97",
-      "wordCount": 2672,
+      "draftSHA256": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+      "wordCount": 2666,
       "completedAt": "2026-07-20T09:27:36-03:00",
       "termsDefined": [
         "civic point",
@@ -2166,7 +2192,7 @@
       "chapter": "ch06",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch06.md",
-      "draftSHA256": "dc5bc65ce9c2167ea8af61c0f990c73ab3537129b6ab95d714da81acc9261f57",
+      "draftSHA256": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
       "wordCount": 2355,
       "completedAt": "2026-07-20T15:47:45-03:00",
       "termsDefined": [
@@ -2314,8 +2340,8 @@
       "chapter": "ch10",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch10.md",
-      "draftSHA256": "a6729affd3fccb58732d956da0fbfa1c5b00a1779fade1527366a5f155a89001",
-      "wordCount": 2647,
+      "draftSHA256": "a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9",
+      "wordCount": 2638,
       "completedAt": "2026-07-20T18:20:58-03:00",
       "termsDefined": [
         "open-outcry auction",
@@ -2353,8 +2379,8 @@
       "chapter": "ch11",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch11.md",
-      "draftSHA256": "236b44471c5bd2ca3f924fcfcc00f9d6735c45a3b272aa31da7f237af071bbc2",
-      "wordCount": 2624,
+      "draftSHA256": "89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611",
+      "wordCount": 2617,
       "completedAt": "2026-07-20T19:03:31-03:00",
       "termsDefined": [
         "insurable interest",
@@ -2390,7 +2416,7 @@
       "chapter": "ch12",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch12.md",
-      "draftSHA256": "fd1ffb3b607c29dea7b4500f65dc1b257fcd817dbeac73b9e056036ea2c828b0",
+      "draftSHA256": "e4904a3fc012f9dea5d150f0bce11043546fe46ac563c3aa4f240f9207c07dcd",
       "wordCount": 2825,
       "completedAt": "2026-07-20T19:26:42-03:00",
       "termsDefined": [

@@ -1,0 +1,200 @@
+{
+  "analysis": {
+    "families": {
+      "announced_transition": {
+        "count": 0,
+        "density_per_10000_words": 0.0,
+        "limit_per_10000_words": 2.0,
+        "matches": [],
+        "over_budget": false
+      },
+      "author_intervention": {
+        "count": 1,
+        "density_per_10000_words": 0.32,
+        "limit_per_10000_words": 4.0,
+        "matches": [
+          {
+            "excerpt": "Here is the retrieval test. Suppose the map shows two current events: an Inverness auction and a Halifax sale notice. You want to know how Halifax will conduct its event. Which sou\u2026",
+            "location": "ch01.md \u00b628",
+            "text": "Here is the"
+          }
+        ],
+        "over_budget": false
+      },
+      "contrast_frame": {
+        "count": 0,
+        "density_per_10000_words": 0.0,
+        "limit_per_10000_words": 4.0,
+        "matches": [],
+        "over_budget": false
+      },
+      "faux_gravity": {
+        "count": 0,
+        "density_per_10000_words": 0.0,
+        "limit_per_10000_words": 1.0,
+        "matches": [],
+        "over_budget": false
+      },
+      "honesty_announcement": {
+        "count": 0,
+        "density_per_10000_words": 0.0,
+        "limit_per_10000_words": 0.5,
+        "matches": [],
+        "over_budget": false
+      },
+      "reader_management": {
+        "count": 1,
+        "density_per_10000_words": 0.32,
+        "limit_per_10000_words": 2.0,
+        "matches": [
+          {
+            "excerpt": "That attachment is the first term we need. A **tax lien** is the municipality's legal claim against the property for the unpaid tax. Under Nova Scotia's municipal statutes, it rank\u2026",
+            "location": "ch01.md \u00b617",
+            "text": "hold that"
+          }
+        ],
+        "over_budget": false
+      }
+    },
+    "hard_banned_count": 0,
+    "hard_banned_matches": [],
+    "schema_version": 1,
+    "status": "pass",
+    "total_words": 30958
+  },
+  "chapter_sha256": {
+    "ch01.md": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
+    "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
+    "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
+    "ch04.md": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
+    "ch05.md": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+    "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
+    "ch07.md": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
+    "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
+    "ch09.md": "13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42",
+    "ch10.md": "a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9",
+    "ch11.md": "89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611",
+    "ch12.md": "e4904a3fc012f9dea5d150f0bce11043546fe46ac563c3aa4f240f9207c07dcd",
+    "ch13.md": "9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b"
+  },
+  "decisions": {
+    "accepted": [
+      {
+        "location": "ch03.md opening mechanism transition",
+        "original": "Chapter 2's redemption marker now opens into a mechanism.",
+        "proposed": "The notice's redemption marker now opens into a mechanism.",
+        "reason": "Keeps the evidence object in the foreground and removes unnecessary chapter navigation."
+      },
+      {
+        "location": "ch03.md certificate-period ledger transition",
+        "original": "Chapter 11 will operate that ledger in detail.",
+        "proposed": "During the certificate-holder months, that ledger becomes the working record.",
+        "reason": "Replaces a forward announcement with the concrete role the ledger will perform."
+      },
+      {
+        "location": "ch04.md parcel-biography opening",
+        "original": "Chapter 2 already assigned each field a job. Chapter 4 gives the collection a history.",
+        "proposed": "Each field already has a job. The biography gives the collection a history.",
+        "reason": "Preserves the callback while keeping the parcel file, rather than the book structure, as the subject."
+      },
+      {
+        "location": "ch04.md closing transition",
+        "original": "Chapter 5 will put that biography into motion on the living map.",
+        "proposed": "The living map now puts that biography into motion.",
+        "reason": "Moves directly into the next mechanism and avoids a table-of-contents announcement."
+      },
+      {
+        "location": "ch06.md environmental-record transition",
+        "original": "Chapter 7 will examine what existing environmental and infrastructure records can reveal before lawful inspection becomes possible.",
+        "proposed": "The next inquiry is what existing environmental and infrastructure records can reveal before lawful inspection becomes possible.",
+        "reason": "Retains the instructional sequence while expressing it as the property's next unresolved question."
+      },
+      {
+        "location": "ch10.md completed-payment transition",
+        "original": "Chapter 10 can now end where a completed payment path begins. ... Chapter 11 will operate its calendar.",
+        "proposed": "A completed payment path starts a new clock. The redundant closing calendar sentence is removed.",
+        "reason": "Lets the statutory state change carry the transition and avoids an audible calendar echo at the Chapter 11 opening."
+      },
+      {
+        "location": "ch11.md discharge closing",
+        "original": "Chapter 12 follows that branch. Chapter 11 closes with the discharge because a lawful ending is not an interruption of the process.",
+        "proposed": "The discharge closes this branch because a lawful ending is not an interruption of the process.",
+        "reason": "Removes redundant book navigation without weakening the deed-branch handoff."
+      },
+      {
+        "location": "ch12.md final retrieval transition",
+        "original": "Chapter 13 will retrieve the whole method from first notice to post-deed file.",
+        "proposed": "The whole method can now be retrieved from first notice to post-deed file.",
+        "reason": "Preserves the retrieval cue while centring the listener's ability rather than the next chapter's agenda."
+      },
+      {
+        "location": "ch04.md first Property Online registry explanation",
+        "original": "The governed land-record material was described without introducing the later parcel-register label.",
+        "proposed": "Introduce the parcel register as the parcel-specific registry record within the governed Property Online material.",
+        "reason": "Resolves the blind beginner's inability to reconstruct the chapter's four-record source ledger without adding a new legal conclusion."
+      },
+      {
+        "location": "ch04.md and ch05.md NSPRD introduction",
+        "original": "NSPRD appeared in Chapter 4 and was expanded only in Chapter 5.",
+        "proposed": "Expand Nova Scotia Property Records Database at first use in Chapter 4 and use NSPRD in Chapter 5.",
+        "reason": "Makes the source identity available when its licence and evidence limits are first taught."
+      },
+      {
+        "location": "ch11.md responsibility summary",
+        "original": "Maya registers and preserves the certificate.",
+        "proposed": "Maya preserves the registered certificate.",
+        "reason": "Keeps the treasurer as the registration actor established by the statute and the chapter opening."
+      }
+    ],
+    "after_style_counts": {
+      "announced_transition": 0,
+      "author_intervention": 1,
+      "contrast_frame": 0,
+      "faux_gravity": 0,
+      "hard_banned": 0,
+      "honesty_announcement": 0,
+      "reader_management": 1
+    },
+    "before_style_counts": {
+      "announced_transition": 0,
+      "author_intervention": 1,
+      "contrast_frame": 0,
+      "faux_gravity": 0,
+      "hard_banned": 0,
+      "honesty_announcement": 0,
+      "reader_management": 1
+    },
+    "checks_rerun": [
+      "factual",
+      "coverage-ledger",
+      "narration",
+      "prose"
+    ],
+    "humanizer_applied": true,
+    "model": "GPT-5 Codex",
+    "narration_check_boundary": "The changed passages were read as local spoken prose for syntax and cadence. This is not the separate rendered ear pass, which remains pending.",
+    "rejected": [
+      {
+        "candidate": "Here is the retrieval test.",
+        "location": "ch01.md retrieval exercise",
+        "reason": "Kept because the listener must perform an actual authority-source comparison; this is instructional practice, not empty author intervention."
+      },
+      {
+        "candidate": "hold that priority",
+        "location": "ch01.md tax-lien explanation",
+        "reason": "Kept because the detector matched an ordinary verb phrase describing lien priority, not a reader-management command."
+      },
+      {
+        "candidate": "Convert the remaining parallel lists to continuous prose.",
+        "location": "ch02.md, ch03.md, ch04.md, ch05.md, ch07.md, ch09.md, and ch12.md short lists",
+        "reason": "Rejected because the lists contain distinct identifiers, stage questions, evidence states, tax branches, or legal files and therefore support retrieval rather than false symmetry."
+      }
+    ],
+    "reviewed_at": "2026-07-21",
+    "reviewer": "frontier-lead-author",
+    "scope": "Canonical Chapters 1 through 13; local tightening, de-listification, and sentence-rhythm review followed by narrow post-edit structure and beginner-review repairs.",
+    "skill_version": "declaudification-v1"
+  },
+  "schema_version": 1,
+  "status": "pass"
+}

@@ -90,19 +90,23 @@ direction for pilot development. Deep research,
 structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
 diagram candidates and three accepted-direction atlas prototypes exist. The
 actual Echo/video-stage atlas proof, atlas batch authorization, final hash-bound
-learning review, humanizer and rendered ear pass, accepted final figures, cover
-selection, EPUB, Echo narration, public package verification and full listening
-all remain pending.
+learning review, rendered ear pass, accepted final figures, cover selection,
+EPUB, Echo narration, public package verification and full listening all remain
+pending. The bounded humanizer/tightening pass is complete and has a current
+hash-bound prose receipt; any later ear-pass edit must regenerate that receipt.
 
 The governed nonpackage pilot rendered on 2026-07-20 at 14:27 with verified
 alignment and a clean pronunciation audit. Its exact SHA-256 is
 `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`;
 Dan accepted that exact pilot for continued drafting with “continue” at
-2026-07-20T08:55:51-03:00. Canonical Chapters 1–13 now total 31,834 Markdown
-words after the initial independent structure, blind beginner and claim-
-traceability review recorded in `research/editorial-review.md`. That round
-resolved its blocking findings, but the chapters remain draft prose until the
-single-job humanizer/tightening work, final hash-bound learning review and
+2026-07-20T08:55:51-03:00. Canonical Chapters 1–13 now total 31,824 Markdown
+words after the initial independent review and the bounded humanizer pass
+recorded in `research/editorial-review.md` and
+`research/humanizer-decisions.json`. Eight local style edits remove generic
+chapter navigation, and three post-edit beginner-review repairs clarify the
+parcel-register record, expand NSPRD at first use and preserve the treasurer as
+the certificate-registration actor.
+The chapters remain draft prose until the final hash-bound learning review and
 rendered ear pass are complete. Final figures, full narration, packaging and
 publication remain separate.
 

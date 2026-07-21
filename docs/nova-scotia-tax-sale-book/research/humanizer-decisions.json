@@ -1,0 +1,118 @@
+{
+  "reviewer": "frontier-lead-author",
+  "model": "GPT-5 Codex",
+  "skill_version": "declaudification-v1",
+  "humanizer_applied": true,
+  "reviewed_at": "2026-07-21",
+  "scope": "Canonical Chapters 1 through 13; local tightening, de-listification, and sentence-rhythm review followed by narrow post-edit structure and beginner-review repairs.",
+  "accepted": [
+    {
+      "location": "ch03.md opening mechanism transition",
+      "original": "Chapter 2's redemption marker now opens into a mechanism.",
+      "proposed": "The notice's redemption marker now opens into a mechanism.",
+      "reason": "Keeps the evidence object in the foreground and removes unnecessary chapter navigation."
+    },
+    {
+      "location": "ch03.md certificate-period ledger transition",
+      "original": "Chapter 11 will operate that ledger in detail.",
+      "proposed": "During the certificate-holder months, that ledger becomes the working record.",
+      "reason": "Replaces a forward announcement with the concrete role the ledger will perform."
+    },
+    {
+      "location": "ch04.md parcel-biography opening",
+      "original": "Chapter 2 already assigned each field a job. Chapter 4 gives the collection a history.",
+      "proposed": "Each field already has a job. The biography gives the collection a history.",
+      "reason": "Preserves the callback while keeping the parcel file, rather than the book structure, as the subject."
+    },
+    {
+      "location": "ch04.md closing transition",
+      "original": "Chapter 5 will put that biography into motion on the living map.",
+      "proposed": "The living map now puts that biography into motion.",
+      "reason": "Moves directly into the next mechanism and avoids a table-of-contents announcement."
+    },
+    {
+      "location": "ch06.md environmental-record transition",
+      "original": "Chapter 7 will examine what existing environmental and infrastructure records can reveal before lawful inspection becomes possible.",
+      "proposed": "The next inquiry is what existing environmental and infrastructure records can reveal before lawful inspection becomes possible.",
+      "reason": "Retains the instructional sequence while expressing it as the property's next unresolved question."
+    },
+    {
+      "location": "ch10.md completed-payment transition",
+      "original": "Chapter 10 can now end where a completed payment path begins. ... Chapter 11 will operate its calendar.",
+      "proposed": "A completed payment path starts a new clock. The redundant closing calendar sentence is removed.",
+      "reason": "Lets the statutory state change carry the transition and avoids an audible calendar echo at the Chapter 11 opening."
+    },
+    {
+      "location": "ch11.md discharge closing",
+      "original": "Chapter 12 follows that branch. Chapter 11 closes with the discharge because a lawful ending is not an interruption of the process.",
+      "proposed": "The discharge closes this branch because a lawful ending is not an interruption of the process.",
+      "reason": "Removes redundant book navigation without weakening the deed-branch handoff."
+    },
+    {
+      "location": "ch12.md final retrieval transition",
+      "original": "Chapter 13 will retrieve the whole method from first notice to post-deed file.",
+      "proposed": "The whole method can now be retrieved from first notice to post-deed file.",
+      "reason": "Preserves the retrieval cue while centring the listener's ability rather than the next chapter's agenda."
+    },
+    {
+      "location": "ch04.md first Property Online registry explanation",
+      "original": "The governed land-record material was described without introducing the later parcel-register label.",
+      "proposed": "Introduce the parcel register as the parcel-specific registry record within the governed Property Online material.",
+      "reason": "Resolves the blind beginner's inability to reconstruct the chapter's four-record source ledger without adding a new legal conclusion."
+    },
+    {
+      "location": "ch04.md and ch05.md NSPRD introduction",
+      "original": "NSPRD appeared in Chapter 4 and was expanded only in Chapter 5.",
+      "proposed": "Expand Nova Scotia Property Records Database at first use in Chapter 4 and use NSPRD in Chapter 5.",
+      "reason": "Makes the source identity available when its licence and evidence limits are first taught."
+    },
+    {
+      "location": "ch11.md responsibility summary",
+      "original": "Maya registers and preserves the certificate.",
+      "proposed": "Maya preserves the registered certificate.",
+      "reason": "Keeps the treasurer as the registration actor established by the statute and the chapter opening."
+    }
+  ],
+  "rejected": [
+    {
+      "location": "ch01.md retrieval exercise",
+      "candidate": "Here is the retrieval test.",
+      "reason": "Kept because the listener must perform an actual authority-source comparison; this is instructional practice, not empty author intervention."
+    },
+    {
+      "location": "ch01.md tax-lien explanation",
+      "candidate": "hold that priority",
+      "reason": "Kept because the detector matched an ordinary verb phrase describing lien priority, not a reader-management command."
+    },
+    {
+      "location": "ch02.md, ch03.md, ch04.md, ch05.md, ch07.md, ch09.md, and ch12.md short lists",
+      "candidate": "Convert the remaining parallel lists to continuous prose.",
+      "reason": "Rejected because the lists contain distinct identifiers, stage questions, evidence states, tax branches, or legal files and therefore support retrieval rather than false symmetry."
+    }
+  ],
+  "before_style_counts": {
+    "hard_banned": 0,
+    "reader_management": 1,
+    "author_intervention": 1,
+    "announced_transition": 0,
+    "contrast_frame": 0,
+    "honesty_announcement": 0,
+    "faux_gravity": 0
+  },
+  "after_style_counts": {
+    "hard_banned": 0,
+    "reader_management": 1,
+    "author_intervention": 1,
+    "announced_transition": 0,
+    "contrast_frame": 0,
+    "honesty_announcement": 0,
+    "faux_gravity": 0
+  },
+  "checks_rerun": [
+    "factual",
+    "coverage-ledger",
+    "narration",
+    "prose"
+  ],
+  "narration_check_boundary": "The changed passages were read as local spoken prose for syntax and cadence. This is not the separate rendered ear pass, which remains pending."
+}

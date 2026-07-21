@@ -260,7 +260,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_three_path = PACKET_ROOT / "chapters/ch03.md"
         chapter_three_checkpoint = continuity["checkpoints"][2]
         self.assertEqual(chapter_three_checkpoint["chapter"], "ch03")
-        self.assertEqual(chapter_three_checkpoint["wordCount"], 1927)
+        self.assertEqual(chapter_three_checkpoint["wordCount"], 1929)
         self.assertEqual(
             chapter_three_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_three_path.read_bytes()).hexdigest(),
@@ -282,7 +282,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_four_path = PACKET_ROOT / "chapters/ch04.md"
         chapter_four_checkpoint = continuity["checkpoints"][3]
         self.assertEqual(chapter_four_checkpoint["chapter"], "ch04")
-        self.assertEqual(chapter_four_checkpoint["wordCount"], 2417)
+        self.assertEqual(chapter_four_checkpoint["wordCount"], 2427)
         self.assertEqual(
             chapter_four_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_four_path.read_bytes()).hexdigest(),
@@ -305,7 +305,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_five = chapter_five_path.read_text(encoding="utf-8")
         chapter_five_checkpoint = continuity["checkpoints"][4]
         self.assertEqual(chapter_five_checkpoint["chapter"], "ch05")
-        self.assertEqual(chapter_five_checkpoint["wordCount"], 2672)
+        self.assertEqual(chapter_five_checkpoint["wordCount"], 2666)
         self.assertEqual(
             chapter_five_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_five_path.read_bytes()).hexdigest(),
@@ -447,7 +447,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_ten = chapter_ten_path.read_text(encoding="utf-8")
         chapter_ten_checkpoint = continuity["checkpoints"][9]
         self.assertEqual(chapter_ten_checkpoint["chapter"], "ch10")
-        self.assertEqual(chapter_ten_checkpoint["wordCount"], 2647)
+        self.assertEqual(chapter_ten_checkpoint["wordCount"], 2638)
         self.assertEqual(
             chapter_ten_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_ten_path.read_bytes()).hexdigest(),
@@ -479,7 +479,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_eleven = chapter_eleven_path.read_text(encoding="utf-8")
         chapter_eleven_checkpoint = continuity["checkpoints"][10]
         self.assertEqual(chapter_eleven_checkpoint["chapter"], "ch11")
-        self.assertEqual(chapter_eleven_checkpoint["wordCount"], 2624)
+        self.assertEqual(chapter_eleven_checkpoint["wordCount"], 2617)
         self.assertEqual(
             chapter_eleven_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_eleven_path.read_bytes()).hexdigest(),

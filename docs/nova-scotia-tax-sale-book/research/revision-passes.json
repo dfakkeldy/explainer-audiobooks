@@ -6,33 +6,101 @@
       "name": "claim-traceability",
       "job": "Check every factual claim against the grounded evidence notes.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": []
+      "reviewer": "independent-claim-traceability-agent and frontier-lead-author",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "CT-01",
+          "location": "ch03.md, ch04.md, ch06.md, ch10.md, ch11.md, and ch12.md humanizer diff",
+          "category": "meaning preservation",
+          "evidence": "The accepted changes alter chapter navigation and sentence cadence only; no legal rule, date, amount, map behavior, source boundary, definition, or uncertainty classification changed.",
+          "decision": "accepted",
+          "reason": "The previous independent claim review remains applicable, and the post-edit Nova Scotia development tests pass against the continuity and evidence artifacts."
+        },
+        {
+          "id": "CT-02",
+          "location": "ch04.md, ch05.md, and ch11.md post-humanizer beginner repairs",
+          "category": "source and actor clarity",
+          "evidence": "Property Online remains the governed source for the parcel register, NSPRD is expanded at first use, and the summary now preserves the treasurer as the certificate-registration actor.",
+          "decision": "accepted",
+          "reason": "The repairs align the beginner model with LAND-002, GIS-001, and LAW-007 without broadening any claim."
+        }
+      ]
     },
     {
       "name": "tightening",
       "job": "Cut avoidable repetition and filler without reducing teaching depth.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": []
+      "reviewer": "frontier-lead-author",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "TI-01",
+          "location": "ch03.md and ch04.md",
+          "category": "generic signposting",
+          "evidence": "Four sentences named the earlier or next chapter where the notice, ledger, parcel biography, or living map could carry the connection directly.",
+          "decision": "accepted",
+          "reason": "The local replacements preserve the callbacks and remove unnecessary book navigation."
+        },
+        {
+          "id": "TI-02",
+          "location": "ch11.md and ch12.md endings",
+          "category": "redundant chapter preview",
+          "evidence": "The deed and retrieval transitions were already established by the surrounding paragraphs.",
+          "decision": "accepted",
+          "reason": "Removing the duplicate chapter announcements leaves the legal branch and retrieval task intact."
+        }
+      ]
     },
     {
       "name": "de-listification",
       "job": "Replace unearned list rhythm with connected spoken prose.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": []
+      "reviewer": "frontier-lead-author",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "DL-01",
+          "location": "Remaining short lists across ch02.md, ch03.md, ch04.md, ch05.md, ch07.md, ch09.md, and ch12.md",
+          "category": "earned parallel structure",
+          "evidence": "Each list distinguishes separate identifiers, stage questions, evidence states, tax branches, or legal files that the listener must retrieve independently.",
+          "decision": "rejected",
+          "reason": "Converting these lists to running prose would reduce lookup clarity and would treat useful structure as a stylistic defect."
+        }
+      ]
     },
     {
       "name": "sentence-rhythm",
       "job": "Vary sentence and paragraph shape while preserving the approved voice.",
       "scope": "single-job",
-      "reviewer": "",
-      "status": "pending",
-      "findings": []
+      "reviewer": "frontier-lead-author",
+      "status": "pass",
+      "findings": [
+        {
+          "id": "SR-01",
+          "location": "ch06.md environmental-record transition",
+          "category": "spoken transition",
+          "evidence": "The prior sentence announced the next chapter rather than naming the parcel's next inquiry.",
+          "decision": "accepted",
+          "reason": "The revised sentence keeps the question sequence audible without changing its scope."
+        },
+        {
+          "id": "SR-02",
+          "location": "ch10.md completed-payment transition",
+          "category": "spoken transition",
+          "evidence": "Two chapter announcements surrounded the stronger concrete image of a certificate clock; post-edit structure review also found an immediate calendar echo at the Chapter 11 opening.",
+          "decision": "accepted",
+          "reason": "The new opening makes the state change carry the paragraph, and the redundant closing calendar sentence was removed."
+        },
+        {
+          "id": "SR-03",
+          "location": "ch01.md retrieval prompt and tax-lien explanation",
+          "category": "automated style candidates",
+          "evidence": "The prose gate flags 'Here is the' and 'hold that' once each, but the first begins a real retrieval and the second describes lien priority.",
+          "decision": "rejected",
+          "reason": "Neither match is the generic reader management that the style family is designed to catch."
+        }
+      ]
     },
     {
       "name": "ear-pass",

@@ -39,11 +39,16 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- Canonical manuscript: Chapters 1–13 now total 31,834 Markdown words after the
-  initial independent structure, blind beginner and claim-traceability review.
-  `research/editorial-review.md` preserves the first-draft hashes, findings and
-  lead-author decisions. The separate humanizer/tightening, final hash-bound
-  learning review and rendered ear pass are next.
+- Canonical manuscript: Chapters 1–13 now total 31,824 Markdown words after the
+  initial independent structure, blind beginner and claim-traceability review
+  plus a bounded humanizer/tightening pass. `research/editorial-review.md`
+  preserves the first-draft hashes, findings and lead-author decisions;
+  `research/humanizer-decisions.json` and
+  `research/prose-style-receipt.json` preserve eight accepted local style edits,
+  three rejected change classes, three post-edit beginner-review repairs and
+  current chapter hashes. The final
+  hash-bound learning review and rendered ear pass are next, and any ear-pass
+  text edit must regenerate the prose receipt.
   Chapter 5 carries the major notice → parcel → context → unknowns →
   handoff rewrite. Chapters 6 and 7 stress-test it against legal access,
   intended use, and bounded environmental records; Chapter 8 separates title,

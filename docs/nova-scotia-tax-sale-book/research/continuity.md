@@ -112,8 +112,8 @@
 ## After Chapter 5
 
 - Canonical path: `chapters/ch05.md`, SHA-256
-  `509967331ff7178285c897c54bed2a32e57a311074b91c0f3c42c21e3c1b1f97`,
-  2,672 Markdown words.
+  `f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0`,
+  2,666 Markdown words.
 - Terms defined: `civic point`, `Plus Code`, `layer`, and `mapped intersection`.
 - Method: notice → parcel → context → unknowns → handoff.
 - Grounded demonstrations: current-notice PID `50308311` at Southside River
@@ -173,8 +173,8 @@
 ## After Chapter 4
 
 - Canonical path: `chapters/ch04.md`, SHA-256
-  `e64333f5950dab1c60f12b2cf231c85aa73c947287b58c761de5573035facd39`,
-  2,417 Markdown words.
+  `c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5`,
+  2,427 Markdown words.
 - Terms defined: `parcel register`, `legal description`, and `title search`.
 - Classification: verified fact, professionally verifiable uncertainty,
   priceable uncertainty, and no-go uncertainty.
@@ -235,8 +235,8 @@
 ## After Chapter 3
 
 - Canonical path: `chapters/ch03.md`, SHA-256
-  `5e5ce834655e8d0027021d98a16d0b666321352e4e4c07c673f1b2c79716c1a3`,
-  1,927 Markdown words.
+  `77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b`,
+  1,929 Markdown words.
 - Terms defined: `certificate of sale`, `certificate holder`, `discharge`, and
   `tax deed`.
 - Mechanism: a paid redeemable sale enters a conditional certificate period;
@@ -363,7 +363,7 @@
 ## After Chapter 6
 
 - Canonical path: `chapters/ch06.md`, SHA-256
-  `dc5bc65ce9c2167ea8af61c0f990c73ab3537129b6ab95d714da81acc9261f57`,
+  `145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8`,
   2,355 Markdown words.
 - Terms defined: `right-of-way`, `road frontage`, and `zoning`.
 - Mechanism: visible approach routes the file toward legal-access evidence; a
@@ -608,8 +608,8 @@
 ## After Chapter 10
 
 - Canonical path: `chapters/ch10.md`, SHA-256
-  `a6729affd3fccb58732d956da0fbfa1c5b00a1779fade1527366a5f155a89001`,
-  2,647 Markdown words.
+  `a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9`,
+  2,638 Markdown words.
 - Terms defined: `open-outcry auction`, `public tender`, and `deposit`.
 - Mechanism: current-list verification, bidder authority, an unchanged written
   ceiling, accepted immediate funds, and any three-business-day balance path
@@ -681,8 +681,8 @@
 ## After Chapter 11
 
 - Canonical path: `chapters/ch11.md`, SHA-256
-  `236b44471c5bd2ca3f924fcfcc00f9d6735c45a3b272aa31da7f237af071bbc2`,
-  2,624 Markdown words.
+  `89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611`,
+  2,617 Markdown words.
 - Terms defined: `insurable interest` and `necessary repair`.
 - Mechanism: a registered certificate creates conditional protective powers,
   insurance and accounting duties, while possession, underwriting, repair
@@ -791,7 +791,7 @@
 ## After Chapter 12
 
 - Canonical path: `chapters/ch12.md`, SHA-256
-  `fd1ffb3b607c29dea7b4500f65dc1b257fcd817dbeac73b9e056036ea2c828b0`,
+  `e4904a3fc012f9dea5d150f0bce11043546fe46ac563c3aa4f240f9207c07dcd`,
   2,825 Markdown words.
 - Terms defined: `deed registration`, `post-deed due diligence`, and `tax-sale
   surplus account`.
@@ -916,3 +916,23 @@
 - Remaining boundary: single-job humanizer/tightening, final two-reviewer
   learning receipt, rendered ear pass, figure acceptance, narration, package,
   listening and publication are still pending.
+
+## After Bounded Humanizer and Post-Edit Review
+
+- Current manuscript: 31,824 Markdown words across thirteen chapters.
+- Voice work: eight local chapter-navigation and sentence-rhythm changes were
+  accepted; the retrieval prompt, lien-priority phrase and earned short lists
+  were retained.
+- Structure repair: one duplicate calendar image at the Chapter 10–11 boundary
+  was removed, after which the structure reread passed.
+- Beginner repair: Chapter 4 now introduces `parcel register` and expands
+  `NSPRD` at first use; Chapter 11 preserves the treasurer as certificate-
+  registration actor. The blind sequential reread passed Chapters 4, 5 and 11,
+  and the structure reviewer independently passed those changes.
+- Current records: `research/humanizer-decisions.json`,
+  `research/prose-qc-humanizer.md`, `research/prose-style-receipt.json`, and
+  Round 2 in `research/editorial-review.md`.
+- Remaining boundary: rendered ear pass, final hash-bound learning and revision
+  receipts, figure acceptance, narration, package, full listening and
+  publication are still pending. Any ear-pass text edit invalidates the current
+  prose receipt and text-review hashes.
