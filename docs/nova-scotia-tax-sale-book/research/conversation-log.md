@@ -118,3 +118,13 @@ are accepted for sequential canonical drafting. Pronunciation acceptance,
 actual Echo/video-stage prototype proof, atlas batch authorization, final figure
 acceptance, full narration, package verification and publication remain
 downstream gates.
+
+## 2026-07-21
+
+- **Exact EPUB manuscript text approved:** “I have reviewed the book, it's good
+  to publish.” Dan then clarified, “I meant the epub text was ready to publish.”
+  The approval is bound to all thirteen exact chapter hashes in
+  publication-authorization.json. It authorizes the public EPUB text edition
+  after cover selection and the remaining package gates. It does not claim
+  approval of unfinished cover, figures, ear-pass audio, pronunciation, full
+  narration or video.

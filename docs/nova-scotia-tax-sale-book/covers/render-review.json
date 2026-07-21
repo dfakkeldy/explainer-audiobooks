@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "status": "review-candidates-ready",
+  "reviewedAt": "2026-07-21T09:26:00-03:00",
+  "reviewer": "Codex",
+  "generationMode": "built-in-imagegen",
+  "review": {
+    "fullSizePortraits": true,
+    "fullSizeSquares": true,
+    "portraitContactSheet": true,
+    "squareContactSheet": true,
+    "thumbnailLegibility": true,
+    "visibleGradientEdges": false
+  },
+  "candidates": [
+    {
+      "id": "parcel-file",
+      "sourceArtSHA256": "d81fcfa6051cca1a866b6630d7386fc4654fc6e2440198bdd4677baccc1ff5f7",
+      "portraitSHA256": "9d450f18a9ed9b8ce8a2c36aeee78e178c8d0743b87848630e8a7c28ff5cb93f",
+      "squareSHA256": "c48731c4780adc5c9f8ffe67198cfe99c15d106e2388ce46472f6d352ef9e849"
+    },
+    {
+      "id": "raised-card",
+      "sourceArtSHA256": "6026127a4a7fed8abc39dc21a0bb377adf0e7307308aa37c28fde6cc3bd64968",
+      "portraitSHA256": "92ca76cf55e05fe1dd56fc055e30f87011e68c13001e12ed4703f38242db2b6f",
+      "squareSHA256": "d679dfebc9949e94798852a9570df0365633315903b4c6a9a5ccef5c478014df"
+    },
+    {
+      "id": "layers-of-uncertainty",
+      "sourceArtSHA256": "98c049e6e868a7240c0d4b1d4fdc709daa385c4eb92db2a21539109991e19aee",
+      "portraitSHA256": "f7294b3acd7bc8ebb2f6fa739c73468d7304f6497a9739525b69c7a6148dfba0",
+      "squareSHA256": "1426335fa0ad1dfe176655a539002d29b99defe8d2eb7807b8ca5250392ec620"
+    }
+  ],
+  "humanPairSelection": "pending"
+}

@@ -54,16 +54,100 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(brief["originalTargetWords"], 22000)
         self.assertEqual(brief["currentTargetWords"], 46200)
         self.assertTrue(brief["draftingStarted"])
-        self.assertEqual(len(brief["scopeHistory"]), 9)
+        self.assertEqual(len(brief["scopeHistory"]), 10)
         for decision in brief["scopeHistory"]:
-            self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19|20)T")
+            self.assertRegex(decision["recordedAt"], r"^2026-07-(18|19|20|21)T")
             self.assertTrue(decision["verbatimQuote"])
-            self.assertEqual(decision["evidence"], decision["verbatimQuote"])
+            self.assertIn(decision["verbatimQuote"], decision["evidence"])
 
         self.assertIn(
             "51 figures direction",
-            brief["scopeHistory"][-1]["verbatimQuote"],
+            brief["scopeHistory"][-2]["verbatimQuote"],
         )
+        self.assertEqual(
+            brief["scopeHistory"][-1]["verbatimQuote"],
+            "I meant the epub text was ready to publish.",
+        )
+
+    def test_epub_text_approval_is_bound_to_exact_chapter_hashes(self) -> None:
+        authorization = json.loads(
+            (RESEARCH_ROOT / "publication-authorization.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        chapter_dir = PACKET_ROOT / "chapters"
+        actual_hashes = {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(chapter_dir.glob("ch*.md"))
+        }
+
+        self.assertEqual(authorization["classification"], "public-safe")
+        self.assertEqual(
+            authorization["manuscriptTextApproval"]["status"], "approved"
+        )
+        self.assertEqual(
+            authorization["manuscriptTextApproval"]["reviewedChapterSHA256"],
+            actual_hashes,
+        )
+        self.assertTrue(
+            authorization["publicationAuthorization"]["permissionToPublish"]
+        )
+        self.assertEqual(authorization["boundaries"]["coverSelection"], "pending")
+        self.assertEqual(authorization["boundaries"]["audioListeningStatus"], "pending")
+
+    def test_cover_review_has_three_complete_unselected_pairs(self) -> None:
+        covers_root = PACKET_ROOT / "covers"
+        review = json.loads(
+            (covers_root / "render-review.json").read_text(encoding="utf-8")
+        )
+        candidate_dirs = sorted(covers_root.glob("candidate-[1-3]"))
+
+        self.assertEqual(len(candidate_dirs), 3)
+        self.assertEqual(review["status"], "review-candidates-ready")
+        self.assertEqual(review["humanPairSelection"], "pending")
+        self.assertFalse((covers_root / "cover-selection.json").exists())
+
+        reviewed = {item["id"]: item for item in review["candidates"]}
+        self.assertEqual(
+            set(reviewed),
+            {"parcel-file", "raised-card", "layers-of-uncertainty"},
+        )
+        for candidate_dir in candidate_dirs:
+            portrait = json.loads(
+                (candidate_dir / "cover-render.json").read_text(encoding="utf-8")
+            )
+            square = json.loads(
+                (candidate_dir / "m4b-cover-render.json").read_text(encoding="utf-8")
+            )
+            candidate_id = portrait["candidate"]["id"]
+
+            portrait_spec = json.loads(
+                (candidate_dir / "cover-spec.json").read_text(encoding="utf-8")
+            )
+            square_spec = json.loads(
+                (candidate_dir / "m4b-cover-spec.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(portrait_spec["schema_version"], 2)
+            self.assertEqual(square_spec["schema_version"], 2)
+            self.assertEqual(square["candidate"]["id"], candidate_id)
+            self.assertEqual(
+                portrait["source_art_sha256"], square["source_art_sha256"]
+            )
+            self.assertEqual(portrait["dimensions"], [1600, 2560])
+            self.assertEqual(square["dimensions"], [2400, 2400])
+            self.assertEqual(
+                reviewed[candidate_id]["sourceArtSHA256"],
+                portrait["source_art_sha256"],
+            )
+            self.assertEqual(
+                reviewed[candidate_id]["portraitSHA256"],
+                portrait["output_sha256"],
+            )
+            self.assertEqual(
+                reviewed[candidate_id]["squareSHA256"],
+                square["output_sha256"],
+            )
+            self.assertTrue((candidate_dir / "brief.md").exists())
 
     def test_outline_gate_records_map_revision_approval_for_pilot_only(self) -> None:
         outline = json.loads(

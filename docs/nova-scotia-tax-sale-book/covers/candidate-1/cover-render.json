@@ -1,0 +1,41 @@
+{
+  "brand_mark": {
+    "source": "brand-mark.png",
+    "source_sha256": "240d17d0fd37d0611dd9557f1407134149cd0841b503aff56f369721934dfdde"
+  },
+  "candidate": {
+    "direction_name": "The Parcel File",
+    "id": "parcel-file"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    1600,
+    2560
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+    "technical-mono": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
+  },
+  "output": "cover.png",
+  "output_sha256": "9d450f18a9ed9b8ce8a2c36aeee78e178c8d0743b87848630e8a7c28ff5cb93f",
+  "receipt_version": 1,
+  "renderer_version": 2,
+  "schema_version": 1,
+  "source_art": "source-art.png",
+  "source_art_sha256": "d81fcfa6051cca1a866b6630d7386fc4654fc6e2440198bdd4677baccc1ff5f7",
+  "spec": "cover-spec.json",
+  "spec_sha256": "c30015bc00eeabeb645f2a31e70535bf6d6fd074c618d6da2d653ff8d995ecbc",
+  "thumbnail": "cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    256
+  ],
+  "thumbnail_sha256": "8cf5bbdf428f7fd95284ef20cce5aa2640689a0ac4c92e886b9d1dee359231a4",
+  "variant": "portrait",
+  "warnings": [
+    "layer 3 advisory contrast ratio is 2.64:1"
+  ]
+}

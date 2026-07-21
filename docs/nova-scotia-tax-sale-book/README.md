@@ -106,9 +106,11 @@ recorded in `research/editorial-review.md` and
 chapter navigation, and three post-edit beginner-review repairs clarify the
 parcel-register record, expand NSPRD at first use and preserve the treasurer as
 the certificate-registration actor.
-The chapters remain draft prose until the final hash-bound learning review and
-rendered ear pass are complete. Final figures, full narration, packaging and
-publication remain separate.
+Dan approved the exact thirteen-chapter EPUB manuscript text for public
+publication on 2026-07-21. The approval is hash-bound in
+research/publication-authorization.json; any chapter-byte change requires a new
+manuscript verdict. Cover selection and the remaining figure, ear-pass, package,
+full-narration and video gates remain separate.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the

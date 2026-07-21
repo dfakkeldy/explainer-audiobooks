@@ -132,6 +132,17 @@
       "approvalSource": "user",
       "verbatimQuote": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction.",
       "evidence": "The new map warrants one major Chapter 5 rewrite plus targeted changes to Chapters 2, 4, 6, 7, 9, and 13—let’s work on that with the 51 figures direction."
+    },
+    {
+      "date": "2026-07-21",
+      "recordedAt": "2026-07-21T08:43:56-03:00",
+      "oldTargetWords": 46200,
+      "newTargetWords": 46200,
+      "reason": "The user completed his manuscript review, approved the exact thirteen-chapter EPUB text for public publication and clarified that cover work remains the current task.",
+      "approvalStatus": "epub-manuscript-text-approved; public-publication-authorized-pending-cover-and-package-gates",
+      "approvalSource": "user",
+      "verbatimQuote": "I meant the epub text was ready to publish.",
+      "evidence": "I have reviewed the book, it's good to publish. I meant the epub text was ready to publish."
     }
   ],
   "safety": {
@@ -147,9 +158,9 @@
     ]
   },
   "privacy": {
-    "status": "public-safe-development",
+    "status": "public-safe-manuscript-approved",
     "permissionToPublish": true,
     "publicationIntent": "public",
-    "publicationActionStatus": "development-pr-authorized; finished-audiobook-publication-pending"
+    "publicationActionStatus": "epub-text-approved; finished-edition-publication-authorized-pending-cover-and-required-package-gates"
   }
 }
