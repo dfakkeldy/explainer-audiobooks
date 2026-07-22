@@ -165,7 +165,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
             self.assertTrue((candidate_dir / "brief.md").exists())
 
-    def test_public_epub_package_binds_approved_text_and_selected_cover(self) -> None:
+    def test_public_first_listen_package_binds_approved_text_audio_and_cover(self) -> None:
         public_root = REPO_ROOT / "books/beyond-the-tax-sale-packet"
         publication = json.loads(
             (public_root / "publication.json").read_text(encoding="utf-8")
@@ -179,11 +179,18 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
         )
 
-        self.assertEqual(publication["publicationStatus"], "public-epub")
+        self.assertEqual(publication["publicationStatus"], "public-first-listen")
+        self.assertEqual(publication["humanListeningStatus"], "pending")
         self.assertTrue(publication["permissionToPublish"])
-        self.assertEqual(publication["selectedCover"], "packet-lifts")
-        self.assertEqual(publication["audioStatus"], "pending-not-included")
-        self.assertFalse((public_root / "beyond-the-tax-sale-packet.m4b").exists())
+        self.assertEqual(
+            publication["disclosure"],
+            "This edition has passed package and audio checks. The creator's "
+            "full listening review is still underway.",
+        )
+        self.assertTrue((public_root / "beyond-the-tax-sale-packet.m4b").is_file())
+        self.assertTrue(
+            (public_root / "beyond-the-tax-sale-packet.alignment.json").is_file()
+        )
 
         for artifact in publication["artifacts"].values():
             path = public_root / artifact["file"]
@@ -327,9 +334,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("ACCEPT FULL AUDIO", checklist)
         self.assertIn("REVISE AUDIO", checklist)
         self.assertIn("REJECT AUDIO", checklist)
-        self.assertIn("second-device import/open/render proof", checklist)
+        self.assertIn("second-device proof of the public edition", checklist)
         self.assertIn("video-edition production", checklist)
-        self.assertIn("public audiobook publication", checklist)
+        self.assertIn("public-first-listen", checklist)
         self.assertIn("notice → parcel → context → unknowns → handoff", checklist)
         self.assertIn("Property Online", checklist)
 
@@ -343,9 +350,13 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            receipt["status"], "ready-for-replacement-full-audio-human-verdict"
+            receipt["status"],
+            "public-first-listen-authorized-full-audio-verdict-pending",
         )
-        self.assertFalse(receipt["permissionToPublishAudiobook"])
+        self.assertTrue(receipt["permissionToPublishAudiobook"])
+        self.assertEqual(
+            receipt["publicationAuthorization"]["status"], "public-first-listen"
+        )
         self.assertEqual(
             receipt["source"]["epubSHA256"],
             "40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0",
@@ -386,13 +397,13 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertEqual(
             receipt["humanGates"]["audiobookPublication"],
-            "blocked-pending-explicit-full-audio-verdict",
+            "authorized-public-first-listen",
         )
-        self.assertFalse(
+        self.assertTrue(
             (
                 REPO_ROOT
                 / "books/beyond-the-tax-sale-packet/beyond-the-tax-sale-packet.m4b"
-            ).exists()
+            ).is_file()
         )
 
     def test_negative_pictou_verdict_blocks_exact_candidate_without_reopening_text(
@@ -406,7 +417,11 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         verdict = verdicts["verdicts"][-1]
 
         self.assertEqual(
-            verdicts["status"], "replacement-candidate-awaiting-human-verdict"
+            verdicts["status"],
+            "public-first-listen-authorized-human-verdict-pending",
+        )
+        self.assertEqual(
+            verdicts["publicationAuthorization"]["status"], "public-first-listen"
         )
         self.assertEqual(verdict["decision"], "revise-audio")
         self.assertEqual(verdict["finding"]["term"], "Pictou")

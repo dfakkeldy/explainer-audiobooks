@@ -68,14 +68,14 @@ Choose one only after the pronunciation reel and the entire M4B have been heard:
 - **REJECT AUDIO** — stop audiobook production and state the reason.
 
 No verdict is inferred from opening the file, completing a spot check, or
-accepting the earlier pilot. Until the explicit verdict is recorded, audiobook
-publication and website deployment remain blocked.
+accepting the earlier pilot. The full-audio verdict remains pending. Dan
+separately authorized a `public-first-listen` deployment on 2026-07-22. That
+publication permission does not count as full-audio acceptance, and any later
+negative listening verdict supersedes the public-first-listen edition.
 
 ## Separate gates not covered here
 
-- second-device import/open/render proof;
-- final figure selection or promotion;
-- video-edition production;
-- public audiobook publication;
-- changes to `kinnokilabs.com`; and
-- merge or deployment of the implementation PR.
+- completed full-audio human acceptance;
+- second-device proof of the public edition;
+- final figure promotion; and
+- video-edition production.
