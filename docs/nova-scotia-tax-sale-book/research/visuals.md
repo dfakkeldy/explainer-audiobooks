@@ -1,11 +1,33 @@
 # Visual-listening figure plan
 
-Status: 51-figure direction approved for pilot development, with two QGIS 4 development proofs, eight
-legal/process diagrams and eleven NS Marks The Spot screenshots rendered as
-review candidates. This register is the authority for interior figures in the
-public edition. Candidate assets live under `chapters/images/` and will be
-embedded as standalone Markdown figures only after the matching narration,
-placement and Echo proof are approved.
+Status: all 51 figures in the approved pilot direction now have landscape review
+candidates, and all 51 have paired mobile review candidates. Figures 41 through
+51 use genuine 390-by-844 mobile-browser captures in the mobile rendition rather
+than resized desktop screenshots. The remaining mobile figures are purpose-built
+1080-by-1920 reflows. This register remains the authority for interior figures in
+the public edition. Canonical chapter prose is unchanged; review builds use the
+reversible placement layer under `figures/` until the matching narration,
+placement, full phone review and Echo proof are approved.
+
+## Complete visual review set — 2026-07-22
+
+The previously missing 32 figures—01, 02 and 09 through 38—now exist in both
+2560-by-1440 landscape and 1080-by-1920 mobile forms under
+`figures/visual-expansion-review-v4/`. The set includes the two original
+editorial scenes, the three five-map fictional case families, the evidence and
+legal-process diagrams, the numerical charts and the final retrieval aid.
+
+Figures 03 through 08, 39 and 40 also have purpose-built mobile reflows in the
+same review directory. Together with the separately captured mobile-browser map
+screens, the private staging run contains 51 desktop and 51 mobile assets. Its
+placement receipt proves that removing the review-only figure blocks restores
+the canonical chapter Markdown exactly.
+
+Two silent 103.967-second proof reels were rendered from the complete cue order:
+1920-by-1080 landscape and 1080-by-1920 portrait. They are rapid visual-review
+artifacts, not narrated exports, governed packages or publication evidence. The
+paired EPUBs are likewise review candidates only; full human figure acceptance,
+narration alignment and the whole-book video export remain separate gates.
 
 ## Interactive-map research-chain batch — 2026-07-20
 

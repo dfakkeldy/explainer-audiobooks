@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "assetStatus": "review-candidate",
+  "scope": "paired visual review figures: figure-03, figure-04, figure-05, figure-06, figure-07, figure-08, figure-39, figure-40",
+  "profiles": {
+    "mobile": {
+      "width": 1080,
+      "height": 1920
+    }
+  },
+  "figures": [
+    {
+      "id": "figure-03",
+      "filename": "figure-03-two-clocks.png",
+      "chapter": 1,
+      "title": "Auction day connects two clocks",
+      "caption": "The sale connects two legal clocks; it does not end either one instantly.",
+      "kind": "flow",
+      "renditions": {
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile-support/mobile/figure-03-two-clocks.png",
+          "sha256": "1c43926a38a13d226ce9ed8f60d82ce7d776c9ce4c553e3f48b9aca60f8f3abf",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-04",
+      "filename": "figure-04-packet-anatomy.png",
+      "chapter": 2,
+      "title": "A parcel sheet is a set of claims",
+      "caption": "Every field is an identifier or claim to verify, not a promise about the parcel.",
+      "kind": "columns",
+      "renditions": {
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile-support/mobile/figure-04-packet-anatomy.png",
+          "sha256": "34932b32c895280abf1cd054f340050c99850a9f47d3e1ff9bebc5f1c3180ef5",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-05",
+      "filename": "figure-05-identifiers-not-promises.png",
+      "chapter": 2,
+      "title": "Identifiers help records meet",
+      "caption": "None alone proves boundary, access, condition, value or buildability.",
+      "kind": "stack",
+      "renditions": {
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile-support/mobile/figure-05-identifiers-not-promises.png",
+          "sha256": "f447596fb82849021364ab668138e31feb1d7cc1d5d7ab5ac5148aaef23a5f13",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-06",
+      "filename": "figure-06-reconcile-the-packet.png",
+      "chapter": 2,
+      "title": "Preserve disagreement between sources",
+      "caption": "A discrepancy is a research finding, not permission to choose the convenient version.",
+      "kind": "columns",
+      "renditions": {
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile-support/mobile/figure-06-reconcile-the-packet.png",
+          "sha256": "366dd8bce2928490457579238cfe628a15f0179131c7efc471817f919e303979",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-07",
+      "filename": "figure-07-redeemable-route.png",
+      "chapter": 3,
+      "title": "The ordinary redeemable route",
+      "caption": "A winning bid may begin a six-month certificate-holder period rather than immediate ownership.",
+      "kind": "flow",
+      "renditions": {
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile-support/mobile/figure-07-redeemable-route.png",
+          "sha256": "20958944da85f16b7cf622732b1ffcaf27109de440032e3a1aa5f0f6fc7c7b06",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-08",
+      "filename": "figure-08-nonredeemable-route.png",
+      "chapter": 3,
+      "title": "No redemption period is not no uncertainty",
+      "caption": "Immediate deed changes the redemption route, not possession, access, title or buildability.",
+      "kind": "flow",
+      "renditions": {
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile-support/mobile/figure-08-nonredeemable-route.png",
+          "sha256": "785db4f01ab8841b9c8d91f3bd3c1143046e4b3cf0f50c2c7693b77a14fdb27e",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-39",
+      "filename": "figure-39-payment-readiness-clock.png",
+      "chapter": 10,
+      "title": "Payment readiness extends beyond the hammer",
+      "caption": "The hammer identifies a leading bid; readiness and payment determine whether the sale completes.",
+      "kind": "flow",
+      "renditions": {
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile-support/mobile/figure-39-payment-readiness-clock.png",
+          "sha256": "b034922562c3fe55d5b9165762d1a3afd6208c72b88b764171e502197b28fdfe",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-40",
+      "filename": "figure-40-surplus-proceeds-route.png",
+      "chapter": 12,
+      "title": "Surplus follows a statutory route",
+      "caption": "Surplus is held and claimed through a statutory route; it is not a purchaser windfall.",
+      "kind": "flow",
+      "renditions": {
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile-support/mobile/figure-40-surplus-proceeds-route.png",
+          "sha256": "dff7d99a9056301a19aee75eb0d98c4e34eeb78d0da8025f466e1b9a354a795e",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    }
+  ],
+  "boundaries": [
+    "Fictional composite maps are teaching diagrams, not surveys or parcel evidence.",
+    "Generated scenes are editorial illustrations, not documentary depictions.",
+    "No figure is governed, accepted, syncable or publishable until human and device review pass."
+  ]
+}
