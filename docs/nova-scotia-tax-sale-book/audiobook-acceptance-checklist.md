@@ -11,11 +11,18 @@ against `research/audiobook-candidate-receipt.json` before listening.
 
 ## Quick gate: pronunciation reel
 
+The first candidate is rejected: Dan heard **Pictou** as “picktoau” and requires
+**“PICK-toe.”** This checklist now applies only to the replacement M4B at
+SHA-256 `f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8`
+and replacement probe reel at SHA-256
+`910a98daf19e6a3265794fbee46e52d577d31d7759cfd99fa1d2efdf4d0aaf27`.
+Do not use the earlier listening folder for this verdict.
+
 Listen to the short pronunciation reel first. Record the exact term and clip if
 anything needs repair.
 
 - [ ] Inverness
-- [ ] Pictou
+- [ ] Pictou — must end like **toe**, not “taow” or “toau”
 - [ ] AAN and “Assessment Account Number”
 - [ ] PID and “Parcel Identification Number”
 - [ ] NSPRD and “Nova Scotia Property Records Database”

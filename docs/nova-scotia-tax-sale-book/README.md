@@ -126,13 +126,20 @@ controlled wrapper-only rebuild from the frozen public EPUB is required, and
 claims pronunciation acceptance, full-audio acceptance, publication, website
 deployment, video work, figure promotion, or second-device proof.
 
-That controlled rebuild is now complete as a private first-listen candidate:
-13 chapters, 14,257.408 seconds, exact M4B SHA-256
-`f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec`.
-The selector-bound delivery chain, 612-anchor sidecar, automated pronunciation
-audit, selected square-cover identity, archive integrity, full decode and
-acoustic scan pass. `research/audiobook-candidate-receipt.json` preserves those
-machine results while leaving pronunciation and full-book human listening
+Dan rejected that first controlled candidate after hearing **Pictou** as
+“picktoau” and specified **“PICK-toe.”** The exact negative verdict remains
+bound in `research/audiobook-human-listening-verdicts.json`; it did not reopen
+the approved text or cover.
+
+A fresh wrapper-only replacement is now complete as a private first-listen
+candidate: 13 chapters, 14,256.597333 seconds, exact M4B SHA-256
+`f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8`.
+Its complete automated audit proves all five Pictou occurrences use the
+long-o `pˈɪktO` override and none use rejected `pˈɪktaʊ`. The selector-bound
+delivery chain, 612-anchor sidecar, selected square-cover identity, archive
+integrity, full decode and acoustic scan pass.
+`research/audiobook-candidate-receipt.json` preserves those machine results
+while leaving replacement pronunciation and full-book human listening
 pending. The M4B and renderer work state remain outside the public repository.
 
 The three accepted-direction atlas prototypes remain development evidence, but

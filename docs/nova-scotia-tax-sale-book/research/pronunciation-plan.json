@@ -23,12 +23,13 @@
       "term": "Pictou",
       "variants": [],
       "spokenCandidates": [
-        "PIK-toe"
+        "PICK-toe"
       ],
-      "source": "author",
-      "reason": "The municipality supplies the recurring sealed-tender comparison and its local place name is easily misread from spelling.",
+      "source": "listener",
+      "reason": "Dan rejected the fallback picktoau reading and specified a clean long-o ending: PICK-toe. The automated audit must also prove that possessive contexts preserve the same base pronunciation.",
       "expectedChapters": [
-        "ch01.md"
+        "ch01.md",
+        "ch10.md"
       ],
       "required": true,
       "status": "planned",

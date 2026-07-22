@@ -301,6 +301,14 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
                     f"{form!r} is absent from its declared pronunciation chapters",
                 )
 
+        pictou = next(item for item in pronunciation["terms"] if item["term"] == "Pictou")
+        self.assertEqual(pictou["source"], "listener")
+        self.assertEqual(pictou["variants"], [])
+        self.assertEqual(
+            pictou["spokenCandidates"],
+            ["PICK-toe"],
+        )
+
     def test_audiobook_acceptance_packet_preserves_separate_gates(self) -> None:
         audit = (RESEARCH_ROOT / "audiobook-candidate-audit.md").read_text(
             encoding="utf-8"
@@ -334,7 +342,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
         )
 
-        self.assertEqual(receipt["status"], "ready-for-full-audio-human-verdict")
+        self.assertEqual(
+            receipt["status"], "ready-for-replacement-full-audio-human-verdict"
+        )
         self.assertFalse(receipt["permissionToPublishAudiobook"])
         self.assertEqual(
             receipt["source"]["epubSHA256"],
@@ -343,18 +353,37 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertTrue(receipt["source"]["canonicalChaptersUnchanged"])
         self.assertFalse(receipt["source"]["propertyOnlineMaterialIncluded"])
         self.assertEqual(receipt["narration"]["voice"], "am_michael")
+        self.assertEqual(
+            (RESEARCH_ROOT / "approved-echo-pronunciation-sha.txt")
+            .read_text(encoding="utf-8")
+            .strip(),
+            receipt["narration"]["echoSourceSHA"],
+        )
         self.assertEqual(receipt["artifacts"]["audiobook"]["chapterCount"], 13)
         self.assertEqual(
             receipt["artifacts"]["audiobook"]["sha256"],
-            "f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec",
+            "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8",
         )
         self.assertEqual(receipt["artifacts"]["alignment"]["anchorCount"], 612)
         self.assertEqual(receipt["artifacts"]["alignment"]["wordTimedAnchorCount"], 324)
         self.assertEqual(
             receipt["artifacts"]["pronunciationAudit"]["diagnosticCount"], 0
         )
+        self.assertEqual(
+            receipt["artifacts"]["pronunciationAudit"]["pictouDecisionCount"], 5
+        )
+        self.assertEqual(
+            receipt["artifacts"]["pronunciationAudit"]["pictouIPA"], "pˈɪktO"
+        )
+        self.assertEqual(
+            receipt["artifacts"]["pronunciationAudit"]["rejectedPictouIPACount"],
+            0,
+        )
         self.assertEqual(receipt["checks"]["fullAudioDecode"], "pass")
-        self.assertEqual(receipt["humanGates"]["fullAudioListening"], "pending")
+        self.assertEqual(
+            receipt["humanGates"]["fullAudioListening"],
+            "pending-replacement-verdict",
+        )
         self.assertEqual(
             receipt["humanGates"]["audiobookPublication"],
             "blocked-pending-explicit-full-audio-verdict",
@@ -365,6 +394,43 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
                 / "books/beyond-the-tax-sale-packet/beyond-the-tax-sale-packet.m4b"
             ).exists()
         )
+
+    def test_negative_pictou_verdict_blocks_exact_candidate_without_reopening_text(
+        self,
+    ) -> None:
+        verdicts = json.loads(
+            (RESEARCH_ROOT / "audiobook-human-listening-verdicts.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        verdict = verdicts["verdicts"][-1]
+
+        self.assertEqual(
+            verdicts["status"], "replacement-candidate-awaiting-human-verdict"
+        )
+        self.assertEqual(verdict["decision"], "revise-audio")
+        self.assertEqual(verdict["finding"]["term"], "Pictou")
+        self.assertEqual(verdict["finding"]["heard"], "picktoau")
+        self.assertEqual(verdict["finding"]["expected"], "PICK-toe")
+        self.assertEqual(verdict["finding"]["rejectedRendererIPA"], "pˈɪktaʊ")
+        self.assertEqual(verdict["finding"]["targetRendererIPA"], "pˈɪktO")
+        self.assertEqual(
+            verdict["boundArtifacts"]["audiobookSHA256"],
+            "f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec",
+        )
+        replacement = verdicts["replacementCandidate"]
+        self.assertEqual(
+            replacement["audiobookSHA256"],
+            "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8",
+        )
+        self.assertEqual(replacement["pictouEvidence"]["occurrenceCount"], 5)
+        self.assertEqual(replacement["pictouEvidence"]["selectedIPA"], "pˈɪktO")
+        self.assertEqual(replacement["pictouEvidence"]["rejectedIPACount"], 0)
+        self.assertEqual(replacement["humanPronunciationVerdict"], "pending")
+        self.assertFalse(
+            verdicts["frozenInputs"]["canonicalManuscriptRevisionAuthorized"]
+        )
+        self.assertFalse(verdicts["frozenInputs"]["selectedCoverRevisionAuthorized"])
 
     def test_first_section_voice_acceptance_binds_exact_candidate(self) -> None:
         continuity = json.loads(

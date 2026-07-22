@@ -1,6 +1,6 @@
 # Governed audiobook candidate audit
 
-Date: 2026-07-21
+Dates: 2026-07-21–2026-07-22
 
 ## Decision
 
@@ -97,3 +97,47 @@ passed gates, and it is not represented as a pass.
 
 Human pronunciation listening and the entire-book listening verdict remain
 pending. The candidate is not published.
+
+## Human pronunciation finding
+
+On 2026-07-21, Dan rejected the candidate's reading of **Pictou**. He heard
+“picktoau” and specified a clean long-o ending: **“PICK-toe.”** The automated
+audit confirms that all five narrated occurrences used fallback IPA
+`pˈɪktaʊ`; the required Echo form is `pˈɪktO`.
+
+This negative finding supersedes the candidate's pending pronunciation status
+and blocks the full-audio acceptance candidate. It is bound to the exact M4B,
+probe reel, probe evidence and automated audit in
+`audiobook-human-listening-verdicts.json`. Repair requires a fresh governed
+render because pronunciation changes alter Echo's book-wide capture identity.
+The frozen manuscript and selected cover remain unchanged.
+
+## Controlled pronunciation repair outcome
+
+Echo PR #468 adds the governed whole-word override `Pictou → pˈɪktO` and
+preserves possessive audit surfaces. The installed renderer is pinned to exact
+Echo source `a5fe8d432efbc92d0b73fec2cfa2d721186f480d`, rv15, with CLI SHA-256
+`e78eb64b1a56c701361e73e7bf5e5f0232141b7332fc614c72e463d81c06ff2a`
+and unchanged resources SHA-256
+`7dc8c5f635f5fe451156a9ba842650d44e01acadf52a20cdfac5fecaed78777b`.
+Because this changed the render identity, all thirteen chapters were captured
+under a fresh governed run rather than mixed with the rejected candidate.
+
+The replacement candidate completed on 2026-07-22:
+
+- M4B SHA-256:
+  `f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8`
+- Duration: 14,256.597333 seconds (`3:57:36.597`)
+- Chapter markers: 13, in canonical order
+- Alignment: 612 anchors, 324 with verified word timings
+- Pronunciation audit: complete coverage, 235 decisions, zero diagnostics
+- Pictou: five of five decisions use `pˈɪktO` through
+  `override.built-in.pictou`; zero decisions use rejected `pˈɪktaʊ`
+- Human probe reel SHA-256:
+  `910a98daf19e6a3265794fbee46e52d577d31d7759cfd99fa1d2efdf4d0aaf27`
+- Selector-bound schema-v3 delivery chain, selected cover identity, EPUB
+  archive integrity, full AAC decode and silence scan: pass
+
+This replacement advances only to renewed pronunciation listening and the
+full-book human verdict. It has not been published, deployed, merged, proved on
+a second device, used to begin video work or used to promote final figures.
