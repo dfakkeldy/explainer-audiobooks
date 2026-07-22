@@ -1,18 +1,19 @@
 {
   "schemaVersion": 1,
   "slug": "beyond-the-tax-sale-packet",
-  "editionId": "2026-public-epub",
-  "publicationStatus": "public-epub",
+  "editionId": "public-first-listen-2026-07-22",
+  "publicationStatus": "public-first-listen",
+  "humanListeningStatus": "pending",
   "classification": "public-safe",
   "permissionToPublish": true,
-  "permissionGrantedAt": "2026-07-21T08:43:56-03:00",
-  "manuscriptTextReviewStatus": "approved",
-  "coverSelectionStatus": "user-selected",
-  "selectedCover": "packet-lifts",
-  "figureCount": 0,
-  "audioStatus": "pending-not-included",
-  "humanFullAudioListening": "pending",
-  "disclosure": "This EPUB text edition has passed manuscript, cover and package checks. Audiobook production and full-audio listening remain separate and pending.",
+  "permissionGrantedAt": "2026-07-22T08:49:48-03:00",
+  "publicationAuthorization": {
+    "authorizedBy": "Dan Fakkeldy",
+    "verbatim": "okay, that's great. Can you put the latest audiobook on the tax sale website and deploy it? Also, is there a copy in the icloud book folder?",
+    "listeningRoomClarification": "oh and of course make sure the book is in the listening room"
+  },
+  "disclosure": "This edition has passed package and audio checks. The creator's full listening review is still underway.",
+  "sourceArtIncluded": false,
   "artifacts": {
     "manuscript": {
       "file": "beyond-the-tax-sale-packet.md",
@@ -22,22 +23,21 @@
       "file": "beyond-the-tax-sale-packet.epub",
       "sha256": "40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0"
     },
+    "m4b": {
+      "file": "beyond-the-tax-sale-packet.m4b",
+      "sha256": "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8"
+    },
+    "alignment": {
+      "file": "beyond-the-tax-sale-packet.alignment.json",
+      "sha256": "3ae38b4d81b0eaad4e04a59bd6ed67a4176526ec859a3e900950d6102406df77"
+    },
     "portraitCover": {
       "file": "cover.png",
       "sha256": "fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6"
     },
-    "squareCompanionCover": {
+    "squareCover": {
       "file": "m4b-cover.png",
       "sha256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c"
-    },
-    "coverSelection": {
-      "file": "cover-selection.json",
-      "sha256": "799e33994aa4b338bbcc1b5ceb916defd96ecf2f4fe5aa15ffdf6a96502f1b32"
     }
-  },
-  "internalGateReceipts": {
-    "learningDesignSHA256": "f56a24ffaa8e7b908d64f1cfe3edfcccd9b0ce96353a18e6b8d18b2ebb0a0235",
-    "proseStyleSHA256": "6f16b7b8c1ab8033f979cb859f66670487ef55833ada43144ddeaeee5a424e77",
-    "earPassSHA256": "b1b0fbdb56042b10100db9ed40ba459e70e823d3e3ebdfc6bd14e3d895993e45"
   }
 }

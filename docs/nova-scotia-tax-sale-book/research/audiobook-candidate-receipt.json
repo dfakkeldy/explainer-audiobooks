@@ -1,12 +1,21 @@
 {
   "schemaVersion": 1,
-  "status": "ready-for-replacement-full-audio-human-verdict",
+  "status": "public-first-listen-authorized-full-audio-verdict-pending",
   "completedAt": "2026-07-22T04:58:41-03:00",
   "title": "Beyond the Tax-Sale Packet",
   "slug": "beyond-the-tax-sale-packet",
   "edition": "governed-audiobook-pictou-fixed-first-listen-candidate",
-  "classification": "public-safe-private-listening-candidate",
-  "permissionToPublishAudiobook": false,
+  "classification": "public-safe",
+  "permissionToPublishAudiobook": true,
+  "publicationAuthorization": {
+    "status": "public-first-listen",
+    "authorizedBy": "Dan Fakkeldy",
+    "authorizedAt": "2026-07-22T08:49:48-03:00",
+    "verbatim": "okay, that's great. Can you put the latest audiobook on the tax sale website and deploy it? Also, is there a copy in the icloud book folder?",
+    "listeningRoomClarification": "oh and of course make sure the book is in the listening room",
+    "humanListeningStatus": "pending",
+    "disclosure": "This edition has passed package and audio checks. The creator's full listening review is still underway."
+  },
   "supersedesRejectedAudiobookSHA256": "f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec",
   "source": {
     "epubFileName": "beyond-the-tax-sale-packet.epub",
@@ -104,10 +113,10 @@
     "pronunciationListening": "pending-replacement-verdict",
     "fullAudioListening": "pending-replacement-verdict",
     "secondDeviceProof": "not-started",
-    "audiobookPublication": "blocked-pending-explicit-full-audio-verdict",
+    "audiobookPublication": "authorized-public-first-listen",
     "videoEdition": "not-started",
     "finalFigures": "not-promoted"
   },
   "methodBoundary": "The book preserves notice to parcel to context to unknowns to handoff. Maps are screening evidence, not proof of access, title, condition, value, permission, possession, or buildability.",
-  "reviewBoundary": "This receipt proves a governed replacement first-listen candidate and machine/package checks. It does not claim human pronunciation acceptance, a completed full-book listen, second-device proof, audiobook publication, website deployment, video production, final-figure acceptance, or pull-request merge."
+  "reviewBoundary": "This receipt proves a governed replacement candidate, machine/package checks, and explicit public-first-listen authorization. It does not claim human pronunciation acceptance, a completed full-book listen, second-device proof, completed website deployment, video production, final-figure acceptance, or pull-request merge."
 }

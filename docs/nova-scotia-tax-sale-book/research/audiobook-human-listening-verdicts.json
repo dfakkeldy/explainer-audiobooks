@@ -1,6 +1,13 @@
 {
   "schemaVersion": 1,
-  "status": "replacement-candidate-awaiting-human-verdict",
+  "status": "public-first-listen-authorized-human-verdict-pending",
+  "publicationAuthorization": {
+    "status": "public-first-listen",
+    "authorizedBy": "Dan Fakkeldy",
+    "authorizedAt": "2026-07-22T08:49:48-03:00",
+    "humanListeningStatus": "pending",
+    "supersededByNegativeVerdict": true
+  },
   "currentBlockedCandidateSHA256": "f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec",
   "replacementCandidate": {
     "createdAt": "2026-07-22T04:58:41-03:00",

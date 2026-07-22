@@ -2,9 +2,10 @@
 
 ## Beyond the Tax-Sale Packet
 
-**Status:** governed public EPUB published; private governed audiobook candidate
-in preparation for pronunciation and full-book human listening. No public
-audiobook, video edition, or accepted final figure set is claimed.
+**Status:** governed public EPUB published; the exact Pictou-fixed audiobook is
+authorized for `public-first-listen` publication while pronunciation and
+full-book human listening remain pending. No completed human listen, video
+edition, second-device proof, or accepted final figure set is claimed.
 
 This packet develops a long, spoken-first educational book about Nova Scotia
 municipal tax sales: terminology, the statutory process, municipal variation,
@@ -66,9 +67,8 @@ individual lien labels at that scale. NS Aerial remains the detail basemap.
 - Property Online plans, registry documents, or subscription-derived material;
 - live-property scores, rankings, maximum bids, or recommendations;
 - internal pricing and possible-service planning notes; and
-- private governed audiobook listening artifacts or machine receipts; those
-  remain under the ignored `.build` tree and a private listening destination,
-  not in this public repository package.
+- private governed renderer scratch and pronunciation-review artifacts; the
+  public package includes only the verified M4B and portable alignment sidecar.
 
 The interactive implementation remains in the
 [NS Marks The Spot repository](https://github.com/dfakkeldy/ns-marks-the-spot)
@@ -92,11 +92,13 @@ direction for pilot development. Deep research,
 structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
 diagram candidates and three accepted-direction atlas prototypes exist. The
 actual Echo/video-stage atlas proof, atlas batch authorization, accepted final
-figures, full-audio human acceptance and audiobook publication all remain
-pending. The final-hash structure and blind sequential beginner reviews,
+figures and full-audio human acceptance all remain pending. The exact
+Pictou-fixed M4B is separately authorized for public-first-listen publication.
+The final-hash structure and blind sequential beginner reviews,
 bounded humanizer/tightening pass, rendered ear-pass diagnostics and governed
 text-only EPUB build are complete. The public reader package is under
-`books/beyond-the-tax-sale-packet/`; no M4B or video is claimed.
+`books/beyond-the-tax-sale-packet/`; the governed M4B is included, while no
+video is claimed.
 
 The governed nonpackage pilot rendered on 2026-07-20 at 14:27 with verified
 alignment and a clean pronunciation audit. Its exact SHA-256 is

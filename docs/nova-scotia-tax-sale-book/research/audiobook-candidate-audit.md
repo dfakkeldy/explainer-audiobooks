@@ -138,6 +138,10 @@ The replacement candidate completed on 2026-07-22:
 - Selector-bound schema-v3 delivery chain, selected cover identity, EPUB
   archive integrity, full AAC decode and silence scan: pass
 
-This replacement advances only to renewed pronunciation listening and the
-full-book human verdict. It has not been published, deployed, merged, proved on
-a second device, used to begin video work or used to promote final figures.
+This replacement advances to renewed pronunciation listening and the full-book
+human verdict. On 2026-07-22, Dan separately authorized publishing this exact
+candidate to the tax-sale website and Listening Room. It therefore advances as
+`public-first-listen`: package and audio checks pass, human listening remains
+pending, and any later negative verdict supersedes the public edition. This
+authorization does not prove second-device playback, begin video work, or
+promote final figures.
