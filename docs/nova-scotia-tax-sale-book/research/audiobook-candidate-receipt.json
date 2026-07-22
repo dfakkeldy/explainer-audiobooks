@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "status": "ready-for-full-audio-human-verdict",
+  "completedAt": "2026-07-21T22:30:36-03:00",
+  "title": "Beyond the Tax-Sale Packet",
+  "slug": "beyond-the-tax-sale-packet",
+  "edition": "governed-audiobook-first-listen-candidate",
+  "classification": "public-safe-private-listening-candidate",
+  "permissionToPublishAudiobook": false,
+  "source": {
+    "epubFileName": "beyond-the-tax-sale-packet.epub",
+    "epubSHA256": "40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0",
+    "canonicalChapterCount": 13,
+    "canonicalMarkdownWords": 31824,
+    "canonicalChaptersUnchanged": true,
+    "interiorFigureCount": 0,
+    "propertyOnlineMaterialIncluded": false
+  },
+  "narration": {
+    "voice": "am_michael",
+    "renderer": "Echo rv15",
+    "runID": "40049b5e7bac-5e68cf2ac67f-7dc8c5f635f5-31ee5c0bf729-58cf8c2b8d02d883704413f9bb487a296ddddd63-am_michael",
+    "attemptID": "0cbf18b9d7892878e17ce4819d9edbd3c7c9c47a398bfb2473d7781d19526954",
+    "echoSourceSHA": "58cf8c2b8d02d883704413f9bb487a296ddddd63",
+    "echoCLI_SHA256": "5e68cf2ac67f20dd29dd07031421cf9ad5f782c0d02d29eb127eeb1cef0b9fb7",
+    "echoResourcesSHA256": "7dc8c5f635f5fe451156a9ba842650d44e01acadf52a20cdfac5fecaed78777b",
+    "rendererManifestSHA256": "31ee5c0bf7291ab67e27301f5e8e214095843a0bbc6bf2de7f9674998e734ee0",
+    "installedModelByteAttestation": false,
+    "assuranceLevel": "unattended-first-listen"
+  },
+  "cover": {
+    "candidate": 1,
+    "direction": "The Packet Lifts",
+    "portraitSHA256": "fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6",
+    "squareSHA256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c",
+    "selectionReceiptSHA256": "799e33994aa4b338bbcc1b5ceb916defd96ecf2f4fe5aa15ffdf6a96502f1b32",
+    "m4bSquareCoverIdentity": "normalized-pixels-match"
+  },
+  "artifacts": {
+    "audiobook": {
+      "fileName": "beyond-the-tax-sale-packet.m4b",
+      "sha256": "f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec",
+      "byteCount": 63800471,
+      "durationSeconds": 14257.408,
+      "durationClock": "3:57:37.408",
+      "chapterCount": 13
+    },
+    "alignment": {
+      "fileName": "beyond-the-tax-sale-packet.alignment.json",
+      "sha256": "4b46b3d0b71f80d15c4b639097ae4e8b00bf4b20f9badff37edb58a9ffc29fef",
+      "anchorCount": 612,
+      "wordTimedAnchorCount": 324
+    },
+    "pronunciationAudit": {
+      "fileName": "beyond-the-tax-sale-packet.pronunciation-audit.json",
+      "sha256": "809fe12b03c3affb05d624b6650cedb72f6386bba5a6335ffd26e4378c49772b",
+      "schemaVersion": 2,
+      "coverage": "complete",
+      "decisionCount": 235,
+      "diagnosticCount": 0
+    },
+    "rendererPronunciationReel": {
+      "fileName": "beyond-the-tax-sale-packet.pronunciation-reel.m4b",
+      "sha256": "a627ee6aa4d0eea6e9478306f08b0a418a93ba4b12a1e48a58c45468947e3ba7",
+      "durationSeconds": 190.762667
+    },
+    "humanProbeReel": {
+      "fileName": "pronunciation-probe-reel.m4b",
+      "sha256": "aea2df95c63c0a9dd4e521b87892312c62af061a9a419f04069edad7ac01a4e9",
+      "durationSeconds": 120.984,
+      "evidenceFileName": "pronunciation-probe-evidence.json",
+      "evidenceSHA256": "9adb4d12abf72c4f358cc0436219405c58e6877240493444af51992be5c7187f",
+      "humanListening": "pending"
+    }
+  },
+  "receiptChain": {
+    "currentAttemptSHA256": "d77ab05fe42f26c147cd9b6815c06f81b83ecd9b9e3e1f42321719c6258eabdc",
+    "currentAcceptedSelectorSHA256": "d4fb5e635ccbc1bc85aead3eb0126927058c5388cf2ff5f05053f30e5e61aa02",
+    "inputReceiptSHA256": "e24dafeefff046b650d58759b2107b20538177b126a0fe6eaafc0b3744750ecd",
+    "resumeStateSHA256": "5930b60d45968b2977709c2acbce0170d46aac227bd665a3affcad1f7f03515a",
+    "renderSuccessSchemaVersion": 3,
+    "renderSuccessSHA256": "3bca99c95af67202f823a11f4ac78a9f09a14f18d4796a9c26216de10f41f720",
+    "pronunciationPlanSHA256": "17ff1cfd206c9b4305e3be466970e3a8835a9896a71e3a0a06050d9d93699656",
+    "pronunciationPlanReceiptSHA256": "3b509f0ea37dccadd57f225594b43e1249840b7bed67e5d46a3023ff39dc2e48"
+  },
+  "checks": {
+    "selectorBoundDeliveryChain": "pass",
+    "sidecar": "SIDECAR_OK",
+    "pronunciationAudit": "clean",
+    "fullAudioDecode": "pass",
+    "silenceAtLeastThreeSecondsBelowMinus45dB": 0,
+    "chapterMarkersAndTitles": "13-in-order",
+    "epubArchiveIntegrity": "pass",
+    "selectedCoverIdentity": "pass",
+    "completeRepositoryTests": "535-pass-1-skipped",
+    "optionalEchoDatabaseQA": "inconclusive-no-report-after-11-minutes-stopped"
+  },
+  "humanGates": {
+    "pronunciationListening": "pending",
+    "fullAudioListening": "pending",
+    "secondDeviceProof": "not-started",
+    "audiobookPublication": "blocked-pending-explicit-full-audio-verdict",
+    "videoEdition": "not-started",
+    "finalFigures": "not-promoted"
+  },
+  "methodBoundary": "The book preserves notice to parcel to context to unknowns to handoff. Maps are screening evidence, not proof of access, title, condition, value, permission, possession, or buildability.",
+  "reviewBoundary": "This receipt proves a governed first-listen candidate and machine/package checks. It does not claim human pronunciation acceptance, a completed full-book listen, second-device proof, audiobook publication, website deployment, video production, or final-figure acceptance."
+}

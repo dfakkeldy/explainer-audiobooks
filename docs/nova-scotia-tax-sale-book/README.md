@@ -2,8 +2,9 @@
 
 ## Beyond the Tax-Sale Packet
 
-**Status:** public-safe research and visual-development work in progress. This
-is not a completed book or audiobook.
+**Status:** governed public EPUB published; private governed audiobook candidate
+in preparation for pronunciation and full-book human listening. No public
+audiobook, video edition, or accepted final figure set is claimed.
 
 This packet develops a long, spoken-first educational book about Nova Scotia
 municipal tax sales: terminology, the statutory process, municipal variation,
@@ -65,9 +66,9 @@ individual lien labels at that scale. NS Aerial remains the detail basemap.
 - Property Online plans, registry documents, or subscription-derived material;
 - live-property scores, rankings, maximum bids, or recommendations;
 - internal pricing and possible-service planning notes; and
-- complete canonical manuscript, covers or governed full-book package; the
-  ignored `.build` tree contains only the accepted nonpackage narrated pilot
-  and its machine receipts, not a final audiobook or delivery package.
+- private governed audiobook listening artifacts or machine receipts; those
+  remain under the ignored `.build` tree and a private listening destination,
+  not in this public repository package.
 
 The interactive implementation remains in the
 [NS Marks The Spot repository](https://github.com/dfakkeldy/ns-marks-the-spot)
@@ -79,7 +80,8 @@ chapter screenshots.
 
 ## Current production gates
 
-The project is in governed whole-manuscript review. Dan approved the prior
+The approved text edition has completed governed whole-manuscript review. Dan
+approved the prior
 twelve-chapter outline and forty-figure visual direction on 2026-07-19, accepted
 the exact three-card Inverness Packet Atlas direction with “I like them,” and
 accepted the exact first-section teaching and voice with “Let’s go for the
@@ -90,8 +92,8 @@ direction for pilot development. Deep research,
 structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
 diagram candidates and three accepted-direction atlas prototypes exist. The
 actual Echo/video-stage atlas proof, atlas batch authorization, accepted final
-figures, Echo narration, audiobook package verification and full listening all
-remain pending. The final-hash structure and blind sequential beginner reviews,
+figures, full-audio human acceptance and audiobook publication all remain
+pending. The final-hash structure and blind sequential beginner reviews,
 bounded humanizer/tightening pass, rendered ear-pass diagnostics and governed
 text-only EPUB build are complete. The public reader package is under
 `books/beyond-the-tax-sale-packet/`; no M4B or video is claimed.
@@ -116,6 +118,22 @@ portrait, square and source-art hashes. The remaining figure, ear-pass, package,
 full-narration and video gates remain separate. The governed public EPUB embeds
 the selected portrait cover byte-for-byte and is verified at SHA-256
 `40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0`.
+
+The earlier 3:57:37 ear-pass render remains diagnostic evidence rather than a
+promotable package. `research/audiobook-candidate-audit.md` records why a
+controlled wrapper-only rebuild from the frozen public EPUB is required, and
+`audiobook-acceptance-checklist.md` defines the next human gate. Neither file
+claims pronunciation acceptance, full-audio acceptance, publication, website
+deployment, video work, figure promotion, or second-device proof.
+
+That controlled rebuild is now complete as a private first-listen candidate:
+13 chapters, 14,257.408 seconds, exact M4B SHA-256
+`f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec`.
+The selector-bound delivery chain, 612-anchor sidecar, automated pronunciation
+audit, selected square-cover identity, archive integrity, full decode and
+acoustic scan pass. `research/audiobook-candidate-receipt.json` preserves those
+machine results while leaving pronunciation and full-book human listening
+pending. The M4B and renderer work state remain outside the public repository.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the
