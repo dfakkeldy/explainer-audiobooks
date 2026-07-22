@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "status": "render-and-automated-audio-check-pass",
+  "completedAt": "2026-07-22",
+  "scope": "Chapter 5 section A Small Find, and a Larger Property Question",
+  "canonicalChapterSHA256": "fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa",
+  "renderer": "Echo rv15",
+  "voice": "am_michael",
+  "durationSeconds": 157.781333,
+  "audioSHA256": "8d5c3c072d0d0abd1c3c0f33e2de4fe138bab223164d9642a68bb1e0016aab47",
+  "sourceEpubSHA256": "25efd8e423870c5e154eb1dacaaee4c8e406969513537d2d67f264de4210480e",
+  "alignmentSHA256": "b903778058b492a0c5497d8463f5f3f1cda365e4a11f411e63c619955aee3aa3",
+  "pronunciationAuditSHA256": "232f94c0edbc5bce0078114de34ab74f3187336504e0db6dc0769279afaaebf6",
+  "pronunciationReelSHA256": "8a92ea5eb47000168f37630008c29dfb667e1e6deffa889cf538e3142c1e962e",
+  "successReceiptSHA256": "0e398a6262d1e62fbf19536d31e4817264033becfb283c6bfc1fcb5a4c22a50c",
+  "checks": {
+    "sidecar": "SIDECAR_OK",
+    "alignmentAnchors": 6,
+    "wordTimedAnchors": 3,
+    "pronunciationCoverage": "complete",
+    "pronunciationDiagnostics": 0,
+    "silenceAtLeastThreeSecondsBelowMinus45dB": 0
+  },
+  "humanListeningStatus": "pending",
+  "reviewBoundary": "This nonpackage Echo sample proves successful rendering, sidecar integrity, complete automated pronunciation coverage and no long-silence defect for the revised section. It does not claim that Dan listened to or accepted the sample, or that a revised full audiobook exists."
+}

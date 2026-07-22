@@ -100,25 +100,29 @@
 ## Before `ch05-s02`
 
 - Job: operate road/water and geology/resource screens one question at a time,
+  distinguish a recreational mineral clue from a property-rights question,
   bound one historical result, then preserve source, date, limitation, unknown,
   next record, and professional handoff.
-- Allowed evidence: `MAP-002`, `MAP-004`–`MAP-007`, and `LAND-004`.
+- Allowed evidence: `MAP-002`, `MAP-004`–`MAP-008`, `MIN-001`–`MIN-004`, and
+  `LAND-004`.
 - New-term budget: `layer` and `mapped intersection`.
-- Grounded cases: current-notice PID `50308311` at Southside River Denys and
-  historical Halifax PID `00542589`; both are interface demonstrations only.
+- Grounded cases: current-notice PID `50308311` at Southside River Denys, Dan's
+  anonymous panning example and the Touquoy vesting record, and historical
+  Halifax PID `00542589`; all remain bounded demonstrations.
 - No-repeat boundary: no access, wetland, flood, clean-site, resource-rights,
   contamination, value, comparable-sale, forecast, or recommendation inference.
 
 ## After Chapter 5
 
 - Canonical path: `chapters/ch05.md`, SHA-256
-  `f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0`,
-  2,666 Markdown words.
+  `fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa`,
+  3,031 Markdown words.
 - Terms defined: `civic point`, `Plus Code`, `layer`, and `mapped intersection`.
 - Method: notice → parcel → context → unknowns → handoff.
 - Grounded demonstrations: current-notice PID `50308311` at Southside River
-  Denys and historical Halifax PID `00542589`; neither is a recommendation,
-  value model, access conclusion, or site opinion.
+  Denys, the anonymous panning and Touquoy example, and historical Halifax PID
+  `00542589`; none is a recommendation, value model, access conclusion, site
+  opinion or prediction that a vesting order will affect a particular parcel.
 - Retrievals: recover record family/direct source/exact parcel; state source,
   date, observation, limitation, unknown, and handoff; name historical mode
   before repeating an amount.
@@ -919,7 +923,7 @@
 
 ## After Bounded Humanizer and Post-Edit Review
 
-- Current manuscript: 31,824 Markdown words across thirteen chapters.
+- Current manuscript: 32,189 Markdown words across thirteen chapters.
 - Voice work: eight local chapter-navigation and sentence-rhythm changes were
   accepted; the retrieval prompt, lien-priority phrase and earned short lists
   were retained.
@@ -932,6 +936,22 @@
 - Current records: `research/humanizer-decisions.json`,
   `research/prose-qc-humanizer.md`, `research/prose-style-receipt.json`, and
   Round 2 in `research/editorial-review.md`.
+
+## 2026-07-22 Chapter 5 mineral-rights revision
+
+- Dan authorized an anonymous firsthand panning example and the associated
+  mineral-rights/property-risk lesson with “okay, let's add it to chapter 5.”
+- Chapter 5 now distinguishes a public occurrence record, a recreational find,
+  Crown mineral ownership, private-land surface-access applications and the
+  vesting-order mechanism without identifying the brook or predicting that a
+  particular property will be affected.
+- The Touquoy record is stated narrowly: fourteen vesting-order parcels, the
+  Higgins tree-farm challenge and the correction that Touquoy later produced
+  gold. The legal lesson is the current Act's mine-connected-purpose wording,
+  not a claim that the project found nothing.
+- The revised canonical Chapter 5 is 3,031 words at SHA-256
+  `fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa`;
+  the full manuscript is 32,189 words.
 - Remaining boundary: rendered ear pass, final hash-bound learning and revision
   receipts, figure acceptance, narration, package, full listening and
   publication are still pending. Any ear-pass text edit invalidates the current

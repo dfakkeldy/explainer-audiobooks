@@ -572,13 +572,18 @@
       "styleGuidePath": "research/voice-source-profile.md",
       "declaudificationPath": "../../skill/references/declaudification.md",
       "previousSectionTextOrSummary": "The map workflow now begins with current versus historical mode, municipality and dated event, direct-source confirmation, and exact parcel establishment by PID or authoritative civic-point containment. Imagery, geometry, mapped area, civic points and Plus Codes remain bounded orientation context.",
-      "sectionJob": "Use road, water and geology or resource layers one question at a time, bound one historical result, then write the unknown and professional handoff.",
+      "sectionJob": "Use road, water and geology or resource layers one question at a time, distinguish a recreational mineral clue from a property-rights question, bound one historical result, then write the unknown and professional handoff.",
       "specificClaims": [
         "MAP-002",
         "MAP-004",
         "MAP-005",
         "MAP-006",
+        "MAP-008",
         "MAP-007",
+        "MIN-001",
+        "MIN-002",
+        "MIN-003",
+        "MIN-004",
         "LAND-004"
       ],
       "coverageConcepts": [
@@ -588,13 +593,14 @@
         "historical outcome boundary"
       ],
       "throughlineAdvance": "Convert attractive map pixels into traceable evidence classifications and next actions.",
-      "payoff": "The listener can use River Denys and one historical Halifax result to say what the app reports, what it does not establish and where the next question belongs.",
+      "payoff": "The listener can use River Denys, an anonymous panning example, the Touquoy vesting record and one historical Halifax result to say what a source reports, what it does not establish and where the next question belongs.",
       "landingBeat": "Notice, parcel, context, unknowns and handoff becomes the repeatable method.",
       "mustNotRepeat": [
         "Do not repeat the current-source and parcel-establishment sequence in full.",
         "Do not infer legal access from visible transportation or road linework.",
         "Do not infer wetlands, flood status or clean site conditions from water or empty layer results.",
         "Do not infer reserves, mineral rights, contamination, safety or economic value from resource layers.",
+        "Do not identify the panning location or turn the Touquoy case into a claim that every occurrence creates an expropriation risk.",
         "Do not infer current value or future bidding from a historical outcome.",
         "Do not turn either real PID into a recommendation."
       ],
@@ -615,6 +621,7 @@
       ],
       "groundedExamples": [
         "current-notice PID 50308311 Southside River Denys road and water context",
+        "anonymous around-2015 recreational panning example and the Touquoy vesting-order record",
         "historical Halifax PID 00542589 March 8 2022 outcome"
       ],
       "method": [
@@ -625,7 +632,7 @@
         "handoff"
       ],
       "retrievalPrompt": "State source, date, observation, limitation, unknown and handoff for one mapped result, then name the record family before repeating any historical amount.",
-      "runningSummary": "A layer isolates one source-sized context question. A mapped intersection reports a relationship between current service geometry and current parcel geometry without becoming a real-world legal or physical conclusion. River Denys demonstrates road/water limits; the Halifax result demonstrates historical limits; and the full method preserves notice, parcel, context, unknowns and handoff.",
+      "runningSummary": "A layer isolates one source-sized context question. A mapped intersection reports a relationship between current service geometry and current parcel geometry without becoming a real-world legal or physical conclusion. River Denys demonstrates road/water limits; the anonymous panning example and Touquoy record separate recreational interest from mineral-tenure and surface-rights questions; the Halifax result demonstrates historical limits; and the full method preserves notice, parcel, context, unknowns and handoff.",
       "unresolvedPromises": [
         "Stress-test road proximity against legal access in Chapter 6.",
         "Stress-test empty or returned environmental records in Chapter 7.",
@@ -2225,8 +2232,8 @@
       "chapter": "ch05",
       "status": "canonical-draft-complete",
       "draftPath": "chapters/ch05.md",
-      "draftSHA256": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
-      "wordCount": 2666,
+      "draftSHA256": "fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa",
+      "wordCount": 3031,
       "completedAt": "2026-07-20T09:27:36-03:00",
       "termsDefined": [
         "civic point",
@@ -2244,6 +2251,7 @@
       "examplesUsed": [
         "fictional Birch Point Road combined research state",
         "current-notice PID 50308311 Southside River Denys road and water context",
+        "anonymous around-2015 recreational panning example and the Touquoy vesting-order record",
         "historical Halifax PID 00542589 March 8 2022 outcome"
       ],
       "retrievals": [
@@ -2251,8 +2259,8 @@
         "State source, date, observation, limitation, unknown and handoff for a mapped result.",
         "Name the historical record family before repeating an amount."
       ],
-      "listenerLoad": "Four map terms, no calculation, one five-word method, two real bounded interface demonstrations and three applied retrievals.",
-      "runningSummary": "The map organizes dated record families and shortens the route from a direct municipal notice to an exact research parcel. Civic, boundary, imagery, road, water, resource and historical results remain source-bounded observations. Notice, parcel, context, unknowns and handoff turns the interface into a question machine rather than a property verdict.",
+      "listenerLoad": "Four map terms, no calculation, one five-word method, three real bounded demonstrations and three applied retrievals.",
+      "runningSummary": "The map organizes dated record families and shortens the route from a direct municipal notice to an exact research parcel. Civic, boundary, imagery, road, water, resource and historical results remain source-bounded observations. A mineral occurrence can direct recreational curiosity while opening separate tenure, surface-rights and legal questions. Notice, parcel, context, unknowns and handoff turns the interface into a question machine rather than a property verdict.",
       "unresolvedPromises": [
         "Challenge mapped road context with the Chapter 6 legal-access failure case.",
         "Challenge resource and empty-result discipline with Chapter 7 environmental evidence.",
@@ -2280,8 +2288,8 @@
         "State source, date, observation, limitation, unknown and handoff for a mapped result.",
         "Name the historical record family before repeating an amount."
       ],
-      "listenerLoadNotes": "Four map terms, no calculation, one five-word method, two real bounded interface demonstrations and three applied retrievals.",
-      "priorSectionSummary": "The map organizes dated record families and shortens the route from a direct municipal notice to an exact research parcel. Civic, boundary, imagery, road, water, resource and historical results remain source-bounded observations. Notice, parcel, context, unknowns and handoff turns the interface into a question machine rather than a property verdict.",
+      "listenerLoadNotes": "Four map terms, no calculation, one five-word method, three real bounded demonstrations and three applied retrievals.",
+      "priorSectionSummary": "The map organizes dated record families and shortens the route from a direct municipal notice to an exact research parcel. Civic, boundary, imagery, road, water, resource and historical results remain source-bounded observations. A mineral occurrence can direct recreational curiosity while opening separate tenure, surface-rights and legal questions. Notice, parcel, context, unknowns and handoff turns the interface into a question machine rather than a property verdict.",
       "doNotRepeat": [
         "Do not re-tour the interface or recite its layer catalogue.",
         "Do not redefine civic point, Plus Code, layer or mapped intersection.",

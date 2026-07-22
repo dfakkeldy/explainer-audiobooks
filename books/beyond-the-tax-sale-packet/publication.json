@@ -12,24 +12,36 @@
     "verbatim": "okay, that's great. Can you put the latest audiobook on the tax sale website and deploy it? Also, is there a copy in the icloud book folder?",
     "listeningRoomClarification": "oh and of course make sure the book is in the listening room"
   },
-  "disclosure": "This edition has passed package and audio checks. The creator's full listening review is still underway.",
+  "manuscriptTextReviewStatus": "approved",
+  "chapter5MineralOccurrenceRevision": {
+    "status": "requested-and-approved",
+    "privacyBoundary": "Anonymous and location-free; no brook, home location, PID or coordinates."
+  },
+  "coverSelectionStatus": "user-selected",
+  "selectedCover": "packet-lifts",
+  "figureCount": 0,
+  "audioStatus": "published-prior-manuscript-revision",
+  "humanFullAudioListening": "pending",
+  "disclosure": "The revised EPUB text includes the approved anonymous Chapter 5 mineral-occurrence passage. The included public-first-listen M4B and alignment remain the earlier manuscript edition and do not include that revision. A revised full audiobook and human listening verdict remain pending.",
   "sourceArtIncluded": false,
   "artifacts": {
     "manuscript": {
       "file": "beyond-the-tax-sale-packet.md",
-      "sha256": "ec714ed85fff84670b2c2082dcba8d56850128e8642efc556e2a1a53266fb740"
+      "sha256": "a768bae0589e7f76e4aef1a36f433a57db7942659826ac6a2cd05a6f338dccf5"
     },
     "epub": {
       "file": "beyond-the-tax-sale-packet.epub",
-      "sha256": "40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0"
+      "sha256": "12a0822a8c89babc26b160f75d44128ea4056c1624707961dcd9c2061464b37a"
     },
     "m4b": {
       "file": "beyond-the-tax-sale-packet.m4b",
-      "sha256": "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8"
+      "sha256": "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8",
+      "manuscriptParity": false
     },
     "alignment": {
       "file": "beyond-the-tax-sale-packet.alignment.json",
-      "sha256": "3ae38b4d81b0eaad4e04a59bd6ed67a4176526ec859a3e900950d6102406df77"
+      "sha256": "3ae38b4d81b0eaad4e04a59bd6ed67a4176526ec859a3e900950d6102406df77",
+      "manuscriptParity": false
     },
     "portraitCover": {
       "file": "cover.png",
@@ -39,5 +51,11 @@
       "file": "m4b-cover.png",
       "sha256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c"
     }
+  },
+  "internalGateReceipts": {
+    "learningDesignSHA256": "40ad1b13a9c6166bb2729409f04f3d33bdb34859a90290f04604cbac6d9807dd",
+    "proseStyleSHA256": "54239290ea0bb08fb635465a293cb9623c81c71a15cbe61d035c4e45ca9f7e00",
+    "earPassSHA256": "c8ad8727e28608d5c9a30b46007c089375ce25069206385b3ea229db4a6c98b9",
+    "chapter5RevisionEarPassSHA256": "db86294c00a85793170292addeaea0148c78139fd7a0be2a9f56d3bd4441ae00"
   }
 }

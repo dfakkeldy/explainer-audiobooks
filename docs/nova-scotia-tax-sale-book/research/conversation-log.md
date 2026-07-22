@@ -135,3 +135,18 @@ downstream gates.
   user`, binds both exact image hashes and preserves the earlier publication
   permission. This does not accept the remaining figures, rendered-ear-pass
   findings, full narration, video or an unverified package.
+
+## 2026-07-22
+
+- **Anonymous gold-panning example added to Chapter 5:** Dan described using a
+  public mineral-occurrence record around 2015 to choose a brook for
+  recreational panning, then finding a little colour. He explicitly asked not
+  to identify his home or the brook. He wanted the example to show both the
+  usefulness of public geological records and the reason a mineral occurrence
+  can be a property-risk question rather than an automatic benefit.
+- After discussing the Nova Scotia mineral-rights, surface-access and vesting-
+  order boundaries and the Touquoy tree-farm case, Dan directed: “okay, let's
+  add it to chapter 5.” The public manuscript keeps the location anonymous,
+  corrects the claim that Touquoy never produced gold, and routes mineral
+  occurrences to current tenure, surface-rights and legal review rather than
+  valuation.

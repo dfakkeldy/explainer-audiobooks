@@ -615,7 +615,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_five = chapter_five_path.read_text(encoding="utf-8")
         chapter_five_checkpoint = continuity["checkpoints"][4]
         self.assertEqual(chapter_five_checkpoint["chapter"], "ch05")
-        self.assertEqual(chapter_five_checkpoint["wordCount"], 2666)
+        self.assertEqual(chapter_five_checkpoint["wordCount"], 3031)
         self.assertEqual(
             chapter_five_checkpoint["draftSHA256"],
             hashlib.sha256(chapter_five_path.read_bytes()).hexdigest(),
@@ -639,6 +639,12 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertIn("current or historical mode", chapter_five)
         self.assertIn("not a recommendation", chapter_five)
+        self.assertIn("A Small Find, and a Larger Property Question", chapter_five)
+        self.assertIn("found a little colour", chapter_five)
+        self.assertIn("connected with or incidental to one", chapter_five)
+        self.assertIn("Touquoy did later produce gold", chapter_five)
+        self.assertIn("neither a bonus nor an automatic rejection", chapter_five)
+        self.assertIn("leaving the brook unnamed", chapter_five)
 
         chapter_six_path = PACKET_ROOT / "chapters/ch06.md"
         chapter_six = chapter_six_path.read_text(encoding="utf-8")
@@ -1048,8 +1054,13 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
                 "MAP-005",
                 "MAP-006",
                 "MAP-007",
+                "MAP-008",
             },
         )
+        mineral_claims = {
+            claim["id"] for claim in evidence["claims"] if claim["id"].startswith("MIN-")
+        }
+        self.assertEqual(mineral_claims, {"MIN-001", "MIN-002", "MIN-003", "MIN-004"})
 
         for output in receipt["outputs"]:
             with self.subTest(file=output["file"]):
