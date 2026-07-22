@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "status": "replacement-candidate-awaiting-human-verdict",
+  "currentBlockedCandidateSHA256": "f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec",
+  "replacementCandidate": {
+    "createdAt": "2026-07-22T04:58:41-03:00",
+    "audiobookSHA256": "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8",
+    "pronunciationProbeReelSHA256": "910a98daf19e6a3265794fbee46e52d577d31d7759cfd99fa1d2efdf4d0aaf27",
+    "pronunciationProbeEvidenceSHA256": "4b39999920dfcbe2759f4ede2b0eaa216e3011f9a33024259b5b257ada6a20d3",
+    "pronunciationAuditSHA256": "94189c7a63cfb196478a1d22703ce3b7896a6738be7f7d59edacf3ab1b6064d3",
+    "echoSourceSHA": "a5fe8d432efbc92d0b73fec2cfa2d721186f480d",
+    "pictouEvidence": {
+      "occurrenceCount": 5,
+      "selectedIPA": "pˈɪktO",
+      "source": "builtInOverride",
+      "ruleID": "override.built-in.pictou",
+      "rejectedIPACount": 0
+    },
+    "humanPronunciationVerdict": "pending",
+    "humanFullAudioVerdict": "pending"
+  },
+  "verdicts": [
+    {
+      "id": "2026-07-21-pictou-long-o",
+      "recordedAt": "2026-07-21T23:33:34-03:00",
+      "reviewer": "Dan Fakkeldy",
+      "decision": "revise-audio",
+      "scope": "pronunciation-probe-and-matching-full-candidate-occurrences",
+      "verbatimEvidence": [
+        "pictou is wrong. It is pronounced with a long o at the end. picktoe",
+        "it pronounced it like picktoau"
+      ],
+      "finding": {
+        "term": "Pictou",
+        "heard": "picktoau",
+        "expected": "PICK-toe",
+        "rejectedRendererIPA": "pˈɪktaʊ",
+        "targetRendererIPA": "pˈɪktO",
+        "affectedCanonicalChapters": [
+          "ch01.md",
+          "ch02.md",
+          "ch10.md"
+        ],
+        "affectedNarratedOccurrences": 5
+      },
+      "boundArtifacts": {
+        "audiobookSHA256": "f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec",
+        "pronunciationProbeReelSHA256": "aea2df95c63c0a9dd4e521b87892312c62af061a9a419f04069edad7ac01a4e9",
+        "pronunciationProbeEvidenceSHA256": "9adb4d12abf72c4f358cc0436219405c58e6877240493444af51992be5c7187f",
+        "pronunciationAuditSHA256": "809fe12b03c3affb05d624b6650cedb72f6386bba5a6335ffd26e4378c49772b"
+      },
+      "requiredAction": "fresh-controlled-rebuild-through-governed-wrapper",
+      "invalidates": [
+        "current-pronunciation-candidate",
+        "current-full-audio-acceptance-candidate"
+      ],
+      "doesNotAuthorize": [
+        "manuscript-revision",
+        "cover-revision",
+        "audiobook-publication",
+        "website-change-or-deployment",
+        "video-edition",
+        "final-figure-promotion",
+        "pull-request-merge"
+      ]
+    }
+  ],
+  "frozenInputs": {
+    "publicEPUBSHA256": "40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0",
+    "portraitCoverSHA256": "fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6",
+    "canonicalMarkdownWords": 31824,
+    "canonicalChapterCount": 13,
+    "canonicalManuscriptRevisionAuthorized": false,
+    "selectedCoverRevisionAuthorized": false
+  }
+}

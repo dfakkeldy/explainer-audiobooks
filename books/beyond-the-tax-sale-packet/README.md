@@ -27,10 +27,12 @@ lawyer, surveyor, planner, inspector, insurer, accountant or bidder.
 - Audiobook and video editions: pending and not included
 
 This EPUB text edition has passed manuscript-hash, learning-design, prose,
-cover-pair, archive-integrity and embedded-cover checks. The complete rendered
-ear-pass also passed acoustic, alignment and pronunciation diagnostics without a
-text change. Full-audio listening and final audiobook acceptance remain separate
-and pending.
+cover-pair, archive-integrity and embedded-cover checks. A controlled governed
+`am_michael` audiobook candidate has also passed selector-bound package,
+alignment, automated pronunciation, cover-identity, decode and acoustic checks
+without a text change. It is available only in the private listening package;
+full-audio listening, explicit acceptance and audiobook publication remain
+separate and pending. No M4B is included here.
 
 ## Reader artifact hashes
 
@@ -66,6 +68,11 @@ professionals for a live property decision.
 - cover specifications, receipts, thumbnails and `cover-selection.json` —
   reproducible cover provenance and publication permission
 - `publication.json` — machine-readable text-edition publication receipt
+
+Audiobook candidate hashes, the reuse decision and the human checklist are
+recorded in the public-safe development packet under
+`docs/nova-scotia-tax-sale-book/`; the audio and resumable renderer artifacts
+remain outside this public book directory.
 
 This public book package is licensed under the repository's
 [Creative Commons Attribution 4.0 content license](../../LICENSE-CONTENT.md).

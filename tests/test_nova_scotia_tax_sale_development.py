@@ -86,9 +86,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         }
 
         self.assertEqual(authorization["classification"], "public-safe")
-        self.assertEqual(
-            authorization["manuscriptTextApproval"]["status"], "approved"
-        )
+        self.assertEqual(authorization["manuscriptTextApproval"]["status"], "approved")
         self.assertEqual(
             authorization["manuscriptTextApproval"]["reviewedChapterSHA256"],
             actual_hashes,
@@ -150,9 +148,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             self.assertEqual(portrait_spec["schema_version"], 2)
             self.assertEqual(square_spec["schema_version"], 2)
             self.assertEqual(square["candidate"]["id"], candidate_id)
-            self.assertEqual(
-                portrait["source_art_sha256"], square["source_art_sha256"]
-            )
+            self.assertEqual(portrait["source_art_sha256"], square["source_art_sha256"])
             self.assertEqual(portrait["dimensions"], [1600, 2560])
             self.assertEqual(square["dimensions"], [2400, 2400])
             self.assertEqual(
@@ -175,9 +171,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             (public_root / "publication.json").read_text(encoding="utf-8")
         )
         learning_receipt = json.loads(
-            (RESEARCH_ROOT / "learning-design-receipt.json").read_text(
-                encoding="utf-8"
-            )
+            (RESEARCH_ROOT / "learning-design-receipt.json").read_text(encoding="utf-8")
         )
         authorization = json.loads(
             (RESEARCH_ROOT / "publication-authorization.json").read_text(
@@ -232,9 +226,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(outline["authorization"]["approvedBy"], "Dan Fakkeldy")
         self.assertEqual(outline["authorization"]["verbatimQuote"], approval)
         self.assertEqual(outline["authorization"]["evidence"], approval)
-        self.assertEqual(
-            outline["authorization"]["approvalScope"], "pilot-development"
-        )
+        self.assertEqual(outline["authorization"]["approvalScope"], "pilot-development")
         self.assertEqual(
             outline["authorization"]["scope"],
             "revised-thirteen-chapter-outline-and-fifty-one-figure-direction",
@@ -273,7 +265,17 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         terms = {entry["term"] for entry in pronunciation["terms"]}
         self.assertTrue(
-            {"Mabou", "Whycocomagh", "Judique", "AAN", "PID", "NSPRD", "MGA"} <= terms
+            {
+                "Inverness",
+                "Pictou",
+                "AAN",
+                "PID",
+                "NSPRD",
+                "CBRM",
+                "HST",
+                "Municipal Government Act",
+            }
+            <= terms
         )
         self.assertIn("approved for pilot development", handoff)
         self.assertIn(
@@ -281,6 +283,154 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             conversation,
         )
         self.assertIn("Let's add a chapter about using this resource", conversation)
+
+    def test_pronunciation_plan_forms_exist_in_declared_chapters(self) -> None:
+        pronunciation = json.loads(
+            (RESEARCH_ROOT / "pronunciation-plan.json").read_text(encoding="utf-8")
+        )
+
+        for entry in pronunciation["terms"]:
+            declared_text = "\n".join(
+                (PACKET_ROOT / "chapters" / chapter).read_text(encoding="utf-8")
+                for chapter in entry["expectedChapters"]
+            ).casefold()
+            for form in [entry["term"], *entry["variants"]]:
+                self.assertIn(
+                    form.casefold(),
+                    declared_text,
+                    f"{form!r} is absent from its declared pronunciation chapters",
+                )
+
+        pictou = next(item for item in pronunciation["terms"] if item["term"] == "Pictou")
+        self.assertEqual(pictou["source"], "listener")
+        self.assertEqual(pictou["variants"], [])
+        self.assertEqual(
+            pictou["spokenCandidates"],
+            ["PICK-toe"],
+        )
+
+    def test_audiobook_acceptance_packet_preserves_separate_gates(self) -> None:
+        audit = (RESEARCH_ROOT / "audiobook-candidate-audit.md").read_text(
+            encoding="utf-8"
+        )
+        checklist = (PACKET_ROOT / "audiobook-acceptance-checklist.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("cannot be promoted byte-for-byte", audit)
+        self.assertIn("does not reopen or change the approved manuscript", audit)
+        self.assertIn(
+            "40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0",
+            audit,
+        )
+        self.assertIn("unattended-first-listen", audit)
+        self.assertIn("ACCEPT FULL AUDIO", checklist)
+        self.assertIn("REVISE AUDIO", checklist)
+        self.assertIn("REJECT AUDIO", checklist)
+        self.assertIn("second-device import/open/render proof", checklist)
+        self.assertIn("video-edition production", checklist)
+        self.assertIn("public audiobook publication", checklist)
+        self.assertIn("notice → parcel → context → unknowns → handoff", checklist)
+        self.assertIn("Property Online", checklist)
+
+    def test_audiobook_candidate_receipt_binds_machine_and_human_boundaries(
+        self,
+    ) -> None:
+        receipt = json.loads(
+            (RESEARCH_ROOT / "audiobook-candidate-receipt.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual(
+            receipt["status"], "ready-for-replacement-full-audio-human-verdict"
+        )
+        self.assertFalse(receipt["permissionToPublishAudiobook"])
+        self.assertEqual(
+            receipt["source"]["epubSHA256"],
+            "40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0",
+        )
+        self.assertTrue(receipt["source"]["canonicalChaptersUnchanged"])
+        self.assertFalse(receipt["source"]["propertyOnlineMaterialIncluded"])
+        self.assertEqual(receipt["narration"]["voice"], "am_michael")
+        self.assertEqual(
+            (RESEARCH_ROOT / "approved-echo-pronunciation-sha.txt")
+            .read_text(encoding="utf-8")
+            .strip(),
+            receipt["narration"]["echoSourceSHA"],
+        )
+        self.assertEqual(receipt["artifacts"]["audiobook"]["chapterCount"], 13)
+        self.assertEqual(
+            receipt["artifacts"]["audiobook"]["sha256"],
+            "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8",
+        )
+        self.assertEqual(receipt["artifacts"]["alignment"]["anchorCount"], 612)
+        self.assertEqual(receipt["artifacts"]["alignment"]["wordTimedAnchorCount"], 324)
+        self.assertEqual(
+            receipt["artifacts"]["pronunciationAudit"]["diagnosticCount"], 0
+        )
+        self.assertEqual(
+            receipt["artifacts"]["pronunciationAudit"]["pictouDecisionCount"], 5
+        )
+        self.assertEqual(
+            receipt["artifacts"]["pronunciationAudit"]["pictouIPA"], "pˈɪktO"
+        )
+        self.assertEqual(
+            receipt["artifacts"]["pronunciationAudit"]["rejectedPictouIPACount"],
+            0,
+        )
+        self.assertEqual(receipt["checks"]["fullAudioDecode"], "pass")
+        self.assertEqual(
+            receipt["humanGates"]["fullAudioListening"],
+            "pending-replacement-verdict",
+        )
+        self.assertEqual(
+            receipt["humanGates"]["audiobookPublication"],
+            "blocked-pending-explicit-full-audio-verdict",
+        )
+        self.assertFalse(
+            (
+                REPO_ROOT
+                / "books/beyond-the-tax-sale-packet/beyond-the-tax-sale-packet.m4b"
+            ).exists()
+        )
+
+    def test_negative_pictou_verdict_blocks_exact_candidate_without_reopening_text(
+        self,
+    ) -> None:
+        verdicts = json.loads(
+            (RESEARCH_ROOT / "audiobook-human-listening-verdicts.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        verdict = verdicts["verdicts"][-1]
+
+        self.assertEqual(
+            verdicts["status"], "replacement-candidate-awaiting-human-verdict"
+        )
+        self.assertEqual(verdict["decision"], "revise-audio")
+        self.assertEqual(verdict["finding"]["term"], "Pictou")
+        self.assertEqual(verdict["finding"]["heard"], "picktoau")
+        self.assertEqual(verdict["finding"]["expected"], "PICK-toe")
+        self.assertEqual(verdict["finding"]["rejectedRendererIPA"], "pˈɪktaʊ")
+        self.assertEqual(verdict["finding"]["targetRendererIPA"], "pˈɪktO")
+        self.assertEqual(
+            verdict["boundArtifacts"]["audiobookSHA256"],
+            "f117bb2016b2b7bc58e900130a03b37d66452afff7e6a9ac0f81d1816dd706ec",
+        )
+        replacement = verdicts["replacementCandidate"]
+        self.assertEqual(
+            replacement["audiobookSHA256"],
+            "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8",
+        )
+        self.assertEqual(replacement["pictouEvidence"]["occurrenceCount"], 5)
+        self.assertEqual(replacement["pictouEvidence"]["selectedIPA"], "pˈɪktO")
+        self.assertEqual(replacement["pictouEvidence"]["rejectedIPACount"], 0)
+        self.assertEqual(replacement["humanPronunciationVerdict"], "pending")
+        self.assertFalse(
+            verdicts["frozenInputs"]["canonicalManuscriptRevisionAuthorized"]
+        )
+        self.assertFalse(verdicts["frozenInputs"]["selectedCoverRevisionAuthorized"])
 
     def test_first_section_voice_acceptance_binds_exact_candidate(self) -> None:
         continuity = json.loads(
@@ -330,9 +480,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(pilot["decision"]["verdict"], "continue")
         self.assertEqual(pilot["decision"]["evidence"], "continue")
         self.assertTrue(pilot["decision"]["recordedBeforeFullDraft"])
-        self.assertEqual(
-            pilot["decision"]["audioSHA256"], pilot["audioSHA256"]
-        )
+        self.assertEqual(pilot["decision"]["audioSHA256"], pilot["audioSHA256"])
         self.assertTrue(candidate.startswith("## Chapter 1 — The Last Scene First"))
         self.assertGreaterEqual(len(candidate.split()), 800)
         self.assertLessEqual(len(candidate.split()), 1500)
@@ -363,9 +511,12 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         canonical_path = PACKET_ROOT / "chapters/ch01.md"
         canonical = canonical_path.read_text(encoding="utf-8")
-        expected = candidate.rstrip("\n") + "\n\n" + technical_path.read_text(
-            encoding="utf-8"
-        ).rstrip("\n") + "\n"
+        expected = (
+            candidate.rstrip("\n")
+            + "\n\n"
+            + technical_path.read_text(encoding="utf-8").rstrip("\n")
+            + "\n"
+        )
         self.assertNotEqual(canonical, expected)
         chapter_checkpoint = continuity["checkpoints"][0]
         self.assertEqual(chapter_checkpoint["chapter"], "ch01")
@@ -633,9 +784,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             for item in continuity["draftContexts"]
             if item["section"].startswith("ch11-")
         }
-        self.assertEqual(
-            set(chapter_eleven_contexts), {"ch11-s01", "ch11-s02"}
-        )
+        self.assertEqual(set(chapter_eleven_contexts), {"ch11-s01", "ch11-s02"})
         self.assertTrue(
             all(
                 item["status"] == "canonical-section-drafted"
@@ -648,7 +797,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("municipality's official close-out record", chapter_eleven)
         chapter_eleven_flat = " ".join(chapter_eleven.split())
         self.assertIn("requested purchaser statement", chapter_eleven_flat)
-        self.assertIn("full redemption amount is paid to the treasurer", chapter_eleven_flat)
+        self.assertIn(
+            "full redemption amount is paid to the treasurer", chapter_eleven_flat
+        )
         self.assertIn("not a Nova Scotia tariff", chapter_eleven_flat)
 
         chapter_twelve_path = PACKET_ROOT / "chapters/ch12.md"
@@ -682,8 +833,12 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("tax-sale surplus account", chapter_twelve_lower)
         chapter_twelve_flat = " ".join(chapter_twelve.split())
         self.assertIn("six years following its registration", chapter_twelve_flat)
-        self.assertIn("before twenty years have passed from the sale", chapter_twelve_flat)
-        self.assertIn("assessed value is a dated mass-appraisal estimate", chapter_twelve_flat)
+        self.assertIn(
+            "before twenty years have passed from the sale", chapter_twelve_flat
+        )
+        self.assertIn(
+            "assessed value is a dated mass-appraisal estimate", chapter_twelve_flat
+        )
 
         chapter_thirteen_path = PACKET_ROOT / "chapters/ch13.md"
         chapter_thirteen = chapter_thirteen_path.read_text(encoding="utf-8")
@@ -713,8 +868,12 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_thirteen_flat = " ".join(chapter_thirteen.split())
         self.assertIn("Alder Crossing is a complete stop result", chapter_thirteen_flat)
         self.assertIn("It is not a property ranking", chapter_thirteen_flat)
-        self.assertIn("Payment readiness remains a separate gate", chapter_thirteen_flat)
-        self.assertIn("The public map remains owner-free and parcel-first", chapter_thirteen_flat)
+        self.assertIn(
+            "Payment readiness remains a separate gate", chapter_thirteen_flat
+        )
+        self.assertIn(
+            "The public map remains owner-free and parcel-first", chapter_thirteen_flat
+        )
         self.assertIn("without a sales pitch", chapter_thirteen_flat)
 
     def test_inverness_atlas_plan_is_separate_from_approved_figure_manifest(
@@ -732,7 +891,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("45 lien entries", atlas)
         self.assertIn("47 unique PIDs", atlas)
         self.assertIn("53 NSPRD polygon features", atlas)
-        self.assertIn("outside both the previously approved forty-figure", atlas.lower())
+        self.assertIn(
+            "outside both the previously approved forty-figure", atlas.lower()
+        )
         self.assertIn("No assessed-owner names", atlas)
         self.assertIn("not legal access", atlas.lower())
         self.assertIn("not a wetland determination", atlas.lower())
@@ -810,7 +971,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertIn("Halifax Regional Municipality", comparison)
 
-    def test_visual_category_math_matches_the_proposed_fifty_one_row_manifest(self) -> None:
+    def test_visual_category_math_matches_the_proposed_fifty_one_row_manifest(
+        self,
+    ) -> None:
         visuals = (RESEARCH_ROOT / "visuals.md").read_text(encoding="utf-8")
         ids = {
             int(match.group(1))
@@ -857,15 +1020,29 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             "d3114b5cfc907d85f8b2c1f015d5476719b53586",
         )
         self.assertEqual(
-            {claim["id"] for claim in evidence["claims"] if claim["id"].startswith("MAP-")},
-            {"MAP-001", "MAP-002", "MAP-003", "MAP-004", "MAP-005", "MAP-006", "MAP-007"},
+            {
+                claim["id"]
+                for claim in evidence["claims"]
+                if claim["id"].startswith("MAP-")
+            },
+            {
+                "MAP-001",
+                "MAP-002",
+                "MAP-003",
+                "MAP-004",
+                "MAP-005",
+                "MAP-006",
+                "MAP-007",
+            },
         )
 
         for output in receipt["outputs"]:
             with self.subTest(file=output["file"]):
                 path = PACKET_ROOT / output["file"]
                 self.assertTrue(path.is_file())
-                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), output["sha256"])
+                self.assertEqual(
+                    hashlib.sha256(path.read_bytes()).hexdigest(), output["sha256"]
+                )
                 data = path.read_bytes()[:24]
                 self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
                 self.assertEqual(struct.unpack(">II", data[16:24]), (2560, 1440))
