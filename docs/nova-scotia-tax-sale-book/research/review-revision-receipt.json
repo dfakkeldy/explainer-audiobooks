@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "status": "review-candidate",
+  "recordedAt": "2026-07-22",
+  "purpose": "Bind the current 54-figure review manuscript without altering or inheriting the earlier manuscript, voice, listening, figure, video, or publication approvals.",
+  "basePublicationAuthorizationSHA256": "4b839fba4e0086f3f0d805f51e0470d4e18940e493ff26457aca0d54cc301ebd",
+  "baseApprovedChapterSHA256": {
+    "ch01.md": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
+    "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
+    "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
+    "ch04.md": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
+    "ch05.md": "fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa",
+    "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
+    "ch07.md": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
+    "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
+    "ch09.md": "13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42",
+    "ch10.md": "a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9",
+    "ch11.md": "89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611",
+    "ch12.md": "e4904a3fc012f9dea5d150f0bce11043546fe46ac563c3aa4f240f9207c07dcd",
+    "ch13.md": "9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b"
+  },
+  "candidateChapterSHA256": {
+    "ch01.md": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
+    "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
+    "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
+    "ch04.md": "eb1d290b0b5b757b1d1dab34e297819a8ffb37e6d4d2642e8476fded1065da0e",
+    "ch05.md": "776e3bb380bf51cae1503ce6affe48145ee0f43d19416b32ae33c343772d5b48",
+    "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
+    "ch07.md": "f89614dcddd30e294e1dd512c2f3922090ecbe3e712f5c89e103bf9d13099877",
+    "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
+    "ch09.md": "13796ad23011077e31ba3b837bfdaf25f32ccff6ddd1b3891d044dd12d068b42",
+    "ch10.md": "a51bb2c965e22647fd4ddb667ffb608d185999df0e136cb87335e1465ec7e9a9",
+    "ch11.md": "89e08534389537e7d218fc9fd16130d42665ec75123679c2562dfa40b3957611",
+    "ch12.md": "e79fa3e435be5559276336c5e3c2d62c9fc2c456722c51f26d3cef57015e8be6",
+    "ch13.md": "9d2b06558b599bae69535134b36c78c387a1e0506d1f9718a7f3a0a82c2cd87b"
+  },
+  "changedChapters": [
+    "ch04.md",
+    "ch05.md",
+    "ch07.md",
+    "ch12.md"
+  ],
+  "revisionSummary": [
+    "Clarify that land-register views are dated snapshots and that instrument terms and post-sale legal effect remain separate questions.",
+    "Refresh the current and historical map workflow, including withdrawn records and outcome-pending historical entries.",
+    "Add bounded mapped-building, PVSC assessment, and flood-coverage evidence lessons.",
+    "Preserve the approved anonymous gold-panning lesson merged in the base revision."
+  ],
+  "privacyBoundary": {
+    "privateSourceExcluded": true,
+    "privateFactsExcluded": true,
+    "privateCitationsExcluded": true,
+    "statement": "A private due-diligence document informed only general editorial questions. No private parcel, person, land-record extract, screenshot, quotation, or source citation is included in this candidate."
+  },
+  "gates": {
+    "manuscriptTextApproved": false,
+    "narrationAccepted": false,
+    "fullListeningAccepted": false,
+    "figuresAccepted": false,
+    "videoEditionAccepted": false,
+    "publicationAuthorizedForCandidate": false
+  }
+}

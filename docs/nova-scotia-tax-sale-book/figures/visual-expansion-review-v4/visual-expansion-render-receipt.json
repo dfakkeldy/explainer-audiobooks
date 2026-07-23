@@ -1,0 +1,730 @@
+{
+  "schemaVersion": 1,
+  "assetStatus": "review-candidate",
+  "scope": "approved missing figures 01, 02, and 09 through 38",
+  "profiles": {
+    "landscape": {
+      "width": 2560,
+      "height": 1440
+    },
+    "mobile": {
+      "width": 1080,
+      "height": 1920
+    }
+  },
+  "figures": [
+    {
+      "id": "figure-01",
+      "filename": "figure-01-auction-morning.png",
+      "chapter": 1,
+      "title": "Auction morning is collection work",
+      "caption": "A tax sale begins as municipal collection work, not a treasure hunt.",
+      "kind": "scene",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-01-auction-morning.png",
+          "sha256": "22ad46e0a68d82e9906a01a84d13cfd3797b566775b6c13738421c0f52404a3d",
+          "width": 2560,
+          "height": 1440,
+          "sourceSHA256": "da5573c4fe58fdd546b57709e970abdf7cd53b06e54e598dae169a9cef772dbf"
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-01-auction-morning.png",
+          "sha256": "ad07a2f1c37e877ecd36be4c4da9b0830d17ccdc137d70cd4b17af390a6937ac",
+          "width": 1080,
+          "height": 1920,
+          "sourceSHA256": "c17d193e9323afa1ccea920c36f2a474e53ad4e0fd0431e2e6c7480f93b4703d"
+        }
+      }
+    },
+    {
+      "id": "figure-02",
+      "filename": "figure-02-nova-scotia-municipal-methods.png",
+      "chapter": 1,
+      "title": "One statute, different event methods",
+      "caption": "Municipal procedure varies even though the provincial legal framework is shared.",
+      "kind": "municipal-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-02-nova-scotia-municipal-methods.png",
+          "sha256": "4995b2bdb52c120f70ef7238b060648811d516beb0ca533a736c35fc58638097",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-02-nova-scotia-municipal-methods.png",
+          "sha256": "2cf531bc832d59217cd614011b176c67540a990645f7035a691e9f04a09b2de0",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-09",
+      "filename": "figure-09-evidence-desk.png",
+      "chapter": 4,
+      "title": "Build a traceable evidence file",
+      "caption": "The researcher's product is a traceable evidence file, not a verdict.",
+      "kind": "scene",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-09-evidence-desk.png",
+          "sha256": "282c74f349ac51048583aa5dc77a9b79276c3589f01abbd2acf20d3be4d57bb7",
+          "width": 2560,
+          "height": 1440,
+          "sourceSHA256": "96817a2e5a05a2499b70003c8bccf859300075137b7d24750405a03a954bab68"
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-09-evidence-desk.png",
+          "sha256": "45185d5f3e8568a9317ebaff5fc936146baece4d57e300b2f8a24c06c4a14657",
+          "width": 1080,
+          "height": 1920,
+          "sourceSHA256": "14d2cab10ffd0cff45aa02a4f06a75fd50dc13e2436dd58efa30ae064ae6e5ec"
+        }
+      }
+    },
+    {
+      "id": "figure-10",
+      "filename": "figure-10-source-authority-ladder.png",
+      "chapter": 4,
+      "title": "Authority depends on the question",
+      "caption": "A stronger source is one authorized to answer the particular question.",
+      "kind": "ladder",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-10-source-authority-ladder.png",
+          "sha256": "3c7c06833a9eb7fe65339719be4cd85e6b2cd9ea4ea68c1d00910e8bad64d411",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-10-source-authority-ladder.png",
+          "sha256": "2f2479013f84f38813eb4349645cb5aa3891bd93fd9ed53fae1c0704b4357eb6",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-11",
+      "filename": "figure-11-beyond-the-packet-delta.png",
+      "chapter": 4,
+      "title": "Credit the packet; add the missing work",
+      "caption": "The value-add begins after the municipality's facts, map and legal description.",
+      "kind": "columns",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-11-beyond-the-packet-delta.png",
+          "sha256": "154dba71746faab293a2ad9db7f904cf90cb5a96015f7ef4395706e2f9331c83",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-11-beyond-the-packet-delta.png",
+          "sha256": "de83aa6369c9dfd0243c03d2285d752f3a4e1dba36d778e592722474bcc6c29b",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-12",
+      "filename": "figure-12-five-evidence-labels.png",
+      "chapter": 4,
+      "title": "Five labels keep claims honest",
+      "caption": "Good research labels the strength and authority of each observation.",
+      "kind": "columns",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-12-five-evidence-labels.png",
+          "sha256": "4bf455fdf33870a99a42ef0d7d95e775250c7c11f25ca5337d7a5b2c07c33691",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-12-five-evidence-labels.png",
+          "sha256": "f6cf3db016b4366547e9a578f383438e73d21b0b219b4a3b73f1c443f53d05f9",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-13",
+      "filename": "figure-13-case-a-orientation.png",
+      "chapter": 6,
+      "title": "Case A starts with location",
+      "caption": "Case A begins with location, not a conclusion about access.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-13-case-a-orientation.png",
+          "sha256": "f8ba1835f01e8cdc3efa31bfc6948411afcf62b81b25ac6bf3e5c98b4614fe7a",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-13-case-a-orientation.png",
+          "sha256": "4795523390f55e32fa9b3dc746ed3b5a8cb3aea601b4ff709b2c81fbd072275c",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-14",
+      "filename": "figure-14-case-a-identity.png",
+      "chapter": 6,
+      "title": "Case A: identify the research target",
+      "caption": "The graphical outline identifies the target; it does not settle the legal boundary.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-14-case-a-identity.png",
+          "sha256": "87649fec0b4c00e1fc1810de9e9ad13b7aee015ce77fd576c1e6fe1857bd1d73",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-14-case-a-identity.png",
+          "sha256": "73caeecda2bdecd5fa829e0729577a7d24f293b11909ec03d020ebbb9e1431ab",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-15",
+      "filename": "figure-15-case-a-access.png",
+      "chapter": 6,
+      "title": "Case A: a visible route is not a right",
+      "caption": "A visible track can be a clue without being a legal right of access.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-15-case-a-access.png",
+          "sha256": "b509fd6bd9753bf572384f8ad7b36e5344c9413252e1a2c8a7b0fbd7648ecdd7",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-15-case-a-access.png",
+          "sha256": "2bc206c36ff1da326c40d6d195c3ce5b2f797d58f902f41e02fcb37f434bc40a",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-16",
+      "filename": "figure-16-case-a-planning.png",
+      "chapter": 6,
+      "title": "Case A: planning and servicing separate",
+      "caption": "Planning controls and servicing are separate tests from parcel identity.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-16-case-a-planning.png",
+          "sha256": "775dfe61d1daea68cfb8488e5e176345571daecf77dfd00b11c78bac0cc54247",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-16-case-a-planning.png",
+          "sha256": "9b86f3b42480cf614b5039bac753db17765a363c9987601afe0accd96137356a",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-17",
+      "filename": "figure-17-case-a-screening.png",
+      "chapter": 7,
+      "title": "Case A: screening starts harder questions",
+      "caption": "A screening map is not an environmental opinion.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-17-case-a-screening.png",
+          "sha256": "07010aec01f09c5c032c0bd6b838dc43cad13fa687c0ada66d6de6d92e39f741",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-17-case-a-screening.png",
+          "sha256": "8db2d85b94ea2b7c1370ece54471d3f3b85bcaa1f3b552307efad3f23eb1900c",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-18",
+      "filename": "figure-18-case-b-orientation.png",
+      "chapter": 7,
+      "title": "Case B begins with occupancy clues",
+      "caption": "An occupied-looking building changes the question set before possession is discussed.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-18-case-b-orientation.png",
+          "sha256": "609fb5e4bb976a0230f55a6f37d9caca4a561d43e51918ee51a14416752239d9",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-18-case-b-orientation.png",
+          "sha256": "1d512209c188376a75a4e16c4fa5b652aae6215b2dfe6043703ded59ecdd240c",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-19",
+      "filename": "figure-19-case-b-identity.png",
+      "chapter": 7,
+      "title": "Case B: land and structures may diverge",
+      "caption": "Land, buildings and a manufactured home may not share one simple record story.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-19-case-b-identity.png",
+          "sha256": "75e647a35aac60a1ecb37c0b313d4a900a4826e940542bd6abdf2c911bf59e6c",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-19-case-b-identity.png",
+          "sha256": "2f5555b5e0f80b2821e6ce84f9a0cdaca53c405cbe97762eefcbfa6b9b6263e5",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-20",
+      "filename": "figure-20-case-b-access.png",
+      "chapter": 7,
+      "title": "Case B: observe without trespass",
+      "caption": "Exterior observation can narrow questions without entry, confrontation or trespass.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-20-case-b-access.png",
+          "sha256": "659885640abe0f20a3e8036f4501c647a4cdc7b649e9408de074b580b57ba9ad",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-20-case-b-access.png",
+          "sha256": "d81b2c8574869b1f6293c23dd03bed241bb08d646c54185370ae8c4303218815",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-21",
+      "filename": "figure-21-case-b-planning.png",
+      "chapter": 8,
+      "title": "Case B: occupation proves neither use nor services",
+      "caption": "Existing occupation does not prove lawful use, services or vacant possession.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-21-case-b-planning.png",
+          "sha256": "7ca64afedf1db9e4cd1c4047b9b86085e4a7895b28694a8ef0dbe20a8e192be9",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-21-case-b-planning.png",
+          "sha256": "d02fc3e4c01b1fe72c3f31f7ff54824d36f5fddf00f1d178090fec59a2df1d5c",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-22",
+      "filename": "figure-22-case-b-screening.png",
+      "chapter": 8,
+      "title": "Case B: a historical clue is not a finding",
+      "caption": "A mapped historical clue is a lead for professional review, not a contamination finding.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-22-case-b-screening.png",
+          "sha256": "4aaf5175538fdae152541c2f679f6c2f4c2c465c6753f1ff12c8932fd69bde9a",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-22-case-b-screening.png",
+          "sha256": "cbcf591813f0eb34a2b24e05c07bdd98ec0618741f3fc95f676a5389deb5f269",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-23",
+      "filename": "figure-23-negative-search-beam.png",
+      "chapter": 7,
+      "title": "A negative search has a beam",
+      "caption": "No result means only that this search, in this source, found no matching record.",
+      "kind": "coverage",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-23-negative-search-beam.png",
+          "sha256": "0f1054d2313f7d6068284ed5e7ca78abff3aa5c3718753f1169a9cce2a1acde2",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-23-negative-search-beam.png",
+          "sha256": "88858ab1eb6b58e06505e5caf0dfd5b765146f741595c1a3543e3cdabafe90eb",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-24",
+      "filename": "figure-24-title-encumbrance-possession.png",
+      "chapter": 8,
+      "title": "Three questions, not three synonyms",
+      "caption": "Title, encumbrances and possession are related, but none is a synonym for the others.",
+      "kind": "columns",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-24-title-encumbrance-possession.png",
+          "sha256": "dbdb7ab50002623c5e6e7beafbecf2613e028ce32e439a28b93fb487d4704a81",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-24-title-encumbrance-possession.png",
+          "sha256": "8469f474430fe2eaeca53035a6fc90c3c7be2855ce97c15580467c0c4feb48ec",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-25",
+      "filename": "figure-25-occupied-property-handoff.png",
+      "chapter": 8,
+      "title": "Observation stops before self-help",
+      "caption": "Occupancy questions move from observation to legal advice\u2014not to self-help.",
+      "kind": "flow",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-25-occupied-property-handoff.png",
+          "sha256": "421d7d41d8c2ca1af599665ab04e031f0eee361c3fbcfed245724f93d48fbc43",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-25-occupied-property-handoff.png",
+          "sha256": "9adb9c3d2789b1e3574e10fc67c79dfd0f799145e00bd3142f5dc964da356480",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-26",
+      "filename": "figure-26-inverness-ratio-distribution.png",
+      "chapter": 9,
+      "title": "Thirty-one published rows, bounded",
+      "caption": "In the 31 published rows, competition often carried bids above the recovery amount.",
+      "kind": "ratio-chart",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-26-inverness-ratio-distribution.png",
+          "sha256": "372763be6a259efe88b238ffe33f02aebd6e8f23fc27886a3a8bc78b48f04786",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-26-inverness-ratio-distribution.png",
+          "sha256": "6686fd6007f29bf759d72fef787ccf8ac4b44d68ffbd74cef71e24396cbb76f3",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-27",
+      "filename": "figure-27-fifty-thirtyfive-thirtyone.png",
+      "chapter": 9,
+      "title": "Do not collapse three official counts",
+      "caption": "Advertised, sold and published-result counts answer different questions.",
+      "kind": "count-chart",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-27-fifty-thirtyfive-thirtyone.png",
+          "sha256": "31f059985e677b4c3ce9ecbf22127ba2e3f9ed185302eab60090177f42d5b74e",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-27-fifty-thirtyfive-thirtyone.png",
+          "sha256": "5ef65b9f8451e72ed5041fd561faa679f6e77ed9ebbb40ee7b19cab81d4be981",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-28",
+      "filename": "figure-28-municipal-result-comparison.png",
+      "chapter": 9,
+      "title": "Definitions travel with the numbers",
+      "caption": "Cross-municipal numbers are useful only when procedure, sample and denominator travel with them.",
+      "kind": "columns",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-28-municipal-result-comparison.png",
+          "sha256": "f39b1a33a006da6ff4b449754b2935469a5a373353a32fee778d2ea5c0784fbb",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-28-municipal-result-comparison.png",
+          "sha256": "675d943c22571407b0b3199c4e23dc5e630904c533367080875b89f54101f70b",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-29",
+      "filename": "figure-29-all-in-cost-stack.png",
+      "chapter": 9,
+      "title": "The bid is only the first layer",
+      "caption": "The winning bid is one layer in the acquisition's uncertainty budget.",
+      "kind": "stack",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-29-all-in-cost-stack.png",
+          "sha256": "919d114e40d00f75ebc3de2ad0a58007f273ba3b14ba996f45567e93a44ff1c4",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-29-all-in-cost-stack.png",
+          "sha256": "a52f199cda5cd7049a3502c6bb113ae6d8a6e271041e983092dc2cc4d75a5ab5",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-30",
+      "filename": "figure-30-auction-versus-tender.png",
+      "chapter": 10,
+      "title": "Two formats, one written limit",
+      "caption": "Open bidding reveals competitors; a tender hides them, but both reward a prewritten limit.",
+      "kind": "two-route",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-30-auction-versus-tender.png",
+          "sha256": "22e3c4b0ff00982fbfaef2d9613f19f268f263651a716e4b23bff713bd648455",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-30-auction-versus-tender.png",
+          "sha256": "7721d8c88cb0dbaf0295e8de0263fa9b759fc01b452f1ea93a7434af1ceceb31",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-31",
+      "filename": "figure-31-certificate-holder-calendar.png",
+      "chapter": 11,
+      "title": "The certificate-holder months are active",
+      "caption": "The certificate-holder months are an operations period, not dead time.",
+      "kind": "calendar",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-31-certificate-holder-calendar.png",
+          "sha256": "a06a1e2bdc735b39b10210aa6f77bb2dccbfcbdbd5fbac7656b6eaf1c5b7f29f",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-31-certificate-holder-calendar.png",
+          "sha256": "bee104637e92e6b36b8e405481580e0f381a5d80f4b2b106cc62093a848adb7d",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-32",
+      "filename": "figure-32-deed-is-a-beginning.png",
+      "chapter": 12,
+      "title": "A deed moves the questions",
+      "caption": "A tax deed changes the file's legal stage; it does not finish the property work.",
+      "kind": "radial",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-32-deed-is-a-beginning.png",
+          "sha256": "ea3a7e606bea528cb5253e10b49a947d4c90c8583b19d9e3ded09663ba7ab312",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-32-deed-is-a-beginning.png",
+          "sha256": "24fdff6b855c022946fab46467d6e05de55d5c428a6d5ed6f79a44434dbd2010",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-33",
+      "filename": "figure-33-case-c-orientation.png",
+      "chapter": 13,
+      "title": "Case C is coherent, not recommended",
+      "caption": "Case C is the strongest file, not a recommendation to buy.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-33-case-c-orientation.png",
+          "sha256": "8b71c823b28a6fd86289b3ee7808f9d9db918a91b4351181c7019c81e8851068",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-33-case-c-orientation.png",
+          "sha256": "881a5953b55dfe230550fc2a5cf2e4acf1dd7a92f712e7b2bbf96751f446fda6",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-34",
+      "filename": "figure-34-case-c-identity.png",
+      "chapter": 13,
+      "title": "Case C: consistent records reduce one unknown",
+      "caption": "Consistent records reduce one uncertainty without eliminating the rest.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-34-case-c-identity.png",
+          "sha256": "ee08ab69ed2ed6529c1ef33e4e38277e05c8226e558855c733b9b655ed563901",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-34-case-c-identity.png",
+          "sha256": "272b59a1c7e031ad6ad6eed4f778c0add0ec9fe7d744422768d64269a7ab401f",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-35",
+      "filename": "figure-35-case-c-access.png",
+      "chapter": 13,
+      "title": "Case C: strong clues focus the legal question",
+      "caption": "Strong map evidence can support a focused legal question; it cannot answer it.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-35-case-c-access.png",
+          "sha256": "4470309a7c4d2baa8047b2e7c0202d69e661f3b27cb8b5da372280789d6d8588",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-35-case-c-access.png",
+          "sha256": "b37682843061ebcfd4d1086f081a9f4ac849e2c890a11ec2432c36ad91c3a9c0",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-36",
+      "filename": "figure-36-case-c-planning.png",
+      "chapter": 13,
+      "title": "Case C: name every confirmation",
+      "caption": "A coherent file names the confirmations still required before intended use is credible.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-36-case-c-planning.png",
+          "sha256": "b70700be5a6aa18284b3270dd425d0e5af7149c33adb50480f00c172ef4326c3",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-36-case-c-planning.png",
+          "sha256": "e19a4e19ddd90a516dc8c064fb034689dd2208957596eef424e2d6802a05e257",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-37",
+      "filename": "figure-37-case-c-screening.png",
+      "chapter": 13,
+      "title": "Case C: no mapped overlap is bounded",
+      "caption": "No mapped overlap found is not a clean bill of health.",
+      "kind": "case-map",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-37-case-c-screening.png",
+          "sha256": "d6c619280631aa625bfeddcd660c24bd37db5ebdf8f358c699122092f30e9ef2",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-37-case-c-screening.png",
+          "sha256": "7ee02b20bef75c9151cb4846d9aa295abf80c45f6b9f3585a858ce5cc1f5dbed",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    },
+    {
+      "id": "figure-38",
+      "filename": "figure-38-known-unresolved-professional.png",
+      "chapter": 13,
+      "title": "End with a file that knows its limits",
+      "caption": "A responsible file separates known facts, unresolved questions and authorized handoffs.",
+      "kind": "columns",
+      "renditions": {
+        "landscape": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/landscape/figure-38-known-unresolved-professional.png",
+          "sha256": "a64c1d6c22d9a5062c7da0141fd1cb6c0e206d64bfe68ffafe8b6140eafde241",
+          "width": 2560,
+          "height": 1440
+        },
+        "mobile": {
+          "path": "docs/nova-scotia-tax-sale-book/figures/visual-expansion-review-v4/mobile/figure-38-known-unresolved-professional.png",
+          "sha256": "cae81177ff1534a9068595bd3ddbac4d1af71566b2dcb2df3e4758153a990478",
+          "width": 1080,
+          "height": 1920
+        }
+      }
+    }
+  ],
+  "boundaries": [
+    "Fictional composite maps are teaching diagrams, not surveys or parcel evidence.",
+    "Generated scenes are editorial illustrations, not documentary depictions.",
+    "No figure is governed, accepted, syncable or publishable until human and device review pass."
+  ]
+}

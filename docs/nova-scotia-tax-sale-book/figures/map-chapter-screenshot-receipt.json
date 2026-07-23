@@ -1,16 +1,14 @@
 {
-  "schemaVersion": 2,
-  "status": "review-candidates",
-  "capturedAt": "2026-07-20",
+  "schemaVersion": 3,
+  "status": "paired-review-candidates",
+  "capturedAt": "2026-07-22",
   "captureSource": {
     "application": "NS Marks The Spot production web map",
     "repository": "https://github.com/dfakkeldy/ns-marks-the-spot",
-    "sourceCommit": "d3114b5cfc907d85f8b2c1f015d5476719b53586",
+    "sourceCommit": "a7ba7da9ad5f8a5dcc1c67c79888bb76b6bae108",
     "sourceReceiptURL": "https://kinnokilabs.com/apps/nsmarksthespot/map/source.json",
-    "sourceReceiptRetrievedAt": "2026-07-20T10:31:39Z",
+    "sourceReceiptVerifiedAt": "2026-07-22",
     "captureURL": "https://kinnokilabs.com/apps/nsmarksthespot/map/",
-    "viewport": "2560x1440",
-    "outputSize": "2560x1440",
     "colourMode": "RGB",
     "fileFormat": "PNG",
     "browserConsole": {
@@ -23,70 +21,58 @@
     "livePropertyRecommendation": false,
     "refreshBeforePublication": true,
     "currentAndHistoricalKeptSeparate": true,
+    "outcomePendingKeptDistinctFromSaleResult": true,
     "propertyOnlineMaterialIncluded": false,
-    "notes": "Production interface states are dated screening evidence. Current notices must be refreshed against the direct municipality; historical outcomes describe only their recorded events. Civic points, Plus Codes, graphical boundaries, imagery and returned layer results do not prove ownership, occupancy, legal access, survey boundaries, physical condition, resource value or development permission."
+    "notes": "Production interface states are dated screening evidence. Current notices require direct municipal verification. A mapped building count is not occupancy or condition; a PVSC assessment is not present value; outside flood-study coverage or no returned pixels is not proof of no hazard; and an elapsed event date is not a sale outcome. Civic points, Plus Codes, graphical boundaries, imagery and returned layer results do not prove ownership, legal access, survey boundaries, physical condition, resource value or development permission."
   },
-  "outputs": [
+  "profiles": [
     {
-      "file": "chapters/images/figure-41-map-layer-overview.png",
-      "sha256": "f60a2b209826f63914706d6f758cf39c6b7b5ffe71aaa5b0bd0fbceb20b75c3b",
-      "teachingJob": "Production overview and research modes"
+      "name": "landscape",
+      "captureMethod": "Production browser at an explicit 2560x1440 viewport",
+      "viewport": "2560x1440",
+      "outputSize": "2560x1440",
+      "outputs": [
+        {"file": "figures/map-screens-review-v2/landscape/figure-41-map-layer-overview.png", "sha256": "1d00c4054beb739012d41c6e25ef49a1c453fbaae31f613304f71e52d2bf5a28", "teachingJob": "Production overview and research modes"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-42-province-data-licence.png", "sha256": "899fa9e1f46e8e9d3aa9b8d4076c16709ed30a109e7136410f7e1a4f409d89f5", "teachingJob": "Province-data licence and limitation boundary"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-43-current-parcel-browser.png", "sha256": "586379fdd6e8d8fdfee33b9e937837810aa8d633cde5fa387fc3606bcbaca6d0", "teachingJob": "Current Inverness browser and direct source"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-44-civic-address-search.png", "sha256": "ea96a6d94b9755af25e39ba3d668240146f820215caf089165643c3c0f7653a9", "teachingJob": "Authoritative civic-address search"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-45-current-parcel-evidence.png", "sha256": "7fbab52c39375dd95ffcdc96c4b1da94540e80b09e8f28fdc6589f9f73ef3d44", "teachingJob": "Bounded parcel inspector evidence"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-46-aerial-and-property-boundaries.png", "sha256": "4894be738523b013d77fb462fb70d9cd51794799fbacbc0dc96944405bc77b02", "teachingJob": "Aerial and graphical boundary comparison"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-47-roads-water-context.png", "sha256": "70fc6cf8fcdb2571335f51f9a7c97a615336ffc56e53b2decdf4a070e7fd723c", "teachingJob": "Road and water context versus intersections"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-48-geology-resources.png", "sha256": "a2278442ef06ba428e182c38ce7f176d39233320a831d880f43f2d52a0411b0a", "teachingJob": "Geology and resource screening"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-49-historical-outcomes-overview.png", "sha256": "2393019dc5cc7d20537f5eecc51168ff8604ef8e4956c8782d6f235545b58e89", "teachingJob": "Historical catalogue and outcome filters"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-50-historical-outcome-sheet.png", "sha256": "86892f0fae022f48b7c9cff57595ee31d5587a158a46abe1a48910d737ae3f6c", "teachingJob": "Verified Halifax exact-PID result"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-51-combined-parcel-research.png", "sha256": "4b27101ee5f1f23e94214d348535ec375544754ad63ca6a50d3faa224b3bf384", "teachingJob": "Complete notice-to-handoff research state"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-52-buildings-assessment.png", "sha256": "c8feed9d1ea4c955cb83eaa6722ddf5f4b91393c3d2d1c35e9f3eaa53a3fbac4", "teachingJob": "Mapped buildings and dated PVSC assessment"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-53-flood-hazard-evidence.png", "sha256": "c24a3f172b99133945ff2d3c9f97d93dca26cbb2d3182f8a38b3892a8ba14b52", "teachingJob": "Flood coverage and empty-result limits"},
+        {"file": "figures/map-screens-review-v2/landscape/figure-54-cbrm-outcome-unknown.png", "sha256": "d1303bc7cb3d8bbcfcf9a7f2c6431732fbea5f62476f5898aed2a3acf6e46bc8", "teachingJob": "CBRM outcome-pending historical record"}
+      ]
     },
     {
-      "file": "chapters/images/figure-42-province-data-licence.png",
-      "sha256": "cec12c56c80d9432ba6f6ddbfcb5e7495c24540d9d2843def300ec23e1495498",
-      "teachingJob": "Province-data licence and limitation boundary"
-    },
-    {
-      "file": "chapters/images/figure-43-current-parcel-browser.png",
-      "sha256": "750da3dfa7a68dc08fd7487434f4b639e676344ae0c19ab9f03605dc92b24d5c",
-      "teachingJob": "Current-event parcel browser and redemption filter"
-    },
-    {
-      "file": "chapters/images/figure-44-civic-address-search.png",
-      "sha256": "297fa83a27414085c7f5b2c105672f5c980af5098f34881823e697bd49978dcf",
-      "teachingJob": "Authoritative civic-address search and parcel containment"
-    },
-    {
-      "file": "chapters/images/figure-45-current-parcel-evidence.png",
-      "sha256": "cb95afed5efc8ae73b0a5f2a41fff2e7978ee6009c8051d415f27b4016067891",
-      "teachingJob": "Current parcel sheet with civic point, Plus Code and context limits"
-    },
-    {
-      "file": "chapters/images/figure-46-aerial-and-property-boundaries.png",
-      "sha256": "a6d201ea06d9fb173a85f543ea3f89dc709c81eb552eadb1b6d3ce71aa810b9a",
-      "teachingJob": "Aerial imagery and graphical property-boundary comparison"
-    },
-    {
-      "file": "chapters/images/figure-47-roads-water-context.png",
-      "sha256": "1a8a057b47a41a39de5920e18ca9a885b71e5dc3bb16c3885fc7b0bf4a15a41b",
-      "teachingJob": "Road and water proximity versus mapped intersections"
-    },
-    {
-      "file": "chapters/images/figure-48-geology-resources.png",
-      "sha256": "9e2b34d0a36ec511a4286dc37d8cbd3c2f8dff40411c028af5965b2d5cbd1b03",
-      "teachingJob": "Geology and resource-layer screening boundary"
-    },
-    {
-      "file": "chapters/images/figure-49-historical-outcomes-overview.png",
-      "sha256": "9749bfdb1b51e7739961072a459794743affc99149c3a6bb728951535a0ffd48",
-      "teachingJob": "Historical-outcome catalogue separated from current notices"
-    },
-    {
-      "file": "chapters/images/figure-50-historical-outcome-sheet.png",
-      "sha256": "b7c62a923f5162d0e2bf448a0e5fd77b57b05091b141150dbc6669b0b5faa17e",
-      "teachingJob": "One exact-PID historical result with official sources"
-    },
-    {
-      "file": "chapters/images/figure-51-combined-parcel-research.png",
-      "sha256": "c8b10871b9f81e841fd5921ad1f9425f564e8052cd284c6cfc167472b5a3a8de",
-      "teachingJob": "Complete notice-to-parcel research state and handoff boundary"
-    },
-    {
-      "file": "figures/map-chapter-screenshots-contact-sheet.png",
-      "sha256": "b743a8a3cfd04fe61b524b9ebef91c221b47a0a46ad6c9060d8a4fa2276348d0",
-      "teachingJob": "Human visual review of all eleven screenshot candidates",
-      "dimensions": "2560x1440"
+      "name": "mobile",
+      "captureMethod": "Production browser rendered responsively at an explicit 390x844 viewport; not cropped or resized from desktop",
+      "viewport": "390x844",
+      "outputSize": "390x844",
+      "outputs": [
+        {"file": "figures/map-screens-review-v2/mobile/figure-41-map-layer-overview.png", "sha256": "32bf3362ba63c5b2acca9d0f1b5121421750b8e54696a7fe5dddeaba61ccdd87", "teachingJob": "Responsive production overview and research modes"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-42-province-data-licence.png", "sha256": "dcfdc17099cc80385e789d7abc4297debee945862eb4041aac6a74d7159361b9", "teachingJob": "Responsive layer-source and limitation cues"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-43-current-parcel-browser.png", "sha256": "215599dc4e0d6f87dc67f8ef6915d9f03ca39a1f7211034ef03d84b3868d60a2", "teachingJob": "Current Inverness browser and direct source"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-44-civic-address-search.png", "sha256": "cb9be1e306ce7824ed8c780ac305f304e46436f8fc8a1c354d39b0d0f0e65d87", "teachingJob": "Authoritative civic-address search"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-45-current-parcel-evidence.png", "sha256": "5ac5b9153e674b40d5e61f97954a15db75d6132d3b8313aa9c447f9152a388f8", "teachingJob": "Bounded parcel inspector evidence"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-46-aerial-and-property-boundaries.png", "sha256": "6ff46602a87346cf64fc5e1aad185a6e13953d5b131f4f7d2aaa5d5a74dbcfe9", "teachingJob": "Aerial and graphical boundary comparison"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-47-roads-water-context.png", "sha256": "71c2c17719c8c998e4c3faab4334aa0e49d1a7e5ffc05fad3d499e537f2e5b34", "teachingJob": "Road and water context versus intersections"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-48-geology-resources.png", "sha256": "5f75e873271c80d202c14c32d11dfd30cd83b71682365ff9a98633723a749f12", "teachingJob": "Geology and resource screening"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-49-historical-outcomes-overview.png", "sha256": "14fe1c03c8a3c136be3ec2d4f03d67cc5193121e9c7d9c4e4d8beb87a63f7276", "teachingJob": "Historical catalogue and outcome filters"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-50-historical-outcome-sheet.png", "sha256": "2b35bb05d2205fcbc567072d4cb45316174e8eab6d6c20dcb7f48e48d862d310", "teachingJob": "Verified Halifax exact-PID result"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-51-combined-parcel-research.png", "sha256": "59a92de92b8d3254cf7e44c788f7ee46625b7fca6c2d1cf867ffcfa6a9f445e3", "teachingJob": "Complete notice-to-handoff research state"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-52-buildings-assessment.png", "sha256": "4a1d857d7731475df081e0f79cd9016ac251e4ae11cae2485273c21f434dab2a", "teachingJob": "Mapped buildings and dated PVSC assessment"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-53-flood-hazard-evidence.png", "sha256": "957738fe46950fef12d0304475fb6e94a28f1330ebcd4a3ecd3c0c631ceb982d", "teachingJob": "Flood coverage and empty-result limits"},
+        {"file": "figures/map-screens-review-v2/mobile/figure-54-cbrm-outcome-unknown.png", "sha256": "24364c10d54acb711b6bbc7879fdce91518cbd9500ed4bc301417325a14d2308", "teachingJob": "CBRM outcome-pending historical record"}
+      ]
     }
+  ],
+  "reviewSheets": [
+    {"file": "figures/map-screens-review-v2/contact-sheet-landscape.png", "dimensions": "2064x1224", "teachingJob": "Human review of all fourteen landscape captures"},
+    {"file": "figures/map-screens-review-v2/contact-sheet-mobile.png", "dimensions": "1589x908", "teachingJob": "Human review of all fourteen genuine mobile-browser captures"}
   ]
 }

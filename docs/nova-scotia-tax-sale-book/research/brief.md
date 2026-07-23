@@ -18,7 +18,7 @@
 - Current-law boundary: core official sources were refreshed on 2026-07-19 and
   must be checked again before a later edition or before relying on a live-sale
   detail.
-- Visual-listening target: a figure-rich Echo slideshow and video-export edition. The proposed revision contains 51 purposeful figures: the previously approved 40-figure direction plus eleven version-stamped NS Marks The Spot walkthrough screenshots. Narration must still work with the screen unavailable.
+- Visual-listening target: a figure-rich Echo slideshow and video-export edition. The current review direction contains 54 purposeful figures: the previously approved 40-figure direction plus fourteen paired, version-stamped NS Marks The Spot walkthrough screenshots. Narration must still work with the screen unavailable.
 
 ## Editorial stance
 
@@ -56,7 +56,7 @@ The book's value does not depend on converting readers into clients. Its primary
   historical results and empty states are screening evidence—not access,
   occupancy, ownership, survey, flood, wetland, title, condition, value or
   forecast conclusions.
-- Treat figures 41–51 as source-versioned production review candidates. Refresh
+- Treat figures 41–54 as source-versioned production review candidates. Refresh
   current and historical records again immediately before publication.
 
 ## Visual and video direction
