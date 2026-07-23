@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage the approved tax-sale prose with review-only visual cue blocks."""
+"""Stage the current tax-sale review prose with review-only visual cue blocks."""
 
 from __future__ import annotations
 

@@ -169,8 +169,8 @@ Estimated total: approximately 46,200 words before editorial compression.
 
 ## Visual-listening route
 
-The approved-for-pilot revision is planned as a figure-rich Echo slideshow and
-video-export title with 51 purposeful figures. `visuals.md` is the detailed
+The current review direction is planned as a figure-rich Echo slideshow and
+video-export title with 54 purposeful figures. `visuals.md` is the detailed
 manifest and provenance
 authority. The chapter-level route is:
 
@@ -182,10 +182,11 @@ authority. The chapter-level route is:
   `figure-08`).
 - Chapter 4: evidence-desk scene, source-authority ladder, beyond-the-packet
   delta and five evidence labels (`figure-09`–`figure-12`).
-- Chapter 5: eleven version-stamped production screenshots covering current
-  notice, exact parcel, civic search, parcel evidence, aerial/boundaries,
-  road/water, geology/resources, historical outcomes and a combined research
-  record (`figure-41`–`figure-51`).
+- Chapter 5: fourteen paired, version-stamped production screenshots covering
+  current notice, exact parcel, civic search, parcel evidence, mapped buildings,
+  dated PVSC assessment, aerial/boundaries, road/water, flood evidence,
+  geology/resources, verified and outcome-pending historical records, and a
+  combined research state (`figure-41`–`figure-54`).
 - Chapters 6–7: the five-map Case A packet, with a focused apparent-versus-legal
   access story (`figure-13`–`figure-17`).
 - Chapters 7–8: the five-map Case B occupied-building packet plus negative-search

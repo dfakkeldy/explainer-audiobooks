@@ -24,12 +24,12 @@ screens, the current direction contains 54 desktop and 54 mobile assets. Its
 placement receipt proves that removing the review-only figure blocks restores
 the canonical chapter Markdown exactly.
 
-Two silent 103.967-second proof reels were rendered from the earlier 51-cue order:
-1920-by-1080 landscape and 1080-by-1920 portrait. They are rapid visual-review
-artifacts, not narrated exports, governed packages or publication evidence. The
-paired EPUBs are likewise review candidates only. They must be regenerated for
-the 54-cue direction; full human figure acceptance, narration alignment and the
-whole-book video export remain separate gates.
+Two silent 108.034-second proof reels were rendered from the current 54-cue
+order: 1920-by-1080 landscape and 1080-by-1920 portrait. They are rapid local
+visual-review artifacts, not narrated exports, governed packages or publication
+evidence. The paired EPUBs are likewise review candidates only. Full human
+figure acceptance, narration alignment and the whole-book video export remain
+separate gates.
 
 ## Interactive-map research-chain batch — refreshed 2026-07-22
 

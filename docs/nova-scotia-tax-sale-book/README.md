@@ -88,7 +88,12 @@ accepted the exact first-section teaching and voice with “Let’s go for the
 voice.” On 2026-07-20 he authorized redesigning the map chapter and
 review figures around the production workflow: notice → parcel → context →
 unknowns → handoff, then explicitly approved that thirteen-chapter, 51-figure
-direction for pilot development. Deep research,
+direction for pilot development. On 2026-07-22 he approved expanding the same
+direction to 54 figures with paired landscape and genuine mobile-browser map
+captures. The current four-chapter wording refresh is an exact-hash review
+candidate recorded in `research/review-revision-receipt.json`; it does not
+inherit the earlier manuscript, narration, listening, figure, video or
+publication approvals. Deep research,
 structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
 diagram candidates and three accepted-direction atlas prototypes exist. The
 actual Echo/video-stage atlas proof, atlas batch authorization, accepted final

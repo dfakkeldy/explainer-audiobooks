@@ -27,9 +27,30 @@ ATTRIBUTION = (
     "Scotia which is provided without warranty or liability for errors or "
     "omissions."
 )
+REVIEW_REVISION_PATH = RESEARCH_ROOT / "review-revision-receipt.json"
 
 
 class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
+    def assert_checkpoint_or_review_revision(
+        self, chapter_path: Path, checkpoint_sha256: str
+    ) -> None:
+        actual_sha256 = hashlib.sha256(chapter_path.read_bytes()).hexdigest()
+        if actual_sha256 == checkpoint_sha256:
+            return
+
+        revision = json.loads(REVIEW_REVISION_PATH.read_text(encoding="utf-8"))
+        chapter = chapter_path.name
+        self.assertEqual(revision["status"], "review-candidate")
+        self.assertEqual(
+            revision["baseApprovedChapterSHA256"][chapter], checkpoint_sha256
+        )
+        self.assertEqual(
+            revision["candidateChapterSHA256"][chapter], actual_sha256
+        )
+        self.assertIn(chapter, revision["changedChapters"])
+        self.assertFalse(revision["gates"]["manuscriptTextApproved"])
+        self.assertFalse(revision["gates"]["narrationAccepted"])
+
     def test_learning_evidence_matches_validator_contract(self) -> None:
         evidence_path = RESEARCH_ROOT / "evidence-notes.json"
         evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
@@ -73,7 +94,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             "i'm going to go with image 1",
         )
 
-    def test_epub_text_approval_is_bound_to_exact_chapter_hashes(self) -> None:
+    def test_epub_text_approval_and_review_revision_are_separately_bound(self) -> None:
         authorization = json.loads(
             (RESEARCH_ROOT / "publication-authorization.json").read_text(
                 encoding="utf-8"
@@ -87,10 +108,33 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         self.assertEqual(authorization["classification"], "public-safe")
         self.assertEqual(authorization["manuscriptTextApproval"]["status"], "approved")
+        approved_hashes = authorization["manuscriptTextApproval"][
+            "reviewedChapterSHA256"
+        ]
+        revision = json.loads(REVIEW_REVISION_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
-            authorization["manuscriptTextApproval"]["reviewedChapterSHA256"],
-            actual_hashes,
+            revision["basePublicationAuthorizationSHA256"],
+            hashlib.sha256(
+                (RESEARCH_ROOT / "publication-authorization.json").read_bytes()
+            ).hexdigest(),
         )
+        self.assertEqual(revision["baseApprovedChapterSHA256"], approved_hashes)
+        self.assertEqual(revision["candidateChapterSHA256"], actual_hashes)
+        self.assertEqual(
+            set(revision["changedChapters"]),
+            {
+                chapter
+                for chapter, approved_sha256 in approved_hashes.items()
+                if actual_hashes[chapter] != approved_sha256
+            },
+        )
+        self.assertEqual(revision["status"], "review-candidate")
+        self.assertFalse(revision["gates"]["manuscriptTextApproved"])
+        self.assertFalse(revision["gates"]["narrationAccepted"])
+        self.assertFalse(revision["gates"]["figuresAccepted"])
+        self.assertFalse(revision["gates"]["videoEditionAccepted"])
+        self.assertTrue(revision["privacyBoundary"]["privateSourceExcluded"])
+        self.assertTrue(revision["privacyBoundary"]["privateFactsExcluded"])
         self.assertTrue(
             authorization["publicationAuthorization"]["permissionToPublish"]
         )
@@ -548,18 +592,16 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(
             chapter_checkpoint["editorialReviewPath"], "research/editorial-review.md"
         )
-        self.assertEqual(
-            chapter_checkpoint["draftSHA256"],
-            hashlib.sha256(canonical_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            canonical_path, chapter_checkpoint["draftSHA256"]
         )
 
         chapter_two_path = PACKET_ROOT / "chapters/ch02.md"
         chapter_two_checkpoint = continuity["checkpoints"][1]
         self.assertEqual(chapter_two_checkpoint["chapter"], "ch02")
         self.assertEqual(chapter_two_checkpoint["wordCount"], 2977)
-        self.assertEqual(
-            chapter_two_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_two_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_two_path, chapter_two_checkpoint["draftSHA256"]
         )
         chapter_two_contexts = {
             item["section"]: item
@@ -579,9 +621,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_three_checkpoint = continuity["checkpoints"][2]
         self.assertEqual(chapter_three_checkpoint["chapter"], "ch03")
         self.assertEqual(chapter_three_checkpoint["wordCount"], 1929)
-        self.assertEqual(
-            chapter_three_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_three_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_three_path, chapter_three_checkpoint["draftSHA256"]
         )
         chapter_three_contexts = {
             item["section"]: item
@@ -601,9 +642,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_four_checkpoint = continuity["checkpoints"][3]
         self.assertEqual(chapter_four_checkpoint["chapter"], "ch04")
         self.assertEqual(chapter_four_checkpoint["wordCount"], 2427)
-        self.assertEqual(
-            chapter_four_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_four_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_four_path, chapter_four_checkpoint["draftSHA256"]
         )
         chapter_four_contexts = {
             item["section"]: item
@@ -624,9 +664,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_five_checkpoint = continuity["checkpoints"][4]
         self.assertEqual(chapter_five_checkpoint["chapter"], "ch05")
         self.assertEqual(chapter_five_checkpoint["wordCount"], 3031)
-        self.assertEqual(
-            chapter_five_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_five_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_five_path, chapter_five_checkpoint["draftSHA256"]
         )
         chapter_five_contexts = {
             item["section"]: item
@@ -659,9 +698,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_six_checkpoint = continuity["checkpoints"][5]
         self.assertEqual(chapter_six_checkpoint["chapter"], "ch06")
         self.assertEqual(chapter_six_checkpoint["wordCount"], 2355)
-        self.assertEqual(
-            chapter_six_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_six_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_six_path, chapter_six_checkpoint["draftSHA256"]
         )
         chapter_six_contexts = {
             item["section"]: item
@@ -686,9 +724,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_seven_checkpoint = continuity["checkpoints"][6]
         self.assertEqual(chapter_seven_checkpoint["chapter"], "ch07")
         self.assertEqual(chapter_seven_checkpoint["wordCount"], 2436)
-        self.assertEqual(
-            chapter_seven_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_seven_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_seven_path, chapter_seven_checkpoint["draftSHA256"]
         )
         chapter_seven_contexts = {
             item["section"]: item
@@ -713,9 +750,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_eight_checkpoint = continuity["checkpoints"][7]
         self.assertEqual(chapter_eight_checkpoint["chapter"], "ch08")
         self.assertEqual(chapter_eight_checkpoint["wordCount"], 2226)
-        self.assertEqual(
-            chapter_eight_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_eight_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_eight_path, chapter_eight_checkpoint["draftSHA256"]
         )
         chapter_eight_contexts = {
             item["section"]: item
@@ -741,9 +777,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_nine_checkpoint = continuity["checkpoints"][8]
         self.assertEqual(chapter_nine_checkpoint["chapter"], "ch09")
         self.assertEqual(chapter_nine_checkpoint["wordCount"], 2407)
-        self.assertEqual(
-            chapter_nine_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_nine_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_nine_path, chapter_nine_checkpoint["draftSHA256"]
         )
         chapter_nine_contexts = {
             item["section"]: item
@@ -772,9 +807,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_ten_checkpoint = continuity["checkpoints"][9]
         self.assertEqual(chapter_ten_checkpoint["chapter"], "ch10")
         self.assertEqual(chapter_ten_checkpoint["wordCount"], 2638)
-        self.assertEqual(
-            chapter_ten_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_ten_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_ten_path, chapter_ten_checkpoint["draftSHA256"]
         )
         chapter_ten_contexts = {
             item["section"]: item
@@ -804,9 +838,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_eleven_checkpoint = continuity["checkpoints"][10]
         self.assertEqual(chapter_eleven_checkpoint["chapter"], "ch11")
         self.assertEqual(chapter_eleven_checkpoint["wordCount"], 2617)
-        self.assertEqual(
-            chapter_eleven_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_eleven_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_eleven_path, chapter_eleven_checkpoint["draftSHA256"]
         )
         chapter_eleven_contexts = {
             item["section"]: item
@@ -836,9 +869,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_twelve_checkpoint = continuity["checkpoints"][11]
         self.assertEqual(chapter_twelve_checkpoint["chapter"], "ch12")
         self.assertEqual(chapter_twelve_checkpoint["wordCount"], 2825)
-        self.assertEqual(
-            chapter_twelve_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_twelve_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_twelve_path, chapter_twelve_checkpoint["draftSHA256"]
         )
         chapter_twelve_contexts = {
             item["section"]: item
@@ -874,9 +906,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         chapter_thirteen_checkpoint = continuity["checkpoints"][12]
         self.assertEqual(chapter_thirteen_checkpoint["chapter"], "ch13")
         self.assertEqual(chapter_thirteen_checkpoint["wordCount"], 2176)
-        self.assertEqual(
-            chapter_thirteen_checkpoint["draftSHA256"],
-            hashlib.sha256(chapter_thirteen_path.read_bytes()).hexdigest(),
+        self.assert_checkpoint_or_review_revision(
+            chapter_thirteen_path, chapter_thirteen_checkpoint["draftSHA256"]
         )
         chapter_thirteen_contexts = {
             item["section"]: item
@@ -934,7 +965,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             " ".join(conversation.split()),
         )
         self.assertIn("Inverness Packet Atlas", visuals)
-        self.assertIn("does not add the atlas to the 51-figure", visuals)
+        self.assertIn("does not add the atlas to the 54-figure", visuals)
 
     def test_inverness_atlas_visual_approval_binds_exact_prototype_set(self) -> None:
         receipt = json.loads(ATLAS_RECEIPT_PATH.read_text(encoding="utf-8"))
@@ -1000,7 +1031,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         )
         self.assertIn("Halifax Regional Municipality", comparison)
 
-    def test_visual_category_math_matches_the_proposed_fifty_one_row_manifest(
+    def test_visual_category_math_matches_the_proposed_fifty_four_row_manifest(
         self,
     ) -> None:
         visuals = (RESEARCH_ROOT / "visuals.md").read_text(encoding="utf-8")
@@ -1011,10 +1042,10 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         map_ids = set(range(13, 23)) | set(range(33, 38))
         editorial_ids = {1, 9}
         retrieval_ids = {38}
-        screenshot_ids = set(range(41, 52))
+        screenshot_ids = set(range(41, 55))
         diagram_ids = ids - map_ids - editorial_ids - retrieval_ids - screenshot_ids
 
-        self.assertEqual(ids, set(range(1, 52)))
+        self.assertEqual(ids, set(range(1, 55)))
         self.assertEqual(
             (
                 len(map_ids),
@@ -1023,7 +1054,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
                 len(retrieval_ids),
                 len(screenshot_ids),
             ),
-            (15, 22, 2, 1, 11),
+            (15, 22, 2, 1, 14),
         )
 
     def test_map_chapter_plan_and_screenshot_receipt_are_review_only(self) -> None:
@@ -1040,13 +1071,18 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertIn("The Map Is a Question Machine", plan)
         self.assertIn("one parcel, one toggle and one note", plan.lower())
         self.assertIn("not a verdict machine", plan.lower())
-        self.assertEqual(receipt["status"], "review-candidates")
+        self.assertEqual(receipt["status"], "paired-review-candidates")
         self.assertFalse(receipt["publicationBoundary"]["acceptedFinalFigures"])
         self.assertTrue(receipt["publicationBoundary"]["refreshBeforePublication"])
-        self.assertEqual(len(receipt["outputs"]), 12)
+        self.assertEqual(receipt["schemaVersion"], 3)
+        self.assertEqual(len(receipt["profiles"]), 2)
+        self.assertEqual(
+            {profile["name"]: len(profile["outputs"]) for profile in receipt["profiles"]},
+            {"landscape": 14, "mobile": 14},
+        )
         self.assertEqual(
             receipt["captureSource"]["sourceCommit"],
-            "d3114b5cfc907d85f8b2c1f015d5476719b53586",
+            "a7ba7da9ad5f8a5dcc1c67c79888bb76b6bae108",
         )
         self.assertEqual(
             {
@@ -1070,16 +1106,21 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         }
         self.assertEqual(mineral_claims, {"MIN-001", "MIN-002", "MIN-003", "MIN-004"})
 
-        for output in receipt["outputs"]:
-            with self.subTest(file=output["file"]):
-                path = PACKET_ROOT / output["file"]
-                self.assertTrue(path.is_file())
-                self.assertEqual(
-                    hashlib.sha256(path.read_bytes()).hexdigest(), output["sha256"]
-                )
-                data = path.read_bytes()[:24]
-                self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
-                self.assertEqual(struct.unpack(">II", data[16:24]), (2560, 1440))
+        expected_dimensions = {"landscape": (2560, 1440), "mobile": (390, 844)}
+        for profile in receipt["profiles"]:
+            for output in profile["outputs"]:
+                with self.subTest(profile=profile["name"], file=output["file"]):
+                    path = PACKET_ROOT / output["file"]
+                    self.assertTrue(path.is_file())
+                    self.assertEqual(
+                        hashlib.sha256(path.read_bytes()).hexdigest(), output["sha256"]
+                    )
+                    data = path.read_bytes()[:24]
+                    self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+                    self.assertEqual(
+                        struct.unpack(">II", data[16:24]),
+                        expected_dimensions[profile["name"]],
+                    )
 
     def test_public_listing_is_owner_free_and_complete(self) -> None:
         payload = json.loads(LISTING_PATH.read_text(encoding="utf-8"))
