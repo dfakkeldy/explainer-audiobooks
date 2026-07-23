@@ -2,10 +2,11 @@
 
 ## Beyond the Tax-Sale Packet
 
-**Status:** governed public EPUB published; the exact Pictou-fixed audiobook is
-authorized for `public-first-listen` publication while pronunciation and
-full-book human listening remain pending. No completed human listen, video
-edition, second-device proof, or accepted final figure set is claimed.
+**Status:** governed public EPUB published; a new private 54-figure audiobook
+candidate has completed governed narration and automated package checks.
+Pronunciation review (especially the two Touquoy occurrences), full-book human
+listening, figure acceptance, video production and publication of this revised
+edition remain separate pending gates.
 
 This packet develops a long, spoken-first educational book about Nova Scotia
 municipal tax sales: terminology, the statutory process, municipal variation,
@@ -97,8 +98,9 @@ publication approvals. Deep research,
 structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
 diagram candidates and three accepted-direction atlas prototypes exist. The
 actual Echo/video-stage atlas proof, atlas batch authorization, accepted final
-figures and full-audio human acceptance all remain pending. The exact
-Pictou-fixed M4B is separately authorized for public-first-listen publication.
+figures and full-audio human acceptance all remain pending. The exact earlier
+Pictou-fixed M4B is separately authorized for public-first-listen publication;
+that authorization does not transfer to the revised 54-figure candidate.
 The final-hash structure and blind sequential beginner reviews,
 bounded humanizer/tightening pass, rendered ear-pass diagnostics and governed
 text-only EPUB build are complete. The public reader package is under
@@ -149,6 +151,24 @@ integrity, full decode and acoustic scan pass.
 `research/audiobook-candidate-receipt.json` preserves those machine results
 while leaving replacement pronunciation and full-book human listening
 pending. The M4B and renderer work state remain outside the public repository.
+
+The revised 54-figure edition now also has a fresh private first-listen M4B:
+13 chapters, 15,170.090667 seconds (4:12:50.091), exact SHA-256
+`f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505`.
+It is bound to the current 54-figure EPUB at SHA-256
+`b2399f3850e98050fe58e913ba1bd8cfd1cc5a86331b4b3a4f884959f82d666d`.
+The selector-bound delivery chain, complete 248-decision pronunciation audit,
+735-anchor alignment sidecar, 13 ordered chapter markers, selected cover,
+archive integrity, full decode and acoustic scan pass. All five Pictou
+occurrences use the accepted long-o override. The audit also exposes two
+Touquoy occurrences produced by generic fallback; no authoritative
+pronunciation guide was found during the unattended pass, so those samples are
+explicit priority human checks rather than accepted pronunciations.
+`research/audiobook-54-figure-first-listen-receipt.json` preserves the exact
+machine evidence and keeps pronunciation, full listening, publication, figure,
+video and second-device gates pending. The new M4B and private renderer work
+state remain outside the public repository and have not been synced or
+published.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the

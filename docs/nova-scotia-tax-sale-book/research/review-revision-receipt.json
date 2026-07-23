@@ -52,6 +52,14 @@
     "privateCitationsExcluded": true,
     "statement": "A private due-diligence document informed only general editorial questions. No private parcel, person, land-record extract, screenshot, quotation, or source citation is included in this candidate."
   },
+  "narrationCandidate": {
+    "status": "private-first-listen-human-verdict-pending",
+    "receipt": "audiobook-54-figure-first-listen-receipt.json",
+    "sourceEpubSHA256": "b2399f3850e98050fe58e913ba1bd8cfd1cc5a86331b4b3a4f884959f82d666d",
+    "m4bSHA256": "f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505",
+    "automatedChecks": "pass",
+    "priorityHumanPronunciationCheck": "Touquoy"
+  },
   "gates": {
     "manuscriptTextApproved": false,
     "narrationAccepted": false,
