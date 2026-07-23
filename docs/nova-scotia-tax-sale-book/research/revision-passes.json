@@ -5,7 +5,7 @@
     "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
     "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
     "ch04.md": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
-    "ch05.md": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+    "ch05.md": "fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa",
     "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
     "ch07.md": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
     "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
@@ -38,6 +38,14 @@
           "evidence": "Property Online remains the governed source for the parcel register, NSPRD is expanded at first use, and the summary now preserves the treasurer as the certificate-registration actor.",
           "decision": "accepted",
           "reason": "The repairs align the beginner model with LAND-002, GIS-001, and LAW-007 without broadening any claim."
+        },
+        {
+          "id": "CT-03",
+          "location": "ch05.md, A Small Find, and a Larger Property Question",
+          "category": "new claim traceability",
+          "evidence": "MAP-008 preserves the author-attested anecdote and privacy boundary; MIN-001 through MIN-004 bind the Crown-ownership, surface-access, vesting-order, Touquoy and production statements to current law and official records.",
+          "decision": "accepted",
+          "reason": "Every new factual statement has a traceable source or is expressly labelled as the author's approximate firsthand recollection."
         }
       ]
     },
@@ -113,6 +121,14 @@
           "evidence": "The prose gate flags 'Here is the' and 'hold that' once each, but the first begins a real retrieval and the second describes lien priority.",
           "decision": "rejected",
           "reason": "Neither match is the generic reader management that the style family is designed to catch."
+        },
+        {
+          "id": "SR-04",
+          "location": "ch05.md, A Small Find, and a Larger Property Question",
+          "category": "local narration rhythm",
+          "evidence": "The passage alternates the short panning scene with plain statutory explanation, corrects the Touquoy production claim directly and returns to the established unknowns-and-handoff vocabulary without a slogan or chapter preview.",
+          "decision": "accepted",
+          "reason": "The bounded humanizer review found no local voice repair that would improve cadence without weakening precision."
         }
       ]
     },
@@ -138,10 +154,18 @@
           "evidence": "The blind sequential review recorded short dense or case-switch moments, and also recorded the exact following explanation or summary that restored the mental model in every instance.",
           "decision": "rejected",
           "reason": "The final-hash beginner verdict is pass, the moments preserve necessary legal or evidence distinctions, and the user approved these exact chapter bytes. No text repair is warranted."
+        },
+        {
+          "id": "EP-03",
+          "location": "ch05.md, A Small Find, and a Larger Property Question",
+          "category": "supplemental revision render",
+          "evidence": "The exact revised section rendered through Echo rv15 with am_michael as a 157.781333-second nonpackage sample. The sidecar passed with six monotonic anchors and three word-timed anchors, pronunciation coverage was complete with zero diagnostics, and no silence of at least three seconds below -45 dB was detected.",
+          "decision": "accepted",
+          "reason": "The automated audio checks found no rendering defect that requires a text repair. Dan's listening and pronunciation acceptance remain pending and no revised full audiobook is claimed."
         }
       ],
-      "renderer": "Echo rv15 with am_michael; audio-derived acoustic, sidecar and pronunciation inspection",
-      "listeningContext": "Full road-book render inspection; human full-audio listening remains pending",
+      "renderer": "Echo rv15 with am_michael; prior full-road-book render plus a supplemental exact-section revision render",
+      "listeningContext": "Automated acoustic, sidecar and pronunciation inspection; human listening to the full book and the revised-section sample remains pending",
       "stumbles": [],
       "lostThreadAt": [
         "ch01 The First Clock: recovered in the next paragraph",

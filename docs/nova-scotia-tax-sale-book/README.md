@@ -104,7 +104,7 @@ The governed nonpackage pilot rendered on 2026-07-20 at 14:27 with verified
 alignment and a clean pronunciation audit. Its exact SHA-256 is
 `c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`;
 Dan accepted that exact pilot for continued drafting with “continue” at
-2026-07-20T08:55:51-03:00. Canonical Chapters 1–13 now total 31,824 Markdown
+2026-07-20T08:55:51-03:00. Canonical Chapters 1–13 now total 32,189 Markdown
 words after the initial independent review and the bounded humanizer pass
 recorded in `research/editorial-review.md` and
 `research/humanizer-decisions.json`. Eight local style edits remove generic
@@ -112,14 +112,15 @@ chapter navigation, and three post-edit beginner-review repairs clarify the
 parcel-register record, expand NSPRD at first use and preserve the treasurer as
 the certificate-registration actor.
 Dan approved the exact thirteen-chapter EPUB manuscript text for public
-publication on 2026-07-21. The approval is hash-bound in
+publication on 2026-07-21 and requested the anonymous Chapter 5
+mineral-occurrence revision on 2026-07-22. The approval is hash-bound in
 research/publication-authorization.json; any chapter-byte change requires a new
 manuscript verdict. Dan selected Candidate 1, *The Packet Lifts*, as the paired
 EPUB/audiobook cover on 2026-07-21; `covers/cover-selection.json` binds the
 portrait, square and source-art hashes. The remaining figure, ear-pass, package,
 full-narration and video gates remain separate. The governed public EPUB embeds
 the selected portrait cover byte-for-byte and is verified at SHA-256
-`40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0`.
+`12a0822a8c89babc26b160f75d44128ea4056c1624707961dcd9c2061464b37a`.
 
 The earlier 3:57:37 ear-pass render remains diagnostic evidence rather than a
 promotable package. `research/audiobook-candidate-audit.md` records why a
@@ -154,8 +155,9 @@ usefully than a static owner-free atlas.
 This material is educational only. It is not legal, tax, investment, title,
 surveying, appraisal, access, environmental, insurance, planning, tenancy, or
 construction advice. Municipal lists and procedures change. The legal and
-event research was refreshed against official sources on 2026-07-19, and the
-Chapter 6–11 planning, access, environmental, title, occupancy, mobile-home,
+event research was refreshed against official sources on 2026-07-19, the
+Chapter 5 mineral-resource sources on 2026-07-22, and the Chapter 6–11
+planning, access, environmental, title, occupancy, mobile-home,
 auction-result, tax, eligibility, auction/tender, payment, failed-sale,
 certificate, redemption, and insurance sources on 2026-07-20; readers must
 consult the current statute, live municipal list, auction terms, and their own

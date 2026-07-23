@@ -5,7 +5,7 @@
     "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
     "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
     "ch04.md": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
-    "ch05.md": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+    "ch05.md": "fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa",
     "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
     "ch07.md": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
     "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
@@ -58,6 +58,14 @@
         "evidence": "Fresh cases require the listener to classify verified facts, unknowns, next authorities and consequences before answers are supplied, then return to the opening scene without ranking properties.",
         "decision": "accepted",
         "reason": "The ending resolves the book through transfer and every material forward promise lands at its intended stage."
+      },
+      {
+        "id": "STR-06",
+        "location": "ch05.md, A Small Find, and a Larger Property Question",
+        "category": "grounded application and legal boundary",
+        "evidence": "The anonymous panning example follows the existing geology-layer limits, then separates a recreational clue from mineral ownership, surface access, vesting orders and property value before returning to unknowns and handoff.",
+        "decision": "accepted",
+        "reason": "The addition deepens the existing question-machine concept without changing chapter order, adding a new core term or turning the case into legal or investment advice."
       }
     ]
   },
@@ -71,7 +79,7 @@
       {"afterChapter": "ch02.md", "plausibleMentalModel": "A notice row routes the event through lien number, AAN, PID, civic area, assessment, recovery amount and redemption marker, while the current municipality controls live status.", "confusions": ["Withdrawal has several possible causes and therefore a deliberately narrow public meaning."], "unstableTerms": ["recovery amount", "current", "withdrawn", "non-redeemable"], "lostAt": []},
       {"afterChapter": "ch03.md", "plausibleMentalModel": "A redeemable payment creates a certificate-holder middle state, while redemption and deed are separate endings with separate documents.", "confusions": ["Immediate deed describes redemption timing and can momentarily sound more automatic than it is."], "unstableTerms": ["immediate deed", "insurable", "necessary repairs", "non-diminishing use"], "lostAt": ["The first redemption-category list is dense; the evidence-ledger explanation restores the model."]},
       {"afterChapter": "ch04.md", "plausibleMentalModel": "A parcel biography is a dated source ledger that preserves unknowns and routes them to the proper source or professional.", "confusions": ["The four destinations for an unknown can overlap in practice."], "unstableTerms": ["verified", "professionally verifiable", "priceable uncertainty", "no-go uncertainty", "parcel register"], "lostAt": ["The court-order branch arrives abruptly; its risk-free warning restores orientation."]},
-      {"afterChapter": "ch05.md", "plausibleMentalModel": "Choose current or historical records, confirm the municipal source, establish an exact parcel, ask one source-sized context question, record unknowns and hand off.", "confusions": ["The transition from fictional Birch Point Road to the real PID demonstration briefly changes the active case."], "unstableTerms": ["current mode", "historical mode", "production receipt", "mapped intersection"], "lostAt": ["The real-PID road-and-water demonstration creates a short case-switch; the method remains clear."]},
+      {"afterChapter": "ch05.md", "plausibleMentalModel": "Choose current or historical records, confirm the municipal source, establish an exact parcel, ask one source-sized context question, and route both returned features and mineral-rights questions through explicit unknowns and handoff.", "confusions": ["The transition from fictional Birch Point Road to the real PID demonstration briefly changes the active case.", "A recorded occurrence can be recreationally interesting without establishing that mining or a vesting order will affect a particular parcel."], "unstableTerms": ["current mode", "historical mode", "production receipt", "mapped intersection", "vesting order"], "lostAt": ["The real-PID road-and-water demonstration creates a short case-switch; the method remains clear."]},
       {"afterChapter": "ch06.md", "plausibleMentalModel": "Visible approach, legal passage, physical access, frontage, zoning and approval are independent project gates.", "confusions": ["A registered passage right still requires survey and planning confirmation."], "unstableTerms": ["right-of-way", "road frontage", "permitted use", "buildable lot"], "lostAt": []},
       {"afterChapter": "ch07.md", "plausibleMentalModel": "Historical use, environmental, well, sewage, hazard and mine records illuminate different slices of physical uncertainty without replacing inspection.", "confusions": ["A well point can lie inside a polygon without being associated with the parcel."], "unstableTerms": ["contaminated site", "worst-case", "hazard map", "no feature shown"], "lostAt": ["The move from coastal scenarios to incomplete mine inventory requires a mental reset."]},
       {"afterChapter": "ch08.md", "plausibleMentalModel": "A tax deed changes title but does not automatically create vacant possession, erase every easement, grant entry, establish condition or merge a manufactured home with the land.", "confusions": ["The manufactured-home branch introduces land, personal-property and tenancy systems together."], "unstableTerms": ["fee simple", "encumbrance", "vacant possession", "affixed"], "lostAt": ["The manufactured-home scenario briefly feels like a new chapter before its asset-identity purpose becomes clear."]},
@@ -90,7 +98,8 @@
       {"id": "BB-06", "location": "ch10.md, The Finish Line Beyond the Hammer", "category": "payment terminology", "evidence": "Deposit has event-specific meanings and the chapter warns the listener to read the current terms rather than assume a fixed sum.", "decision": "rejected", "reason": "Replacing the municipality's operative term would reduce fidelity; the explicit warning is the safer teaching choice."},
       {"id": "BB-07", "location": "ch11.md, Closing the Ledger When the Property Is Redeemed", "category": "accounting density", "evidence": "The full municipal calculation and purchaser repayment overlap without being identical; the following evidence ledger supplies the spoken reset.", "decision": "rejected", "reason": "The distinction is legally important, passes sequential review and should not be simplified into an inaccurate equivalence."},
       {"id": "BB-08", "location": "ch12.md, The Money and the Challenge Take Different Roads", "category": "clock separation", "evidence": "The twenty-year surplus route and six-year deed-challenge period remain in separate files with different claimants and consequences.", "decision": "accepted", "reason": "Preserve the separate-file and separate-clock treatment."},
-      {"id": "BB-09", "location": "ch13.md, three fresh files and durable record", "category": "transfer", "evidence": "The synthesis demonstrates that a stop, an unresolved file and conditional readiness can all be completed research outcomes without ranking property.", "decision": "accepted", "reason": "Preserve as the final transfer exercise."}
+      {"id": "BB-09", "location": "ch13.md, three fresh files and durable record", "category": "transfer", "evidence": "The synthesis demonstrates that a stop, an unresolved file and conditional readiness can all be completed research outcomes without ranking property.", "decision": "accepted", "reason": "Preserve as the final transfer exercise."},
+      {"id": "BB-10", "location": "ch05.md, A Small Find, and a Larger Property Question", "category": "legal-risk calibration", "evidence": "The passage states the present statutory mechanism and one historical use, then explicitly says a nearby occurrence is neither a bonus nor an automatic rejection and does not predict a property outcome.", "decision": "accepted", "reason": "The source and limitation remain audible, the author's location stays private, and the paragraph lands in the existing unknowns-and-handoff framework."}
     ]
   }
 }

@@ -39,7 +39,7 @@ unranked.
 - Voice/tone: calm civic explainer; precise without sounding like a statute;
   never a bargain hunt or sales funnel.
 - Source confidence: deep, with perishable event and fee details dated.
-- Canonical manuscript: Chapters 1–13 now total 31,824 Markdown words after the
+- Canonical manuscript: Chapters 1–13 now total 32,189 Markdown words after the
   initial independent structure, blind beginner and claim-traceability review
   plus a bounded humanizer/tightening pass. `research/editorial-review.md`
   preserves the first-draft hashes, findings and lead-author decisions;

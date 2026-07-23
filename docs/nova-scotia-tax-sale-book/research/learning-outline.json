@@ -332,21 +332,27 @@
         },
         {
           "id": "ch05-s02",
-          "job": "Use road/water and geology/resource layers one question at a time, bound one historical result, then write the unknown and professional handoff.",
-          "argument": "A layer, returned intersection or historical outcome can narrow the next question only when its source, date, coverage, limitation, unknown and authoritative handoff travel with the observation.",
+          "job": "Use road/water and geology/resource layers one question at a time, distinguish a recreational mineral clue from a property-rights question, bound one historical result, then write the unknown and professional handoff.",
+          "argument": "A layer, returned intersection, mineral occurrence or historical outcome can narrow the next question only when its source, date, coverage, limitation, unknown and authoritative handoff travel with the observation.",
           "specificClaims": [
             "MAP-002",
             "MAP-004",
             "MAP-005",
             "MAP-006",
+            "MAP-008",
             "MAP-007",
+            "MIN-001",
+            "MIN-002",
+            "MIN-003",
+            "MIN-004",
             "LAND-004"
           ],
           "throughlineAdvance": "Convert attractive map pixels into traceable evidence classifications and next actions.",
-          "payoff": "The listener can use River Denys and one historical Halifax result to say what the app reports, what it does not establish and where the next question belongs.",
+          "payoff": "The listener can use River Denys, an anonymous panning example, the Touquoy vesting record and one historical Halifax result to say what a source reports, what it does not establish and where the next question belongs.",
           "landingBeat": "Notice, parcel, context, unknowns and handoff becomes the repeatable method.",
           "mustNotRepeat": [
             "Do not infer legal access from road linework.",
+            "Do not treat a mineral occurrence as property value, proof of mining or an automatic rejection.",
             "Do not infer a clean site from an empty result.",
             "Do not infer current value or future bidding from a historical outcome.",
             "Do not turn the live example into a recommendation."

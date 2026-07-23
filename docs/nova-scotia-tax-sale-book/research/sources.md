@@ -5,8 +5,9 @@ map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access,
 Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, Chapter 9
 auction-result/tax/eligibility, Chapter 10 auction/tender/payment, Chapter 11
 certificate/redemption/insurance, and Chapter 12 deed/surplus/contestability/
-post-deed sources were refreshed on 2026-07-20. Primary and official sources control;
-explanatory sources are labelled separately.
+post-deed sources were refreshed on 2026-07-20. The Chapter 5 mineral-rights
+and Touquoy sources were refreshed on 2026-07-22. Primary and official sources
+control; explanatory sources are labelled separately.
 
 ## Controlling law
 
@@ -86,6 +87,14 @@ explanatory sources are labelled separately.
 47. Province of Nova Scotia, NS Orthophotomap Database service at `https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer`.
 48. NS Marks The Spot source commit [`d3114b5c`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/d3114b5cfc907d85f8b2c1f015d5476719b53586/web), [production source receipt](https://kinnokilabs.com/apps/nsmarksthespot/map/source.json), and [live public map](https://kinnokilabs.com/apps/nsmarksthespot/map/), checked 2026-07-20. The build combines current CBRM/Inverness notice catalogues, verified historical outcomes, exact-PID and authoritative civic-address search, mapped civic points, Plus Codes, approximate mapped acreage, road/water context, and geology/resource layers with explicit limitations. Its bundled Province-data explanation, licence link and rendered attribution preserve the checked public-display boundary. These are screening and source-routing tools, not title, survey, access, occupancy, environmental, resource-value, valuation or forecast opinions.
 49. Nova Scotia, [Open Government Licence](https://support.novascotia.ca/services/open-data-portal-licence).
+
+## Mineral rights and the Touquoy example
+
+50. Nova Scotia Legislature, [Mineral Resources Act](https://nslegislature.ca/sites/default/files/legc/statutes/mineral%20resources.pdf), consolidated to 2026-04-09, especially ss. 5 and 25–27. Section 5 reserves mineral ownership to the Crown; ss. 25–26 govern private-land consent and surface-access applications; s. 27 permits a mineral lessee to seek a vesting order for land or an interest required for a mine or a connected or incidental purpose and deems the filed interest expropriated.
+51. Government of Nova Scotia, [Decision Allows Touqouy Gold Project to Move Ahead](https://news.novascotia.ca/en/2012/06/15/decision-allows-touqouy-gold-project-move-ahead), 2012-06-15. The Province reported vesting orders transferring fourteen parcels to DDV Gold after acquisition agreements could not be reached.
+52. Supreme Court of Canada, [Bulletin of Proceedings, 2014-02-28](https://decisions.scc-csc.ca/scc-csc/bulletins/en/4534/1/document.do), file 35540, *Forrest C. Higgins Jr. v. Attorney General of Nova Scotia et al.* The case summary records DDV's claim that it required part of Mr. Higgins's land, the ministerial vesting order, the dismissed Nova Scotia challenges and the refusal of leave to appeal.
+53. CBC, “Gold mine demands family tree farm property,” 2012-04-24, retrieved through the [Google News archive index](https://news.google.com/rss/articles/CBMinAFBVV95cUxQaGlMamhITmREUTFDQmlKQTZ4NVNPd3lTN2xSdWg2d1daNGdYR245RUpGU0xwYndDS2ZIblFaRDcwa3h2ZlRNR3J2Mi1GeWZJMkpzYy1PWWdnWHpBRi0xa05TMGJPaU5hRkhHZm9JTW54T1ZYNTJ1bkJNcGNFZXBPSlozWjRyNG5GSGNzczlwWHQ1ZmVXRmVuSlN1N08?oc=5). Used only for the contemporary tree-farm description; the official statute, Province decision and court record control the legal claims.
+54. Nova Scotia Department of Natural Resources, [Information Circular ME 84, *Nova Scotia Mineral Production, Exploration and Deposit Appraisal 2024*](https://novascotia.ca/natr/meb/data/pubs/ic/ic_me_084.pdf), pp. 9–10. The official summary says Touquoy production mining ended in early 2023, stockpiled ore processing continued until September 2023 and 2,903 ounces were recovered and sold through mill cleanup in 2024.
 
 ## Confidence
 

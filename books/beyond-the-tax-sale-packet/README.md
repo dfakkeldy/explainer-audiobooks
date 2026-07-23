@@ -20,30 +20,29 @@ lawyer, surveyor, planner, inspector, insurer, accountant or bidder.
 - Classification: public-safe
 - Permission to publish the audiobook: granted by Dan Fakkeldy on 2026-07-22
 - Exact manuscript text: reviewed and approved by Dan Fakkeldy
+- Chapter 5 mineral-occurrence revision: requested and approved by Dan Fakkeldy
 - Cover: **The Packet Lifts**, selected by Dan as Candidate 1
 - Chapters: 13
-- Canonical Markdown words: 31,824
+- Canonical Markdown words: 32,189
 - Interior figures: none in this text edition
 - Audiobook: chaptered `am_michael` edition included
 - Full-book human listening: pending
 - Video edition: not included
 
-The text edition has passed manuscript-hash, learning-design, prose,
-cover-pair, archive-integrity and embedded-cover checks. A controlled governed
-`am_michael` audiobook candidate has also passed selector-bound package,
-alignment, automated pronunciation, cover-identity, decode and acoustic checks
-without a text change. Dan explicitly authorized publishing that mechanically
-verified package on 2026-07-22 while keeping the full human listening verdict
-pending.
+The revised text edition has passed manuscript-hash, learning-design, prose,
+cover-pair, archive-integrity and embedded-cover checks. The included governed
+`am_michael` audiobook remains the earlier public-first-listen edition and does
+not narrate the approved Chapter 5 mineral-occurrence revision. A revised full
+audiobook, its alignment and full human listening remain separate and pending.
 
 This edition has passed package and audio checks. The creator's full listening review is still underway.
 
 ## Reader artifact hashes
 
 - Markdown SHA-256:
-  `ec714ed85fff84670b2c2082dcba8d56850128e8642efc556e2a1a53266fb740`
+  `a768bae0589e7f76e4aef1a36f433a57db7942659826ac6a2cd05a6f338dccf5`
 - EPUB SHA-256:
-  `40049b5e7bac13657d5b1417fc1dbac25f6c3d02587c3c484e2e49dc73003bd0`
+  `12a0822a8c89babc26b160f75d44128ea4056c1624707961dcd9c2061464b37a`
 - M4B SHA-256:
   `f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8`
 - Alignment SHA-256:
@@ -59,8 +58,9 @@ This edition has passed package and audio checks. The creator's full listening r
 
 The EPUB embeds the selected portrait cover byte-for-byte. The M4B embeds the
 selected square companion with normalized-pixel identity. The
-`public-first-listen` status does not claim a completed human listen; a later
-negative verdict supersedes this edition and requires controlled repair or
+`public-first-listen` status does not claim a completed human listen, and the
+M4B does not claim parity with the revised Chapter 5 text. A later negative
+listening verdict supersedes the audio edition and requires controlled repair or
 withdrawal.
 
 The material is educational only. It is not legal, tax, investment, title,

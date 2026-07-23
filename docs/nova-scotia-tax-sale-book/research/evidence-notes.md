@@ -294,6 +294,36 @@ consolidated to 2026-05-01.
 - Confidence: high for the checked layer catalogue; individual service coverage and availability are perishable.
 - Boundary: Visible points, nearby features, overlays and empty views do not establish reserves, mineral rights, contamination, safety, economic potential or absence. Each result must be routed to the named source and appropriate professional review.
 
+### MAP-008 — author's recreational panning example
+- Supported wording: Around 2015, Dan used a provincial mineral-occurrence record to choose a brook for recreational panning and found a little colour; the brook is intentionally unnamed.
+- Source: Dan Fakkeldy's firsthand account and 2026-07-22 editorial direction.
+- Confidence: firsthand recollection; the approximate year and colloquial “colour” are preserved rather than upgraded to a laboratory identification or commercial claim.
+- Boundary: The example demonstrates how a public record can direct a question. It does not identify a location, establish an economic deposit, grant access or permission, or support a property-value conclusion.
+
+### MIN-001 — Crown mineral ownership and private-land consent
+- Supported wording: Under the current Nova Scotia Mineral Resources Act, all minerals are reserved to and owned by the Crown. A mineral-right holder or prospector normally needs the owner's or occupier's consent for the private-land activities listed in s. 25 and may apply for surface-access rights under s. 26 if consent cannot be obtained.
+- Source: Nova Scotia Legislature, *Mineral Resources Act*, ss. 5, 25 and 26, consolidated to 2026-04-09.
+- Confidence: high for the current statutory text; application to a particular property requires current legal advice and the governing records.
+- Boundary: A mapped occurrence does not establish a mineral right, a pending access application, an entitlement to enter, or the outcome of a ministerial decision.
+
+### MIN-002 — mine-connected vesting orders
+- Supported wording: A mineral lessee unable to acquire land or an interest required for a mine or a purpose connected with or incidental to a mine may apply for a vesting order; once filed, the vested land or interest is deemed expropriated under the Expropriation Act.
+- Source: Nova Scotia Legislature, *Mineral Resources Act*, s. 27, consolidated to 2026-04-09.
+- Confidence: high for the current statutory text.
+- Boundary: The section establishes a legal mechanism, not that any mapped occurrence, tenure polygon or particular parcel will be subject to it.
+
+### MIN-003 — Touquoy vesting-order example
+- Supported wording: In 2012 the Province granted DDV Gold vesting orders transferring fourteen parcels for the proposed Touquoy mine after acquisition agreements could not be reached. Forrest Higgins challenged the order concerning part of his family's tree-farm property; the Supreme Court of Canada refused leave after the Nova Scotia courts dismissed his challenge.
+- Source: Government of Nova Scotia, “Decision Allows Touqouy Gold Project to Move Ahead,” 2012-06-15; Supreme Court of Canada Bulletin of Proceedings, 2014-02-28, file 35540; CBC, “Gold mine demands family tree farm property,” 2012-04-24.
+- Confidence: high for the vesting orders and litigation path; the tree-farm description is contemporary CBC reporting rather than a statutory finding.
+- Boundary: The case predates the current 2016 Act. It demonstrates that the vesting mechanism has been used, not how a future application would be decided.
+
+### MIN-004 — Touquoy production correction
+- Supported wording: Touquoy later produced gold; production mining concluded in early 2023, stockpiled ore was processed until September 2023, and the Province reported 2,903 ounces recovered and sold through mill cleanup in 2024.
+- Source: Nova Scotia Department of Natural Resources, Information Circular ME 84, *Nova Scotia Mineral Production, Exploration and Deposit Appraisal 2024*, pp. 9–10.
+- Confidence: high for the official production summary.
+- Boundary: Mine-wide production does not show that ore came from a particular surface parcel acquired through a vesting order.
+
 ### MAP-007 — verified historical outcome context
 - Supported wording: The checked build keeps verified historical tax-sale outcomes off by default, filters them by municipality, year and outcome, links result sheets to official notice/result sources, and labels a selected record as historical rather than currently available.
 - Source: NS Marks The Spot source commit `d3114b5c`; `web/src/data/historicalTaxSales.ts`, `web/src/data/historicalSourceLedger.json`, `web/src/App.tsx` and figures 49–50.

@@ -24,5 +24,12 @@
   },
   "reviewBoundary": "This receipt proves a complete render plus acoustic, alignment and pronunciation inspection. It does not claim that Dan completed a full-audio listen or accepted the final audiobook.",
   "humanFullAudioListening": "pending",
-  "textRepairRequired": false
+  "textRepairRequired": false,
+  "supplementalRevisionEarPass": {
+    "receiptPath": "research/ch05-revision-ear-pass.json",
+    "canonicalChapterSHA256": "fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa",
+    "audioSHA256": "8d5c3c072d0d0abd1c3c0f33e2de4fe138bab223164d9642a68bb1e0016aab47",
+    "status": "render-and-automated-audio-check-pass",
+    "humanListeningStatus": "pending"
+  }
 }

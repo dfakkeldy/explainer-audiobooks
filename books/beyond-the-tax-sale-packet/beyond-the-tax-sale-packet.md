@@ -4,7 +4,7 @@ _How Nova Scotia Municipal Auctions Really Work_
 
 by Dan Fakkeldy
 
-Roughly 31,676 words.
+Roughly 32,040 words.
 
 ---
 
@@ -473,6 +473,18 @@ The geology and resource screen follows the same rhythm. The checked map can dis
 The useful question is never “Is this mineral land?” Begin with the particular service. Does the current layer return a mapped occurrence or opening within the selected area or a defined screening distance? What does that dataset claim to represent? What date and coverage statement accompany it? Which provincial record can explain the feature?
 
 A visible occurrence does not establish a reserve, ownership of mineral rights, economic potential, contamination, or danger. An abandoned-mine-opening point does not by itself locate every underground working or describe current site condition. Mineral-tenure geometry does not tell a surface owner what can happen without the governing records and legal framework.
+
+A Small Find, and a Larger Property Question
+
+Around 2015, I used a provincial mineral-occurrence record to choose a brook for recreational gold panning. The record did not promise gold. It gave me a reason to look. I bought a pan, tried the brook, and found a little colour. It would never pay the bills, but it was a memorable demonstration of what a public geological record can do. I am leaving the brook unnamed because its location is not the lesson.
+
+On a property file, the same observation would not automatically belong in the benefits column. Gold nearby may be recreationally interesting while raising separate questions about mineral tenure, surface access, and future land use. The layer establishes a recorded occurrence at its mapped location. It does not establish who may explore, whether mining is economically possible, or what could happen on a particular surface parcel.
+
+Nova Scotia law makes that distinction concrete. The Crown owns the minerals. A mineral-right holder or prospector who cannot obtain the owner's or occupier's consent may apply to the Minister for surface-access rights. A mineral lessee who cannot acquire land or an interest needed for a mine—or for a purpose connected with or incidental to one—may apply for a vesting order. Once filed, the vested land or interest is deemed expropriated.
+
+The power is not merely theoretical. In 2012 the Province granted DDV Gold vesting orders for fourteen parcels needed for the proposed Touquoy mine after acquisition agreements could not be reached. The Supreme Court of Canada later refused leave in Forrest Higgins's challenge involving part of his family's tree farm. Touquoy did later produce gold, so “the mine found nothing” would be inaccurate. The narrower lesson is stronger: the Act can reach land needed for mine-connected purposes, not only the spot from which ore is taken.
+
+For a researcher, “gold nearby” is neither a bonus nor an automatic rejection. It opens questions: which occurrence was returned, what tenure exists, which surface rights may be involved, and what the current law permits. Those questions belong under unknowns and handoff. The map still does what the pan did years ago: it tells us where a worthwhile question begins.
 
 An empty view has an equally strict limit. It means the current query returned no displayed feature under the current settings and service response. It does not prove no feature exists, no historic activity occurred, the site is clean, or the service is complete. Loading, empty, and error are separate interface states because silence can otherwise be mistaken for a negative finding.
 
@@ -1260,7 +1272,7 @@ It is a notice connected to a parcel, a parcel placed in bounded context, unknow
 
 ## Source shelf
 
-Retrieved 2026-07-18 unless noted; core law, Inverness event, and provincial map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access, Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, Chapter 9 auction-result/tax/eligibility, Chapter 10 auction/tender/payment, Chapter 11 certificate/redemption/insurance, and Chapter 12 deed/surplus/contestability/ post-deed sources were refreshed on 2026-07-20. Primary and official sources control; explanatory sources are labelled separately.
+Retrieved 2026-07-18 unless noted; core law, Inverness event, and provincial map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access, Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, Chapter 9 auction-result/tax/eligibility, Chapter 10 auction/tender/payment, Chapter 11 certificate/redemption/insurance, and Chapter 12 deed/surplus/contestability/ post-deed sources were refreshed on 2026-07-20. The Chapter 5 mineral-rights and Touquoy sources were refreshed on 2026-07-22. Primary and official sources control; explanatory sources are labelled separately.
 
 Controlling law
 
@@ -1301,6 +1313,10 @@ Cross-municipality practice and results
 GIS rights and public implementation
 
 46. Province of Nova Scotia, [NSPRD ArcGIS map service](https://nsgiwa2.novascotia.ca/arcgis/rest/services/PLAN/PLAN_NSPRD_WM84/MapServer), which displays property boundaries and limited attribution. 47. Province of Nova Scotia, NS Orthophotomap Database service at `https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer`. 48. NS Marks The Spot source commit [`d3114b5c`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/d3114b5cfc907d85f8b2c1f015d5476719b53586/web), [production source receipt](https://kinnokilabs.com/apps/nsmarksthespot/map/source.json), and [live public map](https://kinnokilabs.com/apps/nsmarksthespot/map/), checked 2026-07-20. The build combines current CBRM/Inverness notice catalogues, verified historical outcomes, exact-PID and authoritative civic-address search, mapped civic points, Plus Codes, approximate mapped acreage, road/water context, and geology/resource layers with explicit limitations. Its bundled Province-data explanation, licence link and rendered attribution preserve the checked public-display boundary. These are screening and source-routing tools, not title, survey, access, occupancy, environmental, resource-value, valuation or forecast opinions. 49. Nova Scotia, [Open Government Licence](https://support.novascotia.ca/services/open-data-portal-licence).
+
+Mineral rights and the Touquoy example
+
+50. Nova Scotia Legislature, [Mineral Resources Act](https://nslegislature.ca/sites/default/files/legc/statutes/mineral%20resources.pdf), consolidated to 2026-04-09, especially ss. 5 and 25–27. Section 5 reserves mineral ownership to the Crown; ss. 25–26 govern private-land consent and surface-access applications; s. 27 permits a mineral lessee to seek a vesting order for land or an interest required for a mine or a connected or incidental purpose and deems the filed interest expropriated. 51. Government of Nova Scotia, [Decision Allows Touqouy Gold Project to Move Ahead](https://news.novascotia.ca/en/2012/06/15/decision-allows-touqouy-gold-project-move-ahead), 2012-06-15. The Province reported vesting orders transferring fourteen parcels to DDV Gold after acquisition agreements could not be reached. 52. Supreme Court of Canada, [Bulletin of Proceedings, 2014-02-28](https://decisions.scc-csc.ca/scc-csc/bulletins/en/4534/1/document.do), file 35540, *Forrest C. Higgins Jr. v. Attorney General of Nova Scotia et al.* The case summary records DDV's claim that it required part of Mr. Higgins's land, the ministerial vesting order, the dismissed Nova Scotia challenges and the refusal of leave to appeal. 53. CBC, “Gold mine demands family tree farm property,” 2012-04-24, retrieved through the [Google News archive index](https://news.google.com/rss/articles/CBMinAFBVV95cUxQaGlMamhITmREUTFDQmlKQTZ4NVNPd3lTN2xSdWg2d1daNGdYR245RUpGU0xwYndDS2ZIblFaRDcwa3h2ZlRNR3J2Mi1GeWZJMkpzYy1PWWdnWHpBRi0xa05TMGJPaU5hRkhHZm9JTW54T1ZYNTJ1bkJNcGNFZXBPSlozWjRyNG5GSGNzczlwWHQ1ZmVXRmVuSlN1N08?oc=5). Used only for the contemporary tree-farm description; the official statute, Province decision and court record control the legal claims. 54. Nova Scotia Department of Natural Resources, [Information Circular ME 84, *Nova Scotia Mineral Production, Exploration and Deposit Appraisal 2024*](https://novascotia.ca/natr/meb/data/pubs/ic/ic_me_084.pdf), pp. 9–10. The official summary says Touquoy production mining ended in early 2023, stockpiled ore processing continued until September 2023 and 2,903 ounces were recovered and sold through mill cleanup in 2024.
 
 Confidence
 

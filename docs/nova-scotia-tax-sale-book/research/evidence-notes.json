@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "claimPolicy": "traceable-only",
   "notesPath": "research/evidence-notes.md",
-  "notesSHA256": "e5015e1be40adeb519c5be495d75041c9540cf1c87dfa02fad367a77b70ada39",
+  "notesSHA256": "5d837e730a62fad8b63186fc01eb117d30f8908880d0f942f696d02be5c3c938",
   "claims": [
     {
       "id": "LAW-001",
@@ -467,6 +467,46 @@
       "locator": "web/src/layers/layerCatalog.ts; figure 48",
       "verificationStatus": "verified",
       "verificationNote": "Verified for the checked catalogue; resource layers are screening sources, not evidence of reserves, rights, contamination, safety, value or absence."
+    },
+    {
+      "id": "MAP-008",
+      "claim": "Around 2015, Dan used a provincial mineral-occurrence record to choose a brook for recreational panning and found a little colour; the brook is intentionally unnamed.",
+      "source": "Dan Fakkeldy's firsthand account and 2026-07-22 editorial direction",
+      "locator": "research/conversation-log.md, 2026-07-22",
+      "verificationStatus": "verified",
+      "verificationNote": "Author-attested recollection. The approximate year and colloquial colour are preserved without identifying the brook or asserting laboratory identification, commercial significance, access or value."
+    },
+    {
+      "id": "MIN-001",
+      "claim": "The current Mineral Resources Act reserves all minerals to the Crown and normally requires owner or occupier consent for the listed private-land activities, with a ministerial surface-access application available when consent cannot be obtained.",
+      "source": "Nova Scotia Legislature, Mineral Resources Act",
+      "locator": "ss. 5, 25 and 26; consolidation dated 2026-04-09",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the current official consolidation; a mapped occurrence does not establish a mineral right, access application, entitlement to enter or ministerial outcome."
+    },
+    {
+      "id": "MIN-002",
+      "claim": "A mineral lessee unable to acquire land or an interest required for a mine or a connected or incidental purpose may apply for a vesting order, and the filed interest is deemed expropriated.",
+      "source": "Nova Scotia Legislature, Mineral Resources Act",
+      "locator": "s. 27; consolidation dated 2026-04-09",
+      "verificationStatus": "verified",
+      "verificationNote": "Directly verified against the current official consolidation; the mechanism does not establish that any occurrence, tenure polygon or parcel will be subject to an application or order."
+    },
+    {
+      "id": "MIN-003",
+      "claim": "In 2012 the Province granted DDV Gold vesting orders for fourteen Touquoy parcels after acquisition agreements could not be reached, and the Supreme Court of Canada later refused leave in Forrest Higgins's challenge concerning part of his family's tree-farm property.",
+      "source": "Government of Nova Scotia; Supreme Court of Canada; CBC",
+      "locator": "Province news release 2012-06-15; SCC Bulletin 2014-02-28 file 35540; CBC 2012-04-24",
+      "verificationStatus": "verified",
+      "verificationNote": "Official sources verify the vesting orders and litigation path. Contemporary CBC reporting supplies the tree-farm description. The case predates the current 2016 Act and does not predict a future decision."
+    },
+    {
+      "id": "MIN-004",
+      "claim": "Touquoy later produced gold; production mining ended in early 2023, stockpiled ore processing continued until September 2023, and 2,903 ounces were recovered and sold through mill cleanup in 2024.",
+      "source": "Nova Scotia Department of Natural Resources, Information Circular ME 84",
+      "locator": "Nova Scotia Mineral Production, Exploration and Deposit Appraisal 2024, pp. 9-10",
+      "verificationStatus": "verified",
+      "verificationNote": "Verified against the official 2024 production summary; mine-wide production does not establish that ore came from a particular parcel acquired by vesting order."
     },
     {
       "id": "MAP-007",

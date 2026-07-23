@@ -60,14 +60,14 @@
     "hard_banned_matches": [],
     "schema_version": 1,
     "status": "pass",
-    "total_words": 30958
+    "total_words": 31314
   },
   "chapter_sha256": {
     "ch01.md": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
     "ch02.md": "7d0d6921f30f68ad58760f8175192f1a160f3ccb69da93bf1f3a897fcf7d5f64",
     "ch03.md": "77c7f6190ad0b71fda38fa716f2c64e0aaf70472d2e1930b9b6a3c327a8c7b5b",
     "ch04.md": "c82874825d4328bf8a044325f0b57deef03a285a08824088de4a4073678727c5",
-    "ch05.md": "f181aac38b4ab9921387eac674d5068d98aea609327ddf80c79eae32071e45e0",
+    "ch05.md": "fe24ce3757101672c040f370d0a3c3feef23451b1412c6a2f669e0e45596bcaa",
     "ch06.md": "145c3bfccfb49df2fe01909a7f1d0e0cef54c20fa2d75ce3976edb80a4b43ed8",
     "ch07.md": "16eb73a280ae8c64bca021dcaba7496ee890c48b25e3d35993f8325dbb55a25d",
     "ch08.md": "d7f957b648666055a2292052243c5012157ebcd2bdcba24936bbce7de2590939",
@@ -144,6 +144,12 @@
         "original": "Maya registers and preserves the certificate.",
         "proposed": "Maya preserves the registered certificate.",
         "reason": "Keeps the treasurer as the registration actor established by the statute and the chapter opening."
+      },
+      {
+        "location": "ch05.md, A Small Find, and a Larger Property Question",
+        "original": "A proposed anonymous panning anecdote and a general concern about mining-related land powers.",
+        "proposed": "A 365-word source-bounded passage that keeps the brook unnamed, separates recreational interest from property conclusions, states the current statutory mechanisms, records the Touquoy example and corrects the claim that the mine produced no gold.",
+        "reason": "The local passage sounds natural aloud, preserves Dan's firsthand account without exposing the location, and turns the anecdote into the chapter's existing unknowns-and-handoff method rather than a warning slogan."
       }
     ],
     "after_style_counts": {
@@ -190,9 +196,9 @@
         "reason": "Rejected because the lists contain distinct identifiers, stage questions, evidence states, tax branches, or legal files and therefore support retrieval rather than false symmetry."
       }
     ],
-    "reviewed_at": "2026-07-21",
+    "reviewed_at": "2026-07-22",
     "reviewer": "frontier-lead-author",
-    "scope": "Canonical Chapters 1 through 13; local tightening, de-listification, and sentence-rhythm review followed by narrow post-edit structure and beginner-review repairs.",
+    "scope": "Canonical Chapters 1 through 13; the prior whole-manuscript tightening and the 2026-07-22 Chapter 5 mineral-rights revision received a bounded local rhythm, privacy and claim-boundary review.",
     "skill_version": "declaudification-v1"
   },
   "schema_version": 1,

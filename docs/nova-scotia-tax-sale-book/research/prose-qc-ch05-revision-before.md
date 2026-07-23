@@ -22,26 +22,26 @@
 
 ## Repeated phrases
 
-- **3×**: “two recovery amounts differ between the”
 - **3×**: “recovery amounts differ between the summary”
+- **3×**: “two recovery amounts differ between the”
+- **3×**: “taxes were already more than six”
 - **3×**: “were already more than six years”
 - **3×**: “more than six years in arrears”
 - **3×**: “already more than six years in”
-- **3×**: “taxes were already more than six”
 - **3×**: “no mapped road or trail intersection”
-- **2×**: “sheets lien six appears in the”
-- **2×**: “sheet in the downloaded packet two”
-- **2×**: “detailed sheet in the downloaded packet”
 - **2×**: “contains forty-five lien entries the detailed”
-- **2×**: “entries the detailed portion contains forty-four”
-- **2×**: “forty-four property sheets lien six appears”
-- **2×**: “contains forty-four property sheets lien six”
-- **2×**: “property sheets lien six appears in”
-- **2×**: “portion contains forty-four property sheets lien”
-- **2×**: “the detailed portion contains forty-four property”
-- **2×**: “forty-five lien entries the detailed portion”
+- **2×**: “detailed sheet in the downloaded packet”
 - **2×**: “differ between the summary and their”
 - **2×**: “lien six appears in the summary”
+- **2×**: “the detailed portion contains forty-four property”
+- **2×**: “sheet in the downloaded packet two”
+- **2×**: “portion contains forty-four property sheets lien”
+- **2×**: “contains forty-four property sheets lien six”
+- **2×**: “sheets lien six appears in the”
+- **2×**: “detailed portion contains forty-four property sheets”
+- **2×**: “lien entries the detailed portion contains”
+- **2×**: “property sheets lien six appears in”
+- **2×**: “forty-five lien entries the detailed portion”
 
 ## Similar paragraphs
 
