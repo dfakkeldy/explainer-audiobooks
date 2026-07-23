@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify a sanitized, explicitly authorized public-first-listen package."""
+"""Verify a sanitized, explicitly authorized public audiobook package."""
 
 from __future__ import annotations
 
@@ -16,6 +16,14 @@ DISCLOSURE = (
     "This edition has passed package and audio checks. The creator's full "
     "listening review is still underway."
 )
+GOVERNED_FINAL_DISCLOSURE = (
+    "This edition has passed package and audio checks. The creator completed "
+    "the full listening review and approved this edition for publication."
+)
+_PUBLICATION_DISCLOSURES = {
+    ("public-first-listen", "pending"): DISCLOSURE,
+    ("governed-final", "accepted"): GOVERNED_FINAL_DISCLOSURE,
+}
 
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -100,19 +108,22 @@ def _verify_receipt_fields(receipt: dict[str, object]) -> str:
     _require(receipt.get("schemaVersion") == 1, "schemaVersion must be 1")
     slug = receipt.get("slug")
     _require(isinstance(slug, str) and _SLUG.fullmatch(slug) is not None, "slug is invalid")
-    _require(
-        receipt.get("publicationStatus") == "public-first-listen",
-        "publicationStatus must be public-first-listen",
+    publication_state = (
+        receipt.get("publicationStatus"),
+        receipt.get("humanListeningStatus"),
     )
     _require(
-        receipt.get("humanListeningStatus") == "pending",
-        "humanListeningStatus must be pending",
+        publication_state in _PUBLICATION_DISCLOSURES,
+        "publicationStatus and humanListeningStatus must form an approved state",
     )
     _require(receipt.get("classification") == "public-safe", "classification must be public-safe")
     _require(receipt.get("permissionToPublish") is True, "permissionToPublish must be true")
     permission_date = receipt.get("permissionGrantedAt")
     _require(isinstance(permission_date, str) and permission_date, "permissionGrantedAt is required")
-    _require(receipt.get("disclosure") == DISCLOSURE, "disclosure must match the approved text")
+    _require(
+        receipt.get("disclosure") == _PUBLICATION_DISCLOSURES[publication_state],
+        "disclosure must match the approved text",
+    )
     _require(isinstance(receipt.get("sourceArtIncluded"), bool), "sourceArtIncluded must be boolean")
     return slug
 
@@ -183,13 +194,20 @@ def _verify_source_art(book_dir: Path, receipt: dict[str, object]) -> None:
         _require(not declared_art.exists() and not source_candidates, "source art is present despite sourceArtIncluded false")
 
 
-def _verify_public_surface(book_dir: Path) -> None:
+def _verify_public_surface(
+    book_dir: Path, receipt: dict[str, object]
+) -> None:
     readme = book_dir / "README.md"
     try:
         readme_text = readme.read_text(encoding="utf-8")
     except (OSError, UnicodeError) as error:
         raise ValueError("README is missing or unreadable") from error
-    _require(DISCLOSURE in readme_text, "README must include the approved disclosure")
+    disclosure = receipt["disclosure"]
+    assert isinstance(disclosure, str)
+    _require(
+        disclosure in readme_text,
+        "README must include the approved disclosure",
+    )
     for path in book_dir.rglob("*"):
         relative = path.relative_to(book_dir)
         parts = relative.parts
@@ -208,7 +226,7 @@ def verify_public_package(book_dir: Path) -> None:
     assert isinstance(slug, str)
     _verify_media_and_alignment(book_dir, slug)
     _verify_source_art(book_dir, receipt)
-    _verify_public_surface(book_dir)
+    _verify_public_surface(book_dir, receipt)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -218,9 +236,9 @@ def main(argv: list[str] | None = None) -> int:
     try:
         verify_public_package(args.book_directory)
     except ValueError as error:
-        print(f"public first-listen verification failed: {error}", file=sys.stderr)
+        print(f"public audiobook verification failed: {error}", file=sys.stderr)
         return 1
-    print("public first-listen verification passed")
+    print("public audiobook verification passed")
     return 0
 
 

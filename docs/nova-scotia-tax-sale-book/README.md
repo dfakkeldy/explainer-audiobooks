@@ -2,11 +2,11 @@
 
 ## Beyond the Tax-Sale Packet
 
-**Status:** governed public EPUB published; a new private 54-figure audiobook
-candidate has completed governed narration and automated package checks.
-Pronunciation review (especially the two Touquoy occurrences), full-book human
-listening, figure acceptance, video production and publication of this revised
-edition remain separate pending gates.
+**Status:** the governed-final 54-figure EPUB and 4:12:50 audiobook have passed
+package checks, completed Dan's full listening review and received explicit
+publication authorization. The two Touquoy passages were accepted in context,
+but their canonical pronunciation remains unverified. Portrait/landscape video
+publication and second-device proof remain separate.
 
 This packet develops a long, spoken-first educational book about Nova Scotia
 municipal tax sales: terminology, the statutory process, municipal variation,
@@ -165,10 +165,13 @@ Touquoy occurrences produced by generic fallback; no authoritative
 pronunciation guide was found during the unattended pass, so those samples are
 explicit priority human checks rather than accepted pronunciations.
 `research/audiobook-54-figure-first-listen-receipt.json` preserves the exact
-machine evidence and keeps pronunciation, full listening, publication, figure,
-video and second-device gates pending. The new M4B and private renderer work
-state remain outside the public repository and have not been synced or
-published.
+machine evidence. Dan then reported “I listened, sounds good” and explicitly
+authorized publication on the tax-sale page and in the Listening Room.
+`research/audiobook-54-figure-publication-receipt.json` binds that verdict and
+authorization to the exact M4B. The public package now carries the matching
+54-figure EPUB, M4B and alignment. Private renderer work state remains outside
+the repository. The rendered Touquoy passages are accepted for this edition,
+but the receipt does not claim that their pronunciation is canonical.
 
 The three accepted-direction atlas prototypes remain development evidence, but
 the remaining 42-card batch is paused. Review should first decide whether the

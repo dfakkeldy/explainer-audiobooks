@@ -15,38 +15,42 @@ lawyer, surveyor, planner, inspector, insurer, accountant or bidder.
 
 ## Edition and publication
 
-- Edition: `public-first-listen-2026-07-22`
-- Publication status: `public-first-listen`
+- Edition: `governed-final-54-figure-2026-07-23`
+- Publication status: `governed-final`
 - Classification: public-safe
-- Permission to publish the audiobook: granted by Dan Fakkeldy on 2026-07-22
+- Permission to publish the audiobook: granted by Dan Fakkeldy on 2026-07-23
 - Exact manuscript text: reviewed and approved by Dan Fakkeldy
 - Chapter 5 mineral-occurrence revision: requested and approved by Dan Fakkeldy
 - Cover: **The Packet Lifts**, selected by Dan as Candidate 1
 - Chapters: 13
-- Canonical Markdown words: 32,189
-- Interior figures: none in this text edition
-- Audiobook: chaptered `am_michael` edition included
-- Full-book human listening: pending
+- Narrated words: 32,983
+- Interior figures: 54
+- Audiobook: 4:12:50 chaptered `am_michael` edition included
+- Full-book human listening: accepted by Dan Fakkeldy
 - Video edition: not included
 
-The revised text edition has passed manuscript-hash, learning-design, prose,
-cover-pair, archive-integrity and embedded-cover checks. The included governed
-`am_michael` audiobook remains the earlier public-first-listen edition and does
-not narrate the approved Chapter 5 mineral-occurrence revision. A revised full
-audiobook, its alignment and full human listening remain separate and pending.
+The revised illustrated edition has passed manuscript-hash, learning-design,
+prose, cover-pair, archive-integrity, embedded-cover, alignment, full-decode and
+acoustic checks. Its governed `am_michael` audiobook narrates the same current
+54-figure EPUB text and includes the approved Chapter 5 mineral-occurrence
+revision.
 
-This edition has passed package and audio checks. The creator's full listening review is still underway.
+This edition has passed package and audio checks. The creator completed the full listening review and approved this edition for publication.
+
+The complete listening verdict accepted the rendered Touquoy passage in
+context. It does not establish a canonical pronunciation for the name; Dan
+explicitly said he did not know how Touquoy should be pronounced.
 
 ## Reader artifact hashes
 
 - Markdown SHA-256:
-  `a768bae0589e7f76e4aef1a36f433a57db7942659826ac6a2cd05a6f338dccf5`
+  `6a636ec20a11d54dbf1d84e354bb8d2df178637e7a8e34bf0883662481efb670`
 - EPUB SHA-256:
-  `12a0822a8c89babc26b160f75d44128ea4056c1624707961dcd9c2061464b37a`
+  `b2399f3850e98050fe58e913ba1bd8cfd1cc5a86331b4b3a4f884959f82d666d`
 - M4B SHA-256:
-  `f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8`
+  `f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505`
 - Alignment SHA-256:
-  `3ae38b4d81b0eaad4e04a59bd6ed67a4176526ec859a3e900950d6102406df77`
+  `c5c8b5ed7fd8fc2f1595edadb292d9356be51790f758656bffeaad0352665dcc`
 - Portrait cover SHA-256:
   `fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6`
 - Square companion cover SHA-256:
@@ -57,11 +61,11 @@ This edition has passed package and audio checks. The creator's full listening r
 ## Verification boundary
 
 The EPUB embeds the selected portrait cover byte-for-byte. The M4B embeds the
-selected square companion with normalized-pixel identity. The
-`public-first-listen` status does not claim a completed human listen, and the
-M4B does not claim parity with the revised Chapter 5 text. A later negative
-listening verdict supersedes the audio edition and requires controlled repair or
-withdrawal.
+selected square companion with normalized-pixel identity. The M4B and alignment
+match the current narrated EPUB text. The `governed-final` status records the
+completed human listen and publication authorization; it does not convert map
+screening evidence into proof of access, title, condition, value, permission or
+buildability.
 
 The material is educational only. It is not legal, tax, investment, title,
 surveying, appraisal, access, environmental, insurance, planning, tenancy or
@@ -75,6 +79,7 @@ professionals for a live property decision.
 - `beyond-the-tax-sale-packet.m4b` — governed chaptered audiobook
 - `beyond-the-tax-sale-packet.alignment.json` — portable Listening Room sidecar
 - `beyond-the-tax-sale-packet.md` — companion manuscript
+- `images/` — 54 public-safe teaching and map-workflow figures
 - `cover.png` — selected EPUB portrait cover
 - `m4b-cover.png` — selected square audiobook cover
 - cover specifications, receipts, thumbnails and `cover-selection.json` —

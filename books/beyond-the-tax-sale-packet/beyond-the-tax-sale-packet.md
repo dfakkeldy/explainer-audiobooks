@@ -4,13 +4,19 @@ _How Nova Scotia Municipal Auctions Really Work_
 
 by Dan Fakkeldy
 
-Roughly 32,040 words.
+Roughly 32,983 words.
 
 ---
 
 ## Chapter 1 — The Last Scene First
 
 Imagine a fictionalized August auction room in Port Hood shortly before a sale begins. The place comes from the Inverness notice; the room details are a composite, not event instructions. A municipal treasurer has a list. Registered bidders wait for a parcel to be called. Somewhere outside the room are owners, lenders, heirs, neighbours, and perhaps occupants whose lives do not fit neatly into the row that is about to be called.
+
+<!-- visual-figure-start:figure-01 -->
+
+![Editorial illustration of a quiet Cape Breton community hall on an auction morning, with folders and bidder cards visible through the entrance.](images/figure-01-auction-morning.png)
+
+<!-- visual-figure-end:figure-01 -->
 
 The auction is the visible part. It is also the last scene in a much longer story.
 
@@ -68,6 +74,12 @@ That further document is our second term: the **notice of intent**. It is a form
 
 Only after that does the sale become broadly visible. A sale or tender must receive at least thirty consecutive days of qualifying public notice, either through newspaper publication that meets the statute or by posting on the municipal website. The advertisement may identify the property briefly and direct the reader to the treasurer for the full description.
 
+<!-- visual-figure-start:figure-03 -->
+
+![Two horizontal timelines meet at auction day: arrears, notices and advertisement before it; certificate, possible redemption and deed after it.](images/figure-03-two-clocks.png)
+
+<!-- visual-figure-end:figure-03 -->
+
 Imagine that a municipal website posts this fictional line: “Harbour Road, parcel identifier ending four-two-one, taxes and expenses owing.” Is that line trying to persuade you that Harbour Road is desirable?
 
 No. Its job is to identify the property in a collection process and tell the public where to seek the fuller record. It is notice, not marketing. That distinction carries forward into the map. A marker or parcel outline derived from an official notice helps you find the event and the apparent parcel. It does not turn the municipality into the property's seller in the ordinary real estate sense, and it does not turn the notice into a condition report.
@@ -75,6 +87,12 @@ No. Its job is to identify the property in a collection process and tell the pub
 The process can end in more than one kind of event. The statutory default is a public auction. With council's consent, the treasurer may call for tenders instead, and council may define an acceptable minimum where the property may not recover all taxes, interest, and expenses. Dated municipal examples show the variation: Inverness and Richmond have used open auctions; Pictou has used a sealed tender; Annapolis has moved unsold auction properties into tender treatment; and Chester says it will not hold a 2026 sale.
 
 The common legal frame does not create one province-wide event calendar or one set of bidding instructions. It tells you why a sale can occur. The current municipal notice tells you whether this sale is occurring, in what form, and under which local instructions.
+
+<!-- visual-figure-start:figure-02 -->
+
+![Map of Nova Scotia highlighting Inverness, CBRM, Richmond, Pictou, Annapolis, Kings and Chester with symbols for auction, tender or no current sale.](images/figure-02-nova-scotia-municipal-methods.png)
+
+<!-- visual-figure-end:figure-02 -->
 
 Halifax requires one more piece of discipline. It has a parallel tax-sale framework in the Halifax Regional Municipality Charter rather than the tax-sale division of the Municipal Government Act. The broad sequence is recognizably similar, but the correct authority is different. Halifax's administrative rules also make the hidden work in the file unusually visible by listing possible sale-expense categories: notice, title search, survey, certificate and deed preparation, registration, closing, and redemption administration. Those categories help us see what a process can involve. They are not a price list for Inverness, Pictou, or any other municipality.
 
@@ -96,6 +114,12 @@ The Inverness packet gives each property a compact row before it gives the reade
 
 Return to fictional Harbour Road. Its row might contain a lien number, an assessed-owner field, an assessment account number, a parcel identification number, a location, and separate land and building entries. The page may also show a recovery amount and whether a redemption period applies. A reader can take in the row in a second and feel that the property has been described.
 
+<!-- visual-figure-start:figure-04 -->
+
+![Annotated fictional tax-sale packet page pointing to lien number, AAN, PID, recovery amount, assessment, redemption marker, map and legal-description areas.](images/figure-04-packet-anatomy.png)
+
+<!-- visual-figure-end:figure-04 -->
+
 The row has done a different job. It has supplied the handles needed to begin research.
 
 Start with the lien number. This is the municipality's label for the item in this sale. It helps the treasurer call the right entry, helps a bidder follow an amended list, and helps everyone refer to the same row. It is local to the event. Lien six in an August packet is not a permanent identity for the land, and a lien number from Inverness tells you nothing about how Halifax or Pictou labels its own material.
@@ -113,6 +137,12 @@ The second identifier is the **Parcel Identification Number**, or **PID**. It id
 The word *parcel* deserves restraint. A parcel is a unit in the land-record system. A shape drawn for that PID is useful for orientation and record lookup. The shape is not automatically a survey opinion about the location of every boundary on the ground. The PID also does not certify access, permitted use, physical condition, or freedom from competing interests.
 
 AAN and PID can be remembered as two catalogue keys. One leads toward the assessment account; the other leads toward the mapped parcel and related land records. The comparison ends there. Land records do more than describe an object sitting on a shelf, and legal interests cannot be reduced to a library entry. The value of the analogy is simply that choosing the wrong key opens the wrong catalogue.
+
+<!-- visual-figure-start:figure-05 -->
+
+![Seven labelled record cards form a ladder from tax-sale lien to legal description, with the unsupported conclusions crossed out beside each card.](images/figure-05-identifiers-not-promises.png)
+
+<!-- visual-figure-end:figure-05 -->
 
 Suppose Harbour Road's summary row carries one AAN and one PID. That pairing is evidence that the municipality associated a particular assessment account and parcel with the sale entry it published. It is not proof that every building, driveway, fence, utility line, or apparent yard inside the reader's mental picture belongs to that parcel. Each of those questions needs its own source.
 
@@ -133,6 +163,12 @@ This book keeps Property Online behind a firm boundary. Subscription screens, pl
 Now compare the summary schedule with the detailed portion of the real August 2026 packet. The schedule contains forty-five lien entries. The detailed portion contains forty-four property sheets. Lien six appears in the summary without a corresponding detailed sheet in the downloaded packet. Two entries also carry amounts that differ between the summary and their detail pages.
 
 The correct response begins with identification. Preserve both versions. Name the lien number, AAN, PID, page, and retrieval date available in each source. Do not merge the rows by eye and do not discard the awkward version. The municipality owns the live sale process and can answer which information controls.
+
+<!-- visual-figure-start:figure-06 -->
+
+![Six source boxes feed a comparison table; mismatched amount, missing detail page and differing result counts are highlighted in amber.](images/figure-06-reconcile-the-packet.png)
+
+<!-- visual-figure-end:figure-06 -->
 
 For Harbour Road, the research file can now contain a simple source table:
 
@@ -224,6 +260,12 @@ The notice's redemption marker now opens into a mechanism. For most tax-sale pro
 
 Harbour Road is in the six-month category. The certificate holder has paid, but the owner and other qualifying interest holders still have a live statutory route back to the property. The certificate holder therefore occupies a middle state: more responsibility than a prospective bidder, less finality than a deeded owner.
 
+<!-- visual-figure-start:figure-07 -->
+
+![Timeline from auction to certificate, insurance and record keeping, possible redemption, and tax deed if no redemption occurs.](images/figure-07-redeemable-route.png)
+
+<!-- visual-figure-end:figure-07 -->
+
 The statutes give that middle state practical content. A certificate holder may protect the land and may use it without diminishing its value. The holder may collect rent. The holder must avoid injuring the property, must not cut trees, and must insure buildings that are insurable.
 
 Each power arrives with a boundary. Protection can support work needed to keep an insurable building from deteriorating. It does not create a general licence to renovate for a preferred future use. Non-diminishing use does not erase planning law, tenancy, occupancy, safety, or the continuing redemption right. Rent collection does not answer who occupies the premises or how lawful communication and accounting must occur in a real case.
@@ -278,6 +320,12 @@ Fee simple describes a form of ownership. It does not report the physical condit
 
 Immediate deed is therefore a description of timing within the redemption system. It means the normal six-month redemption period is absent for the older-arrears category. “Immediate” does not promise that every practical and legal question can be resolved on sale day.
 
+<!-- visual-figure-start:figure-08 -->
+
+![Short route from auction to deed beside four unresolved branches labelled possession, access, title and intended use.](images/figure-08-nonredeemable-route.png)
+
+<!-- visual-figure-end:figure-08 -->
+
 The document sequence helps keep the distinction stable. A leading bid is an auction event. Completed payment leads to the purchaser's statutory position. A registered certificate governs the redeemable middle period. Full redemption ends that position through repayment and discharge. Expiry without redemption, or the older-arrears exception, permits the deed route. The registered tax deed begins a different set of ownership, possession, title, planning, insurance, and physical-property questions.
 
 Consider two fictional parcels called at the same auction. Harbour Road is marked redeemable. Quarry Lane is in the older-arrears category. Both purchasers pay in full.
@@ -302,9 +350,21 @@ The Inverness packet does more work than a typical auction advertisement. For ea
 
 The useful first move is an inventory. Which facts came from the municipal packet? Which source did the municipality name? Which details describe the auction event, which describe an assessment account, and which purport to describe the parcel? The inventory credits the municipality and prevents later research from being mistaken for original discovery.
 
+<!-- visual-figure-start:figure-11 -->
+
+![Two-column stack comparing municipal packet contents with reconciliation, planning, terrain, environmental screening, uncertainty labels and professional handoffs.](images/figure-11-beyond-the-packet-delta.png)
+
+<!-- visual-figure-end:figure-11 -->
+
 Take a fictional composite entry on Birch Point Road. Its packet row supplies a lien number, AAN, PID, civic location, assessment fields, recovery amount, and redemption marker. The detailed page adds mapped orientation and descriptive material. Each field already has a job. The biography gives the collection a history.
 
 The first page in the research file is a source ledger. It might say that the event status and recovery amount came from the municipality's dated notice. The assessment fields came through the account information reproduced in that packet. The parcel identifier points toward provincial parcel and registry systems. The mapped image is orientation. The legal description is text that requires land-record interpretation. Each line records a source, a retrieval date, and a limitation.
+
+<!-- visual-figure-start:figure-09 -->
+
+![Overhead editorial illustration of a desk with a municipal packet, map layers, statute, source log and three folders marked known, unresolved and professional.](images/figure-09-evidence-desk.png)
+
+<!-- visual-figure-end:figure-09 -->
 
 That ledger matters when the records disagree. Inverness's August packet has a summary lien with no matching detailed sheet, and two recovery amounts differ between the summary and detail portions. A clean-looking research report could hide those conflicts by choosing one number. A parcel biography preserves both records, identifies their dates and locations, and routes the current-event question back to the municipality.
 
@@ -317,6 +377,10 @@ An authorized land-record researcher can use Property Online to connect that PID
 Property Online can be searched by PID, AAN, owner or address and contains ownership, parcel-mapping and registry information. In a lawyer's title review, the **parcel register** is the parcel-specific registry record within that governed land-record material. It can move the file beyond the assessed-owner label on an auction notice and identify documents or registered interests that require interpretation.
 
 It is not a self-executing conclusion. A document number, interest entry, or name in a register does not tell an untrained reader how the interest operates, whether another instrument changes it, or what the tax-sale statutes do to it. The register creates a more precise set of questions. It does not turn the researcher into the lawyer who answers them.
+
+Three records should stay separate in the file. The search or parcel-register view is a dated snapshot. The source instrument, release, agreement, or order supplies the underlying terms. The legal effect of that material—including what the tax-deed provisions do or do not change—requires the governing law and property-specific interpretation. The appearance of a mortgage, judgment, easement, or other interest proves neither its present amount nor its release, priority, or treatment after sale.
+
+Record the retrieval date and refresh the land-record search near the decision point. If a recent registration, pending document, court order, or conflicting entry could matter, ask the land-registration office or reviewing lawyer what the current search does and does not capture. A fresh result can change the question without answering it by itself.
 
 The same discipline applies to the **legal description**. A civic address helps people find a place. A legal description identifies land through the language used in the conveyancing record. It may refer to bearings, distances, adjoining lands, plans, lots, roads, shorelines, or older descriptions. The description's job is not to paint an easy picture for a driver. Its job is to state what the instrument describes.
 
@@ -334,11 +398,23 @@ The municipal title work does not become a purchaser's title opinion merely beca
 
 For Birch Point Road, the source ledger can now carry four distinct entries. The municipal notice establishes the dated auction record. The parcel register routes registered interests to legal review. The legal description supplies the recorded land description. Public parcel and aerial services provide attributed screening views. None is labelled “the truth” while the others become decoration.
 
+<!-- visual-figure-start:figure-10 -->
+
+![Stacked source cards rise from imagery and screening clues to municipal records, registry evidence and governing law, with different question icons beside them.](images/figure-10-source-authority-ladder.png)
+
+<!-- visual-figure-end:figure-10 -->
+
 The researcher then writes observations in deliberately bounded language:
 
 - The municipal packet associates this exact PID with this dated auction entry. - The current provincial parcel service returns mapped geometry for the PID. - The aerial service shows visible features within and near that reported geometry on its captured imagery. - The land record contains a legal description and instrument references that require professional interpretation.
 
 The verbs do useful work. “Associates,” “returns,” “shows,” and “contains” report what a source did. They do not silently become “owns,” “bounds,” “permits,” or “guarantees.”
+
+<!-- visual-figure-start:figure-12 -->
+
+![Five colour-coded evidence cards progress from verified record to unresolved no-go, each with a one-sentence example.](images/figure-12-five-evidence-labels.png)
+
+<!-- visual-figure-end:figure-12 -->
 
 Now the legal question can become specific. Instead of asking a lawyer, “Is this property okay?” the file can ask which registered interests affect the parcel, how the legal description and referenced plan should be read, what the tax deed would do to those interests, and what cannot be resolved before sale. A surveyor can receive the mapped-boundary and description question without being asked to interpret the tax-sale statute. Each professional sees the source material and the uncertainty that belongs to that profession.
 
@@ -394,13 +470,25 @@ Start With the Record Family
 
 NS Marks The Spot can place a tax-sale record, parcel outline, civic point, road, water feature, and geology symbol in one screen. That is its power and its main risk. The eye combines nearby marks faster than the mind checks their sources. A current notice, an old result, a graphical boundary, and a coloured overlay can begin to feel like one coherent property story even though they were created by different authorities for different purposes at different times.
 
+<!-- visual-figure-start:figure-41 -->
+
+![Production map with current and historical modes, current defaults and the available public layers visible.](images/figure-41-map-layer-overview.png)
+
+<!-- visual-figure-end:figure-41 -->
+
 The map works best when it slows that combination down.
 
-Begin before the parcel is visible. Choose the record family. In the production build checked on July 20, 2026, the current-sale catalogue contained dated municipal notice entries for the Cape Breton Regional Municipality, or CBRM, July 21 event and the Inverness August 11 event. That is a dated catalogue snapshot, not a claim that either event remains live when this passage is heard. The historical catalogue contains verified outcomes from completed events and is kept off by default. A current notice asks what a municipality presently says it intends to sell. A historical outcome reports what a source recorded after an earlier event. Those are not two filters over one timeless collection. They are different kinds of evidence.
+Begin before the parcel is visible. Choose the record family. In the production build checked on July 22, 2026, the current-sale catalogue showed the Inverness August 11 event with 40 advertised records, 5 marked withdrawn, and 40 active PIDs. That is a dated catalogue snapshot, not a claim that the event or every entry remains live when this passage is heard. The historical catalogue is kept off by default. It contains dated results from completed events and can also hold a recent event whose outcome remains explicitly unknown while official results are pending. A current notice asks what a municipality presently says it intends to sell. A historical record reports what the checked sources did or did not yet establish after an earlier event. Those are not two filters over one timeless collection. They are different kinds of evidence.
 
 The distinction protects a road listener from a simple but serious error. A parcel in historical mode is not currently available because its marker appears on the same basemap as a current parcel. An opening amount or winning amount from an older event does not migrate into a present valuation. A current entry does not remain live because the app still displays its dated snapshot.
 
 Choose current mode and Inverness. The app exposes the event date, municipal source, snapshot language, parcel list, and the notice's published redemption category. The direct source link is the most important control on that screen. It returns the researcher to the municipality that owns the event record.
+
+<!-- visual-figure-start:figure-43 -->
+
+![Inverness August 11 view showing 40 advertised records, 5 withdrawn records, 40 active PIDs, redemption filters and the direct official source.](images/figure-43-current-parcel-browser.png)
+
+<!-- visual-figure-end:figure-43 -->
 
 The app is a research index. The municipality's current notice or direct confirmation controls whether the sale is live, a parcel remains listed, the event has been postponed, or a term has changed. A copied PDF, screenshot, browser tab, or map catalogue can become stale. The link is not a footnote for later. It is part of the operating sequence.
 
@@ -408,17 +496,45 @@ Suppose the fictional Birch Point Road entry appears in the Inverness list. The 
 
 The same rule governs the production receipt. The book's inspectable production record preserves the exact map build, capture date and interface checks used for its figures. In narration, the durable point is simpler: the receipt establishes which dated interface state produced the captured evidence. It does not guarantee that the site, municipal pages or provincial services will remain unchanged or available later.
 
+<!-- visual-figure-start:figure-42 -->
+
+![Province-data notice in landscape and mobile layer-source metadata identify approximate boundaries, dated services and the licence boundary.](images/figure-42-province-data-licence.png)
+
+<!-- visual-figure-end:figure-42 -->
+
 Provenance makes change detectable. It does not make change stop.
 
 After current status comes parcel identity. If the notice supplies an exact PID, search that PID. The result should select the parcel returned for that identifier and open its bounded evidence sheet. The sheet can report the selected PID, approximate area from mapped geometry, current notice association, mapped civic points, Plus Codes, and service-derived context. Every field keeps its own job.
 
 The approximate mapped area is a calculation from the current parcel geometry. It is useful for orientation and comparison to other records. It is not a survey area, a deeded acreage guarantee, or proof that the polygon represents every interest involved in the sale. The word “mapped” should travel with the number.
 
+The sheet may now also report a mapped-building count and a dated PVSC assessment account. In the checked demonstration for PID `50292390`, the building query returned two Nova Scotia Topographic Database point or polygon features intersecting the mapped parcel. That count does not establish how many structures currently exist, whether any are occupied, their condition or use, or whether they have permits. A returned zero would mean that the checked query found no mapped feature; it would not prove an empty parcel.
+
+<!-- visual-figure-start:figure-52 -->
+
+![Parcel inspector showing two mapped building features, PVSC AAN `00616672`, 2026 assessed and taxable values of $35,000, and the attached limitations.](images/figure-52-buildings-assessment.png)
+
+<!-- visual-figure-end:figure-52 -->
+
+The same demonstration matched PVSC Assessment Account Number `00616672` and displayed 2026 assessed and taxable values of $35,000. The sheet states the valuation and physical-state dates behind that assessment and links the source. The amount is not today's sale price, a current appraisal, a repair estimate, or a bid ceiling. The demonstration parcel is not presented as a current tax-sale listing. It is used because the two fields make their separate evidence limits visible in one bounded inspector.
+
 Sometimes the research begins with a civic address instead of a PID. The checked map searches the provincial civic-address service. It uses the returned authoritative **civic point** and opens the parcel polygon that contains that point. It does not choose the nearest parcel to a guessed coordinate or fabricate an address between known points.
+
+<!-- visual-figure-start:figure-44 -->
+
+![Exact civic-address result and selected parcel shown together, with authoritative-result language visible.](images/figure-44-civic-address-search.png)
+
+<!-- visual-figure-end:figure-44 -->
 
 Containment is a precise interface operation: this returned civic point falls inside this returned parcel polygon. Its legal meaning remains narrow. The operation does not prove who owns or occupies the parcel, whether the point is the mailing address for every interest, whether a building sits at the point, whether the public can enter, or whether there is legal access from the road.
 
 The distinction matters when the picture feels obvious. A civic point may sit beside a visible roof. The parcel polygon may touch a road symbol. The app can report both facts faithfully and still have no authority to infer occupancy or right-of-way. Containment finds the parcel to investigate. It does not finish the investigation.
+
+<!-- visual-figure-start:figure-45 -->
+
+![Selected parcel with authoritative civic result, Plus Code, mapped context and explicit evidence limits.](images/figure-45-current-parcel-evidence.png)
+
+<!-- visual-figure-end:figure-45 -->
 
 The sheet may also provide a **Plus Code**. A Plus Code encodes a location so it can be shared or recovered without relying on a conventional street address. It can help a research team discuss the same mapped point, especially in rural areas where address language is awkward or absent.
 
@@ -431,6 +547,12 @@ Now imagine an interruption. The route ends, the phone is locked, and the file i
 Only after those answers are recovered should imagery or context layers return. The order prevents a memorable shape from becoming the source of identity.
 
 The graphical parcel boundary and aerial image are the next temptation. Together they can make the parcel feel physically known. The line appears exact. The imagery supplies texture, buildings, vegetation, water, and roads. Yet both are dated services, and the parcel line remains graphical boundary information rather than a survey.
+
+<!-- visual-figure-start:figure-46 -->
+
+![Selected civic parcel on NS Aerial with graphical property-boundary linework and source attribution.](images/figure-46-aerial-and-property-boundaries.png)
+
+<!-- visual-figure-end:figure-46 -->
 
 The correct reading is source-specific. The current NSPRD graphical parcel service returned this polygon for the selected PID. The captured aerial service showed these visible features at its imagery date. The Province attribution and licence link remain on the public view. The combination supports questions about apparent relationships. It does not locate a legal boundary on the ground, certify current condition, or authorize entry.
 
@@ -454,6 +576,12 @@ The checked production capture for PID `50308311` provides a useful road-and- wa
 
 Transportation context is visible nearby. The current service query reports no mapped road or trail intersection with the selected parcel geometry. The water query returns River Denys features intersecting that geometry.
 
+<!-- visual-figure-start:figure-47 -->
+
+![Southside River Denys parcel sheet showing current notice facts, River Denys intersections and no mapped road/trail intersection.](images/figure-47-roads-water-context.png)
+
+<!-- visual-figure-end:figure-47 -->
+
 That returned relationship is a **mapped intersection**. The current service geometry for a named feature crosses or overlaps the current parcel polygon according to the query. The result is stronger than saying a coloured line looks close on the screen. It is narrower than saying the real-world feature crosses the legal parcel exactly as shown.
 
 For the road result, “no mapped intersection” does not mean no access. A right- of-way may exist outside the road dataset. A visible route may be private, unmapped, misaligned, or legally irrelevant. The parcel geometry itself is not a survey. The result routes the file toward title, plan, survey, and municipal road questions.
@@ -462,6 +590,16 @@ Visible transportation nearby does not fill the gap. Nearness answers a spatial 
 
 The River Denys intersections need equal restraint. The result does not by itself identify a wetland, establish flood risk, locate a surveyed watercourse boundary, determine a setback, or report current ground condition. It says that the checked water-service geometry intersects the checked parcel geometry. The source and limitation determine the next question.
 
+Flood hazard evidence needs the same coverage discipline. The inspector can separate published river-study layers from current, 2050, and 2100 coastal scenarios. A one-percent or five-percent annual-exceedance probability describes the event mapped by a particular study, not a universal flood probability for every point in the PID. The coastal years are sea-level scenarios, not extra probabilities.
+
+<!-- visual-figure-start:figure-53 -->
+
+![Flood evidence panel reports outside the four river-study extents and no current, 2050 or 2100 coastal pixel intersection, with the no-hazard caveat visible.](images/figure-53-flood-hazard-evidence.png)
+
+<!-- visual-figure-end:figure-53 -->
+
+For PID `50292390`, the checked screen reported that the parcel lay outside the geographic extents of the four published river-study layers. It also returned no intersecting pixels in the three coastal scenarios. Neither result proves no flood hazard. Outside study coverage means the river question was not assessed, and an empty raster intersection remains an approximate screen rather than a survey, elevation certificate, insurance finding, or site-specific analysis.
+
 A strong note for this screen can be spoken in six parts:
 
 > Source: current provincial road and water services in the checked production > build. Date: July 20, 2026 capture. Observation: the service returned River > Denys water intersections and no mapped road or trail intersection for the > selected polygon; transportation remained visible nearby. Limitation: both > source geometry and parcel geometry are screening data. Unknown: legal access, > ground conditions, water constraints, and current service completeness. Next > authority: land records and a lawyer for access; survey and current municipal > or environmental sources for the physical and regulatory questions.
@@ -469,6 +607,12 @@ A strong note for this screen can be spoken in six parts:
 Source, date, observation, limitation, unknown, and handoff travel together. If the note loses its limitation, the result becomes too strong. If it loses the observation, it becomes a generic disclaimer. If it loses the unknown and handoff, it creates caution without progress.
 
 The geology and resource screen follows the same rhythm. The checked map can display bedrock geology, mineral occurrences, mineral tenure, and abandoned mine openings. Those layers are useful because rural land can have a history or subsurface context that is not visible in an aerial image.
+
+<!-- visual-figure-start:figure-48 -->
+
+![Selected parcel with geology and resource controls active and map symbols visible.](images/figure-48-geology-resources.png)
+
+<!-- visual-figure-end:figure-48 -->
 
 The useful question is never “Is this mineral land?” Begin with the particular service. Does the current layer return a mapped occurrence or opening within the selected area or a defined screening distance? What does that dataset claim to represent? What date and coverage statement accompany it? Which provincial record can explain the feature?
 
@@ -490,11 +634,31 @@ An empty view has an equally strict limit. It means the current query returned n
 
 The handoff changes with the result. A named provincial geology record may go to a geoscience source or qualified professional. A tenure question may require the authoritative registry and legal interpretation. A mine-opening or possible site-condition question may require current records, lawful inspection, and an environmental or engineering professional. The map supplies the address of the question, not the answer expected from the professional.
 
-Historical mode tests a different kind of restraint. Switch away from current notices and open the verified historical catalogue. The interface can filter by municipality, year, and recorded outcome. It labels historical records and links the selected result to official notice and result sources.
+Historical mode tests a different kind of restraint. Switch away from current notices and open the dated historical catalogue. The interface can filter by municipality, year, and recorded outcome. It labels historical records and links the selected record to the official notice and, when one exists, the official result source.
+
+<!-- visual-figure-start:figure-49 -->
+
+![Historical mode showing 154 records, 161 exact matched PIDs, municipality, year and outcome filters, and explicit outcome-unknown language.](images/figure-49-historical-outcomes-overview.png)
+
+<!-- visual-figure-end:figure-49 -->
 
 One captured Halifax example uses PID `00542589` from the March 8, 2022 event. The sheet displays the recorded opening amount and winning amount, with derived difference or ratio fields. Those figures answer a bounded historical question: what did the checked official records report for that PID at that event?
 
+<!-- visual-figure-start:figure-50 -->
+
+![Halifax March 8, 2022 result sheet with official notice/result links, difference/ratio fields and historical disclaimer.](images/figure-50-historical-outcome-sheet.png)
+
+<!-- visual-figure-end:figure-50 -->
+
 They do not answer what the parcel is worth now. The result is not a comparable sale model. It does not predict competition at another auction, establish a discount, or supply a bidding ratio. Tax-sale outcomes occur inside their own legal, physical, market, information, and participation conditions. The direct official sources remain attached so the record can be audited rather than remembered as a floating number.
+
+A newer Cape Breton Regional Municipality, or CBRM, record demonstrates the opposite case. PID `15234636` appears in the July 21, 2026 historical event with the minimum bid and notice fields, but the winning-bid field says “Awaiting official results.” The event page says results will be posted after payment is confirmed. The record therefore claims no sale outcome, no purchaser, and no inference about present ownership or parcel status. Moving a dated notice into historical mode after its event date does not manufacture a result that the municipality has not published.
+
+<!-- visual-figure-start:figure-54 -->
+
+![CBRM July 21, 2026 record marked Outcome pending, with minimum bid, Awaiting official results, official links and dated-notice-only limitation.](images/figure-54-cbrm-outcome-unknown.png)
+
+<!-- visual-figure-end:figure-54 -->
 
 Historical context can still teach. A catalogue of results can show that advertised properties may be removed, that opening and winning amounts can differ, and that outcomes vary. The lesson is about process and evidence, not a shortcut from past ratios to present decisions.
 
@@ -505,6 +669,12 @@ The full map method can now fit into five durable words: **notice, parcel, conte
 Notice means choose the record family, municipality, event, date, and direct official source. Parcel means establish the exact PID or authoritative civic- point containment and keep mapped geometry bounded. Context means ask one source-sized question through one layer or service. Unknowns means write what the result cannot establish and distinguish empty from error. Handoff means name the next record, authority, or qualified professional.
 
 The method does not end with a score. Consider a combined fictional research state for Birch Point Road. The current municipal notice is confirmed. The exact PID returns mapped geometry. A civic point and Plus Code supply orientation. The road query creates an access question. A water result creates a source-and- condition question. A resource overlay creates a records question. The screen has become more useful while the number of explicit unknowns has increased.
+
+<!-- visual-figure-start:figure-51 -->
+
+![Soapstone Mine Road parcel sheet, civic results, Plus Codes, road/water observations and geology/resource layers together.](images/figure-51-combined-parcel-research.png)
+
+<!-- visual-figure-end:figure-51 -->
 
 That increase is success. An investigative tool earns trust by showing where knowledge ends, not by making uncertainty disappear behind a polished parcel sheet.
 
@@ -524,6 +694,12 @@ The Route You Can See
 
 The fictional Maple Ridge sliver looks easy from a kitchen table. Its long, narrow shape lies just behind two roadside lots. A pale track leaves the public road, crosses one of those lots, and seems to continue into the sliver. The auction recovery amount is modest. The aerial image gives the route a beginning, a middle, and an apparent destination.
 
+<!-- visual-figure-start:figure-13 -->
+
+![Wide map locating fictional Parcel A among communities, public roads and water, with scale and north arrow.](images/figure-13-case-a-orientation.png)
+
+<!-- visual-figure-end:figure-13 -->
+
 That image can carry a researcher farther than the evidence does.
 
 Chapter 5 left one map result deliberately unresolved: transportation may be visible nearby even when the checked service reports no mapped road or trail intersection with the selected parcel geometry. The correct note does not turn that empty result into “landlocked,” and it does not turn a nearby line into “accessible.” It records the source, date, result, limitation, unknown, and next authority.
@@ -540,7 +716,19 @@ A **right-of-way** is a right of passage over land. In a parcel file, the phrase
 
 The visible track is like a door. Evidence of a sufficient right-of-way or public-road relationship is the key that may authorize passage. The analogy is useful because a door can be obvious while authority to open it is absent. Its limit is equally important: a real right-of-way is not a universal key. Its scope and obligations come from law and the particular records, not from the appearance of a path.
 
+<!-- visual-figure-start:figure-15 -->
+
+![Terrain map showing Parcel A, a nearby public road, a dashed visible track, steep contours and a question mark where legal access would need proof.](images/figure-15-case-a-access.png)
+
+<!-- visual-figure-end:figure-15 -->
+
 Maple Ridge's municipal sale notice does not supply that key. The notice identifies the sale entry and routes the researcher toward the exact parcel. The public map supplies orientation and a bounded picture. A tax deed may later change the purchaser's registered interest according to the governing process, but it does not invent a missing route across a neighbour's land. The deed branch from Chapter 3 therefore cannot cure this problem by anticipation.
+
+<!-- visual-figure-start:figure-14 -->
+
+![Parcel A highlighted with three fictional record identifiers and a prominent not-a-survey warning.](images/figure-14-case-a-identity.png)
+
+<!-- visual-figure-end:figure-14 -->
 
 Suppose the authorized record search finds an old plan showing the pale track. That is useful. It is still a question, not yet an answer. Was the line surveyed as a boundary, drawn as an existing road, proposed as a route, or tied to a registered interest? Does the current parcel benefit? Is the description clear enough to locate? Has later work changed the physical route? The plan, related instruments, current survey evidence, and legal interpretation must be reconciled rather than ranked by which picture looks most convincing.
 
@@ -565,6 +753,12 @@ The Use the Parcel Must Support
 Assume the access research improves. A lawyer finds a registered passage right that appears to benefit Maple Ridge. A surveyor can relate its description to the ground. The fictional bidder wants a small year-round house.
 
 The parcel has crossed one threshold. It has not crossed the others.
+
+<!-- visual-figure-start:figure-16 -->
+
+![Map of fictional Parcel A with zoning colour, frontage dimension, well and septic question icons, and a planner-confirmation callout.](images/figure-16-case-a-planning.png)
+
+<!-- visual-figure-end:figure-16 -->
 
 The next conversation begins with the intended use, not with a request for a general opinion about whether the land is “good.” A planner cannot test a vague hope. The useful question names the exact PID, proposed use, available access evidence, and the specific confirmation needed before a bid.
 
@@ -616,6 +810,12 @@ Three Records Beneath One Yard
 
 The fictional Breakwater Lane parcel faces a sheltered Nova Scotia cove. A low wooden building sits back from the road. Faded lettering on an old photograph suggests that it once served as a small engine-repair workshop. A more recent roadside image shows new siding and grass where a fuel tank may once have stood. The map supplies an exact parcel for research, a coastal setting, and a few resource layers.
 
+<!-- visual-figure-start:figure-17 -->
+
+![Aerial-style map of Parcel A with wet-ground, coastal, geology and mine-opening screening layers and an unresolved-evidence legend.](images/figure-17-case-a-screening.png)
+
+<!-- visual-figure-end:figure-17 -->
+
 It cannot smell heating oil in soil, test water, locate a buried pipe, or tell whether an old system still works.
 
 The exterior clues are still useful. The former workshop raises questions about fuel, solvents, waste handling, fill, and prior spills. A pipe or concrete pad visible from a public place may sharpen one of those questions. The date and source of the image matter. The observation should remain literal: a feature is visible, or a historical record describes a use. “Contamination” is not an exterior observation.
@@ -640,6 +840,12 @@ The map point is not the well. Its position may be based on the location informa
 
 Breakwater Lane returns one well point near the graphical parcel. The address resembles an older address associated with the workshop, but the location is estimated and the parcel has since been reconfigured. The log describes depth and a reported yield. A weak file says, “The property has a well.” A bounded file says:
 
+<!-- visual-figure-start:figure-19 -->
+
+![Parcel B outline contains a building footprint and a separate manufactured-home question card tied to different fictional records.](images/figure-19-case-b-identity.png)
+
+<!-- visual-figure-end:figure-19 -->
+
 > The provincial database returned one estimated well-log point near the > selected parcel under the recorded search. The log contains drilling and > construction information. The current well location, parcel association, > ownership, physical condition, yield, water quality, and serviceability remain > unverified.
 
 The distinction survives even if the point falls inside the current graphical parcel. Containment compares two mapped objects. It does not cure uncertainty in the source coordinates or prove that the physical feature remains where the log suggests.
@@ -654,11 +860,23 @@ The correct note is narrower:
 
 Three records now sit beneath one yard. The contaminated-site search returns no parcel-specific entry. The well database returns an estimated point and a detailed old log. The sewage search returns no old file in a system with a known retention limit. “No,” “yes,” and “no” would flatten those results into misleading symmetry.
 
+<!-- visual-figure-start:figure-18 -->
+
+![Map locating fictional Parcel B in a serviced community with a building footprint and nearby streets.](images/figure-18-case-b-orientation.png)
+
+<!-- visual-figure-end:figure-18 -->
+
 The stronger summary classifies them:
 
 - The former-use history is a positive clue that expands environmental inquiry. - The registry search is a bounded negative result with reporting and search limits. - The well log is a positive record with uncertain parcel association, geolocation, and present-condition limits. - The sewage search is a negative result whose retention boundary is central to its meaning.
 
 None of this authorizes a visit. A municipal tax-sale listing does not grant entry, and an exterior research file cannot be converted into a private-site inspection. If sufficient lawful investigation cannot occur before bidding, the remaining physical uncertainty belongs in the decision as uncertainty. It does not disappear because the auction date arrives.
+
+<!-- visual-figure-start:figure-20 -->
+
+![Street-and-terrain map of Parcel B showing a driveway, drainage path and public observation points outside the parcel boundary.](images/figure-20-case-b-access.png)
+
+<!-- visual-figure-end:figure-20 -->
 
 The records have still improved the file. They have separated a former-use clue from a contamination conclusion, a drilling record from a current water system, and a missing sewage file from a compliance finding. Each source now produces a specific next question.
 
@@ -669,6 +887,8 @@ A Future Shore and an Incomplete Past
 Breakwater Lane's biography now moves in two directions. The coastal record looks forward into changing water levels and storms. The geological record looks backward into mining activity that may be poorly documented or imprecisely located. Both can change the next question without delivering a property verdict.
 
 A **hazard map** is a screening map that depicts a defined hazard or scenario using stated data and methods. The definition is intentionally tied to the source. A hazard map does not mean that damage will occur at every coloured place or that an uncoloured place is safe from every related hazard.
+
+A parcel inspector can make that boundary easier to retain by reporting study coverage, scenario, and returned intersection separately. It still cannot turn “outside this study extent” into “no risk,” or a no-pixel result into a finding about the whole property. Those states route the next question; they do not close it.
 
 Nova Scotia's Coastal Hazard Map lets a researcher search by community, address, or PID and examine current, 2050, and 2100 scenarios. Its 2100 worst-case coastal flooding scenario combines the highest high tide, a one-in-one-hundred-year storm surge, and projected sea-level rise. That is a powerful planning view because it makes a future combination visible across a large area.
 
@@ -689,6 +909,12 @@ Imagine that the mine layer returns a known opening point just outside Breakwate
 An empty query is more delicate. “No abandoned mine opening shown” means the checked source returned no displayed opening under the recorded query and map state. Because the inventory is incomplete and excludes some expressions of hazard, the result cannot support “no mining hazard.” It may still reduce one specific concern: no known inventory point was returned by that search. That is useful evidence when its boundary stays attached.
 
 The relationship resembles a flashlight in a dark barn. The beam is the source's coverage. It can reveal a post, a stair, or clear floor in the area it illuminates. Darkness outside the beam does not prove the barn is empty. The analogy has a limit. A public database has systematic scope, methods, and evidence; its beam is not random, and different sources are not equally weak. The point is to learn what this beam covers before making a claim about what it did not show.
+
+<!-- visual-figure-start:figure-23 -->
+
+![A flashlight beam covers part of a dark field labelled by time, location and record type; hazards outside the beam remain unknown.](images/figure-23-negative-search-beam.png)
+
+<!-- visual-figure-end:figure-23 -->
 
 This is why the interface must keep positive, negative, and error states apart. A positive state means the service returned a feature or scenario under the recorded conditions. A negative state means the query completed and returned no feature under those conditions. An error state means the researcher does not have a completed result. A failed service, loading timeout, hidden layer, or incorrect selection cannot be narrated as “nothing found.”
 
@@ -734,6 +960,12 @@ The right-of-way retrieves the access lesson from Chapter 6 in a fresh direction
 
 The title file therefore needs more than the phrase “free of encumbrances.” It needs the exact deed, the current parcel register, the instruments behind relevant entries, the legal description, and a lawyer's interpretation of how the governing provisions apply to this parcel. If a right-of-way continues, the file also needs its route, purpose, width, parties, maintenance language, and any other terms the source instruments actually contain. None should be reconstructed from a driveway line in imagery.
 
+<!-- visual-figure-start:figure-24 -->
+
+![Three parallel columns labelled ownership interest, rights and burdens, and people or property on site, joined by dotted rather than equal signs.](images/figure-24-title-encumbrance-possession.png)
+
+<!-- visual-figure-end:figure-24 -->
+
 There can also be a court-order branch. A municipal treasurer may apply to a court for findings about tax arrears and for an order addressing the interests the deed will convey, the interests it will remain subject to, notice, and the manner of sale. A sale conducted under that route takes its legal effect from the statute and the actual order, including any exceptions, exclusions, or partial interests set out there.
 
 That makes the order part of the Foundry Street question, if an order exists. The useful note is not “court approved,” as though two words resolved the parcel. It is:
@@ -776,11 +1008,23 @@ For a pre-bid listener, possession becomes an input to the decision rather than 
 
 Now change one fact. Instead of an occupied apartment building, the listing involves a manufactured home. The familiar PID appears in the notice, and the map shows a land parcel beneath the symbol. That is not enough to establish what asset is being sold.
 
+<!-- visual-figure-start:figure-22 -->
+
+![Parcel B map with a former-use symbol, nearby registry point and arrows to records and environmental-professional questions.](images/figure-22-case-b-screening.png)
+
+<!-- visual-figure-end:figure-22 -->
+
 Nova Scotia has specific tax-sale regulations and prescribed forms for mobile homes. The legal file must first identify whether the sale concerns land, a mobile home, or some combination described by the controlling documents. An unaffixed home can also raise personal-property questions. Nova Scotia's Personal Property Registry is the system used to search for security interests in personal property, including mobile and manufactured homes. It is not the land registry. A clean-looking PID search does not answer a search that belongs in the personal-property system.
 
 Location introduces a third record family. A manufactured home may sit on land owned by someone else in a land-lease community. Nova Scotia's Residential Tenancies framework applies to those communities and includes rules about the space, the tenancy relationship, and sale of a home that remains there. Ownership of the home, ownership of the ground, the right to keep the home on the space, and any registered personal-property security are distinct questions.
 
 Imagine a fictional Harbour Park listing. The municipal notice uses a mobile home identifier and a civic location. The map selects the underlying land PID. A roadside view shows a manufactured home on a serviced pad. None of those facts establishes that the mobile home and land share an owner, that the home is affixed to the land, that the pad agreement transfers, that a personal-property lien is absent, or that the home can remain where it sits after a sale.
+
+<!-- visual-figure-start:figure-21 -->
+
+![Planning map of Parcel B with zone, water and sewer lines, use-confirmation icon and a separate occupancy warning.](images/figure-21-case-b-planning.png)
+
+<!-- visual-figure-end:figure-21 -->
 
 The bounded file reads:
 
@@ -793,6 +1037,12 @@ Foundry Street and Harbour Park now share one recovery exercise. What do you own
 The questions do not all need favourable answers. They need supportable answers or explicit stop conditions before a bid. Title counsel can interpret the deed and land interests. Property and tenancy counsel can identify the lawful possession route. The municipality can clarify its current sale documents and event terms without becoming the purchaser's lawyer or access provider. The Personal Property Registry and land records answer different searches. A map can route the researcher to the right parcel and source; it cannot merge those legal systems.
 
 The dramatic action in an occupied tax sale is often the action not taken. No lock turns because an auction concluded. No occupant becomes a trespasser by assumption. No box of belongings becomes garbage by appearance. No home and land become one asset because they occupy the same pixels.
+
+<!-- visual-figure-start:figure-25 -->
+
+![Flowchart starts with lawful exterior observation and records, then stops at lawyer or tenancy advice before contact, entry, lock changes or goods handling.](images/figure-25-occupied-property-handoff.png)
+
+<!-- visual-figure-end:figure-25 -->
 
 The deed answers a title question. Vacant possession is a separate researched outcome. Keeping those statements apart protects the accuracy of the file and the people whose lives do not vanish when ownership paperwork changes.
 
@@ -810,7 +1060,19 @@ Inverness County's May 2025 records make that boundary visible before any ratio 
 
 All three counts belong in the account of the event. Fifty describes what was advertised. Thirty-five describes the sales reported to council. Thirty-one describes the rows available for calculation in the public result sheet. A researcher who silently calls the thirty-one-row sheet “all sales” has changed the source rather than clarified it.
 
+<!-- visual-figure-start:figure-27 -->
+
+![Three large count cards show 50 advertised, 35 reported sold and 31 published result rows, with 15 removals and a four-row unresolved gap.](images/figure-27-fifty-thirtyfive-thirtyone.png)
+
+<!-- visual-figure-end:figure-27 -->
+
 Within those thirty-one published rows, the median winning bid was 4.53 times the advertised recovery amount. Twenty-four were at least twice the recovery amount, fifteen were at least five times, and seven were at least ten times. The range ran from approximately the recovery amount to more than twenty-one times it.
+
+<!-- visual-figure-start:figure-26 -->
+
+![Dot plot of 31 bid-to-recovery ratios from 1.00 to 21.62, with the 4.53 median marked and a 31-row completeness caveat.](images/figure-26-inverness-ratio-distribution.png)
+
+<!-- visual-figure-end:figure-26 -->
 
 Those observations establish that competition often moved well beyond the municipal recovery number in that dated sample. They do not establish that the higher bids were correct, that the lower bids were bargains, or that a future Inverness auction will behave the same way. The result sheet has no column for legal access, remediation, possession, insurance, repair, financing, later redemption, or regret.
 
@@ -821,6 +1083,12 @@ CBRM's official March 2026 result sheet supplies a useful contrast. Twenty-four 
 That mixture matters more than any one spectacular row. Competition was not a single force applied evenly across the list. Some rows stopped immediately. Others climbed far beyond the debt-recovery starting point. The result set cannot say whether those differences came from parcel characteristics, bidder research, mistaken identity, appetite for risk, intended use, or the people who happened to attend.
 
 Richmond County's June 2026 table is smaller still. Its three published sold rows were about 1.33, 6.59, and 6.28 times the listed taxes, interest, and charges. Three rows are enough to demonstrate variation within one event. They are far too few to support a municipal price rule.
+
+<!-- visual-figure-start:figure-28 -->
+
+![Three small charts compare dated municipal result sets, each labelled with auction type, number of rows and a warning against treating recovery as value.](images/figure-28-municipal-result-comparison.png)
+
+<!-- visual-figure-end:figure-28 -->
 
 Cross-municipality comparison therefore requires more than placing ratios in three columns. Each comparison carries the municipality, event date, sale format, published-row count, denominator, and known completeness limit. A minimum bid in one event and listed charges in another may have similar economic roles without being perfectly interchangeable fields. Descriptive samples can challenge folklore while remaining unsuitable for prediction.
 
@@ -833,6 +1101,12 @@ Consider a fictional Cedar Street building with a four-figure recovery amount an
 This is the problem that makes **all-in cost** useful. All-in cost is the total exposure required to reach a defined use, including the bid, applicable taxes, professional work, carrying, condition, possession, and a reserve for unresolved uncertainty. The definition begins with a use because “own the parcel” is not a complete economic destination. A year-round home, a serviced building lot, a woodlot, and a long-term hold require different evidence and different work.
 
 The cost stack resembles an iceberg. The winning bid is the visible tip. Legal work, tax, survey, insurance, security, carrying, repair, remediation, possession, and uncertainty can sit below the surface. The analogy has an important limit: the submerged proportion is not fixed, and known costs should be researched and estimated rather than treated as a mysterious mass. Its purpose is to prevent the visible bid from impersonating the whole exposure.
+
+<!-- visual-figure-start:figure-29 -->
+
+![Layered stack begins with bid price and adds taxes, legal work, insurance, survey, carrying costs, repairs, remediation, possession and reserve.](images/figure-29-all-in-cost-stack.png)
+
+<!-- visual-figure-end:figure-29 -->
 
 An old result can now do one honest job in the Cedar Street file. It can show that other bidders sometimes paid several multiples of municipal recovery amounts in particular past events. It cannot say which multiple Cedar Street deserves. Competition measures how the room behaved. It does not complete the parcel biography.
 
@@ -910,6 +1184,12 @@ Annapolis County's 2026 records show why the format label needs an event date. I
 
 Open bidding and tendering create opposite temptations. In the room, the bidder may chase a visible rival. At a desk, the bidder may raise a sealed offer to avoid losing by an imagined small difference. Neither temptation adds title, access, condition, possession, tax or use evidence. The Cedar Street maximum therefore enters either format unchanged.
 
+<!-- visual-figure-start:figure-30 -->
+
+![Parallel timelines compare registration and live bidding with sealed submission and opening, both ending at the same written walk-away rule.](images/figure-30-auction-versus-tender.png)
+
+<!-- visual-figure-end:figure-30 -->
+
 Suppose the fictional bidder is Maya. For an open auction, her rehearsal is physical and short. She knows who is authorized to bid, which card represents that authority and the exact amount at which the card stays down. For a tender, the same authority is expressed through the event's stated submission rules and deadline. The ceiling is checked before submission. There is no second private number called “what I would have bid if I knew.”
 
 Authority includes more than possessing identification or a signed letter. The Municipal Government Act prohibits certain people from buying land at the selling municipality's tax sale, directly or through an agent. The prohibited group includes a council member or employee of that municipality, specified village commission members or employees, their spouses, and a company in which one of those people owns or beneficially owns a majority of the outstanding shares. The statute attaches a penalty and possible loss of office or employment.
@@ -937,6 +1217,12 @@ This is the Chapter 9 retrieval under noise. Did the higher call establish a new
 The payment path needs the same advance rehearsal. Under the Municipal Government Act, statutory payment forms include cash, certified cheque, money order, bank draft, irrevocable letter of credit and a lawyer's trust cheque. Council may authorize another legal-tender delivery method. That permission does not require a particular event to accept every possible method. The current sale terms decide what the municipality will take and how it must be delivered.
 
 Inverness's August 2026 terms list cash, certified cheque, money order, debit, bank draft and lawyer's trust cheque. Its FAQ says the successful bidder must immediately pay the taxes, interest and expenses for which the property was sold, plus the stated two-hundred-dollar deed-registration amount. Any remaining purchase price is due within three business days.
+
+<!-- visual-figure-start:figure-39 -->
+
+![Horizontal readiness path from authorized registration to accepted funds, immediate recovery and registration payment, then the three-business-day balance, with branches for no sufficient bidder, immediate re-offer, re-advertisement and resale costs.](images/figure-39-payment-readiness-clock.png)
+
+<!-- visual-figure-end:figure-39 -->
 
 The **deposit** is the immediate amount paid toward the purchase before a remaining balance is completed. In the statutory auction structure, the buyer must immediately pay the whole purchase price or a smaller amount equal to the taxes, interest and expenses for which the land was sold. Event-specific fees or payment instructions can sit beside that obligation. A bidder should use the municipality's current terminology and amount rather than treating “deposit” as a universal flat fee.
 
@@ -1007,6 +1293,12 @@ Cedar Street appears vacant from public-road observations. “Appears” stays i
 Human safety runs beside legal authority. A damaged roof, unstable porch, exposed wiring, mould, fuel, animals or an unknown occupant can turn a seemingly minor check into an emergency. The certificate does not make Maya a building inspector, electrician, environmental professional or peace officer. An urgent threat is routed to the appropriate emergency or municipal authority. Non-urgent condition work is scoped by qualified people using lawful access.
 
 The first operating file therefore begins with the registered certificate and the sale date. Beside them go the redemption deadline, municipal contact, property-tax account instructions, possession advice, insurer communications, photographs or reports lawfully obtained, approvals, invoices, receipts, rent records and other income records. Every item carries a date and source. The file must be able to explain what Maya knew, what authority she relied on, what she did and what money moved.
+
+<!-- visual-figure-start:figure-31 -->
+
+![Six-month calendar with recurring record-keeping and insurance tasks, new-tax markers, protective-work limits and a possible redemption event.](images/figure-31-certificate-holder-calendar.png)
+
+<!-- visual-figure-end:figure-31 -->
 
 The new tax bills matter immediately. The redemption formula can include taxes levied after the sale and related interest. That statutory possibility is not a reason to ignore the bills and expect another person to absorb them later. Maya confirms with the municipality where notices will go, how the account is tracked during the certificate period and what must be paid when due. A missed notice can create a practical problem even when the statute later recognizes a category of tax.
 
@@ -1116,6 +1408,12 @@ When lawful possession or authorized access is eventually established, the first
 
 The owner now holds three records that should never be collapsed. The registered deed states the land interest and supplies the date that starts the Marketable Titles Act period. The title opinion explains the actual deed and land record. The possession file establishes who is present and which lawful route governs access and control.
 
+<!-- visual-figure-start:figure-32 -->
+
+![Tax deed at the centre sends six arrows to lawyer, possession, planning, survey, condition and insurance workstreams.](images/figure-32-deed-is-a-beginning.png)
+
+<!-- visual-figure-end:figure-32 -->
+
 Foundry Street can move into physical due diligence only when those files support the move. Registration has changed the document, started a clock and made the new owner responsible for decisions that the auction map could never make.
 
 The Second Due-Diligence Wave
@@ -1133,6 +1431,8 @@ Municipal letters can sharpen part of the picture. Cape Breton Regional Municipa
 Neither letter is a universal property approval. A zoning confirmation does not promise that a proposed design will receive permits. A clearance response does not replace an inspection and cannot reveal a defect that was never reported or recorded. The owner asks for the current product that matches the actual question, retains the response date and qualifications, and sends any difficult answer to the appropriate municipal staff or professional.
 
 Public assessment information supplies another bounded source. Property Valuation Services Corporation allows the public to find assessments by civic address or Assessment Account Number and offers broader searches, including by assessment range. Its open assessment-history data can show assessed and taxable assessed values over several years.
+
+A selected parcel sheet may carry that dated PVSC account and assessment beside other public evidence. The convenience does not widen the number's meaning: it is still neither a present market price nor evidence of current building or site condition.
 
 Those values need labels. The assessed value is a dated mass-appraisal estimate based on a stated valuation date and the physical state recorded for a stated condition date. The taxable assessed value may differ, including through the Capped Assessment Program. Transfer-related eligibility can also change. The numbers are useful context for the assessment and tax files; they are not a current appraisal, a repair estimate, a resale promise or the maximum rational bid.
 
@@ -1159,6 +1459,12 @@ The Money and the Challenge Take Different Roads
 The deed gives the purchaser an ownership route. It does not make every dollar from the sale belong to the purchaser, and it does not eliminate the legal route for a person who claims the sale was wrongful.
 
 A **tax-sale surplus account** is the municipality's statutory account for sale proceeds remaining after the required municipal applications. It is a proceeds record, not a statement about which interests continue to burden the land.
+
+<!-- visual-figure-start:figure-40 -->
+
+![Sale proceeds first satisfy statutory municipal amounts, then enter a surplus account; after redemption expiry a prior interest holder may apply to Supreme Court before the twenty-year endpoint.](images/figure-40-surplus-proceeds-route.png)
+
+<!-- visual-figure-end:figure-40 -->
 
 Consider Elena, a fictional former co-owner whose interest may have attached to the property before the sale. She discovers that the sale produced a balance after the municipal applications. She does not ask the new deed holder to pay her and she does not treat the old interest as a continuing lien on the land. She takes the notices, ownership documents and sale information to a lawyer.
 
@@ -1226,15 +1532,45 @@ Union Workshop demonstrates a harder form of completion than Alder Crossing. One
 
 The third file is Meadow Line. The summary entry and detail sheet agree on the recovery amount. The AAN leads to the assessment account and the PID selects the same apparent land described by the municipal material. The public parcel map shows the graphical outline beside a mapped road. A current zoning-confirmation response addresses the stated vacant-land use, and the public screening sources return no mapped intersection requiring an immediate specialist branch.
 
+<!-- visual-figure-start:figure-33 -->
+
+![Regional map locates fictional Parcel C near a public road and community services with a green evidence-file label and no bid score.](images/figure-33-case-c-orientation.png)
+
+<!-- visual-figure-end:figure-33 -->
+
+<!-- visual-figure-start:figure-34 -->
+
+![Parcel C outline beside matching fictional lien, AAN and PID cards and a not-a-survey note.](images/figure-34-case-c-identity.png)
+
+<!-- visual-figure-end:figure-34 -->
+
 Meadow Line is the most research-ready of the three evidence files. That comparison describes only the state of the research. It is not a property ranking.
 
 The graphical boundary remains an orientation record rather than a survey. The road relationship supports a focused access question rather than a legal right. The zoning response identifies current zoning and applicable provisions; it is not a permit, service confirmation or promise that the intended project will be approved. Empty environmental, well, sewage, coastal or mine searches retain the coverage and currency limits of their sources.
 
+<!-- visual-figure-start:figure-35 -->
+
+![Parcel C touches a mapped public road and gentle contours, with a lawyer-confirmation icon at the frontage.](images/figure-35-case-c-access.png)
+
+<!-- visual-figure-end:figure-35 -->
+
 Meadow Line becomes coherent because the remaining questions are named and have credible verification routes. The lawyer can review the parcel register, legal description and access evidence. The municipality can answer the exact frontage, lot, intended-use and approval questions. Service and site professionals can test what the public record cannot. A surveyor can be engaged if the boundary or road relationship matters to the plan. The file does not need every possible fact; it needs every decision-critical uncertainty either resolved or assigned a defensible treatment.
+
+<!-- visual-figure-start:figure-36 -->
+
+![Parcel C planning map shows zone, frontage, well and septic assumptions and three written questions for municipal planning staff.](images/figure-36-case-c-planning.png)
+
+<!-- visual-figure-end:figure-36 -->
 
 Historical results do not fill the valuation column. Inverness records from a past event show that published bids often exceeded recovery amounts, and the official sources do not contain identical counts for every measure. That is useful evidence about competition and record completeness. It does not forecast Meadow Line's sale price or prove value. The assessment supplies dated tax context, not the bidder's walk-away number.
 
 If the essential legal and use questions return acceptable answers, Meadow Line can proceed to an all-in cost file. The bidder defines the intended use, obtains current tax advice, estimates professional work, carrying and site costs, and keeps a reserve for uncertainty that is genuinely priceable. The supported value boundary defined in Chapter 9 and those costs produce a written maximum. Auction energy cannot raise it.
+
+<!-- visual-figure-start:figure-37 -->
+
+![Physical-screening map for Parcel C shows searched layers, no highlighted overlap, coverage limits and an inspection handoff.](images/figure-37-case-c-screening.png)
+
+<!-- visual-figure-end:figure-37 -->
 
 Payment readiness remains a separate gate. A parcel can fit the evidence and budget while the bidder lacks the authority, accepted funds or balance path required by the current event terms. That file is not ready. Affordability in a spreadsheet does not change the municipality's process after the bid.
 
@@ -1249,6 +1585,12 @@ The Record That Survives the Event
 A reusable research record has to survive a change in the world outside it. A municipality withdraws a parcel. A bidder pays. An owner redeems. A certificate holder requests a deed. An inspection contradicts the pre-bid screen. If the file preserves only a screenshot and a conclusion, each change makes it stale or misleading.
 
 The stable core can be read in one breath: dated municipal notice, exact identifiers, bounded context return, visible unknown, next authority and decision consequence. The municipal source is refreshed before action. AAN, PID, civic point, graphical boundary and legal description keep their separate jobs. Each map result retains its source, retrieval date and limitation. Each unknown names the question that a particular professional or public authority is being asked to answer.
+
+<!-- visual-figure-start:figure-38 -->
+
+![Final summary sheet with columns for known facts, unresolved questions and professional handoffs, plus a separate box stating that the bidder owns the decision.](images/figure-38-known-unresolved-professional.png)
+
+<!-- visual-figure-end:figure-38 -->
 
 That structure also protects the public-private boundary. Subscription land- record material stays in the governed working file unless reuse is authorized. A public explanation can name the question and the need for registry review without reproducing subscriber-only pages or personal owner details. The public map remains owner-free and parcel-first.
 
@@ -1269,55 +1611,3 @@ The fictionalized room in Port Hood is still ordinary. The treasurer still has a
 It is a notice connected to a parcel, a parcel placed in bounded context, unknowns kept visible and questions handed to the people authorized to answer them. That record is enough to support a careful decision. It is also enough to explain, publicly and without a sales pitch, how Nova Scotia municipal tax-sale research can be useful.
 
 ---
-
-## Source shelf
-
-Retrieved 2026-07-18 unless noted; core law, Inverness event, and provincial map-service sources were refreshed on 2026-07-19. Chapter 6 planning/access, Chapter 7 environmental, Chapter 8 title/occupancy/mobile-home, Chapter 9 auction-result/tax/eligibility, Chapter 10 auction/tender/payment, Chapter 11 certificate/redemption/insurance, and Chapter 12 deed/surplus/contestability/ post-deed sources were refreshed on 2026-07-20. The Chapter 5 mineral-rights and Touquoy sources were refreshed on 2026-07-22. Primary and official sources control; explanatory sources are labelled separately.
-
-Controlling law
-
-1. Nova Scotia Legislature, [Municipal Government Act](https://nslegislature.ca/sites/default/files/legc/statutes/municipal%20government.pdf), consolidated to 2026-04-09. Research snapshot SHA-256: `dad414bba48b09ecff008638787c4e9df6be9f385732a1a97585117ba08d7f2c`; snapshot intentionally not committed. 2. Nova Scotia Legislature, [Halifax Regional Municipality Charter](https://nslegislature.ca/sites/default/files/legc/statutes/halifax%20regional%20municipality%20charter.pdf), consolidated to 2026-05-01. Research snapshot SHA-256: `e5ce81649302f64dbee664e0d11a4648f5f314f5b5264ede06382db131fac674`; snapshot intentionally not committed. 3. Nova Scotia Legislature, [Marketable Titles Act](https://nslegislature.ca/sites/default/files/legc/statutes/marketable%20titles.pdf), standalone consolidation dated 2015-09-01, especially the tax-deed contestability and exceptions in s. 6. Research snapshot SHA-256: `20c3c10c29aad0a4f686b23ec6c08d622a91ea94d70e3df74a9bc03d94d1d942`; snapshot intentionally not committed. 4. Nova Scotia, [Selling Mobile Homes at Tax Sale Definitions Regulations](https://novascotia.ca/JUST/regulations/regs/mgmohodf.htm), refreshed 2026-07-20. 5. Nova Scotia, [Selling Mobile Homes at Tax Sale Forms](https://novascotia.ca/just/REGULATIONS/regs/mgmohofm.htm), refreshed 2026-07-20. The prescribed forms separately contemplate a certificate of sale, discharge, and agreement for sale for a mobile home; the electronic consolidation warns that it is unofficial. 6. Canada, [Prohibition on the Purchase of Residential Property by Non-Canadians Act](https://laws-lois.justice.gc.ca/eng/acts/P-25.2/section-4.html) and [Regulations](https://laws-lois.justice.gc.ca/eng/regulations/SOR-2022-250/section-4.html), refreshed 2026-07-20 against official consolidations current into 2026.
-
-Municipal procedure and actual-sale evidence
-
-7. Cape Breton Regional Municipality, [Tax Sales](https://cbrm.ns.ca/business/property-sales-management/tax-sales/), including auction, payment, redemption, occupied-property, access, HST and due-diligence notices; refreshed 2026-07-20. CBRM states that occupied properties can be sold and that the municipality neither removes residents nor provides access; its current event FAQ also states that HST applies to vacant land and commercially assessed property, a municipal instruction the book does not generalize beyond that event. 8. CBRM, [July 21, 2026 tax-sale advertisement](https://cbrm.ns.ca/wp-content/uploads/2026/06/JULY-21-2026-2nd-Ad.pdf). Research snapshot SHA-256 `5435e9b89df5ac15f63097c0935661b5616e7b6bdc8b04fd4e8811ba6d457566`; snapshot intentionally not committed. 9. CBRM, [March 10, 2026 sold-property results](https://cbrm.ns.ca/wp-content/uploads/2026/03/Sold-Properties-March-10-2026-Tax-Sale.pdf). Research snapshot SHA-256 `ed0dbc1dcc09a7fb9a063b716784cb1b3ba18306f9984013791e4b250f667dc4`; snapshot intentionally not committed. 10. Municipality of the County of Inverness, [Property Tax Sales](https://invernesscounty.ca/services/finance-taxation/tax-sales/) and [December 2025 FAQ](https://invernesscounty.ca/wp-content/uploads/2026/01/Property-Tax-Sales-FAQ.pdf), refreshed 2026-07-20. The current page still identifies the August 11, 2026 Port Hood public auction; the FAQ retains the immediate recovery payment, $200 registration amount and three-business-day balance. FAQ snapshot SHA-256: `5f20a56b058bfec5bc4f7a5677084812d6e6817a93a99b734dcbc15698253908`. 11. Municipality of the District of Chester, [Tax Sales](https://chester.ca/government/property-taxes-and-rates/tax-sales). 12. Municipality of the County of Kings, [Tax Sales](https://www.countyofkings.ca/business/tax-sales) and public-tender policy material in the [2025-02-04 Council agenda](https://www.countyofkings.ca/upload/All_Uploads/COUNCIL/Meeting_Documents/COUNCIL/2025/2025-02-04%20COUNCIL/agenda/2025-02-04%20Council%20Agenda.pdf). 13. Halifax Regional Municipality, [Property Tax Sales](https://www.halifax.ca/home-property/property-taxes/tax-sale). 14. Halifax Regional Municipality, [Administrative Order 18 Respecting Revenue Collections](https://www.halifax.ca/sites/default/files/documents/city-hall/legislation-by-laws/ao18.pdf), including Schedule 1 tax-sale administration fees; refreshed 2026-07-20. Research snapshot SHA-256: `6a5900a77dae78453b37209c88baf52024c59b346c0be2110d76fb5dbd1bbb8b`; snapshot intentionally not committed.
-
-Property identity, title and assessment
-
-15. Nova Scotia, [Sign in to Property Online](https://www.novascotia.ca/sign-property-online) and [Property Online User Guide](https://novascotia.ca/sns/access/land/property-online-user-guide.asp). 16. Nova Scotia, [Land Registration Administration Regulations](https://novascotia.ca/just/Regulations/regs/LRAdminRegs.htm). 17. Property Valuation Services Corporation, [Find an Assessment](https://www.pvsc.ca/find-assessment), [2026 assessment-notice guidance](https://www.pvsc.ca/your-property-assessment-notice) and [datazONE assessed-value history](https://www.thedatazone.ca/Assessment/Assessed-Value-and-Taxable-Assessed-Value-History/bt58-qu28), refreshed 2026-07-20. Public search supports address, AAN and advanced criteria, while the open history distinguishes assessed from taxable assessed values; the book treats both as dated mass-appraisal and taxation context rather than current sale value or condition evidence. 18. Nova Scotia, [Land Registry fees](https://www.novascotia.ca/land-registry-fees), refreshed 2026-07-20; the current page states that fees are due at registration, recording or filing and lists the current document-registration fee. The chapter treats the amount as perishable and does not generalize exemptions. 19. GeoNOVA, [mapping products](https://geonova.novascotia.ca/browse-our-mapping-products).
-
-Land-use, physical and environmental research
-
-20. Nova Scotia Environment and Climate Change, [Environmental Registry](https://novascotia.ca/nse/dept/envregistry.asp), [Contaminated Sites](https://www.novascotia.ca/nse/contaminatedsites/), [Environmental Records Management System](https://novascotia.ca/nse/erms/), and [Environmental Registry process information](https://novascotia.ca/nse/dept/docs/FOIPOP_EnvRegistryProcess.pdf), refreshed 2026-07-20. 21. Nova Scotia, [Well Logs Database](https://novascotia.ca/nse/groundwater/welldatabase.asp) and [Private Wells in Real Estate Transactions](https://novascotia.ca/nse/water/docs/private-wells-in-real-estate-transactions.pdf), refreshed 2026-07-20. 22. Nova Scotia, [Coastal Hazard Map User Guide](https://www.novascotia.ca/coastal-climate-change/docs/coastal-hazard-map-user-guide.pdf), refreshed 2026-07-20. 23. Nova Scotia Natural Resources, [Abandoned Mine Openings Database](https://novascotia.ca/natr/meb/geoscience-online/about-database-amo.asp), [DP ME 10 Version 9 download](https://novascotia.ca/natr/meb/download/dp010.asp), and [2024 metadata](https://novascotia.ca/natr/meb/download/dp010md.asp), refreshed 2026-07-20. The product is under the Nova Scotia Open Government Licence; the inventory is incomplete, excludes surface expressions of subsidence, and reports that private-land positions can be inaccurate by up to approximately 50 metres. Downloaded archive SHA-256: `058e7e344849dade89e0c10a199e4795b51a27d711e2069849ebb37a2857d147`; the full source archive remains an ignored local build input. 24. Nova Scotia Municipal Affairs, [municipal planning strategy and land-use by-law guide](https://www.novascotia.ca/documents/developing-municipal-planning-strategy-and-land-use-law-guide-municipalities). 25. CBRM, [Zoning Confirmation and Municipal Clearance](https://cbrm.ns.ca/home-property/building-development/zoning-confirmation-municipal-clearance/), refreshed 2026-07-20. The current page distinguishes a zoning letter identifying applicable land-use-by-law provisions from a clearance letter reporting outstanding building-code orders, by-law orders and fire-code violations; neither is a permit or physical inspection.
-
-Transfer taxes, sales taxes and eligibility
-
-26. Nova Scotia, [Municipal deed transfer and property tax](https://www.novascotia.ca/municipal-deed-transfer-and-property-tax) and [June 2025 municipal rates](https://www.novascotia.ca/sns/pdf/ans-property-dtt-rates.pdf), refreshed 2026-07-20 together with MGA s. 109(4), which exempts a deed given pursuant to a tax sale from municipal deed transfer tax. 27. Nova Scotia, [Non-resident Provincial Deed Transfer Tax](https://www.novascotia.ca/non-resident-provincial-deed-transfer-tax), refreshed 2026-07-20. The current page states a 10% rate for qualifying post-2025-03-31 transfers, calculated on the transferred non-resident interest and the higher of purchase price or assessed value, subject to exemptions. 28. Canada Revenue Agency, [Sales of Vacant Land by Individuals](https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/gi-003/sales-vacant-land-individuals.html) and [Real Property and the GST/HST](https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/19-1/real-property-gst-hst.html), refreshed 2026-07-20. CRA's examples confirm that real-property treatment depends on the seller, use, property and transaction rather than a universal vacant-land rule. 29. Department of Finance Canada, [foreign-buyer prohibition extended to 2027](https://www.canada.ca/en/department-finance/news/2024/02/government-announces-two-year-extension-to-ban-on-foreign-ownership-of-canadian-housing.html), refreshed 2026-07-20 and checked with the current federal Act and Regulations. 30. CMHC, [Prohibition on the Purchase of Residential Property by Non-Canadians Act FAQ](https://www.cmhc-schl.gc.ca/professionals/housing-markets-data-and-research/housing-research/consultations/prohibition-purchase-residential-property-non-canadians-act/faq), refreshed 2026-07-20 for the geography, vacant-land and genuine-development exception explanations; the current Act, Regulations and Finance extension control timing.
-
-Insurance availability boundary
-
-31. Intact Insurance, [Vacant Home Insurance](https://www.intact.ca/en/personal-insurance/home/house-insurance/vacant-home-insurance) and [Non-Standard Property](https://www.intact.ca/en/business-insurance/specialty/non-standard-property), refreshed 2026-07-20 and used only to illustrate that vacancy can require specialized underwriting. These pages do not promise coverage for a tax-sale certificate holder or a particular property.
-
-Explanatory legal education
-
-32. Legal Information Society of Nova Scotia, [Property taxes](https://www.legalinfo.org/housing-owning-renting-neighbours/property-taxes), used as a secondary plain-language risk inventory. 33. Nova Scotia Residential Tenancies, [tenant and landlord resources](https://novascotia.ca/residential-tenancies-tenants-and-landlords/) and [ending a tenancy guide](https://www.novascotia.ca/sites/default/files/documents/1-1763/residential-tenancies-guides-ending-tenancy-en.pdf), refreshed 2026-07-20 and used only to establish that occupied-property and abandoned-goods questions require a separate lawful process. 34. Nova Scotia, [Personal Property Registry](https://www.novascotia.ca/programs-and-services/personal-property-registry), refreshed 2026-07-20. The service covers liens on personal property, including mobile and manufactured homes, rather than land-title interests. 35. Nova Scotia Residential Tenancies, [land-lease communities: rights and responsibilities](https://www.novascotia.ca/land-lease-communities-mobile-parks-rights-and-responsibilities-tenants-and-landlords), refreshed 2026-07-20. The page confirms that the Residential Tenancies Act applies to land-lease communities and identifies separate rules for tenancy and sale of a manufactured home remaining on a rented space.
-
-Inverness County deepening
-
-36. Municipality of the County of Inverness, [August 11, 2026 property packet](https://invernesscounty.ca/wp-content/uploads/2026/07/Tax-Sale_August-11.pdf), 139 pages. Research snapshot SHA-256: `bd202d018b87e3fb8b871df4eb10ac7b966138df3c8ae29c98c91e7f2b3afaac`; the owner-bearing snapshot is intentionally not committed. Text extraction plus representative visual review confirmed that detailed entries already contain the core fact table, aerial overlay, Property Online map/disclaimer and registry legal description. 37. Inverness County, [May 27, 2025 property packet](https://invernesscounty.ca/wp-content/uploads/2025/04/Tax-Sale-Information-2.pdf). Research snapshot SHA-256: `d82beede28d8bdab2cae21894d6e731696cdddcc4fcf93e286f261863a9dabd5`; snapshot intentionally not committed. 38. Inverness County, [2025 property-tax results](https://invernesscounty.ca/wp-content/uploads/2026/03/2025-Property-Tax-Results.pdf), refreshed through the municipality's current tax-sale results page on 2026-07-20. Research snapshot SHA-256: `b830a727e4ffa6b498ee8eda241db7127ccbbb4ebb56de87a83a2a8c217f5f08`; snapshot intentionally not committed. 39. Inverness County, [Property Tax Sales FAQ](https://invernesscounty.ca/wp-content/uploads/2026/01/Property-Tax-Sales-FAQ.pdf), prepared December 2025. Research snapshot SHA-256: `5f20a56b058bfec5bc4f7a5677084812d6e6817a93a99b734dcbc15698253908`; snapshot intentionally not committed. 40. Inverness County, [June 19, 2025 Committee of the Whole minutes](https://invernesscounty.ca/wp-content/uploads/2025/07/Minutes_COW_June_19_2025_post.pdf), refreshed 2026-07-20, especially page 4: 50 advertised, 35 sold, 15 removed, and $608,693.21 reported surplus. 41. Inverness County, [Plan Inverness Municipal Planning Strategy and Land Use By-law in effect](https://invernesscounty.ca/municipal-planning-strategy-land-use-bylaw-in-effect/), effective 2025-09-11, with administration through Eastern District Planning Commission; refreshed 2026-07-20.
-
-Cross-municipality practice and results
-
-42. Municipality of the County of Richmond, [Tax Sales and June 12, 2026 results](https://www.richmondcounty.ca/tax-sales.html), refreshed 2026-07-20; the current table publishes three sold rows and supports only a compact descriptive comparison. 43. Municipality of the County of Pictou, [2026-01 sealed-tender advertisement](https://munpict.ca/assets/Tax-Sale-2026-01-Final-Advertisement-Posted-revised-April-10.pdf), refreshed 2026-07-20. It requires one municipal bid form per property, no fax or email bids, and full payment within three days of successful-bid notification. Research snapshot SHA-256: `9ee824de63bf9aa97a932f48c88709775b072890e9e7308b0162ff24f046c19b`; snapshot intentionally not committed. 44. Municipality of the County of Annapolis, [Tax Sale page](https://annapoliscounty.ca/tax-finance/tax-sale), [March 5, 2026 sale results](https://annapoliscounty.ca/tax-finance/tax-sale/1997-2024-tax-sale-results), [June 8, 2026 tender results](https://annapoliscounty.ca/tax-finance/tax-sale/2363-june-2026-tax-sale-by-tender-2), and [Tax Sale Information](https://annapoliscounty.ca/tax-finance/tax-sale/311-tax-sale-information), refreshed 2026-07-20. The current index preserves the March sale results followed by the June sale-by-tender results, while the information page describes both auction and tender routes. This is a dated procedural example, not a current invitation to bid. The owner-bearing March result image was checked but is intentionally not committed; snapshot SHA-256: `078c4557c9c38f5256942a4bce9c9101f9c3d1114d4450caeb017fdd52d6e046`. 45. Municipality of the County of Kings, [Tax Sales](https://www.countyofkings.ca/business/sales.aspx), and Municipality of Chester, [Tax Sales](https://chester.ca/government/property-taxes-and-rates/tax-sales).
-
-GIS rights and public implementation
-
-46. Province of Nova Scotia, [NSPRD ArcGIS map service](https://nsgiwa2.novascotia.ca/arcgis/rest/services/PLAN/PLAN_NSPRD_WM84/MapServer), which displays property boundaries and limited attribution. 47. Province of Nova Scotia, NS Orthophotomap Database service at `https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer`. 48. NS Marks The Spot source commit [`d3114b5c`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/d3114b5cfc907d85f8b2c1f015d5476719b53586/web), [production source receipt](https://kinnokilabs.com/apps/nsmarksthespot/map/source.json), and [live public map](https://kinnokilabs.com/apps/nsmarksthespot/map/), checked 2026-07-20. The build combines current CBRM/Inverness notice catalogues, verified historical outcomes, exact-PID and authoritative civic-address search, mapped civic points, Plus Codes, approximate mapped acreage, road/water context, and geology/resource layers with explicit limitations. Its bundled Province-data explanation, licence link and rendered attribution preserve the checked public-display boundary. These are screening and source-routing tools, not title, survey, access, occupancy, environmental, resource-value, valuation or forecast opinions. 49. Nova Scotia, [Open Government Licence](https://support.novascotia.ca/services/open-data-portal-licence).
-
-Mineral rights and the Touquoy example
-
-50. Nova Scotia Legislature, [Mineral Resources Act](https://nslegislature.ca/sites/default/files/legc/statutes/mineral%20resources.pdf), consolidated to 2026-04-09, especially ss. 5 and 25–27. Section 5 reserves mineral ownership to the Crown; ss. 25–26 govern private-land consent and surface-access applications; s. 27 permits a mineral lessee to seek a vesting order for land or an interest required for a mine or a connected or incidental purpose and deems the filed interest expropriated. 51. Government of Nova Scotia, [Decision Allows Touqouy Gold Project to Move Ahead](https://news.novascotia.ca/en/2012/06/15/decision-allows-touqouy-gold-project-move-ahead), 2012-06-15. The Province reported vesting orders transferring fourteen parcels to DDV Gold after acquisition agreements could not be reached. 52. Supreme Court of Canada, [Bulletin of Proceedings, 2014-02-28](https://decisions.scc-csc.ca/scc-csc/bulletins/en/4534/1/document.do), file 35540, *Forrest C. Higgins Jr. v. Attorney General of Nova Scotia et al.* The case summary records DDV's claim that it required part of Mr. Higgins's land, the ministerial vesting order, the dismissed Nova Scotia challenges and the refusal of leave to appeal. 53. CBC, “Gold mine demands family tree farm property,” 2012-04-24, retrieved through the [Google News archive index](https://news.google.com/rss/articles/CBMinAFBVV95cUxQaGlMamhITmREUTFDQmlKQTZ4NVNPd3lTN2xSdWg2d1daNGdYR245RUpGU0xwYndDS2ZIblFaRDcwa3h2ZlRNR3J2Mi1GeWZJMkpzYy1PWWdnWHpBRi0xa05TMGJPaU5hRkhHZm9JTW54T1ZYNTJ1bkJNcGNFZXBPSlozWjRyNG5GSGNzczlwWHQ1ZmVXRmVuSlN1N08?oc=5). Used only for the contemporary tree-farm description; the official statute, Province decision and court record control the legal claims. 54. Nova Scotia Department of Natural Resources, [Information Circular ME 84, *Nova Scotia Mineral Production, Exploration and Deposit Appraisal 2024*](https://novascotia.ca/natr/meb/data/pubs/ic/ic_me_084.pdf), pp. 9–10. The official summary says Touquoy production mining ended in early 2023, stockpiled ore processing continued until September 2023 and 2,903 ounces were recovered and sold through mill cleanup in 2024.
-
-Confidence
-
-- Overall source-confidence label: `deep`. - High confidence: statutory sale sequence, payment, redemption, purchaser rights, deed effect, official service capabilities, current Inverness auction rules, observed official result rows, and the Province restricted-service attribution contract already implemented in NS Marks The Spot. - Medium confidence until property-specific professional review: HST application, title insurability, treatment of a particular occupancy or tenancy, development feasibility, environmental responsibility, and the effect of unexamined federal or statutory interests. - Perishable: live sale dates, property lists, payment methods adopted by council, fees, tax rates, HST treatment stated by a municipality, foreign-buyer rules, municipal zoning/service information, and map-service/licence versions.

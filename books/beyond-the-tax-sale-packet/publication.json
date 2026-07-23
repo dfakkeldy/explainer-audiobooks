@@ -1,16 +1,17 @@
 {
   "schemaVersion": 1,
   "slug": "beyond-the-tax-sale-packet",
-  "editionId": "public-first-listen-2026-07-22",
-  "publicationStatus": "public-first-listen",
-  "humanListeningStatus": "pending",
+  "editionId": "governed-final-54-figure-2026-07-23",
+  "publicationStatus": "governed-final",
+  "humanListeningStatus": "accepted",
   "classification": "public-safe",
   "permissionToPublish": true,
-  "permissionGrantedAt": "2026-07-22T08:49:48-03:00",
+  "permissionGrantedAt": "2026-07-23T07:28:25-03:00",
   "publicationAuthorization": {
     "authorizedBy": "Dan Fakkeldy",
-    "verbatim": "okay, that's great. Can you put the latest audiobook on the tax sale website and deploy it? Also, is there a copy in the icloud book folder?",
-    "listeningRoomClarification": "oh and of course make sure the book is in the listening room"
+    "verbatim": "Okay, I listened, sounds good, let's make it public, put it on kinnokilabs.com/taxsale as well as the lsitening room.",
+    "listeningVerdict": "Okay, I listened, sounds good",
+    "touquoyBoundary": "I don't even know how to pronounce touquoy so I don't think I can help on that one."
   },
   "manuscriptTextReviewStatus": "approved",
   "chapter5MineralOccurrenceRevision": {
@@ -19,29 +20,30 @@
   },
   "coverSelectionStatus": "user-selected",
   "selectedCover": "packet-lifts",
-  "figureCount": 0,
-  "audioStatus": "published-prior-manuscript-revision",
-  "humanFullAudioListening": "pending",
-  "disclosure": "The revised EPUB text includes the approved anonymous Chapter 5 mineral-occurrence passage. The included public-first-listen M4B and alignment remain the earlier manuscript edition and do not include that revision. A revised full audiobook and human listening verdict remain pending.",
+  "figureCount": 54,
+  "audioStatus": "published-current-54-figure-edition",
+  "humanFullAudioListening": "accepted",
+  "touquoyPronunciationStatus": "rendered-passage-accepted-in-context-canonical-pronunciation-unverified",
+  "disclosure": "This edition has passed package and audio checks. The creator completed the full listening review and approved this edition for publication.",
   "sourceArtIncluded": false,
   "artifacts": {
     "manuscript": {
       "file": "beyond-the-tax-sale-packet.md",
-      "sha256": "a768bae0589e7f76e4aef1a36f433a57db7942659826ac6a2cd05a6f338dccf5"
+      "sha256": "6a636ec20a11d54dbf1d84e354bb8d2df178637e7a8e34bf0883662481efb670"
     },
     "epub": {
       "file": "beyond-the-tax-sale-packet.epub",
-      "sha256": "12a0822a8c89babc26b160f75d44128ea4056c1624707961dcd9c2061464b37a"
+      "sha256": "b2399f3850e98050fe58e913ba1bd8cfd1cc5a86331b4b3a4f884959f82d666d"
     },
     "m4b": {
       "file": "beyond-the-tax-sale-packet.m4b",
-      "sha256": "f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8",
-      "manuscriptParity": false
+      "sha256": "f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505",
+      "manuscriptParity": true
     },
     "alignment": {
       "file": "beyond-the-tax-sale-packet.alignment.json",
-      "sha256": "3ae38b4d81b0eaad4e04a59bd6ed67a4176526ec859a3e900950d6102406df77",
-      "manuscriptParity": false
+      "sha256": "c5c8b5ed7fd8fc2f1595edadb292d9356be51790f758656bffeaad0352665dcc",
+      "manuscriptParity": true
     },
     "portraitCover": {
       "file": "cover.png",
@@ -53,9 +55,10 @@
     }
   },
   "internalGateReceipts": {
-    "learningDesignSHA256": "40ad1b13a9c6166bb2729409f04f3d33bdb34859a90290f04604cbac6d9807dd",
-    "proseStyleSHA256": "54239290ea0bb08fb635465a293cb9623c81c71a15cbe61d035c4e45ca9f7e00",
-    "earPassSHA256": "c8ad8727e28608d5c9a30b46007c089375ce25069206385b3ea229db4a6c98b9",
-    "chapter5RevisionEarPassSHA256": "db86294c00a85793170292addeaea0148c78139fd7a0be2a9f56d3bd4441ae00"
+    "learningDesignSHA256": "8a0e1a32a14522668a5ce8f9a8c2bea5dc980cc49c51c8ba7eefc5bb960180b3",
+    "proseStyleSHA256": "823f50ee96ede3009c2345159318cad308a42cceb50609ef9a130edfc121d742",
+    "earPassSHA256": "ba76161a5c7e2db9f4815a2e7841d8b76fe6e699624ff13fc960754aeecf3f5f",
+    "firstListenReceiptSHA256": "5880f2a3414f48e39d075d6c00ade97088699f8741ee4d4fb70c3605d75879e5",
+    "pronunciationPlanReceiptSHA256": "a6eef2657259a79018c78c4ac55fbc7eb8a0860f00f90d94d8197f032967935b"
   }
 }

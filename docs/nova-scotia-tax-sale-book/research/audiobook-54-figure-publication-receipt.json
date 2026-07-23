@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "status": "governed-final-publication-authorized",
+  "recordedAt": "2026-07-23T07:28:25-03:00",
+  "title": "Beyond the Tax-Sale Packet",
+  "slug": "beyond-the-tax-sale-packet",
+  "edition": "governed-final-54-figure-2026-07-23",
+  "classification": "public-safe",
+  "sourceFirstListenReceipt": {
+    "file": "audiobook-54-figure-first-listen-receipt.json",
+    "sha256": "5880f2a3414f48e39d075d6c00ade97088699f8741ee4d4fb70c3605d75879e5"
+  },
+  "humanListeningVerdict": {
+    "status": "accepted",
+    "acceptedBy": "Dan Fakkeldy",
+    "acceptedAt": "2026-07-23T07:28:25-03:00",
+    "verbatim": "Okay, I listened, sounds good",
+    "boundM4BSHA256": "f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505",
+    "fullBookListening": "complete"
+  },
+  "touquoyBoundary": {
+    "verbatim": "I don't even know how to pronounce touquoy so I don't think I can help on that one.",
+    "renderedDecisionCount": 2,
+    "renderedIPA": "tˈaʊkwɔɪ",
+    "renderRule": "g2p.fallback.touquoy",
+    "status": "rendered-passage-accepted-in-context-canonical-pronunciation-unverified",
+    "statement": "The positive full-book verdict accepts the heard passage for this edition. It is not evidence that the renderer produced a canonical local pronunciation."
+  },
+  "publicationAuthorization": {
+    "status": "granted",
+    "authorizedBy": "Dan Fakkeldy",
+    "authorizedAt": "2026-07-23T07:28:25-03:00",
+    "verbatim": "Okay, I listened, sounds good, let's make it public, put it on kinnokilabs.com/taxsale as well as the lsitening room.",
+    "destinations": [
+      "public Explainer Audiobooks package",
+      "kinnokilabs.com/taxsale",
+      "KinNoKi Listening Room"
+    ]
+  },
+  "artifacts": {
+    "epub": {
+      "file": "beyond-the-tax-sale-packet.epub",
+      "sha256": "b2399f3850e98050fe58e913ba1bd8cfd1cc5a86331b4b3a4f884959f82d666d",
+      "figureCount": 54
+    },
+    "m4b": {
+      "file": "beyond-the-tax-sale-packet.m4b",
+      "sha256": "f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505",
+      "durationSeconds": 15170.090667,
+      "chapterCount": 13
+    },
+    "alignment": {
+      "file": "beyond-the-tax-sale-packet.alignment.json",
+      "sha256": "c5c8b5ed7fd8fc2f1595edadb292d9356be51790f758656bffeaad0352665dcc",
+      "anchorCount": 735,
+      "wordTimedAnchorCount": 328
+    },
+    "markdown": {
+      "file": "beyond-the-tax-sale-packet.md",
+      "sha256": "6a636ec20a11d54dbf1d84e354bb8d2df178637e7a8e34bf0883662481efb670"
+    },
+    "portraitCover": {
+      "file": "cover.png",
+      "sha256": "fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6"
+    },
+    "squareCover": {
+      "file": "m4b-cover.png",
+      "sha256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c"
+    }
+  },
+  "checks": {
+    "governedDeliveryChain": "pass",
+    "publicCoverSync": "reuse-pass",
+    "fullAudioDecode": "pass",
+    "chapterMarkersAndTitles": "13-in-order",
+    "alignment": "735-anchors-328-word-timed",
+    "pronunciationAudit": "248-decisions-0-diagnostics",
+    "pictouOverride": "5-of-5-pass",
+    "epubArchiveIntegrity": "pass",
+    "embeddedFigureCount": 54,
+    "humanFullListen": "accepted"
+  },
+  "remainingGates": {
+    "secondDeviceProof": "not-required-for-publication-not-complete",
+    "portraitVideo": "not-published",
+    "landscapeVideo": "not-published"
+  },
+  "publicationBoundary": "This authorization covers the exact governed-final EPUB, M4B, alignment, Markdown, covers and 54 public-safe figures listed above. It does not publish a video edition or establish a canonical Touquoy pronunciation."
+}
