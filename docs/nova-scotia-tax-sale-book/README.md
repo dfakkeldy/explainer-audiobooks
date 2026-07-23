@@ -25,7 +25,7 @@ ranking, or an advertisement disguised as education.
   structured learning records, Inverness dossier, municipal comparison,
   auction-result analysis, production-map research-chain plan and product
   feedback, accepted voice exemplar, pronunciation plan,
-  conversation decision log, handoff packet, and approved-for-pilot 51-figure visual direction;
+  conversation decision log, handoff packet, and approved-for-pilot 54-figure visual direction;
 - `maps/data/`: an owner-free snapshot of the municipality-published August
   2026 listing facts;
 - `maps/qgis/`: the editable QGIS 4.0.2 project used for the current proofs;
@@ -36,15 +36,15 @@ ranking, or an advertisement disguised as education.
 - `maps/scripts/`: a reproducible local NSPRD/AMO source build and QGIS 4 render
   workflow;
 - `figures/`: the deterministic diagram renderer, teaching/provenance
-  specifications, contact sheets and hash-bound receipt for figures 03–08, 39
-  and 40;
+  specifications, paired contact sheets and hash-bound receipts, including 14
+  production-map screens in both landscape and genuine mobile-browser profiles;
 - `chapters/`: canonical Chapters 1–13, drafted sequentially from the accepted
   pilot and approved argument outline, including the major map-method rewrite
   and its access, intended-use, environmental, title, cost, auction, tender,
   payment, and failed-sale branches;
   and
-- `chapters/images/`: eight legal/process candidates plus eleven
-  2560-by-1440 NS Marks The Spot walkthrough screenshots; none is yet accepted
+- `chapters/images/`: the complete 54-figure landscape review set, including 14
+  refreshed 2560-by-1440 NS Marks The Spot walkthrough screenshots; none is yet accepted
   or embedded in a manuscript.
 
 ![Inverness County auction orientation proof](maps/exports/inverness-all-properties-orientation.png)
@@ -73,8 +73,8 @@ individual lien labels at that scale. NS Aerial remains the detail basemap.
 The interactive implementation remains in the
 [NS Marks The Spot repository](https://github.com/dfakkeldy/ns-marks-the-spot)
 and [live map](https://kinnokilabs.com/apps/nsmarksthespot/map/) rather than
-being duplicated here. The 2026-07-20 screenshot receipt pins production source
-commit `d3114b5cfc907d85f8b2c1f015d5476719b53586`. This repository owns the
+being duplicated here. The 2026-07-22 paired screenshot receipt pins production
+source commit `a7ba7da9ad5f8a5dcc1c67c79888bb76b6bae108`. This repository owns the
 book-development packet, its reproducible QGIS proofs and version-stamped
 chapter screenshots.
 

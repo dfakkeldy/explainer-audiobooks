@@ -47,8 +47,8 @@ def parse_visual_register() -> dict[str, dict[str, str | int]]:
             "caption": data["caption"],
             "altText": data["alt"],
         }
-    if len(figures) != 51:
-        raise ValueError(f"Expected 51 figure rows in {VISUALS_PATH}, found {len(figures)}")
+    if len(figures) != 54:
+        raise ValueError(f"Expected 54 figure rows in {VISUALS_PATH}, found {len(figures)}")
     return figures
 
 
