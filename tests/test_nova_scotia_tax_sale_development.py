@@ -40,7 +40,9 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
 
         revision = json.loads(REVIEW_REVISION_PATH.read_text(encoding="utf-8"))
         chapter = chapter_path.name
-        self.assertEqual(revision["status"], "review-candidate")
+        self.assertEqual(
+            revision["status"], "governed-final-publication-authorized"
+        )
         self.assertEqual(
             revision["baseApprovedChapterSHA256"][chapter], checkpoint_sha256
         )
@@ -48,8 +50,8 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             revision["candidateChapterSHA256"][chapter], actual_sha256
         )
         self.assertIn(chapter, revision["changedChapters"])
-        self.assertFalse(revision["gates"]["manuscriptTextApproved"])
-        self.assertFalse(revision["gates"]["narrationAccepted"])
+        self.assertTrue(revision["gates"]["manuscriptTextApproved"])
+        self.assertTrue(revision["gates"]["narrationAccepted"])
 
     def test_learning_evidence_matches_validator_contract(self) -> None:
         evidence_path = RESEARCH_ROOT / "evidence-notes.json"
@@ -128,10 +130,12 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
                 if actual_hashes[chapter] != approved_sha256
             },
         )
-        self.assertEqual(revision["status"], "review-candidate")
-        self.assertFalse(revision["gates"]["manuscriptTextApproved"])
-        self.assertFalse(revision["gates"]["narrationAccepted"])
-        self.assertFalse(revision["gates"]["figuresAccepted"])
+        self.assertEqual(
+            revision["status"], "governed-final-publication-authorized"
+        )
+        self.assertTrue(revision["gates"]["manuscriptTextApproved"])
+        self.assertTrue(revision["gates"]["narrationAccepted"])
+        self.assertTrue(revision["gates"]["figuresAccepted"])
         self.assertFalse(revision["gates"]["videoEditionAccepted"])
         self.assertTrue(revision["privacyBoundary"]["privateSourceExcluded"])
         self.assertTrue(revision["privacyBoundary"]["privateFactsExcluded"])
@@ -209,7 +213,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
             self.assertTrue((candidate_dir / "brief.md").exists())
 
-    def test_public_first_listen_package_tracks_revised_text_and_prior_audio(self) -> None:
+    def test_governed_final_package_tracks_current_text_figures_and_audio(self) -> None:
         public_root = REPO_ROOT / "books/beyond-the-tax-sale-packet"
         publication = json.loads(
             (public_root / "publication.json").read_text(encoding="utf-8")
@@ -223,21 +227,20 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
         )
 
-        self.assertEqual(publication["publicationStatus"], "public-first-listen")
-        self.assertEqual(publication["humanListeningStatus"], "pending")
+        self.assertEqual(publication["publicationStatus"], "governed-final")
+        self.assertEqual(publication["humanListeningStatus"], "accepted")
         self.assertTrue(publication["permissionToPublish"])
         self.assertEqual(
-            publication["audioStatus"], "published-prior-manuscript-revision"
+            publication["audioStatus"], "published-current-54-figure-edition"
         )
-        self.assertFalse(publication["artifacts"]["m4b"]["manuscriptParity"])
-        self.assertFalse(publication["artifacts"]["alignment"]["manuscriptParity"])
+        self.assertTrue(publication["artifacts"]["m4b"]["manuscriptParity"])
+        self.assertTrue(publication["artifacts"]["alignment"]["manuscriptParity"])
+        self.assertEqual(publication["figureCount"], 54)
         self.assertEqual(
             publication["disclosure"],
-            "The revised EPUB text includes the approved anonymous Chapter 5 "
-            "mineral-occurrence passage. The included public-first-listen M4B "
-            "and alignment remain the earlier manuscript edition and do not "
-            "include that revision. A revised full audiobook and human listening "
-            "verdict remain pending.",
+            "This edition has passed package and audio checks. The creator "
+            "completed the full listening review and approved this edition for "
+            "publication.",
         )
         self.assertTrue((public_root / "beyond-the-tax-sale-packet.m4b").is_file())
         self.assertTrue(
@@ -260,6 +263,16 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             self.assertEqual(
                 hashlib.sha256(epub.read("OEBPS/cover.png")).hexdigest(),
                 publication["artifacts"]["portraitCover"]["sha256"],
+            )
+            self.assertEqual(
+                len(
+                    [
+                        name
+                        for name in epub.namelist()
+                        if name.startswith("OEBPS/images/")
+                    ]
+                ),
+                54,
             )
 
     def test_outline_gate_records_map_revision_approval_for_pilot_only(self) -> None:
@@ -457,6 +470,36 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
                 / "books/beyond-the-tax-sale-packet/beyond-the-tax-sale-packet.m4b"
             ).is_file()
         )
+
+    def test_54_figure_publication_receipt_binds_positive_listen_and_touquoy_boundary(
+        self,
+    ) -> None:
+        receipt = json.loads(
+            (
+                RESEARCH_ROOT
+                / "audiobook-54-figure-publication-receipt.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(
+            receipt["status"], "governed-final-publication-authorized"
+        )
+        self.assertEqual(receipt["humanListeningVerdict"]["status"], "accepted")
+        self.assertEqual(
+            receipt["humanListeningVerdict"]["boundM4BSHA256"],
+            "f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505",
+        )
+        self.assertEqual(receipt["publicationAuthorization"]["status"], "granted")
+        self.assertIn(
+            "kinnokilabs.com/taxsale",
+            receipt["publicationAuthorization"]["destinations"],
+        )
+        self.assertEqual(
+            receipt["touquoyBoundary"]["status"],
+            "rendered-passage-accepted-in-context-canonical-pronunciation-unverified",
+        )
+        self.assertEqual(receipt["artifacts"]["epub"]["figureCount"], 54)
+        self.assertEqual(receipt["checks"]["humanFullListen"], "accepted")
 
     def test_negative_pictou_verdict_blocks_exact_candidate_without_reopening_text(
         self,

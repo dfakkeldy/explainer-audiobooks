@@ -1,8 +1,9 @@
 {
   "schemaVersion": 1,
-  "status": "review-candidate",
+  "status": "governed-final-publication-authorized",
   "recordedAt": "2026-07-22",
-  "purpose": "Bind the current 54-figure review manuscript without altering or inheriting the earlier manuscript, voice, listening, figure, video, or publication approvals.",
+  "finalizedAt": "2026-07-23T07:28:25-03:00",
+  "purpose": "Bind the governed-final 54-figure manuscript, narration, full listening, figure acceptance and publication authorization while keeping video acceptance separate.",
   "basePublicationAuthorizationSHA256": "4b839fba4e0086f3f0d805f51e0470d4e18940e493ff26457aca0d54cc301ebd",
   "baseApprovedChapterSHA256": {
     "ch01.md": "58c53045ad75609716a8e2e340238997d01476a499533877c04b59d72366fc47",
@@ -53,19 +54,21 @@
     "statement": "A private due-diligence document informed only general editorial questions. No private parcel, person, land-record extract, screenshot, quotation, or source citation is included in this candidate."
   },
   "narrationCandidate": {
-    "status": "private-first-listen-human-verdict-pending",
+    "status": "governed-final-publication-authorized",
     "receipt": "audiobook-54-figure-first-listen-receipt.json",
+    "publicationReceipt": "audiobook-54-figure-publication-receipt.json",
     "sourceEpubSHA256": "b2399f3850e98050fe58e913ba1bd8cfd1cc5a86331b4b3a4f884959f82d666d",
     "m4bSHA256": "f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505",
     "automatedChecks": "pass",
-    "priorityHumanPronunciationCheck": "Touquoy"
+    "humanFullListening": "accepted",
+    "touquoyStatus": "rendered-passage-accepted-in-context-canonical-pronunciation-unverified"
   },
   "gates": {
-    "manuscriptTextApproved": false,
-    "narrationAccepted": false,
-    "fullListeningAccepted": false,
-    "figuresAccepted": false,
+    "manuscriptTextApproved": true,
+    "narrationAccepted": true,
+    "fullListeningAccepted": true,
+    "figuresAccepted": true,
     "videoEditionAccepted": false,
-    "publicationAuthorizedForCandidate": false
+    "publicationAuthorizedForCandidate": true
   }
 }

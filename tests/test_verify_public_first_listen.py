@@ -15,6 +15,10 @@ DISCLOSURE = (
     "This edition has passed package and audio checks. The creator's full "
     "listening review is still underway."
 )
+GOVERNED_FINAL_DISCLOSURE = (
+    "This edition has passed package and audio checks. The creator completed "
+    "the full listening review and approved this edition for publication."
+)
 
 
 def artifact(root: Path, name: str, payload: bytes) -> dict[str, str]:
@@ -83,6 +87,18 @@ class PublicFirstListenVerifierTests(unittest.TestCase):
             verifier.verify_public_package(self.book_dir)
 
     def test_verifies_generic_public_package(self) -> None:
+        with self.probes():
+            verifier.verify_public_package(self.book_dir)
+
+    def test_verifies_governed_final_public_package(self) -> None:
+        self.receipt["publicationStatus"] = "governed-final"
+        self.receipt["humanListeningStatus"] = "accepted"
+        self.receipt["disclosure"] = GOVERNED_FINAL_DISCLOSURE
+        self.write_receipt()
+        (self.book_dir / "README.md").write_text(
+            GOVERNED_FINAL_DISCLOSURE, encoding="utf-8"
+        )
+
         with self.probes():
             verifier.verify_public_package(self.book_dir)
 
