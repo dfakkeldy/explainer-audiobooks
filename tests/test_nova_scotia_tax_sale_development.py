@@ -165,7 +165,7 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
             )
             self.assertTrue((candidate_dir / "brief.md").exists())
 
-    def test_public_first_listen_package_binds_approved_text_audio_and_cover(self) -> None:
+    def test_public_first_listen_package_tracks_revised_text_and_prior_audio(self) -> None:
         public_root = REPO_ROOT / "books/beyond-the-tax-sale-packet"
         publication = json.loads(
             (public_root / "publication.json").read_text(encoding="utf-8")
@@ -183,9 +183,17 @@ class NovaScotiaTaxSaleDevelopmentTests(unittest.TestCase):
         self.assertEqual(publication["humanListeningStatus"], "pending")
         self.assertTrue(publication["permissionToPublish"])
         self.assertEqual(
+            publication["audioStatus"], "published-prior-manuscript-revision"
+        )
+        self.assertFalse(publication["artifacts"]["m4b"]["manuscriptParity"])
+        self.assertFalse(publication["artifacts"]["alignment"]["manuscriptParity"])
+        self.assertEqual(
             publication["disclosure"],
-            "This edition has passed package and audio checks. The creator's "
-            "full listening review is still underway.",
+            "The revised EPUB text includes the approved anonymous Chapter 5 "
+            "mineral-occurrence passage. The included public-first-listen M4B "
+            "and alignment remain the earlier manuscript edition and do not "
+            "include that revision. A revised full audiobook and human listening "
+            "verdict remain pending.",
         )
         self.assertTrue((public_root / "beyond-the-tax-sale-packet.m4b").is_file())
         self.assertTrue(
