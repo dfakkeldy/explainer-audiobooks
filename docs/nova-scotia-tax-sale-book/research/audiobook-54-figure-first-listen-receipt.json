@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "status": "private-first-listen-human-verdict-pending",
+  "completedAt": "2026-07-23T02:22:56-03:00",
+  "title": "Beyond the Tax-Sale Packet",
+  "slug": "beyond-the-tax-sale-packet-54-figure-first-listen",
+  "edition": "2026-54-figure-first-listen",
+  "classification": "private",
+  "permissionToPublishAudiobook": false,
+  "source": {
+    "epubFileName": "beyond-the-tax-sale-packet-54-figure-first-listen.epub",
+    "epubSHA256": "b2399f3850e98050fe58e913ba1bd8cfd1cc5a86331b4b3a4f884959f82d666d",
+    "canonicalChapterCount": 13,
+    "narratedWordCount": 32983,
+    "interiorFigureCount": 54,
+    "propertyOnlineMaterialIncluded": false,
+    "privateDueDiligenceMaterialIncluded": false
+  },
+  "narration": {
+    "voice": "am_michael",
+    "renderer": "Echo rv15",
+    "runID": "b2399f3850e9-e78eb64b1a56-7dc8c5f635f5-cd300e824f88-a5fe8d432efbc92d0b73fec2cfa2d721186f480d-am_michael",
+    "attemptID": "f88635e7719dfb4105a0ae4a3fa5bd3fa6022a226ab30aac1024d0902cee455e",
+    "echoSourceSHA": "a5fe8d432efbc92d0b73fec2cfa2d721186f480d",
+    "echoCLI_SHA256": "e78eb64b1a56c701361e73e7bf5e5f0232141b7332fc614c72e463d81c06ff2a",
+    "echoResourcesSHA256": "7dc8c5f635f5fe451156a9ba842650d44e01acadf52a20cdfac5fecaed78777b",
+    "rendererManifestSHA256": "cd300e824f88b53cfe5edbba21f58fd98dd7bfc6bbd75542f556c080fa6ccc15",
+    "installedModelByteAttestation": false,
+    "assuranceLevel": "unattended-first-listen"
+  },
+  "cover": {
+    "candidate": 1,
+    "direction": "The Packet Lifts",
+    "portraitSHA256": "fffaf3037b43f6341a822cb004a0a4d1829e8ef56df80c753400471ffe53ddf6",
+    "squareSHA256": "350a78085825b8cadcf706d0be7355cc7020030b5cf86b90a5376aea3eeb707c",
+    "selectionReceiptSHA256": "2fb1ebd650e8c97b114265932fd80fc29f26170f875de1de7d811c3c6b131b30",
+    "m4bSquareCoverIdentity": "normalized-pixels-match"
+  },
+  "artifacts": {
+    "audiobook": {
+      "fileName": "beyond-the-tax-sale-packet-54-figure-first-listen.m4b",
+      "sha256": "f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505",
+      "byteCount": 67570322,
+      "durationSeconds": 15170.090667,
+      "durationClock": "4:12:50.091",
+      "chapterCount": 13
+    },
+    "alignment": {
+      "fileName": "beyond-the-tax-sale-packet-54-figure-first-listen.alignment.json",
+      "sha256": "c5c8b5ed7fd8fc2f1595edadb292d9356be51790f758656bffeaad0352665dcc",
+      "anchorCount": 735,
+      "wordTimedAnchorCount": 328
+    },
+    "pronunciationAudit": {
+      "fileName": "beyond-the-tax-sale-packet-54-figure-first-listen.pronunciation-audit.json",
+      "sha256": "005ff0d3d79b0ce7d18fcffd3587c69bace6448af38d84500f51c0c6cff0844c",
+      "schemaVersion": 2,
+      "coverage": "complete",
+      "decisionCount": 248,
+      "diagnosticCount": 0,
+      "pictouDecisionCount": 5,
+      "pictouIPA": "pˈɪktO",
+      "rejectedPictouIPACount": 0,
+      "touquoyDecisionCount": 2,
+      "touquoyIPA": "tˈaʊkwɔɪ",
+      "touquoyRule": "g2p.fallback.touquoy",
+      "touquoyHumanStatus": "priority-listening-pending"
+    },
+    "rendererPronunciationReel": {
+      "fileName": "beyond-the-tax-sale-packet-54-figure-first-listen.pronunciation-reel.m4b",
+      "sha256": "f1fb89a57b23552af131f9918bde3d6d959bebfb0a8a3d5752e358045dcf19c6",
+      "durationSeconds": 190.762667
+    },
+    "humanProbeReel": {
+      "fileName": "pronunciation-probe-reel.m4b",
+      "sha256": "ff5f646a7192eb8f1434a33996588c84daf1d85510278f17e03f811b5be22d22",
+      "durationSeconds": 221.636,
+      "requiredFormCount": 15,
+      "termCount": 11,
+      "evidenceFileName": "pronunciation-probe-evidence.json",
+      "evidenceSHA256": "2a86598b05558cf84c0df409ca7b03d2bb5e15c5f1a40740c1a45586bff393ce",
+      "humanListening": "pending"
+    }
+  },
+  "receiptChain": {
+    "currentAttemptSHA256": "646d52f41f9ff8a65a8b22b68df66da34c3919821be1e39bf8713cffcb8b40d2",
+    "currentAcceptedSelectorSHA256": "cb19abe927412b21b677efa5c6c832afadce8d74fc02bb08daf99b40c8c15b88",
+    "inputReceiptSHA256": "e566a55d1993beed90971585168d58eb58978ee2338b2e360e1a5e29f20bffab",
+    "resumeStateSHA256": "2a177578bc5d836c1604c058aa66bb6b7ed032c17007a9132529bc4775f0ae9f",
+    "renderSuccessSchemaVersion": 3,
+    "renderSuccessSHA256": "49100f07222078a370bd74c02626ae8e283da36a997f7c777b005b3152c234b4",
+    "pronunciationPlanSHA256": "2e60ab707dc711f47d6a57c79f6616b787c0c30fbec6dbf9e180bd04166cb805",
+    "pronunciationPlanReceiptSHA256": "a6eef2657259a79018c78c4ac55fbc7eb8a0860f00f90d94d8197f032967935b"
+  },
+  "checks": {
+    "selectorBoundDeliveryChain": "pass",
+    "sidecar": "SIDECAR_OK",
+    "pronunciationAudit": "clean",
+    "pictouLongOAllFiveOccurrences": "pass",
+    "rejectedPictouDiphthongAbsent": "pass",
+    "fullAudioDecode": "pass",
+    "silenceAtLeastThreeSecondsBelowMinus45dB": 0,
+    "chapterMarkersAndTitles": "13-in-order",
+    "epubArchiveIntegrity": "pass",
+    "selectedCoverIdentity": "pass",
+    "completeRepositoryTests": "546-pass-1-skipped"
+  },
+  "humanGates": {
+    "pronunciationListening": "pending-priority-touquoy",
+    "fullAudioListening": "pending",
+    "secondDeviceProof": "not-started",
+    "audiobookPublication": "not-authorized-for-this-candidate",
+    "videoEdition": "not-started",
+    "finalFigures": "not-accepted"
+  },
+  "pronunciationResearchBoundary": "An unattended web search found official and media references to the Touquoy mine but no authoritative pronunciation guide. The generic fallback is exposed for human review and is not treated as accepted.",
+  "methodBoundary": "The book preserves notice to parcel to context to unknowns to handoff. Maps are screening evidence, not proof of access, title, condition, value, permission, possession, or buildability.",
+  "reviewBoundary": "This receipt proves a private, governed first-listen candidate and automated package checks. It does not claim human pronunciation acceptance, a completed full-book listen, figure acceptance, second-device proof, video production, publication authorization, website deployment, iCloud sync, or pull-request merge."
+}
