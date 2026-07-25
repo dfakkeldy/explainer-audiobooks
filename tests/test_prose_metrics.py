@@ -54,6 +54,20 @@ class TestProseMetrics(unittest.TestCase):
         self.assertEqual(result["count"], 2)
         self.assertEqual(result["per_1k_sentences"], 200.0)
 
+    def test_abstract_subjects_flags_concept_in_subject_slot(self):
+        text = ("The document matters because a bid and a paid sale differ. "
+                "Each power arrives with a boundary.")
+        result = prose_metrics.abstract_subjects([text])
+        self.assertEqual(result["count"], 2)
+
+    def test_abstract_subjects_ignores_concrete_actors(self):
+        text = "The treasurer registers the certificate. Gazzaniga asked why."
+        self.assertEqual(prose_metrics.abstract_subjects([text])["count"], 0)
+
+    def test_abstract_subjects_share_is_normalised(self):
+        text = "The document matters. A clerk signed it."
+        self.assertEqual(prose_metrics.abstract_subjects([text])["share_of_sentences"], 0.5)
+
 
 if __name__ == "__main__":
     unittest.main()

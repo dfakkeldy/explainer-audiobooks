@@ -21,6 +21,24 @@ COORDINATE_LIST_RE = re.compile(
     re.IGNORECASE,
 )
 
+ABSTRACT_NOUNS = frozenset({
+    "document", "power", "duty", "protection", "obligation", "requirement",
+    "boundary", "distinction", "mechanism", "process", "approach", "concept",
+    "principle", "framework", "structure", "pattern", "relationship",
+    "uncertainty", "ambiguity", "tension", "tradeoff", "trade-off",
+    "difference", "similarity", "importance", "significance", "value",
+    "question", "answer", "point", "issue", "problem", "solution",
+    "insurance", "redemption", "use", "rent", "notice", "certificate",
+    "statute", "provision", "rule", "law", "right", "interest", "position",
+    "stage", "state", "step", "phase", "case", "result", "effect", "cause",
+    "reason", "purpose", "goal", "benefit", "cost", "risk", "consequence",
+})
+
+ABSTRACT_SUBJECT_RE = re.compile(
+    r"^(?:The|A|An|Each|Every|This|That)\s+([\w'-]+)\s+(?:\w+s|is|are|was|were|has|have|can|may|must|does|do)\b",
+    re.IGNORECASE,
+)
+
 
 def split_sentences(text: str) -> list[str]:
     """Split on sentence terminators followed by whitespace."""
@@ -78,5 +96,29 @@ def coordinate_lists(paragraph_texts: list[str]) -> dict[str, object]:
     return {
         "count": len(examples),
         "per_1k_sentences": per_1k,
+        "examples": examples[:20],
+    }
+
+
+def abstract_subjects(paragraph_texts: list[str]) -> dict[str, object]:
+    """Count sentences whose grammatical subject is an abstract noun.
+
+    Advisory only. Real writers put people and things in the subject slot
+    and concepts in the predicate; "The document matters" is the inversion.
+    The noun list is curated rather than exhaustive, so this reports
+    candidates for a human, never a verdict.
+    """
+    examples: list[str] = []
+    sentences: list[str] = []
+    for paragraph in paragraph_texts:
+        sentences.extend(split_sentences(paragraph))
+    for sentence in sentences:
+        match = ABSTRACT_SUBJECT_RE.match(sentence.strip())
+        if match and match.group(1).lower() in ABSTRACT_NOUNS:
+            examples.append(sentence.strip()[:160])
+    share = round(len(examples) / len(sentences), 4) if sentences else 0.0
+    return {
+        "count": len(examples),
+        "share_of_sentences": share,
         "examples": examples[:20],
     }
