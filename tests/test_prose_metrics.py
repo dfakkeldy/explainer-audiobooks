@@ -87,6 +87,21 @@ class TestProseMetrics(unittest.TestCase):
         low, high = prose_metrics.ARITHMETIC_TIERS["none"]
         self.assertFalse(low <= 7.1 <= high)
 
+    def test_abstract_subjects_known_false_positive_on_compound_plural_subject(self):
+        # KNOWN LIMITATION: The verb alternation in ABSTRACT_SUBJECT_RE accepts
+        # any token ending in "s", so it cannot distinguish a third-person-singular
+        # verb from a plural noun. When an abstract noun from ABSTRACT_NOUNS acts
+        # as a modifier in a compound subject whose head noun is plural, this test
+        # will assert the false positive (count=1). This is a documented limitation;
+        # any change to the regex to fix this should fail this test and force a
+        # deliberate decision.
+        text = "The case workers arrived."
+        result = prose_metrics.abstract_subjects([text])
+        # Currently incorrectly flagged because "case" is in ABSTRACT_NOUNS and
+        # "workers" ends in "s", so the regex matches.
+        self.assertEqual(result["count"], 1)
+        self.assertIn("The case workers arrived", result["examples"][0])
+
 
 if __name__ == "__main__":
     unittest.main()

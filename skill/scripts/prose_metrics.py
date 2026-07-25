@@ -125,7 +125,9 @@ def abstract_subjects(paragraph_texts: list[str]) -> dict[str, object]:
     Advisory only. Real writers put people and things in the subject slot
     and concepts in the predicate; "The document matters" is the inversion.
     The noun list is curated rather than exhaustive, so this reports
-    candidates for a human, never a verdict.
+    candidates for a human, never a verdict. The verb pattern accepts any
+    token ending in "s", so compound subjects whose abstract word is a
+    modifier and whose head noun is plural will be reported as false positives.
     """
     examples: list[str] = []
     sentences: list[str] = []
