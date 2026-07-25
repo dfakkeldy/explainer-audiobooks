@@ -80,6 +80,7 @@ not decide the curriculum and must not produce prose for the author to polish.
   },
   "revisionMode": {
     "name": "new-book",
+    "priorEditionExists": false,
     "sourceEdition": "",
     "preserve": {
       "governingQuestion": "",
@@ -109,9 +110,28 @@ the run private, set publication permission false, record delivery intent and
 every inferred choice, and set `humanListeningStatus: pending`. If
 `productionMode` is absent, validation defaults to `governed-final`.
 
+`revisionMode.priorEditionExists` is required and has no default: the mode is
+an answered question, not a starting point, so a brief can never reach
+`new-book` by simply omitting the question. When `priorEditionExists` is
+`true`, `name` must be `first-edition-plus`; a brief that declares a prior
+edition and still asks for `new-book` fails validation, because a revision
+that discards a working narrative spine is how a working book gets worse. When
+`priorEditionExists` is `false`, `new-book` is valid.
+
 Use `first-edition-plus` when an earlier edition taught successfully. Record the
 source edition and the governing question, narrative spine, successful examples,
 and varied chapter jobs to preserve.
+
+A listener saying "I didn't learn X" is an instruction to add X's missing
+foundation into the existing spine. It never authorizes re-planning the book
+around X. *The Question Machine*'s first edition traced Descartes through
+McCulloch and Pitts to backpropagation and taught successfully; feedback that a
+listener still hadn't grasped what a neural network is led the next edition to
+delete that lineage and replace it with mathematics. The lineage was the
+explanation, not decoration competing with the mechanism for word budget, and
+removing it left a vacuum only notation filled — unfollowable to a listener who
+is driving. A correct revision records where the new material inserts into the
+spine and names what stays; it does not discard the spine to make room.
 
 Word targets are estimates. Record target changes with old/new values, reason,
 approval status, `approvalSource`, and evidence. A reduction after drafting
@@ -287,6 +307,43 @@ Each blind assessment records `plausibleMentalModel`, `confusions`,
 `unstableTerms`, and `lostAt`. Each review lane records a distinct reviewer,
 `verdict: pass`, and citation-first findings with final decisions. Set
 `reviewedChapterSHA256` to the canonical chapter hashes after accepted repairs.
+
+## Patch revisions
+
+The listener's ordinary workflow is asynchronous: request a book at night,
+listen the next day, and return notes. Those notes name specific chapters with
+specific problems, and the correct response is a patch, not a rewrite: only
+the chapters named in the change list get redrafted, every other chapter is
+preserved byte-for-byte, and only the redrafted chapters get re-narrated. The
+change list decides which chapters move; it does not reopen the outline, the
+narrative spine, or any chapter it does not name.
+
+Because a fix in one chapter can leave a seam with its neighbor, re-check
+continuity on the immediate neighbors of every changed chapter — the chapter
+immediately before and immediately after — even though their text is
+unchanged. A repaired chapter 4 can still break a callback, a promise, or a
+`mustNotRepeat` boundary in chapter 5. Record that re-check in
+`continuity.json` the same way any other continuity pass is recorded.
+
+The safety property this protects — not a quality gate, and it never reads or
+judges prose — is that every chapter absent from the change list keeps an
+identical SHA-256 before and after the patch. `learning_design_qc.py` already
+binds chapter hashes into every receipt (`chapter_hashes`, `chapterSHA256`);
+`verify_patch_revision_preserved_chapters` reuses that same hashing rather than
+inventing a parallel one:
+
+```bash
+python3 skill/scripts/learning_design_qc.py \
+  --verify-patch-preservation \
+  --run-root "$RUN_ROOT" \
+  --previous-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
+  --changed-chapters ch04.md
+```
+
+A failure here means silent loss in a chapter the change list did not name —
+not a prose defect. Do not resolve it by adding the chapter to the change list
+after the fact; that requires the listener's sign-off, since it changes what
+the patch claims to have touched.
 
 ## Gate order
 

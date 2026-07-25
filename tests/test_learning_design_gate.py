@@ -183,6 +183,7 @@ class LearningDesignFixture(unittest.TestCase):
                 },
                 "revisionMode": {
                     "name": "new-book",
+                    "priorEditionExists": False,
                     "sourceEdition": "",
                     "preserve": {
                         "governingQuestion": "",
@@ -850,9 +851,27 @@ class LearningDesignGateTests(LearningDesignFixture):
     def test_first_edition_plus_requires_preservation_evidence(self) -> None:
         brief = self.read_json("learning-brief.json")
         brief["revisionMode"]["name"] = "first-edition-plus"
+        brief["revisionMode"]["priorEditionExists"] = True
         self.write_json("learning-brief.json", brief)
 
         with self.assertRaisesRegex(ValueError, "revisionMode"):
+            self.module().validate_run(self.root)
+
+    def test_missing_prior_edition_exists_errors(self) -> None:
+        brief = self.read_json("learning-brief.json")
+        del brief["revisionMode"]["priorEditionExists"]
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "priorEditionExists"):
+            self.module().validate_run(self.root)
+
+    def test_prior_edition_exists_true_with_new_book_name_errors(self) -> None:
+        brief = self.read_json("learning-brief.json")
+        brief["revisionMode"]["priorEditionExists"] = True
+        brief["revisionMode"]["name"] = "new-book"
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "previous spine"):
             self.module().validate_run(self.root)
 
     def test_reduced_target_requires_user_approved_scope_history(self) -> None:
@@ -1256,6 +1275,66 @@ class LearningDesignGateTests(LearningDesignFixture):
 
         with self.assertRaisesRegex(ValueError, "unresolved"):
             self.module().validate_run(self.root)
+
+
+class PatchRevisionPreservationTests(LearningDesignFixture):
+    def module(self):
+        return importlib.import_module("learning_design_qc")
+
+    def test_patch_revision_passes_when_unnamed_chapters_are_unchanged(self) -> None:
+        previous_hashes = self.chapter_hashes()
+        (self.chapters / "ch02.md").write_text(
+            "## Chapter 2 - Training and Inference (revised)\n\n"
+            "Training changes parameters. Inference uses those parameters on new input.\n",
+            encoding="utf-8",
+        )
+
+        current = self.module().verify_patch_revision_preserved_chapters(
+            self.chapters, previous_hashes, ["ch02.md"]
+        )
+
+        self.assertEqual(previous_hashes["ch01.md"], current["ch01.md"])
+        self.assertNotEqual(previous_hashes["ch02.md"], current["ch02.md"])
+
+    def test_patch_revision_fails_when_unnamed_chapter_mutates(self) -> None:
+        previous_hashes = self.chapter_hashes()
+        (self.chapters / "ch01.md").write_text(
+            "## Chapter 1 - What a Network Does (silently changed)\n\n"
+            "A neural network maps input values to an output through learned parameters.\n",
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(ValueError, "ch01.md"):
+            self.module().verify_patch_revision_preserved_chapters(
+                self.chapters, previous_hashes, ["ch02.md"]
+            )
+
+    def test_patch_revision_fails_when_unnamed_chapter_is_deleted(self) -> None:
+        previous_hashes = self.chapter_hashes()
+        (self.chapters / "ch01.md").unlink()
+
+        with self.assertRaisesRegex(ValueError, "removed chapter ch01.md"):
+            self.module().verify_patch_revision_preserved_chapters(
+                self.chapters, previous_hashes, ["ch02.md"]
+            )
+
+    def test_patch_revision_rejects_unknown_chapter_in_change_list(self) -> None:
+        previous_hashes = self.chapter_hashes()
+
+        with self.assertRaisesRegex(ValueError, "unknown chapter"):
+            self.module().verify_patch_revision_preserved_chapters(
+                self.chapters, previous_hashes, ["ch99.md"]
+            )
+
+    def test_patch_revision_does_not_evaluate_named_chapter_prose(self) -> None:
+        previous_hashes = self.chapter_hashes()
+        (self.chapters / "ch02.md").write_text("lowercase, no punctuation, terrible prose", encoding="utf-8")
+
+        current = self.module().verify_patch_revision_preserved_chapters(
+            self.chapters, previous_hashes, ["ch02.md"]
+        )
+
+        self.assertIn("ch02.md", current)
 
 
 class LearningDesignBuilderTests(LearningDesignFixture):

@@ -366,9 +366,18 @@ def validate_brief(brief: dict[str, Any], run_root: Path) -> dict[str, Any]:
     revision = brief.get("revisionMode")
     if not isinstance(revision, dict):
         raise ValueError("brief.revisionMode must be an object")
+    prior_edition_exists = require_bool(
+        revision.get("priorEditionExists"), "brief.revisionMode.priorEditionExists"
+    )
     revision_mode = require_string(revision.get("name"), "brief.revisionMode.name")
     if revision_mode not in REVISION_MODES:
         raise ValueError("brief.revisionMode.name must be new-book or first-edition-plus")
+    if prior_edition_exists and revision_mode != "first-edition-plus":
+        raise ValueError(
+            "brief.revisionMode.priorEditionExists is true, so brief.revisionMode.name "
+            "must be first-edition-plus: a revision that discards the previous spine "
+            "is how a working book gets worse"
+        )
     preserve = revision.get("preserve")
     if not isinstance(preserve, dict):
         raise ValueError("brief.revisionMode.preserve must be an object")
@@ -1239,13 +1248,107 @@ def verify_learning_receipt(chapters_dir: Path, receipt_path: Path) -> dict[str,
     return receipt
 
 
+def verify_patch_revision_preserved_chapters(
+    chapters_dir: Path,
+    previous_chapter_sha256: Any,
+    changed_chapters: Any,
+) -> dict[str, str]:
+    """Enforce the patch-revision safety property.
+
+    A patch revision names specific chapters in a change list; every chapter
+    NOT named must come out byte-for-byte identical. This reuses the same
+    `chapter_hashes` mechanism every learning-design receipt already binds
+    (`chapterSHA256`) rather than inventing a parallel one. It is a safety
+    check against silent loss, not a quality gate: it never reads, scores, or
+    otherwise judges prose, and a change to a named chapter is not evaluated
+    here at all.
+    """
+    if not isinstance(previous_chapter_sha256, dict) or not previous_chapter_sha256:
+        raise ValueError("previous chapterSHA256 must be a non-empty object")
+    for name, digest in previous_chapter_sha256.items():
+        if not isinstance(name, str) or not SHA256_RE.fullmatch(str(digest)):
+            raise ValueError(
+                f"previous chapterSHA256[{name}] must be a lowercase SHA-256 digest"
+            )
+
+    changed = set(
+        require_string_list(
+            changed_chapters, "patchRevision.changedChapters", allow_empty=True
+        )
+    )
+    unknown_changed = sorted(changed - set(previous_chapter_sha256))
+    if unknown_changed:
+        raise ValueError(
+            f"patchRevision.changedChapters names unknown chapter {unknown_changed[0]}"
+        )
+
+    current_hashes = chapter_hashes(chapters_dir)
+    for name, previous_digest in previous_chapter_sha256.items():
+        if name in changed:
+            continue
+        current_digest = current_hashes.get(name)
+        if current_digest is None:
+            raise ValueError(
+                f"patch revision removed chapter {name}, which was not named in "
+                "changedChapters"
+            )
+        if current_digest != previous_digest:
+            raise ValueError(
+                f"patch revision changed chapter {name} without naming it in "
+                "changedChapters; every chapter not named in the change list must "
+                "stay byte-for-byte identical"
+            )
+    return current_hashes
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Validate audiobook learning design and bind it to final chapters."
     )
-    parser.add_argument("--run-root", required=True, type=Path)
-    parser.add_argument("--receipt-out", required=True, type=Path)
+    parser.add_argument("--run-root", type=Path)
+    parser.add_argument("--receipt-out", type=Path)
+    parser.add_argument(
+        "--verify-patch-preservation",
+        action="store_true",
+        help=(
+            "Check that a patch revision left every chapter not named in "
+            "--changed-chapters byte-for-byte identical to --previous-receipt. "
+            "This is a safety check, not a quality gate; it never inspects prose."
+        ),
+    )
+    parser.add_argument(
+        "--previous-receipt",
+        type=Path,
+        help="Prior learning-design-receipt.json to read chapterSHA256 from.",
+    )
+    parser.add_argument(
+        "--changed-chapters",
+        default="",
+        help="Comma-separated chapter filenames named in the revision's change list.",
+    )
     args = parser.parse_args()
+
+    if args.verify_patch_preservation:
+        if args.run_root is None or args.previous_receipt is None:
+            parser.error(
+                "--verify-patch-preservation requires --run-root and --previous-receipt"
+            )
+        previous_receipt = load_record(
+            args.previous_receipt, "previous learning-design receipt"
+        )
+        changed_chapters = [
+            name.strip() for name in args.changed_chapters.split(",") if name.strip()
+        ]
+        verify_patch_revision_preserved_chapters(
+            Path(args.run_root) / "chapters",
+            previous_receipt.get("chapterSHA256"),
+            changed_chapters,
+        )
+        print("patch revision preservation: pass")
+        return
+
+    if args.run_root is None or args.receipt_out is None:
+        parser.error("--run-root and --receipt-out are required")
     receipt = write_receipt(args.run_root, args.receipt_out)
     print(f"learning design process: {receipt['status']}")
     print(f"receipt: {args.receipt_out}")
