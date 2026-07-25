@@ -1,9 +1,14 @@
 # De-Claudification Contract for Audiobook Prose
 
-Use this contract during drafting and again during final editorial review. A
-post-draft cleanup alone is not enough: a four-hour audiobook can become
-irritating through accumulated habits even when every individual sentence is
-grammatical and defensible.
+This file is the **QC-time density review** — read it when checking a
+finished draft, not while writing one. `voice-design.md` is the drafting-time
+instruction: freeze its control panel and required project sample sentences
+before the first section, and hand it to the lead author with the fact pack.
+
+Run this contract once as an independent inventory before the humanizer, and
+again during final editorial review. A post-draft cleanup alone is not enough:
+a four-hour audiobook can become irritating through accumulated habits even
+when every individual sentence is grammatical and defensible.
 
 ## Drafting Rule
 

@@ -1,8 +1,8 @@
 # Narration style bible
 
 Contents: Voice & rules (verbatim block for the frontier lead author) · Why
-these rules matter · Length and runtime math · The fact-pack discipline · QC
-checklist · EPUB validity.
+these rules matter · Length and runtime math · The fact-pack discipline · The
+story ledger · QC checklist · EPUB validity.
 
 This is the craft layer of the explainer-audiobook skill. The whole product is
 *heard*, never read on a page, so every rule below exists to serve the ear. Give
@@ -130,16 +130,37 @@ section call.
 
 SECTION INPUT: draft section by section. Every call receives the full
 argument-level outline, grounded claim IDs, the approved voice exemplar, the
-previous section text or running summary, this section's job, and what it must
-not repeat. A prose prompt without those artifacts is incomplete.
+previous section text, this section's job, and what it must not repeat. A
+summary hands the author facts and strips cadence — always pass the actual
+previous section text. A prose prompt without those artifacts is incomplete.
 
-DE-CLAUDIFICATION — follow `declaudification.md` during drafting. State the fact
-directly instead of managing the listener's reaction. The listener's named
-AI-writing patterns to avoid are hard bans. Do not synonym-cycle through hold,
+DE-CLAUDIFICATION — the listener's named AI-writing patterns to avoid are hard
+bans during drafting, not just a QC finding. State the fact directly instead
+of managing the listener's reaction. Do not synonym-cycle through hold,
 carry, keep, sit with, notice, pause, resist, or let-that-land instructions; do
 not use repeated `let me`, `not X but Y`, announced transitions, or honesty
 announcements such as `honestly` and `the honest answer` as a voice. Put
-epistemic precision and uncertainty in the claim itself.
+epistemic precision and uncertainty in the claim itself. `declaudification.md`
+runs the full density review at QC time, once before the humanizer and again
+after.
+
+BUDGETS — caps you write toward, not gates that fail a build:
+- At most three genuinely new core terms per chapter.
+- Six to ten durable book outcomes across the whole book.
+- At most three temporary values and three symbolic steps in any spoken
+  calculation.
+- At least one real, sourced story anchor per chapter — see
+  `research/story-ledger.md` — or a recorded exemption.
+- Arithmetic language stays inside the brief's declared tier.
+- No coordinated list of four or more items. Name the one that carries the
+  point; the rest belongs in the reference appendix, not the narration.
+- Vary sentence and paragraph length deliberately. Uniform rhythm is the most
+  reliable signature of assembled prose — more reliable than any phrase.
+
+MODAL CONVERSION: statutory and API sources arrive in *may* and *must*.
+Convert them into people doing things: "The holder may collect rent" becomes
+"The rent cheques start coming to you." Where a modal must survive because the
+condition genuinely matters, name who is bound by it.
 
 SHAPE of each chapter: give the chapter a distinct job in the book — perhaps a
 scene, a mechanism, a guided walkthrough, a comparison, a failure analysis, or
@@ -233,6 +254,29 @@ listener must come away knowing cold — the frontier author voices each of thos
 least twice in the chapter, once introduced and once in passing. Grounding beats trusting model memory
 every time, and it is the difference between a guide the user can trust and
 plausible-sounding fiction.
+
+## The story ledger (this is what keeps a book from coming out storyless)
+
+Books come out storyless for a specific reason: the fact pack collects
+statutes and API surfaces, so at drafting time the author has no narrative
+material on hand and invents a hypothetical. Fix it at the source, during
+research, before the outline freezes — build `research/story-ledger.md`.
+
+Each entry records:
+
+- what happened, in one line;
+- named actors, place, and date;
+- a source citation;
+- which concept the entry carries;
+- **the reversal** — what a reasonable person would have expected instead. No
+  reversal means it is an example, not a story, and it does not count.
+
+Sources are documented and institutional only: published decisions, papers,
+post-mortems, news reports, real repository history, and named public figures
+acting in public roles. Never private individuals.
+
+Every chapter plan names a ledger entry it uses, or records an exemption with
+a reason. An exemption is a recorded decision, not a silent gap.
 
 ## QC checklist (run after generation, before assembling)
 

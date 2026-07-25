@@ -51,9 +51,13 @@ and fiction-specific revision.
 - Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
   preparing the production handoff. The final prose pass is bounded: it removes
   AI tics without inventing personality, anecdotes, sources, or claims.
+- Read `../../skill/references/voice-design.md` and capture the drafting-time
+  control-panel settings and the 3-5 project-specific sample sentences for the
+  handoff packet — a handoff carrying only prohibitions reproduces the
+  original flattened-prose problem downstream.
 - Read `../../skill/references/declaudification.md` and capture the listener's
-  **AI-writing patterns to avoid**, disliked phrase families, and any positive
-  voice sample before preparing the production handoff.
+  **AI-writing patterns to avoid** and disliked phrase families before
+  preparing the production handoff.
 
 ## Resuming an in-progress project
 
@@ -113,6 +117,14 @@ user means before creating a new one.
    before the outline. Every usable claim needs a stable ID, verified source,
    precise locator, uncertainty, and `traceable-only` status. The research phase
    does not decide the learning arc or draft prose.
+
+   Plan `research/story-ledger.md` in the same phase. Each entry records what
+   happened, the named actors, place, and date, the source citation, the concept
+   it carries, and the reversal — what a reasonable person would have expected
+   instead. No reversal means it is an example, not a story. Sources are
+   documented and institutional, never private individuals. Gather these before
+   the outline freezes: evidence notes alone leave the author with no narrative
+   material at drafting time, which is where invented hypotheticals come from.
 
    When the user names private books or audio as a writing reference, plan a
    private `research/voice-source-profile.md`. Capture high-level craft—opening

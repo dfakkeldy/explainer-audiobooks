@@ -192,7 +192,13 @@ decision here:
 - Honesty announcements to avoid (`honestly`, `the honest answer`, `to be
   honest`, and variants); express epistemic honesty through precise claims and
   uncertainty instead:
-- Positive voice sample:
+- Voice-design control panel: the ten `voice-design.md` dial settings recorded
+  for this project (narrator stance, sentence movement, diction, evidence
+  handling, concession, humour, exposition, story density, emphasis, direct
+  address):
+- Positive voice sample: 3-5 project-specific sample sentences from
+  `voice-design.md`, required rather than optional — a handoff carrying only
+  prohibitions reproduces the flattened-prose problem downstream:
 - Voice constraints and things that must not be invented or copied:
 - Voice sample path, if any:
 

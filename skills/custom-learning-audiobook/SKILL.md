@@ -88,13 +88,16 @@ than retyping it from memory.
     question-led narrative, mechanism-first spiral, end-to-end trace, or problem
     progression.
   - `../../skill/references/narration-style.md` for spoken style and QC sweeps.
+  - `../../skill/references/voice-design.md` for the drafting-time control
+    panel, required project-specific sample sentences, and the story-ledger
+    requirement — read before outlining or drafting.
   - `../../skill/references/frontier-manuscript-pipeline.md` for the artifactized
     research-outline-draft-revision pipeline, voice calibration, frontier-author
     / cheaper-worker split, continuity ledger, and citation-first reader review.
   - `../../skill/references/humanizer-pass.md` for the bounded `humanizer` pass
     that removes AI tics without replacing the frontier author's voice.
-  - `../../skill/references/declaudification.md` for drafting-time prevention,
-    phrase-family density review, and the hash-bound prose receipt.
+  - `../../skill/references/declaudification.md` for the QC-time density
+    review: phrase-family prevalence and the hash-bound prose receipt.
   - `../../skill/references/cover-art.md` for cover concepts, visual quality,
     and the signature accent-colour rule.
   - `../../skill/scripts/build_book.py` for EPUB and combined Markdown.
@@ -261,10 +264,11 @@ than retyping it from memory.
    `sectionJobs` list, and an in-run `fastTrackAuthorizationPath`. Never batch
    across chapters, duplicate a separately drafted section, or use batching to
    skip continuity updates and section-level provenance.
-   Also provide the listener's **AI-writing patterns to avoid** and the complete
-   `declaudification.md` drafting rule. State facts directly instead of managing
-   the listener's reaction with `hold`, `sit with`, `notice`, or synonym-cycled
-   commands.
+   Also provide the approved `voice-design.md` control panel and project
+   sample sentences, and the listener's **AI-writing patterns to avoid** as
+   hard bans. State facts directly instead of managing the listener's reaction
+   with `hold`, `sit with`, `notice`, or synonym-cycled commands; run the full
+   `declaudification.md` density review at QC time, not per section.
 
 9. **Keep Markdown canonical; use cheap workers as evidence and production
    sidecars.** Save the frontier author's chapter files under `chapters/`. Cheap
