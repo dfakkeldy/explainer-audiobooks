@@ -6,7 +6,15 @@
 
 **Architecture:** New pure-function module `skill/scripts/prose_metrics.py` holds every new measure and is imported by `prose_qc.py`, keeping the existing 381-line script from bloating and making each measure unit-testable in isolation. Measures land first and advisory; budgets that consume them land second; governance and prose-craft references land third; the `book_qc.py` consolidation lands last because it is the only task that can break packaging.
 
-**Tech Stack:** Python 3.11+, stdlib only (`re`, `statistics`, `dataclasses`, `json`, `hashlib`), pytest.
+**Tech Stack:** Python 3.11+, stdlib only (`re`, `statistics`, `dataclasses`, `json`, `hashlib`, `unittest`, `tempfile`).
+
+> **Correction applied 2026-07-25 during execution.** The first draft of this
+> plan specified pytest. **pytest is not installed in this environment and no
+> test in this repo uses it** — 33 of 33 test files use `unittest.TestCase`.
+> All test code below is unittest style. Repo conventions, verified:
+> `sys.path.insert(0, str(Path(__file__).parents[1] / "skill" / "scripts"))`
+> followed by a plain `import`; `tempfile.TemporaryDirectory()` for scratch
+> dirs; run with `python3 -m unittest discover -s tests -v`.
 
 ## Global Constraints
 
@@ -18,7 +26,8 @@
 - Paragraph CV is measured and reported but never a threshold (separates 0.37/0.43 good vs 0.30 weak — too narrow).
 - Contract tests pin SKILL.md phrasing (`tests/test_skill_prose_contract.py`, `test_skill_learning_contract.py`, `test_fiction_book_development_contract.py`, `test_custom_learning_audiobook_install_contract.py`). Any reference-doc edit must run the full suite.
 - Private/generated artifacts stay uncommitted. `build/` is gitignored and holds the QM ed1 corpus — never add it.
-- Run the full suite with `python3 -m pytest tests/ -q` plus `python3 tools/validate_skills.py` before every commit.
+- Run the full suite with `python3 -m unittest discover -s tests -v` plus `python3 tools/validate_skills.py` before every commit.
+- Test style is `unittest.TestCase`. No pytest fixtures (`tmp_path`), no `@pytest.mark.parametrize`, no `pytest.skip` — use `tempfile.TemporaryDirectory()`, `with self.subTest(...)`, and `self.skipTest(...)`.
 
 ## File Structure
 
@@ -95,7 +104,7 @@ def test_rhythm_empty_input_is_safe():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python3 -m pytest tests/test_prose_metrics.py -q`
+Run: `python3 -m unittest tests.test_prose_metrics -v`
 Expected: FAIL — `FileNotFoundError` or `ModuleNotFoundError` for `prose_metrics.py`.
 
 - [ ] **Step 3: Write minimal implementation**
@@ -161,8 +170,8 @@ def rhythm(paragraph_texts: list[str]) -> dict[str, float]:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `python3 -m pytest tests/test_prose_metrics.py -q`
-Expected: PASS, 4 passed.
+Run: `python3 -m unittest tests.test_prose_metrics -v`
+Expected: OK (4 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -211,7 +220,7 @@ def test_coordinate_lists_per_1k_sentences_is_normalised():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python3 -m pytest tests/test_prose_metrics.py -q`
+Run: `python3 -m unittest tests.test_prose_metrics -v`
 Expected: FAIL — `AttributeError: module 'prose_metrics' has no attribute 'coordinate_lists'`.
 
 - [ ] **Step 3: Write minimal implementation**
@@ -248,8 +257,8 @@ def coordinate_lists(paragraph_texts: list[str]) -> dict[str, object]:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `python3 -m pytest tests/test_prose_metrics.py -q`
-Expected: PASS, 7 passed.
+Run: `python3 -m unittest tests.test_prose_metrics -v`
+Expected: OK (7 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -295,7 +304,7 @@ def test_abstract_subjects_share_is_normalised():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python3 -m pytest tests/test_prose_metrics.py -q`
+Run: `python3 -m unittest tests.test_prose_metrics -v`
 Expected: FAIL — `AttributeError: module 'prose_metrics' has no attribute 'abstract_subjects'`.
 
 - [ ] **Step 3: Write minimal implementation**
@@ -347,8 +356,8 @@ def abstract_subjects(paragraph_texts: list[str]) -> dict[str, object]:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `python3 -m pytest tests/test_prose_metrics.py -q`
-Expected: PASS, 10 passed.
+Run: `python3 -m unittest tests.test_prose_metrics -v`
+Expected: OK (10 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -398,7 +407,7 @@ def test_arithmetic_tiers_none_excludes_ed1_baseline():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python3 -m pytest tests/test_prose_metrics.py -q`
+Run: `python3 -m unittest tests.test_prose_metrics -v`
 Expected: FAIL — `AttributeError: module 'prose_metrics' has no attribute 'arithmetic_density'`.
 
 - [ ] **Step 3: Write minimal implementation**
@@ -449,8 +458,8 @@ def arithmetic_tier_verdict(per_10k: float, tier: str) -> dict[str, object]:
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `python3 -m pytest tests/test_prose_metrics.py -q`
-Expected: PASS, 14 passed.
+Run: `python3 -m unittest tests.test_prose_metrics -v`
+Expected: OK (14 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -549,7 +558,7 @@ def test_metrics_never_fail_the_run(tmp_path):
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `python3 -m pytest tests/test_prose_qc_metrics.py -q`
+Run: `python3 -m unittest tests.test_prose_qc_metrics -v`
 Expected: FAIL — `assert "Shape metrics" in text`.
 
 - [ ] **Step 3: Write minimal implementation**
@@ -619,11 +628,11 @@ Add the CLI flag in `main()`:
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `python3 -m pytest tests/test_prose_qc_metrics.py tests/test_prose_metrics.py -q`
-Expected: PASS, 17 passed.
+Run: `python3 -m unittest tests.test_prose_qc_metrics tests.test_prose_metrics -v`
+Expected: OK (17 tests).
 
 Run the full suite to confirm the receipt change broke nothing:
-`python3 -m pytest tests/ -q && python3 tools/validate_skills.py`
+`python3 -m unittest discover -s tests -v && python3 tools/validate_skills.py`
 Expected: all pass.
 
 - [ ] **Step 5: Commit**
@@ -657,22 +666,25 @@ Known verdicts, from the design spec:
   Is There Anyone in Here?    good          sentence_cv 0.65, lists 0
   NS tax-sale book            weak          sentence_cv 0.51, lists 12
 
-A threshold that does not reproduce this split is wrong.
+A threshold that does not reproduce this split is wrong. The corpora live
+outside version control, so a missing corpus SKIPS rather than fails --
+a fresh clone must stay green.
 """
-import importlib.util
+from __future__ import annotations
+
+import sys
+import unittest
 from pathlib import Path
 
-import pytest
+sys.path.insert(0, str(Path(__file__).parents[1] / "skill" / "scripts"))
+import prose_metrics
 
 REPO = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location(
-    "prose_metrics", REPO / "skill" / "scripts" / "prose_metrics.py"
-)
-prose_metrics = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(prose_metrics)
 
 SENTENCE_CV_FLOOR = 0.60
 COORDINATE_LIST_CEILING = 3.0
+
+GOOD_BOOKS = ("qm_ed1", "consciousness")
 
 CORPORA = {
     "qm_ed1": REPO / "build" / "the-question-machine" / "chapters-narration",
@@ -695,52 +707,60 @@ def _paragraphs(directory: Path) -> list[str]:
     return texts
 
 
-def _load(name: str) -> list[str]:
-    directory = CORPORA[name]
-    if not directory.is_dir():
-        pytest.skip(f"corpus {name} not present at {directory}")
-    paragraphs = _paragraphs(directory)
-    if not paragraphs:
-        pytest.skip(f"corpus {name} has no chapters")
-    return paragraphs
+class CorpusRegressionTests(unittest.TestCase):
+    def _load(self, name: str) -> list[str]:
+        directory = CORPORA[name]
+        if not directory.is_dir():
+            self.skipTest(f"corpus {name} not present at {directory}")
+        paragraphs = _paragraphs(directory)
+        if not paragraphs:
+            self.skipTest(f"corpus {name} has no chapters")
+        return paragraphs
+
+    def test_good_books_clear_the_sentence_cv_floor(self) -> None:
+        for name in GOOD_BOOKS:
+            with self.subTest(corpus=name):
+                result = prose_metrics.rhythm(self._load(name))
+                self.assertGreaterEqual(result["sentence_cv"], SENTENCE_CV_FLOOR)
+
+    def test_weak_book_fails_the_sentence_cv_floor(self) -> None:
+        result = prose_metrics.rhythm(self._load("tax_sale"))
+        self.assertLess(result["sentence_cv"], SENTENCE_CV_FLOOR)
+
+    def test_good_books_clear_the_coordinate_list_ceiling(self) -> None:
+        for name in GOOD_BOOKS:
+            with self.subTest(corpus=name):
+                result = prose_metrics.coordinate_lists(self._load(name))
+                self.assertLessEqual(
+                    result["per_1k_sentences"], COORDINATE_LIST_CEILING
+                )
+
+    def test_weak_book_exceeds_the_coordinate_list_ceiling(self) -> None:
+        result = prose_metrics.coordinate_lists(self._load("tax_sale"))
+        self.assertGreater(result["per_1k_sentences"], COORDINATE_LIST_CEILING)
+
+    def test_arithmetic_tier_does_not_penalise_the_book_that_taught(self) -> None:
+        """Ed1 scored the corpus maximum for arithmetic and taught successfully."""
+        joined = "\n\n".join(self._load("qm_ed1"))
+        density = prose_metrics.arithmetic_density(joined)
+        verdict = prose_metrics.arithmetic_tier_verdict(
+            float(density["per_10k_words"]), "light"
+        )
+        self.assertTrue(verdict["within_band"])
 
 
-@pytest.mark.parametrize("name", ["qm_ed1", "consciousness"])
-def test_good_books_clear_the_sentence_cv_floor(name):
-    result = prose_metrics.rhythm(_load(name))
-    assert result["sentence_cv"] >= SENTENCE_CV_FLOOR
-
-
-def test_weak_book_fails_the_sentence_cv_floor():
-    result = prose_metrics.rhythm(_load("tax_sale"))
-    assert result["sentence_cv"] < SENTENCE_CV_FLOOR
-
-
-@pytest.mark.parametrize("name", ["qm_ed1", "consciousness"])
-def test_good_books_clear_the_coordinate_list_ceiling(name):
-    result = prose_metrics.coordinate_lists(_load(name))
-    assert result["per_1k_sentences"] <= COORDINATE_LIST_CEILING
-
-
-def test_weak_book_exceeds_the_coordinate_list_ceiling():
-    result = prose_metrics.coordinate_lists(_load("tax_sale"))
-    assert result["per_1k_sentences"] > COORDINATE_LIST_CEILING
-
-
-def test_arithmetic_tier_does_not_penalise_the_book_that_taught():
-    """Ed1 scored the corpus maximum for arithmetic and taught successfully."""
-    joined = "\n\n".join(_load("qm_ed1"))
-    density = prose_metrics.arithmetic_density(joined)
-    verdict = prose_metrics.arithmetic_tier_verdict(
-        float(density["per_10k_words"]), "light"
-    )
-    assert verdict["within_band"] is True
+if __name__ == "__main__":
+    unittest.main()
 ```
+
+**Note on `subTest` and skips:** `self.skipTest` inside a `subTest` block skips
+that sub-case only; the sibling corpus still runs. That is the desired behaviour
+— one missing corpus must not hide the other's verdict.
 
 - [ ] **Step 2: Run test to verify it fails or skips honestly**
 
-Run: `python3 -m pytest tests/test_corpus_regression.py -v`
-Expected: 6 tests, each either PASS or SKIP with a named missing corpus. Any FAIL means a threshold is wrong — **stop and report the measured value; do not adjust the threshold to make the test green.**
+Run: `python3 -m unittest tests.test_corpus_regression -v`
+Expected: 5 test methods, each either OK or SKIP with a named missing corpus. Any FAIL means a threshold is wrong — **stop and report the measured value; do not adjust the threshold to make the test green.**
 
 - [ ] **Step 3: Record measured values in the plan**
 
@@ -748,7 +768,7 @@ Append the actual measured numbers as a comment block at the top of the test fil
 
 - [ ] **Step 4: Run the full suite**
 
-Run: `python3 -m pytest tests/ -q && python3 tools/validate_skills.py`
+Run: `python3 -m unittest discover -s tests -v && python3 tools/validate_skills.py`
 Expected: all pass.
 
 - [ ] **Step 5: Commit**
@@ -802,13 +822,13 @@ Append to the `NUMBERS, JARGON, FORM` block:
 
 - [ ] **Step 4: Run the contract tests**
 
-Run: `python3 -m pytest tests/test_skill_prose_contract.py -v`
+Run: `python3 -m unittest tests.test_skill_prose_contract -v`
 Expected: PASS. If a pinned phrase assertion fails, read the assertion and update the test **only** when the phrase it pins was deliberately changed by this task; otherwise restore the phrase.
 
 - [ ] **Step 5: Run the full suite and commit**
 
 ```bash
-python3 -m pytest tests/ -q && python3 tools/validate_skills.py
+python3 -m unittest discover -s tests -v && python3 tools/validate_skills.py
 git add skill/references/narration-style.md tests/
 git commit -m "feat: give the author generation-time budgets instead of only receipts"
 ```
@@ -872,7 +892,7 @@ intuition and the lineage.
 - [ ] **Step 5: Run tests and commit**
 
 ```bash
-python3 -m pytest tests/ -q && python3 tools/validate_skills.py
+python3 -m unittest discover -s tests -v && python3 tools/validate_skills.py
 git add skill/references/learning-design.md tests/
 git commit -m "feat: collapse six verdicts to three and preserve spines by default"
 ```
@@ -915,7 +935,7 @@ reason.
 - [ ] **Step 4: Run tests and commit**
 
 ```bash
-python3 -m pytest tests/ -q && python3 tools/validate_skills.py
+python3 -m unittest discover -s tests -v && python3 tools/validate_skills.py
 git add skill/references/voice-design.md skill/references/declaudification.md skill/references/narration-style.md
 git commit -m "feat: add nonfiction voice control panel and story ledger contract"
 ```
@@ -939,7 +959,7 @@ value of this plan is in Tasks 1–9; this task is ergonomics.
 - [ ] **Step 2:** Add `tests/test_book_qc_dispatch.py` asserting both profiles
   produce a combined report and that the existing receipts are unchanged
   byte-for-byte.
-- [ ] **Step 3:** Run `python3 -m pytest tests/ -q && python3 tools/validate_skills.py`.
+- [ ] **Step 3:** Run `python3 -m unittest discover -s tests -v && python3 tools/validate_skills.py`.
 - [ ] **Step 4:** Commit only if green.
 
 ---
