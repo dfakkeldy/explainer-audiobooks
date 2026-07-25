@@ -47,15 +47,18 @@ ARITHMETIC_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Bands are arithmetic terms per 10,000 words. Calibrated from The Question
-# Machine ed1 (7.1/10k), which taught successfully and scored the corpus
-# maximum. An absolute cap would have failed the book we are reproducing,
-# so density is always judged against the brief's declared tier.
+# Bands are arithmetic terms per 10,000 words. Measured with this module's
+# own ARITHMETIC_RE (not the earlier exploratory regex, which double-counted
+# ordinary English "times"/"plus"/"minus"): The Question Machine ed1 = 1.97/10k
+# and taught successfully; the consciousness book (is-there-anyone-in-here) =
+# 1.22/10k; the tax-sale book = 0.00/10k. An absolute cap is rejected because
+# density is a property of the subject, not of quality -- so density is
+# always judged against the brief's declared tier, not a single global bar.
 ARITHMETIC_TIERS: dict[str, tuple[float, float]] = {
-    "none": (0.0, 2.0),
-    "light": (2.0, 12.0),
-    "quantitative": (12.0, 30.0),
-    "symbolic": (30.0, 1000.0),
+    "none": (0.0, 0.5),
+    "light": (0.5, 5.0),
+    "quantitative": (5.0, 20.0),
+    "symbolic": (20.0, 1000.0),
 }
 
 

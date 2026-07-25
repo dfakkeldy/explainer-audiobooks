@@ -78,14 +78,39 @@ class TestProseMetrics(unittest.TestCase):
         self.assertEqual(prose_metrics.arithmetic_density(text)["per_10k_words"], 10.0)
 
     def test_arithmetic_tiers_place_ed1_baseline_in_light(self):
-        # Question Machine ed1 measured 7.1 arithmetic terms per 10k words and
-        # taught successfully. "light" must contain that value.
+        # The Question Machine ed1, measured with the shipped ARITHMETIC_RE
+        # (not the earlier exploratory regex that double-counted "times",
+        # "plus", "minus" as ordinary English), is 1.97 arithmetic terms per
+        # 10k words, and it taught successfully. "light" must contain that
+        # value -- that's the whole point of the tier system.
         low, high = prose_metrics.ARITHMETIC_TIERS["light"]
-        self.assertTrue(low <= 7.1 <= high)
+        self.assertTrue(low <= 1.97 <= high)
 
     def test_arithmetic_tiers_none_excludes_ed1_baseline(self):
         low, high = prose_metrics.ARITHMETIC_TIERS["none"]
-        self.assertFalse(low <= 7.1 <= high)
+        self.assertFalse(low <= 1.97 <= high)
+
+    def test_arithmetic_tier_verdict_within_band_is_true(self):
+        result = prose_metrics.arithmetic_tier_verdict(1.97, "light")
+        self.assertTrue(result["known"])
+        self.assertTrue(result["within_band"])
+        self.assertEqual(result["measured"], 1.97)
+        self.assertEqual(result["band"], [0.5, 5.0])
+
+    def test_arithmetic_tier_verdict_outside_band_is_false(self):
+        result = prose_metrics.arithmetic_tier_verdict(20.0, "none")
+        self.assertTrue(result["known"])
+        self.assertFalse(result["within_band"])
+
+    def test_arithmetic_tier_verdict_unknown_tier_reads_as_compliant(self):
+        # An unrecognized tier name (a typo, a stale brief) must never
+        # manufacture a failure: within_band is always True when known is
+        # False. This is a deliberate tradeoff -- a typo'd tier silently
+        # reads as compliant rather than blocking, so any caller must check
+        # `known` before trusting `within_band`.
+        result = prose_metrics.arithmetic_tier_verdict(1.97, "extra-spicy")
+        self.assertFalse(result["known"])
+        self.assertTrue(result["within_band"])
 
     def test_abstract_subjects_known_false_positive_on_compound_plural_subject(self):
         # KNOWN LIMITATION: The verb alternation in ABSTRACT_SUBJECT_RE accepts
