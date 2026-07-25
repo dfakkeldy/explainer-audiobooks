@@ -331,8 +331,23 @@ def report(
     phrase_size: int,
     threshold: float,
     limit: int,
+    paragraph_texts: list[str],
     metrics: dict[str, object] | None = None,
 ) -> str:
+    """Render the Markdown candidate report.
+
+    `paragraphs` is the >=20-word-filtered population used by the
+    style-family checks. `paragraph_texts` must be the *unfiltered*
+    population for the same chapters (see `extract_paragraph_texts`) --
+    it is the only source `analyse_metrics` is ever computed from here,
+    so a caller that skips it and passes the filtered `paragraphs` list
+    instead would silently undercount rhythm and coordinate lists. When
+    `metrics` is precomputed (e.g. by the CLI, which also needs it for
+    the receipt), it is used as-is and `paragraph_texts` is ignored for
+    metrics purposes; either way there is exactly one correct answer for
+    a given chapter set, since both paths bottom out in
+    `analyse_metrics(paragraph_texts)`.
+    """
     lines = ["# Prose QC Candidate Report", "", "> This report flags candidates; verify against the coverage ledger before editing. Intentional retrieval practice is not padding.", ""]
     chapter_counts = Counter(paragraph.chapter for paragraph in paragraphs)
     lines += ["## Input", "", f"- Chapters: {len(chapter_counts)}", f"- Analysed prose paragraphs: {len(paragraphs)}", ""]
@@ -387,7 +402,7 @@ def report(
     lines += ["## Editorial decision", "", "For every candidate, mark it as **keep** (intentional retrieval with a named learning purpose), **tighten**, **deepen**, **replace with an example/boundary**, or **remove**. Only the frontier author makes substantive prose changes.", ""]
 
     if metrics is None:
-        metrics = analyse_metrics([paragraph.text for paragraph in paragraphs])
+        metrics = analyse_metrics(paragraph_texts)
     lines.append("## Shape metrics (advisory)")
     lines.append("")
     rhythm_block = metrics["rhythm"]
@@ -446,7 +461,10 @@ def main() -> int:
     paragraph_texts = [text for path in source_files for text in extract_paragraph_texts(path)]
     style = analyse_style(paragraphs)
     metrics = analyse_metrics(paragraph_texts, args.arithmetic_tier)
-    output = report(paragraphs, args.phrase_size, args.similarity_threshold, args.limit, metrics=metrics)
+    output = report(
+        paragraphs, args.phrase_size, args.similarity_threshold, args.limit,
+        paragraph_texts, metrics=metrics,
+    )
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(output, encoding="utf-8")
