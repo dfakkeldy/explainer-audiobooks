@@ -70,10 +70,13 @@ For an explainer book, `build_book.py` additionally takes
 `--non-narrated-appendix "$RUN_ROOT/research/sources.md"` for a readable
 sources document that stays outside Echo narration and narrated word counts.
 
-Read `references/declaudification.md` before outlining or drafting. Record the
-listener's **AI-writing patterns to avoid**, prevent those phrase families in the
-lead-author prompt, and require the family-density gate plus hash-bound prose
-receipt before packaging.
+Read `references/voice-design.md` before outlining or drafting. Freeze the
+control-panel choices and the required project-specific sample sentences
+before the first section, and give the block to the lead author with the fact
+pack. Read `references/declaudification.md` at QC time, when checking a
+finished draft: record the listener's **AI-writing patterns to avoid**,
+prevent those phrase families in the lead-author prompt, and require the
+family-density gate plus hash-bound prose receipt before packaging.
 
 Read `references/road-book-mode.md`, `references/learning-design.md`, and
 `references/curriculum-patterns.md` before intake or outlining. Default to
@@ -628,6 +631,10 @@ completion or delivery claim.
 - `references/narration-style.md` — the voice & rules block to give the frontier
   author verbatim, the reasoning behind them, the length/runtime table, the
   fact-pack discipline, and the QC checklist. Read before writing fact packs.
+- `references/voice-design.md` — the drafting-time control panel, the required
+  project-specific sample sentences, the four habits, and what counts as a
+  story. Read before outlining or drafting; freeze it before the first
+  section.
 - `references/cover-art.md` — how to design, render, review, and explicitly
   select three complete art-and-type candidates; ships with
   `cover-art-example.svg` as a structural reference for an approved vector
@@ -637,8 +644,8 @@ completion or delivery claim.
   frontier-author / cheaper-worker split, and citation-first review format.
 - `references/humanizer-pass.md` — the bounded `humanizer` pass for removing
   AI-writing tells without replacing the frontier author's voice or meaning.
-- `references/declaudification.md` — drafting prohibitions, rhetorical phrase
-  families, density limits, the two-pass humanizer inventory, and the
+- `references/declaudification.md` — the QC-time density review: rhetorical
+  phrase families, density limits, the two-pass humanizer inventory, and the
   hash-bound prose receipt required for new packages.
 - `references/road-book-mode.md` — the driving/delivery listening mode,
   first-edition-plus revision rule, narrative and real-world teaching

@@ -37,7 +37,7 @@ class ManifestEntry:
 
 SKILL_MANIFEST = {
     Path("SKILL.md"): ManifestEntry(
-        "file", 0o644, "4990a97819087d00f6a13676401d3b4c44b9eb65e627237c08afc9684f8f7fc5"
+        "file", 0o644, "6f8f27dc897ca125a7e903d178534250782c712d2429c2f38b626996d61a0df2"
     ),
     Path("agents"): ManifestEntry("directory", 0o755),
     Path("agents/openai.yaml"): ManifestEntry(

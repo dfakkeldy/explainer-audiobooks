@@ -51,9 +51,13 @@ and fiction-specific revision.
 - Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
   preparing the production handoff. The final prose pass is bounded: it removes
   AI tics without inventing personality, anecdotes, sources, or claims.
+- Read `../../skill/references/voice-design.md` and capture the drafting-time
+  control-panel settings and the 3-5 project-specific sample sentences for the
+  handoff packet — a handoff carrying only prohibitions reproduces the
+  original flattened-prose problem downstream.
 - Read `../../skill/references/declaudification.md` and capture the listener's
-  **AI-writing patterns to avoid**, disliked phrase families, and any positive
-  voice sample before preparing the production handoff.
+  **AI-writing patterns to avoid** and disliked phrase families before
+  preparing the production handoff.
 
 ## Resuming an in-progress project
 
