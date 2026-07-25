@@ -16,6 +16,10 @@ import re
 import statistics
 
 SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
+COORDINATE_LIST_RE = re.compile(
+    r"(?:[\w'-]+(?:\s+[\w'-]+){0,3},\s+){3,}(?:and|or)\s+[\w'-]+",
+    re.IGNORECASE,
+)
 
 
 def split_sentences(text: str) -> list[str]:
@@ -53,4 +57,26 @@ def rhythm(paragraph_texts: list[str]) -> dict[str, float]:
         "sentence_mean": round(statistics.mean(sent_lengths), 2) if sent_lengths else 0.0,
         "paragraph_count": len(para_lengths),
         "sentence_count": len(sent_lengths),
+    }
+
+
+def coordinate_lists(paragraph_texts: list[str]) -> dict[str, object]:
+    """Count exhaustive coordinated series of four or more items.
+
+    Four-plus item lists are the prose signature of completeness-seeking:
+    the writer enumerates the whole category instead of choosing the one
+    item that carries the point. Three items is ordinary English and is
+    deliberately not flagged.
+    """
+    examples: list[str] = []
+    sentence_total = 0
+    for paragraph in paragraph_texts:
+        sentence_total += len(split_sentences(paragraph))
+        for match in COORDINATE_LIST_RE.finditer(paragraph):
+            examples.append(re.sub(r"\s+", " ", match.group(0)).strip())
+    per_1k = round(len(examples) / sentence_total * 1000, 2) if sentence_total else 0.0
+    return {
+        "count": len(examples),
+        "per_1k_sentences": per_1k,
+        "examples": examples[:20],
     }

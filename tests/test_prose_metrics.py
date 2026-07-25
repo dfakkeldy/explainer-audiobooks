@@ -1,13 +1,9 @@
-import importlib.util
+import sys
 import unittest
 from pathlib import Path
 
-SPEC = importlib.util.spec_from_file_location(
-    "prose_metrics",
-    Path(__file__).resolve().parents[1] / "skill" / "scripts" / "prose_metrics.py",
-)
-prose_metrics = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(prose_metrics)
+sys.path.insert(0, str(Path(__file__).parents[1] / "skill" / "scripts"))
+import prose_metrics
 
 
 class TestProseMetrics(unittest.TestCase):
@@ -38,6 +34,25 @@ class TestProseMetrics(unittest.TestCase):
         self.assertEqual(result["paragraph_cv"], 0.0)
         self.assertEqual(result["sentence_cv"], 0.0)
         self.assertEqual(result["paragraph_count"], 0)
+
+    def test_coordinate_lists_flags_four_item_series(self):
+        text = ("Non-diminishing use does not erase planning law, tenancy, "
+                "occupancy, safety, or the continuing redemption right.")
+        result = prose_metrics.coordinate_lists([text])
+        self.assertEqual(result["count"], 1)
+        self.assertIn("planning law, tenancy", result["examples"][0])
+
+    def test_coordinate_lists_ignores_three_item_series(self):
+        # Three items is ordinary English; four or more is the tell.
+        text = "He brought bread, cheese, and wine."
+        self.assertEqual(prose_metrics.coordinate_lists([text])["count"], 0)
+
+    def test_coordinate_lists_per_1k_sentences_is_normalised(self):
+        listed = ("alpha, beta, gamma, delta, and epsilon follow. ") * 2
+        plain = "Short one. " * 8
+        result = prose_metrics.coordinate_lists([listed + plain])
+        self.assertEqual(result["count"], 2)
+        self.assertEqual(result["per_1k_sentences"], 200.0)
 
 
 if __name__ == "__main__":
