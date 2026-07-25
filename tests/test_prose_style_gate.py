@@ -111,7 +111,7 @@ class ProseStyleAnalysisTests(unittest.TestCase):
             "parameters to calculate a useful output from a new input during inference."
         )
         paragraph = self.paragraph(text)
-        output = prose_qc.report([paragraph], 6, 0.68, 20)
+        output = prose_qc.report([paragraph], 6, 0.68, 20, [text])
 
         self.assertIn("## Rhetorical family gate", output)
         self.assertIn("reader_management", output)
