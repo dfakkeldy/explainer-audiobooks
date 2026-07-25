@@ -24,18 +24,27 @@ added the road-book contract. All three are merged and live.
 
 | Book | Verdict | paraCV | sentCV | 4+ item lists /1k sents | arith terms /10k words |
 |---|---|---|---|---|---|
-| The Question Machine ed1 | taught well | 0.37 | 0.72 | 0 | 7.1 |
-| Is There Anyone in Here? | good | 0.43 | 0.65 | 0 | 5.4 |
-| NS tax-sale book | weak | 0.30 | 0.51 | 12 | 6.2 |
+| The Question Machine ed1 | taught well | 0.34 | 0.662 | 9.3 | 1.97 |
+| Is There Anyone in Here? | good | 0.47 | 0.656 | 14.2 | 1.22 |
+| NS tax-sale book | weak | 0.34 | 0.503 | 62.6 | 0.00 |
+
+> **Corrected 2026-07-25 during implementation.** The first version of this table
+> was measured with exploratory regexes written for this analysis. The shipped
+> detectors differ: the coordinate-list pattern allows 1–4 words per item (not
+> just single words), and the arithmetic pattern correctly excludes `times`,
+> `plus`, and `minus`, which match ordinary English constantly. Absolute values
+> moved; **every conclusion below still holds**, because each rests on the
+> ordering, not the magnitude.
 
 `paraCV` / `sentCV` are standard deviation over mean of paragraph and sentence
 word counts — rhythm variance.
 
-Two measures separate good from weak: **sentence variance** (0.65–0.72 good,
-0.51 weak) and **coordinate lists** (0 good, 12 weak). Arithmetic density does
-*not* separate — ed1 scores highest because it is a book about AI. Any
-arithmetic budget must be relative to the brief's approved level, never a
-universal cap.
+Two measures separate good from weak: **sentence variance** (0.656–0.662 good,
+0.503 weak) and **coordinate lists** (9.3–14.2 good, 62.6 weak — the weak book
+runs 4–7× the good books). Arithmetic density does *not* separate: the tax-sale
+book scores 0.00 and is the weak one, while ed1 discusses gradients and taught
+successfully. Any arithmetic budget must be relative to the brief's declared
+tier, never a universal cap.
 
 ### Forensic evidence from the KB
 
@@ -130,20 +139,22 @@ prompt and checked after **each chapter**, not at gate 11:
 |---|---|---|---|
 | new core terms / chapter | ≤3 | advisory | ed3 introduced 35 in ch1 |
 | durable book outcomes | 6–10 | blocking | KB contract item 2 |
-| arithmetic density | ≤ tier band (below) | advisory | ed3 ran ~9× ed1 |
+| arithmetic density | within declared tier band | advisory | ed3 ran ~9× ed1 |
 | values / symbolic steps per spoken calculation | ≤3 / ≤3 | blocking | exists in `narration-style.md`, unenforced |
 | real sourced story anchors / chapter | ≥1 or recorded exemption | blocking | new |
-| sentence CV | ≥0.60 | blocking *iff* corpus split holds | ed1 0.72, consciousness 0.65, tax-sale 0.51 |
-| 4+ item lists / 1k sentences | ≤3 | blocking | ed1 and consciousness both 0 |
+| sentence CV | ≥0.60 | blocking *iff* corpus split holds | ed1 0.662, consciousness 0.656, tax-sale 0.503 |
+| 4+ item lists / 1k sentences | ≤25 | blocking | ed1 9.3, consciousness 14.2, tax-sale 62.6 |
 
-Paragraph CV is measured and reported but is **not** a budget: it separates the
-corpus too narrowly (0.37 / 0.43 good vs 0.30 weak) to carry a threshold.
+Paragraph CV is measured and reported but is **not** a budget: it does not
+separate the corpus at all under the shipped detector (0.34 good, 0.47 good,
+0.34 weak), so it cannot carry a threshold.
 
 "Arithmetic density ≤ tier band" requires the brief to record a named arithmetic
-tier — `none`, `light` (ed1's level, ~7 arithmetic terms per 10k words),
-`quantitative`, or `symbolic`. The check compares measured density against that
-tier's band, calibrated from ed1 for `light`. Absolute caps are rejected: ed1
-scored the corpus maximum and taught successfully.
+tier — `none`, `light`, `quantitative`, or `symbolic`. Bands per 10k words:
+none 0–0.5, light 0.5–5, quantitative 5–20, symbolic 20+. Calibrated so ed1
+(1.97) and the consciousness book (1.22) sit in `light`, and the tax-sale book
+(0.00) in `none`. Absolute caps are rejected: arithmetic density is a property
+of the subject, not of quality — the weak book in this corpus scores zero.
 
 Collapse 6 independent verdicts to 3. Curriculum, chapter teaching, blind
 beginner review, and comprehension pilot all measure one question — does a

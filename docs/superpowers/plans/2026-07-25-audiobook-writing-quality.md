@@ -22,7 +22,7 @@
 - Stdlib only. No new third-party dependencies.
 - All new measures ship **advisory** (reported, never failing) until Task 6 proves the corpus split. Only Task 7 promotes any measure to blocking.
 - Receipt schemas are **additive only**. An existing `prose-style-receipt.json` must keep validating; `build_book.py --prose-receipt` must keep accepting receipts produced before this change.
-- Arithmetic density is **never** an absolute cap — always a ratio against the brief's declared tier. Ed1 scored the corpus maximum (7.1/10k) and taught successfully.
+- Arithmetic density is **never** an absolute cap — always a ratio against the brief's declared tier. Measured with the shipped `ARITHMETIC_RE`, ed1 = 1.97/10k and taught successfully; consciousness = 1.22; tax-sale = 0.00. (An earlier exploratory regex counted `times`/`plus`/`minus` and reported 7.1 — that figure is discredited, and the tier bands were recalibrated against the clean measurement.)
 - Paragraph CV is measured and reported but never a threshold (separates 0.37/0.43 good vs 0.30 weak — too narrow).
 - Contract tests pin SKILL.md phrasing (`tests/test_skill_prose_contract.py`, `test_skill_learning_contract.py`, `test_fiction_book_development_contract.py`, `test_custom_learning_audiobook_install_contract.py`). Any reference-doc edit must run the full suite.
 - Private/generated artifacts stay uncommitted. `build/` is gitignored and holds the QM ed1 corpus — never add it.
@@ -678,9 +678,15 @@ The three corpora live outside version control. The test **skips** rather than f
 """Empirical thresholds, validated against three real books.
 
 Known verdicts, from the design spec:
-  Question Machine ed1        taught well   sentence_cv 0.72, lists 0
-  Is There Anyone in Here?    good          sentence_cv 0.65, lists 0
-  NS tax-sale book            weak          sentence_cv 0.51, lists 12
+  Question Machine ed1        taught well   sentence_cv 0.662, lists  9.3
+  Is There Anyone in Here?    good          sentence_cv 0.656, lists 14.2
+  NS tax-sale book            weak          sentence_cv 0.503, lists 62.6
+
+Measured 2026-07-25 with this repo's own COORDINATE_LIST_RE and rhythm().
+An earlier exploratory regex matched only single-word list items and gave
+0/0/12; the shipped detector allows 1-4 words per item and gives the numbers
+above. The relative ordering -- the weak book runs 4-7x the good books -- is
+what carries the signal, and it holds under both detectors.
 
 A threshold that does not reproduce this split is wrong. The corpora live
 outside version control, so a missing corpus SKIPS rather than fails --
@@ -698,7 +704,7 @@ import prose_metrics
 REPO = Path(__file__).resolve().parents[1]
 
 SENTENCE_CV_FLOOR = 0.60
-COORDINATE_LIST_CEILING = 3.0
+COORDINATE_LIST_CEILING = 25.0
 
 GOOD_BOOKS = ("qm_ed1", "consciousness")
 
