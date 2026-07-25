@@ -13,11 +13,15 @@ import argparse
 import hashlib
 import json
 import re
+import sys
 from collections import Counter
 from dataclasses import dataclass
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Iterable
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import prose_metrics  # noqa: E402
 
 WORD_RE = re.compile(r"[A-Za-z][A-Za-z'-]*")
 PARAGRAPH_SPLIT_RE = re.compile(r"\n\s*\n")
@@ -154,6 +158,33 @@ def analyse_style(
     }
 
 
+def analyse_metrics(paragraph_texts: list[str], arithmetic_tier: str | None = None) -> dict[str, object]:
+    """Shape measures. Advisory: reported, never a failure condition.
+
+    Kept separate from analyse_style because the style families judge what
+    the prose says, while these judge how uniformly it says it.
+
+    Takes plain paragraph text (not the length-filtered `Paragraph` records
+    analyse_style uses) because rhythm's whole signal is the contrast between
+    short and long paragraphs -- the same length filter that keeps the
+    phrase-repetition checks meaningful would erase exactly what rhythm is
+    designed to detect.
+    """
+    joined = "\n\n".join(paragraph_texts)
+    arith = prose_metrics.arithmetic_density(joined)
+    block: dict[str, object] = {
+        "rhythm": prose_metrics.rhythm(paragraph_texts),
+        "coordinate_lists": prose_metrics.coordinate_lists(paragraph_texts),
+        "abstract_subjects": prose_metrics.abstract_subjects(paragraph_texts),
+        "arithmetic": arith,
+    }
+    if arithmetic_tier:
+        block["arithmetic_tier"] = prose_metrics.arithmetic_tier_verdict(
+            float(arith["per_10k_words"]), arithmetic_tier
+        )
+    return block
+
+
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -167,6 +198,7 @@ def write_style_receipt(
     receipt_path: Path,
     analysis: dict[str, object],
     decisions: dict[str, object],
+    metrics: dict[str, object] | None = None,
 ) -> dict[str, object]:
     required_fields = {
         "reviewer", "model", "skill_version", "humanizer_applied",
@@ -189,6 +221,7 @@ def write_style_receipt(
         "status": analysis.get("status", "fail"),
         "chapter_sha256": _chapter_hashes(Path(chapters_dir)),
         "analysis": analysis,
+        "metrics": metrics if metrics is not None else analyse_metrics([]),
         "decisions": decisions,
     }
     receipt_path = Path(receipt_path)
@@ -214,13 +247,26 @@ def chapters(chapters_dir: Path) -> Iterable[Path]:
     yield from sorted(chapters_dir.glob("ch*.md"))
 
 
-def extract_paragraphs(path: Path) -> list[Paragraph]:
+def extract_paragraph_texts(path: Path) -> list[str]:
+    """All non-heading, non-image paragraph blocks, unfiltered by length.
+
+    Shape metrics (see analyse_metrics) need the full paragraph population,
+    short beats included, so this intentionally skips the >=20-word gate
+    that extract_paragraphs applies for the phrase-repetition/style checks.
+    """
     raw = path.read_text(encoding="utf-8")
-    result: list[Paragraph] = []
+    texts: list[str] = []
     for block in PARAGRAPH_SPLIT_RE.split(raw):
         stripped = block.strip()
         if not stripped or stripped.startswith("#") or stripped.startswith("!["):
             continue
+        texts.append(stripped)
+    return texts
+
+
+def extract_paragraphs(path: Path) -> list[Paragraph]:
+    result: list[Paragraph] = []
+    for stripped in extract_paragraph_texts(path):
         tokenized = words(stripped)
         if len(tokenized) >= 20:
             result.append(Paragraph(path.name, len(result) + 1, stripped, tokenized))
@@ -280,7 +326,13 @@ def formulaic_starts(paragraphs: list[Paragraph], position: str, limit: int) -> 
     return findings[:limit]
 
 
-def report(paragraphs: list[Paragraph], phrase_size: int, threshold: float, limit: int) -> str:
+def report(
+    paragraphs: list[Paragraph],
+    phrase_size: int,
+    threshold: float,
+    limit: int,
+    metrics: dict[str, object] | None = None,
+) -> str:
     lines = ["# Prose QC Candidate Report", "", "> This report flags candidates; verify against the coverage ledger before editing. Intentional retrieval practice is not padding.", ""]
     chapter_counts = Counter(paragraph.chapter for paragraph in paragraphs)
     lines += ["## Input", "", f"- Chapters: {len(chapter_counts)}", f"- Analysed prose paragraphs: {len(paragraphs)}", ""]
@@ -333,6 +385,30 @@ def report(paragraphs: list[Paragraph], phrase_size: int, threshold: float, limi
         lines.append("")
 
     lines += ["## Editorial decision", "", "For every candidate, mark it as **keep** (intentional retrieval with a named learning purpose), **tighten**, **deepen**, **replace with an example/boundary**, or **remove**. Only the frontier author makes substantive prose changes.", ""]
+
+    if metrics is None:
+        metrics = analyse_metrics([paragraph.text for paragraph in paragraphs])
+    lines.append("## Shape metrics (advisory)")
+    lines.append("")
+    rhythm_block = metrics["rhythm"]
+    lines.append(f"- paragraph_cv: {rhythm_block['paragraph_cv']} (advisory, no threshold)")
+    lines.append(f"- sentence_cv: {rhythm_block['sentence_cv']}")
+    coord = metrics["coordinate_lists"]
+    lines.append(f"- coordinate_lists: {coord['count']} ({coord['per_1k_sentences']} per 1k sentences)")
+    abstract = metrics["abstract_subjects"]
+    lines.append(f"- abstract_subjects: {abstract['count']} ({abstract['share_of_sentences']} of sentences)")
+    lines.append(f"- arithmetic: {metrics['arithmetic']['per_10k_words']} per 10k words")
+    if "arithmetic_tier" in metrics:
+        tier = metrics["arithmetic_tier"]
+        if tier["known"]:
+            lines.append(
+                f"- arithmetic_tier: {tier['tier']} band {tier['band']} "
+                f"measured {tier['measured']} within_band={tier['within_band']}"
+            )
+        else:
+            lines.append(f"- arithmetic_tier: {tier['tier']} (unknown tier, treated as compliant)")
+    lines.append("")
+
     return "\n".join(lines)
 
 
@@ -349,6 +425,11 @@ def main() -> int:
                         help="JSON humanizer decisions required by --style-receipt-out")
     parser.add_argument("--fail-on-style", action="store_true",
                         help="Exit 1 when hard bans or family density budgets fail")
+    parser.add_argument(
+        "--arithmetic-tier",
+        choices=sorted(prose_metrics.ARITHMETIC_TIERS),
+        help="Brief's declared arithmetic tier; enables the band comparison.",
+    )
     args = parser.parse_args()
 
     if args.phrase_size < 3:
@@ -362,8 +443,10 @@ def main() -> int:
     if not source_files:
         parser.error(f"no ch*.md files in: {args.chapters_dir}")
     paragraphs = [paragraph for path in source_files for paragraph in extract_paragraphs(path)]
+    paragraph_texts = [text for path in source_files for text in extract_paragraph_texts(path)]
     style = analyse_style(paragraphs)
-    output = report(paragraphs, args.phrase_size, args.similarity_threshold, args.limit)
+    metrics = analyse_metrics(paragraph_texts, args.arithmetic_tier)
+    output = report(paragraphs, args.phrase_size, args.similarity_threshold, args.limit, metrics=metrics)
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(output, encoding="utf-8")
@@ -373,7 +456,9 @@ def main() -> int:
         if not args.decisions:
             parser.error("--style-receipt-out requires --decisions")
         decisions = json.loads(args.decisions.read_text(encoding="utf-8"))
-        write_style_receipt(args.chapters_dir, args.style_receipt_out, style, decisions)
+        write_style_receipt(args.chapters_dir, args.style_receipt_out, style, decisions, metrics=metrics)
+    # Measures are advisory (see analyse_metrics): --fail-on-style is driven
+    # solely by analyse_style's status, never by shape-metric values.
     return 1 if args.fail_on_style and style["status"] != "pass" else 0
 
 
