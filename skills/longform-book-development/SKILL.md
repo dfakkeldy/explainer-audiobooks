@@ -118,6 +118,14 @@ user means before creating a new one.
    precise locator, uncertainty, and `traceable-only` status. The research phase
    does not decide the learning arc or draft prose.
 
+   Plan `research/story-ledger.md` in the same phase. Each entry records what
+   happened, the named actors, place, and date, the source citation, the concept
+   it carries, and the reversal — what a reasonable person would have expected
+   instead. No reversal means it is an example, not a story. Sources are
+   documented and institutional, never private individuals. Gather these before
+   the outline freezes: evidence notes alone leave the author with no narrative
+   material at drafting time, which is where invented hypotheticals come from.
+
    When the user names private books or audio as a writing reference, plan a
    private `research/voice-source-profile.md`. Capture high-level craft—opening
    move, evidence-to-example movement, plain-language mechanism, humor boundary,

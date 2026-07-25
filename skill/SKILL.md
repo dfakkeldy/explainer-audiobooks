@@ -195,6 +195,20 @@ uncertainty. Bind it in `research/evidence-notes.json` with
 `claimPolicy: traceable-only`. The outline and manuscript may use only claims
 traceable to this artifact; a citation-shaped memory is not evidence.
 
+In the same call, build `research/story-ledger.md` — the narrative material the
+book will teach with. Each entry records what happened in one line, the named
+actors, place, and date, the source citation, the concept it carries, and the
+reversal: what a reasonable person would have expected instead. An entry with no
+reversal is an example, not a story, and does not count. Sources are documented
+and institutional — published decisions, papers, post-mortems, news reports, real
+repository history, named public figures acting in public roles — never private
+individuals. Every chapter plan later names a ledger entry or records an
+exemption with a reason, so a storyless chapter surfaces at planning time rather
+than mid-draft. Gather these before the outline freezes: a fact pack of statutes
+and API surfaces leaves the author with no narrative on hand at drafting time,
+which is when hypotheticals like "a fictional bidder" get invented. See
+`references/voice-design.md` for what separates a story from an illustration.
+
 When the user approved a private writing source, analyze its high-level craft in
 `research/voice-source-profile.md`: opening move, evidence-to-example movement,
 plain-language mechanism, direct address, humor boundary, uncertainty, rhythm,
