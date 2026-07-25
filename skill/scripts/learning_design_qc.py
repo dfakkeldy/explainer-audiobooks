@@ -378,6 +378,12 @@ def validate_brief(brief: dict[str, Any], run_root: Path) -> dict[str, Any]:
             "must be first-edition-plus: a revision that discards the previous spine "
             "is how a working book gets worse"
         )
+    if not prior_edition_exists and revision_mode == "first-edition-plus":
+        raise ValueError(
+            "brief.revisionMode.name is first-edition-plus, so "
+            "brief.revisionMode.priorEditionExists must be true: there is no earlier "
+            "edition to preserve from"
+        )
     preserve = revision.get("preserve")
     if not isinstance(preserve, dict):
         raise ValueError("brief.revisionMode.preserve must be an object")

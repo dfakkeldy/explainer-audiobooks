@@ -874,6 +874,16 @@ class LearningDesignGateTests(LearningDesignFixture):
         with self.assertRaisesRegex(ValueError, "previous spine"):
             self.module().validate_run(self.root)
 
+    def test_first_edition_plus_without_prior_edition_errors(self) -> None:
+        """The inverse: preserving from an edition that is declared not to exist."""
+        brief = self.read_json("learning-brief.json")
+        brief["revisionMode"]["name"] = "first-edition-plus"
+        brief["revisionMode"]["priorEditionExists"] = False
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "no earlier"):
+            self.module().validate_run(self.root)
+
     def test_reduced_target_requires_user_approved_scope_history(self) -> None:
         brief = self.read_json("learning-brief.json")
         old_target = brief["originalTargetWords"]
