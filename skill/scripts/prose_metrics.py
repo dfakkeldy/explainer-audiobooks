@@ -39,6 +39,25 @@ ABSTRACT_SUBJECT_RE = re.compile(
     re.IGNORECASE,
 )
 
+ARITHMETIC_RE = re.compile(
+    r"\b(?:multiply|multiplied|divide[ds]?|subtract(?:ed)?|sum of|product of"
+    r"|square(?:d|s|\s+root)?|derivative|gradient|slope|chain rule|matrix"
+    r"|matrices|vector|dot product|weighted sum|partial derivative"
+    r"|logarithm|exponent(?:ial)?|coefficient)\b",
+    re.IGNORECASE,
+)
+
+# Bands are arithmetic terms per 10,000 words. Calibrated from The Question
+# Machine ed1 (7.1/10k), which taught successfully and scored the corpus
+# maximum. An absolute cap would have failed the book we are reproducing,
+# so density is always judged against the brief's declared tier.
+ARITHMETIC_TIERS: dict[str, tuple[float, float]] = {
+    "none": (0.0, 2.0),
+    "light": (2.0, 12.0),
+    "quantitative": (12.0, 30.0),
+    "symbolic": (30.0, 1000.0),
+}
+
 
 def split_sentences(text: str) -> list[str]:
     """Split on sentence terminators followed by whitespace."""
@@ -121,4 +140,26 @@ def abstract_subjects(paragraph_texts: list[str]) -> dict[str, object]:
         "count": len(examples),
         "share_of_sentences": share,
         "examples": examples[:20],
+    }
+
+
+def arithmetic_density(text: str) -> dict[str, float]:
+    """Rate of arithmetic-operation language per 10,000 words."""
+    total_words = len(text.split())
+    count = len(ARITHMETIC_RE.findall(text))
+    per_10k = round(count / total_words * 10000, 2) if total_words else 0.0
+    return {"count": count, "per_10k_words": per_10k}
+
+
+def arithmetic_tier_verdict(per_10k: float, tier: str) -> dict[str, object]:
+    """Compare measured density against the brief's declared tier band."""
+    if tier not in ARITHMETIC_TIERS:
+        return {"tier": tier, "known": False, "within_band": True}
+    low, high = ARITHMETIC_TIERS[tier]
+    return {
+        "tier": tier,
+        "known": True,
+        "band": [low, high],
+        "measured": per_10k,
+        "within_band": low <= per_10k <= high,
     }

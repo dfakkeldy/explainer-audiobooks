@@ -68,6 +68,25 @@ class TestProseMetrics(unittest.TestCase):
         text = "The document matters. A clerk signed it."
         self.assertEqual(prose_metrics.abstract_subjects([text])["share_of_sentences"], 0.5)
 
+    def test_arithmetic_density_counts_operation_language(self):
+        text = "You multiply the weights, take the gradient, then the chain rule applies."
+        result = prose_metrics.arithmetic_density(text)
+        self.assertEqual(result["count"], 3)
+
+    def test_arithmetic_density_normalises_per_10k_words(self):
+        text = ("multiply " + "filler " * 999)
+        self.assertEqual(prose_metrics.arithmetic_density(text)["per_10k_words"], 10.0)
+
+    def test_arithmetic_tiers_place_ed1_baseline_in_light(self):
+        # Question Machine ed1 measured 7.1 arithmetic terms per 10k words and
+        # taught successfully. "light" must contain that value.
+        low, high = prose_metrics.ARITHMETIC_TIERS["light"]
+        self.assertTrue(low <= 7.1 <= high)
+
+    def test_arithmetic_tiers_none_excludes_ed1_baseline(self):
+        low, high = prose_metrics.ARITHMETIC_TIERS["none"]
+        self.assertFalse(low <= 7.1 <= high)
+
 
 if __name__ == "__main__":
     unittest.main()
