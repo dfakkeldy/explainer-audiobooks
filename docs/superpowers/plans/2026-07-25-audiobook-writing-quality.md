@@ -26,7 +26,23 @@
 - Paragraph CV is measured and reported but never a threshold (separates 0.37/0.43 good vs 0.30 weak — too narrow).
 - Contract tests pin SKILL.md phrasing (`tests/test_skill_prose_contract.py`, `test_skill_learning_contract.py`, `test_fiction_book_development_contract.py`, `test_custom_learning_audiobook_install_contract.py`). Any reference-doc edit must run the full suite.
 - Private/generated artifacts stay uncommitted. `build/` is gitignored and holds the QM ed1 corpus — never add it.
-- Run the full suite with `python3 -m unittest discover -s tests -v` plus `python3 tools/validate_skills.py` before every commit.
+- Run `python3 tools/validate_skills.py` before every commit. It must pass.
+- **The full suite cannot run in this environment.** Pillow is not installed, so
+  15 of 34 test modules fail at import with `ModuleNotFoundError: No module named
+  'PIL'`, and `tests.test_custom_learning_audiobook_echo_runtime` hangs on a
+  subprocess/socket test. This is pre-existing and unrelated to this plan — a
+  missing third-party module cannot be caused by adding stdlib-only code. Do not
+  install Pillow; it is the user's system Python and that is their call.
+  **Verify with the PIL-independent modules instead:**
+  ```
+  python3 -m unittest tests.test_prose_metrics tests.test_prose_qc_metrics \
+    tests.test_corpus_regression tests.test_skill_prose_contract \
+    tests.test_skill_learning_contract tests.test_fiction_book_development_contract \
+    tests.test_skill_cover_contract tests.test_skill_unattended_contract \
+    tests.test_custom_learning_audiobook_install_contract -v
+  ```
+  Report honestly which modules were and were not exercised. Never claim "full
+  suite passes."
 - Test style is `unittest.TestCase`. No pytest fixtures (`tmp_path`), no `@pytest.mark.parametrize`, no `pytest.skip` — use `tempfile.TemporaryDirectory()`, `with self.subTest(...)`, and `self.skipTest(...)`.
 
 ## File Structure
