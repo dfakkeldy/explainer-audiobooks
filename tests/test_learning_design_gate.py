@@ -183,6 +183,7 @@ class LearningDesignFixture(unittest.TestCase):
                 },
                 "revisionMode": {
                     "name": "new-book",
+                    "priorEditionExists": False,
                     "sourceEdition": "",
                     "preserve": {
                         "governingQuestion": "",
@@ -850,9 +851,89 @@ class LearningDesignGateTests(LearningDesignFixture):
     def test_first_edition_plus_requires_preservation_evidence(self) -> None:
         brief = self.read_json("learning-brief.json")
         brief["revisionMode"]["name"] = "first-edition-plus"
+        brief["revisionMode"]["priorEditionExists"] = True
+        brief["revisionMode"]["sourceEdition"] = "An earlier edition that taught well."
         self.write_json("learning-brief.json", brief)
 
         with self.assertRaisesRegex(ValueError, "revisionMode"):
+            self.module().validate_run(self.root)
+
+    def test_revision_mode_requires_a_prior_edition_declaration(self) -> None:
+        brief = self.read_json("learning-brief.json")
+        brief["revisionMode"].pop("priorEditionExists", None)
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "priorEditionExists"):
+            self.module().validate_run(self.root)
+
+    def test_prior_edition_declaration_must_be_boolean(self) -> None:
+        brief = self.read_json("learning-brief.json")
+        brief["revisionMode"]["priorEditionExists"] = "no"
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "priorEditionExists"):
+            self.module().validate_run(self.root)
+
+    def test_declared_prior_edition_requires_a_named_source_edition(self) -> None:
+        brief = self.read_json("learning-brief.json")
+        brief["revisionMode"]["priorEditionExists"] = True
+        brief["revisionMode"]["sourceEdition"] = ""
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "sourceEdition"):
+            self.module().validate_run(self.root)
+
+    def test_new_book_over_a_prior_edition_requires_documented_preserve_decisions(
+        self,
+    ) -> None:
+        brief = self.read_json("learning-brief.json")
+        brief["revisionMode"]["priorEditionExists"] = True
+        brief["revisionMode"]["sourceEdition"] = "is-there-anyone-in-here (2026-07-17)"
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "revisionMode.preserve"):
+            self.module().validate_run(self.root)
+
+    def test_new_book_over_a_prior_edition_accepts_documented_preserve_decisions(
+        self,
+    ) -> None:
+        brief = self.read_json("learning-brief.json")
+        brief["revisionMode"] = {
+            "name": "new-book",
+            "sourceEdition": "is-there-anyone-in-here (public-road-book-2026-07-17)",
+            "preserve": {
+                "governingQuestion": (
+                    "Deliberately NOT preserved. The first edition asked whether the "
+                    "machine is conscious; this book asks what survives attack."
+                ),
+                "narrativeSpine": (
+                    "Deliberately inverted. The first edition assembles a case; this "
+                    "book dismantles one and keeps a tally of the residue."
+                ),
+                "successfulExamples": [
+                    "The problem of other minds as the reason the question is hard",
+                    "Split-brain interpretation as the human half of the witness problem",
+                ],
+                "chapterJobs": [
+                    "Do not reuse the standalone machinery tour",
+                    "Do not reuse the three-pile evidence taxonomy",
+                ],
+            },
+            "priorEditionExists": True,
+        }
+        self.write_json("learning-brief.json", brief)
+
+        receipt = self.module().validate_run(self.root)
+
+        self.assertEqual(receipt["status"], "pass")
+
+    def test_first_edition_plus_cannot_deny_a_prior_edition(self) -> None:
+        brief = self.read_json("learning-brief.json")
+        brief["revisionMode"]["name"] = "first-edition-plus"
+        brief["revisionMode"]["priorEditionExists"] = False
+        self.write_json("learning-brief.json", brief)
+
+        with self.assertRaisesRegex(ValueError, "priorEditionExists"):
             self.module().validate_run(self.root)
 
     def test_reduced_target_requires_user_approved_scope_history(self) -> None:

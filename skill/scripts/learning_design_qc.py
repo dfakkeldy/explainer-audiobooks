@@ -372,7 +372,25 @@ def validate_brief(brief: dict[str, Any], run_root: Path) -> dict[str, Any]:
     preserve = revision.get("preserve")
     if not isinstance(preserve, dict):
         raise ValueError("brief.revisionMode.preserve must be an object")
-    if revision_mode == "first-edition-plus":
+    # A run must state whether an earlier edition exists. Reaching new-book by
+    # saying nothing is the failure this gate exists to prevent, so omission is
+    # an error rather than a false default.
+    if "priorEditionExists" not in revision:
+        raise ValueError(
+            "brief.revisionMode.priorEditionExists is required; new-book may not be "
+            "reached by omitting any statement about a prior edition"
+        )
+    prior_edition_exists = require_bool(
+        revision.get("priorEditionExists"), "brief.revisionMode.priorEditionExists"
+    )
+    if revision_mode == "first-edition-plus" and not prior_edition_exists:
+        raise ValueError(
+            "brief.revisionMode.priorEditionExists must be true for first-edition-plus"
+        )
+    # The prior edition is a fact about the subject; the mode is a deliberate
+    # choice about it. When an earlier edition exists, new-book must document the
+    # carryovers and non-carryovers exactly as first-edition-plus does.
+    if prior_edition_exists:
         require_string(revision.get("sourceEdition"), "brief.revisionMode.sourceEdition")
         for field in ("governingQuestion", "narrativeSpine"):
             require_string(preserve.get(field), f"brief.revisionMode.preserve.{field}")
