@@ -24,6 +24,7 @@ Two different audiences:
 | [The Message](books/claude-platform-01-the-message/) | Claude Platform Documentation, Volume 1: Messages API fundamentals and the application decisions around a model call | 12 chapters · ~2.1 h | Codex (GPT-5) |
 | [Making Claude Think and Respond Reliably](books/claude-platform-02-thinking-and-reliable-responses/) | Claude Platform Documentation, Volume 2: reasoning, multimodal inputs, structured output, streaming, and reliable responses | 13 chapters · ~1.5 h | Codex (GPT-5) |
 | [Giving Claude Tools](books/claude-platform-03-giving-claude-tools/) | Claude Platform Documentation, Volume 3: client tool contracts, agent loops, authorization, and controlled action | 14 chapters · ~4.5 h | OpenAI Codex |
+| [Tools Claude Can Operate](books/claude-platform-04-tools-claude-can-operate/) | Claude Platform Documentation, Volume 4: server and Anthropic-schema client tools, sandboxes, tool context, and delegated execution | 15 chapters · ~3.9 h | Claude Opus 5 |
 | [An Unsettling Conversation](books/an-unsettling-conversation/) | J-Space, working memory, and the evidence limits around machine consciousness | 13 chapters · ~5.5 h | Codex (GPT-5) |
 | [J-Space: Inside the Machine](books/jspace-inside-the-machine/) | Parameters, activations, working memory, J-Space, and the question of consciousness | 13 chapters · ~3.9 h | Codex (GPT-5) |
 | [Is There Anyone in Here?](books/is-there-anyone-in-here/) | One language model examines the evidence for and against its own consciousness | 10 chapters · ~1.8 h | Claude Fable 5 |

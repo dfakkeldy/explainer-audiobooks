@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "slug": "claude-platform-04-tools-claude-can-operate",
+  "editionId": "public-first-listen-2026-07-25",
+  "publicationStatus": "public-first-listen",
+  "humanListeningStatus": "pending",
+  "classification": "public-safe",
+  "permissionToPublish": true,
+  "permissionGrantedAt": "2026-07-25",
+  "disclosure": "This edition has passed package and audio checks. The creator's full listening review is still underway.",
+  "sourceArtIncluded": true,
+  "artifacts": {
+    "manuscript": {
+      "file": "claude-platform-04-tools-claude-can-operate.md",
+      "sha256": "caeca5bfb2151fa8441370cad7297a8fa8560257b8111b426b90205033065daa"
+    },
+    "epub": {
+      "file": "claude-platform-04-tools-claude-can-operate.epub",
+      "sha256": "570d3b1ab8db8a8defe9eefa6561be3f1da187f5462c0f73ad4d111a33af6570"
+    },
+    "m4b": {
+      "file": "claude-platform-04-tools-claude-can-operate.m4b",
+      "sha256": "92293d3c52607681a07afbe7b5cedb83da16e6587536d4090f5fe52dceb40f9a"
+    },
+    "alignment": {
+      "file": "claude-platform-04-tools-claude-can-operate.alignment.json",
+      "sha256": "827db6b8aabe12b2be8979936e56e5d1a6d0de04d821188bd26509f1025c719d"
+    },
+    "portraitCover": {
+      "file": "cover.png",
+      "sha256": "ac2d07097c520ce05780888fd4f7212634552e92a78b39f13262e500297987ea"
+    },
+    "squareCover": {
+      "file": "m4b-cover.png",
+      "sha256": "e7fe63749d9ccde1ef5fe17a53e4ef13b1aab039c615753d5e4a4b49b15ad715"
+    }
+  }
+}

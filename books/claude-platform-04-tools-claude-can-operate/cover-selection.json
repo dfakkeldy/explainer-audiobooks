@@ -1,0 +1,41 @@
+{
+  "book_slug": "claude-platform-04-tools-claude-can-operate",
+  "candidate": {
+    "direction_name": "Two Rooms, One Door",
+    "id": "two-rooms"
+  },
+  "edition_id": "public-first-listen-2026-07-25",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-25T07:13:01Z",
+  "selection_source": "delegated-editorial-choice",
+  "source_art_sha256": "f051a421670645b8d457ea3ef3bd821b4f29bd7f672bf7e04e352ae1aca6f05e",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "ac2d07097c520ce05780888fd4f7212634552e92a78b39f13262e500297987ea",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "1ab32999712bbb931a5ef4e35f290b7aa4303ed713b061a6056ce1c688956174",
+      "specification_sha256": "ff9a8ea70fa39e1d275d98fad9d8797633963aabfe41a92be79ed1dca97fd33a",
+      "subtitle_included": true,
+      "thumbnail_sha256": "1479b66ec750ea4618eb0a818d9a8552db29b081710b2e7047647ae4f440119a"
+    },
+    "square": {
+      "cover_sha256": "e7fe63749d9ccde1ef5fe17a53e4ef13b1aab039c615753d5e4a4b49b15ad715",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "9ac85d69dbda4c36055c366a1ab7fc297ccb7b080dce895e8c6c7871a91dc698",
+      "specification_sha256": "0084df968cacd30fb48aab1e58981c07b6321c70162e26c5ea45932cf171298d",
+      "subtitle_included": true,
+      "thumbnail_sha256": "48c1830322d1df7c6182c69181fb3693add8ed1625a25ab1a4ba79b2bb763ba7"
+    }
+  }
+}
