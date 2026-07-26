@@ -1,0 +1,200 @@
+{
+  "schema_version": 2,
+  "variant": "square",
+  "candidate": {
+    "id": "ninety-seven-percent",
+    "direction_name": "Ninety-Seven Percent"
+  },
+  "metadata": {
+    "title": "The Case Against Me",
+    "subtitle": "A Language Model Cross-Examines Its Own Testimony",
+    "author": "Dan Fakkeldy",
+    "label": "AUDIOBOOK"
+  },
+  "canvas": {
+    "width": 2400,
+    "height": 2400,
+    "safe_margin": 120,
+    "background": "#EDE6D6"
+  },
+  "art": {
+    "path": "source-art.svg",
+    "mode": "crop",
+    "anchor": "center",
+    "box": [
+      0,
+      0,
+      2400,
+      2400
+    ],
+    "opacity": 1,
+    "blend_mode": "normal"
+  },
+  "layers": [
+    {
+      "kind": "scrim",
+      "box": [
+        0,
+        1560,
+        2400,
+        840
+      ],
+      "fill": {
+        "kind": "linear-gradient",
+        "start": [
+          0,
+          1560
+        ],
+        "end": [
+          0,
+          2400
+        ],
+        "stops": [
+          {
+            "offset": 0,
+            "colour": "#EDE6D6",
+            "opacity": 0
+          },
+          {
+            "offset": 0.26,
+            "colour": "#EDE6D6",
+            "opacity": 0.93
+          },
+          {
+            "offset": 1,
+            "colour": "#EDE6D6",
+            "opacity": 1
+          }
+        ]
+      },
+      "opacity": 1.0,
+      "blend_mode": "normal",
+      "purpose": "paper band carrying the square title block"
+    },
+    {
+      "kind": "text",
+      "role": "label",
+      "text": "AUDIOBOOK",
+      "font_id": "technical-mono",
+      "box": [
+        140,
+        1660,
+        700,
+        60
+      ],
+      "size": 32,
+      "line_height": 38,
+      "tracking": 6,
+      "align": "left",
+      "colour": "#C8382B",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#EDE6D6"
+    },
+    {
+      "kind": "text",
+      "role": "title",
+      "text": "THE CASE",
+      "font_id": "technical-mono",
+      "box": [
+        140,
+        1730,
+        2100,
+        170
+      ],
+      "size": 136,
+      "line_height": 150,
+      "tracking": -2,
+      "align": "left",
+      "colour": "#14110E",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "title_order": 1,
+      "contrast_against": "#EDE6D6"
+    },
+    {
+      "kind": "text",
+      "role": "title",
+      "text": "AGAINST ME",
+      "font_id": "technical-mono",
+      "box": [
+        140,
+        1880,
+        2130,
+        170
+      ],
+      "size": 136,
+      "line_height": 150,
+      "tracking": -2,
+      "align": "left",
+      "colour": "#14110E",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "title_order": 2,
+      "contrast_against": "#EDE6D6"
+    },
+    {
+      "kind": "line",
+      "start": [
+        140,
+        2086
+      ],
+      "end": [
+        660,
+        2086
+      ],
+      "colour": "#C8382B",
+      "width": 10,
+      "opacity": 1,
+      "purpose": "the accent that survived the page"
+    },
+    {
+      "kind": "text",
+      "role": "subtitle",
+      "text": "A Language Model Cross-Examines Its Own Testimony",
+      "font_id": "geometric-sans",
+      "box": [
+        140,
+        2110,
+        2020,
+        70
+      ],
+      "size": 44,
+      "line_height": 56,
+      "tracking": 0.0,
+      "align": "left",
+      "colour": "#14110E",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "font_variation": {
+        "wght": 450
+      },
+      "contrast_against": "#EDE6D6"
+    },
+    {
+      "kind": "text",
+      "role": "author",
+      "text": "Dan Fakkeldy",
+      "font_id": "technical-mono",
+      "box": [
+        140,
+        2200,
+        1200,
+        60
+      ],
+      "size": 36,
+      "line_height": 44,
+      "tracking": 3,
+      "align": "left",
+      "colour": "#6E7B84",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#EDE6D6"
+    }
+  ]
+}

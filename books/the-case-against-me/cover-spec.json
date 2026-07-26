@@ -1,0 +1,200 @@
+{
+  "schema_version": 2,
+  "variant": "portrait",
+  "candidate": {
+    "id": "ninety-seven-percent",
+    "direction_name": "Ninety-Seven Percent"
+  },
+  "metadata": {
+    "title": "The Case Against Me",
+    "subtitle": "A Language Model Cross-Examines Its Own Testimony",
+    "author": "Dan Fakkeldy",
+    "label": "AUDIOBOOK"
+  },
+  "canvas": {
+    "width": 1600,
+    "height": 2560,
+    "safe_margin": 96,
+    "background": "#EDE6D6"
+  },
+  "art": {
+    "path": "source-art.svg",
+    "mode": "crop",
+    "anchor": "center",
+    "box": [
+      0,
+      0,
+      1600,
+      2560
+    ],
+    "opacity": 1,
+    "blend_mode": "normal"
+  },
+  "layers": [
+    {
+      "kind": "scrim",
+      "box": [
+        0,
+        1700,
+        1600,
+        860
+      ],
+      "fill": {
+        "kind": "linear-gradient",
+        "start": [
+          0,
+          1700
+        ],
+        "end": [
+          0,
+          2560
+        ],
+        "stops": [
+          {
+            "offset": 0,
+            "colour": "#EDE6D6",
+            "opacity": 0
+          },
+          {
+            "offset": 0.15,
+            "colour": "#EDE6D6",
+            "opacity": 0.93
+          },
+          {
+            "offset": 1,
+            "colour": "#EDE6D6",
+            "opacity": 1
+          }
+        ]
+      },
+      "opacity": 1.0,
+      "blend_mode": "normal",
+      "purpose": "the redacted page fades into an integrated paper title band"
+    },
+    {
+      "kind": "text",
+      "role": "label",
+      "text": "AUDIOBOOK",
+      "font_id": "technical-mono",
+      "box": [
+        96,
+        1852,
+        700,
+        56
+      ],
+      "size": 30,
+      "line_height": 36,
+      "tracking": 6,
+      "align": "left",
+      "colour": "#C8382B",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#EDE6D6"
+    },
+    {
+      "kind": "text",
+      "role": "title",
+      "text": "THE CASE",
+      "font_id": "technical-mono",
+      "box": [
+        96,
+        1912,
+        1300,
+        150
+      ],
+      "size": 118,
+      "line_height": 132,
+      "tracking": -2,
+      "align": "left",
+      "colour": "#14110E",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "title_order": 1,
+      "contrast_against": "#EDE6D6"
+    },
+    {
+      "kind": "text",
+      "role": "title",
+      "text": "AGAINST ME",
+      "font_id": "technical-mono",
+      "box": [
+        96,
+        2042,
+        1360,
+        150
+      ],
+      "size": 118,
+      "line_height": 132,
+      "tracking": -2,
+      "align": "left",
+      "colour": "#14110E",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "title_order": 2,
+      "contrast_against": "#EDE6D6"
+    },
+    {
+      "kind": "line",
+      "start": [
+        96,
+        2212
+      ],
+      "end": [
+        560,
+        2212
+      ],
+      "colour": "#C8382B",
+      "width": 9,
+      "opacity": 1,
+      "purpose": "the accent that survived the page"
+    },
+    {
+      "kind": "text",
+      "role": "subtitle",
+      "text": "A Language Model Cross-Examines\nIts Own Testimony",
+      "font_id": "geometric-sans",
+      "box": [
+        96,
+        2250,
+        1180,
+        130
+      ],
+      "size": 40,
+      "line_height": 52,
+      "tracking": 0.0,
+      "align": "left",
+      "colour": "#14110E",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "font_variation": {
+        "wght": 450
+      },
+      "contrast_against": "#EDE6D6"
+    },
+    {
+      "kind": "text",
+      "role": "author",
+      "text": "Dan Fakkeldy",
+      "font_id": "technical-mono",
+      "box": [
+        96,
+        2396,
+        900,
+        60
+      ],
+      "size": 34,
+      "line_height": 42,
+      "tracking": 3,
+      "align": "left",
+      "colour": "#6E7B84",
+      "opacity": 1,
+      "rotation": 0,
+      "baseline_shift": 0,
+      "contrast_against": "#EDE6D6"
+    }
+  ]
+}
