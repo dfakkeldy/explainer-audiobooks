@@ -34,6 +34,14 @@ CASES = {
         "private_directory": "claude-platform-02-thinking-and-reliable-responses",
         "private_stem": "claude-platform-02-thinking-and-reliable-responses",
     },
+    "claude-platform-03-giving-claude-tools": {
+        "chapters": 14,
+        "anchors": 822,
+        "duration": (16026, 16027),
+        "title": "Giving Claude Tools",
+        "private_directory": "claude-platform-03-giving-claude-tools",
+        "private_stem": "claude-platform-03-giving-claude-tools",
+    },
 }
 
 
