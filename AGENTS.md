@@ -1,37 +1,78 @@
 # Explainer Audiobooks Agent Guide
 
-Use the business knowledge base at
-`/Users/dfakkeldy/Developer/knowledge-base` as operating context for this repo.
+This repository contains public audiobook-production methods and tooling plus
+public-safe books. Work here may also produce private packages that remain
+outside Git.
 
-Before planning, changing, or answering anything non-trivial here, read:
+## Task Routing
 
-1. `/Users/dfakkeldy/Developer/knowledge-base/AGENTS.md`
-2. `/Users/dfakkeldy/Developer/knowledge-base/bundle/index.md`
-3. Relevant KB pages, especially:
-   - `/projects/explainer-audiobooks.md`
-   - `/topics/echo-workplace-beta-recruitment.md`
-   - `/status/2026-07-06-custom-learning-audiobook-skill-design.md`
+- For repository, tooling, test, or instruction maintenance, work directly in
+  the repository. Do not invoke a book-production skill unless the task calls
+  for book development or production.
+- Use `skill/` for long technical explainers.
+- Use `skills/custom-learning-audiobook/` for ready-to-produce,
+  listener-specific learning books.
+- Use `skills/longform-book-development/` for collaborative nonfiction book
+  development.
+- Use `skills/fiction-book-development/` for fiction development through an
+  accepted Markdown manuscript.
+- Once selected, the relevant skill owns the detailed production workflow. This
+  root guide does not activate a production workflow by itself.
 
-Then verify the live repo state before making current claims:
+## Context and Current State
 
-- `git status --short --branch`
-- current branch/upstream
-- relevant open PRs/issues when publishing work
-- local generated/private artifacts before deciding what belongs in Git
+- Consult `/Users/dfakkeldy/Developer/knowledge-base` only when the task depends
+  on portfolio context, project history, prior decisions, or current business
+  state. Self-contained repository, tooling, test, instruction, or artifact
+  work does not trigger knowledge-base reading.
+- When the knowledge base is relevant, read its `AGENTS.md`, its bundle index,
+  and only the smallest relevant project, topic, or status pages.
+- Verify current facts in the relevant live repository or service. Before
+  editing, inspect the branch, upstream, and working tree, and preserve
+  unrelated work.
 
-## Repo Rules
+## Privacy, Licensing, and Artifact Boundaries
 
-- Keep private/generated book artifacts out of the public repo unless the book is
-  explicitly public-safe.
-- Do not commit private source notes, raw build research, private client/prospect
-  books, local narration scratch, or non-public-domain source material.
+- Keep private source notes, raw research, private books, private client or
+  prospect material, local narration scratch, and non-public-domain source
+  material out of the public repository.
 - Public-safe finished books may live under `books/<slug>/` following existing
-  repo conventions.
-- Copy public-safe finished packages to:
-  `/Users/dfakkeldy/Library/Mobile Documents/com~apple~CloudDocs/Books`
-- For private books, keep delivery artifacts in the private project folder; only
-  copy to iCloud Books when the user explicitly wants a private reading copy.
-- `skill/` is the canonical shared skill source for both Claude and Codex.
-- Preserve unrelated local edits and generated artifacts. If cleanup is needed,
-  inspect first and move private/generated scratch out of the repo rather than
-  bulk deleting it.
+  conventions. Follow the repository's code and book-content license files.
+- `skill/` is the canonical shared source for the installed explainer skill.
+- Do not bulk-clean generated or private artifacts. Inspect the exact target
+  first; durable project state may live in skill-defined build directories.
+- Treat accepted manuscript text and cover art as frozen unless the user
+  authorizes changes.
+- The selected production skill governs delivery. Keep manuscript acceptance,
+  package generation, narration, synchronization, pronunciation and human
+  listening, iCloud delivery, repository publication, and website publication
+  as separate states.
+- Public-safe content is eligible for publication, but public safety alone is
+  not authorization to publish or copy it elsewhere.
+- Copy a package to iCloud Books only when the requested outcome or selected
+  production workflow calls for that delivery step.
+
+## Verification
+
+- Start with the narrowest relevant test, for example:
+  `python3 -m unittest tests.<relevant_module> -v`.
+- For broad skill or tooling changes, run:
+  `python3 -m unittest discover -s tests -v` and
+  `python3 tools/validate_skills.py`.
+- When the installed-skill or symlink contract changes, also run:
+  `python3 tools/validate_custom_learning_skill_install.py`.
+- Run `git diff --check` before committing.
+- For book artifacts, also follow the selected skill's quality checks. Tool
+  tests do not prove narration quality, human listening acceptance, delivery,
+  or publication.
+- Instruction-only edits do not require a book build or render.
+
+## Repository Workflow
+
+- Preserve unrelated edits and untracked files; do not adopt them as part of
+  the task.
+- Publish successful requested implementation work as a ready pull request when
+  the repository supports that workflow. Diagnosis, read-only review, design,
+  and planning do not trigger publication.
+- Treat local verification, hosted CI, merge, deployment, delivery, and human
+  acceptance as distinct states and report them accurately.
