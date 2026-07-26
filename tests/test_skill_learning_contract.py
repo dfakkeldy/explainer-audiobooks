@@ -221,6 +221,27 @@ class SkillLearningContractTests(unittest.TestCase):
         ):
             self.assertIn(phrase, text)
 
+    def test_revision_mode_contract_binds_the_prior_edition_declaration(self) -> None:
+        reference = self.read("skill/references/learning-design.md")
+        self.assertIn("priorEditionExists", reference)
+        for phrase in (
+            "required and binds both ways",
+            "sourceEdition",
+            "preserve",
+        ):
+            self.assertIn(phrase, reference)
+
+        starter = json.loads(
+            self.read("skill/templates/learning-design/learning-brief.json")
+        )
+        revision = starter["revisionMode"]
+        self.assertIn(
+            "priorEditionExists",
+            revision,
+            "the schema-v2 starter must state the prior-edition fact explicitly",
+        )
+        self.assertIsInstance(revision["priorEditionExists"], bool)
+
     def test_curriculum_pattern_is_selected_and_preserved(self) -> None:
         reference = self.read("skill/references/curriculum-patterns.md").lower()
         for phrase in (

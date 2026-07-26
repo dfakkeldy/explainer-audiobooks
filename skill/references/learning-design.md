@@ -80,6 +80,7 @@ not decide the curriculum and must not produce prose for the author to polish.
   },
   "revisionMode": {
     "name": "new-book",
+    "priorEditionExists": false,
     "sourceEdition": "",
     "preserve": {
       "governingQuestion": "",
@@ -109,9 +110,18 @@ the run private, set publication permission false, record delivery intent and
 every inferred choice, and set `humanListeningStatus: pending`. If
 `productionMode` is absent, validation defaults to `governed-final`.
 
-Use `first-edition-plus` when an earlier edition taught successfully. Record the
-source edition and the governing question, narrative spine, successful examples,
-and varied chapter jobs to preserve.
+`revisionMode.priorEditionExists` is required and binds both ways. State it as a
+boolean; omitting it fails the gate rather than defaulting, so `new-book` can
+never be reached by saying nothing about an earlier edition.
+
+Use `first-edition-plus` when an earlier edition taught successfully; it requires
+`priorEditionExists: true`. Whenever `priorEditionExists` is true — including a
+deliberate `new-book` companion to an earlier edition — record the `sourceEdition`
+and a `preserve` block naming the governing question, narrative spine, successful
+examples, and varied chapter jobs. Each `preserve` field must be filled in, and a
+deliberate non-carryover is documented by saying so in that field rather than by
+leaving it empty. Set `priorEditionExists: false` only when no earlier edition
+exists; the `sourceEdition` and `preserve` fields may then stay empty.
 
 Word targets are estimates. Record target changes with old/new values, reason,
 approval status, `approvalSource`, and evidence. A reduction after drafting

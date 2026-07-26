@@ -15,6 +15,7 @@
   },
   "revisionMode": {
     "name": "new-book",
+    "priorEditionExists": false,
     "sourceEdition": "",
     "preserve": {
       "governingQuestion": "",
