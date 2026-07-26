@@ -1,0 +1,175 @@
+{
+  "schema_version": 2,
+  "variant": "square",
+  "candidate": {
+    "id": "two-rooms",
+    "direction_name": "Two Rooms, One Door"
+  },
+  "metadata": {
+    "title": "Tools Claude Can Operate",
+    "subtitle": "Managed Tools, Sandboxes, and Delegated Execution",
+    "author": "Dan Fakkeldy",
+    "label": "Claude Platform Documentation, Volume 4"
+  },
+  "canvas": {
+    "width": 2400,
+    "height": 2400,
+    "background": "#0B1030",
+    "safe_margin": 120
+  },
+  "art": {
+    "path": "source-art.png",
+    "mode": "bleed",
+    "box": [
+      0,
+      0,
+      2400,
+      2400
+    ],
+    "anchor": "center",
+    "opacity": 1,
+    "blend_mode": "normal"
+  },
+  "layers": [
+    {
+      "kind": "scrim",
+      "box": [
+        0,
+        1360,
+        2400,
+        1040
+      ],
+      "opacity": 1,
+      "blend_mode": "normal",
+      "purpose": "type field",
+      "fill": {
+        "kind": "linear-gradient",
+        "start": [
+          0,
+          1360
+        ],
+        "end": [
+          2400,
+          2400
+        ],
+        "stops": [
+          {
+            "offset": 0,
+            "colour": "#0B1030",
+            "opacity": 0.97
+          },
+          {
+            "offset": 0.7,
+            "colour": "#0B1030",
+            "opacity": 0.85
+          },
+          {
+            "offset": 1,
+            "colour": "#0B1030",
+            "opacity": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "text",
+      "role": "label",
+      "text": "CLAUDE PLATFORM DOCUMENTATION \u00b7 VOLUME 4",
+      "font_id": "technical-mono",
+      "size": 32,
+      "line_height": 36,
+      "tracking": 3,
+      "colour": "#48E5DA",
+      "contrast_against": "#0B1030",
+      "opacity": 1,
+      "box": [
+        150,
+        1258,
+        2100,
+        46
+      ],
+      "align": "center",
+      "rotation": 0,
+      "baseline_shift": 0
+    },
+    {
+      "kind": "text",
+      "role": "title",
+      "text": "TOOLS CLAUDE\nCAN OPERATE",
+      "font_id": "display-condensed",
+      "size": 172,
+      "line_height": 166,
+      "tracking": 0,
+      "colour": "#F4EFE6",
+      "contrast_against": "#0B1030",
+      "opacity": 1,
+      "box": [
+        150,
+        1350,
+        2100,
+        560
+      ],
+      "align": "center",
+      "rotation": 0,
+      "baseline_shift": 0,
+      "title_order": 1
+    },
+    {
+      "kind": "line",
+      "start": [
+        990.0,
+        1950
+      ],
+      "end": [
+        1410.0,
+        1950
+      ],
+      "width": 9,
+      "colour": "#48E5DA",
+      "opacity": 1,
+      "purpose": "series accent"
+    },
+    {
+      "kind": "text",
+      "role": "subtitle",
+      "text": "MANAGED TOOLS, SANDBOXES,\nAND DELEGATED EXECUTION",
+      "font_id": "geometric-sans",
+      "size": 42,
+      "line_height": 48,
+      "tracking": 1,
+      "colour": "#F4EFE6",
+      "contrast_against": "#0B1030",
+      "opacity": 1,
+      "box": [
+        150,
+        1988,
+        2100,
+        180
+      ],
+      "align": "center",
+      "rotation": 0,
+      "baseline_shift": 0
+    },
+    {
+      "kind": "text",
+      "role": "author",
+      "text": "DAN FAKKELDY",
+      "font_id": "technical-mono",
+      "size": 36,
+      "line_height": 40,
+      "tracking": 5,
+      "colour": "#F4EFE6",
+      "contrast_against": "#0B1030",
+      "opacity": 1,
+      "box": [
+        150,
+        2162,
+        2100,
+        54
+      ],
+      "align": "center",
+      "rotation": 0,
+      "baseline_shift": 0
+    }
+  ]
+}

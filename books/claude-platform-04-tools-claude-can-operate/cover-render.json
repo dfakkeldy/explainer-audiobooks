@@ -1,0 +1,35 @@
+{
+  "candidate": {
+    "direction_name": "Two Rooms, One Door",
+    "id": "two-rooms"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    1600,
+    2560
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "display-condensed": "e74b750df582c608f35db467b711b2b60d2217618e85e60b72b42dfd00446cab",
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+    "technical-mono": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
+  },
+  "output": "cover.png",
+  "output_sha256": "ac2d07097c520ce05780888fd4f7212634552e92a78b39f13262e500297987ea",
+  "receipt_version": 1,
+  "renderer_version": 2,
+  "schema_version": 1,
+  "source_art": "source-art.png",
+  "source_art_sha256": "f051a421670645b8d457ea3ef3bd821b4f29bd7f672bf7e04e352ae1aca6f05e",
+  "spec": "cover-spec.json",
+  "spec_sha256": "ff9a8ea70fa39e1d275d98fad9d8797633963aabfe41a92be79ed1dca97fd33a",
+  "thumbnail": "cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    256
+  ],
+  "thumbnail_sha256": "1479b66ec750ea4618eb0a818d9a8552db29b081710b2e7047647ae4f440119a",
+  "variant": "portrait",
+  "warnings": []
+}

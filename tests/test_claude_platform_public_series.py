@@ -34,6 +34,14 @@ CASES = {
         "private_directory": "claude-platform-02-thinking-and-reliable-responses",
         "private_stem": "claude-platform-02-thinking-and-reliable-responses",
     },
+    "claude-platform-04-tools-claude-can-operate": {
+        "chapters": 15,
+        "anchors": 699,
+        "duration": (14205, 14206),
+        "title": "Tools Claude Can Operate",
+        "private_directory": "claude-platform-04-tools-claude-can-operate",
+        "private_stem": "claude-platform-04-tools-claude-can-operate",
+    },
 }
 
 
