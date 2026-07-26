@@ -1,0 +1,41 @@
+{
+  "book_slug": "the-case-against-me",
+  "candidate": {
+    "direction_name": "Ninety-Seven Percent",
+    "id": "ninety-seven-percent"
+  },
+  "edition_id": "public-companion-2026-07-26",
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "privacy": {
+    "classification": "public-safe",
+    "permission_to_publish": true
+  },
+  "schema_version": 2,
+  "selected_at": "2026-07-26T12:40:00-03:00",
+  "selection_source": "delegated-editorial-choice",
+  "source_art_sha256": "2d38a24da51a0a9483000affbaef5c010827c0fc95b1215d6009375d90b239af",
+  "variants": {
+    "portrait": {
+      "cover_sha256": "0e3c67c9521cc52fdea11cd45ed272a77689501c04229be0deeddc1de54f2ac6",
+      "dimensions": [
+        1600,
+        2560
+      ],
+      "render_receipt_sha256": "6311087d851320bc61b8ebb97c997f28b989b6f9640ccae15032e9d342d4da36",
+      "specification_sha256": "39a222508d0c9205c8211a1ca8494557cbe0311136c8f5575f2abde044b2a03a",
+      "subtitle_included": true,
+      "thumbnail_sha256": "8b142c542856912fd5d6809cd36657c9b4d76e66fb16dac4b3242f54d68c76d6"
+    },
+    "square": {
+      "cover_sha256": "ba6c7df5944ace8427efe8b30612fea72bfdd0212cd90a99c199da1714685dcb",
+      "dimensions": [
+        2400,
+        2400
+      ],
+      "render_receipt_sha256": "6eed4408b3bc0331765899a2a794db9005479a23af9f751ae41fac4ff8d60a53",
+      "specification_sha256": "e811a9c6068b2210b09e22e6ec15a55ae94597a6f624163031780fae6cd30c5e",
+      "subtitle_included": true,
+      "thumbnail_sha256": "9316c9740e7992176b85e4ce028792268b77899ef95556ca96b9c152bdcf8b2a"
+    }
+  }
+}

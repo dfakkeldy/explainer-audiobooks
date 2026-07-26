@@ -1,0 +1,37 @@
+{
+  "candidate": {
+    "direction_name": "Ninety-Seven Percent",
+    "id": "ninety-seven-percent"
+  },
+  "colour_mode": "RGB",
+  "dimensions": [
+    1600,
+    2560
+  ],
+  "font_manifest_sha256": "5c905e1ab6642b14d341a450be01e12a54f541a775e0e63410765ae87e11947f",
+  "font_manifest_version": 1,
+  "fonts": {
+    "geometric-sans": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+    "technical-mono": "ac27abd6450a64dd94467580a02fe6235156d5b92f2926ebbc8e7489df64e0be"
+  },
+  "output": "cover.png",
+  "output_sha256": "0e3c67c9521cc52fdea11cd45ed272a77689501c04229be0deeddc1de54f2ac6",
+  "receipt_version": 1,
+  "renderer_version": 2,
+  "schema_version": 1,
+  "source_art": "source-art.svg",
+  "source_art_sha256": "2d38a24da51a0a9483000affbaef5c010827c0fc95b1215d6009375d90b239af",
+  "spec": "cover-spec.json",
+  "spec_sha256": "39a222508d0c9205c8211a1ca8494557cbe0311136c8f5575f2abde044b2a03a",
+  "thumbnail": "cover-thumbnail.png",
+  "thumbnail_dimensions": [
+    160,
+    256
+  ],
+  "thumbnail_sha256": "8b142c542856912fd5d6809cd36657c9b4d76e66fb16dac4b3242f54d68c76d6",
+  "variant": "portrait",
+  "warnings": [
+    "layer 2 advisory contrast ratio is 4.16:1",
+    "layer 7 advisory contrast ratio is 3.50:1"
+  ]
+}
