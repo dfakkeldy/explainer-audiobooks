@@ -36,7 +36,6 @@ class SkillProseContractTests(unittest.TestCase):
     def test_every_audiobook_skill_uses_the_shared_gate(self) -> None:
         for relative in (
             "skill/SKILL.md",
-            "skills/custom-learning-audiobook/SKILL.md",
             "skills/longform-book-development/SKILL.md",
         ):
             with self.subTest(relative=relative):
@@ -44,10 +43,7 @@ class SkillProseContractTests(unittest.TestCase):
                 self.assertIn("declaudification.md", text)
                 self.assertIn("AI-writing patterns to avoid", text)
 
-        for relative in (
-            "skill/SKILL.md",
-            "skills/custom-learning-audiobook/SKILL.md",
-        ):
+        for relative in ("skill/SKILL.md",):
             with self.subTest(production_skill=relative):
                 text = self.read(relative)
                 self.assertIn("--fail-on-style", text)

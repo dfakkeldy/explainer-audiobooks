@@ -42,7 +42,7 @@ class SkillLearningContractTests(unittest.TestCase):
             self.assertIn(phrase, text)
 
     def test_production_skills_require_both_independent_receipts(self) -> None:
-        for relative in ("skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md"):
+        for relative in ("skill/SKILL.md",):
             with self.subTest(relative=relative):
                 text = self.read(relative)
                 self.assertIn("references/learning-design.md", text)
@@ -58,11 +58,7 @@ class SkillLearningContractTests(unittest.TestCase):
             "This edition has passed package and audio checks. "
             "The creator's full listening review is still underway."
         )
-        for relative in (
-            "skill/references/unattended-production.md",
-            "skills/custom-learning-audiobook/SKILL.md",
-            "skills/custom-learning-audiobook/references/package-and-qc.md",
-        ):
+        for relative in ("skill/references/unattended-production.md",):
             with self.subTest(relative=relative):
                 text = self.read(relative)
                 self.assertIn("publicationAuthorization", text)
@@ -74,8 +70,6 @@ class SkillLearningContractTests(unittest.TestCase):
         for relative in (
             "skill/references/frontier-manuscript-pipeline.md",
             "skill/references/narration-style.md",
-            "skills/custom-learning-audiobook/references/intake-and-research.md",
-            "skills/custom-learning-audiobook/references/package-and-qc.md",
         ):
             with self.subTest(relative=relative):
                 text = self.read(relative)
@@ -115,7 +109,6 @@ class SkillLearningContractTests(unittest.TestCase):
     def test_orchestrators_preserve_pipeline_phase_boundaries(self) -> None:
         for relative in (
             "skill/SKILL.md",
-            "skills/custom-learning-audiobook/SKILL.md",
             "skills/longform-book-development/SKILL.md",
         ):
             with self.subTest(relative=relative):
@@ -135,9 +128,7 @@ class SkillLearningContractTests(unittest.TestCase):
     def test_every_learning_entry_point_defaults_and_handoffs_road_book_mode(self) -> None:
         for relative in (
             "skill/SKILL.md",
-            "skills/custom-learning-audiobook/SKILL.md",
             "skills/longform-book-development/SKILL.md",
-            "skills/custom-learning-audiobook/references/intake-and-research.md",
             "skills/longform-book-development/references/handoff-packet.md",
         ):
             with self.subTest(relative=relative):
@@ -173,28 +164,6 @@ class SkillLearningContractTests(unittest.TestCase):
             "word count",
         ):
             self.assertIn(phrase, text)
-
-    def test_production_skills_plan_listener_pronunciation_before_full_audio(
-        self,
-    ) -> None:
-        for relative in (
-            "skill/SKILL.md",
-            "skills/custom-learning-audiobook/SKILL.md",
-            "skills/custom-learning-audiobook/references/intake-and-research.md",
-            "skills/custom-learning-audiobook/references/package-and-qc.md",
-            "skills/longform-book-development/SKILL.md",
-            "skills/longform-book-development/references/handoff-packet.md",
-        ):
-            with self.subTest(relative=relative):
-                text = self.read(relative)
-                self.assertIn("pronunciation-plan.json", text)
-                self.assertIn("listener", text.lower())
-
-        package = self.read(
-            "skills/custom-learning-audiobook/references/package-and-qc.md"
-        )
-        self.assertIn("build_pronunciation_probe_reel.py", package)
-        self.assertIn("pronunciation_plan_qc.py", package)
 
     def test_shared_contract_requires_orientation_and_complete_explanation_paths(self) -> None:
         text = self.read("skill/references/learning-design.md")
@@ -256,7 +225,6 @@ class SkillLearningContractTests(unittest.TestCase):
             self.assertIn(phrase, reference)
         for relative in (
             "skill/SKILL.md",
-            "skills/custom-learning-audiobook/SKILL.md",
             "skills/longform-book-development/SKILL.md",
             "skills/longform-book-development/references/handoff-packet.md",
         ):
@@ -305,9 +273,6 @@ class SkillLearningContractTests(unittest.TestCase):
             "skill/SKILL.md",
             "skill/references/learning-design.md",
             "skill/references/road-book-mode.md",
-            "skills/custom-learning-audiobook/SKILL.md",
-            "skills/custom-learning-audiobook/references/intake-and-research.md",
-            "skills/custom-learning-audiobook/references/package-and-qc.md",
             "skills/longform-book-development/SKILL.md",
             "skills/longform-book-development/references/handoff-packet.md",
         )

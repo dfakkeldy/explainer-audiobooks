@@ -7,12 +7,6 @@ ROOT = Path(__file__).parents[1]
 FILES = {
     "cover": ROOT / "skill" / "references" / "cover-art.md",
     "long": ROOT / "skill" / "SKILL.md",
-    "custom": ROOT / "skills" / "custom-learning-audiobook" / "SKILL.md",
-    "package": ROOT
-    / "skills"
-    / "custom-learning-audiobook"
-    / "references"
-    / "package-and-qc.md",
     "public": ROOT / "docs" / "how-these-were-made.md",
     "readme": ROOT / "README.md",
     "make": ROOT / "docs" / "make-your-own.md",
@@ -30,7 +24,7 @@ class SkillCoverContractTests(unittest.TestCase):
             cursor = position + len(marker)
 
     def test_each_active_skill_uses_the_complete_governed_workflow(self) -> None:
-        for key in ("long", "custom"):
+        for key in ("long",):
             text = FILES[key].read_text(encoding="utf-8")
             for required in (
                 "render_cover_pair(",
@@ -62,61 +56,6 @@ class SkillCoverContractTests(unittest.TestCase):
         )
         self.assertNotIn("cp <build>/dist/<Output-Filename-Base>.epub", text)
 
-    def test_custom_skill_finishes_manuscript_before_build_and_audio(self) -> None:
-        text = FILES["custom"].read_text(encoding="utf-8")
-        self.assert_in_order(
-            text,
-            (
-                "**Humanize and complete prose QC before packaging.**",
-                "**Build the governed EPUB.**",
-                "**Render native Echo audio.**",
-                "/usr/local/bin/python3 skill/scripts/cover_receipts.py verify",
-                "--m4b",
-                "**Package and copy.**",
-            ),
-        )
-
-    def test_package_reference_orders_prose_build_audio_verify_and_copy(self) -> None:
-        text = FILES["package"].read_text(encoding="utf-8")
-        self.assert_in_order(
-            text,
-            (
-                "## Prose QC",
-                "## EPUB And Markdown",
-                "## Echo M4B And Alignment",
-                "## Final Cover Receipt Verification",
-                "--m4b",
-                "## Copy Rules",
-            ),
-        )
-
-    def test_public_repo_delivery_uses_governed_sync(self) -> None:
-        text = FILES["package"].read_text(encoding="utf-8")
-        self.assertIn("--public-destination", text)
-        for forbidden in (
-            'cp "$DIST/$SLUG.epub"',
-            'cp "$DIST/cover-$SELECTED.png"',
-        ):
-            self.assertNotIn(forbidden, text)
-
-    def test_private_icloud_copy_requires_an_explicit_user_request(self) -> None:
-        required = (
-            "Private or sensitive packages stay in the agreed private project "
-            "folder and receive an iCloud Books reading copy only on an explicit "
-            "user request."
-        )
-        forbidden = (
-            "default listening/delivery surface for public-safe and private books",
-            "public-safe and private books unless the user explicitly says not",
-            "always create a complete icloud drive delivery folder for finished packages unless",
-            "copy the complete package to the icloud drive `books/<title>/` delivery folder by default",
-        )
-        for key in ("custom", "package"):
-            text = " ".join(FILES[key].read_text(encoding="utf-8").split())
-            self.assertIn(required, text)
-            for old_wording in forbidden:
-                self.assertNotIn(old_wording, text.casefold())
-
     def test_public_method_states_governed_chronology(self) -> None:
         text = FILES["public"].read_text(encoding="utf-8")
         self.assert_in_order(
@@ -132,14 +71,14 @@ class SkillCoverContractTests(unittest.TestCase):
         )
 
     def test_candidate_contract_varies_typography_as_well_as_art(self) -> None:
-        for key in ("cover", "long", "custom", "package"):
+        for key in ("cover", "long"):
             text = FILES[key].read_text(encoding="utf-8")
             self.assertIn("title strategy", text)
             self.assertIn("font", text)
             self.assertIn("line breaks", text)
 
     def test_active_commands_do_not_teach_the_legacy_template(self) -> None:
-        for key in ("cover", "long", "custom", "package"):
+        for key in ("cover", "long"):
             text = FILES[key].read_text(encoding="utf-8")
             self.assertNotIn("--layout bleed", text)
             self.assertNotIn("lower 25–35% reserved", text)
@@ -158,7 +97,7 @@ class SkillCoverContractTests(unittest.TestCase):
             "M4B square",
             "post-embed verification",
         )
-        for key in ("cover", "long", "custom", "package", "public", "readme", "make"):
+        for key in ("cover", "long", "public", "readme", "make"):
             text = FILES[key].read_text(encoding="utf-8")
             for marker in required:
                 with self.subTest(file=key, marker=marker):
@@ -167,7 +106,7 @@ class SkillCoverContractTests(unittest.TestCase):
     def test_active_skills_teach_paired_commands_not_new_single_cover_selection(
         self,
     ) -> None:
-        for key in ("long", "custom", "package"):
+        for key in ("long",):
             text = FILES[key].read_text(encoding="utf-8")
             for marker in (
                 "cover_pairs.py",
@@ -189,17 +128,17 @@ class SkillCoverContractTests(unittest.TestCase):
             self.assertIn("private", text)
         combined = "\n".join(
             FILES[key].read_text(encoding="utf-8")
-            for key in ("long", "custom", "package", "public", "readme", "make")
+            for key in ("long", "public", "readme", "make")
         )
         self.assertIn("five-book migration", combined)
         self.assertIn("not a universal future rule", combined)
 
     def test_active_new_work_uses_complete_paired_interfaces(self) -> None:
         # The full copy-paste command sequence lives in exactly one normative
-        # reference per skill ("cover" for explainer-audiobook, "package" for
-        # custom-learning-audiobook). The skill bodies carry only the contract
-        # summary plus a pointer — duplicated command blocks drift.
-        for key in ("package", "cover"):
+        # reference ("cover", for the explainer-audiobook skill). The skill
+        # body carries only the contract summary plus a pointer — duplicated
+        # command blocks drift.
+        for key in ("cover",):
             text = FILES[key].read_text(encoding="utf-8")
             for marker in (
                 "render_cover_pair(",
@@ -224,10 +163,7 @@ class SkillCoverContractTests(unittest.TestCase):
                 with self.subTest(file=key, marker=marker):
                     self.assertIn(marker, text)
 
-        for key, pointer in (
-            ("long", "references/cover-art.md"),
-            ("custom", "references/package-and-qc.md"),
-        ):
+        for key, pointer in (("long", "references/cover-art.md"),):
             text = FILES[key].read_text(encoding="utf-8")
             self.assertIn("Complete paired command example", text)
             self.assertIn(pointer, text)
@@ -235,29 +171,18 @@ class SkillCoverContractTests(unittest.TestCase):
         # The narration wrapper embeds the square cover itself; mutating a
         # narrated M4B invalidates the pronunciation audit. Every active
         # surface states the rule and none teaches the old mutation flow.
-        for key in ("long", "custom", "package", "cover"):
+        for key in ("long", "cover"):
             text = FILES[key].read_text(encoding="utf-8")
             self.assertIn("Never run `replace_m4b_cover.py`", text)
             self.assertNotIn('--portrait-cover "$PAIR/cover.png"', text)
 
     def test_active_new_work_does_not_run_single_cover_renderer(self) -> None:
-        for key in ("long", "custom", "package", "cover"):
+        for key in ("long", "cover"):
             text = FILES[key].read_text(encoding="utf-8")
             self.assertNotIn("/make_cover.py \\\n  --spec", text)
 
-    def test_active_paired_selection_uses_current_cli_vocabulary(self) -> None:
-        legacy_markers = {
-            "custom": "The older command below is verification-only compatibility",
-            "package": "The following single-cover commands are verification-only compatibility",
-        }
-        for key, legacy_marker in legacy_markers.items():
-            text = FILES[key].read_text(encoding="utf-8")
-            active_text = text.split(legacy_marker, 1)[0]
-            self.assertIn("selection_source=user", active_text)
-            self.assertNotIn("selection_source=explicit-user-choice", active_text)
-
     def test_delegated_public_cover_choice_is_distinct_from_autoselection(self) -> None:
-        for key in ("custom", "package", "cover"):
+        for key in ("cover",):
             with self.subTest(file=key):
                 text = FILES[key].read_text(encoding="utf-8")
                 self.assertIn("delegated-editorial-choice", text)
@@ -275,7 +200,7 @@ class SkillCoverContractTests(unittest.TestCase):
             "post-embed verification",
             "governed public/iCloud/site sync",
         )
-        for key in ("long", "custom", "package", "cover", "public", "readme", "make"):
+        for key in ("long", "cover", "public", "readme", "make"):
             with self.subTest(file=key):
                 normalized = " ".join(FILES[key].read_text(encoding="utf-8").split())
                 self.assert_in_order(normalized, markers)

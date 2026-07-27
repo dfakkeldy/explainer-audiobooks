@@ -94,7 +94,7 @@ cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
 
 # Run the governed Echo narration wrapper next (it embeds the square cover
 # itself), then complete the selector-bound QC flow in
-# skills/custom-learning-audiobook/references/package-and-qc.md. That flow
+# skill/references/publishing-a-public-edition.md. That flow
 # sets AUDIOBOOK to the accepted run-scoped M4B.
 : "${AUDIOBOOK:?set only from the verified current-accepted selector}"
 /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
@@ -415,5 +415,5 @@ Pre-paired packages carry a single-cover receipt created with
 some had square art embedded after the fact with `replace_m4b_cover.py`. Verify
 those receipts with `cover_receipts.py verify`; the full legacy command shapes
 are preserved in the compatibility section of
-`skills/custom-learning-audiobook/references/package-and-qc.md`. Never use any
+`skill/references/publishing-a-public-edition.md`. Never use any
 of them for a new or revised package.

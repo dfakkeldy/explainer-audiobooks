@@ -104,20 +104,10 @@ The long technical explainer pipeline is packaged as a Claude Code skill in
 the narration style guide. Point Claude Code at it and ask for a book on any
 subject, grounded in any codebase you can read.
 
-The separate **[`custom-learning-audiobook`](skills/custom-learning-audiobook/)**
-skill is for short, listener-specific Echo beta books from plain topic requests:
-"I want to learn X." It defaults to roughly two hours, uses one lead writer for
-continuity, routes public/private books explicitly, supports approved interior
-pictures as EPUB figures, and renders Echo-ready audio with `am_michael` when
-the Echo CLI is available. It does not substitute Apple/macOS system narration
-for native Echo/Kokoro audio unless the requester explicitly asks for a
-non-Echo preview. Finished packages are copied to a complete iCloud Drive
-`Books/<Title>/` folder by default so they are easy to find.
-
 The **[`longform-book-development`](skills/longform-book-development/)** skill is
 the slower front door for book ideas that need several rounds of shaping before
 production: rough concept, outline, source plan, picture gathering, visual
-provenance, and a final handoff packet for `custom-learning-audiobook`.
+provenance, and a final handoff packet for production.
 
 The **[`fiction-book-development`](skills/fiction-book-development/)** skill is a
 dedicated manuscript workflow for novels, novellas, and story collections. It

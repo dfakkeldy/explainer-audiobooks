@@ -15,7 +15,6 @@ class SkillUnattendedContractTests(unittest.TestCase):
     def test_all_book_skills_route_through_the_shared_contract(self) -> None:
         for relative in (
             "skill/SKILL.md",
-            "skills/custom-learning-audiobook/SKILL.md",
             "skills/longform-book-development/SKILL.md",
             "skills/fiction-book-development/SKILL.md",
         ):

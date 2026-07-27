@@ -4,13 +4,13 @@ import unittest
 from pathlib import Path
 
 REPO = Path(__file__).parents[1]
-WRAPPER = REPO / "skills" / "custom-learning-audiobook" / "scripts" / "echo_pronunciation_narrate.sh"
+WRAPPER = REPO / "skills" / "echo-narration" / "scripts" / "echo_pronunciation_narrate.sh"
 
 
 class EchoNarrationLeanTests(unittest.TestCase):
     def setUp(self) -> None:
         if not WRAPPER.is_file():
-            self.skipTest(f"wrapper not at {WRAPPER}; Task 3 moves it")
+            self.skipTest(f"wrapper not at {WRAPPER}")
         self.text = WRAPPER.read_text(encoding="utf-8")
 
     def test_wrapper_does_not_require_a_pronunciation_plan(self) -> None:
@@ -27,7 +27,7 @@ class EchoNarrationLeanTests(unittest.TestCase):
         for retired in (
             REPO / "skill" / "scripts" / "pronunciation_plan_qc.py",
             REPO / "skill" / "scripts" / "build_pronunciation_probe_reel.py",
-            REPO / "skills" / "custom-learning-audiobook" / "scripts" / "echo_learning_pilot_narrate.sh",
+            REPO / "skills" / "echo-narration" / "scripts" / "echo_learning_pilot_narrate.sh",
         ):
             self.assertFalse(retired.exists(), f"{retired} should be deleted")
 

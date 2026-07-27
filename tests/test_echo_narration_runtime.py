@@ -31,42 +31,42 @@ WAIT_TIMEOUT = float(os.environ.get("ECHO_TEST_WAIT_TIMEOUT", "60"))
 PREFLIGHT = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_preflight.sh"
 )
 AUDIT_VALIDATOR = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "validate_pronunciation_audit.py"
 )
 NARRATE_WRAPPER = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_narrate.sh"
 )
 LEASE_HELPER = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_lease.py"
 )
 STATE_HELPER = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_state.py"
 )
 INSTALLED_RENDERER = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_installed_renderer.py"
 )
