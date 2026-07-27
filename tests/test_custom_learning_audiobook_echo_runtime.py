@@ -1522,6 +1522,45 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertTrue((artifact_root / "fixture.m4b").is_file())
         self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
 
+    def test_preserves_optional_pronunciation_reel(self) -> None:
+        """Port of test_learning_pilot_preserves_optional_pronunciation_reel,
+        deleted from this file in commit a092860 along with the pilot
+        wrapper it exercised (originally added in commit 9b86658). The full
+        wrapper stages and publishes the reel exactly like the pilot wrapper
+        did (`mv -- "$STAGE_REEL" "$REEL"` in echo_pronunciation_narrate.sh),
+        under the full wrapper's dist/echo-renders/<run>/<attempt> layout
+        rather than the pilot's flat dist directory. This is the only test
+        in the suite that sets FAKE_EMIT_REEL; without it the reel
+        staging/publish path and the reelFileName/reelSHA256 success-receipt
+        fields go uncovered.
+        """
+        environment = self.environment()
+        environment["FAKE_EMIT_REEL"] = "1"
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        selector = json.loads(
+            (self.run_root / "research" / "echo-render-current-accepted.json")
+            .read_text(encoding="utf-8")
+        )
+        artifact_root = self.run_root / "dist" / selector["artifactRelativePath"]
+        self.assertTrue(
+            artifact_root.is_relative_to(self.run_root / "dist" / "echo-renders")
+        )
+        reel = artifact_root / "fixture.pronunciation-reel.m4b"
+        self.assertEqual(b"fixture listening reel", reel.read_bytes())
+
+        success = json.loads(
+            next(
+                (self.run_root / "research").glob("echo-render-success-*.json")
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(reel.name, success["reelFileName"])
+        self.assertEqual(
+            hashlib.sha256(reel.read_bytes()).hexdigest(), success["reelSHA256"]
+        )
+
     def test_wrapper_replaces_inherited_echo_resource_dir_for_every_cli_call(
         self,
     ) -> None:

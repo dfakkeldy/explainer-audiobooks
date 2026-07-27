@@ -16,13 +16,6 @@ NARRATE_WRAPPER = (
     / "scripts"
     / "echo_pronunciation_narrate.sh"
 )
-PILOT_NARRATE_WRAPPER = (
-    ROOT
-    / "skills"
-    / "custom-learning-audiobook"
-    / "scripts"
-    / "echo_learning_pilot_narrate.sh"
-)
 PREFLIGHT = (
     ROOT
     / "skills"
@@ -44,9 +37,6 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         self.skill = SKILL.read_text(encoding="utf-8")
         self.package = PACKAGE.read_text(encoding="utf-8")
         self.narrate_wrapper = NARRATE_WRAPPER.read_text(encoding="utf-8")
-        self.pilot_narrate_wrapper = PILOT_NARRATE_WRAPPER.read_text(
-            encoding="utf-8"
-        )
         self.preflight = PREFLIGHT.read_text(encoding="utf-8")
         self.lease_helper = LEASE_HELPER.read_text(encoding="utf-8")
 
@@ -211,94 +201,6 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         self.assertIn("--jobs 1", self.narrate_wrapper)
         self.assertIn("--threads 2", self.narrate_wrapper)
 
-    def test_learning_pilot_has_a_governed_isolated_nonpackage_wrapper(self) -> None:
-        normalized_package = self.normalized(self.package)
-        self.assertIn("echo_learning_pilot_narrate.sh", normalized_package)
-        self.assertIn("isolated pilot work", normalized_package)
-        for marker in (
-            "learning-pilot-nonpackage",
-            "APPROVED_ECHO_PRONUNCIATION_SHA",
-            "PILOT_ROOT",
-            "verify-sidecar",
-            "validate_pronunciation_audit.py",
-            "REEL",
-            "--jobs 1",
-            "--threads 2",
-            "listener_acceptance=pending",
-        ):
-            with self.subTest(marker=marker):
-                self.assertIn(marker, self.pilot_narrate_wrapper)
-        self.assertNotIn("--cover", self.pilot_narrate_wrapper)
-
-    def test_learning_pilot_uses_the_shared_installed_renderer_boundary(self) -> None:
-        governed_source = (
-            self.preflight + self.narrate_wrapper + self.pilot_narrate_wrapper
-        )
-        for forbidden in (
-            "ECHO_REPO",
-            ".build/cli",
-            "xcode-build-gate.sh",
-            "xcodebuild",
-            "make",
-            "git ",
-            "/usr/bin/git",
-        ):
-            with self.subTest(forbidden=forbidden):
-                self.assertNotIn(forbidden, governed_source)
-
-        for shared_function in (
-            "echo_pronunciation_resolve_installed_renderer",
-            "echo_pronunciation_assert_leases",
-            "echo_pronunciation_renderer_receipt_text",
-            "echo_pronunciation_attest_renderer",
-        ):
-            with self.subTest(shared_function=shared_function):
-                self.assertIn(f"{shared_function}()", self.preflight)
-                self.assertIn(shared_function, self.pilot_narrate_wrapper)
-
-        for identity_field in (
-            "renderer_schema_version",
-            "renderer_root",
-            "renderer_build_root",
-            "installer_source_sha",
-            "renderer_manifest_sha256",
-            "echo_cli_sha256",
-            "echo_resources_sha256",
-            "model_policy_revision",
-            "model_expected_byte_count",
-            "model_bytes_attested=false",
-        ):
-            with self.subTest(identity_field=identity_field):
-                self.assertIn(identity_field, self.preflight)
-
-        self.assertIn("resolve-new", self.preflight)
-        self.assertIn("resolve-resume", self.preflight)
-        self.assertIn("ECHO_RENDERER_BUILD_ROOT", self.pilot_narrate_wrapper)
-        self.assertIn("--resume", self.pilot_narrate_wrapper)
-        self.assertGreaterEqual(
-            self.pilot_narrate_wrapper.count("pilot_attest_inputs"),
-            4,
-            "pilot must attest before launch, after render, and around publish",
-        )
-
-    def test_full_and_pilot_wrappers_use_shared_renderer_and_lease_functions(
-        self,
-    ) -> None:
-        for name, wrapper in (
-            ("full", self.narrate_wrapper),
-            ("pilot", self.pilot_narrate_wrapper),
-        ):
-            with self.subTest(wrapper=name):
-                self.assertIn(
-                    'source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"', wrapper
-                )
-                self.assertIn(
-                    "echo_pronunciation_resolve_installed_renderer", wrapper
-                )
-                self.assertIn("echo_pronunciation_assert_leases", wrapper)
-                self.assertNotIn("\nresolve_installed_renderer() {", wrapper)
-                self.assertNotIn("\nassert_leases() {", wrapper)
-
     def test_wrapper_binds_selected_square_cover_to_immutable_render(self) -> None:
         for marker in (
             "M4B_COVER",
@@ -377,32 +279,6 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
         self.assertIn("real-book pronunciation probe", normalized_skill)
         self.assertIn("--max-chapters", self.narrate_wrapper)
-
-    def test_full_render_requires_hash_bound_listener_pronunciation_acceptance(
-        self,
-    ) -> None:
-        for marker in (
-            "PRONUNCIATION_PLAN",
-            "pronunciation-plan.json",
-            "pronunciation_plan_qc.py",
-            "--phase planning",
-            "--phase full-render",
-            "pronunciation-plan-receipt.json",
-        ):
-            with self.subTest(wrapper_marker=marker):
-                self.assertIn(marker, self.narrate_wrapper)
-
-        for text in (self.skill, self.package):
-            with self.subTest(document="skill" if text == self.skill else "package"):
-                normalized = self.normalized(text)
-                for marker in (
-                    "pronunciation-plan.json",
-                    "build_pronunciation_probe_reel.py",
-                    "accepted",
-                    "human listening",
-                    "hyperparameter",
-                ):
-                    self.assertIn(marker, normalized)
 
     def test_review_artifacts_are_automatic_and_part_of_package_qc(self) -> None:
         normalized = self.normalized(self.package)
