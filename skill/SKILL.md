@@ -519,7 +519,7 @@ Legacy single-cover receipts (created with `cover_receipts.py select` and
 `--selection-source explicit-user-choice`) are verification-only compatibility
 for pre-paired packages; the preserved legacy command shapes live in the
 compatibility sections of `references/cover-art.md` and
-`skills/custom-learning-audiobook/references/package-and-qc.md`. Never use
+`skill/references/publishing-a-public-edition.md`. Never use
 them for new work.
 
 Assign `SLUG`, `TITLE`, `SUBTITLE`, `EDITION_ID`, `SELECTED_AT`,
@@ -540,8 +540,9 @@ Verify the EPUB is valid (the `mimetype` check in `references/narration-style.md
 ### 9. Native Echo/Kokoro M4B and alignment
 
 For a complete governed package, render native Echo/Kokoro audio only after the
-governed EPUB exists. Follow the complete wrapper and receipt procedure in
-`skills/custom-learning-audiobook/references/package-and-qc.md`. Create
+governed EPUB exists. Follow the wrapper procedure in
+`skills/echo-narration/references/narrating.md` and the receipt procedure in
+`skill/references/publishing-a-public-edition.md`. Create
 `research/pronunciation-plan.json`, including listener-named risks and every
 spoken variant. Render bounded partial chapters first, use
 `build_pronunciation_probe_reel.py`, and normally require accepted, hash-bound
@@ -556,7 +557,7 @@ EXPLAINER_ROOT=$(git rev-parse --show-toplevel)
 export EXPLAINER_ROOT
 export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
 export PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
-"$EXPLAINER_ROOT/skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh" \
+"$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_narrate.sh" \
   --max-chapters 1
 ```
 
@@ -567,7 +568,7 @@ through the governed wrapper. Never bypass its pronunciation-plan gate.
 
 After Echo writes the M4B and alignment sidecar, complete the selector-bound
 "Audio And Alignment QC" flow in
-`skills/custom-learning-audiobook/references/package-and-qc.md` (it sets
+`skill/references/publishing-a-public-edition.md` (it sets
 `AUDIOBOOK` from the verified current-accepted selector), then run the paired
 `cover_receipts.py verify` command from `references/cover-art.md` across the
 selected pair, governed EPUB, and `$AUDIOBOOK`.

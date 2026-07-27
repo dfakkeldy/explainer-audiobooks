@@ -7,6 +7,7 @@ ROOT = Path(__file__).parents[1]
 FILES = {
     "cover": ROOT / "skill" / "references" / "cover-art.md",
     "long": ROOT / "skill" / "SKILL.md",
+    "unattended": ROOT / "skill" / "references" / "unattended-production.md",
     "public": ROOT / "docs" / "how-these-were-made.md",
     "readme": ROOT / "README.md",
     "make": ROOT / "docs" / "make-your-own.md",
@@ -132,6 +133,10 @@ class SkillCoverContractTests(unittest.TestCase):
         )
         self.assertIn("five-book migration", combined)
         self.assertIn("not a universal future rule", combined)
+
+    def test_private_icloud_copy_requires_an_explicit_user_request(self) -> None:
+        text = FILES["unattended"].read_text(encoding="utf-8")
+        self.assertIn("when stated, a private iCloud reading copy", text)
 
     def test_active_new_work_uses_complete_paired_interfaces(self) -> None:
         # The full copy-paste command sequence lives in exactly one normative

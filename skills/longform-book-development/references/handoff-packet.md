@@ -1,7 +1,7 @@
 # Handoff Packet
 
 Use this shape when handing a developed longform book project to
-`$custom-learning-audiobook`.
+`$audiobook`.
 
 ## Packet Sections
 
@@ -10,7 +10,7 @@ Use this shape when handing a developed longform book project to
 
 ## Production Request
 
-Use `$custom-learning-audiobook` to turn this approved book plan into a complete
+Use `$audiobook` to turn this approved book plan into a complete
 learning audiobook package. Include the approved interior pictures as EPUB
 figures, build EPUB and combined Markdown, render Echo audio when available, and
 report any blockers honestly.

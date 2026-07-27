@@ -7,7 +7,7 @@ description: >-
   resuming an in-progress book project ("let's keep working on my book").
   Nonfiction only; route novels, novellas, and short stories to
   fiction-book-development. Hands the finished concept to
-  custom-learning-audiobook for production.
+  audiobook for production.
 ---
 
 # Longform Book Development
@@ -20,16 +20,16 @@ remains conversational for an explicitly exploratory
 request. An overnight, ready-to-listen, delegated, or multi-book request selects
 `unattended-first-listen`: make reversible editorial decisions, record them in
 `research/unattended-decisions.json`, complete the handoff, and invoke
-`custom-learning-audiobook` without another approval pause. Human checkpoint
+`audiobook` without another approval pause. Human checkpoint
 language below applies to `governed-final`; unattended mode follows the shared
 editorial checkpoint and package-or-blocker contract.
 
 Shape a durable book project before synthesis. This skill owns the messy
 creative conversation: turning scattered ideas into an approved brief, outline,
-source plan, picture plan, and handoff packet for `custom-learning-audiobook`.
+source plan, picture plan, and handoff packet for `audiobook`.
 
 Do not use this skill for a simple "make me a book about X" request that is ready
-for one-pass production. Use `custom-learning-audiobook` directly for that.
+for one-pass production. Use `audiobook` directly for that.
 Do not use it for novels, novellas, or short-story collections; route fiction to
 `fiction-book-development`, which owns story bibles, canonical prose, continuity,
 and fiction-specific revision.
@@ -87,7 +87,7 @@ user means before creating a new one.
 
    Two `research/` roots exist in this pipeline: `research/*` paths in steps
    2-6 live in this workspace, while `research/*` paths inside the handoff
-   packet refer to the production run folder that `custom-learning-audiobook`
+   packet refer to the production run folder that `audiobook`
    will create at `.build/custom-learning-audiobooks/<slug>/` (keep the same
    `<slug>` so the workspaces cross-reference).
 
@@ -185,7 +185,7 @@ user means before creating a new one.
    claim-traceability, tightening, de-listification, sentence-rhythm, and
    rendered ear-pass lanes.
    Preserve these decisions so the handoff is complete enough that a fresh agent can run
-   `custom-learning-audiobook` without re-litigating the concept.
+   `audiobook` without re-litigating the concept.
 
    `references/handoff-packet.md` closes with the authoritative required-field
    checklist for this packet; that single copy is the gate, so do not maintain
@@ -195,7 +195,7 @@ user means before creating a new one.
    **development draft**. It cannot start pilot or canonical production.
 
 8. **Invoke the audiobook skill for production.** Hand the packet to
-   `custom-learning-audiobook` for research finalization, manuscript writing,
+   `audiobook` for research finalization, manuscript writing,
    cover generation, EPUB/Markdown building, Echo M4B/alignment rendering, QC,
    and delivery. This skill may draft sample passages or chapter beats, but it
    should not own the final manuscript build unless the user explicitly asks.
@@ -248,7 +248,7 @@ governed by the production skill's lanes and cannot be waived here:
   `revision-passes.json` plan of separate single-job passes including ear-pass,
 - source/research plan,
 - figure/image plan with provenance,
-- handoff packet ready for `custom-learning-audiobook`.
+- handoff packet ready for `audiobook`.
 
 The handoff also records whether the bounded `humanizer` pass is required,
 optional, or explicitly skipped, plus any voice constraints the production
