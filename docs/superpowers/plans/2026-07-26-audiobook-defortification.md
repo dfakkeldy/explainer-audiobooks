@@ -446,7 +446,10 @@ After Tasks 1-2 the directory `skills/custom-learning-audiobook/` holds no skill
 
 **Files:**
 - Rename: `skills/custom-learning-audiobook/` → `skills/echo-narration/`
-- Delete: `skills/echo-narration/SKILL.md`, `skills/echo-narration/agents/`, `skills/echo-narration/references/intake-and-research.md`, `tools/validate_custom_learning_skill_install.py`, `tests/test_custom_learning_audiobook_install_contract.py`, `tests/test_custom_learning_audiobook_echo_contract.py`
+- Delete: `skills/echo-narration/SKILL.md`, `skills/echo-narration/agents/`, `skills/echo-narration/references/intake-and-research.md`, `tools/validate_custom_learning_skill_install.py`, `tests/test_custom_learning_audiobook_install_contract.py`
+- Modify (do NOT delete — see the correction below): `tests/test_custom_learning_audiobook_echo_contract.py`
+
+**Correction (2026-07-26, after Task 2's review).** This task originally deleted `tests/test_custom_learning_audiobook_echo_contract.py` outright. That was wrong. Task 2's implementer deleted it early, and review established that only 4 of its 18 tests were obsolete; the other 14 are text contracts on files that **survive this rename** — `echo_pronunciation_narrate.sh`, `echo_pronunciation_preflight.sh`, `echo_pronunciation_lease.py`, and the operator docs. One of them, `test_run_id_is_derived_in_exactly_one_place`, is a named regression guard against a past production break. The 14 were restored in commit `e324b5f`. This task must **repoint their paths** to `skills/echo-narration/`, not delete them. Rename the file to `tests/test_echo_narration_contract.py` to match what it now tests.
 - Create: `skills/echo-narration/references/narrating.md`
 - Modify: `tests/test_custom_learning_audiobook_echo_runtime.py`, `tests/test_echo_installed_renderer.py`, `tests/test_echo_narration_lean.py`, `skill/references/cover-art.md:97,418`
 
@@ -475,9 +478,16 @@ cd /Users/dfakkeldy/Developer/explainer-audiobooks/.claude/worktrees/kind-pascal
   skills/custom-learning-audiobook/references/intake-and-research.md \
   skills/custom-learning-audiobook/references/package-and-qc.md \
   tools/validate_custom_learning_skill_install.py \
-  tests/test_custom_learning_audiobook_install_contract.py \
-  tests/test_custom_learning_audiobook_echo_contract.py
+  tests/test_custom_learning_audiobook_install_contract.py
 ```
+
+**Do not delete `tests/test_custom_learning_audiobook_echo_contract.py`.** Its 14 surviving tests cover files this task renames rather than removes. Rename it alongside them and repoint its paths:
+
+```bash
+cd /Users/dfakkeldy/Developer/explainer-audiobooks/.claude/worktrees/kind-pascal-8b42e3 && git mv tests/test_custom_learning_audiobook_echo_contract.py tests/test_echo_narration_contract.py
+```
+
+Then update every `skills/custom-learning-audiobook` path inside it to `skills/echo-narration`. If one of the 14 asserts on text in `references/package-and-qc.md` (deleted in Step 2), repoint that assertion at the file the text moved to — `references/narrating.md` for Echo commands, or `skill/references/publishing-a-public-edition.md` for receipt and sync prose. Do not delete an assertion because its source file moved.
 
 `validate_custom_learning_skill_install.py` validated the install of a skill that no longer exists. Its Hermes consumer is a known downstream break, recorded in Task 8 Step 6.
 
