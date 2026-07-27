@@ -49,13 +49,6 @@ NARRATE_WRAPPER = (
     / "scripts"
     / "echo_pronunciation_narrate.sh"
 )
-PILOT_NARRATE_WRAPPER = (
-    ROOT
-    / "skills"
-    / "custom-learning-audiobook"
-    / "scripts"
-    / "echo_learning_pilot_narrate.sh"
-)
 LEASE_HELPER = (
     ROOT
     / "skills"
@@ -388,11 +381,6 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
 </package>""",
             )
             archive.writestr("OEBPS/cover.png", portrait.read_bytes())
-        pilot_dist = self.run_root / "pilot" / "dist"
-        pilot_dist.mkdir(parents=True)
-        (pilot_dist / "fixture-pilot.epub").write_bytes(
-            (dist / "fixture.epub").read_bytes()
-        )
 
         self.git("init", "-q")
         self.git("config", "user.email", "fixture@example.com")
@@ -751,29 +739,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         return build_root, manifest_sha
 
-    def run_pilot_narrate(
-        self,
-        *arguments: str,
-        environment: dict[str, str] | None = None,
-    ) -> subprocess.CompletedProcess[str]:
-        pilot_environment = dict(environment or self.environment())
-        return subprocess.run(
-            [str(PILOT_NARRATE_WRAPPER), *arguments],
-            cwd=self.explainer,
-            env=pilot_environment,
-            capture_output=True,
-            text=True,
-        )
-
     def resume_arguments(self) -> tuple[str, str, str]:
         state = next(
             (self.run_root / "research").glob("echo-resume-state-*.json")
-        )
-        return ("--resume", "--resume-state", str(state))
-
-    def pilot_resume_arguments(self) -> tuple[str, str, str]:
-        state = next(
-            (self.run_root / "pilot" / "research").glob("echo-resume-state-*.json")
         )
         return ("--resume", "--resume-state", str(state))
 
@@ -790,13 +758,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             )
             sentinel.chmod(sentinel.stat().st_mode | stat.S_IXUSR)
 
-        for wrapper, invoke in (
-            ("full", self.run_narrate),
-            ("pilot", self.run_pilot_narrate),
-        ):
-            with self.subTest(wrapper=wrapper):
-                result = invoke()
-                self.assertEqual(0, result.returncode, result.stderr)
+        result = self.run_narrate()
+        self.assertEqual(0, result.returncode, result.stderr)
         self.assertFalse(forbidden_log.exists(), forbidden_log.read_text() if forbidden_log.exists() else "")
 
     def test_missing_installed_version_is_actionable_and_does_not_build(self) -> None:
@@ -908,125 +871,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "false" if identity["modelBytesAttested"] is False else "true",
         )
 
-    def test_learning_pilot_wrapper_uses_isolated_coverless_paths(self) -> None:
-        log = self.tmp / "pilot-narrate.log"
-        environment = self.environment()
-        environment["FAKE_NARRATE_LOG"] = str(log)
-
-        result = self.run_pilot_narrate(environment=environment)
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        arguments = [
-            line.removeprefix("ARG=")
-            for line in log.read_text(encoding="utf-8").splitlines()
-            if line.startswith("ARG=")
-        ]
-        pilot_root = (self.run_root / "pilot").resolve()
-        self.assertEqual(
-            str((pilot_root / "dist" / "fixture-pilot.epub").resolve()),
-            arguments[arguments.index("--epub") + 1],
-        )
-        self.assertTrue(
-            Path(arguments[arguments.index("--work-dir") + 1]).is_relative_to(
-                pilot_root
-            )
-        )
-        self.assertTrue(
-            Path(arguments[arguments.index("--db") + 1]).is_relative_to(pilot_root)
-        )
-        self.assertNotIn("--cover", arguments)
-        self.assertTrue((pilot_root / "dist" / "fixture-pilot.m4b").is_file())
-        self.assertTrue(
-            (pilot_root / "dist" / "fixture-pilot.alignment.json").is_file()
-        )
-        self.assertTrue(
-            (pilot_root / "dist" / "fixture-pilot.pronunciation-audit.json").is_file()
-        )
-        receipts = list(
-            (pilot_root / "research").glob("echo-pilot-success-*.env")
-        )
-        self.assertEqual(1, len(receipts))
-        receipt = receipts[0].read_text(encoding="utf-8")
-        self.assertIn("kind=learning-pilot-nonpackage", receipt)
-        self.assertRegex(receipt, r"audio_sha256=[0-9a-f]{64}")
-        self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
-
-    def test_learning_pilot_binds_the_full_installed_renderer_identity(self) -> None:
-        full_fields = self.preflight_fields()
-
-        result = self.run_pilot_narrate()
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        pilot_receipt = next(
-            (self.run_root / "pilot" / "research").glob("echo-pilot-inputs-*.env")
-        ).read_text(encoding="utf-8")
-        pilot_fields = dict(
-            line.split("=", 1) for line in pilot_receipt.splitlines() if "=" in line
-        )
-        shared_fields = {
-            "renderer_root": "ECHO_RENDERER_ROOT",
-            "renderer_build_root": "ECHO_RENDERER_BUILD_ROOT",
-            "installer_source_sha": "APPROVED_ECHO_INSTALLER_SHA",
-            "approved_echo_pronunciation_sha": "APPROVED_ECHO_PRONUNCIATION_SHA",
-            "echo_source_sha": "ECHO_SOURCE_SHA",
-            "renderer_manifest_sha256": "ECHO_RENDERER_MANIFEST_SHA256",
-            "echo_cli_path": "CLI",
-            "echo_cli_sha256": "ECHO_CLI_SHA256",
-            "echo_resource_dir": "ECHO_RESOURCE_DIR",
-            "echo_resources_sha256": "ECHO_RESOURCES_SHA256",
-            "render_version": "ECHO_RENDER_VERSION",
-            "model_policy_revision": "ECHO_MODEL_REVISION",
-            "model_expected_byte_count": "ECHO_MODEL_EXPECTED_BYTES",
-            "model_bytes_attested": "ECHO_MODEL_BYTES_ATTESTED",
-        }
-        for pilot_name, full_name in shared_fields.items():
-            with self.subTest(field=pilot_name):
-                self.assertEqual(full_fields[full_name], pilot_fields[pilot_name])
-
-    def test_learning_pilot_replaces_inherited_resource_dir_for_every_cli_call(
-        self,
-    ) -> None:
-        environment = self.environment()
-        environment["ECHO_RESOURCE_DIR"] = "/stale/debug/resources"
-
-        result = self.run_pilot_narrate(environment=environment)
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        calls = self.installed_probe_log.read_text(encoding="utf-8").splitlines()
-        sealed_suffix = f" ECHO_RESOURCE_DIR={self.resources.resolve()}"
-        self.assertGreater(len(calls), 0)
-        self.assertTrue(all(call.endswith(sealed_suffix) for call in calls), calls)
-        for required_call in (
-            "CALL=--version:",
-            "CALL=narrate:--help",
-            "CALL=verify-sidecar:--help",
-            "CALL=narrate:--epub",
-            "CALL=verify-sidecar:--epub",
-        ):
-            with self.subTest(required_call=required_call):
-                self.assertTrue(
-                    any(call.startswith(required_call) for call in calls), calls
-                )
-
-    def test_learning_pilot_preserves_optional_pronunciation_reel(self) -> None:
-        environment = self.environment()
-        environment["FAKE_EMIT_REEL"] = "1"
-
-        result = self.run_pilot_narrate(environment=environment)
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        pilot_root = self.run_root / "pilot"
-        reel = pilot_root / "dist" / "fixture-pilot.pronunciation-reel.m4b"
-        self.assertEqual(b"fixture listening reel", reel.read_bytes())
-        success = next(
-            (pilot_root / "research").glob("echo-pilot-success-*.env")
-        ).read_text(encoding="utf-8")
-        self.assertIn(f"reel_path={reel.resolve()}", success)
-        self.assertRegex(success, r"reel_sha256=[0-9a-f]{64}")
-
-    def test_learning_pilot_does_not_publish_after_resource_mutation(self) -> None:
-        ready = self.tmp / "pilot-ready"
-        release = self.tmp / "pilot-release"
+    def test_does_not_publish_after_resource_mutation(self) -> None:
+        ready = self.tmp / "narrate-ready"
+        release = self.tmp / "narrate-release"
         environment = self.environment()
         environment.update(
             {
@@ -1035,7 +882,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             }
         )
         process = subprocess.Popen(
-            [str(PILOT_NARRATE_WRAPPER)],
+            [str(NARRATE_WRAPPER)],
             cwd=self.explainer,
             env=environment,
             stdout=subprocess.PIPE,
@@ -1053,20 +900,16 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("installed renderer attestation failed", stderr)
-        pilot_dist = self.run_root / "pilot" / "dist"
-        self.assertFalse((pilot_dist / "fixture-pilot.m4b").exists())
-        self.assertFalse((pilot_dist / "fixture-pilot.alignment.json").exists())
-        self.assertFalse(
-            (pilot_dist / "fixture-pilot.pronunciation-audit.json").exists()
-        )
+        self.assertFalse(list((self.run_root / "dist").glob("echo-renders/**/*")))
+        self.assertFalse(list(self.run_root.glob(".echo-output-*")))
 
-    def test_learning_pilot_rejects_executable_and_resource_mutation_before_cli_launch(
+    def test_rejects_executable_and_resource_mutation_before_cli_launch(
         self,
     ) -> None:
         control = self.tmp / "probe-block-control"
         ready = self.tmp / "probe-block-ready"
         release = self.tmp / "probe-block-release"
-        narrate_log = self.tmp / "pilot-prelaunch-narrate.log"
+        narrate_log = self.tmp / "prelaunch-narrate.log"
         control.write_text("2\n", encoding="utf-8")
         environment = self.environment()
         environment.update(
@@ -1075,7 +918,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             }
         )
         process = subprocess.Popen(
-            [str(PILOT_NARRATE_WRAPPER)],
+            [str(NARRATE_WRAPPER)],
             cwd=self.explainer,
             env=environment,
             stdout=subprocess.PIPE,
@@ -1100,67 +943,56 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             else 0
         )
         self.assertEqual(0, narrate_calls, "mutated package reached CLI narration")
-        pilot_dist = self.run_root / "pilot" / "dist"
-        for artifact in (
-            "fixture-pilot.m4b",
-            "fixture-pilot.alignment.json",
-            "fixture-pilot.pronunciation-audit.json",
-        ):
-            with self.subTest(artifact=artifact):
-                self.assertFalse((pilot_dist / artifact).exists())
+        self.assertFalse(list((self.run_root / "dist").glob("echo-renders/**/*")))
+        self.assertFalse(list(self.run_root.glob(".echo-output-*")))
 
-    def test_full_and_pilot_hold_the_exact_build_root_lease_through_narration(
+    def test_full_wrapper_holds_the_exact_build_root_lease_through_narration(
         self,
     ) -> None:
-        for wrapper, command in (
-            ("full", NARRATE_WRAPPER),
-            ("pilot", PILOT_NARRATE_WRAPPER),
-        ):
-            with self.subTest(wrapper=wrapper):
-                ready = self.tmp / f"{wrapper}-build-lease-ready"
-                release = self.tmp / f"{wrapper}-build-lease-release"
-                environment = self.environment()
-                environment.update(
-                    {
-                        "FAKE_NARRATE_READY": str(ready),
-                        "FAKE_NARRATE_RELEASE": str(release),
-                    }
-                )
-                process = subprocess.Popen(
-                    [str(command)],
-                    cwd=self.explainer,
-                    env=environment,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-                self.addCleanup(lambda: process.poll() is None and process.kill())
-                self.wait_for_path(ready, process)
+        ready = self.tmp / "full-build-lease-ready"
+        release = self.tmp / "full-build-lease-release"
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_READY": str(ready),
+                "FAKE_NARRATE_RELEASE": str(release),
+            }
+        )
+        process = subprocess.Popen(
+            [str(NARRATE_WRAPPER)],
+            cwd=self.explainer,
+            env=environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.addCleanup(lambda: process.poll() is None and process.kill())
+        self.wait_for_path(ready, process)
 
-                contender = subprocess.run(
-                    [
-                        str(LEASE_HELPER),
-                        "--lock-root",
-                        str(self.lease_root),
-                        "--resource",
-                        str(self.renderer_build_root),
-                        "--",
-                        "/usr/bin/true",
-                    ],
-                    cwd=self.explainer,
-                    env=self.environment(),
-                    capture_output=True,
-                    text=True,
-                )
-                self.assertEqual(75, contender.returncode, contender.stderr)
-                self.assertIn(
-                    f"active narration lease owns shared resource: {self.renderer_build_root}",
-                    contender.stderr,
-                )
+        contender = subprocess.run(
+            [
+                str(LEASE_HELPER),
+                "--lock-root",
+                str(self.lease_root),
+                "--resource",
+                str(self.renderer_build_root),
+                "--",
+                "/usr/bin/true",
+            ],
+            cwd=self.explainer,
+            env=self.environment(),
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(75, contender.returncode, contender.stderr)
+        self.assertIn(
+            f"active narration lease owns shared resource: {self.renderer_build_root}",
+            contender.stderr,
+        )
 
-                release.touch()
-                stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
-                self.assertEqual(0, process.returncode, f"{stdout}\n{stderr}")
+        release.touch()
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
+        self.assertEqual(0, process.returncode, f"{stdout}\n{stderr}")
 
     def preflight_fields(self) -> dict[str, str]:
         names = (
@@ -1669,45 +1501,6 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         self.assertEqual(64, mismatched.returncode)
         self.assertIn("canonical", mismatched.stderr)
-
-    def test_pilot_resume_cannot_omit_or_silently_ignore_state(self) -> None:
-        bare = self.run_pilot_narrate("--resume")
-        self.assertEqual(64, bare.returncode)
-        self.assertIn("--resume-state ABSOLUTE_PATH", bare.stderr)
-
-        relative = self.run_pilot_narrate(
-            "--resume", "--resume-state", "research/echo-resume-state.json"
-        )
-        self.assertEqual(64, relative.returncode)
-        self.assertIn("absolute", relative.stderr)
-
-        initial = self.run_pilot_narrate()
-        self.assertEqual(0, initial.returncode, initial.stderr)
-        resumed = self.run_pilot_narrate(*self.pilot_resume_arguments())
-        self.assertEqual(0, resumed.returncode, resumed.stderr)
-
-    def test_learning_pilot_resume_keeps_its_sealed_renderer_after_promotion(
-        self,
-    ) -> None:
-        selector_path = self.renderer_root / self.source_sha / "approved-renderer.json"
-        original_selector = selector_path.read_bytes()
-        sealed_build, sealed_manifest = self.select_manifest_variant(
-            lambda payload: payload.__setitem__("renderVersion", 13),
-            render_version=13,
-        )
-        initial = self.run_pilot_narrate()
-        self.assertEqual(0, initial.returncode, initial.stderr)
-        selector_path.write_bytes(original_selector)
-
-        resumed = self.run_pilot_narrate(*self.pilot_resume_arguments())
-
-        self.assertEqual(0, resumed.returncode, resumed.stderr)
-        receipt = next(
-            (self.run_root / "pilot" / "research").glob("echo-pilot-inputs-*.env")
-        ).read_text(encoding="utf-8")
-        self.assertIn(f"renderer_build_root={sealed_build}", receipt)
-        self.assertIn(f"renderer_manifest_sha256={sealed_manifest}", receipt)
-        self.assertIn("render_version=13", receipt)
 
     def test_success_publishes_run_scoped_media_and_current_selector(self) -> None:
         result = self.run_narrate()

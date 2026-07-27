@@ -52,7 +52,6 @@ SKILL_FILES = {
     "references/package-and-qc.md": 0o644,
     "scripts/echo_installed_renderer.py": 0o755,
     "scripts/echo_pronunciation_preflight.sh": 0o755,
-    "scripts/echo_learning_pilot_narrate.sh": 0o755,
     "scripts/validate_pronunciation_audit.py": 0o755,
     "scripts/echo_pronunciation_narrate.sh": 0o755,
     "scripts/echo_pronunciation_lease.py": 0o755,

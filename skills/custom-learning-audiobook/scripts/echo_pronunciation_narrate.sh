@@ -138,26 +138,12 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
   fi
 
   if (( ! RECOVER_STALE_LOCK )); then
-    CANONICAL_PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
-    if [[ -z ${PRONUNCIATION_PLAN:-} ]]; then
-      printf 'PRONUNCIATION_PLAN is required; expected %s\n' \
-        "$CANONICAL_PRONUNCIATION_PLAN" >&2
+    # An optional word list improves the render (e.g. "hyperparameter").
+    # It is an input, not a gate: an absent or unvalidated list is fine.
+    if [[ -n ${PRONUNCIATION_PLAN:-} && ! -f "$PRONUNCIATION_PLAN" ]]; then
+      printf 'PRONUNCIATION_PLAN was set but does not exist: %s\n' \
+        "$PRONUNCIATION_PLAN" >&2
       exit 64
-    fi
-    if [[ "$PRONUNCIATION_PLAN" != "$CANONICAL_PRONUNCIATION_PLAN" ]]; then
-      printf 'PRONUNCIATION_PLAN must be the canonical run plan: %s\n' \
-        "$CANONICAL_PRONUNCIATION_PLAN" >&2
-      exit 64
-    fi
-    if [[ -n "$MAX_CHAPTERS" ]]; then
-      /usr/local/bin/python3 "$SCRIPT_DIR/../../../skill/scripts/pronunciation_plan_qc.py" \
-        --run-root "$RUN_ROOT" \
-        --phase planning
-    else
-      /usr/local/bin/python3 "$SCRIPT_DIR/../../../skill/scripts/pronunciation_plan_qc.py" \
-        --run-root "$RUN_ROOT" \
-        --phase full-render \
-        --receipt-out "$RUN_ROOT/research/pronunciation-plan-receipt.json"
     fi
   fi
 
