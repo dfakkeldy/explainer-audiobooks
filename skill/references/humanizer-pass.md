@@ -6,10 +6,10 @@ been applied. The goal is prose that sounds like a thoughtful person explaining 
 real subject aloud, not prose that has been cosmetically rewritten by another
 model.
 
-Read `declaudification.md` first. The humanizer is a two-pass gate: an
+Read `declaudification.md` first. The humanizer is a two-pass check: an
 independent inventory before edits, followed by frontier-author repairs and a
-final verified run. Review chapter by chapter and then across the whole manuscript
-so synonym-cycled habits are not hidden by chapter boundaries.
+final run. Review chapter by chapter and then across the whole manuscript so
+synonym-cycled habits are not hidden by chapter boundaries.
 
 ## Learning-design precondition
 
@@ -19,17 +19,16 @@ unexplained terms, shallow mechanisms, and missing worked examples. Each is a
 structural blocker: record the exact location and return to learning review and
 frontier-author repair.
 
-The humanizer also cannot replace the artifactized revision pipeline. Complete
+The humanizer also cannot replace the revision sequence. Complete
 claim-traceability, tightening, de-listification, sentence-rhythm, and rendered
-ear-pass work as separate single-job passes in `revision-passes.json`. "Make it
-better" is not a valid pass, and combining all five jobs in the humanizer hides
-which defect was actually tested.
+ear-pass work as separate single-job passes. "Make it better" is not a valid
+pass, and combining all five jobs in the humanizer hides which defect was
+actually tested.
 
 Do not smooth over a structural blocker with cleaner transitions, more polished
 definitions, or added motivational prose. The humanizer starts only after the
-learning architecture and substantive explanations are accepted. If a local
-voice edit changes chapter hashes, rerun final structure and beginner-reader
-review before generating the learning-design receipt.
+learning architecture and substantive explanations are accepted. After a local
+voice edit, rerun structure and beginner review over the affected material.
 
 ## What the pass should do
 
@@ -54,7 +53,7 @@ review before generating the learning-design receipt.
 - Do not invent anecdotes, interviews, feelings, opinions, quotations, sources,
   first-person experience, or claims about the author.
 - Do not change facts, examples, citations, technical identifiers, commands,
-  filenames, definitions, boundaries, chapter order, or the coverage ledger.
+  filenames, definitions, boundaries, or chapter order.
 - Do not erase useful repetition that deliberately retrieves a concept for learning.
 - Do not replace the manuscript wholesale or impose a generic "conversational"
   persona. Preserve the approved voice and the frontier author's choices.
@@ -74,12 +73,10 @@ review before generating the learning-design receipt.
    patch-sized change list first when the manuscript is large.
 3. Have the frontier author review every finding, record accepted and rejected
    items with reasons, and make every accepted non-mechanical change.
-4. Re-run factual/citation checks, the coverage-ledger comparison, narration
-   checks, and the whole-manuscript prose gate after accepted edits.
-5. Record counts before and after plus the reviewer/model/skill version,
-   accepted and rejected findings, rerun checks, and chapter hashes in the final
-   `prose-style-receipt.json`. Packaging must verify the receipt against the
-   canonical chapters.
+4. Re-run factual/citation checks, narration checks, blind beginner review, and
+   the whole-manuscript prose gate after accepted edits.
+5. Review the before-and-after counts and preserve the accepted and rejected
+   findings with their reasons in the editorial notes.
 
 A cheaper worker may flag AI patterns and quote exact locations, but may not
 rewrite the book in a competing voice. If humanization changes explanation,

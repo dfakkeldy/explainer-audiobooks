@@ -125,4 +125,4 @@ This repo is dual-licensed, split by folder:
 
 ## Credits
 
-Curated by **Dan Fakkeldy**. The worked example throughout is **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source audiobook study player. Books written by **Claude (Opus 4.8 and Fable 5)** and **GPT-5 Codex** via the `explainer-audiobook` and `custom-learning-audiobook` skills (with an earlier edition of *Git Happens* by **DeepSeek v4**, kept in git history); each book's own README and EPUB metadata record its model.
+Curated by **Dan Fakkeldy**. The worked example throughout is **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source audiobook study player. Books written by **Claude (Opus 4.8 and Fable 5)** and **GPT-5 Codex** through the repository's audiobook workflows (now consolidated as the `audiobook` skill; an earlier edition of *Git Happens* by **DeepSeek v4** remains in git history); each book's own README and EPUB metadata record its model.

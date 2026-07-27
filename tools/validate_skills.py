@@ -51,27 +51,20 @@ def validate_skill(path: str, name: str) -> None:
 
 
 def main() -> int:
-    validate_skill("skill", "explainer-audiobook")
-    validate_skill("skills/custom-learning-audiobook", "custom-learning-audiobook")
+    validate_skill("skill", "audiobook")
     validate_skill("skills/longform-book-development", "longform-book-development")
     validate_skill("skills/fiction-book-development", "fiction-book-development")
 
     paired_contract = (
-        "exactly three", "1600×2560", "cover.png", "2400×2400",
-        "m4b-cover.png", "explicit pair selection", "paired receipt",
-        "EPUB portrait", "M4B square", "post-embed verification",
+        "exactly three", "1600×2560", "cover.png", "2400×2400", "m4b-cover.png",
     )
     for path in (
-        "skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md",
-        "skill/references/cover-art.md",
-        "skills/custom-learning-audiobook/references/package-and-qc.md",
+        "skill/SKILL.md", "skill/references/cover-art.md",
         "README.md", "docs/how-these-were-made.md", "docs/make-your-own.md",
     ):
         contains(path, *paired_contract)
 
-    # The full paired command sequence lives in exactly one normative
-    # reference per skill; the skill bodies keep a summary plus a pointer so
-    # duplicated command blocks cannot drift.
+    # Receipt and sync commands are isolated in the rare public-publishing lane.
     complete_paired = (
         "render_cover_pair(", "portrait_spec=", "square_spec=",
         "portrait_output=", "square_output=", "portrait_thumbnail=",
@@ -81,76 +74,28 @@ def main() -> int:
         "--m4b-cover \"$PAIR/m4b-cover.png\"",
         "--paired-artifact-dir \"$PAIR\"", "--intent reuse", "--apply",
     )
-    for path in (
-        "skill/references/cover-art.md",
-        "skills/custom-learning-audiobook/references/package-and-qc.md",
-    ):
-        contains(path, *complete_paired)
-
-    contains("skill/SKILL.md", "Complete paired command example", "references/cover-art.md")
     contains(
-        "skills/custom-learning-audiobook/SKILL.md",
-        "Complete paired command example",
-        "references/package-and-qc.md",
+        "skill/references/publishing-a-public-edition.md",
+        *complete_paired,
     )
 
-    for path in (
-        "skill/SKILL.md", "skills/custom-learning-audiobook/SKILL.md",
-        "skill/references/cover-art.md",
-        "skills/custom-learning-audiobook/references/package-and-qc.md",
-    ):
-        # The narration wrapper embeds the square cover itself; mutating a
-        # narrated M4B invalidates the pronunciation audit.
-        contains(path, "Never run `replace_m4b_cover.py`")
-        require(
-            "/make_cover.py \\\n  --spec" not in read(path),
-            f"{path} teaches active single-cover rendering",
-        )
-        require(
-            "--portrait-cover \"$PAIR/cover.png\"" not in read(path),
-            f"{path} teaches the retired post-narration cover mutation flow",
-        )
-
-    for path, legacy_marker in (
-        (
-            "skills/custom-learning-audiobook/SKILL.md",
-            "The older command below is verification-only compatibility",
-        ),
-        (
-            "skills/custom-learning-audiobook/references/package-and-qc.md",
-            "The following single-cover commands are verification-only compatibility",
-        ),
-    ):
-        active_text = read(path).split(legacy_marker, 1)[0]
-        require("selection_source=user" in active_text, f"{path} missing current paired selection source")
-        require(
-            "selection_source=explicit-user-choice" not in active_text,
-            f"{path} teaches legacy selection source for paired work",
-        )
+    publishing = "skill/references/publishing-a-public-edition.md"
+    contains(publishing, "Never mutate a narrated M4B", "replace_m4b_cover.py")
+    require(
+        "--portrait-cover \"$PAIR/cover.png\"" not in read(publishing),
+        f"{publishing} teaches the retired post-narration cover mutation flow",
+    )
 
     contains(
         "skill/SKILL.md",
         "am_michael",
         "am_puck",
-        "do not use `af_heart` as the default",
-        "image_generate",
-        "one specific visual thesis",
-        "Reject weak outputs and regenerate",
-        "load the `humanizer` skill",
+        "never `af_heart`",
+        "Dan Fakkeldy",
+        "--contributor",
+        "AI-writing patterns to avoid",
+        "`humanizer`",
         "must not invent anecdotes",
-    )
-    contains(
-        "skills/custom-learning-audiobook/SKILL.md",
-        "one lead writer",
-        "source-confidence label",
-        "public-safe",
-        "interior pictures",
-        "M4B/alignment",
-        "copy-ready editorial prompt",
-        "eye-catching 2–4-colour palette",
-        "load the `humanizer` skill",
-        "Do not invent\n    anecdotes",
-        "Do not use `af_heart` as the default narrator.",
     )
     contains(
         "skills/longform-book-development/SKILL.md",
@@ -172,34 +117,23 @@ def main() -> int:
         "stronger art direction",
     )
     contains(
-        "skills/custom-learning-audiobook/references/intake-and-research.md",
-        "Open Notebook",
-        "public-safe",
-        "Sensitive/high-stakes",
-    )
-    contains(
-        "skills/custom-learning-audiobook/references/package-and-qc.md",
+        "skills/echo-narration/references/narrating.md",
         "echo-cli",
         "--voice am_michael",
         "<slug>.alignment.json",
         "ffprobe",
-        "Interior Figures",
-    )
-    contains(
-        "skills/custom-learning-audiobook/agents/openai.yaml",
-        "$custom-learning-audiobook",
     )
     contains(
         "skills/longform-book-development/SKILL.md",
         "handoff packet",
         "picture plan",
-        "custom-learning-audiobook",
+        "audiobook",
     )
     contains(
         "skills/longform-book-development/references/handoff-packet.md",
         "Figure Plan",
         "chapters/images/",
-        "$custom-learning-audiobook",
+        "$audiobook",
     )
     contains(
         "skills/longform-book-development/agents/openai.yaml",

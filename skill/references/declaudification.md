@@ -83,24 +83,16 @@ per-10,000-word density budget. Treat every match as a candidate, not an
 automatic deletion; the frontier author records accepted and rejected findings
 and gives a reason for any rejected hard-looking case.
 
-After the humanizer and frontier-author repair, create
-`research/humanizer-decisions.json` with the reviewer, model, skill version,
-`humanizer_applied: true`, accepted and rejected finding lists, and the factual,
-coverage-ledger, narration, and prose checks rerun. Then produce the hash-bound
-receipt:
+After the humanizer and frontier-author repair, rerun factual, narration, and
+prose checks. Review accepted and rejected findings and the reason for each
+decision, then run the final whole-manuscript gate:
 
 ```bash
 python3 skill/scripts/prose_qc.py \
   --chapters-dir "$RUN_ROOT/chapters" \
   --out "$RUN_ROOT/research/prose-qc-after.md" \
-  --fail-on-style \
-  --decisions "$RUN_ROOT/research/humanizer-decisions.json" \
-  --style-receipt-out "$RUN_ROOT/research/prose-style-receipt.json"
+  --fail-on-style
 ```
-
-Pass that receipt to `build_book.py --prose-receipt`. Packaging verifies the
-chapter hashes before writing EPUB or combined Markdown output, so a later edit
-cannot inherit an earlier draft's prose approval.
 
 ## Human Judgment
 

@@ -1,6 +1,6 @@
 # Curriculum Patterns
 
-Choose and record a learning shape before writing the canonical outline. The
+Choose and explain a learning shape before writing the canonical outline. The
 pattern is a reasoned curriculum decision, not a decorative label.
 
 ## Question-led narrative
@@ -32,24 +32,12 @@ failures. Each chapter establishes a problem, the response it motivated, and
 the new tradeoff or boundary. Guard against turning history into chronology
 without a cumulative mental model.
 
-## Required record
-
-Add this object to `learning-outline.json`:
-
-```json
-{
-  "curriculumPattern": {
-    "name": "mechanism-first-spiral",
-    "reason": "The learner needs one stable mechanism before larger systems.",
-    "fitEvidence": "The approved outcome starts with a calculable small case."
-  }
-}
-```
+## Selection note
 
 Allowed names are `question-led-narrative`, `mechanism-first-spiral`,
-`end-to-end-trace`, and `problem-progression`. Record why the pattern fits this
-learner, listening context, and subject. Preserve it across handoffs unless the
-user approves a new progression.
+`end-to-end-trace`, and `problem-progression`. In `source/outline.md`, name the
+chosen pattern and explain why it fits this listener, context, and subject.
+Preserve it across handoffs unless new evidence calls for a different route.
 
 A terminology inventory is not a curriculum pattern. Terms belong in complete
 explanation paths inside an authorized learning progression.

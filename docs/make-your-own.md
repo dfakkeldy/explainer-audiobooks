@@ -1,14 +1,8 @@
 # Make your own
 
-The long technical pipeline is a [Claude Code](https://claude.com/claude-code)
+The audiobook pipeline is one [Claude Code](https://claude.com/claude-code)
 skill, bundled in [`skill/`](../skill/). With it installed, you make a book by
 asking — in plain English — for one.
-
-For a shorter, listener-specific Echo beta book from a topic request, use the
-separate [`custom-learning-audiobook`](../skills/custom-learning-audiobook/)
-skill instead. It is built for requests like "I want to learn small engine
-repair" or "make my coworker a two-hour book on X", where the requester should
-not have to gather sources first.
 
 ## Install
 
@@ -16,8 +10,7 @@ Copy the skill into your Claude Code skills directory:
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -R skill ~/.claude/skills/explainer-audiobook
-ln -s "$(pwd)/skills/custom-learning-audiobook" ~/.claude/skills/custom-learning-audiobook
+ln -s "$(pwd)/skill" ~/.claude/skills/audiobook
 ```
 
 (Or drop it into a project's `.claude/skills/`.) It needs Python 3 and, for cover rasterizing, either `rsvg-convert` (from librsvg) or ImageMagick — both optional; without them the build just skips the cover.
@@ -45,8 +38,8 @@ Then say something like:
 The skill will walk the process in [`skill/SKILL.md`](../skill/SKILL.md):
 
 1. **Pin the brief** — it confirms the subject, the real worked example to ground everything in, the target length, and the voice.
-2. **Propose an outline and coverage ledger** — it maps each core concept to a
-   useful knowledge delta, real example, and purposeful later retrieval before
+2. **Write an argument-level outline** — it maps the governing question,
+   chapter jobs, throughlines, grounded cases, and purposeful returns before
    spending money on prose.
 3. **Build fact packs** — lower-cost workers read the real docs/source of your
    worked example so the frontier author stays true to it.
@@ -55,7 +48,8 @@ The skill will walk the process in [`skill/SKILL.md`](../skill/SKILL.md):
 5. **Review + assemble** — cheap diagnostics and reader reports identify exact
    repair candidates; the frontier author handles substantive fixes, then EPUB,
    cover, audio, and Markdown are rendered from the reviewed chapters.
-6. **Deliver** — the finished `.epub` lands in `~/Downloads/book-inbox/`.
+6. **Deliver** — an explicitly requested private reading copy lands with its
+   editable source under iCloud Books.
 
 ## The two ingredients that matter
 

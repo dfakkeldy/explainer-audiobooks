@@ -29,9 +29,10 @@ class SkillProseContractTests(unittest.TestCase):
             "precise claims",
             "uncertainty",
             "--fail-on-style",
-            "--style-receipt-out",
         ):
             self.assertIn(phrase, text)
+        self.assertNotIn("--style-receipt-out", text)
+        self.assertNotIn("prose-style-receipt", text)
 
     def test_every_audiobook_skill_uses_the_shared_gate(self) -> None:
         for relative in (
@@ -47,18 +48,16 @@ class SkillProseContractTests(unittest.TestCase):
             with self.subTest(production_skill=relative):
                 text = self.read(relative)
                 self.assertIn("--fail-on-style", text)
-                self.assertIn("--prose-receipt", text)
 
-    def test_humanizer_contract_requires_global_inventory_and_hash_bound_receipt(self) -> None:
+    def test_humanizer_contract_requires_global_inventory_and_reviewed_decisions(self) -> None:
         text = self.read("skill/references/humanizer-pass.md")
         for phrase in (
             "independent inventory",
             "chapter by chapter",
             "whole manuscript",
-            "before and after",
+            "before-and-after",
             "accepted",
             "rejected",
-            "chapter hashes",
         ):
             self.assertIn(phrase, text)
 

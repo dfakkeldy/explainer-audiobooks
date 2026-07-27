@@ -83,11 +83,11 @@ Sources are documented and institutional: published decisions, papers,
 post-mortems, news reports, real repository history, named public figures acting
 in public roles. Not private individuals.
 
-Collect these during research, into `research/story-ledger.md`, **before the
-outline freezes**. This is the actual reason books come out storyless — the fact
-pack gathers statutes and API surfaces, so at drafting time the author has no
-narrative material on hand and invents a hypothetical. You cannot write stories
-from a fact pack that contains none.
+Collect these during research, in the story-ledger section of
+`source/research.md`, **before the outline freezes**. This is the actual reason
+books come out storyless — the fact pack gathers statutes and API surfaces, so
+at drafting time the author has no narrative material on hand and invents a
+hypothetical. You cannot write stories from a fact pack that contains none.
 
 ## For idea-driven subjects, the lineage *is* the mechanism
 
