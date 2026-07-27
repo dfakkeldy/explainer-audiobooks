@@ -489,6 +489,22 @@ cd /Users/dfakkeldy/Developer/explainer-audiobooks/.claude/worktrees/kind-pascal
 
 Then update every `skills/custom-learning-audiobook` path inside it to `skills/echo-narration`. If one of the 14 asserts on text in `references/package-and-qc.md` (deleted in Step 2), repoint that assertion at the file the text moved to — `references/narrating.md` for Echo commands, or `skill/references/publishing-a-public-edition.md` for receipt and sync prose. Do not delete an assertion because its source file moved.
 
+- [ ] **Step 3c: Restore six assertions lost with two mixed-subject tests**
+
+Task 2's re-review found that two of the four tests deleted from this file were mixed-subject: they asserted on the deleted pilot wrapper *and* on files that survive. Their pilot half was correctly dropped; their surviving half is now guarded by nothing. Read the originals for the exact assertion text:
+
+```bash
+cd /Users/dfakkeldy/Developer/explainer-audiobooks/.claude/worktrees/kind-pascal-8b42e3 && git show 9b86658:tests/test_custom_learning_audiobook_echo_contract.py | sed -n '225,320p'
+```
+
+Add one new test to the renamed file covering what is currently unguarded, with paths pointing at `skills/echo-narration/`:
+
+1. The four shared shell functions are **defined** in `echo_pronunciation_preflight.sh` (they are, at roughly lines 84, 251, 315, 330).
+2. `echo_pronunciation_narrate.sh` **uses** `echo_pronunciation_resolve_installed_renderer` and `echo_pronunciation_assert_leases` rather than defining local copies.
+3. The anti-duplication negatives against the wrapper: `assertNotIn("\nresolve_installed_renderer() {", ...)` and `assertNotIn("\nassert_leases() {", ...)`.
+
+Item 3 is the point of the exercise. It is the same class of guard as `test_run_id_is_derived_in_exactly_one_place`, which exists because duplicating a derivation between the preflight and the wrapper once broke every render in production. Do not skip it as redundant with item 2 — item 2 proves the shared function is called, item 3 proves a local copy has not been added alongside it.
+
 `validate_custom_learning_skill_install.py` validated the install of a skill that no longer exists. Its Hermes consumer is a known downstream break, recorded in Task 8 Step 6.
 
 - [ ] **Step 3: Rename the directory**
