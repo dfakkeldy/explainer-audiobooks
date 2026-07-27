@@ -110,8 +110,15 @@ narration-time build work. Stop immediately on any failure:
 
 ```bash
 set -euo pipefail
-EXPLAINER_ROOT=$(git rev-parse --show-toplevel)
-export RUN_ROOT="$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG"
+: "${NARRATION_SCRIPT:?set the absolute installed echo_pronunciation_narrate.sh path}"
+[[ "$NARRATION_SCRIPT" == /* && -x "$NARRATION_SCRIPT" ]]
+NARRATION_SCRIPT_DIR=$(cd -- "$(dirname -- "$NARRATION_SCRIPT")" && pwd -P)
+PIPELINE_ROOT=$(cd -- "$NARRATION_SCRIPT_DIR/../../.." && pwd -P)
+[[ "$NARRATION_SCRIPT" == \
+  "$PIPELINE_ROOT/skills/echo-narration/scripts/echo_pronunciation_narrate.sh" ]]
+EXPLAINER_ROOT="$PIPELINE_ROOT"
+export EXPLAINER_ROOT
+export RUN_ROOT="$PIPELINE_ROOT/.build/custom-learning-audiobooks/$SLUG"
 export DIST="$RUN_ROOT/dist"
 export VOICE=am_michael
 export SLUG TITLE
@@ -120,7 +127,7 @@ export M4B_COVER="$PAIR/m4b-cover.png"
 : "${APPROVED_ECHO_PRONUNCIATION_SHA:?set the exact reviewed 40-character source SHA}"
 export APPROVED_ECHO_PRONUNCIATION_SHA
 
-"$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_narrate.sh"
+"$NARRATION_SCRIPT"
 ```
 
 Pronunciation review is on by default; it applies approved rules before TTS
@@ -159,7 +166,13 @@ Only then rerun the wrapper with `--resume`; it must select the original
 `WORK`/`DB` and acquire all resource leases before it invokes Echo:
 
 ```bash
-"$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_narrate.sh" --resume
+ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
+RUN_ID=$(/usr/local/bin/python3 -c \
+  'import json,sys; print(json.load(open(sys.argv[1]))["runID"])' \
+  "$ATTEMPT_RECEIPT")
+RESUME_STATE="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
+[[ "$RESUME_STATE" == /* && -f "$RESUME_STATE" ]]
+"$NARRATION_SCRIPT" --resume --resume-state "$RESUME_STATE"
 ```
 
 Never copy old captures into a new run, edit a receipt, or resume after
@@ -184,7 +197,7 @@ state were sealed but the book is still partial:
 
 ```bash
 set +e
-"$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_narrate.sh" \
+"$NARRATION_SCRIPT" \
   --max-chapters 1
 rc=$?
 set -e
@@ -196,8 +209,10 @@ because the option counts uncaptured chapters in the current process:
 
 ```bash
 set +e
-"$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_narrate.sh" \
-  --resume --max-chapters 1
+RESUME_STATE="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
+[[ "$RESUME_STATE" == /* && -f "$RESUME_STATE" ]]
+"$NARRATION_SCRIPT" \
+  --resume --resume-state "$RESUME_STATE" --max-chapters 1
 rc=$?
 set -e
 [[ "$rc" == 2 ]]
@@ -247,7 +262,8 @@ ARTIFACT_RELATIVE_PATH=$(selector_value artifactRelativePath)
 INPUT_RECEIPT_NAME=$(selector_value inputReceiptFileName)
 SUCCESS_RECEIPT_NAME=$(selector_value successReceiptFileName)
 STATE_RECEIPT_NAME="echo-resume-state-$RUN_ID.json"
-[[ "$RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-([0-9a-f]{40}|[0-9a-f]{64})-(am_michael|am_puck)$ ]]
+STATE_HELPER="$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_state.py"
+/usr/local/bin/python3 "$STATE_HELPER" validate-run-id "$RUN_ID"
 [[ "$ATTEMPT_ID" =~ ^[0-9a-f]{64}$ ]]
 [[ "$ARTIFACT_RELATIVE_PATH" == "echo-renders/$RUN_ID/$ATTEMPT_ID" ]]
 [[ "$INPUT_RECEIPT_NAME" == "echo-render-inputs-$RUN_ID.env" ]]
@@ -285,14 +301,14 @@ export ECHO_RESOURCE_DIR
 ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "$AUDIOBOOK"
 
-python3 -m json.tool "$SIDECAR" >/dev/null
+/usr/local/bin/python3 -m json.tool "$SIDECAR" >/dev/null
 
 "$CLI" verify-sidecar \
   --epub "$DIST/$SLUG.epub" \
   --audio "$AUDIOBOOK" \
   --sidecar "$SIDECAR"
 
-"$EXPLAINER_ROOT/skills/echo-narration/scripts/validate_pronunciation_audit.py" \
+/usr/local/bin/python3 "$EXPLAINER_ROOT/skills/echo-narration/scripts/validate_pronunciation_audit.py" \
   "$AUDIT"
 ```
 

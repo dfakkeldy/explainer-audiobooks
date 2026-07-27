@@ -160,6 +160,14 @@ class PackageVerification:
     checks: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class ReceiptFreePairVerification:
+    portrait_sha256: str
+    square_sha256: str
+    epub_sha256: str
+    checks: tuple[str, ...]
+
+
 class _DuplicateJSONKeyError(ValueError):
     pass
 
@@ -1142,6 +1150,39 @@ def verify_package(
     )
 
 
+def verify_receipt_free_pair(
+    portrait_path: Path,
+    square_path: Path,
+    epub_path: Path,
+) -> ReceiptFreePairVerification:
+    """Bind a private standalone pair to the EPUB without creating a receipt."""
+    portrait = _require_file(portrait_path, "portrait standalone cover")
+    square = _require_file(square_path, "square standalone cover")
+    epub = _require_file(epub_path, "EPUB")
+    portrait_payload = portrait.read_bytes()
+    square_payload = square.read_bytes()
+    if png_dimensions(portrait_payload) != PAIRED_DIMENSIONS["portrait"]:
+        raise ValueError("portrait standalone cover must be a 1600x2560 PNG")
+    if png_dimensions(square_payload) != PAIRED_DIMENSIONS["square"]:
+        raise ValueError("square standalone cover must be a 2400x2400 PNG")
+    try:
+        with zipfile.ZipFile(epub, "r") as archive:
+            member = discover_cover_member(archive, discover_opf_member(archive))
+            epub_cover = archive.read(member)
+    except ValueError:
+        raise
+    except (KeyError, OSError, RuntimeError, zipfile.BadZipFile) as error:
+        raise ValueError(f"invalid EPUB: {epub}") from error
+    if epub_cover != portrait_payload:
+        raise ValueError("EPUB portrait cover bytes do not match standalone cover")
+    return ReceiptFreePairVerification(
+        portrait_sha256=hashlib.sha256(portrait_payload).hexdigest(),
+        square_sha256=hashlib.sha256(square_payload).hexdigest(),
+        epub_sha256=hashlib.sha256(epub.read_bytes()).hexdigest(),
+        checks=("portrait-png", "square-png", "epub-portrait-bytes"),
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -1194,6 +1235,10 @@ def main() -> int:
     verify.add_argument("--epub", type=Path)
     verify.add_argument("--m4b", type=Path)
     verify.add_argument("--receipt", type=Path)
+    verify_private = commands.add_parser("verify-receipt-free-pair")
+    verify_private.add_argument("--cover", required=True, type=Path)
+    verify_private.add_argument("--m4b-cover", required=True, type=Path)
+    verify_private.add_argument("--epub", required=True, type=Path)
 
     arguments = parser.parse_args()
     if arguments.command == "select":
@@ -1219,7 +1264,7 @@ def main() -> int:
             arguments.privacy_classification,
             arguments.permission_to_publish,
         )
-    else:
+    elif arguments.command == "verify":
         result = verify_package(
             arguments.selection,
             arguments.cover,
@@ -1227,6 +1272,12 @@ def main() -> int:
             epub_path=arguments.epub,
             m4b_path=arguments.m4b,
             receipt_path=arguments.receipt,
+        )
+    else:
+        result = verify_receipt_free_pair(
+            arguments.cover,
+            arguments.m4b_cover,
+            arguments.epub,
         )
     print(json.dumps(asdict(result), sort_keys=True))
     return 0

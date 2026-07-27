@@ -25,7 +25,30 @@ class AudiobookLongformHandoffContractTests(unittest.TestCase):
         numbered_questions = re.findall(r"(?m)^([1-5])\. ", ordinary)
         self.assertEqual(["1", "2", "3", "4", "5"], numbered_questions, ordinary)
         self.assertNotRegex(ordinary, r"(?m)^6\. ")
-        self.assertIn("one `AskUserQuestion` batch", ordinary)
+        self.assertIn("host's available batched input mechanism", ordinary)
+        self.assertNotIn("AskUserQuestion", ordinary)
+
+    def test_skill_defines_cross_repo_narration_and_durable_source_contracts(self) -> None:
+        audiobook = AUDIOBOOK.read_text(encoding="utf-8")
+        for marker in (
+            "absolute `BOOK_ROOT`",
+            "`$BOOK_ROOT/source/brief.md`",
+            "`$BOOK_ROOT/source/outline.md`",
+            "`$BOOK_ROOT/source/research/`",
+            "`$BOOK_ROOT/source/chapters/`",
+            "`$BOOK_ROOT/source/feedback.md`",
+            "references/narrating.md",
+            "NARRATION_SCRIPT",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, audiobook)
+
+    def test_skill_scopes_standing_private_delivery_authorization_to_dan(self) -> None:
+        audiobook = AUDIOBOOK.read_text(encoding="utf-8")
+        self.assertIn("standing private iCloud authorization", audiobook)
+        self.assertIn("Dan-specific", audiobook)
+        self.assertIn("other user or context", audiobook)
+        self.assertIn("explicitly opts in", audiobook)
 
     def test_complete_handoff_skips_repeated_intake_and_converges_on_start(self) -> None:
         audiobook = AUDIOBOOK.read_text(encoding="utf-8")

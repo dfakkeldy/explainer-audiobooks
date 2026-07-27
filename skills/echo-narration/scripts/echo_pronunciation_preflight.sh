@@ -351,6 +351,7 @@ echo_pronunciation_receipt_text() {
   echo_pronunciation_renderer_receipt_text
   printf '%s\n' \
     "epub_sha256=$EPUB_SHA256" \
+    "cover_binding_mode=$COVER_BINDING_MODE" \
     "cover_selection_path=$COVER_SELECTION" \
     "cover_selection_sha256=$COVER_SELECTION_SHA256" \
     "portrait_cover_path=$COVER" \
@@ -430,7 +431,6 @@ echo_pronunciation_preflight() {
   done
 
   EPUB="$RUN_ROOT/dist/$SLUG.epub"
-  COVER_SELECTION="$RUN_ROOT/dist/cover-selection.json"
   if [[ -L "$EPUB" || ! -f "$EPUB" ]]; then
     printf 'source EPUB is missing: %s\n' "$EPUB" >&2
     return 66
@@ -447,33 +447,57 @@ echo_pronunciation_preflight() {
     printf 'COVER and M4B_COVER must identify one canonical candidate pair\n' >&2
     return 64
   fi
+  COVER_SELECTION="$selected_pair_dir/cover-selection.json"
+  if [[ -e "$COVER_SELECTION" || -L "$COVER_SELECTION" ]]; then
+    COVER_BINDING_MODE=paired-receipt
+  else
+    COVER_BINDING_MODE=receipt-free-private
+    COVER_SELECTION=
+  fi
   local cover_input
-  for cover_input in "$COVER_SELECTION" "$COVER" "$M4B_COVER"; do
+  for cover_input in "$COVER" "$M4B_COVER"; do
     if [[ -L "$cover_input" || ! -f "$cover_input" ]]; then
       printf 'governed paired-cover input is missing or unsafe: %s\n' \
         "$cover_input" >&2
       return 66
     fi
   done
-  if ! /usr/local/bin/python3 "$cover_helper" verify \
-    --selection "$COVER_SELECTION" --cover "$COVER" \
-    --m4b-cover "$M4B_COVER" --epub "$EPUB" >/dev/null; then
+  if [[ "$COVER_BINDING_MODE" == paired-receipt ]]; then
+    if [[ -L "$COVER_SELECTION" || ! -f "$COVER_SELECTION" ]]; then
+      printf 'governed paired-cover input is missing or unsafe: %s\n' \
+        "$COVER_SELECTION" >&2
+      return 66
+    fi
+    if ! /usr/local/bin/python3 "$cover_helper" verify \
+      --selection "$COVER_SELECTION" --cover "$COVER" \
+      --m4b-cover "$M4B_COVER" --epub "$EPUB" >/dev/null; then
+      printf 'selected cover pair does not match its receipt or EPUB\n' >&2
+      return 65
+    fi
+  elif ! /usr/local/bin/python3 "$cover_helper" verify-receipt-free-pair \
+    --cover "$COVER" --m4b-cover "$M4B_COVER" --epub "$EPUB" >/dev/null; then
     printf 'selected cover pair does not match its receipt or EPUB\n' >&2
     return 65
   fi
 
   EPUB_SHA256=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
-  COVER_SELECTION_SHA256=$(/usr/bin/shasum -a 256 "$COVER_SELECTION" | awk '{print $1}')
+  COVER_SELECTION_SHA256=
+  if [[ "$COVER_BINDING_MODE" == paired-receipt ]]; then
+    COVER_SELECTION_SHA256=$(/usr/bin/shasum -a 256 "$COVER_SELECTION" | awk '{print $1}')
+  fi
   COVER_SHA256=$(/usr/bin/shasum -a 256 "$COVER" | awk '{print $1}')
   M4B_COVER_SHA256=$(/usr/bin/shasum -a 256 "$M4B_COVER" | awk '{print $1}')
   local hash_name
   for hash_name in \
-    EPUB_SHA256 COVER_SELECTION_SHA256 COVER_SHA256 M4B_COVER_SHA256; do
+    EPUB_SHA256 COVER_SHA256 M4B_COVER_SHA256; do
     require_sha256 "$hash_name" "${!hash_name}" || return $?
   done
+  if [[ "$COVER_BINDING_MODE" == paired-receipt ]]; then
+    require_sha256 COVER_SELECTION_SHA256 "$COVER_SELECTION_SHA256" || return $?
+  fi
   PACKAGE_SHA256=$(printf '%s\n' \
     "epub=$EPUB_SHA256" \
-    "cover_selection=$COVER_SELECTION_SHA256" \
+    "cover_selection=${COVER_SELECTION_SHA256:-receipt-free-private}" \
     "portrait_cover=$COVER_SHA256" \
     "square_cover=$M4B_COVER_SHA256" \
     | /usr/bin/shasum -a 256 | awk '{print $1}')
@@ -534,7 +558,7 @@ echo_pronunciation_preflight() {
   EXPLAINER_ROOT=$explainer_root
   export EXPLAINER_ROOT APPROVED_ECHO_PRONUNCIATION_SHA
   export ECHO_SOURCE_SHA EPUB EPUB_SHA256
-  export COVER_SELECTION COVER_SELECTION_SHA256 COVER COVER_SHA256
+  export COVER_BINDING_MODE COVER_SELECTION COVER_SELECTION_SHA256 COVER COVER_SHA256
   export M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256
   export CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256
   export ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST
@@ -551,7 +575,7 @@ echo_pronunciation_attest_inputs() {
   lease_root=$(echo_pronunciation_canonical_lease_root) || return $?
   for required in \
     EXPLAINER_ROOT SLUG RUN_ROOT APPROVED_ECHO_PRONUNCIATION_SHA \
-    ECHO_SOURCE_SHA EPUB EPUB_SHA256 COVER_SELECTION COVER_SELECTION_SHA256 \
+    ECHO_SOURCE_SHA EPUB EPUB_SHA256 COVER_BINDING_MODE \
     COVER COVER_SHA256 M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256 \
     CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256 \
     ECHO_RENDER_VERSION ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT \
@@ -602,33 +626,54 @@ echo_pronunciation_attest_inputs() {
 
   local expected_epub expected_cover_selection selected_pair_dir cover_input
   expected_epub="$RUN_ROOT/dist/$SLUG.epub"
-  expected_cover_selection="$RUN_ROOT/dist/cover-selection.json"
   selected_pair_dir=${COVER%/*}
+  expected_cover_selection="$selected_pair_dir/cover-selection.json"
   if [[ "$EPUB" != "$expected_epub" || -L "$EPUB" || ! -f "$EPUB" \
-    || "$COVER_SELECTION" != "$expected_cover_selection" \
     || "$COVER" != "$selected_pair_dir/cover.png" \
     || "$M4B_COVER" != "$selected_pair_dir/m4b-cover.png" \
     || ! "$selected_pair_dir" =~ ^$RUN_ROOT/dist/candidate-[123]$ ]]; then
     printf 'governed source paths changed while narration lease was held\n' >&2
     return 65
   fi
-  for cover_input in "$COVER_SELECTION" "$COVER" "$M4B_COVER"; do
+  for cover_input in "$COVER" "$M4B_COVER"; do
     if [[ -L "$cover_input" || ! -f "$cover_input" ]]; then
       printf 'selected cover input changed while narration lease was held: %s\n' \
         "$cover_input" >&2
       return 65
     fi
   done
+  case "$COVER_BINDING_MODE" in
+    paired-receipt)
+      if [[ "$COVER_SELECTION" != "$expected_cover_selection" \
+        || -L "$COVER_SELECTION" || ! -f "$COVER_SELECTION" ]]; then
+        printf 'selected cover receipt changed while narration lease was held\n' >&2
+        return 65
+      fi
+      ;;
+    receipt-free-private)
+      if [[ -n "$COVER_SELECTION" || -n "$COVER_SELECTION_SHA256" ]]; then
+        printf 'receipt-free private cover binding unexpectedly names a receipt\n' >&2
+        return 65
+      fi
+      ;;
+    *)
+      printf 'unknown sealed cover binding mode: %s\n' "$COVER_BINDING_MODE" >&2
+      return 65
+      ;;
+  esac
 
   local current_epub_sha current_cover_selection_sha current_cover_sha
   local current_m4b_cover_sha current_package_sha
   current_epub_sha=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
-  current_cover_selection_sha=$(/usr/bin/shasum -a 256 "$COVER_SELECTION" | awk '{print $1}')
+  current_cover_selection_sha=
+  if [[ "$COVER_BINDING_MODE" == paired-receipt ]]; then
+    current_cover_selection_sha=$(/usr/bin/shasum -a 256 "$COVER_SELECTION" | awk '{print $1}')
+  fi
   current_cover_sha=$(/usr/bin/shasum -a 256 "$COVER" | awk '{print $1}')
   current_m4b_cover_sha=$(/usr/bin/shasum -a 256 "$M4B_COVER" | awk '{print $1}')
   current_package_sha=$(printf '%s\n' \
     "epub=$current_epub_sha" \
-    "cover_selection=$current_cover_selection_sha" \
+    "cover_selection=${current_cover_selection_sha:-receipt-free-private}" \
     "portrait_cover=$current_cover_sha" \
     "square_cover=$current_m4b_cover_sha" \
     | /usr/bin/shasum -a 256 | awk '{print $1}')
@@ -643,9 +688,18 @@ echo_pronunciation_attest_inputs() {
     printf 'selected cover package changed while narration lease was held\n' >&2
     return 65
   fi
-  if ! /usr/local/bin/python3 "$cover_helper" verify \
-    --selection "$COVER_SELECTION" --cover "$COVER" \
-    --m4b-cover "$M4B_COVER" --epub "$EPUB" >/dev/null; then
+  local cover_verification_failed=0
+  if [[ "$COVER_BINDING_MODE" == paired-receipt ]]; then
+    /usr/local/bin/python3 "$cover_helper" verify \
+      --selection "$COVER_SELECTION" --cover "$COVER" \
+      --m4b-cover "$M4B_COVER" --epub "$EPUB" >/dev/null \
+      || cover_verification_failed=1
+  else
+    /usr/local/bin/python3 "$cover_helper" verify-receipt-free-pair \
+      --cover "$COVER" --m4b-cover "$M4B_COVER" --epub "$EPUB" >/dev/null \
+      || cover_verification_failed=1
+  fi
+  if (( cover_verification_failed )); then
     printf 'selected cover pair changed while narration lease was held\n' >&2
     return 65
   fi

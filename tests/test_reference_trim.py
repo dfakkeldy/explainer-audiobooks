@@ -48,6 +48,34 @@ class ReferenceTrimTests(unittest.TestCase):
                             f"SKILL.md cites missing {token}",
                         )
 
+    def test_learning_design_retains_the_teaching_and_blind_review_contracts(self) -> None:
+        text = (REFS / "learning-design.md").read_text(encoding="utf-8").casefold()
+        for marker in (
+            "chapter teaching plan",
+            "durable outcome",
+            "prerequisites",
+            "definition",
+            "reason",
+            "mechanism",
+            "concrete case",
+            "misconception",
+            "expected ability",
+            "blind sequential beginner review",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+
+    def test_road_book_retains_concept_and_working_memory_budgets(self) -> None:
+        text = (REFS / "road-book-mode.md").read_text(encoding="utf-8").casefold()
+        for marker in (
+            "concept budget",
+            "audio working-memory budget",
+            "optional material",
+            "main listen must remain complete",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+
 
 if __name__ == "__main__":
     unittest.main()

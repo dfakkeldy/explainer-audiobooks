@@ -24,8 +24,9 @@ thumbnails, and auto-selects the strongest complete pair on its rubric. It uses
 for the M4B square, then builds and narrates the book without asking you to
 operate publishing receipts.
 
-The result stays in its private run root. It goes to iCloud Books only when you
-explicitly request a private reading copy. If you later authorize a public
+Dan's personal workflow has standing private iCloud delivery authorization.
+For any other user or context, the result stays at an absolute local book root
+unless that user explicitly opts in. If you later authorize a public
 edition, use the separate
 [`publishing-a-public-edition.md`](../skill/references/publishing-a-public-edition.md)
 runbook for human selection, publication permission, verification, and
@@ -49,8 +50,8 @@ The skill will walk the process in [`skill/SKILL.md`](../skill/SKILL.md):
 5. **Review + assemble** — cheap diagnostics and reader reports identify exact
    repair candidates; the frontier author handles substantive fixes, then EPUB,
    cover, audio, and Markdown are rendered from the reviewed chapters.
-6. **Deliver** — an explicitly requested private reading copy lands with its
-   editable source under iCloud Books.
+6. **Deliver** — Dan's authorized private reading copy lands with its editable
+   source under iCloud Books; other users remain local unless they opt in.
 
 ## The two ingredients that matter
 

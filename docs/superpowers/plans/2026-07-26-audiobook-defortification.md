@@ -293,7 +293,9 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: nothing from Task 1.
-- Produces: `echo_pronunciation_narrate.sh` runs with `PRONUNCIATION_PLAN` unset. When set, the file is passed through to the renderer as a word list without QC validation. Task 3 renames the directory holding this script; Task 4's SKILL.md documents its invocation.
+- Produces: `echo_pronunciation_narrate.sh` has no `PRONUNCIATION_PLAN`
+  interface at all. Task 3 renames the directory holding this script; Task 4's
+  SKILL.md documents its invocation.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -432,8 +434,8 @@ The Echo wrapper refused to render unless a canonical pronunciation-plan
 existed at an exact path and passed QC. The word list is genuinely useful
 input for the renderer; the gate around it was not.
 
-Keep PRONUNCIATION_PLAN as an optional file. Drop the plan QC, the probe
-reel builder, and the pilot narration wrapper.
+Remove `PRONUNCIATION_PLAN` entirely. Drop the plan QC, the probe reel builder,
+and the pilot narration wrapper.
 
 Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 ```
@@ -723,7 +725,13 @@ Replace the file entirely. Follow the spec's section 2 ("The run"), section 3 ("
 **Body sections, in order:**
 
 1. **Interpreter note.** State plainly: run every script with `/usr/local/bin/python3`. The default `python3` lacks Pillow and cannot import `build_book.py`.
-2. **Intake.** The five questions, asked in one batch via `AskUserQuestion`, followed by "state the plan in one line — title, angle, chapter count, estimated runtime — and start. Do not wait for a reply." Then the silent defaults table: road-book listening, `am_michael` then `am_puck`, never `af_heart`, author `Dan Fakkeldy`, model name to `--contributor`, warm second-person spoken voice, private, cover auto-selected.
+2. **Intake.** The five questions, asked once through the host's available
+   batched input mechanism, followed by "state the plan in one line — title,
+   angle, chapter count, estimated runtime — and start. Do not wait for a
+   reply." Then the silent defaults table: road-book listening, `am_michael`
+   then `am_puck`, never `af_heart`, author `Dan Fakkeldy`, model name to
+   `--contributor`, warm second-person spoken voice, private, cover
+   auto-selected.
 3. **Research.** Evidence notes with real sources and locators, a story ledger (a story has a reversal; without one it is an illustration), per-chapter fact packs naming the real files, tools, and commands. Plain Markdown. The rule that survives: the manuscript may only assert what the research supports.
 4. **Outline.** Argument-level and question-led — durable outcomes, a governing question, a narrative spine, varied chapter jobs, 2-4 throughlines. A terminology syllabus is not an outline. No approval pause.
 5. **Draft.** One frontier author, every section in order, carrying the outline, fact pack, previous section's text or faithful summary, current section's job, and its must-not-repeat list. Cheaper workers may extract, verify, assemble, render, and report with citations; they never write or replace chapters.
@@ -1188,12 +1196,14 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 Unit tests confirm the tooling works. Only a real book confirms the workflow does.
 
 **Files:**
-- Modify: `~/.claude/skills/` symlinks (outside the repo)
+- Modify after merge: `~/.claude/skills/` and `~/.agents/skills/` symlinks
+  (outside the repo)
 - Modify: `README.md` if it names the retired skills
 
 **Interfaces:**
 - Consumes: everything from Tasks 1-7.
-- Produces: a working `audiobook` skill on disk and a real book in the iCloud Books folder.
+- Produces: a working `audiobook` skill in both hosts and, when Dan's standing
+  authorization is recorded, a real book in the iCloud Books folder.
 
 - [ ] **Step 1: Confirm the full suite and validator are green**
 
@@ -1215,8 +1225,27 @@ If either name appears as a live instruction (an install command, a "use this sk
 
 These live outside the repo and are not covered by any test.
 
+After merge, inspect each exact retired path and its target. Remove only a
+confirmed symlink, then create the new link; do not recursively delete anything:
+
 ```bash
-rm ~/.claude/skills/explainer-audiobook ~/.claude/skills/custom-learning-audiobook && ln -s /Users/dfakkeldy/Developer/explainer-audiobooks/skill ~/.claude/skills/audiobook && ls -l ~/.claude/skills/audiobook
+for skill_host in "$HOME/.claude/skills" "$HOME/.agents/skills"; do
+  test -d "$skill_host"
+  for retired in explainer-audiobook custom-learning-audiobook; do
+    retired_path="$skill_host/$retired"
+    if test -L "$retired_path"; then
+      readlink "$retired_path"
+      unlink "$retired_path"
+    elif test -e "$retired_path"; then
+      printf 'refusing non-symlink path: %s\n' "$retired_path" >&2
+      exit 1
+    fi
+  done
+  test ! -e "$skill_host/audiobook" && test ! -L "$skill_host/audiobook"
+  ln -s /Users/dfakkeldy/Developer/explainer-audiobooks/skill \
+    "$skill_host/audiobook"
+  ls -ld "$skill_host/audiobook"
+done
 ```
 
 Note the symlink targets the **main checkout**, not this worktree. Until this branch merges, the linked skill is still the old one — expected, and the reason Step 5's end-to-end run happens after merge.
@@ -1233,7 +1262,10 @@ If Step 2 found nothing to change, skip this step rather than making an empty co
 
 - [ ] **Step 5: End-to-end acceptance — make a real book**
 
-After this branch merges to `main`, ask for a short real book (target ~1 hour, so the run is quick) and confirm every one of these:
+After this branch merges to `main`, record
+`delivery_authorization: standing-dan-private-workflow` in the brief before
+using Dan's iCloud `BOOK_ROOT`, then ask for a short real book (target ~1 hour,
+so the run is quick) and confirm every one of these:
 
 1. Exactly five questions asked, in one batch.
 2. A one-line plan stated, and the run continues **without waiting** for a reply.
@@ -1241,6 +1273,9 @@ After this branch merges to `main`, ask for a short real book (target ~1 hour, s
 4. `~/Library/Mobile Documents/com~apple~CloudDocs/Books/<Book Title>/` exists and contains `<Book Title>.epub`, `<Book Title>.m4b`, `cover.png`, and `source/` holding `brief.md`, `outline.md`, `research.md`, `chapters/`, and `feedback.md`.
 5. No receipt files anywhere in the delivered folder — no `*-receipt.json`, no `cover-selection.json`, no `unattended-decisions.json`.
 6. The EPUB opens and the M4B plays with chapter markers.
+
+For any generic installation or other user, run this acceptance at an absolute
+local `BOOK_ROOT`; do not copy to iCloud unless that user explicitly opts in.
 
 - [ ] **Step 6: End-to-end acceptance — redo it**
 

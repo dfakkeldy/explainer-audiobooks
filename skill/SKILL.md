@@ -21,7 +21,8 @@ Pillow and cannot import `build_book.py`.
 
 ### Ordinary request
 
-For a direct book request, use one `AskUserQuestion` batch:
+For a direct book request, use the host's available batched input mechanism
+once for exactly these five questions:
 
 1. What is the book about, and what should the listener be able to do after it?
 2. Who is it for?
@@ -53,10 +54,14 @@ Apply silent defaults and write them to `source/brief.md`:
 | Voice | warm, second-person, spoken |
 | Privacy | private |
 | Cover | strongest of three rendered pairs, selected on the rubric |
+| Delivery | Dan-specific standing private iCloud authorization; otherwise local |
 
 Use `.build/custom-learning-audiobooks/<slug>/` as the internal run root, with
-`research/`, `chapters/`, and `dist/` scratch directories. The book's delivered
-`source/` folder is its durable source of truth.
+`research/`, `chapters/`, and `dist/` scratch directories. Define absolute `BOOK_ROOT`
+before writing durable work. Its source of truth is
+`$BOOK_ROOT/source/brief.md`, `$BOOK_ROOT/source/outline.md`,
+`$BOOK_ROOT/source/research/`, `$BOOK_ROOT/source/chapters/`, and
+`$BOOK_ROOT/source/feedback.md`; the run root remains disposable scratch.
 
 ## Research
 
@@ -133,13 +138,19 @@ portrait/square coherence, absence of defects, and distinctiveness, then report
 the choice rather than asking.
 
 Run `skill/scripts/build_book.py` with the chapters, chosen covers, title,
-author `Dan Fakkeldy`, and model in `--contributor`. Narrate with
-`skills/echo-narration/scripts/echo_pronunciation_narrate.sh`.
+author `Dan Fakkeldy`, and model in `--contributor`. Resolve the absolute
+`NARRATION_SCRIPT` from this installed skill or its repository, then follow
+`skills/echo-narration/references/narrating.md` for the mandatory invocation
+and accepted-artifact verification contract. Never derive the pipeline root
+from the subject repository.
 
-Keep the private result in its run root unless the user explicitly requests a
-private iCloud reading copy. On that request, copy the finished folder to
-`~/Library/Mobile Documents/com~apple~CloudDocs/Books/<Book Title>/`, whose
-expanded path contains `com~apple~CloudDocs/Books`.
+For this Dan-specific personal workflow, the original request is standing
+private iCloud authorization. Record that authorization in
+`$BOOK_ROOT/source/brief.md`, set `BOOK_ROOT` to the expanded
+`~/Library/Mobile Documents/com~apple~CloudDocs/Books/<Book Title>/`, and
+deliver the finished private folder there. Never inherit that authorization
+for any other user or context: keep an absolute local `BOOK_ROOT` unless that
+user explicitly opts in to iCloud delivery.
 
 ## What a book is
 

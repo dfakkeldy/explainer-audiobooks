@@ -61,8 +61,9 @@ Together they trace the life of a real app — *what it's made of* → *how it s
 Every new title uses exactly three coordinated portrait/square candidates. The
 ordinary private workflow reviews them and auto-selects the strongest complete
 pair: `cover.png` at 1600×2560 for the EPUB portrait and `m4b-cover.png` at
-2400×2400 for the M4B square. It builds and narrates without public receipts and
-stays private unless the user explicitly requests a private iCloud reading copy.
+2400×2400 for the M4B square. It builds and narrates without public receipts.
+Dan's personal workflow has standing private iCloud delivery authorization;
+other users stay at a local book root unless they explicitly opt in.
 
 Public promotion is separate. A user-authorized public edition follows
 [`publishing-a-public-edition.md`](skill/references/publishing-a-public-edition.md)
@@ -76,7 +77,7 @@ This five-book migration exception is historical scope, not ongoing policy.
 
 1. **Pin the brief** — subject, the real worked example, target length, voice.
 2. **Outline** — one chapter per concept, in teaching order, each grounded in one real piece of the example.
-3. **Fact packs + coverage ledger** — before prose is written, distill *accurate*
+3. **Fact packs + story ledger + argument outline** — before prose is written, distill *accurate*
    facts from the real docs and source into each chapter's evidence, then map each
    core concept to a real example, a knowledge delta, and a purposeful later
    retrieval. This keeps tens of thousands of AI-written words accurate and

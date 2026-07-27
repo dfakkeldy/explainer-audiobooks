@@ -658,7 +658,7 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --epub "$EPUB" \
   --audio "$STAGE_OUTPUT" \
   --sidecar "$STAGE_SIDECAR"
-"$SCRIPT_DIR/validate_pronunciation_audit.py" "$STAGE_AUDIT"
+/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$STAGE_AUDIT"
 verify_locked_inputs
 
 for final_output in "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL"; do
@@ -687,7 +687,7 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --epub "$EPUB" \
   --audio "$OUTPUT" \
   --sidecar "$SIDECAR"
-"$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
+/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
 verify_locked_inputs
 if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   verify-state "${state_command[@]}"; then

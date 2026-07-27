@@ -21,6 +21,8 @@ import zipfile
 from collections.abc import Callable
 from pathlib import Path
 
+from PIL import Image
+
 
 ROOT = Path(__file__).parents[1]
 # These tests spawn real narration wrappers and wait on their side effects. The
@@ -142,10 +144,12 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.run_root = (
             self.explainer / ".build" / "custom-learning-audiobooks" / "fixture"
         )
-        self.pilot_cli = (
+        self.uninstalled_cli_fixture = (
             self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
         )
-        self.pilot_resources = self.pilot_cli.parent / "EchoNarrationResources"
+        self.uninstalled_resources_fixture = (
+            self.uninstalled_cli_fixture.parent / "EchoNarrationResources"
+        )
         self.renderer_root = (self.tmp / "installed-renderers").resolve()
         self.source_sha = ACCEPTED_SOURCE_SHA
         self.installer_source_sha = ACCEPTED_INSTALLER_SHA
@@ -173,12 +177,12 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             encoding="utf-8",
         )
         (self.echo / ".gitignore").write_text(".build/\n", encoding="utf-8")
-        self.pilot_cli.parent.mkdir(parents=True)
-        self.pilot_resources.mkdir()
+        self.uninstalled_cli_fixture.parent.mkdir(parents=True)
+        self.uninstalled_resources_fixture.mkdir()
         self.write_cli(
             include_review_flag=True,
-            cli=self.pilot_cli,
-            resources=self.pilot_resources,
+            cli=self.uninstalled_cli_fixture,
+            resources=self.uninstalled_resources_fixture,
         )
 
         staging_root = self.renderer_root / self.source_sha / ("f" * 64)
@@ -251,15 +255,15 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         gate.chmod(gate.stat().st_mode | stat.S_IXUSR)
 
         dist = self.run_root / "dist"
-        pair = dist / "candidate-1"
-        pair.mkdir(parents=True)
-        portrait = pair / "cover.png"
-        square = pair / "m4b-cover.png"
-        portrait.write_bytes(b"fixture portrait cover")
-        square.write_bytes(b"fixture square cover")
+        self.pair = dist / "candidate-1"
+        self.pair.mkdir(parents=True)
+        self.portrait = self.pair / "cover.png"
+        self.square = self.pair / "m4b-cover.png"
+        Image.new("RGB", (1600, 2560), "#243447").save(self.portrait, "PNG")
+        Image.new("RGB", (2400, 2400), "#375a7f").save(self.square, "PNG")
         sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
         filler = "a" * 64
-        selection = {
+        self.cover_selection_payload = {
             "schema_version": 2,
             "book_slug": "fixture",
             "edition_id": "fixture-private-v1",
@@ -269,7 +273,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
                 "portrait": {
                     "specification_sha256": filler,
                     "render_receipt_sha256": filler,
-                    "cover_sha256": sha(portrait),
+                    "cover_sha256": sha(self.portrait),
                     "dimensions": [1600, 2560],
                     "thumbnail_sha256": filler,
                     "subtitle_included": True,
@@ -277,7 +281,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
                 "square": {
                     "specification_sha256": filler,
                     "render_receipt_sha256": filler,
-                    "cover_sha256": sha(square),
+                    "cover_sha256": sha(self.square),
                     "dimensions": [2400, 2400],
                     "thumbnail_sha256": filler,
                     "subtitle_included": False,
@@ -288,9 +292,6 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             "selected_at": "2026-07-14T00:00:00+00:00",
             "privacy": {"classification": "private", "permission_to_publish": False},
         }
-        (dist / "cover-selection.json").write_text(
-            json.dumps(selection), encoding="utf-8"
-        )
         chapters = self.run_root / "chapters"
         research = self.run_root / "research"
         chapters.mkdir()
@@ -316,54 +317,6 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             + "\n",
             encoding="utf-8",
         )
-        pronunciation_reel = research / "pronunciation-probe-reel.m4b"
-        pronunciation_reel.write_bytes(b"fixture approved pronunciation reel")
-        pronunciation_evidence = research / "pronunciation-probe-evidence.json"
-        pronunciation_evidence.write_text(
-            json.dumps(
-                {
-                    "schemaVersion": 1,
-                    "reelFileName": pronunciation_reel.name,
-                    "reelSHA256": sha(pronunciation_reel),
-                    "clips": [
-                        {"term": "fixture", "variantHeard": "fixture"}
-                    ],
-                },
-                sort_keys=True,
-            )
-            + "\n",
-            encoding="utf-8",
-        )
-        pronunciation_plan = research / "pronunciation-plan.json"
-        pronunciation_plan.write_text(
-            json.dumps(
-                {
-                    "schemaVersion": 1,
-                    "terms": [
-                        {
-                            "term": "fixture",
-                            "variants": [],
-                            "source": "author",
-                            "reason": "Exercise the governed pronunciation gate.",
-                            "expectedChapters": ["ch01.md"],
-                            "required": True,
-                            "status": "accepted",
-                            "decision": {
-                                "acceptedBy": "Runtime fixture",
-                                "acceptedAt": "2026-07-14T00:00:00+00:00",
-                            },
-                            "evidence": {
-                                "path": "research/pronunciation-probe-evidence.json",
-                                "sha256": sha(pronunciation_evidence),
-                            },
-                        }
-                    ],
-                },
-                sort_keys=True,
-            )
-            + "\n",
-            encoding="utf-8",
-        )
         with zipfile.ZipFile(dist / "fixture.epub", "w") as archive:
             archive.writestr(
                 "META-INF/container.xml",
@@ -380,7 +333,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
   <manifest><item id="cover-image" href="cover.png" media-type="image/png" properties="cover-image"/></manifest>
 </package>""",
             )
-            archive.writestr("OEBPS/cover.png", portrait.read_bytes())
+            archive.writestr("OEBPS/cover.png", self.portrait.read_bytes())
 
         self.git("init", "-q")
         self.git("config", "user.email", "fixture@example.com")
@@ -742,6 +695,19 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         return ("--resume", "--resume-state", str(state))
 
+    def write_public_pair_receipt(self) -> Path:
+        receipt = self.pair / "cover-selection.json"
+        payload = copy.deepcopy(self.cover_selection_payload)
+        payload["privacy"] = {
+            "classification": "public-safe",
+            "permission_to_publish": True,
+        }
+        receipt.write_text(
+            json.dumps(payload, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return receipt
+
     def test_ordinary_wrapper_observes_no_build_or_checkout_descendants(self) -> None:
         forbidden_log = self.tmp / "forbidden-descendants.log"
         for command in ("make", "git", "xcodebuild", "xcode-build-gate.sh"):
@@ -998,6 +964,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "ECHO_SOURCE_SHA",
             "EPUB",
             "EPUB_SHA256",
+            "COVER_BINDING_MODE",
             "COVER_SELECTION",
             "COVER_SELECTION_SHA256",
             "COVER",
@@ -1035,6 +1002,72 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             for line in result.stdout.splitlines()
             if line.split("=", 1)[0] in names
         )
+
+    def test_private_pair_preflight_is_receipt_free_and_hash_bound(self) -> None:
+        root_receipt = self.run_root / "dist" / "cover-selection.json"
+
+        fields = self.preflight_fields()
+
+        self.assertEqual("receipt-free-private", fields["COVER_BINDING_MODE"])
+        self.assertEqual("", fields["COVER_SELECTION"])
+        self.assertEqual("", fields["COVER_SELECTION_SHA256"])
+        self.assertFalse(root_receipt.exists())
+        self.assertEqual(
+            hashlib.sha256(Path(fields["EPUB"]).read_bytes()).hexdigest(),
+            fields["EPUB_SHA256"],
+        )
+        self.assertEqual(
+            hashlib.sha256(Path(fields["COVER"]).read_bytes()).hexdigest(),
+            fields["COVER_SHA256"],
+        )
+        self.assertEqual(
+            hashlib.sha256(Path(fields["M4B_COVER"]).read_bytes()).hexdigest(),
+            fields["M4B_COVER_SHA256"],
+        )
+
+        Path(fields["M4B_COVER"]).write_bytes(b"changed after preflight")
+        result = self.run_direct_leased(fields)
+        self.assertEqual(65, result.returncode)
+        self.assertIn(
+            "selected cover package changed while narration lease was held",
+            result.stderr,
+        )
+
+    def test_public_pair_preflight_infers_receipt_beside_selected_pair(self) -> None:
+        root_receipt = self.run_root / "dist" / "cover-selection.json"
+        pair_receipt = self.write_public_pair_receipt()
+
+        fields = self.preflight_fields()
+
+        self.assertEqual("paired-receipt", fields["COVER_BINDING_MODE"])
+        self.assertEqual(str(pair_receipt), fields["COVER_SELECTION"])
+        self.assertEqual(
+            hashlib.sha256(pair_receipt.read_bytes()).hexdigest(),
+            fields["COVER_SELECTION_SHA256"],
+        )
+        self.assertFalse(root_receipt.exists())
+
+    def test_state_helper_accepts_current_run_id_and_rejects_legacy_shape(self) -> None:
+        current = "-".join(
+            ["1" * 12, "2" * 12, "3" * 12, "4" * 12, "5" * 40, "am_michael"]
+        )
+        legacy = "-".join(
+            ["1" * 12, "2" * 12, "3" * 12, "5" * 40, "am_michael"]
+        )
+
+        accepted = subprocess.run(
+            ["/usr/local/bin/python3", str(STATE_HELPER), "validate-run-id", current],
+            capture_output=True,
+            text=True,
+        )
+        rejected = subprocess.run(
+            ["/usr/local/bin/python3", str(STATE_HELPER), "validate-run-id", legacy],
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(0, accepted.returncode, accepted.stderr)
+        self.assertNotEqual(0, rejected.returncode)
 
     def run_direct_leased(
         self,

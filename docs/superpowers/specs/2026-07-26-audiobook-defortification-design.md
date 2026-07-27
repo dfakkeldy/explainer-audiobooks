@@ -47,6 +47,7 @@ changes to name the new skill. Public publishing keeps its tooling, parked.
 | Craft passes kept | Five named revision passes; blind beginner review |
 | Craft passes cut | Coverage ledger |
 | Book source location | Inside the book's own iCloud folder |
+| Delivery authorization | Dan's original request is standing private iCloud authorization; no inheritance to other users |
 | On redo | Replace in place; one prior version retained |
 | Intake questions | Subject, audience, prior knowledge, length, real grounding |
 | Check-in before drafting | State the plan in one line, do not wait |
@@ -73,6 +74,15 @@ Everything else is defaulted silently and written into `source/brief.md`:
 road-book listening (driving and delivering mail), narrator `am_michael` with
 `am_puck` as fallback, author `Dan Fakkeldy`, warm second-person spoken voice,
 private, cover auto-selected from three rendered candidates.
+
+### Standing delivery authorization
+
+For Dan's named personal workflow, the original request to receive finished
+books in iCloud Books is standing authorization for that private delivery.
+Record it in `source/brief.md` and use the expanded iCloud Books title folder as
+the absolute `BOOK_ROOT`. This ruling is identity- and context-scoped: another
+user or a generic installation defaults to an absolute local `BOOK_ROOT` and
+must explicitly opt in before any iCloud copy.
 
 ### 2. Research
 
@@ -129,7 +139,8 @@ Render three coordinated cover pairs, auto-select the strongest on the existing
 rubric — subject specificity, thumbnail legibility, title hierarchy,
 portrait/square coherence, absence of defects, distinctiveness — and report the
 choice. Build the EPUB and combined Markdown. Narrate the M4B through the Echo
-wrapper. Write the complete folder to iCloud Books.
+wrapper. For Dan's authorized personal workflow, write the complete folder to
+iCloud Books; otherwise retain it at the explicitly chosen local `BOOK_ROOT`.
 
 The cover choice is reported, not requested. A cover you dislike is day-2
 feedback like anything else.

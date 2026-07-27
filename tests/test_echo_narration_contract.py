@@ -191,12 +191,51 @@ class EchoNarrationContractTests(unittest.TestCase):
             "M4B_COVER_SHA256",
             "cover_receipts.py",
             "cover-selection.json",
+            "receipt-free-private",
+            "paired-receipt",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.preflight)
 
         self.assertIn('--cover "$M4B_COVER"', self.narrate_wrapper)
         self.assertIn("M4B_COVER_SHA256", self.preflight)
+
+    def test_resume_examples_pass_the_exact_canonical_state_receipt(self) -> None:
+        normalized = self.normalized(self.narrating)
+        self.assertGreaterEqual(
+            normalized.count('--resume --resume-state "$RESUME_STATE"'),
+            2,
+        )
+        self.assertIn(
+            'RESUME_STATE="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"',
+            self.narrating,
+        )
+        self.assertNotIn(
+            "echo_pronunciation_narrate.sh\" --resume\n",
+            self.narrating,
+        )
+
+    def test_operating_commands_use_the_required_python_interpreter(self) -> None:
+        validator = (
+            '/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py"'
+        )
+        self.assertEqual(2, self.narrate_wrapper.count(validator))
+        self.assertIn(
+            '/usr/local/bin/python3 "$EXPLAINER_ROOT/skills/echo-narration/'
+            'scripts/validate_pronunciation_audit.py"',
+            self.narrating,
+        )
+
+    def test_reference_derives_pipeline_root_from_installed_narration_script(self) -> None:
+        self.assertNotIn("git rev-parse --show-toplevel", self.narrating)
+        for marker in (
+            "NARRATION_SCRIPT",
+            "NARRATION_SCRIPT_DIR",
+            "PIPELINE_ROOT",
+            'export RUN_ROOT="$PIPELINE_ROOT/.build/custom-learning-audiobooks/$SLUG"',
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.narrating)
 
     def test_wrapper_holds_fd_backed_resource_leases_through_narration(self) -> None:
         for marker in (
@@ -254,7 +293,7 @@ class EchoNarrationContractTests(unittest.TestCase):
             "--max-chapters 1",
             "exit 2",
             "partial",
-            "--resume --max-chapters 1",
+            '--resume --resume-state "$RESUME_STATE" --max-chapters 1',
             "no accepted M4B",
         ):
             with self.subTest(marker=marker):
