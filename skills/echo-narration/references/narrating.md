@@ -209,6 +209,10 @@ because the option counts uncaptured chapters in the current process:
 
 ```bash
 set +e
+ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
+RUN_ID=$(/usr/local/bin/python3 -c \
+  'import json,sys; print(json.load(open(sys.argv[1]))["runID"])' \
+  "$ATTEMPT_RECEIPT")
 RESUME_STATE="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
 [[ "$RESUME_STATE" == /* && -f "$RESUME_STATE" ]]
 "$NARRATION_SCRIPT" \
@@ -279,7 +283,7 @@ SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
 AUDIT="$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json"
 REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
 
-"$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_state.py" \
+/usr/local/bin/python3 "$STATE_HELPER" \
   verify-delivery \
   --attempt "$ATTEMPT_RECEIPT" \
   --selector "$CURRENT_SELECTOR" \

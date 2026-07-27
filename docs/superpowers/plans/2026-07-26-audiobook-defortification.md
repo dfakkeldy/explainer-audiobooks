@@ -431,8 +431,8 @@ Expected: `OK (skipped=6)`. `tests/test_custom_learning_audiobook_echo_runtime.p
 cd /Users/dfakkeldy/Developer/explainer-audiobooks/.claude/worktrees/kind-pascal-8b42e3 && git add -A && git commit -m "feat: narrate without a validated pronunciation plan
 
 The Echo wrapper refused to render unless a canonical pronunciation-plan
-existed at an exact path and passed QC. The word list is genuinely useful
-input for the renderer; the gate around it was not.
+existed at an exact path and passed QC. Echo has no word-list input; the plan
+fed only the deleted QC gate.
 
 Remove `PRONUNCIATION_PLAN` entirely. Drop the plan QC, the probe reel builder,
 and the pilot narration wrapper.

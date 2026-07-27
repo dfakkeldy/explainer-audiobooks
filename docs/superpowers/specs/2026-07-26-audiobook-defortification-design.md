@@ -309,9 +309,12 @@ also covers cover embedding that still matters.
 
 ## Migration
 
-1. Rename the symlink `~/.claude/skills/explainer-audiobook` to
-   `~/.claude/skills/audiobook`. It already points at `skill/`, so no reinstall.
-2. Delete the symlink `~/.claude/skills/custom-learning-audiobook`.
+1. Rename `~/.claude/skills/explainer-audiobook` to
+   `~/.claude/skills/audiobook` and `~/.agents/skills/explainer-audiobook` to
+   `~/.agents/skills/audiobook`. Each already points at `skill/`, so no
+   reinstall.
+2. Delete `~/.claude/skills/custom-learning-audiobook` and
+   `~/.agents/skills/custom-learning-audiobook`.
 3. Update `longform-book-development` and `fiction-book-development` handoff
    pointers to name `audiobook`.
 4. The Hermes copy of `custom-learning-audiobook` is a downstream consumer of
@@ -342,7 +345,7 @@ deliberately: the plan is stated in one line before drafting, and a wrong angle
 is interruptible and, failing that, correctable on day two.
 
 **Removing the pronunciation gate can produce a book that mispronounces a term
-throughout.** Accepted: the optional word list is still supported, and a
+throughout.** Accepted: Echo has no word-list input in this workflow, so a
 mispronunciation is exactly the kind of thing the next-day listen catches.
 
 **Losing the coverage ledger may allow padding to return.** The tightening pass

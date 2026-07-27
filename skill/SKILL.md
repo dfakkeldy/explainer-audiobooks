@@ -60,7 +60,7 @@ Use `.build/custom-learning-audiobooks/<slug>/` as the internal run root, with
 `research/`, `chapters/`, and `dist/` scratch directories. Define absolute `BOOK_ROOT`
 before writing durable work. Its source of truth is
 `$BOOK_ROOT/source/brief.md`, `$BOOK_ROOT/source/outline.md`,
-`$BOOK_ROOT/source/research/`, `$BOOK_ROOT/source/chapters/`, and
+`$BOOK_ROOT/source/research.md`, `$BOOK_ROOT/source/chapters/`, and
 `$BOOK_ROOT/source/feedback.md`; the run root remains disposable scratch.
 
 ## Research

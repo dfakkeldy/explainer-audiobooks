@@ -34,7 +34,7 @@ class AudiobookLongformHandoffContractTests(unittest.TestCase):
             "absolute `BOOK_ROOT`",
             "`$BOOK_ROOT/source/brief.md`",
             "`$BOOK_ROOT/source/outline.md`",
-            "`$BOOK_ROOT/source/research/`",
+            "`$BOOK_ROOT/source/research.md`",
             "`$BOOK_ROOT/source/chapters/`",
             "`$BOOK_ROOT/source/feedback.md`",
             "references/narrating.md",
@@ -42,6 +42,7 @@ class AudiobookLongformHandoffContractTests(unittest.TestCase):
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, audiobook)
+        self.assertNotIn("`$BOOK_ROOT/source/research/`", audiobook)
 
     def test_skill_scopes_standing_private_delivery_authorization_to_dan(self) -> None:
         audiobook = AUDIOBOOK.read_text(encoding="utf-8")

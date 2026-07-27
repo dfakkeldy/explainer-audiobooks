@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import json
+import os
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -215,6 +219,71 @@ class EchoNarrationContractTests(unittest.TestCase):
             self.narrating,
         )
 
+    def test_partial_resume_example_derives_every_variable_and_executes(self) -> None:
+        section = self.narrating.split(
+            "To render exactly the next chapter", 1
+        )[1]
+        block = section.split("```bash", 1)[1].split("```", 1)[0].strip()
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            run_root = root / "run"
+            research = run_root / "research"
+            research.mkdir(parents=True)
+            run_id = "-".join(
+                [
+                    "1" * 12,
+                    "2" * 12,
+                    "3" * 12,
+                    "4" * 12,
+                    "5" * 40,
+                    "am_michael",
+                ]
+            )
+            (research / "echo-render-current-attempt.json").write_text(
+                json.dumps({"runID": run_id}),
+                encoding="utf-8",
+            )
+            (research / f"echo-resume-state-{run_id}.json").write_text(
+                "{}\n",
+                encoding="utf-8",
+            )
+            log = root / "arguments.log"
+            wrapper = root / "narrate"
+            wrapper.write_text(
+                "#!/usr/bin/env bash\n"
+                'printf "%s\\n" "$@" >"$ARGUMENT_LOG"\n'
+                "exit 2\n",
+                encoding="utf-8",
+            )
+            wrapper.chmod(0o755)
+            environment = os.environ.copy()
+            environment.update(
+                {
+                    "RUN_ROOT": str(run_root),
+                    "NARRATION_SCRIPT": str(wrapper),
+                    "ARGUMENT_LOG": str(log),
+                }
+            )
+
+            result = subprocess.run(
+                ["bash", "-c", f"set -u\n{block}"],
+                env=environment,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertEqual(
+                [
+                    "--resume",
+                    "--resume-state",
+                    str(research / f"echo-resume-state-{run_id}.json"),
+                    "--max-chapters",
+                    "1",
+                ],
+                log.read_text(encoding="utf-8").splitlines(),
+            )
+
     def test_operating_commands_use_the_required_python_interpreter(self) -> None:
         validator = (
             '/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py"'
@@ -223,6 +292,15 @@ class EchoNarrationContractTests(unittest.TestCase):
         self.assertIn(
             '/usr/local/bin/python3 "$EXPLAINER_ROOT/skills/echo-narration/'
             'scripts/validate_pronunciation_audit.py"',
+            self.narrating,
+        )
+        self.assertIn(
+            '/usr/local/bin/python3 "$STATE_HELPER" \\\n  verify-delivery',
+            self.narrating,
+        )
+        self.assertNotIn(
+            '"$EXPLAINER_ROOT/skills/echo-narration/scripts/'
+            'echo_pronunciation_state.py" \\\n  verify-delivery',
             self.narrating,
         )
 
