@@ -20,7 +20,8 @@ that predate this contract and omit `productionMode` remain `governed-final`.
 An explicit user instruction overrides phrase detection. A request to make a
 plan, outline, sample, or development packet is not a request for a finished
 book. A request to have a book ready to listen to is authorization for private
-production and, when stated, a private iCloud reading copy; it is never
+production and, only when the user explicitly requests it, a private iCloud
+reading copy; it is never
 permission to publish.
 
 ## Default instead of asking

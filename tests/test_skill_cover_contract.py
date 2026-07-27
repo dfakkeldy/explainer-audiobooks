@@ -136,7 +136,11 @@ class SkillCoverContractTests(unittest.TestCase):
 
     def test_private_icloud_copy_requires_an_explicit_user_request(self) -> None:
         text = FILES["unattended"].read_text(encoding="utf-8")
-        self.assertIn("when stated, a private iCloud reading copy", text)
+        self.assertIn(
+            "only when the user explicitly requests it, a private iCloud\n"
+            "reading copy",
+            text,
+        )
 
     def test_active_new_work_uses_complete_paired_interfaces(self) -> None:
         # The full copy-paste command sequence lives in exactly one normative
