@@ -4,7 +4,7 @@ Contents: Voice & rules (verbatim block for the frontier lead author) · Why
 these rules matter · Length and runtime math · The fact-pack discipline · The
 story ledger · QC checklist · EPUB validity.
 
-This is the craft layer of the explainer-audiobook skill. The whole product is
+This is the craft layer of the audiobook skill. The whole product is
 *heard*, never read on a page, so every rule below exists to serve the ear. Give
 the "Voice & rules" block to the frontier lead author verbatim. Cheap workers may
 review against it, but they must not replace its prose with a different voice.
@@ -221,9 +221,9 @@ Use these as book-level planning ranges, not a quota to divide equally among
 chapters. A natural narration runs roughly 150 words per minute at 1.0x, ~187 at
 1.25x. Let a chapter be as short as the listener's knowledge delta allows and as
 long as a worked explanation needs; uniform three-thousand-word chapters are a
-reliable way to manufacture filler. Set a range per chapter in the coverage ledger
-and report the real final total. Falling outside the estimate is a planning
-signal, not a reason to add or remove material after the learning job is complete.
+reliable way to manufacture filler. Estimate chapter lengths in the outline and
+report the real final total. Falling outside the estimate is a planning signal,
+not a reason to add or remove material after the learning job is complete.
 
 | Target listen | ~Words | Suggested chapters |
 |---|---|---|
@@ -260,7 +260,8 @@ plausible-sounding fiction.
 Books come out storyless for a specific reason: the fact pack collects
 statutes and API surfaces, so at drafting time the author has no narrative
 material on hand and invents a hypothetical. Fix it at the source, during
-research, before the outline freezes — build `research/story-ledger.md`.
+research, before the outline freezes — add a story-ledger section to
+`source/research.md`.
 
 Each entry records:
 
@@ -280,16 +281,15 @@ a reason. An exemption is a recorded decision, not a silent gap.
 
 ## QC checklist (run after generation, before assembling)
 
-This craft checklist is one lane of the shared `learning-design.md` contract.
-It does not replace `chapter-plans.json`, complete concept explanation paths, or
-final `learning-review.json` structure and beginner-reader verdicts.
+This craft checklist complements the chapter teaching plans and blind beginner
+review in `learning-design.md`. It does not replace either.
 
 Tool-backed checks and cheap editorial review catch the things that ruin a
 narration without letting a lower-cost model take over the author's voice. Run
 them over the chapter files:
 
 - **Real word counts:** `wc -w chapters/ch*.md`. Investigate a chapter that
-  misses its ledger range; do not automatically top it up. The question is
+  misses its outline estimate; do not automatically top it up. The question is
   whether its promised knowledge delta is incomplete, not whether it matches a
   uniform quota.
 - **Code-leak sweep** — narration killers that slipped past the rules:
@@ -313,19 +313,18 @@ them over the chapter files:
     `candidly`. Replace announcements with the exact evidence, uncertainty, or
     boundary.
 - **Repetition and depth review:** run
-  `python3 skill/scripts/prose_qc.py --chapters-dir chapters --out research/prose-qc.md`.
+  `/usr/local/bin/python3 skill/scripts/prose_qc.py --chapters-dir chapters --out research/prose-qc.md`.
   Inspect its repeated-phrase, similar-paragraph, and opening/closing candidates
-  against `coverage-ledger.md`: retain a repeat only when it retrieves, deepens,
-  applies, compares, or corrects a concept. Give a cheap reviewer the report and
-  the ledger, then require a citation-first finding for every genuine issue:
-  location, evidence, listener cost, and repair type. It reports; the frontier
-  author writes substantive fixes.
-- **Explanation-stack check:** for each core ledger row, verify the book gives
+  against the outline and chapter plan: retain a repeat only when it retrieves,
+  deepens, applies, compares, or corrects a concept. Give a cheap reviewer the
+  report and research, then require a citation-first finding for every genuine
+  issue: location, evidence, listener cost, and repair type. It reports; the
+  frontier author writes substantive fixes.
+- **Explanation-stack check:** for each core chapter-plan concept, verify the book gives
   the listener the promised definition, reason, mechanism, concrete case, and
   useful boundary/counterexample where applicable. Flag a shallow claim with its
-  exact location rather than asking a cheaper model to expand it generically.
-  Record the machine-readable result in `coverage-ledger.json` and rerun the
-  final learning review after any accepted repair.
+  exact location rather than asking a cheaper model to expand it generically,
+  and rerun blind beginner review after any accepted repair.
 - **Vocabulary check (codebase-grounded books):** for each chapter, confirm the real
   file/tool/command names from its fact pack actually appear *by name* in the prose
   (not paraphrased into "the settings file"). If the listener couldn't search for
@@ -348,6 +347,6 @@ them over the chapter files:
 `skill/scripts/build_book.py` writes a valid EPUB 3 with both a nav document and an
 NCX table of contents. The one fragile rule: the `mimetype` entry must be the
 first thing in the zip and stored uncompressed. Verify after building:
-`python3 -c "import zipfile;z=zipfile.ZipFile('OUT.epub');i=z.infolist()[0];print(i.filename, i.compress_type)"`
+`/usr/local/bin/python3 -c "import zipfile;z=zipfile.ZipFile('OUT.epub');i=z.infolist()[0];print(i.filename, i.compress_type)"`
 should report `mimetype 0`. Including both TOC formats is deliberate — it makes
 the book import cleanly into the widest range of readers and audiobook apps.

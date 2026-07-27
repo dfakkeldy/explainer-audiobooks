@@ -7,29 +7,23 @@ description: >-
   resuming an in-progress book project ("let's keep working on my book").
   Nonfiction only; route novels, novellas, and short stories to
   fiction-book-development. Hands the finished concept to
-  custom-learning-audiobook for production.
+  audiobook for production.
 ---
 
 # Longform Book Development
 
-## Production mode comes first
+## Development scope
 
-Read `../../skill/references/unattended-production.md` (also listed under
-Required Reference below) before asking development questions. This skill
-remains conversational for an explicitly exploratory
-request. An overnight, ready-to-listen, delegated, or multi-book request selects
-`unattended-first-listen`: make reversible editorial decisions, record them in
-`research/unattended-decisions.json`, complete the handoff, and invoke
-`custom-learning-audiobook` without another approval pause. Human checkpoint
-language below applies to `governed-final`; unattended mode follows the shared
-editorial checkpoint and package-or-blocker contract.
+This skill remains conversational while the user is shaping a book. Once the
+brief, outline, source plan, picture plan, and handoff packet are complete,
+invoke `audiobook` without another intake interview or approval pause.
 
 Shape a durable book project before synthesis. This skill owns the messy
 creative conversation: turning scattered ideas into an approved brief, outline,
-source plan, picture plan, and handoff packet for `custom-learning-audiobook`.
+source plan, picture plan, and handoff packet for `audiobook`.
 
 Do not use this skill for a simple "make me a book about X" request that is ready
-for one-pass production. Use `custom-learning-audiobook` directly for that.
+for one-pass production. Use `audiobook` directly for that.
 Do not use it for novels, novellas, or short-story collections; route fiction to
 `fiction-book-development`, which owns story bibles, canonical prose, continuity,
 and fiction-specific revision.
@@ -37,8 +31,6 @@ and fiction-specific revision.
 ## Required Reference
 
 - Read `references/handoff-packet.md` before preparing the final handoff.
-- Read `../../skill/references/unattended-production.md` before intake and mode
-  selection.
 - Read `../../skill/references/road-book-mode.md` before shaping an audiobook.
   Default to road-book mode for driving and delivering mail unless the listener
   explicitly wants focused study.
@@ -87,13 +79,11 @@ user means before creating a new one.
 
    Two `research/` roots exist in this pipeline: `research/*` paths in steps
    2-6 live in this workspace, while `research/*` paths inside the handoff
-   packet refer to the production run folder that `custom-learning-audiobook`
+   packet refer to the production run folder that `audiobook`
    will create at `.build/custom-learning-audiobooks/<slug>/` (keep the same
    `<slug>` so the workspaces cross-reference).
 
-2. **Clarify in small batches.** In governed-final, ask no more than 2-3
-   questions at a time. In unattended-first-listen, use and record documented
-   defaults rather than asking about routine preferences.
+2. **Clarify in small batches.** Ask no more than 2-3 questions at a time.
    Favor useful prompts over interrogation: audience, outcome, tone, what to
    include or avoid, source material, privacy, and whether the final product is a
    book, audiobook, illustrated EPUB, or all of those.
@@ -105,18 +95,17 @@ user means before creating a new one.
 3. **Maintain the evolving brief.** After each meaningful turn, update the
    working brief with confirmed decisions, assumptions, open questions, title
    candidates, audience promise, length target, voice, privacy status, and
-   source-confidence needs. Record `new-book` or `first-edition-plus`; when an
-   earlier edition taught successfully, preserve its governing question,
-   narrative spine, examples, and chapter jobs. Preserve the original word-count
+   source-confidence needs. When an earlier edition taught successfully, record
+   and preserve its governing question, narrative spine, examples, and chapter
+   jobs. Preserve the original word-count
    estimate and target history; never reduce scope after drafting to make an
    undersized result appear planned, and never add material merely to reach the
    estimate.
 
-4. **Separate grounded research from voice analysis.** Plan
-   `research/evidence-notes.md` and hash-bound `research/evidence-notes.json`
-   before the outline. Every usable claim needs a stable ID, verified source,
-   precise locator, uncertainty, and `traceable-only` status. The research phase
-   does not decide the learning arc or draft prose.
+4. **Separate grounded research from voice analysis.** Plan grounded evidence
+   notes before the outline. Every usable claim needs a stable ID, verified
+   source, precise locator, uncertainty, and a traceable-only boundary. The
+   research phase does not decide the learning arc or draft prose.
 
    Plan `research/story-ledger.md` in the same phase. Each entry records what
    happened, the named actors, place, and date, the source citation, the concept
@@ -142,10 +131,8 @@ user means before creating a new one.
    terms per chapter, problem before name, an audio working-memory budget,
    people/history and narrative anchors, varied real-world applications,
    analogy contracts, retrieval after a gap, and an optional-study layer for
-   derivations and specialist terminology. Governed-final pauses for human
-   road-book approval before pilot synthesis; unattended-first-listen records
-   editorial authorization and continues. Record the
-   selected pattern, why it fits the learner and subject, and the approval
+   derivations and specialist terminology. Record the selected pattern, why it
+   fits the learner and subject, and the approval
    evidence. Every planned section records its job, argument, specific
    evidence-note claim IDs, throughline advance, narrative or metaphor payoff,
    intellectual or emotional landing beat, and what it must not repeat. Obtain a
@@ -160,48 +147,35 @@ user means before creating a new one.
    clearly allows inclusion. Prefer user-owned, generated, public-domain,
    permissively licensed, or self-created images for packaged books.
 
-7. **Prepare the synthesis handoff.** When governed-final approval exists, or
-   when unattended-first-listen editorial acceptance passes, write
-   `handoff/handoff-packet.md` using `references/handoff-packet.md`. Include the
+7. **Prepare the synthesis handoff.** When the development direction is settled,
+   write `handoff/handoff-packet.md` using `references/handoff-packet.md`. Include the
    final brief, outline, throughlines, source plan, figure plan, asset paths, and
    unresolved choices. Include the desired humanizing level, voice sample or
    style notes, AI-writing patterns to avoid, and the instruction to preserve
    facts, citations, technical names, and intentional teaching repetition. The
    packet must name listener-requested and author-anticipated pronunciation
-   risks for `research/pronunciation-plan.json`; include every spoken variant
-   that needs to be heard before full narration.
-   Add a narrated-pilot plan for `research/comprehension-pilot.json`: 10 to 15
-   minutes containing the opening and first technical passage, followed by one
-   lightweight `continue` or `revise` decision against the exact audio hash and
-   optional listener notes. Do not require comprehension questions. The packet can
-   authorize pilot production, but never full canonical drafting before the
-   listener accepts the first section as `research/voice-exemplar.md` and
-   records `verdict: continue`. This lightweight verdict preserves human comprehension
-   authority without turning listening into homework.
+   risks, including every spoken variant that needs special attention.
    Define the later production loop explicitly: draft section by section with
    the full outline, grounded evidence, voice exemplar, previous-section text or
    running summary, section job, and must-not-repeat list. Require
-   `research/revision-passes.json` with separate single-job
-   claim-traceability, tightening, de-listification, sentence-rhythm, and
-   rendered ear-pass lanes.
+   separate single-job claim-traceability, tightening, de-listification,
+   sentence-rhythm, and rendered ear-pass lanes.
    Preserve these decisions so the handoff is complete enough that a fresh agent can run
-   `custom-learning-audiobook` without re-litigating the concept.
+   `audiobook` without re-litigating the concept.
 
    `references/handoff-packet.md` closes with the authoritative required-field
    checklist for this packet; that single copy is the gate, so do not maintain
-   a second list here. If any required item is missing or incomplete — from the
-   learning brief and grounded evidence through the blind sequential review
-   instructions and the narrated pilot plan — label the packet a
-   **development draft**. It cannot start pilot or canonical production.
+   a second list here. If a required item is missing or incomplete, label the
+   packet a **development draft**.
 
 8. **Invoke the audiobook skill for production.** Hand the packet to
-   `custom-learning-audiobook` for research finalization, manuscript writing,
+   `audiobook` for research finalization, manuscript writing,
    cover generation, EPUB/Markdown building, Echo M4B/alignment rendering, QC,
    and delivery. This skill may draft sample passages or chapter beats, but it
    should not own the final manuscript build unless the user explicitly asks.
-   Governed-final retains human outline, first-section, and comprehension gates.
-   Unattended-first-listen follows the shared editorial checkpoints, completes a
-   private first-listen package, and keeps human comprehension pending.
+   A packet that satisfies the authoritative required-field check starts
+   production without repeating the five-question intake. The production skill
+   states its one-line plan and starts without another approval pause.
 
 ## Picture Rules
 
@@ -219,40 +193,34 @@ Approval evidence, wherever these criteria require it, is a dated verbatim
 quote of the user's approving message, recorded in `brief.md` and carried into
 the packet — an agent's paraphrase of assent is not evidence.
 
-The book-development phase is complete when these exist and the user approves
-them, or explicitly asks to proceed without another development gate. That
-waiver reaches only this skill's development gates: outline approval,
-first-section voice-exemplar acceptance, and narrated-pilot comprehension stay
-governed by the production skill's lanes and cannot be waived here:
+The book-development phase is complete when these exist and the direction is
+settled enough to hand to production:
 
 - working title or title candidates,
 - final brief and audience promise,
 - learner prior knowledge and opening orientation,
 - road-book or focused-study listening context, including driving and delivering
   mail when road-book is selected,
-- revision mode and first-edition-plus preservation evidence when applicable,
+- prior-edition preservation notes when applicable,
 - original target plus approved target history,
-- grounded `evidence-notes.json` plan with traceable-only claim IDs,
+- grounded evidence-note plan with traceable-only claim IDs,
 - bounded voice-source profile when private exemplars were named,
 - six-to-ten durable outcomes and per-chapter concept/working-memory budgets,
-- listener pronunciation risks for `pronunciation-plan.json`,
+- listener pronunciation risks and spoken variants,
 - argument-level chapter and section outline with learning arc, prerequisites,
   knowledge delta, teaching beats, grounded examples, specific claims,
   throughline advance, payoff, landing beat, and must-not-repeat constraints,
 - complete core-concept explanation paths,
 - problem-before-name, real-world application, analogy, and retrieval plans,
-- narrated-pilot design for `comprehension-pilot.json`, with full drafting still
-  blocked until human outline approval, first-section voice-exemplar acceptance,
-  and human listening acceptance,
 - section-by-section forward-context contract and a final
-  `revision-passes.json` plan of separate single-job passes including ear-pass,
+  plan of separate single-job passes including ear-pass,
 - source/research plan,
 - figure/image plan with provenance,
-- handoff packet ready for `custom-learning-audiobook`.
+- handoff packet ready for `audiobook`.
 
 The handoff also records whether the bounded `humanizer` pass is required,
 optional, or explicitly skipped, plus any voice constraints the production
 author must preserve.
 For audiobook production, the de-Claudification gate is required even when a
 general humanizer pass is optional: drafting prevention, whole-manuscript family
-density review, accepted/rejected decisions, and a final hash-bound receipt.
+density review, and accepted/rejected decisions.

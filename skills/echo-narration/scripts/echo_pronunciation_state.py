@@ -1097,6 +1097,8 @@ def parser() -> argparse.ArgumentParser:
     hash_parser.add_argument("path", type=Path)
     immutable = commands.add_parser("immutable-file")
     immutable.add_argument("path", type=Path)
+    validate_run_id = commands.add_parser("validate-run-id")
+    validate_run_id.add_argument("run_id")
     for name in ("record-state", "verify-state"):
         command = commands.add_parser(name)
         add_renderer_arguments(command, required=True)
@@ -1177,6 +1179,11 @@ def main(arguments: list[str]) -> int:
             print(hash_tree(options.path.resolve()))
         elif options.command == "immutable-file":
             safe_atomic_write(options.path, sys.stdin.buffer.read(), immutable=True)
+        elif options.command == "validate-run-id":
+            require(
+                RUN_ID_PATTERN.fullmatch(options.run_id) is not None,
+                "run ID is not a current governed narration run ID",
+            )
         elif options.command in {"record-state", "verify-state"}:
             installed_renderer = renderer_identity_from_options(options)
             payload = capture_snapshot(

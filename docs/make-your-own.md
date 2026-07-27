@@ -1,14 +1,8 @@
 # Make your own
 
-The long technical pipeline is a [Claude Code](https://claude.com/claude-code)
+The audiobook pipeline is one [Claude Code](https://claude.com/claude-code)
 skill, bundled in [`skill/`](../skill/). With it installed, you make a book by
 asking — in plain English — for one.
-
-For a shorter, listener-specific Echo beta book from a topic request, use the
-separate [`custom-learning-audiobook`](../skills/custom-learning-audiobook/)
-skill instead. It is built for requests like "I want to learn small engine
-repair" or "make my coworker a two-hour book on X", where the requester should
-not have to gather sources first.
 
 ## Install
 
@@ -16,27 +10,28 @@ Copy the skill into your Claude Code skills directory:
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -R skill ~/.claude/skills/explainer-audiobook
-ln -s "$(pwd)/skills/custom-learning-audiobook" ~/.claude/skills/custom-learning-audiobook
+ln -s "$(pwd)/skill" ~/.claude/skills/audiobook
 ```
 
 (Or drop it into a project's `.claude/skills/`.) It needs Python 3 and, for cover rasterizing, either `rsvg-convert` (from librsvg) or ImageMagick — both optional; without them the build just skips the cover.
 
 ## Ask for a book
 
-New books use exactly three coordinated portrait/square candidates. The human
-makes the explicit pair selection after thumbnail review, and the paired receipt
-binds `cover.png` at 1600×2560 to the EPUB portrait and `m4b-cover.png` at
-2400×2400 to the M4B square. Post-embed verification checks both and preserves
-media before governed public/iCloud/site sync. Public-safe packages may use
-approved public destinations; private packages stay private. Legacy single-cover
-receipts are verification-only compatibility.
+An ordinary book is private and receipt-free. The skill renders exactly three
+coordinated portrait/square candidates, reviews the full-size art and
+thumbnails, and auto-selects the strongest complete pair on its rubric. It uses
+`cover.png` at 1600×2560 for the EPUB portrait and `m4b-cover.png` at 2400×2400
+for the M4B square, then builds and narrates the book without asking you to
+operate publishing receipts.
 
-Order: research → three source directions → portrait/square render pairs →
-thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
-M4B square embedding → post-embed verification → governed public/iCloud/site
-sync. The current *Rodents in the Walls* exclusion is only for the five-book
-migration and is not a universal future rule.
+Dan's personal workflow has standing private iCloud delivery authorization.
+For any other user or context, the result stays at an absolute local book root
+unless that user explicitly opts in. If you later authorize a public
+edition, use the separate
+[`publishing-a-public-edition.md`](../skill/references/publishing-a-public-edition.md)
+runbook for human selection, publication permission, verification, and
+governed public/iCloud/site sync. The current *Rodents in the Walls* exclusion
+is only for the five-book migration and is not a universal future rule.
 
 Then say something like:
 
@@ -45,8 +40,8 @@ Then say something like:
 The skill will walk the process in [`skill/SKILL.md`](../skill/SKILL.md):
 
 1. **Pin the brief** — it confirms the subject, the real worked example to ground everything in, the target length, and the voice.
-2. **Propose an outline and coverage ledger** — it maps each core concept to a
-   useful knowledge delta, real example, and purposeful later retrieval before
+2. **Write an argument-level outline** — it maps the governing question,
+   chapter jobs, throughlines, grounded cases, and purposeful returns before
    spending money on prose.
 3. **Build fact packs** — lower-cost workers read the real docs/source of your
    worked example so the frontier author stays true to it.
@@ -55,7 +50,8 @@ The skill will walk the process in [`skill/SKILL.md`](../skill/SKILL.md):
 5. **Review + assemble** — cheap diagnostics and reader reports identify exact
    repair candidates; the frontier author handles substantive fixes, then EPUB,
    cover, audio, and Markdown are rendered from the reviewed chapters.
-6. **Deliver** — the finished `.epub` lands in `~/Downloads/book-inbox/`.
+6. **Deliver** — Dan's authorized private reading copy lands with its editable
+   source under iCloud Books; other users remain local unless they opt in.
 
 ## The two ingredients that matter
 

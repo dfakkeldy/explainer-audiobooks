@@ -58,18 +58,17 @@ Together they trace the life of a real app — *what it's made of* → *how it s
 
 ## How it works (the short version)
 
-Every new title uses exactly three coordinated portrait/square candidates. A
-human makes the explicit pair selection after thumbnail review; the paired
-receipt binds `cover.png` at 1600×2560 to the EPUB portrait and `m4b-cover.png`
-at 2400×2400 to the M4B square. Post-embed verification proves both identities
-and media preservation before governed public/iCloud/site sync. Public-safe
-work may reach approved public, iCloud, and site destinations; private work
-stays private. Legacy single-cover receipts are verification-only compatibility.
+Every new title uses exactly three coordinated portrait/square candidates. The
+ordinary private workflow reviews them and auto-selects the strongest complete
+pair: `cover.png` at 1600×2560 for the EPUB portrait and `m4b-cover.png` at
+2400×2400 for the M4B square. It builds and narrates without public receipts.
+Dan's personal workflow has standing private iCloud delivery authorization;
+other users stay at a local book root unless they explicitly opt in.
 
-Order: research → three source directions → portrait/square render pairs →
-thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
-M4B square embedding → post-embed verification → governed public/iCloud/site
-sync.
+Public promotion is separate. A user-authorized public edition follows
+[`publishing-a-public-edition.md`](skill/references/publishing-a-public-edition.md)
+for human pair selection, receipts, immutable re-narration when square art
+changes, verification, and governed public/iCloud/site sync.
 
 The *Rodents in the Walls* exclusion applies only to the current five-book
 migration because that edition already has approved square art. It is not a
@@ -78,7 +77,7 @@ This five-book migration exception is historical scope, not ongoing policy.
 
 1. **Pin the brief** — subject, the real worked example, target length, voice.
 2. **Outline** — one chapter per concept, in teaching order, each grounded in one real piece of the example.
-3. **Fact packs + coverage ledger** — before prose is written, distill *accurate*
+3. **Fact packs + story ledger + argument outline** — before prose is written, distill *accurate*
    facts from the real docs and source into each chapter's evidence, then map each
    core concept to a real example, a knowledge delta, and a purposeful later
    retrieval. This keeps tens of thousands of AI-written words accurate and
@@ -104,20 +103,10 @@ The long technical explainer pipeline is packaged as a Claude Code skill in
 the narration style guide. Point Claude Code at it and ask for a book on any
 subject, grounded in any codebase you can read.
 
-The separate **[`custom-learning-audiobook`](skills/custom-learning-audiobook/)**
-skill is for short, listener-specific Echo beta books from plain topic requests:
-"I want to learn X." It defaults to roughly two hours, uses one lead writer for
-continuity, routes public/private books explicitly, supports approved interior
-pictures as EPUB figures, and renders Echo-ready audio with `am_michael` when
-the Echo CLI is available. It does not substitute Apple/macOS system narration
-for native Echo/Kokoro audio unless the requester explicitly asks for a
-non-Echo preview. Finished packages are copied to a complete iCloud Drive
-`Books/<Title>/` folder by default so they are easy to find.
-
 The **[`longform-book-development`](skills/longform-book-development/)** skill is
 the slower front door for book ideas that need several rounds of shaping before
 production: rough concept, outline, source plan, picture gathering, visual
-provenance, and a final handoff packet for `custom-learning-audiobook`.
+provenance, and a final handoff packet for production.
 
 The **[`fiction-book-development`](skills/fiction-book-development/)** skill is a
 dedicated manuscript workflow for novels, novellas, and story collections. It
@@ -135,4 +124,4 @@ This repo is dual-licensed, split by folder:
 
 ## Credits
 
-Curated by **Dan Fakkeldy**. The worked example throughout is **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source audiobook study player. Books written by **Claude (Opus 4.8 and Fable 5)** and **GPT-5 Codex** via the `explainer-audiobook` and `custom-learning-audiobook` skills (with an earlier edition of *Git Happens* by **DeepSeek v4**, kept in git history); each book's own README and EPUB metadata record its model.
+Curated by **Dan Fakkeldy**. The worked example throughout is **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source audiobook study player. Books written by **Claude (Opus 4.8 and Fable 5)** and **GPT-5 Codex** through the repository's audiobook workflows (now consolidated as the `audiobook` skill; an earlier edition of *Git Happens* by **DeepSeek v4** remains in git history); each book's own README and EPUB metadata record its model.

@@ -1,60 +1,41 @@
 from __future__ import annotations
 
+import json
+import os
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).parents[1]
-SKILL = ROOT / "skills" / "custom-learning-audiobook" / "SKILL.md"
-PACKAGE = (
-    ROOT / "skills" / "custom-learning-audiobook" / "references" / "package-and-qc.md"
-)
+NARRATING = ROOT / "skills" / "echo-narration" / "references" / "narrating.md"
 NARRATE_WRAPPER = (
-    ROOT
-    / "skills"
-    / "custom-learning-audiobook"
-    / "scripts"
-    / "echo_pronunciation_narrate.sh"
-)
-PILOT_NARRATE_WRAPPER = (
-    ROOT
-    / "skills"
-    / "custom-learning-audiobook"
-    / "scripts"
-    / "echo_learning_pilot_narrate.sh"
+    ROOT / "skills" / "echo-narration" / "scripts" / "echo_pronunciation_narrate.sh"
 )
 PREFLIGHT = (
-    ROOT
-    / "skills"
-    / "custom-learning-audiobook"
-    / "scripts"
-    / "echo_pronunciation_preflight.sh"
+    ROOT / "skills" / "echo-narration" / "scripts" / "echo_pronunciation_preflight.sh"
 )
 LEASE_HELPER = (
-    ROOT
-    / "skills"
-    / "custom-learning-audiobook"
-    / "scripts"
-    / "echo_pronunciation_lease.py"
+    ROOT / "skills" / "echo-narration" / "scripts" / "echo_pronunciation_lease.py"
 )
+COVER_ART = ROOT / "skill" / "references" / "cover-art.md"
 
 
-class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
+class EchoNarrationContractTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.skill = SKILL.read_text(encoding="utf-8")
-        self.package = PACKAGE.read_text(encoding="utf-8")
+        self.narrating = NARRATING.read_text(encoding="utf-8")
         self.narrate_wrapper = NARRATE_WRAPPER.read_text(encoding="utf-8")
-        self.pilot_narrate_wrapper = PILOT_NARRATE_WRAPPER.read_text(
-            encoding="utf-8"
-        )
         self.preflight = PREFLIGHT.read_text(encoding="utf-8")
         self.lease_helper = LEASE_HELPER.read_text(encoding="utf-8")
+        self.cover_art = COVER_ART.read_text(encoding="utf-8")
 
     @staticmethod
     def normalized(text: str) -> str:
         return " ".join(text.split())
 
     def test_builds_and_preflights_the_exact_release_cli(self) -> None:
+        combined = self.normalized(self.narrating + "\n" + self.preflight)
         for marker in (
             "APPROVED_ECHO_PRONUNCIATION_SHA",
             "ECHO_SOURCE_SHA",
@@ -65,7 +46,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "Stop immediately",
         ):
             with self.subTest(marker=marker):
-                self.assertIn(marker, self.normalized(self.package))
+                self.assertIn(marker, combined)
 
     def test_ordinary_narration_has_no_checkout_or_build_boundary(self) -> None:
         ordinary_source = self.preflight + self.narrate_wrapper
@@ -95,7 +76,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
 
     def test_renderer_identity_comes_from_the_installed_artifacts(self) -> None:
         """The immutable installed package is the operational fingerprint."""
-        normalized_package = self.normalized(self.package)
+        normalized_narrating = self.normalized(self.narrating)
         for marker in (
             "ECHO_CLI_SHA256",
             "ECHO_RESOURCES_SHA256",
@@ -103,8 +84,8 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "APPROVED_ECHO_INSTALLER_SHA",
             "APPROVED_ECHO_PRONUNCIATION_SHA",
         ):
-            with self.subTest(marker=marker, doc="package-and-qc.md"):
-                self.assertIn(marker, normalized_package)
+            with self.subTest(marker=marker, doc="narrating.md"):
+                self.assertIn(marker, normalized_narrating)
 
         normalized_preflight = self.normalized(self.preflight)
         for marker in (
@@ -189,115 +170,24 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         self.assertIn("echo_pronunciation_preflight.sh", self.narrate_wrapper)
         self.assertIn('"$CLI" narrate', self.narrate_wrapper)
         self.assertIn('ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR"', self.narrate_wrapper)
-        self.assertNotIn('"$CLI" narrate', self.package)
-        self.assertIn("Never invoke a DerivedData `Debug/echo-cli`", self.package)
-        self.assertIn("Do not bypass the governed narration wrapper", self.skill)
+        self.assertNotIn('"$CLI" narrate', self.narrating)
+        self.assertIn("Never invoke a DerivedData `Debug/echo-cli`", self.narrating)
 
         for stale_debug_discovery in ("xcodebuild build", "TARGET_BUILD_DIR"):
             with self.subTest(stale=stale_debug_discovery):
-                self.assertNotIn(stale_debug_discovery, self.package)
+                self.assertNotIn(stale_debug_discovery, self.narrating)
 
-        self.assertNotIn("cd /Users/dfakkeldy/Developer/Echo", self.package)
+        self.assertNotIn("cd /Users/dfakkeldy/Developer/Echo", self.narrating)
 
     def test_pronunciation_review_defaults_on_with_bounded_render_concurrency(
         self,
     ) -> None:
-        for text in (self.skill, self.package):
-            with self.subTest(document="skill" if text == self.skill else "package"):
-                normalized = self.normalized(text)
-                self.assertIn("Pronunciation review is on by default", normalized)
-                self.assertIn("Do not pass `--no-pronunciation-review`", normalized)
+        normalized = self.normalized(self.narrating)
+        self.assertIn("Pronunciation review is on by default", normalized)
+        self.assertIn("Do not pass `--no-pronunciation-review`", normalized)
 
         self.assertIn("--jobs 1", self.narrate_wrapper)
         self.assertIn("--threads 2", self.narrate_wrapper)
-
-    def test_learning_pilot_has_a_governed_isolated_nonpackage_wrapper(self) -> None:
-        normalized_package = self.normalized(self.package)
-        self.assertIn("echo_learning_pilot_narrate.sh", normalized_package)
-        self.assertIn("isolated pilot work", normalized_package)
-        for marker in (
-            "learning-pilot-nonpackage",
-            "APPROVED_ECHO_PRONUNCIATION_SHA",
-            "PILOT_ROOT",
-            "verify-sidecar",
-            "validate_pronunciation_audit.py",
-            "REEL",
-            "--jobs 1",
-            "--threads 2",
-            "listener_acceptance=pending",
-        ):
-            with self.subTest(marker=marker):
-                self.assertIn(marker, self.pilot_narrate_wrapper)
-        self.assertNotIn("--cover", self.pilot_narrate_wrapper)
-
-    def test_learning_pilot_uses_the_shared_installed_renderer_boundary(self) -> None:
-        governed_source = (
-            self.preflight + self.narrate_wrapper + self.pilot_narrate_wrapper
-        )
-        for forbidden in (
-            "ECHO_REPO",
-            ".build/cli",
-            "xcode-build-gate.sh",
-            "xcodebuild",
-            "make",
-            "git ",
-            "/usr/bin/git",
-        ):
-            with self.subTest(forbidden=forbidden):
-                self.assertNotIn(forbidden, governed_source)
-
-        for shared_function in (
-            "echo_pronunciation_resolve_installed_renderer",
-            "echo_pronunciation_assert_leases",
-            "echo_pronunciation_renderer_receipt_text",
-            "echo_pronunciation_attest_renderer",
-        ):
-            with self.subTest(shared_function=shared_function):
-                self.assertIn(f"{shared_function}()", self.preflight)
-                self.assertIn(shared_function, self.pilot_narrate_wrapper)
-
-        for identity_field in (
-            "renderer_schema_version",
-            "renderer_root",
-            "renderer_build_root",
-            "installer_source_sha",
-            "renderer_manifest_sha256",
-            "echo_cli_sha256",
-            "echo_resources_sha256",
-            "model_policy_revision",
-            "model_expected_byte_count",
-            "model_bytes_attested=false",
-        ):
-            with self.subTest(identity_field=identity_field):
-                self.assertIn(identity_field, self.preflight)
-
-        self.assertIn("resolve-new", self.preflight)
-        self.assertIn("resolve-resume", self.preflight)
-        self.assertIn("ECHO_RENDERER_BUILD_ROOT", self.pilot_narrate_wrapper)
-        self.assertIn("--resume", self.pilot_narrate_wrapper)
-        self.assertGreaterEqual(
-            self.pilot_narrate_wrapper.count("pilot_attest_inputs"),
-            4,
-            "pilot must attest before launch, after render, and around publish",
-        )
-
-    def test_full_and_pilot_wrappers_use_shared_renderer_and_lease_functions(
-        self,
-    ) -> None:
-        for name, wrapper in (
-            ("full", self.narrate_wrapper),
-            ("pilot", self.pilot_narrate_wrapper),
-        ):
-            with self.subTest(wrapper=name):
-                self.assertIn(
-                    'source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"', wrapper
-                )
-                self.assertIn(
-                    "echo_pronunciation_resolve_installed_renderer", wrapper
-                )
-                self.assertIn("echo_pronunciation_assert_leases", wrapper)
-                self.assertNotIn("\nresolve_installed_renderer() {", wrapper)
-                self.assertNotIn("\nassert_leases() {", wrapper)
 
     def test_wrapper_binds_selected_square_cover_to_immutable_render(self) -> None:
         for marker in (
@@ -305,12 +195,125 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "M4B_COVER_SHA256",
             "cover_receipts.py",
             "cover-selection.json",
+            "receipt-free-private",
+            "paired-receipt",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.preflight)
 
         self.assertIn('--cover "$M4B_COVER"', self.narrate_wrapper)
-        self.assertIn("M4B_COVER_SHA256", self.normalized(self.package))
+        self.assertIn("M4B_COVER_SHA256", self.preflight)
+
+    def test_resume_examples_pass_the_exact_canonical_state_receipt(self) -> None:
+        normalized = self.normalized(self.narrating)
+        self.assertGreaterEqual(
+            normalized.count('--resume --resume-state "$RESUME_STATE"'),
+            2,
+        )
+        self.assertIn(
+            'RESUME_STATE="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"',
+            self.narrating,
+        )
+        self.assertNotIn(
+            "echo_pronunciation_narrate.sh\" --resume\n",
+            self.narrating,
+        )
+
+    def test_partial_resume_example_derives_every_variable_and_executes(self) -> None:
+        section = self.narrating.split(
+            "To render exactly the next chapter", 1
+        )[1]
+        block = section.split("```bash", 1)[1].split("```", 1)[0].strip()
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            run_root = root / "run"
+            research = run_root / "research"
+            research.mkdir(parents=True)
+            run_id = "-".join(
+                [
+                    "1" * 12,
+                    "2" * 12,
+                    "3" * 12,
+                    "4" * 12,
+                    "5" * 40,
+                    "am_michael",
+                ]
+            )
+            (research / "echo-render-current-attempt.json").write_text(
+                json.dumps({"runID": run_id}),
+                encoding="utf-8",
+            )
+            (research / f"echo-resume-state-{run_id}.json").write_text(
+                "{}\n",
+                encoding="utf-8",
+            )
+            log = root / "arguments.log"
+            wrapper = root / "narrate"
+            wrapper.write_text(
+                "#!/usr/bin/env bash\n"
+                'printf "%s\\n" "$@" >"$ARGUMENT_LOG"\n'
+                "exit 2\n",
+                encoding="utf-8",
+            )
+            wrapper.chmod(0o755)
+            environment = os.environ.copy()
+            environment.update(
+                {
+                    "RUN_ROOT": str(run_root),
+                    "NARRATION_SCRIPT": str(wrapper),
+                    "ARGUMENT_LOG": str(log),
+                }
+            )
+
+            result = subprocess.run(
+                ["bash", "-c", f"set -u\n{block}"],
+                env=environment,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertEqual(
+                [
+                    "--resume",
+                    "--resume-state",
+                    str(research / f"echo-resume-state-{run_id}.json"),
+                    "--max-chapters",
+                    "1",
+                ],
+                log.read_text(encoding="utf-8").splitlines(),
+            )
+
+    def test_operating_commands_use_the_required_python_interpreter(self) -> None:
+        validator = (
+            '/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py"'
+        )
+        self.assertEqual(2, self.narrate_wrapper.count(validator))
+        self.assertIn(
+            '/usr/local/bin/python3 "$EXPLAINER_ROOT/skills/echo-narration/'
+            'scripts/validate_pronunciation_audit.py"',
+            self.narrating,
+        )
+        self.assertIn(
+            '/usr/local/bin/python3 "$STATE_HELPER" \\\n  verify-delivery',
+            self.narrating,
+        )
+        self.assertNotIn(
+            '"$EXPLAINER_ROOT/skills/echo-narration/scripts/'
+            'echo_pronunciation_state.py" \\\n  verify-delivery',
+            self.narrating,
+        )
+
+    def test_reference_derives_pipeline_root_from_installed_narration_script(self) -> None:
+        self.assertNotIn("git rev-parse --show-toplevel", self.narrating)
+        for marker in (
+            "NARRATION_SCRIPT",
+            "NARRATION_SCRIPT_DIR",
+            "PIPELINE_ROOT",
+            'export RUN_ROOT="$PIPELINE_ROOT/.build/custom-learning-audiobooks/$SLUG"',
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.narrating)
 
     def test_wrapper_holds_fd_backed_resource_leases_through_narration(self) -> None:
         for marker in (
@@ -341,14 +344,14 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         ):
             self.assertIn(marker, self.lease_helper)
 
-        for marker in (
-            "governed Echo narration wrapper",
+        self.assertIn("governed Echo narration wrapper", self.cover_art)
+        self.assertIn(
             "Do not bypass the wrapper with a direct CLI command",
-        ):
-            self.assertIn(marker, self.skill)
+            self.normalized(self.narrating),
+        )
 
     def test_resume_requires_an_immutable_source_renderer_and_capture_set(self) -> None:
-        normalized = self.normalized(self.package)
+        normalized = self.normalized(self.narrating)
         for marker in (
             "fresh `--work-dir` and `--db`",
             "source EPUB changes",
@@ -362,50 +365,23 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
                 self.assertIn(marker, normalized)
 
     def test_governed_partial_probe_is_resumable_but_not_publishable(self) -> None:
-        normalized_skill = self.normalized(self.skill)
-        normalized_package = self.normalized(self.package)
+        normalized_narrating = self.normalized(self.narrating)
 
         for marker in (
             "--max-chapters 1",
             "exit 2",
             "partial",
-            "--resume --max-chapters 1",
+            '--resume --resume-state "$RESUME_STATE" --max-chapters 1',
             "no accepted M4B",
         ):
             with self.subTest(marker=marker):
-                self.assertIn(marker, normalized_package)
+                self.assertIn(marker, normalized_narrating)
 
-        self.assertIn("real-book pronunciation probe", normalized_skill)
+        self.assertIn("real-book pronunciation probe", normalized_narrating)
         self.assertIn("--max-chapters", self.narrate_wrapper)
 
-    def test_full_render_requires_hash_bound_listener_pronunciation_acceptance(
-        self,
-    ) -> None:
-        for marker in (
-            "PRONUNCIATION_PLAN",
-            "pronunciation-plan.json",
-            "pronunciation_plan_qc.py",
-            "--phase planning",
-            "--phase full-render",
-            "pronunciation-plan-receipt.json",
-        ):
-            with self.subTest(wrapper_marker=marker):
-                self.assertIn(marker, self.narrate_wrapper)
-
-        for text in (self.skill, self.package):
-            with self.subTest(document="skill" if text == self.skill else "package"):
-                normalized = self.normalized(text)
-                for marker in (
-                    "pronunciation-plan.json",
-                    "build_pronunciation_probe_reel.py",
-                    "accepted",
-                    "human listening",
-                    "hyperparameter",
-                ):
-                    self.assertIn(marker, normalized)
-
     def test_review_artifacts_are_automatic_and_part_of_package_qc(self) -> None:
-        normalized = self.normalized(self.package)
+        normalized = self.normalized(self.narrating)
         for marker in (
             "<slug>.pronunciation-audit.json",
             "<slug>.pronunciation-reel.m4b",
@@ -430,10 +406,7 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, normalized)
 
-        self.assertNotIn('mv "$DIST/$SLUG.covered.m4b"', self.skill)
-        self.assertNotIn('mv "$DIST/$SLUG.covered.m4b"', self.package)
-        self.assertIn('cp "$STATE_RECEIPT"', self.package)
-        self.assertGreaterEqual(self.package.count("--state-receipt"), 2)
+        self.assertNotIn('mv "$DIST/$SLUG.covered.m4b"', self.narrating)
 
         for marker in (
             "pronunciation audit",
@@ -441,16 +414,16 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
             "human listening",
         ):
             with self.subTest(report_marker=marker):
-                self.assertIn(marker, self.skill.casefold())
+                self.assertIn(marker, self.narrating.casefold())
 
     def test_operating_docs_require_the_installed_renderer_contract(self) -> None:
-        """The skill must send operators to the versioned store, not a checkout.
+        """The reference must send operators to the versioned store, not a checkout.
 
         These are deliberately documentation assertions: the shell wrappers
         already enforce the boundary, but an operator following stale prose can
         still choose an unsafe or non-reproducible recovery path.
         """
-        normalized = self.normalized(self.skill + "\n" + self.package)
+        normalized = self.normalized(self.narrating)
         for marker in (
             "~/Library/Application Support/Echo/Renderers/",
             "<40-hex source SHA>",
@@ -484,6 +457,36 @@ class CustomLearningAudiobookEchoContractTests(unittest.TestCase):
         ):
             with self.subTest(stale_marker=stale_marker):
                 self.assertNotIn(stale_marker, normalized)
+
+    def test_narrate_wrapper_uses_shared_preflight_functions_without_local_copies(
+        self,
+    ) -> None:
+        """Guards the same class of drift as test_run_id_is_derived_in_exactly_one_place:
+        two of the four tests dropped when the pilot wrapper was deleted were
+        mixed-subject and also asserted that the narrate wrapper calls the
+        shared preflight helpers instead of defining its own local copies.
+        Duplicating a preflight helper locally in the wrapper once let the two
+        definitions disagree and broke every render. This is not redundant with
+        merely checking the shared helper is called: that only proves the
+        wrapper reaches the shared code path, not that a shadowing local
+        definition hasn't also been added alongside it.
+        """
+        for defined_function in (
+            "echo_pronunciation_resolve_installed_renderer() {",
+            "echo_pronunciation_assert_leases() {",
+            "echo_pronunciation_attest_renderer() {",
+            "echo_pronunciation_renderer_receipt_text() {",
+        ):
+            with self.subTest(defined_function=defined_function):
+                self.assertIn(defined_function, self.preflight)
+
+        self.assertIn(
+            "echo_pronunciation_resolve_installed_renderer", self.narrate_wrapper
+        )
+        self.assertIn("echo_pronunciation_assert_leases", self.narrate_wrapper)
+
+        self.assertNotIn("\nresolve_installed_renderer() {", self.narrate_wrapper)
+        self.assertNotIn("\nassert_leases() {", self.narrate_wrapper)
 
 
 if __name__ == "__main__":

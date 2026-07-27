@@ -6,9 +6,8 @@ description: >-
 
 # Fiction Book Development
 
-## Production mode comes first
+## Production scope
 
-Read `../../skill/references/unattended-production.md` before scope questions.
 Exploratory fiction remains collaborative. An explicit autonomous full-draft,
 overnight, ready-to-listen, delegated, or multi-book request selects
 `unattended-first-listen`: choose reversible premise and craft details against a
@@ -44,8 +43,6 @@ audiobook skill.
   drafting scenes.
 - Read `references/revision-passes.md` before revising a chapter or manuscript.
 - Start a new project from `templates/fiction-project.md`.
-- Read `../../skill/references/unattended-production.md` before selecting
-  collaborative or unattended behavior.
 
 ## Scope Gate
 

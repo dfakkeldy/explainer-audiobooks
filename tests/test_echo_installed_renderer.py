@@ -22,28 +22,28 @@ ROOT = Path(__file__).parents[1]
 MODULE_PATH = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_installed_renderer.py"
 )
 STATE_MODULE_PATH = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_state.py"
 )
 LEASE_MODULE_PATH = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_lease.py"
 )
 VECTOR_ROOT = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "references"
     / "echo-renderer-v1"
 )

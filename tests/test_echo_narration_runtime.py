@@ -21,6 +21,8 @@ import zipfile
 from collections.abc import Callable
 from pathlib import Path
 
+from PIL import Image
+
 
 ROOT = Path(__file__).parents[1]
 # These tests spawn real narration wrappers and wait on their side effects. The
@@ -31,49 +33,42 @@ WAIT_TIMEOUT = float(os.environ.get("ECHO_TEST_WAIT_TIMEOUT", "60"))
 PREFLIGHT = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_preflight.sh"
 )
 AUDIT_VALIDATOR = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "validate_pronunciation_audit.py"
 )
 NARRATE_WRAPPER = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_narrate.sh"
-)
-PILOT_NARRATE_WRAPPER = (
-    ROOT
-    / "skills"
-    / "custom-learning-audiobook"
-    / "scripts"
-    / "echo_learning_pilot_narrate.sh"
 )
 LEASE_HELPER = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_lease.py"
 )
 STATE_HELPER = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_pronunciation_state.py"
 )
 INSTALLED_RENDERER = (
     ROOT
     / "skills"
-    / "custom-learning-audiobook"
+    / "echo-narration"
     / "scripts"
     / "echo_installed_renderer.py"
 )
@@ -149,10 +144,12 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.run_root = (
             self.explainer / ".build" / "custom-learning-audiobooks" / "fixture"
         )
-        self.pilot_cli = (
+        self.uninstalled_cli_fixture = (
             self.echo / ".build" / "cli" / "Build" / "Products" / "Release" / "echo-cli"
         )
-        self.pilot_resources = self.pilot_cli.parent / "EchoNarrationResources"
+        self.uninstalled_resources_fixture = (
+            self.uninstalled_cli_fixture.parent / "EchoNarrationResources"
+        )
         self.renderer_root = (self.tmp / "installed-renderers").resolve()
         self.source_sha = ACCEPTED_SOURCE_SHA
         self.installer_source_sha = ACCEPTED_INSTALLER_SHA
@@ -180,12 +177,12 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             encoding="utf-8",
         )
         (self.echo / ".gitignore").write_text(".build/\n", encoding="utf-8")
-        self.pilot_cli.parent.mkdir(parents=True)
-        self.pilot_resources.mkdir()
+        self.uninstalled_cli_fixture.parent.mkdir(parents=True)
+        self.uninstalled_resources_fixture.mkdir()
         self.write_cli(
             include_review_flag=True,
-            cli=self.pilot_cli,
-            resources=self.pilot_resources,
+            cli=self.uninstalled_cli_fixture,
+            resources=self.uninstalled_resources_fixture,
         )
 
         staging_root = self.renderer_root / self.source_sha / ("f" * 64)
@@ -258,15 +255,15 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         gate.chmod(gate.stat().st_mode | stat.S_IXUSR)
 
         dist = self.run_root / "dist"
-        pair = dist / "candidate-1"
-        pair.mkdir(parents=True)
-        portrait = pair / "cover.png"
-        square = pair / "m4b-cover.png"
-        portrait.write_bytes(b"fixture portrait cover")
-        square.write_bytes(b"fixture square cover")
+        self.pair = dist / "candidate-1"
+        self.pair.mkdir(parents=True)
+        self.portrait = self.pair / "cover.png"
+        self.square = self.pair / "m4b-cover.png"
+        Image.new("RGB", (1600, 2560), "#243447").save(self.portrait, "PNG")
+        Image.new("RGB", (2400, 2400), "#375a7f").save(self.square, "PNG")
         sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
         filler = "a" * 64
-        selection = {
+        self.cover_selection_payload = {
             "schema_version": 2,
             "book_slug": "fixture",
             "edition_id": "fixture-private-v1",
@@ -276,7 +273,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
                 "portrait": {
                     "specification_sha256": filler,
                     "render_receipt_sha256": filler,
-                    "cover_sha256": sha(portrait),
+                    "cover_sha256": sha(self.portrait),
                     "dimensions": [1600, 2560],
                     "thumbnail_sha256": filler,
                     "subtitle_included": True,
@@ -284,7 +281,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
                 "square": {
                     "specification_sha256": filler,
                     "render_receipt_sha256": filler,
-                    "cover_sha256": sha(square),
+                    "cover_sha256": sha(self.square),
                     "dimensions": [2400, 2400],
                     "thumbnail_sha256": filler,
                     "subtitle_included": False,
@@ -295,9 +292,6 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             "selected_at": "2026-07-14T00:00:00+00:00",
             "privacy": {"classification": "private", "permission_to_publish": False},
         }
-        (dist / "cover-selection.json").write_text(
-            json.dumps(selection), encoding="utf-8"
-        )
         chapters = self.run_root / "chapters"
         research = self.run_root / "research"
         chapters.mkdir()
@@ -323,54 +317,6 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
             + "\n",
             encoding="utf-8",
         )
-        pronunciation_reel = research / "pronunciation-probe-reel.m4b"
-        pronunciation_reel.write_bytes(b"fixture approved pronunciation reel")
-        pronunciation_evidence = research / "pronunciation-probe-evidence.json"
-        pronunciation_evidence.write_text(
-            json.dumps(
-                {
-                    "schemaVersion": 1,
-                    "reelFileName": pronunciation_reel.name,
-                    "reelSHA256": sha(pronunciation_reel),
-                    "clips": [
-                        {"term": "fixture", "variantHeard": "fixture"}
-                    ],
-                },
-                sort_keys=True,
-            )
-            + "\n",
-            encoding="utf-8",
-        )
-        pronunciation_plan = research / "pronunciation-plan.json"
-        pronunciation_plan.write_text(
-            json.dumps(
-                {
-                    "schemaVersion": 1,
-                    "terms": [
-                        {
-                            "term": "fixture",
-                            "variants": [],
-                            "source": "author",
-                            "reason": "Exercise the governed pronunciation gate.",
-                            "expectedChapters": ["ch01.md"],
-                            "required": True,
-                            "status": "accepted",
-                            "decision": {
-                                "acceptedBy": "Runtime fixture",
-                                "acceptedAt": "2026-07-14T00:00:00+00:00",
-                            },
-                            "evidence": {
-                                "path": "research/pronunciation-probe-evidence.json",
-                                "sha256": sha(pronunciation_evidence),
-                            },
-                        }
-                    ],
-                },
-                sort_keys=True,
-            )
-            + "\n",
-            encoding="utf-8",
-        )
         with zipfile.ZipFile(dist / "fixture.epub", "w") as archive:
             archive.writestr(
                 "META-INF/container.xml",
@@ -387,12 +333,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
   <manifest><item id="cover-image" href="cover.png" media-type="image/png" properties="cover-image"/></manifest>
 </package>""",
             )
-            archive.writestr("OEBPS/cover.png", portrait.read_bytes())
-        pilot_dist = self.run_root / "pilot" / "dist"
-        pilot_dist.mkdir(parents=True)
-        (pilot_dist / "fixture-pilot.epub").write_bytes(
-            (dist / "fixture.epub").read_bytes()
-        )
+            archive.writestr("OEBPS/cover.png", self.portrait.read_bytes())
 
         self.git("init", "-q")
         self.git("config", "user.email", "fixture@example.com")
@@ -586,9 +527,6 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "M4B_COVER": str(
                     self.run_root / "dist" / "candidate-1" / "m4b-cover.png"
                 ),
-                "PRONUNCIATION_PLAN": str(
-                    self.run_root / "research" / "pronunciation-plan.json"
-                ),
                 "ECHO_RENDERER_ROOT": str(self.renderer_root),
                 "ECHO_RENDERER_BUILD_ROOT": str(self.renderer_build_root),
                 "ECHO_RENDERER_MANIFEST": str(
@@ -751,31 +689,24 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         return build_root, manifest_sha
 
-    def run_pilot_narrate(
-        self,
-        *arguments: str,
-        environment: dict[str, str] | None = None,
-    ) -> subprocess.CompletedProcess[str]:
-        pilot_environment = dict(environment or self.environment())
-        return subprocess.run(
-            [str(PILOT_NARRATE_WRAPPER), *arguments],
-            cwd=self.explainer,
-            env=pilot_environment,
-            capture_output=True,
-            text=True,
-        )
-
     def resume_arguments(self) -> tuple[str, str, str]:
         state = next(
             (self.run_root / "research").glob("echo-resume-state-*.json")
         )
         return ("--resume", "--resume-state", str(state))
 
-    def pilot_resume_arguments(self) -> tuple[str, str, str]:
-        state = next(
-            (self.run_root / "pilot" / "research").glob("echo-resume-state-*.json")
+    def write_public_pair_receipt(self) -> Path:
+        receipt = self.pair / "cover-selection.json"
+        payload = copy.deepcopy(self.cover_selection_payload)
+        payload["privacy"] = {
+            "classification": "public-safe",
+            "permission_to_publish": True,
+        }
+        receipt.write_text(
+            json.dumps(payload, sort_keys=True) + "\n",
+            encoding="utf-8",
         )
-        return ("--resume", "--resume-state", str(state))
+        return receipt
 
     def test_ordinary_wrapper_observes_no_build_or_checkout_descendants(self) -> None:
         forbidden_log = self.tmp / "forbidden-descendants.log"
@@ -790,13 +721,8 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             )
             sentinel.chmod(sentinel.stat().st_mode | stat.S_IXUSR)
 
-        for wrapper, invoke in (
-            ("full", self.run_narrate),
-            ("pilot", self.run_pilot_narrate),
-        ):
-            with self.subTest(wrapper=wrapper):
-                result = invoke()
-                self.assertEqual(0, result.returncode, result.stderr)
+        result = self.run_narrate()
+        self.assertEqual(0, result.returncode, result.stderr)
         self.assertFalse(forbidden_log.exists(), forbidden_log.read_text() if forbidden_log.exists() else "")
 
     def test_missing_installed_version_is_actionable_and_does_not_build(self) -> None:
@@ -908,125 +834,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "false" if identity["modelBytesAttested"] is False else "true",
         )
 
-    def test_learning_pilot_wrapper_uses_isolated_coverless_paths(self) -> None:
-        log = self.tmp / "pilot-narrate.log"
-        environment = self.environment()
-        environment["FAKE_NARRATE_LOG"] = str(log)
-
-        result = self.run_pilot_narrate(environment=environment)
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        arguments = [
-            line.removeprefix("ARG=")
-            for line in log.read_text(encoding="utf-8").splitlines()
-            if line.startswith("ARG=")
-        ]
-        pilot_root = (self.run_root / "pilot").resolve()
-        self.assertEqual(
-            str((pilot_root / "dist" / "fixture-pilot.epub").resolve()),
-            arguments[arguments.index("--epub") + 1],
-        )
-        self.assertTrue(
-            Path(arguments[arguments.index("--work-dir") + 1]).is_relative_to(
-                pilot_root
-            )
-        )
-        self.assertTrue(
-            Path(arguments[arguments.index("--db") + 1]).is_relative_to(pilot_root)
-        )
-        self.assertNotIn("--cover", arguments)
-        self.assertTrue((pilot_root / "dist" / "fixture-pilot.m4b").is_file())
-        self.assertTrue(
-            (pilot_root / "dist" / "fixture-pilot.alignment.json").is_file()
-        )
-        self.assertTrue(
-            (pilot_root / "dist" / "fixture-pilot.pronunciation-audit.json").is_file()
-        )
-        receipts = list(
-            (pilot_root / "research").glob("echo-pilot-success-*.env")
-        )
-        self.assertEqual(1, len(receipts))
-        receipt = receipts[0].read_text(encoding="utf-8")
-        self.assertIn("kind=learning-pilot-nonpackage", receipt)
-        self.assertRegex(receipt, r"audio_sha256=[0-9a-f]{64}")
-        self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
-
-    def test_learning_pilot_binds_the_full_installed_renderer_identity(self) -> None:
-        full_fields = self.preflight_fields()
-
-        result = self.run_pilot_narrate()
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        pilot_receipt = next(
-            (self.run_root / "pilot" / "research").glob("echo-pilot-inputs-*.env")
-        ).read_text(encoding="utf-8")
-        pilot_fields = dict(
-            line.split("=", 1) for line in pilot_receipt.splitlines() if "=" in line
-        )
-        shared_fields = {
-            "renderer_root": "ECHO_RENDERER_ROOT",
-            "renderer_build_root": "ECHO_RENDERER_BUILD_ROOT",
-            "installer_source_sha": "APPROVED_ECHO_INSTALLER_SHA",
-            "approved_echo_pronunciation_sha": "APPROVED_ECHO_PRONUNCIATION_SHA",
-            "echo_source_sha": "ECHO_SOURCE_SHA",
-            "renderer_manifest_sha256": "ECHO_RENDERER_MANIFEST_SHA256",
-            "echo_cli_path": "CLI",
-            "echo_cli_sha256": "ECHO_CLI_SHA256",
-            "echo_resource_dir": "ECHO_RESOURCE_DIR",
-            "echo_resources_sha256": "ECHO_RESOURCES_SHA256",
-            "render_version": "ECHO_RENDER_VERSION",
-            "model_policy_revision": "ECHO_MODEL_REVISION",
-            "model_expected_byte_count": "ECHO_MODEL_EXPECTED_BYTES",
-            "model_bytes_attested": "ECHO_MODEL_BYTES_ATTESTED",
-        }
-        for pilot_name, full_name in shared_fields.items():
-            with self.subTest(field=pilot_name):
-                self.assertEqual(full_fields[full_name], pilot_fields[pilot_name])
-
-    def test_learning_pilot_replaces_inherited_resource_dir_for_every_cli_call(
-        self,
-    ) -> None:
-        environment = self.environment()
-        environment["ECHO_RESOURCE_DIR"] = "/stale/debug/resources"
-
-        result = self.run_pilot_narrate(environment=environment)
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        calls = self.installed_probe_log.read_text(encoding="utf-8").splitlines()
-        sealed_suffix = f" ECHO_RESOURCE_DIR={self.resources.resolve()}"
-        self.assertGreater(len(calls), 0)
-        self.assertTrue(all(call.endswith(sealed_suffix) for call in calls), calls)
-        for required_call in (
-            "CALL=--version:",
-            "CALL=narrate:--help",
-            "CALL=verify-sidecar:--help",
-            "CALL=narrate:--epub",
-            "CALL=verify-sidecar:--epub",
-        ):
-            with self.subTest(required_call=required_call):
-                self.assertTrue(
-                    any(call.startswith(required_call) for call in calls), calls
-                )
-
-    def test_learning_pilot_preserves_optional_pronunciation_reel(self) -> None:
-        environment = self.environment()
-        environment["FAKE_EMIT_REEL"] = "1"
-
-        result = self.run_pilot_narrate(environment=environment)
-
-        self.assertEqual(0, result.returncode, result.stderr)
-        pilot_root = self.run_root / "pilot"
-        reel = pilot_root / "dist" / "fixture-pilot.pronunciation-reel.m4b"
-        self.assertEqual(b"fixture listening reel", reel.read_bytes())
-        success = next(
-            (pilot_root / "research").glob("echo-pilot-success-*.env")
-        ).read_text(encoding="utf-8")
-        self.assertIn(f"reel_path={reel.resolve()}", success)
-        self.assertRegex(success, r"reel_sha256=[0-9a-f]{64}")
-
-    def test_learning_pilot_does_not_publish_after_resource_mutation(self) -> None:
-        ready = self.tmp / "pilot-ready"
-        release = self.tmp / "pilot-release"
+    def test_does_not_publish_after_resource_mutation(self) -> None:
+        ready = self.tmp / "narrate-ready"
+        release = self.tmp / "narrate-release"
         environment = self.environment()
         environment.update(
             {
@@ -1035,7 +845,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             }
         )
         process = subprocess.Popen(
-            [str(PILOT_NARRATE_WRAPPER)],
+            [str(NARRATE_WRAPPER)],
             cwd=self.explainer,
             env=environment,
             stdout=subprocess.PIPE,
@@ -1053,20 +863,16 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
         self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
         self.assertIn("installed renderer attestation failed", stderr)
-        pilot_dist = self.run_root / "pilot" / "dist"
-        self.assertFalse((pilot_dist / "fixture-pilot.m4b").exists())
-        self.assertFalse((pilot_dist / "fixture-pilot.alignment.json").exists())
-        self.assertFalse(
-            (pilot_dist / "fixture-pilot.pronunciation-audit.json").exists()
-        )
+        self.assertFalse(list((self.run_root / "dist").glob("echo-renders/**/*")))
+        self.assertFalse(list(self.run_root.glob(".echo-output-*")))
 
-    def test_learning_pilot_rejects_executable_and_resource_mutation_before_cli_launch(
+    def test_rejects_executable_and_resource_mutation_before_cli_launch(
         self,
     ) -> None:
         control = self.tmp / "probe-block-control"
         ready = self.tmp / "probe-block-ready"
         release = self.tmp / "probe-block-release"
-        narrate_log = self.tmp / "pilot-prelaunch-narrate.log"
+        narrate_log = self.tmp / "prelaunch-narrate.log"
         control.write_text("2\n", encoding="utf-8")
         environment = self.environment()
         environment.update(
@@ -1075,7 +881,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             }
         )
         process = subprocess.Popen(
-            [str(PILOT_NARRATE_WRAPPER)],
+            [str(NARRATE_WRAPPER)],
             cwd=self.explainer,
             env=environment,
             stdout=subprocess.PIPE,
@@ -1100,67 +906,56 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             else 0
         )
         self.assertEqual(0, narrate_calls, "mutated package reached CLI narration")
-        pilot_dist = self.run_root / "pilot" / "dist"
-        for artifact in (
-            "fixture-pilot.m4b",
-            "fixture-pilot.alignment.json",
-            "fixture-pilot.pronunciation-audit.json",
-        ):
-            with self.subTest(artifact=artifact):
-                self.assertFalse((pilot_dist / artifact).exists())
+        self.assertFalse(list((self.run_root / "dist").glob("echo-renders/**/*")))
+        self.assertFalse(list(self.run_root.glob(".echo-output-*")))
 
-    def test_full_and_pilot_hold_the_exact_build_root_lease_through_narration(
+    def test_full_wrapper_holds_the_exact_build_root_lease_through_narration(
         self,
     ) -> None:
-        for wrapper, command in (
-            ("full", NARRATE_WRAPPER),
-            ("pilot", PILOT_NARRATE_WRAPPER),
-        ):
-            with self.subTest(wrapper=wrapper):
-                ready = self.tmp / f"{wrapper}-build-lease-ready"
-                release = self.tmp / f"{wrapper}-build-lease-release"
-                environment = self.environment()
-                environment.update(
-                    {
-                        "FAKE_NARRATE_READY": str(ready),
-                        "FAKE_NARRATE_RELEASE": str(release),
-                    }
-                )
-                process = subprocess.Popen(
-                    [str(command)],
-                    cwd=self.explainer,
-                    env=environment,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-                self.addCleanup(lambda: process.poll() is None and process.kill())
-                self.wait_for_path(ready, process)
+        ready = self.tmp / "full-build-lease-ready"
+        release = self.tmp / "full-build-lease-release"
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_READY": str(ready),
+                "FAKE_NARRATE_RELEASE": str(release),
+            }
+        )
+        process = subprocess.Popen(
+            [str(NARRATE_WRAPPER)],
+            cwd=self.explainer,
+            env=environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.addCleanup(lambda: process.poll() is None and process.kill())
+        self.wait_for_path(ready, process)
 
-                contender = subprocess.run(
-                    [
-                        str(LEASE_HELPER),
-                        "--lock-root",
-                        str(self.lease_root),
-                        "--resource",
-                        str(self.renderer_build_root),
-                        "--",
-                        "/usr/bin/true",
-                    ],
-                    cwd=self.explainer,
-                    env=self.environment(),
-                    capture_output=True,
-                    text=True,
-                )
-                self.assertEqual(75, contender.returncode, contender.stderr)
-                self.assertIn(
-                    f"active narration lease owns shared resource: {self.renderer_build_root}",
-                    contender.stderr,
-                )
+        contender = subprocess.run(
+            [
+                str(LEASE_HELPER),
+                "--lock-root",
+                str(self.lease_root),
+                "--resource",
+                str(self.renderer_build_root),
+                "--",
+                "/usr/bin/true",
+            ],
+            cwd=self.explainer,
+            env=self.environment(),
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(75, contender.returncode, contender.stderr)
+        self.assertIn(
+            f"active narration lease owns shared resource: {self.renderer_build_root}",
+            contender.stderr,
+        )
 
-                release.touch()
-                stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
-                self.assertEqual(0, process.returncode, f"{stdout}\n{stderr}")
+        release.touch()
+        stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
+        self.assertEqual(0, process.returncode, f"{stdout}\n{stderr}")
 
     def preflight_fields(self) -> dict[str, str]:
         names = (
@@ -1169,6 +964,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "ECHO_SOURCE_SHA",
             "EPUB",
             "EPUB_SHA256",
+            "COVER_BINDING_MODE",
             "COVER_SELECTION",
             "COVER_SELECTION_SHA256",
             "COVER",
@@ -1206,6 +1002,72 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             for line in result.stdout.splitlines()
             if line.split("=", 1)[0] in names
         )
+
+    def test_private_pair_preflight_is_receipt_free_and_hash_bound(self) -> None:
+        root_receipt = self.run_root / "dist" / "cover-selection.json"
+
+        fields = self.preflight_fields()
+
+        self.assertEqual("receipt-free-private", fields["COVER_BINDING_MODE"])
+        self.assertEqual("", fields["COVER_SELECTION"])
+        self.assertEqual("", fields["COVER_SELECTION_SHA256"])
+        self.assertFalse(root_receipt.exists())
+        self.assertEqual(
+            hashlib.sha256(Path(fields["EPUB"]).read_bytes()).hexdigest(),
+            fields["EPUB_SHA256"],
+        )
+        self.assertEqual(
+            hashlib.sha256(Path(fields["COVER"]).read_bytes()).hexdigest(),
+            fields["COVER_SHA256"],
+        )
+        self.assertEqual(
+            hashlib.sha256(Path(fields["M4B_COVER"]).read_bytes()).hexdigest(),
+            fields["M4B_COVER_SHA256"],
+        )
+
+        Path(fields["M4B_COVER"]).write_bytes(b"changed after preflight")
+        result = self.run_direct_leased(fields)
+        self.assertEqual(65, result.returncode)
+        self.assertIn(
+            "selected cover package changed while narration lease was held",
+            result.stderr,
+        )
+
+    def test_public_pair_preflight_infers_receipt_beside_selected_pair(self) -> None:
+        root_receipt = self.run_root / "dist" / "cover-selection.json"
+        pair_receipt = self.write_public_pair_receipt()
+
+        fields = self.preflight_fields()
+
+        self.assertEqual("paired-receipt", fields["COVER_BINDING_MODE"])
+        self.assertEqual(str(pair_receipt), fields["COVER_SELECTION"])
+        self.assertEqual(
+            hashlib.sha256(pair_receipt.read_bytes()).hexdigest(),
+            fields["COVER_SELECTION_SHA256"],
+        )
+        self.assertFalse(root_receipt.exists())
+
+    def test_state_helper_accepts_current_run_id_and_rejects_legacy_shape(self) -> None:
+        current = "-".join(
+            ["1" * 12, "2" * 12, "3" * 12, "4" * 12, "5" * 40, "am_michael"]
+        )
+        legacy = "-".join(
+            ["1" * 12, "2" * 12, "3" * 12, "5" * 40, "am_michael"]
+        )
+
+        accepted = subprocess.run(
+            ["/usr/local/bin/python3", str(STATE_HELPER), "validate-run-id", current],
+            capture_output=True,
+            text=True,
+        )
+        rejected = subprocess.run(
+            ["/usr/local/bin/python3", str(STATE_HELPER), "validate-run-id", legacy],
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(0, accepted.returncode, accepted.stderr)
+        self.assertNotEqual(0, rejected.returncode)
 
     def run_direct_leased(
         self,
@@ -1670,45 +1532,6 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(64, mismatched.returncode)
         self.assertIn("canonical", mismatched.stderr)
 
-    def test_pilot_resume_cannot_omit_or_silently_ignore_state(self) -> None:
-        bare = self.run_pilot_narrate("--resume")
-        self.assertEqual(64, bare.returncode)
-        self.assertIn("--resume-state ABSOLUTE_PATH", bare.stderr)
-
-        relative = self.run_pilot_narrate(
-            "--resume", "--resume-state", "research/echo-resume-state.json"
-        )
-        self.assertEqual(64, relative.returncode)
-        self.assertIn("absolute", relative.stderr)
-
-        initial = self.run_pilot_narrate()
-        self.assertEqual(0, initial.returncode, initial.stderr)
-        resumed = self.run_pilot_narrate(*self.pilot_resume_arguments())
-        self.assertEqual(0, resumed.returncode, resumed.stderr)
-
-    def test_learning_pilot_resume_keeps_its_sealed_renderer_after_promotion(
-        self,
-    ) -> None:
-        selector_path = self.renderer_root / self.source_sha / "approved-renderer.json"
-        original_selector = selector_path.read_bytes()
-        sealed_build, sealed_manifest = self.select_manifest_variant(
-            lambda payload: payload.__setitem__("renderVersion", 13),
-            render_version=13,
-        )
-        initial = self.run_pilot_narrate()
-        self.assertEqual(0, initial.returncode, initial.stderr)
-        selector_path.write_bytes(original_selector)
-
-        resumed = self.run_pilot_narrate(*self.pilot_resume_arguments())
-
-        self.assertEqual(0, resumed.returncode, resumed.stderr)
-        receipt = next(
-            (self.run_root / "pilot" / "research").glob("echo-pilot-inputs-*.env")
-        ).read_text(encoding="utf-8")
-        self.assertIn(f"renderer_build_root={sealed_build}", receipt)
-        self.assertIn(f"renderer_manifest_sha256={sealed_manifest}", receipt)
-        self.assertIn("render_version=13", receipt)
-
     def test_success_publishes_run_scoped_media_and_current_selector(self) -> None:
         result = self.run_narrate()
         self.assertEqual(0, result.returncode, result.stderr)
@@ -1728,6 +1551,45 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(selector["attemptID"], artifact_root.name)
         self.assertTrue((artifact_root / "fixture.m4b").is_file())
         self.assertFalse((self.run_root / "dist" / "fixture.m4b").exists())
+
+    def test_preserves_optional_pronunciation_reel(self) -> None:
+        """Port of test_learning_pilot_preserves_optional_pronunciation_reel,
+        deleted from this file in commit a092860 along with the pilot
+        wrapper it exercised (originally added in commit 9b86658). The full
+        wrapper stages and publishes the reel exactly like the pilot wrapper
+        did (`mv -- "$STAGE_REEL" "$REEL"` in echo_pronunciation_narrate.sh),
+        under the full wrapper's dist/echo-renders/<run>/<attempt> layout
+        rather than the pilot's flat dist directory. This is the only test
+        in the suite that sets FAKE_EMIT_REEL; without it the reel
+        staging/publish path and the reelFileName/reelSHA256 success-receipt
+        fields go uncovered.
+        """
+        environment = self.environment()
+        environment["FAKE_EMIT_REEL"] = "1"
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        selector = json.loads(
+            (self.run_root / "research" / "echo-render-current-accepted.json")
+            .read_text(encoding="utf-8")
+        )
+        artifact_root = self.run_root / "dist" / selector["artifactRelativePath"]
+        self.assertTrue(
+            artifact_root.is_relative_to(self.run_root / "dist" / "echo-renders")
+        )
+        reel = artifact_root / "fixture.pronunciation-reel.m4b"
+        self.assertEqual(b"fixture listening reel", reel.read_bytes())
+
+        success = json.loads(
+            next(
+                (self.run_root / "research").glob("echo-render-success-*.json")
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(reel.name, success["reelFileName"])
+        self.assertEqual(
+            hashlib.sha256(reel.read_bytes()).hexdigest(), success["reelSHA256"]
+        )
 
     def test_wrapper_replaces_inherited_echo_resource_dir_for_every_cli_call(
         self,

@@ -137,30 +137,6 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     fi
   fi
 
-  if (( ! RECOVER_STALE_LOCK )); then
-    CANONICAL_PRONUNCIATION_PLAN="$RUN_ROOT/research/pronunciation-plan.json"
-    if [[ -z ${PRONUNCIATION_PLAN:-} ]]; then
-      printf 'PRONUNCIATION_PLAN is required; expected %s\n' \
-        "$CANONICAL_PRONUNCIATION_PLAN" >&2
-      exit 64
-    fi
-    if [[ "$PRONUNCIATION_PLAN" != "$CANONICAL_PRONUNCIATION_PLAN" ]]; then
-      printf 'PRONUNCIATION_PLAN must be the canonical run plan: %s\n' \
-        "$CANONICAL_PRONUNCIATION_PLAN" >&2
-      exit 64
-    fi
-    if [[ -n "$MAX_CHAPTERS" ]]; then
-      /usr/local/bin/python3 "$SCRIPT_DIR/../../../skill/scripts/pronunciation_plan_qc.py" \
-        --run-root "$RUN_ROOT" \
-        --phase planning
-    else
-      /usr/local/bin/python3 "$SCRIPT_DIR/../../../skill/scripts/pronunciation_plan_qc.py" \
-        --run-root "$RUN_ROOT" \
-        --phase full-render \
-        --receipt-out "$RUN_ROOT/research/pronunciation-plan-receipt.json"
-    fi
-  fi
-
   DIST="$RUN_ROOT/dist"
   ATTEMPT_ID=$(/usr/local/bin/python3 -c 'import secrets; print(secrets.token_hex(32))')
   ARTIFACT_RELATIVE_PATH="echo-renders/$RUN_ID/$ATTEMPT_ID"
@@ -682,7 +658,7 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --epub "$EPUB" \
   --audio "$STAGE_OUTPUT" \
   --sidecar "$STAGE_SIDECAR"
-"$SCRIPT_DIR/validate_pronunciation_audit.py" "$STAGE_AUDIT"
+/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$STAGE_AUDIT"
 verify_locked_inputs
 
 for final_output in "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL"; do
@@ -711,7 +687,7 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --epub "$EPUB" \
   --audio "$OUTPUT" \
   --sidecar "$SIDECAR"
-"$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
+/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
 verify_locked_inputs
 if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   verify-state "${state_command[@]}"; then

@@ -100,16 +100,8 @@ class FictionBookDevelopmentContractTests(unittest.TestCase):
 
     def test_authorized_private_production_uses_fiction_receipt_not_learning_receipt(self) -> None:
         skill = self.read("SKILL.md")
-        package_reference = (
-            ROOT
-            / "skills"
-            / "custom-learning-audiobook"
-            / "references"
-            / "package-and-qc.md"
-        ).read_text(encoding="utf-8")
-        for text in (skill, package_reference):
-            self.assertIn("fiction-production-receipt.json", text)
-            self.assertIn("--fiction-receipt", text)
+        self.assertIn("fiction-production-receipt.json", skill)
+        self.assertIn("--fiction-receipt", skill)
         self.assertIn("Do not pretend fiction passed a learning-design gate", skill)
 
 

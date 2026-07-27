@@ -1,11 +1,9 @@
 # Award-Worthy Audiobook Covers
 
-Contents: Universal paired-cover rule (with the complete paired command
-example) · Research Lens · Non-Negotiable Default: Three Distinct Directions ·
+Contents: Paired-cover rendering · Research Lens · Three Distinct Directions ·
 Genre Calibration · Candidate Brief Before Making Art · Making the Art ·
-Copy-ready image-generation prompt · Render, Compare, and Select ·
-Award-Worthy Acceptance Bar · Technical Contract · Legacy single-cover
-compatibility.
+Copy-ready image-generation prompt · Render, Compare, and Select · Award-Worthy
+Acceptance Bar · Technical Contract.
 
 ## Universal paired-cover rule
 
@@ -13,25 +11,15 @@ Every new book develops exactly three coordinated portrait/square candidates.
 Each direction shares one source-art identity but has two deliberately composed
 specifications: `cover.png` at 1600×2560 for the EPUB portrait and
 `m4b-cover.png` at 2400×2400 for the M4B square. Review both full-size images and
-both thumbnails together. The user makes an explicit pair selection; never mix
-variants or select automatically. That choice becomes a paired receipt before
-packaging, followed by post-embed verification.
+both thumbnails together. Never mix variants. Select the strongest complete pair
+on subject specificity, thumbnail legibility, title hierarchy, portrait/square
+coherence, absence of defects, and distinctiveness, then report the choice.
 
-The chronological contract is: research → three source directions →
-portrait/square render pairs → thumbnail review → explicit pair selection →
-paired receipt → EPUB portrait + M4B square embedding → post-embed verification
-→ governed public/iCloud/site sync. Legacy single-cover receipts and renderer
-flags are verification-only compatibility; do not teach them for new work.
+The governed Echo narration wrapper embeds the selected square cover itself and
+holds its FD-backed resource leases through narration. Treat the emitted M4B as
+immutable.
 
-The governed Echo narration wrapper embeds the selected square cover itself
-(it passes `M4B_COVER` to `echo-cli narrate`) and hashes the exact resulting
-M4B bytes into the pronunciation audit. Never run `replace_m4b_cover.py` or
-otherwise mutate a narrated M4B after Echo emits it — a byte change invalidates
-the audit and every downstream receipt. That script exists only to verify or
-reproduce pre-paired legacy artifacts.
-
-
-### Complete paired command example
+### Render a paired candidate
 
 Create exactly three directories, `candidate-1/`, `candidate-2/`, and
 `candidate-3/`. Each contains schema-v2 `cover-spec.json` and
@@ -59,86 +47,15 @@ render_cover_pair(
 )
 ```
 
-After the mode-authorized reviewer selects one pair, run the complete governed
-sequence. Use `selection_source=user` for a direct user choice,
-`requested-mix` for a requested mix, `editorial-autoselection` only for the
-private non-publishing unattended lane, or `delegated-editorial-choice` when
-the user explicitly delegates editorial selection for the named edition:
-
-```bash
-PAIR="$DIST/candidate-$SELECTED"
-/usr/local/bin/python3 skill/scripts/cover_receipts.py select-pair \
-  --portrait-render-receipt "$PAIR/cover-render.json" \
-  --square-render-receipt "$PAIR/m4b-cover-render.json" \
-  --out "$DIST/cover-selection.json" \
-  --book-slug "$SLUG" \
-  --edition-id "$EDITION_ID" \
-  --selection-source user \
-  --selected-at "$SELECTED_AT" \
-  --privacy-classification "$CLASSIFICATION"
-cp "$DIST/cover-selection.json" "$PAIR/cover-selection.json"
-
-/usr/local/bin/python3 skill/scripts/build_book.py \
-  --chapters-dir "$RUN_ROOT/chapters" \
-  --out-dir "$DIST" \
-  --title "$TITLE" \
-  --author "Dan Fakkeldy" \
-  --contributor "$CONTRIBUTOR" \
-  --subtitle "$SUBTITLE" \
-  --slug "$SLUG" \
-  --cover "$PAIR/cover.png" \
-  --m4b-cover "$PAIR/m4b-cover.png" \
-  --cover-selection "$DIST/cover-selection.json" \
-  --learning-receipt "$RUN_ROOT/research/learning-design-receipt.json" \
-  --prose-receipt "$RUN_ROOT/research/prose-style-receipt.json"
-
-# Run the governed Echo narration wrapper next (it embeds the square cover
-# itself), then complete the selector-bound QC flow in
-# skills/custom-learning-audiobook/references/package-and-qc.md. That flow
-# sets AUDIOBOOK to the accepted run-scoped M4B.
-: "${AUDIOBOOK:?set only from the verified current-accepted selector}"
-/usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$PAIR/cover.png" \
-  --m4b-cover "$PAIR/m4b-cover.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$AUDIOBOOK" \
-  --receipt "$DIST/cover-selection.json"
-
-/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$PAIR/cover.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$AUDIOBOOK" \
-  --paired-artifact-dir "$PAIR" \
-  --destination "$DELIVERY_DIR" \
-  --intent reuse
-
-/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$PAIR/cover.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$AUDIOBOOK" \
-  --paired-artifact-dir "$PAIR" \
-  --destination "$DELIVERY_DIR" \
-  --intent reuse \
-  --apply
-```
-
-Publication permission is never implied by this sequence: append
-`--permission-to-publish` to the `select-pair` call **only when the user has
-explicitly granted publication for this book**. Omitting it records
-`permission_to_publish: false`, the correct state for private, unattended, and
-not-yet-approved books (and the state the unattended editorial-autoselection
-validator requires). For an EPUB-only book with no Echo audio requested, omit
-the `--m4b` lines from `verify` and `sync_selected_cover.py`.
+For the rare public promotion flow, use
+`references/publishing-a-public-edition.md`.
 
 
 A cover is not a title placed on a coloured rectangle. It is a compact editorial
 argument for why a person should choose this book. The default is **three fully
 rendered, genuinely different, award-worthy cover candidates for every book**.
-Do this without waiting for a special request. The listener chooses the final one
-(or asks to combine aspects); never auto-pick a cover merely because it rendered
+Do this without waiting for a special request. Select the best complete pair on
+the rubric after reviewing every render; never choose merely because it rendered
 first.
 
 ## Research Lens: What Premium Covers Repeatedly Do
@@ -318,23 +235,11 @@ Assign `SLUG` from the approved run metadata. Keep generated artwork text-free.
 Save the shared art and both schema-v2 specs in each candidate directory. Use
 the complete `render_cover_pair(...)` call above for candidates 1 through 3.
 Review every full-size portrait and square render, generated 160-pixel
-thumbnail, art-and-type brief, font/palette note, and warning. In governed-final,
-ask the user to choose or request a mix. In unattended-first-listen, apply the
-rubric in `unattended-production.md` and record the editorial choice and reason.
-A mix becomes a new specification and render.
-
-Use `cover_receipts.py select-pair` as described by the universal rule. A paired
-user choice uses `selection_source=user`; a requested mix uses `requested-mix`;
-and a private, non-publishing unattended choice uses
-`editorial-autoselection`. When the user explicitly delegates the choice for a
-named public-safe edition, use `delegated-editorial-choice` and record the
-rubric rationale in the unattended decisions receipt. That choice is not
-publication permission; the receipt still requires separate authorized
-public-safe classification and permission fields. The receipt validator rejects editorial
-auto-selection unless classification is private and publication permission is
-false. The renderer itself never selects automatically.
-The old single-render receipt and title/art/accent/tone/layout paths are
-verification-only compatibility for existing packages.
+thumbnail, art-and-type brief, font/palette note, and warning. Score the complete
+pairs on subject specificity, thumbnail legibility, title hierarchy,
+portrait/square coherence, absence of defects, and distinctiveness. Select and
+report the strongest. A later request to mix directions becomes a new
+specification and render.
 
 ### Publisher brand mark
 
@@ -408,12 +313,5 @@ Reject and replace any candidate that:
 - `skill/scripts/make_cover_contact_sheet.py` builds a side-by-side contact
   sheet of all candidate renders and thumbnails for review.
 
-## Legacy single-cover compatibility (verification only)
-
-Pre-paired packages carry a single-cover receipt created with
-`cover_receipts.py select` and `--selection-source explicit-user-choice`, and
-some had square art embedded after the fact with `replace_m4b_cover.py`. Verify
-those receipts with `cover_receipts.py verify`; the full legacy command shapes
-are preserved in the compatibility section of
-`skills/custom-learning-audiobook/references/package-and-qc.md`. Never use any
-of them for a new or revised package.
+Public promotion and legacy compatibility commands live only in
+`references/publishing-a-public-edition.md`.
