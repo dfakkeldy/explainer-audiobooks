@@ -71,8 +71,12 @@ def main() -> int:
         "square_thumbnail=", "portrait_receipt=", "square_receipt=",
         "--portrait-render-receipt", "--square-render-receipt",
         "--selection-source user", "--privacy-classification",
+        "--out \"$PAIR/cover-selection.json\"",
+        "--selection \"$PAIR/cover-selection.json\"",
         "--m4b-cover \"$PAIR/m4b-cover.png\"",
-        "--paired-artifact-dir \"$PAIR\"", "--intent reuse", "--apply",
+        "echo_pronunciation_narrate.sh",
+        "--paired-artifact-dir \"$PAIR\"", "--public-destination",
+        "--intent reuse", "--apply",
     )
     contains(
         "skill/references/publishing-a-public-edition.md",

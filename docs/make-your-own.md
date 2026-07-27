@@ -17,19 +17,20 @@ ln -s "$(pwd)/skill" ~/.claude/skills/audiobook
 
 ## Ask for a book
 
-New books use exactly three coordinated portrait/square candidates. The human
-makes the explicit pair selection after thumbnail review, and the paired receipt
-binds `cover.png` at 1600×2560 to the EPUB portrait and `m4b-cover.png` at
-2400×2400 to the M4B square. Post-embed verification checks both and preserves
-media before governed public/iCloud/site sync. Public-safe packages may use
-approved public destinations; private packages stay private. Legacy single-cover
-receipts are verification-only compatibility.
+An ordinary book is private and receipt-free. The skill renders exactly three
+coordinated portrait/square candidates, reviews the full-size art and
+thumbnails, and auto-selects the strongest complete pair on its rubric. It uses
+`cover.png` at 1600×2560 for the EPUB portrait and `m4b-cover.png` at 2400×2400
+for the M4B square, then builds and narrates the book without asking you to
+operate publishing receipts.
 
-Order: research → three source directions → portrait/square render pairs →
-thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
-M4B square embedding → post-embed verification → governed public/iCloud/site
-sync. The current *Rodents in the Walls* exclusion is only for the five-book
-migration and is not a universal future rule.
+The result stays in its private run root. It goes to iCloud Books only when you
+explicitly request a private reading copy. If you later authorize a public
+edition, use the separate
+[`publishing-a-public-edition.md`](../skill/references/publishing-a-public-edition.md)
+runbook for human selection, publication permission, verification, and
+governed public/iCloud/site sync. The current *Rodents in the Walls* exclusion
+is only for the five-book migration and is not a universal future rule.
 
 Then say something like:
 

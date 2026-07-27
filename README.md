@@ -58,18 +58,16 @@ Together they trace the life of a real app — *what it's made of* → *how it s
 
 ## How it works (the short version)
 
-Every new title uses exactly three coordinated portrait/square candidates. A
-human makes the explicit pair selection after thumbnail review; the paired
-receipt binds `cover.png` at 1600×2560 to the EPUB portrait and `m4b-cover.png`
-at 2400×2400 to the M4B square. Post-embed verification proves both identities
-and media preservation before governed public/iCloud/site sync. Public-safe
-work may reach approved public, iCloud, and site destinations; private work
-stays private. Legacy single-cover receipts are verification-only compatibility.
+Every new title uses exactly three coordinated portrait/square candidates. The
+ordinary private workflow reviews them and auto-selects the strongest complete
+pair: `cover.png` at 1600×2560 for the EPUB portrait and `m4b-cover.png` at
+2400×2400 for the M4B square. It builds and narrates without public receipts and
+stays private unless the user explicitly requests a private iCloud reading copy.
 
-Order: research → three source directions → portrait/square render pairs →
-thumbnail review → explicit pair selection → paired receipt → EPUB portrait +
-M4B square embedding → post-embed verification → governed public/iCloud/site
-sync.
+Public promotion is separate. A user-authorized public edition follows
+[`publishing-a-public-edition.md`](skill/references/publishing-a-public-edition.md)
+for human pair selection, receipts, immutable re-narration when square art
+changes, verification, and governed public/iCloud/site sync.
 
 The *Rodents in the Walls* exclusion applies only to the current five-book
 migration because that edition already has approved square art. It is not a

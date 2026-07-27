@@ -36,7 +36,7 @@ the user explicitly authorizes publication of this named edition.
 /usr/local/bin/python3 skill/scripts/cover_receipts.py select-pair \
   --portrait-render-receipt "$PAIR/cover-render.json" \
   --square-render-receipt "$PAIR/m4b-cover-render.json" \
-  --out "$DIST/cover-selection.json" \
+  --out "$PAIR/cover-selection.json" \
   --book-slug "$SLUG" \
   --edition-id "$EDITION_ID" \
   --selection-source user \
@@ -53,15 +53,42 @@ the user explicitly authorizes publication of this named edition.
   --slug "$SLUG" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
-  --cover-selection "$DIST/cover-selection.json"
+  --cover-selection "$PAIR/cover-selection.json"
+```
 
+## Narrate the selected square
+
+If the selected square cover changed, the EPUB and M4B must both be rebuilt.
+Do not reuse an M4B rendered with different square art, and never patch the new
+cover into an old narration.
+
+Set `EXPLAINER_ROOT`, `RUN_ROOT`, `DIST`, `SLUG`, `TITLE`, `VOICE`, `COVER`,
+`M4B_COVER`, and the approved Echo source identity exactly as documented in
+`skills/echo-narration/references/narrating.md`, then run the governed wrapper:
+
+```bash
+export COVER="$PAIR/cover.png"
+export M4B_COVER="$PAIR/m4b-cover.png"
+"$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_narrate.sh"
+```
+
+Follow that reference's **Audio verification** block in full. It resolves
+`AUDIOBOOK` only from the accepted selector at
+`$RUN_ROOT/research/echo-render-current-accepted.json` and verifies the
+immutable M4B, sidecar, audit, input receipt, and success receipt. If the square
+did not change, still resolve the existing M4B through that accepted selector;
+never point `AUDIOBOOK` at an arbitrary or historical file.
+
+Only after that verification succeeds, verify the paired package:
+
+```bash
 /usr/local/bin/python3 skill/scripts/cover_receipts.py verify \
-  --selection "$DIST/cover-selection.json" \
+  --selection "$PAIR/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --m4b-cover "$PAIR/m4b-cover.png" \
   --epub "$DIST/$SLUG.epub" \
   --m4b "$AUDIOBOOK" \
-  --receipt "$DIST/cover-selection.json"
+  --receipt "$PAIR/cover-selection.json"
 ```
 
 ## Sync the selected artifacts
@@ -71,26 +98,28 @@ classification:
 
 ```bash
 /usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
-  --selection "$DIST/cover-selection.json" \
-  --cover "$PAIR/cover.png" \
-  --epub "$DIST/$SLUG.epub" \
-  --m4b "$AUDIOBOOK" \
-  --paired-artifact-dir "$PAIR" \
-  --destination "$DELIVERY_DIR" \
-  --intent reuse
-```
-
-When that classification is expected, repeat the same command with `--apply`:
-
-```bash
-/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
-  --selection "$DIST/cover-selection.json" \
+  --selection "$PAIR/cover-selection.json" \
   --cover "$PAIR/cover.png" \
   --epub "$DIST/$SLUG.epub" \
   --m4b "$AUDIOBOOK" \
   --paired-artifact-dir "$PAIR" \
   --destination "$DELIVERY_DIR" \
   --intent reuse \
+  --public-destination
+```
+
+When that classification is expected, repeat the same command with `--apply`:
+
+```bash
+/usr/local/bin/python3 skill/scripts/sync_selected_cover.py \
+  --selection "$PAIR/cover-selection.json" \
+  --cover "$PAIR/cover.png" \
+  --epub "$DIST/$SLUG.epub" \
+  --m4b "$AUDIOBOOK" \
+  --paired-artifact-dir "$PAIR" \
+  --destination "$DELIVERY_DIR" \
+  --intent reuse \
+  --public-destination \
   --apply
 ```
 

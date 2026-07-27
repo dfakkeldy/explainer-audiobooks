@@ -92,7 +92,7 @@ M4B square embedding → post-embed verification → governed public/iCloud/site
 sync. *Rodents in the Walls* is excluded only from the current five-book
 migration; that is not a universal future rule.
 
-A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the reviewed chapters into EPUB 3 and combined Markdown. The paired renderer creates portrait and square variants from each of three source directions, and the human chooses one complete pair. Its paired receipt governs portrait EPUB embedding and square M4B embedding. Echo renders the EPUB into audio and alignment data; the square-art replacement preserves that media. Post-embed verification checks both images and both containers before governed delivery.
+A small Python builder ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) turns the reviewed chapters into EPUB 3 and combined Markdown. The paired renderer creates portrait and square variants from each of three source directions, and the human chooses one complete pair. Its paired receipt governs portrait EPUB embedding and square M4B embedding. The governed Echo wrapper embeds the selected square art during narration and emits immutable audio plus alignment data. Post-embed verification checks both images and both containers before governed delivery. `replace_m4b_cover.py` is for legacy artifacts only; it is never part of a new or revised render.
 
 ## Model-aware, not model-agnostic
 

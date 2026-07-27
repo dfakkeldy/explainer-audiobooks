@@ -173,8 +173,9 @@ user means before creating a new one.
    cover generation, EPUB/Markdown building, Echo M4B/alignment rendering, QC,
    and delivery. This skill may draft sample passages or chapter beats, but it
    should not own the final manuscript build unless the user explicitly asks.
-   The production skill starts from the settled handoff without repeating
-   development intake.
+   A packet that satisfies the authoritative required-field check starts
+   production without repeating the five-question intake. The production skill
+   states its one-line plan and starts without another approval pause.
 
 ## Picture Rules
 

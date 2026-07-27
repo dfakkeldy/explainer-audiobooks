@@ -19,7 +19,9 @@ Pillow and cannot import `build_book.py`.
 
 ## Intake
 
-Ask these five questions in one `AskUserQuestion` batch:
+### Ordinary request
+
+For a direct book request, use one `AskUserQuestion` batch:
 
 1. What is the book about, and what should the listener be able to do after it?
 2. Who is it for?
@@ -28,8 +30,18 @@ Ask these five questions in one `AskUserQuestion` batch:
 5. Should it be built around a specific real thing — a repo, product, place, or
    document?
 
-Then state the plan in one line — title, angle, chapter count, estimated
-runtime — and start. Do not wait for a reply.
+### Complete longform handoff
+
+When `$longform-book-development` supplies a complete handoff packet, skip the five-question intake.
+A handoff is complete enough when it settles the audience,
+outcome, length, privacy and listening context; governing question, narrative
+spine, chapter and section jobs; source locators and story material; voice and
+figure plan; five craft passes and blind beginner review; narration risks,
+author, contributor, and delivery boundary. An incomplete packet follows the
+ordinary-request route.
+
+After either route, state the plan in one line — title, angle, chapter count,
+estimated runtime — and start with no approval pause.
 
 Apply silent defaults and write them to `source/brief.md`:
 

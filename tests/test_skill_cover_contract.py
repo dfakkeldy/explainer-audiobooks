@@ -90,11 +90,15 @@ class SkillCoverContractTests(unittest.TestCase):
                 with self.subTest(file=key, marker=marker):
                     self.assertIn(marker, text)
 
-    def test_public_docs_state_sync_boundaries_and_migration_scope(self) -> None:
-        for key in ("public", "readme", "make"):
+    def test_docs_distinguish_private_default_from_public_promotion(self) -> None:
+        for key in ("readme", "make"):
             text = FILES[key].read_text(encoding="utf-8")
-            self.assertIn("public/iCloud/site sync", text)
+            self.assertIn("auto-select", text)
             self.assertIn("private", text)
+            self.assertIn("publishing-a-public-edition.md", text)
+            self.assertNotIn("The human\nmakes the explicit pair selection", text)
+        public = FILES["public"].read_text(encoding="utf-8")
+        self.assertIn("public/iCloud/site sync", public)
         combined = "\n".join(
             FILES[key].read_text(encoding="utf-8")
             for key in ("public", "readme", "make")
@@ -125,8 +129,12 @@ class SkillCoverContractTests(unittest.TestCase):
             "--portrait-render-receipt",
             "--square-render-receipt",
             "--privacy-classification",
+            '--out "$PAIR/cover-selection.json"',
+            '--selection "$PAIR/cover-selection.json"',
             '--m4b-cover "$PAIR/m4b-cover.png"',
             '--paired-artifact-dir "$PAIR"',
+            "--public-destination",
+            "echo_pronunciation_narrate.sh",
             "--intent reuse",
             "--apply",
         ):
@@ -140,6 +148,12 @@ class SkillCoverContractTests(unittest.TestCase):
         self.assertIn("legacy artifacts only", publishing)
         self.assertNotIn("replace_m4b_cover.py", FILES["skill"].read_text(encoding="utf-8"))
         self.assertNotIn('--portrait-cover "$PAIR/cover.png"', publishing)
+
+    def test_public_method_uses_wrapper_embedding_not_post_echo_replacement(self) -> None:
+        text = FILES["public"].read_text(encoding="utf-8")
+        self.assertIn("governed Echo wrapper embeds", text)
+        self.assertIn("legacy artifacts only", text)
+        self.assertNotIn("square-art replacement preserves", text)
 
 
 if __name__ == "__main__":
