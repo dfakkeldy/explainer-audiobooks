@@ -71,7 +71,7 @@ SKILL_MANIFEST = {
         "file", 0o755, "5de16dc1b2b7b724b33858a17b0ab1158f033c06a5ba44099f038e66e13035be"
     ),
     Path("scripts/echo_pronunciation_narrate.sh"): ManifestEntry(
-        "file", 0o755, "2df8395f70af88e895f4649875507bf3a8f57414d7b735cf6ca4f9834a356248"
+        "file", 0o755, "bbe9a0e29d414174dbc7c70c78470dea800541afdd73416e31206d7537a66956"
     ),
     Path("scripts/echo_pronunciation_lease.py"): ManifestEntry(
         "file", 0o755, "f36136112ce1f40f47c8312d9687cbaf77ce9dfafcfdf353aa477ec5e5a6271b"

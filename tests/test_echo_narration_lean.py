@@ -20,8 +20,8 @@ class EchoNarrationLeanTests(unittest.TestCase):
     def test_wrapper_does_not_invoke_the_deleted_qc_script(self) -> None:
         self.assertNotIn("pronunciation_plan_qc.py", self.text)
 
-    def test_wrapper_still_accepts_an_optional_word_list(self) -> None:
-        self.assertIn("PRONUNCIATION_PLAN", self.text)
+    def test_pronunciation_plan_variable_is_gone(self) -> None:
+        self.assertNotIn("PRONUNCIATION_PLAN", self.text)
 
     def test_retired_scripts_are_gone(self) -> None:
         for retired in (

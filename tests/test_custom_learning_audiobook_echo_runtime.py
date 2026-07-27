@@ -574,9 +574,6 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "M4B_COVER": str(
                     self.run_root / "dist" / "candidate-1" / "m4b-cover.png"
                 ),
-                "PRONUNCIATION_PLAN": str(
-                    self.run_root / "research" / "pronunciation-plan.json"
-                ),
                 "ECHO_RENDERER_ROOT": str(self.renderer_root),
                 "ECHO_RENDERER_BUILD_ROOT": str(self.renderer_build_root),
                 "ECHO_RENDERER_MANIFEST": str(

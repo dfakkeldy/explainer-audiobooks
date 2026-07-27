@@ -137,16 +137,6 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     fi
   fi
 
-  if (( ! RECOVER_STALE_LOCK )); then
-    # An optional word list improves the render (e.g. "hyperparameter").
-    # It is an input, not a gate: an absent or unvalidated list is fine.
-    if [[ -n ${PRONUNCIATION_PLAN:-} && ! -f "$PRONUNCIATION_PLAN" ]]; then
-      printf 'PRONUNCIATION_PLAN was set but does not exist: %s\n' \
-        "$PRONUNCIATION_PLAN" >&2
-      exit 64
-    fi
-  fi
-
   DIST="$RUN_ROOT/dist"
   ATTEMPT_ID=$(/usr/local/bin/python3 -c 'import secrets; print(secrets.token_hex(32))')
   ARTIFACT_RELATIVE_PATH="echo-renders/$RUN_ID/$ATTEMPT_ID"
