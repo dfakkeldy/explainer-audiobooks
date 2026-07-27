@@ -821,9 +821,6 @@ class ReferenceTrimTests(unittest.TestCase):
 
     def test_skill_only_cites_references_that_exist(self) -> None:
         skill = (REPO / "skill" / "SKILL.md").read_text(encoding="utf-8")
-        for name in SURVIVING:
-            if f"references/{name}" in skill:
-                self.assertTrue((REFS / name).is_file())
         for line in skill.splitlines():
             if "references/" in line and ".md" in line:
                 for token in line.replace("`", " ").replace("(", " ").replace(")", " ").split():
