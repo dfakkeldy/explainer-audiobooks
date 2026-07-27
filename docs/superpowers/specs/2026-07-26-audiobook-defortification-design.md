@@ -202,10 +202,17 @@ Two scripts hard-fail today and must change, or no book can be built:
   `--legacy-without-learning-receipt` and `--learning-pilot` escape hatches are
   removed along with the requirement that made them necessary.
 - `skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh:141`
-  — moves to `skill/scripts/echo/` and drops the canonical-plan requirement and
-  its QC invocation. It still **accepts** an optional plain pronunciation word
-  list, because feeding it terms like `hyperparameter` genuinely improves the
-  render. That was always an input wearing a gate's costume.
+  — drops the canonical-plan requirement, its QC invocation, and the
+  `PRONUNCIATION_PLAN` variable entirely.
+
+  **Corrected 2026-07-26.** This section originally kept the word list as an
+  optional input, on the grounds that feeding Echo terms like `hyperparameter`
+  improves the render — "an input wearing a gate's costume." That was wrong.
+  `echo-cli narrate` takes only `--epub --out --sidecar --voice --title
+  --author --cover --work-dir --db --jobs --threads --resume --max-chapters`.
+  There is no lexicon flag and nothing in the repo passes the variable
+  anywhere. The pronunciation plan was never an input to the renderer; it fed
+  the QC gate and nothing else. It goes with the gate.
 
 ## Deletions
 

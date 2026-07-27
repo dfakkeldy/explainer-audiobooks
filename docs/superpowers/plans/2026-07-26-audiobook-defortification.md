@@ -282,7 +282,9 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 
 ### Task 2: Unblock Echo narration
 
-`echo_pronunciation_narrate.sh:141-160` refuses to render without a canonical `pronunciation-plan.json` that passes `pronunciation_plan_qc.py`. The optional word list survives as a plain input, because feeding Echo terms like `hyperparameter` genuinely improves the render.
+`echo_pronunciation_narrate.sh:141-160` refuses to render without a canonical `pronunciation-plan.json` that passes `pronunciation_plan_qc.py`. Remove the gate and the variable with it.
+
+**Correction (2026-07-26, after review of the first attempt).** This task originally kept `PRONUNCIATION_PLAN` as an optional input, on the stated grounds that feeding Echo terms like `hyperparameter` improves the render. That was wrong. `echo-cli narrate` accepts only `--epub --out --sidecar --voice --title --author --cover --work-dir --db --jobs --threads --resume --max-chapters`; it has no lexicon or pronunciation flag, and nothing in the repo passes the variable anywhere. The pronunciation plan was never an input to the renderer — it existed solely to feed the QC gate this task deletes. Keeping the variable would leave a check whose only possible effect is to abort an otherwise-good render. Dan's call, 2026-07-26: remove it entirely.
 
 **Files:**
 - Create: `tests/test_echo_narration_lean.py`
@@ -320,8 +322,8 @@ class EchoNarrationLeanTests(unittest.TestCase):
     def test_wrapper_does_not_invoke_the_deleted_qc_script(self) -> None:
         self.assertNotIn("pronunciation_plan_qc.py", self.text)
 
-    def test_wrapper_still_accepts_an_optional_word_list(self) -> None:
-        self.assertIn("PRONUNCIATION_PLAN", self.text)
+    def test_pronunciation_plan_variable_is_gone(self) -> None:
+        self.assertNotIn("PRONUNCIATION_PLAN", self.text)
 
     def test_retired_scripts_are_gone(self) -> None:
         for retired in (
@@ -372,19 +374,11 @@ In `skills/custom-learning-audiobook/scripts/echo_pronunciation_narrate.sh`, rep
     fi
 ```
 
-with:
+with nothing — delete the block outright, along with every other reference to `PRONUNCIATION_PLAN` in the wrapper. Nothing consumes the variable, so no replacement check is warranted.
 
-```bash
-    # An optional word list improves the render (e.g. "hyperparameter").
-    # It is an input, not a gate: an absent or unvalidated list is fine.
-    if [[ -n ${PRONUNCIATION_PLAN:-} && ! -f "$PRONUNCIATION_PLAN" ]]; then
-      printf 'PRONUNCIATION_PLAN was set but does not exist: %s\n' \
-        "$PRONUNCIATION_PLAN" >&2
-      exit 64
-    fi
-```
+Leave the surrounding `if (( ! RECOVER_STALE_LOCK )); then ... fi` intact. If removing the block leaves that conditional with an empty body, remove the now-empty conditional too rather than leaving a no-op branch.
 
-Leave the surrounding `if (( ! RECOVER_STALE_LOCK )); then ... fi` intact.
+Note that `tools/validate_custom_learning_skill_install.py` pins a SHA-256 of this wrapper and must be updated to the new hash. That file is deleted in Task 3, but it must pass until then.
 
 - [ ] **Step 4: Delete the retired scripts and tests**
 
