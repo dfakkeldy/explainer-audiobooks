@@ -9,7 +9,7 @@ source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"
 
 usage() {
   printf '%s\n' \
-    'usage: echo_pronunciation_narrate.sh [--resume --resume-state ABSOLUTE_PATH] [--max-chapters N]' \
+    'usage: echo_pronunciation_narrate.sh [--chapter-voice N=voice_id]... [--resume --resume-state ABSOLUTE_PATH] [--max-chapters N]' \
     '       echo_pronunciation_narrate.sh --recover-stale-lock' >&2
 }
 
@@ -17,6 +17,7 @@ RESUME=0
 RESUME_STATE=
 RECOVER_STALE_LOCK=0
 MAX_CHAPTERS=
+CHAPTER_VOICES=()
 INTERNAL_MODE=
 while (( $# )); do
   case "$1" in
@@ -42,6 +43,15 @@ while (( $# )); do
         exit 64
       fi
       MAX_CHAPTERS=$2
+      shift
+      ;;
+    --chapter-voice)
+      if [[ -z ${2:-} ]]; then
+        printf '%s\n' '--chapter-voice requires N=voice_id' >&2
+        usage
+        exit 64
+      fi
+      CHAPTER_VOICES+=("$2")
       shift
       ;;
     --leased-run)
@@ -121,6 +131,9 @@ if [[ -z "$INTERNAL_MODE" ]]; then
   if [[ -n "$MAX_CHAPTERS" ]]; then
     lease_command+=(--max-chapters "$MAX_CHAPTERS")
   fi
+  for chapter_voice in "${CHAPTER_VOICES[@]}"; do
+    lease_command+=(--chapter-voice "$chapter_voice")
+  done
   exec "${lease_command[@]}"
 fi
 
@@ -184,6 +197,9 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     if [[ -n "$MAX_CHAPTERS" ]]; then
       lease_command+=(--max-chapters "$MAX_CHAPTERS")
     fi
+    for chapter_voice in "${CHAPTER_VOICES[@]}"; do
+      lease_command+=(--chapter-voice "$chapter_voice")
+    done
   fi
   exec "${lease_command[@]}"
 fi
@@ -334,12 +350,15 @@ load_owner_metadata() {
   LOCK_AUDIT=$(owner_field output_audit)
   LOCK_REEL=$(owner_field output_reel)
 
+  if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+    validate-run-id "$LOCK_RUN_ID" >/dev/null 2>&1; then
+    return 1
+  fi
   if [[ "$LOCK_SCHEMA" != 2 \
     || ! "$LOCK_OWNER_TOKEN" =~ ^[0-9a-f]{64}$ \
     || ! "$LOCK_OWNER_PID" =~ ^[1-9][0-9]*$ \
     || -z "$LOCK_OWNER_HOST" \
     || -z "$LOCK_OWNER_START" \
-    || ! "$LOCK_RUN_ID" =~ ^[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{40}-(am_michael|am_puck)$ \
     || ! "$LOCK_ATTEMPT_ID" =~ ^[0-9a-f]{64}$ \
     || "$LOCK_WORK" != "$RUN_ROOT/audio-work-$LOCK_RUN_ID" \
     || "$LOCK_DB" != "$RUN_ROOT/narration-$LOCK_RUN_ID.sqlite" \
@@ -560,10 +579,14 @@ state_command=(
   --epub "$EPUB"
   --source-sha "$ECHO_SOURCE_SHA"
   --voice "$VOICE"
+  --voice-plan-sha256 "$VOICE_PLAN_SHA256"
   --render-version "$ECHO_RENDER_VERSION"
   --input-receipt "$ECHO_RENDER_INPUT_RECEIPT"
   --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
 )
+for chapter_voice in "${CHAPTER_VOICES[@]}"; do
+  state_command+=(--chapter-voice "$chapter_voice")
+done
 
 seal_resume_state() {
   /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
@@ -611,6 +634,9 @@ narrate_command=(
   --jobs 1
   --threads 2
 )
+for chapter_voice in "${CHAPTER_VOICES[@]}"; do
+  narrate_command+=(--chapter-voice "$chapter_voice")
+done
 if (( RESUME )); then
   narrate_command+=(--resume)
 fi
@@ -694,12 +720,10 @@ if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   printf 'resume state receipt does not match final WORK, DB, or version-bound Echo captures\n' >&2
   exit 65
 fi
-/usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
-  write-success \
+success_command=(
   "${renderer_state_arguments[@]}" \
   --attempt-id "$ATTEMPT_ID" \
   --run-id "$RUN_ID" \
-  --receipt "$SUCCESS_RECEIPT" \
   --attempt-receipt "$ATTEMPT_RECEIPT" \
   --input-receipt "$ECHO_RENDER_INPUT_RECEIPT" \
   --epub "$EPUB" \
@@ -709,6 +733,7 @@ fi
   --db "$DB" \
   --source-sha "$ECHO_SOURCE_SHA" \
   --voice "$VOICE" \
+  --voice-plan-sha256 "$VOICE_PLAN_SHA256" \
   --render-version "$ECHO_RENDER_VERSION" \
   --audiobook "$OUTPUT" \
   --sidecar "$SIDECAR" \
@@ -716,26 +741,14 @@ fi
   --reel "$REEL" \
   --selection-resource "$SELECTION_RESOURCE" \
   --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
+)
+for chapter_voice in "${CHAPTER_VOICES[@]}"; do
+  success_command+=(--chapter-voice "$chapter_voice")
+done
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
-  verify-success \
-  "${renderer_state_arguments[@]}" \
-  --attempt-id "$ATTEMPT_ID" \
-  --run-id "$RUN_ID" \
-  --receipt "$SUCCESS_RECEIPT" \
-  --attempt-receipt "$ATTEMPT_RECEIPT" \
-  --input-receipt "$ECHO_RENDER_INPUT_RECEIPT" \
-  --epub "$EPUB" \
-  --artifact-relative-path "$ARTIFACT_RELATIVE_PATH" \
-  --state-receipt "$STATE_RECEIPT" \
-  --work "$WORK" \
-  --db "$DB" \
-  --source-sha "$ECHO_SOURCE_SHA" \
-  --voice "$VOICE" \
-  --render-version "$ECHO_RENDER_VERSION" \
-  --audiobook "$OUTPUT" \
-  --sidecar "$SIDECAR" \
-  --audit "$AUDIT" \
-  --reel "$REEL"
+  write-success --receipt "$SUCCESS_RECEIPT" "${success_command[@]}"
+/usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
+  verify-success --receipt "$SUCCESS_RECEIPT" "${success_command[@]}"
 /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   accept-attempt \
   "${renderer_state_arguments[@]}" \

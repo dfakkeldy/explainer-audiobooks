@@ -389,7 +389,7 @@ class EchoNarrationContractTests(unittest.TestCase):
             '--epub "$DIST/$SLUG.epub"',
             '--audio "$AUDIOBOOK"',
             '--sidecar "$SIDECAR"',
-            "schema version is `2`",
+            "schema version is `3`",
             "coverage",
             "watch counts",
             "including zero counts",

@@ -15,16 +15,18 @@ import tempfile
 from pathlib import Path
 
 from echo_pronunciation_lease import load_capability, validate_capability
+from echo_voice_plan import VOICE_IDS, effective_voice, voice_plan
 
 
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
 CHAPTER_CONTENT_SIGNATURE_PATTERN = re.compile(r"[0-9a-f]{16}")
 MARKER_PATTERN = re.compile(r"\.anchors-ch([0-9]+)\.json")
-# epub-cli-resources-manifest-source-voice.
+# epub-cli-resources-manifest-source-voice-plan.
+VOICE_ID_PATTERN = "|".join(re.escape(voice) for voice in sorted(VOICE_IDS))
 RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
     r"[0-9a-f]{12}-[0-9a-f]{40}"
-    r"-(?:am_michael|am_puck)"
+    rf"-(?:{VOICE_ID_PATTERN}|plan-[0-9a-f]{{12}})"
 )
 LEGACY_RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
@@ -256,7 +258,7 @@ def require_receipt_renderer_identity(
 
 
 def read_installed_renderer_identity(path: Path) -> tuple[str, str]:
-    """Read the exact installed-renderer identity from a schema-v2 resume receipt."""
+    """Read the installed-renderer identity from a sealed resume receipt."""
 
     def reject_duplicates(pairs: list[tuple[str, object]]) -> dict[str, object]:
         payload: dict[str, object] = {}
@@ -273,6 +275,7 @@ def read_installed_renderer_identity(path: Path) -> tuple[str, str]:
     except (json.JSONDecodeError, UnicodeDecodeError) as error:
         raise StateError("resume-state receipt is not valid UTF-8 JSON") from error
     require(isinstance(payload, dict), "resume-state receipt must be an object")
+    schema_version = payload.get("schemaVersion")
     expected_keys = {
         "schemaVersion",
         "echoSourceSHA",
@@ -286,13 +289,15 @@ def read_installed_renderer_identity(path: Path) -> tuple[str, str]:
         "databaseByteCount",
         "captures",
     } | set(RENDERER_IDENTITY_KEYS)
+    if schema_version == 3:
+        expected_keys |= {"chapterVoices", "voicePlanSHA256"}
     require(
         set(payload) == expected_keys,
         "resume-state receipt is not the exact installed-renderer schema",
     )
     require(
-        type(payload["schemaVersion"]) is int and payload["schemaVersion"] == 2,
-        "resume-state receipt is not installed-renderer schema 2",
+        type(schema_version) is int and schema_version in {2, 3},
+        "resume-state receipt is not installed-renderer schema 2 or 3",
     )
     identity = renderer_identity_from_payload(payload, "resume-state receipt")
     require_receipt_renderer_identity(payload, identity, "resume-state receipt")
@@ -416,6 +421,8 @@ def capture_snapshot(
     epub: Path,
     source_sha: str,
     voice: str,
+    chapter_voice_values: list[str],
+    voice_plan_sha256: str | None,
     render_version: int,
     input_receipt: Path,
     installed_renderer: dict[str, object],
@@ -425,7 +432,12 @@ def capture_snapshot(
         or re.fullmatch(r"[0-9a-f]{40}", source_sha) is not None,
         "source SHA is invalid",
     )
-    require(voice in {"am_michael", "am_puck"}, "resume voice is invalid")
+    plan = voice_plan(voice, chapter_voice_values)
+    voice_plan_sha256 = voice_plan_sha256 or plan["voicePlanSHA256"]
+    require(
+        plan["voicePlanSHA256"] == voice_plan_sha256,
+        "resume voice-plan SHA-256 is invalid",
+    )
     require(
         type(render_version) is int and render_version >= 12,
         "resume render version must be an integer of at least 12",
@@ -475,6 +487,9 @@ def capture_snapshot(
         ],
         "model_bytes_attested": "false",
         "voice": voice,
+        "chapter_voices": ",".join(plan["canonicalAssignments"]),
+        "voice_plan_sha256": voice_plan_sha256,
+        "voice_plan_id": plan["voicePlanID"],
     }
     for key, value in expected_receipt_identity.items():
         require(
@@ -486,9 +501,14 @@ def capture_snapshot(
     captures: list[dict[str, object]] = []
     capture_set_id: str | None = None
     indexes: set[int] = set()
-    marker_paths = sorted(work.glob(".anchors-ch*.json"), key=lambda path: path.name)
+    marker_paths = sorted(
+        work.glob(".anchors-ch*.json"),
+        key=lambda path: int(MARKER_PATTERN.fullmatch(path.name).group(1))
+        if MARKER_PATTERN.fullmatch(path.name)
+        else -1,
+    )
     require(marker_paths, "resume state has no completed capture markers")
-    for marker in marker_paths:
+    for display_chapter, marker in enumerate(marker_paths, start=1):
         regular_file(marker, "capture marker")
         match = MARKER_PATTERN.fullmatch(marker.name)
         require(match is not None, f"malformed capture marker name: {marker.name}")
@@ -526,8 +546,12 @@ def capture_snapshot(
             identity.get("sourceFingerprint") == expected_source,
             f"resume state source fingerprint differs: {marker.name}",
         )
+        expected_voice = effective_voice(
+            voice, plan["chapterVoices"], display_chapter
+        )
         require(
-            identity.get("voice") == voice, f"resume state voice differs: {marker.name}"
+            identity.get("voice") == expected_voice,
+            f"resume state voice differs: {marker.name}",
         )
         require(
             type(identity.get("chapterIndex")) is int
@@ -598,10 +622,15 @@ def capture_snapshot(
             }
         )
     return {
-        "schemaVersion": 2,
+        "schemaVersion": 3,
         **installed_renderer,
         "sourceFingerprint": expected_source,
         "voice": voice,
+        "chapterVoices": {
+            str(chapter): chapter_voice
+            for chapter, chapter_voice in plan["chapterVoices"].items()
+        },
+        "voicePlanSHA256": voice_plan_sha256,
         "renderVersion": render_version,
         "captureSetID": capture_set_id,
         "inputReceiptSHA256": sha256(input_receipt),
@@ -623,6 +652,8 @@ def success_snapshot(
     database: Path,
     source_sha: str,
     voice: str,
+    chapter_voice_values: list[str],
+    voice_plan_sha256: str | None,
     render_version: int,
     audiobook: Path,
     sidecar: Path,
@@ -660,6 +691,8 @@ def success_snapshot(
             epub,
             source_sha,
             voice,
+            chapter_voice_values,
+            voice_plan_sha256,
             render_version,
             input_receipt,
             installed_renderer,
@@ -720,6 +753,26 @@ def required_string(payload: dict[str, object], field: str, label: str) -> str:
     return value
 
 
+def input_receipt_value(path: Path, key: str) -> str:
+    regular_file(path, "render-input receipt")
+    try:
+        lines = read_regular_bytes(path, "render-input receipt").decode(
+            "utf-8"
+        ).splitlines()
+    except UnicodeDecodeError as error:
+        raise StateError("render-input receipt is not UTF-8") from error
+    values = [
+        line.removeprefix(f"{key}=")
+        for line in lines
+        if line.startswith(f"{key}=")
+    ]
+    require(
+        len(values) == 1 and bool(values[0]),
+        f"render-input receipt has invalid {key}",
+    )
+    return values[0]
+
+
 def attempt_snapshot(
     attempt_id: str,
     run_id: str,
@@ -747,12 +800,12 @@ def attempt_snapshot(
             installed_renderer is not None,
             "current attempt requires installed renderer identity",
         )
-        voice = run_id.rsplit("-", 1)[-1]
+        voice_plan_id = input_receipt_value(input_receipt, "voice_plan_id")
         expected_run_id = (
             f"{sha256(epub)[:12]}-{installed_renderer['echoCLI_SHA256'][:12]}-"
             f"{installed_renderer['echoResourcesSHA256'][:12]}-"
             f"{installed_renderer['rendererManifestSHA256'][:12]}-"
-            f"{installed_renderer['echoSourceSHA']}-{voice}"
+            f"{installed_renderer['echoSourceSHA']}-{voice_plan_id}"
         )
         require(
             run_id == expected_run_id,
@@ -936,7 +989,7 @@ def verify_delivery_receipt(
         "current delivery verification requires installed renderer identity",
     )
     require(
-        historical or voice in {"am_michael", "am_puck"},
+        historical or voice in VOICE_IDS,
         "current delivery verification requires an approved voice",
     )
     if installed_renderer is not None:
@@ -955,11 +1008,16 @@ def verify_delivery_receipt(
             installed_renderer is not None,
             "current delivery verification requires installed renderer identity",
         )
+        require(
+            voice == input_receipt_value(input_receipt, "voice"),
+            "current delivery voice differs from render-input receipt",
+        )
+        voice_plan_id = input_receipt_value(input_receipt, "voice_plan_id")
         expected_run_id = (
             f"{sha256(epub)[:12]}-{installed_renderer['echoCLI_SHA256'][:12]}-"
             f"{installed_renderer['echoResourcesSHA256'][:12]}-"
             f"{installed_renderer['rendererManifestSHA256'][:12]}-"
-            f"{installed_renderer['echoSourceSHA']}-{voice}"
+            f"{installed_renderer['echoSourceSHA']}-{voice_plan_id}"
         )
         require(
             run_id == expected_run_id,
@@ -1108,6 +1166,8 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--epub", type=Path, required=True)
         command.add_argument("--source-sha", required=True)
         command.add_argument("--voice", required=True)
+        command.add_argument("--chapter-voice", action="append", default=[])
+        command.add_argument("--voice-plan-sha256")
         command.add_argument("--render-version", type=int, required=True)
         command.add_argument("--input-receipt", type=Path, required=True)
         command.add_argument("--lock-root", type=Path)
@@ -1142,6 +1202,8 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--db", type=Path, required=True)
         command.add_argument("--source-sha", required=True)
         command.add_argument("--voice", required=True)
+        command.add_argument("--chapter-voice", action="append", default=[])
+        command.add_argument("--voice-plan-sha256")
         command.add_argument("--render-version", type=int, required=True)
         command.add_argument("--audiobook", type=Path, required=True)
         command.add_argument("--sidecar", type=Path, required=True)
@@ -1192,6 +1254,8 @@ def main(arguments: list[str]) -> int:
                 options.epub,
                 options.source_sha,
                 options.voice,
+                options.chapter_voice,
+                options.voice_plan_sha256,
                 options.render_version,
                 options.input_receipt,
                 installed_renderer,
@@ -1284,6 +1348,8 @@ def main(arguments: list[str]) -> int:
                 options.db,
                 options.source_sha,
                 options.voice,
+                options.chapter_voice,
+                options.voice_plan_sha256,
                 options.render_version,
                 options.audiobook,
                 options.sidecar,
