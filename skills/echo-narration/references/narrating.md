@@ -130,6 +130,24 @@ export APPROVED_ECHO_PRONUNCIATION_SHA
 "$NARRATION_SCRIPT"
 ```
 
+For a mixed-voice book, pass one repeatable mapping per narratable chapter.
+Chapter numbers are one-based in the same order readers see in the EPUB. Echo's
+full English `VoiceCatalog` is allowed:
+
+```bash
+"$NARRATION_SCRIPT" \
+  --chapter-voice 1=af_heart \
+  --chapter-voice 2=af_bella \
+  --chapter-voice 3=am_fenrir
+```
+
+The wrapper validates and chapter-sorts the mappings, hashes the exact default
+voice plus mapping plan into the `RUN_ID`, records the canonical plan and hash
+in the immutable input receipt, and repeats the plan in the sealed resume-state
+receipt. A resume must pass the identical `--chapter-voice` arguments. Changing,
+adding, or removing one mapping selects a different `WORK`, database, and
+receipt chain.
+
 Pronunciation review is on by default; it applies approved rules before TTS
 and emits review evidence automatically. Do not pass
 `--no-pronunciation-review` for a governed render. The command uses the
@@ -316,9 +334,11 @@ ffprobe -v error -show_entries format=duration \
   "$AUDIT"
 ```
 
-Require `SIDECAR_OK` from `verify-sidecar`. The media-bound manifest schema
-version is `2`. Require `coverage=complete`, render version 12 or newer,
-`am_michael` or `am_puck`, schema-valid decision objects and timing ranges,
+Require `SIDECAR_OK` from `verify-sidecar`. The current media-bound manifest
+schema version is `3`; schema `2` remains accepted for earlier uniform governed
+renders. Require `coverage=complete`, render version 12 or newer, a known Echo
+English voice or `mixed`, complete valid `chapterVoices` provenance for schema
+3, schema-valid decision objects and timing ranges,
 and watch counts that match decisions across the complete emitted watch
 vocabulary, including zero counts. Require `audiobookSHA256` to match the
 exact raw sibling M4B bytes; when a reel is listed, require

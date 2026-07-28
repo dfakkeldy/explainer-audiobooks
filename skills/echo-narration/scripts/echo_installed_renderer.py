@@ -22,7 +22,13 @@ from typing import BinaryIO, Iterator, Mapping, Sequence
 from echo_pronunciation_state import read_installed_renderer_identity
 
 
-ACCEPTED_INSTALLER_SOURCE_SHA = "2f23aceedb1b9f25b7ea4410756eea32a59af8cd"
+ACCEPTED_INSTALLER_SOURCE_SHA = "d7f27b02f5a6046988d14c7e147e99904f66464b"
+ACCEPTED_INSTALLER_SOURCE_SHAS = frozenset(
+    {
+        "2f23aceedb1b9f25b7ea4410756eea32a59af8cd",
+        ACCEPTED_INSTALLER_SOURCE_SHA,
+    }
+)
 
 _EXECUTABLE_NAME = "echo-cli"
 _RESOURCES_NAME = "EchoNarrationResources"
@@ -349,7 +355,7 @@ def parse_manifest(path: Path, source_sha: str, manifest_sha: str) -> RendererSt
         payload["installerSourceSHA"], "installerSourceSHA"
     )
     _validate_commit_sha(installer_source_sha, "installerSourceSHA")
-    if installer_source_sha != ACCEPTED_INSTALLER_SOURCE_SHA:
+    if installer_source_sha not in ACCEPTED_INSTALLER_SOURCE_SHAS:
         raise ValueError("renderer manifest installer identity is not accepted")
 
     executable_path = _require_string(payload["executablePath"], "executablePath")

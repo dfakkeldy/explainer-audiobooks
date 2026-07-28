@@ -79,6 +79,7 @@ REQUIRED_CAPABILITIES = (
     "--cover",
     "--sidecar",
     "--voice",
+    "--chapter-voice",
     "--db",
     "--work-dir",
     "--jobs",
@@ -408,7 +409,8 @@ out.write_bytes(b"fixture audiobook bytes")
 sidecar.write_text("{}\\n")
 words = ("arithmetic", "campbell", "content", "fakkeldy", "filesystem", "live", "lives", "re", "read", "readme", "record", "resume", "resumes", "résumé", "résumés", "startable", "timeframe", "verified", "xcassets", "xcode")
 audit = {
-    "schemaVersion": 2, "renderVersion": __RENDER_VERSION__, "voice": voice, "coverage": "complete",
+    "schemaVersion": 3, "renderVersion": __RENDER_VERSION__, "voice": voice,
+    "chapterVoices": {"0": voice}, "coverage": "complete",
     "watchCounts": {word: 0 for word in words}, "decisions": [], "diagnostics": [],
     "legacyChapterIndexes": [], "audiobookFileName": out.name,
     "audiobookSHA256": hashlib.sha256(out.read_bytes()).hexdigest(),
@@ -484,7 +486,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             '    printf \'BEGIN=%s\\n\' "$BASHPID" >>"$FAKE_NARRATE_LOG"\n'
             '    printf \'ARG=%s\\n\' "$@" >>"$FAKE_NARRATE_LOG"\n'
             "  fi\n"
-            "  work= db= out= sidecar= epub= voice=\n"
+            "  work= db= out= sidecar= epub= voice= chapter_voice=\n"
             "  while (( $# )); do\n"
             '    case "$1" in\n'
             "      --work-dir) work=$2; shift 2 ;;\n"
@@ -493,10 +495,12 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "      --sidecar) sidecar=$2; shift 2 ;;\n"
             "      --epub) epub=$2; shift 2 ;;\n"
             "      --voice) voice=$2; shift 2 ;;\n"
+            "      --chapter-voice) chapter_voice=$2; shift 2 ;;\n"
             "      --resume) shift ;;\n"
             "      *) shift ;;\n"
             "    esac\n"
             "  done\n"
+            '  [[ $chapter_voice != 1=* ]] || voice=${chapter_voice#1=}\n'
             '  [[ -z ${FAKE_NARRATE_READY:-} ]] || touch "$FAKE_NARRATE_READY"\n'
             "  if [[ -n ${FAKE_NARRATE_RELEASE:-} ]]; then\n"
             "    while [[ ! -e $FAKE_NARRATE_RELEASE ]]; do sleep 0.05; done\n"
@@ -986,6 +990,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "ECHO_MODEL_EXPECTED_BYTES",
             "ECHO_MODEL_BYTES_ATTESTED",
             "VOICE",
+            "CHAPTER_VOICES_CANONICAL",
+            "VOICE_PLAN_SHA256",
+            "VOICE_PLAN_ID",
             "RUN_ID",
             "WORK",
             "DB",
@@ -2258,6 +2265,56 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertNotEqual(0, tampered.returncode)
         self.assertIn("SHA-256 differs", tampered.stderr)
 
+    def test_chapter_voice_plan_is_forwarded_and_bound_to_run_and_resume(
+        self,
+    ) -> None:
+        narrate_log = self.tmp / "mixed-voice-narrate.log"
+        environment = self.environment()
+        environment["FAKE_NARRATE_LOG"] = str(narrate_log)
+        result = self.run_narrate(
+            "--chapter-voice",
+            "1=af_heart",
+            environment=environment,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        arguments = narrate_log.read_text(encoding="utf-8")
+        self.assertIn("ARG=--chapter-voice\nARG=1=af_heart", arguments)
+
+        research = self.run_root / "research"
+        input_receipt = next(research.glob("echo-render-inputs-*.env"))
+        input_fields = dict(
+            line.split("=", 1)
+            for line in input_receipt.read_text(encoding="utf-8").splitlines()
+        )
+        self.assertEqual("1=af_heart", input_fields["chapter_voices"])
+        self.assertRegex(input_fields["voice_plan_sha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(
+            f"plan-{input_fields['voice_plan_sha256'][:12]}",
+            input_fields["voice_plan_id"],
+        )
+        self.assertTrue(
+            input_fields["run_id"].endswith(f"-{input_fields['voice_plan_id']}")
+        )
+
+        state_path = next(research.glob("echo-resume-state-*.json"))
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        self.assertEqual(3, state["schemaVersion"])
+        self.assertEqual({"1": "af_heart"}, state["chapterVoices"])
+        self.assertEqual(
+            input_fields["voice_plan_sha256"], state["voicePlanSHA256"]
+        )
+
+        changed = self.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(state_path),
+            "--chapter-voice",
+            "1=af_bella",
+            environment=environment,
+        )
+        self.assertNotEqual(0, changed.returncode)
+        self.assertIn("canonical current-run receipt", changed.stderr)
+
     def test_renderer_identity_changes_prevent_resume_and_delivery_reuse(self) -> None:
         result = self.run_narrate()
         self.assertEqual(0, result.returncode, result.stderr)
@@ -2765,11 +2822,47 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("pronunciation_audit: clean", result.stdout)
 
-    def test_rejects_non_v2_manifest(self) -> None:
+    def test_rejects_unsupported_manifest_schema(self) -> None:
         self.payload["schemaVersion"] = 1
         result = self.run_validator()
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("schemaVersion must be 2", result.stderr)
+        self.assertIn("schemaVersion must be 2 or 3", result.stderr)
+
+    def test_accepts_schema_v3_mixed_voice_with_complete_chapter_provenance(
+        self,
+    ) -> None:
+        self.payload.update(
+            {
+                "schemaVersion": 3,
+                "voice": "mixed",
+                "chapterVoices": {
+                    "0": "af_heart",
+                    "2": "bf_emma",
+                    "5": "bm_fable",
+                },
+            }
+        )
+        result = self.run_validator()
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_rejects_schema_v3_incomplete_or_inconsistent_voice_provenance(
+        self,
+    ) -> None:
+        cases = (
+            ("missing", None),
+            ("unknown", {"0": "not_a_voice"}),
+            ("mixed-but-uniform", {"0": "af_heart", "2": "af_heart"}),
+        )
+        for name, chapter_voices in cases:
+            with self.subTest(name=name):
+                self.payload["schemaVersion"] = 3
+                self.payload["voice"] = "mixed"
+                if chapter_voices is None:
+                    self.payload.pop("chapterVoices", None)
+                else:
+                    self.payload["chapterVoices"] = chapter_voices
+                result = self.run_validator()
+                self.assertNotEqual(0, result.returncode)
 
     def test_accepts_full_schema_decision_and_matching_watch_count(self) -> None:
         self.payload["decisions"] = [self.valid_decision()]
@@ -2803,7 +2896,7 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
 
     def test_rejects_disallowed_voice_or_pre_v12_render(self) -> None:
         for field, value, message in (
-            ("voice", "af_heart", "voice must be am_michael or am_puck"),
+            ("voice", "af_heart", "schema 2 voice must be am_michael or am_puck"),
             ("renderVersion", 11, "renderVersion must be at least 12"),
         ):
             with self.subTest(field=field):

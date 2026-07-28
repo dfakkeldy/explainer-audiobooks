@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Echo's media-bound schema-v2 pronunciation acceptance manifest."""
+"""Validate Echo's media-bound pronunciation acceptance manifest."""
 
 from __future__ import annotations
 
@@ -81,7 +81,36 @@ DECISION_SOURCES = {
 TIMING_PRECISIONS = {"exactSynthesisWord", "blockAnchorFallback"}
 INT32_MAX = (2**31) - 1
 INT64_MAX = (2**63) - 1
-ALLOWED_VOICES = {"am_michael", "am_puck"}
+ALLOWED_VOICES = {
+    "af_heart",
+    "af_bella",
+    "af_nicole",
+    "af_aoede",
+    "af_kore",
+    "af_sarah",
+    "af_alloy",
+    "af_nova",
+    "af_sky",
+    "af_jessica",
+    "af_river",
+    "am_fenrir",
+    "am_michael",
+    "am_puck",
+    "am_echo",
+    "am_eric",
+    "am_liam",
+    "am_onyx",
+    "am_santa",
+    "am_adam",
+    "bf_emma",
+    "bf_isabella",
+    "bf_alice",
+    "bf_lily",
+    "bm_fable",
+    "bm_george",
+    "bm_lewis",
+    "bm_daniel",
+}
 
 
 class AuditValidationError(ValueError):
@@ -242,14 +271,54 @@ def validate(audit_path: Path) -> None:
     require(isinstance(payload, dict), "manifest root must be an object")
     missing = sorted(REQUIRED_FIELDS - payload.keys())
     require(not missing, f"manifest missing fields: {missing}")
+    schema_version = payload["schemaVersion"]
     require(
-        type(payload["schemaVersion"]) is int and payload["schemaVersion"] == 2,
-        "schemaVersion must be 2",
+        type(schema_version) is int and schema_version in {2, 3},
+        "schemaVersion must be 2 or 3",
     )
     render_version = require_nonnegative_int(payload["renderVersion"], "renderVersion")
     require(render_version >= 12, "renderVersion must be at least 12")
     voice = require_nonempty_string(payload["voice"], "voice")
-    require(voice in ALLOWED_VOICES, "voice must be am_michael or am_puck")
+    if schema_version == 2:
+        require(
+            voice in {"am_michael", "am_puck"},
+            "schema 2 voice must be am_michael or am_puck",
+        )
+        chapter_voices: dict[str, str] = {}
+    else:
+        require(
+            "chapterVoices" in payload,
+            "schema 3 manifest must contain chapterVoices",
+        )
+        raw_chapter_voices = payload["chapterVoices"]
+        require(
+            isinstance(raw_chapter_voices, dict) and bool(raw_chapter_voices),
+            "schema 3 chapterVoices must be a nonempty object",
+        )
+        chapter_voices = {}
+        for chapter_index, chapter_voice in raw_chapter_voices.items():
+            require(
+                isinstance(chapter_index, str)
+                and re.fullmatch(r"0|[1-9][0-9]*", chapter_index) is not None,
+                "chapterVoices keys must be canonical nonnegative chapter indexes",
+            )
+            require(
+                isinstance(chapter_voice, str) and chapter_voice in ALLOWED_VOICES,
+                f"chapterVoices.{chapter_index} is not a known Echo voice",
+            )
+            chapter_voices[chapter_index] = chapter_voice
+        distinct_voices = set(chapter_voices.values())
+        if voice == "mixed":
+            require(
+                len(distinct_voices) > 1,
+                "mixed voice requires more than one distinct chapter voice",
+            )
+        else:
+            require(voice in ALLOWED_VOICES, "voice is not a known Echo voice")
+            require(
+                distinct_voices == {voice},
+                "uniform voice disagrees with chapterVoices",
+            )
     require(payload["coverage"] == "complete", "coverage must be complete")
     require(isinstance(payload["decisions"], list), "decisions must be an array")
     require(isinstance(payload["diagnostics"], list), "diagnostics must be an array")
@@ -289,6 +358,14 @@ def validate(audit_path: Path) -> None:
         validate_decision(decision, index)
         for index, decision in enumerate(payload["decisions"])
     ]
+    if schema_version == 3:
+        for index, decision in enumerate(decisions):
+            chapter_index = decision.get("chapterIndex")
+            if chapter_index is not None:
+                require(
+                    str(chapter_index) in chapter_voices,
+                    f"decisions[{index}].chapterIndex is absent from chapterVoices",
+                )
 
     watch_counts = payload["watchCounts"]
     require(isinstance(watch_counts, dict), "watchCounts must be an object")

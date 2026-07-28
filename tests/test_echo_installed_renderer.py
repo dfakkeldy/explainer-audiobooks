@@ -33,6 +33,13 @@ STATE_MODULE_PATH = (
     / "scripts"
     / "echo_pronunciation_state.py"
 )
+VOICE_PLAN_MODULE_PATH = (
+    ROOT
+    / "skills"
+    / "echo-narration"
+    / "scripts"
+    / "echo_voice_plan.py"
+)
 LEASE_MODULE_PATH = (
     ROOT
     / "skills"
@@ -49,6 +56,7 @@ VECTOR_ROOT = (
 )
 
 ACCEPTED_INSTALLER_SHA = "2f23aceedb1b9f25b7ea4410756eea32a59af8cd"
+CURRENT_INSTALLER_SHA = "d7f27b02f5a6046988d14c7e147e99904f66464b"
 ACCEPTED_SOURCE_SHA = "81a635df84f75f2e391706e071878b379e6fe0a0"
 ACCEPTED_MANIFEST_SHA = (
     "41bbb3c795b32c0e0273bec8847169bbd2bb9158d7b447255e9b90f587d4bdfd"
@@ -68,6 +76,7 @@ REQUIRED_CAPABILITIES = (
     "--cover",
     "--sidecar",
     "--voice",
+    "--chapter-voice",
     "--db",
     "--work-dir",
     "--jobs",
@@ -92,6 +101,7 @@ def load_module(name: str, path: Path):
 
 
 LEASE = load_module("echo_pronunciation_lease", LEASE_MODULE_PATH)
+VOICE_PLAN = load_module("echo_voice_plan", VOICE_PLAN_MODULE_PATH)
 STATE = load_module("echo_pronunciation_state", STATE_MODULE_PATH)
 RENDERER = load_module("custom_learning_echo_installed_renderer", MODULE_PATH)
 
@@ -594,7 +604,7 @@ class ManifestAndAttestationTests(unittest.TestCase):
         expected_command = (
             "PYTHONPATH=Scripts python3 -m echo_renderer.cli install \\\n"
             "  --installer-worktree <clean-reviewed-installer-worktree> \\\n"
-            f"  --installer-sha {ACCEPTED_INSTALLER_SHA} \\\n"
+            f"  --installer-sha {CURRENT_INSTALLER_SHA} \\\n"
             "  --source-worktree <clean-source-worktree-at-SHA> \\\n"
             f"  --source-sha {ACCEPTED_SOURCE_SHA} \\\n"
             "  --promote"
@@ -875,6 +885,15 @@ class ManifestAndAttestationTests(unittest.TestCase):
             )
 
     def test_rejects_wrong_source_and_installer_identities(self):
+        payload = self.payload()
+        payload["installerSourceSHA"] = CURRENT_INSTALLER_SHA
+        build_root, manifest_sha = self.create_package(payload)
+        RENDERER.parse_manifest(
+            build_root / "renderer-manifest.json",
+            ACCEPTED_SOURCE_SHA,
+            manifest_sha,
+        )
+
         payload = self.payload()
         payload["echoSourceSHA"] = "a" * 40
         build_root, manifest_sha = self.create_package(payload)

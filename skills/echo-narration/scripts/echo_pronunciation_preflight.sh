@@ -344,7 +344,10 @@ echo_pronunciation_renderer_receipt_text() {
     "model_policy_revision=$ECHO_MODEL_REVISION" \
     "model_expected_byte_count=$ECHO_MODEL_EXPECTED_BYTES" \
     'model_bytes_attested=false' \
-    "voice=$VOICE"
+    "voice=$VOICE" \
+    "chapter_voices=$CHAPTER_VOICES_CANONICAL" \
+    "voice_plan_sha256=$VOICE_PLAN_SHA256" \
+    "voice_plan_id=$VOICE_PLAN_ID"
 }
 
 echo_pronunciation_receipt_text() {
@@ -504,18 +507,77 @@ echo_pronunciation_preflight() {
   require_sha256 PACKAGE_SHA256 "$PACKAGE_SHA256" || return $?
 
   VOICE=${VOICE:-am_michael}
-  case "$VOICE" in
-    am_michael | am_puck) ;;
-    *)
-      printf 'VOICE must be am_michael or am_puck, got: %s\n' "$VOICE" >&2
-      return 64
-      ;;
-  esac
+  local voice_plan_helper voice_plan_output voice_plan_key voice_plan_value
+  local voice_plan_count_voice=0 voice_plan_count_chapters=0
+  local voice_plan_count_sha=0 voice_plan_count_id=0
+  voice_plan_helper="$script_dir/echo_voice_plan.py"
+  voice_plan_output=$(mktemp "${TMPDIR:-/tmp}/echo-voice-plan.XXXXXX") \
+    || return 70
+  local voice_plan_command=(
+    /usr/local/bin/python3 "$voice_plan_helper"
+    --default-voice "$VOICE"
+    --format env0
+  )
+  local chapter_voice
+  for chapter_voice in "${CHAPTER_VOICES[@]:-}"; do
+    [[ -z "$chapter_voice" ]] || voice_plan_command+=(--chapter-voice "$chapter_voice")
+  done
+  if ! "${voice_plan_command[@]}" >"$voice_plan_output"; then
+    rm -f -- "$voice_plan_output"
+    return 64
+  fi
+  unset CHAPTER_VOICES_CANONICAL VOICE_PLAN_SHA256 VOICE_PLAN_ID
+  while :; do
+    voice_plan_key=
+    if ! IFS= read -r -d '' voice_plan_key; then
+      [[ -z "$voice_plan_key" ]] || {
+        printf 'incomplete Echo voice-plan env0 record\n' >&2
+        rm -f -- "$voice_plan_output"
+        return 65
+      }
+      break
+    fi
+    voice_plan_value=
+    if ! IFS= read -r -d '' voice_plan_value; then
+      printf 'incomplete Echo voice-plan env0 record\n' >&2
+      rm -f -- "$voice_plan_output"
+      return 65
+    fi
+    case "$voice_plan_key" in
+      VOICE)
+        (( voice_plan_count_voice += 1 ))
+        VOICE=$voice_plan_value
+        ;;
+      CHAPTER_VOICES_CANONICAL)
+        (( voice_plan_count_chapters += 1 ))
+        CHAPTER_VOICES_CANONICAL=$voice_plan_value
+        ;;
+      VOICE_PLAN_SHA256)
+        (( voice_plan_count_sha += 1 ))
+        VOICE_PLAN_SHA256=$voice_plan_value
+        ;;
+      VOICE_PLAN_ID)
+        (( voice_plan_count_id += 1 ))
+        VOICE_PLAN_ID=$voice_plan_value
+        ;;
+      *)
+        printf 'unknown Echo voice-plan env0 key: %s\n' "$voice_plan_key" >&2
+        rm -f -- "$voice_plan_output"
+        return 65
+        ;;
+    esac
+  done <"$voice_plan_output"
+  rm -f -- "$voice_plan_output"
+  if (( voice_plan_count_voice != 1 || voice_plan_count_chapters != 1 \
+    || voice_plan_count_sha != 1 || voice_plan_count_id != 1 )); then
+    printf 'Echo voice-plan env0 record is incomplete or duplicated\n' >&2
+    return 65
+  fi
   local echo_source_id
   echo_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
   RUN_ID=$(echo_pronunciation_run_id \
     "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
-    "$ECHO_RENDERER_MANIFEST_SHA256" "$echo_source_id" "$VOICE")
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$echo_source_id" "$VOICE_PLAN_ID")
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
@@ -564,7 +626,8 @@ echo_pronunciation_preflight() {
   export ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST
   export ECHO_RENDERER_MANIFEST_SHA256 APPROVED_ECHO_INSTALLER_SHA
   export ECHO_MODEL_REVISION ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED
-  export ECHO_RENDER_VERSION VOICE RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
+  export ECHO_RENDER_VERSION VOICE CHAPTER_VOICES_CANONICAL
+  export VOICE_PLAN_SHA256 VOICE_PLAN_ID RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
 }
 
 echo_pronunciation_attest_inputs() {
@@ -581,7 +644,8 @@ echo_pronunciation_attest_inputs() {
     ECHO_RENDER_VERSION ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT \
     ECHO_RENDERER_MANIFEST ECHO_RENDERER_MANIFEST_SHA256 \
     APPROVED_ECHO_INSTALLER_SHA ECHO_MODEL_REVISION \
-    ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED VOICE RUN_ID WORK DB \
+    ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED VOICE \
+    VOICE_PLAN_SHA256 VOICE_PLAN_ID RUN_ID WORK DB \
     ECHO_RENDER_INPUT_RECEIPT; do
     if [[ -z ${!required:-} ]]; then
       printf 'sealed preflight state is missing: %s\n' "$required" >&2
@@ -592,6 +656,10 @@ echo_pronunciation_attest_inputs() {
       return 64
     fi
   done
+  if [[ ${CHAPTER_VOICES_CANONICAL+x} != x ]]; then
+    printf 'sealed preflight state is missing: CHAPTER_VOICES_CANONICAL\n' >&2
+    return 70
+  fi
   echo_pronunciation_validate_renderer_paths || return $?
   if ! "$lease_helper" --assert-held --lock-root "$lease_root" \
     --resource "$ECHO_RENDERER_BUILD_ROOT" >/dev/null 2>&1; then
@@ -616,13 +684,27 @@ echo_pronunciation_attest_inputs() {
     printf 'approved Echo pronunciation revision does not match installed source\n' >&2
     return 65
   fi
-  case "$VOICE" in
-    am_michael | am_puck) ;;
-    *)
-      printf 'VOICE must be am_michael or am_puck, got: %s\n' "$VOICE" >&2
-      return 64
-      ;;
-  esac
+  local voice_plan_helper voice_plan_lines
+  voice_plan_helper="$script_dir/echo_voice_plan.py"
+  local voice_plan_command=(
+    /usr/local/bin/python3 "$voice_plan_helper"
+    --default-voice "$VOICE"
+  )
+  local chapter_voice
+  for chapter_voice in "${CHAPTER_VOICES[@]:-}"; do
+    [[ -z "$chapter_voice" ]] || voice_plan_command+=(--chapter-voice "$chapter_voice")
+  done
+  voice_plan_lines=$("${voice_plan_command[@]}") || return $?
+  local expected_voice_plan_lines
+  expected_voice_plan_lines=$(printf '%s\n' \
+    "VOICE=$VOICE" \
+    "CHAPTER_VOICES_CANONICAL=$CHAPTER_VOICES_CANONICAL" \
+    "VOICE_PLAN_SHA256=$VOICE_PLAN_SHA256" \
+    "VOICE_PLAN_ID=$VOICE_PLAN_ID")
+  if [[ "$voice_plan_lines" != "$expected_voice_plan_lines" ]]; then
+    printf 'sealed chapter-voice plan changed while narration lease was held\n' >&2
+    return 65
+  fi
 
   local expected_epub expected_cover_selection selected_pair_dir cover_input
   expected_epub="$RUN_ROOT/dist/$SLUG.epub"
@@ -708,7 +790,7 @@ echo_pronunciation_attest_inputs() {
   expected_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
   expected_run_id=$(echo_pronunciation_run_id \
     "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
-    "$ECHO_RENDERER_MANIFEST_SHA256" "$expected_source_id" "$VOICE")
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$expected_source_id" "$VOICE_PLAN_ID")
   expected_receipt="$RUN_ROOT/research/echo-render-inputs-$expected_run_id.env"
   if [[ "$RUN_ID" != "$expected_run_id" \
     || "$WORK" != "$RUN_ROOT/audio-work-$expected_run_id" \
