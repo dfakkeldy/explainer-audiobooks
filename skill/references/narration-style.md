@@ -76,14 +76,25 @@ NOVELTY AND DEPTH — every paragraph earns its place:
   Do not make every minor term carry all five layers, but do not call a concept
   explained after one vague definition either.
 - Prefer a specific observation, decision, failure, or worked example to a
-  generic claim about what "matters." Use analogies sparingly and never recycle
-  the same one as if it were new.
+  generic claim about what "matters." Frame a practical example as a situation,
+  a choice or action, and a consequence. A clearly signaled hypothetical can
+  rehearse application, but it must not carry unsupported facts.
 - When using an analogy, make its working relationship and correspondences
-  clear, then name where it stops matching. A comparison that supplies only
-  atmosphere does not teach.
+  clear, then name where it stops matching. Make it a short, reusable retrieval
+  handle; do not parade a succession of new metaphors past the same idea. A
+  comparison that supplies only atmosphere does not teach.
 - Do not inflate a chapter to hit a uniform word count. End a chapter when its
   promised knowledge delta is complete; deeper concepts may need more space,
   while orientation and transition chapters may be shorter.
+
+KEY-POINTS CHECKPOINTS — make understanding testable:
+- At the natural learning boundaries named in the outline, use the recognizable
+  spoken cue "Key points." Give two to four short, flowing sentences that
+  retrieve the idea, reconnect it to a concrete decision, or rehearse the next
+  useful action. One may ask a brief question and then answer it.
+- Add no new fact, term, example, or analogy in the checkpoint. Do not inventory
+  every detail, turn it into a visual bullet list, or attach the same recap to
+  every minor section. A narrative bridge may need no checkpoint.
 
 EMPHASIS — say it once, plainly, then move on:
 - When something genuinely matters, say so in ordinary words, once, and let the
@@ -171,10 +182,10 @@ Teach the concept plainly and ground it in the real, named worked-example
 component. Where the design genuinely gave up one thing to get another, name that
 tradeoff once and cleanly, then move on — only where the cost is real, never as a
 reflex, and never the same cost restated several ways. Close with the natural
-last beat for this chapter: a short retrieval, a consequence, a mini-application,
-or the next useful question. Do not bolt on the same generic recap or "you can now"
-line every time. A core term may be re-named at the close only when it helps recall
-or advances the next chapter.
+last beat for this chapter: a planned `Key points` checkpoint, a consequence, a
+mini-application, or the next useful question. Do not bolt on the same generic
+recap or "you can now" line every time. A core term may be re-named at the close
+only when it helps recall or advances the next chapter.
 
 ## Why these rules matter (so you can adapt, not just obey)
 
@@ -325,6 +336,11 @@ them over the chapter files:
   useful boundary/counterexample where applicable. Flag a shallow claim with its
   exact location rather than asking a cheaper model to expand it generically,
   and rerun blind beginner review after any accepted repair.
+- **Key-points checkpoint review:** verify each planned checkpoint is at a
+  meaningful learning boundary, contains two to four speakable recall or action
+  points, and introduces no new material. Flag repeated boilerplate and any
+  checkpoint that reads like an on-page list. Judge the rendered version in the
+  ear-pass; silent readability does not prove the cue works while driving.
 - **Vocabulary check (codebase-grounded books):** for each chapter, confirm the real
   file/tool/command names from its fact pack actually appear *by name* in the prose
   (not paraphrased into "the settings file"). If the listener couldn't search for

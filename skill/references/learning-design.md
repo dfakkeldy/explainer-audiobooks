@@ -19,8 +19,9 @@ Before drafting, define:
   listen.
 
 For each section, write its job, argument, supporting evidence and locator,
-throughline advance, landing beat, and what it must not repeat. A title such as
-"Chapter 4: APIs" is not a section job.
+throughline advance, practical example or analogy plan, landing beat, listening
+checkpoint (`Key points`, retrieval question, action rehearsal, or `none`), and
+what it must not repeat. A title such as "Chapter 4: APIs" is not a section job.
 
 ## Chapter teaching plan
 
@@ -31,7 +32,13 @@ Each chapter plan states:
 - **Definition:** the plain-English meaning of each necessary term.
 - **Reason:** the problem or decision that makes the idea necessary.
 - **Mechanism:** how it works at the level the listener needs.
-- **Concrete case:** a real sourced example, application, or consequence.
+- **Concrete case:** a real sourced example, application, or consequence,
+  framed as a situation, choice or action, and result where possible.
+- **Analogy:** an optional retrieval handle with its relationship,
+  correspondences, and limit, or `none` when the concrete case teaches better.
+- **Listening checkpoints:** the natural boundaries and two to four points the
+  listener should be able to recall or act on at each one, or `none` for a minor
+  transition.
 - **Misconception:** the tempting wrong mental model to prevent.
 - **Expected ability:** the observable understanding the chapter should leave.
 
@@ -39,6 +46,12 @@ Name the problem before introducing its term. Ground mechanisms in real people,
 files, tools, commands, places, records, or systems. Use at least three distinct
 beats where the material earns them, but do not force every chapter into the
 same shape or length.
+
+After sourced grounding, a clearly signaled hypothetical may rehearse the
+listener's decision or action. It must not replace evidence or smuggle a new
+factual claim into the example. A planned `Key points` checkpoint uses short
+spoken sentences, adds no new material, and tests recall or application instead
+of summarizing every detail.
 
 An explanation path normally supplies definition, reason, mechanism, concrete
 case, and a useful boundary. Minor terms need only enough to support the path.
@@ -56,9 +69,9 @@ One frontier author drafts in order. Before each section, provide:
 - the current section's job;
 - the must-not-repeat list.
 
-Maintain a compact continuity note after each section: terms defined, examples
-and analogies already used, deliberate callbacks, open promises, current
-listener load, and the next section's no-repeat constraints.
+Maintain a compact continuity note after each section: terms defined, examples,
+analogies, and checkpoint shapes already used, deliberate callbacks, open
+promises, current listener load, and the next section's no-repeat constraints.
 
 ## Blind sequential beginner review
 
@@ -70,6 +83,8 @@ After each chapter, ask the reviewer to record:
 - the mental model a beginner could plausibly form;
 - confusions and unstable terms;
 - the exact sentence or paragraph where the listener may become lost;
+- at each checkpoint, what the listener could recall or apply without looking
+  back, and whether the cue clarified or merely repeated;
 - any promise that seems unresolved;
 - the smallest kind of repair needed.
 
@@ -88,6 +103,8 @@ Return to the outline or chapter plan when:
 - a section lacks previous context or a no-repeat duty;
 - the chapter defines a term before giving the listener a reason to need it;
 - an invented toy is the only real-world grounding;
+- a checkpoint introduces new material, inventories every detail, or repeats a
+  boilerplate recap after every minor section;
 - the reviewer receives privileged intent materials;
 - the ear-pass is inferred from silent reading;
 - word count is used to force filler.

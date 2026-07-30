@@ -61,9 +61,31 @@ arithmetic: reduce simultaneous unfamiliar terms until each does useful work.
 Every core mechanism needs a real application or consequence. Book-level
 grounding must vary; one invented classroom toy cannot carry the whole subject.
 
+Frame a practical example as a situation, a choice or action, and a consequence
+the listener can recognize. A clearly signaled hypothetical may rehearse a
+decision after the sourced grounding is established, but it must not carry new
+factual claims or pretend to be a sourced story.
+
 For an analogy, state the relationship it explains, at least two
-correspondences, and where the comparison stops matching. Mood without
+correspondences, and where the comparison stops matching. Prefer one short,
+reusable retrieval handle to a procession of fresh metaphors. Mood without
 correspondence is decoration.
+
+## Spoken key-points checkpoints
+
+At a natural learning boundary—often after a useful technique or concept
+cluster, not after every minor section—use a recognizable spoken cue such as
+`Key points`. Follow it with two to four short, speakable sentences that help
+the listener check what stuck. Retrieve the core idea, reconnect it to a
+concrete situation or decision, or rehearse the next useful action. One point
+may pose a brief question and then supply the answer.
+
+The checkpoint is a retrieval aid, not an abstract, glossary, or second ending.
+It introduces no new facts, terms, examples, or analogies; it does not enumerate
+every detail; and it is written for the ear rather than as a visual bullet list.
+Narrative bridges and minor transitions may mark the checkpoint as `none` in
+the outline. Repeating the same recap shape everywhere teaches the listener to
+tune it out.
 
 ## Retrieval and optional study
 
