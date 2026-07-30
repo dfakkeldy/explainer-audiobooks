@@ -76,6 +76,38 @@ class ReferenceTrimTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, text)
 
+    def test_road_book_retains_practical_checkpoint_contract(self) -> None:
+        road_book = (REFS / "road-book-mode.md").read_text(encoding="utf-8").casefold()
+        learning = (REFS / "learning-design.md").read_text(encoding="utf-8").casefold()
+        narration = (REFS / "narration-style.md").read_text(encoding="utf-8").casefold()
+
+        for marker in (
+            "situation, a choice or action, and a consequence",
+            "spoken key-points checkpoints",
+            "not after every minor section",
+            "two to four",
+            "introduces no new facts",
+        ):
+            with self.subTest(surface="road-book", marker=marker):
+                self.assertIn(marker, road_book)
+
+        for marker in (
+            "practical example or analogy plan",
+            "listening checkpoint",
+            "what the listener could recall or apply",
+        ):
+            with self.subTest(surface="learning-design", marker=marker):
+                self.assertIn(marker, learning)
+
+        for marker in (
+            "key-points checkpoints",
+            'spoken cue "key points."',
+            "reads like an on-page list",
+            "works while driving",
+        ):
+            with self.subTest(surface="narration-style", marker=marker):
+                self.assertIn(marker, narration)
+
 
 if __name__ == "__main__":
     unittest.main()

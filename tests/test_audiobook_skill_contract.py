@@ -61,6 +61,18 @@ class AudiobookSkillContractTests(unittest.TestCase):
     def test_preserve_on_revision_rule_survives(self) -> None:
         self.assertIn("what is working and must not change", self.text)
 
+    def test_practical_road_book_support_is_routed_from_the_skill(self) -> None:
+        normalized = " ".join(self.text.split())
+        for marker in (
+            "situation-choice-consequence",
+            "`Key points` checkpoint",
+            "two to four",
+            "with no new facts",
+            "retrieval handles",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, normalized)
+
     def test_retired_gate_vocabulary_is_gone(self) -> None:
         for banned in (
             "learning receipt",
