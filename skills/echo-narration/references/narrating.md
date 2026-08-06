@@ -335,10 +335,10 @@ ffprobe -v error -show_entries format=duration \
 ```
 
 Require `SIDECAR_OK` from `verify-sidecar`. The current media-bound manifest
-schema version is `3`; schema `2` remains accepted for earlier uniform governed
-renders. Require `coverage=complete`, render version 12 or newer, a known Echo
-English voice or `mixed`, complete valid `chapterVoices` provenance for schema
-3, schema-valid decision objects and timing ranges,
+schema version is `6`; schemas `2` through `5` remain accepted for earlier
+governed renders. Require `coverage=complete`, render version 12 or newer, a
+known Echo English voice or `mixed`, complete valid `chapterVoices` provenance
+for schemas `3` through `6`, schema-valid decision objects and timing ranges,
 and watch counts that match decisions across the complete emitted watch
 vocabulary, including zero counts. Require `audiobookSHA256` to match the
 exact raw sibling M4B bytes; when a reel is listed, require

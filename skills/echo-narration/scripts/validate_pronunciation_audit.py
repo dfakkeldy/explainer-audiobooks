@@ -14,23 +14,48 @@ from pathlib import Path
 
 
 WATCH_WORDS = (
+    "able",
     "arithmetic",
+    "available",
     "campbell",
+    "comfortable",
     "content",
+    "deepmind",
+    "deepmind's",
     "fakkeldy",
     "filesystem",
+    "lifecycle",
     "live",
     "lives",
+    "pictou",
+    "possible",
     "re",
     "read",
     "readme",
     "record",
+    "reliable",
     "resume",
     "resumes",
     "résumé",
     "résumés",
+    "stable",
     "startable",
+    "super",
+    "supercomputer",
+    "supercomputers",
+    "superforecasters",
+    "superhuman",
+    "superimposed",
+    "superintelligence",
+    "supernatural",
+    "superposition",
+    "supervised",
+    "supervising",
+    "table",
     "timeframe",
+    "unsupervised",
+    "validator",
+    "validators",
     "verified",
     "xcassets",
     "xcode",
@@ -75,6 +100,8 @@ DECISION_SOURCES = {
     "globalOverride",
     "builtInOverride",
     "contextualHomograph",
+    "supplementalLexicon",
+    "derivedMorphology",
     "monitoredLexicon",
     "fallback",
 }
@@ -273,8 +300,8 @@ def validate(audit_path: Path) -> None:
     require(not missing, f"manifest missing fields: {missing}")
     schema_version = payload["schemaVersion"]
     require(
-        type(schema_version) is int and schema_version in {2, 3},
-        "schemaVersion must be 2 or 3",
+        type(schema_version) is int and 2 <= schema_version <= 6,
+        "schemaVersion must be between 2 and 6",
     )
     render_version = require_nonnegative_int(payload["renderVersion"], "renderVersion")
     require(render_version >= 12, "renderVersion must be at least 12")
@@ -288,12 +315,12 @@ def validate(audit_path: Path) -> None:
     else:
         require(
             "chapterVoices" in payload,
-            "schema 3 manifest must contain chapterVoices",
+            f"schema {schema_version} manifest must contain chapterVoices",
         )
         raw_chapter_voices = payload["chapterVoices"]
         require(
             isinstance(raw_chapter_voices, dict) and bool(raw_chapter_voices),
-            "schema 3 chapterVoices must be a nonempty object",
+            f"schema {schema_version} chapterVoices must be a nonempty object",
         )
         chapter_voices = {}
         for chapter_index, chapter_voice in raw_chapter_voices.items():
@@ -358,7 +385,7 @@ def validate(audit_path: Path) -> None:
         validate_decision(decision, index)
         for index, decision in enumerate(payload["decisions"])
     ]
-    if schema_version == 3:
+    if schema_version >= 3:
         for index, decision in enumerate(decisions):
             chapter_index = decision.get("chapterIndex")
             if chapter_index is not None:
