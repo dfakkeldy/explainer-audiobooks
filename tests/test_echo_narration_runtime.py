@@ -407,9 +407,9 @@ marker["identity"] = identity
 (work / ".anchors-ch0.json").write_text(json.dumps(marker, sort_keys=True, separators=(",", ":")))
 out.write_bytes(b"fixture audiobook bytes")
 sidecar.write_text("{}\\n")
-words = ("arithmetic", "campbell", "content", "fakkeldy", "filesystem", "live", "lives", "re", "read", "readme", "record", "resume", "resumes", "résumé", "résumés", "startable", "timeframe", "verified", "xcassets", "xcode")
+words = ("able", "arithmetic", "available", "campbell", "comfortable", "content", "deepmind", "deepmind's", "fakkeldy", "filesystem", "lifecycle", "live", "lives", "pictou", "possible", "re", "read", "readme", "record", "reliable", "resume", "resumes", "résumé", "résumés", "stable", "startable", "super", "supercomputer", "supercomputers", "superforecasters", "superhuman", "superimposed", "superintelligence", "supernatural", "superposition", "supervised", "supervising", "table", "timeframe", "unsupervised", "validator", "validators", "verified", "xcassets", "xcode")
 audit = {
-    "schemaVersion": 3, "renderVersion": __RENDER_VERSION__, "voice": voice,
+    "schemaVersion": 6, "renderVersion": __RENDER_VERSION__, "voice": voice,
     "chapterVoices": {"0": voice}, "coverage": "complete",
     "watchCounts": {word: 0 for word in words}, "decisions": [], "diagnostics": [],
     "legacyChapterIndexes": [], "audiobookFileName": out.name,
@@ -2826,7 +2826,95 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
         self.payload["schemaVersion"] = 1
         result = self.run_validator()
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("schemaVersion must be 2 or 3", result.stderr)
+        self.assertIn("schemaVersion must be between 2 and 6", result.stderr)
+
+    def test_accepts_schema_v6_with_current_governed_decision_sources(self) -> None:
+        supplemental = self.valid_decision()
+        supplemental.update(
+            {
+                "source": "supplementalLexicon",
+                "ruleID": "g2p.supplemental.filesystem",
+                "rationale": "Supplemental lexicon selected filesystem.",
+            }
+        )
+        derived = self.valid_decision()
+        derived.update(
+            {
+                "normalizedWord": "available",
+                "sourceWord": "available",
+                "sourceContext": "Every available record remained searchable.",
+                "source": "derivedMorphology",
+                "ruleID": "g2p.derived.available",
+                "rationale": "Derived morphology selected available.",
+            }
+        )
+        for decision in (supplemental, derived):
+            decision.pop("chapterRelativeAudioRange")
+            decision.pop("bookRelativeAudioRange")
+            decision.pop("timingPrecision")
+        self.payload.update(
+            {
+                "schemaVersion": 6,
+                "chapterVoices": {"0": "am_michael"},
+                "decisions": [supplemental, derived],
+            }
+        )
+        self.payload["watchCounts"]["filesystem"] = 1
+        self.payload["watchCounts"]["available"] = 1
+
+        result = self.run_validator()
+
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_watch_vocabulary_matches_current_echo_schema_v6_contract(self) -> None:
+        expected = {
+            "able",
+            "arithmetic",
+            "available",
+            "campbell",
+            "comfortable",
+            "content",
+            "deepmind",
+            "deepmind's",
+            "fakkeldy",
+            "filesystem",
+            "lifecycle",
+            "live",
+            "lives",
+            "pictou",
+            "possible",
+            "re",
+            "read",
+            "readme",
+            "record",
+            "reliable",
+            "resume",
+            "resumes",
+            "résumé",
+            "résumés",
+            "stable",
+            "startable",
+            "super",
+            "supercomputer",
+            "supercomputers",
+            "superforecasters",
+            "superhuman",
+            "superimposed",
+            "superintelligence",
+            "supernatural",
+            "superposition",
+            "supervised",
+            "supervising",
+            "table",
+            "timeframe",
+            "unsupervised",
+            "validator",
+            "validators",
+            "verified",
+            "xcassets",
+            "xcode",
+        }
+        self.assertEqual(expected, set(AUDIT_VALIDATOR_MODULE.WATCH_WORDS))
 
     def test_accepts_schema_v3_mixed_voice_with_complete_chapter_provenance(
         self,
