@@ -170,6 +170,24 @@ def add_brand_mark(root: Path, payload: dict[str, object]) -> Path:
 
 
 class CoverSpecValidationTests(unittest.TestCase):
+    def test_loads_empty_canonical_label_without_label_layer(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            payload = valid_payload()
+            payload["metadata"]["label"] = ""
+            payload["layers"] = [
+                layer for layer in payload["layers"] if layer.get("role") != "label"
+            ]
+
+            loaded = load_cover_spec(write_fixture(Path(raw), payload), FONT_MANIFEST)
+
+            self.assertEqual("", loaded.metadata["label"])
+            self.assertFalse(
+                any(
+                    layer.get("kind") == "text" and layer.get("role") == "label"
+                    for layer in loaded.data["layers"]
+                )
+            )
+
     def test_loads_one_safe_brand_mark_as_a_hashed_render_input(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

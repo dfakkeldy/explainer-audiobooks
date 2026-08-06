@@ -558,7 +558,6 @@ def load_cover_spec(
         any(not isinstance(metadata[key], str) for key in metadata)
         or not metadata["title"]
         or not metadata["author"]
-        or not metadata["label"]
     ):
         raise CoverSpecError("canonical metadata strings are invalid")
 
