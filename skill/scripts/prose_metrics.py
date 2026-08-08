@@ -148,6 +148,51 @@ def abstract_subjects(paragraph_texts: list[str]) -> dict[str, object]:
     }
 
 
+def fragment_chains(paragraph_texts: list[str]) -> dict[str, object]:
+    """Count runs of two or more consecutive very short sentences.
+
+    A single clipped sentence after a long one is deliberate emphasis and
+    is not reported. The tell is the drumbeat -- "Not once. Not ever." --
+    consecutive fragments manufacturing weight the content has not earned.
+    Runs reset at paragraph boundaries. Advisory: reported for editorial
+    judgment, never a failure condition, because dialogue, lists read
+    aloud, and deliberate staccato passages are legitimate.
+    """
+    max_words = 5
+    chains = 0
+    longest = 0
+    short_total = 0
+    sentence_total = 0
+    examples: list[str] = []
+
+    def close(run: list[str]) -> None:
+        nonlocal chains, longest
+        if len(run) >= 2:
+            chains += 1
+            longest = max(longest, len(run))
+            if len(examples) < 20:
+                examples.append(" ".join(run)[:160])
+
+    for paragraph in paragraph_texts:
+        run: list[str] = []
+        for sentence in split_sentences(paragraph):
+            sentence_total += 1
+            if len(sentence.split()) <= max_words:
+                short_total += 1
+                run.append(sentence)
+            else:
+                close(run)
+                run = []
+        close(run)
+    share = round(short_total / sentence_total, 4) if sentence_total else 0.0
+    return {
+        "chain_count": chains,
+        "longest_chain": longest,
+        "short_sentence_share": share,
+        "examples": examples,
+    }
+
+
 def arithmetic_density(text: str) -> dict[str, float]:
     """Rate of arithmetic-operation language per 10,000 words."""
     total_words = len(text.split())

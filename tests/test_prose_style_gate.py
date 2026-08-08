@@ -62,6 +62,34 @@ class ProseStyleAnalysisTests(unittest.TestCase):
         self.assertTrue(intervention.get("over_budget"))
         self.assertEqual("fail", analysis.get("status"))
 
+    def test_contrast_frame_catches_is_not_x_it_is_y_pivots(self) -> None:
+        text = (
+            "The history is not just colourful background — it is a map. "
+            "Understanding the rules is not bureaucratic homework; it is part of the work. "
+            "The remaining words describe districts, claims, and stream gravels in enough "
+            "ordinary prose to represent a spoken audiobook paragraph without new frames."
+        )
+        analysis = prose_qc.analyse_style([self.paragraph(text)])
+
+        family = analysis.get("families", {}).get("contrast_frame", {})
+        self.assertEqual(2, family.get("count"))
+
+    def test_intensifier_tics_are_counted_against_a_density_budget(self) -> None:
+        text = (
+            "The result is genuinely surprising. The estimate is precisely wrong. "
+            "The assumption quietly does the work. The effect is remarkably stable. "
+            "The remaining words describe the measurement in enough ordinary prose to "
+            "give the density calculation a realistic paragraph of spoken narration."
+        )
+        analysis = prose_qc.analyse_style(
+            [self.paragraph(text)], density_limits={"intensifier_tic": 1.0}
+        )
+
+        family = analysis.get("families", {}).get("intensifier_tic", {})
+        self.assertEqual(4, family.get("count"))
+        self.assertTrue(family.get("over_budget"))
+        self.assertEqual("fail", analysis.get("status"))
+
     def test_plain_explanatory_prose_passes(self) -> None:
         text = (
             "Inference is the stage when a trained neural network uses its learned parameters "

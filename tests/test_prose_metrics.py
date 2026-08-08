@@ -68,6 +68,38 @@ class TestProseMetrics(unittest.TestCase):
         text = "The document matters. A clerk signed it."
         self.assertEqual(prose_metrics.abstract_subjects([text])["share_of_sentences"], 0.5)
 
+    def test_fragment_chains_counts_consecutive_short_sentences(self):
+        text = ("The model answered every probe the same way across many runs. "
+                "Not once. Not ever. Ninety-seven, seventy-four, seventy-one. "
+                "The full explanation takes several more clauses to state properly.")
+        result = prose_metrics.fragment_chains([text])
+        self.assertEqual(result["chain_count"], 1)
+        self.assertEqual(result["longest_chain"], 3)
+        self.assertIn("Not once. Not ever.", result["examples"][0])
+
+    def test_fragment_chains_ignores_a_single_clipped_sentence(self):
+        # One short sentence after a long one is deliberate emphasis,
+        # not the drumbeat. Only runs of two or more are reported.
+        text = ("The parameters stay frozen while inference runs the calculation "
+                "they define. It bends. The gold settles through the gravel until "
+                "bedrock finally stops it somewhere out of sight.")
+        result = prose_metrics.fragment_chains([text])
+        self.assertEqual(result["chain_count"], 0)
+        self.assertGreater(result["short_sentence_share"], 0.0)
+
+    def test_fragment_chains_reset_at_paragraph_boundaries(self):
+        # A short closer and a short opener in adjacent paragraphs are not
+        # one chain; the rhythm reads differently across a paragraph break.
+        first = "The claim map loads slowly over a weak connection. It bends."
+        second = "Gold sinks. Every crack in the bedrock catches a little more of it."
+        result = prose_metrics.fragment_chains([first, second])
+        self.assertEqual(result["chain_count"], 0)
+
+    def test_fragment_chains_empty_input_is_safe(self):
+        result = prose_metrics.fragment_chains([])
+        self.assertEqual(result["chain_count"], 0)
+        self.assertEqual(result["short_sentence_share"], 0.0)
+
     def test_arithmetic_density_counts_operation_language(self):
         text = "You multiply the weights, take the gradient, then the chain rule applies."
         result = prose_metrics.arithmetic_density(text)

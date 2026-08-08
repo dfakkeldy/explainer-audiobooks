@@ -59,7 +59,12 @@ STYLE_FAMILIES = {
         re.IGNORECASE,
     ),
     "contrast_frame": re.compile(
-        r"\bnot because\b.{0,180}?\bbut because\b|\bthis is not\b.{0,120}?\bthis is\b",
+        r"\bnot because\b.{0,180}?\bbut because\b"
+        r"|\bthis is not\b.{0,120}?\bthis is\b"
+        # The commonest surface form: "is not X — it is Y" and its
+        # contractions ("isn't just X, it's Y"). One clause, no sentence
+        # boundary, pivoting on a dash, colon, semicolon, or comma.
+        r"|\b(?:is|are|was|were)(?: not|n't)\s+(?:(?:just|merely|simply|only)\s+)?[^.?!]{2,60}?[—;:,-]\s*(?:it|this|that|they)(?:'s|'re| is| are| was| were)\b",
         re.IGNORECASE,
     ),
     "honesty_announcement": re.compile(
@@ -75,6 +80,16 @@ STYLE_FAMILIES = {
         r"\b(?:the whole point|the heart of|the real (?:magic|secret|power)|it changes everything|the kind thing)\b",
         re.IGNORECASE,
     ),
+    # Discourse adverbs that manufacture sincerity or weight instead of
+    # letting the claim carry it. List is the tics measured across this
+    # pipeline's own recent books (2026-08 baseline: "precisely" x12 and
+    # "genuinely" x11 in one 17k-word manuscript), not a generic AI-word
+    # list; matches are candidates, since each word has legitimate literal
+    # uses ("precisely calibrated", "quietly closed").
+    "intensifier_tic": re.compile(
+        r"\b(?:genuinely|precisely|quietly|remarkably)\b",
+        re.IGNORECASE,
+    ),
 }
 
 DEFAULT_DENSITY_LIMITS = {
@@ -84,6 +99,7 @@ DEFAULT_DENSITY_LIMITS = {
     "contrast_frame": 4.0,
     "honesty_announcement": 0.5,
     "faux_gravity": 1.0,
+    "intensifier_tic": 3.0,
 }
 
 REQUIRED_RERUN_CHECKS = {"factual", "coverage-ledger", "narration", "prose"}
@@ -176,6 +192,7 @@ def analyse_metrics(paragraph_texts: list[str], arithmetic_tier: str | None = No
         "rhythm": prose_metrics.rhythm(paragraph_texts),
         "coordinate_lists": prose_metrics.coordinate_lists(paragraph_texts),
         "abstract_subjects": prose_metrics.abstract_subjects(paragraph_texts),
+        "fragment_chains": prose_metrics.fragment_chains(paragraph_texts),
         "arithmetic": arith,
     }
     if arithmetic_tier:
@@ -412,6 +429,11 @@ def report(
     lines.append(f"- coordinate_lists: {coord['count']} ({coord['per_1k_sentences']} per 1k sentences)")
     abstract = metrics["abstract_subjects"]
     lines.append(f"- abstract_subjects: {abstract['count']} ({abstract['share_of_sentences']} of sentences)")
+    fragments = metrics["fragment_chains"]
+    lines.append(
+        f"- fragment_chains: {fragments['chain_count']} runs of consecutive short sentences "
+        f"(longest {fragments['longest_chain']}; short-sentence share {fragments['short_sentence_share']})"
+    )
     lines.append(f"- arithmetic: {metrics['arithmetic']['per_10k_words']} per 10k words")
     if "arithmetic_tier" in metrics:
         tier = metrics["arithmetic_tier"]

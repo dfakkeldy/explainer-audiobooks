@@ -28,6 +28,10 @@ class SkillProseContractTests(unittest.TestCase):
             "`truth be told`",
             "precise claims",
             "uncertainty",
+            "intensifier tic",
+            "`genuinely`",
+            "`precisely`",
+            "fragment drumbeat",
             "--fail-on-style",
         ):
             self.assertIn(phrase, text)

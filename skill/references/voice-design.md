@@ -42,7 +42,7 @@ properties they actually want — compressed syntax, patient mechanism-first
 explanation, restrained humour, precise uncertainty — and build an original
 combination.
 
-## Four habits that carry more than any prohibition
+## Five habits that carry more than any prohibition
 
 **Put people and things in the subject slot.** Concepts belong in the predicate.
 "The document matters because a bid and a paid sale differ" is a concept
@@ -65,7 +65,17 @@ must survive, name who is bound by it.
 **Vary the rhythm deliberately.** A one-sentence paragraph after a long one is
 the cheapest emphasis in prose and costs no adjectives. Uniform paragraph length
 is the most reliable signature of assembled text — more reliable than any
-phrase.
+phrase. The same device inverted is also a signature: clipped sentences arriving
+in formation — `Not once. Not ever.` — are stage directions for a dramatic pause
+the page cannot perform. Spend at most one fragment per emphasis, and fold the
+rest back into the sentence that earns them.
+
+**Let the claim carry its own intensity.** `Genuinely surprising`, `precisely
+wrong`, and `quietly radical` are sincerity adverbs doing work the evidence
+should do. Write the expectation the result broke, the number it missed by, the
+thing it changed — then the bare adjective is stronger than the boosted one.
+When a draft leans on the same intensity adverb in every chapter, that word has
+become the book's tic, whatever the word is.
 
 ## What a story is, and is not
 
