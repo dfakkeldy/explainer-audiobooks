@@ -26,6 +26,11 @@ ROAD-BOOK LOAD — protect a one-pass listener:
   symbolic steps, then returns to a concrete case. Move anything that needs
   visual persistence, replay, or a longer chain into optional study material or
   an explicitly short focused lesson.
+- Attention drifts and a driving listener cannot rewind: open each section so
+  it can be joined cold, re-naming the running subject in the first breath
+  instead of leaning on a pronoun or on the previous section's closing
+  contrast. Let a core idea land through two different jobs — mechanism and
+  case, or story and rule — so one missed sentence does not cost the chapter.
 
 CODE ALOUD — at most ONE short line at a time:
 - Never a code block, multi-line snippet, or two code lines back to back. Code the
@@ -218,6 +223,14 @@ only when it helps recall or advances the next chapter.
   and move on — restating the same bargain five ways ("there's no free lunch",
   "that's the trade", "two different bargains", "the thing you refuse to give up")
   is the exact drone that flattens a real insight into filler.
+- **Drift and re-entry.** Minds wander on the road, and ADHD listeners — a
+  natural audience for audio learning — drift more often and lose the central
+  idea before the peripheral detail. Nobody rewinds while driving, so the prose
+  carries the safety margin: cold-joinable section openings, and core ideas
+  that land twice through different jobs. None of this licenses announced
+  transitions or importance claims. Re-entry works by saying the real names
+  again, and centrality is marked by structure — position, time spent, a worked
+  example, a checkpoint, recurrence after a gap.
 - **Throughlines** are 2-4 ideas that recur across the whole book (for the Echo
   book they were: on-device/private by default; design-for-the-margins as an
   engineering force; the solo-dev-with-AI / "don't build what you don't need yet"

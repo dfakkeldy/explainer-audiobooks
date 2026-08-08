@@ -105,7 +105,9 @@ Write for the ear using `references/narration-style.md` and
 files, tools, and commands instead of erasing them into "the settings file",
 and speak at most one short line of code at a time before unpacking it. For a
 road book, ground abstract ideas in practical situation-choice-consequence
-examples. At natural learning boundaries, use a recognizable spoken `Key
+examples, and open each section so a drifted listener can join it cold,
+re-naming the running subject instead of leaning on the previous section's
+close. At natural learning boundaries, use a recognizable spoken `Key
 points` checkpoint of two to four recall or action points, with no new facts.
 Use analogies as short retrieval handles only when they clarify a relationship.
 
