@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -194,6 +195,9 @@ class StageEchoDeliveryTests(unittest.TestCase):
             (b"{}", "nonempty"),
             (b"[]", "nonempty"),
             (b'"text"', "object or array"),
+            (b'{"value": NaN}', "JSON"),
+            (b'{"value": Infinity}', "JSON"),
+            (b'{"value": -Infinity}', "JSON"),
         )
         for payload, message in cases:
             with self.subTest(payload=payload):
@@ -322,6 +326,64 @@ class StageEchoDeliveryTests(unittest.TestCase):
 
         self.assertEqual(before, tree_hash(self.destination))
         self.assertTrue(self.stages())
+
+    def test_existing_destination_requires_a_hash_bound_generated_manifest(self) -> None:
+        mutations = {
+            "missing": None,
+            "malformed": b"{",
+            "wrong schema": {"schemaVersion": 2},
+            "wrong slug": {"slug": "other"},
+            "empty edition": {"editionId": ""},
+            "wrong artifact names": {
+                "rootArtifacts": {
+                    "fixture.m4b": hashlib.sha256(b"audio").hexdigest()
+                }
+            },
+            "wrong live hash": {
+                "rootArtifacts": {
+                    "fixture.m4b": "0" * 64,
+                    "fixture.epub": hashlib.sha256(b"epub").hexdigest(),
+                    "fixture.alignment.json": hashlib.sha256(
+                        b'{"anchors": [1]}\n'
+                    ).hexdigest(),
+                    "cover.png": hashlib.sha256(b"png").hexdigest(),
+                }
+            },
+        }
+        for label, mutation in mutations.items():
+            with self.subTest(label=label):
+                if self.destination.exists():
+                    shutil.rmtree(self.destination)
+                for stage in self.stages():
+                    shutil.rmtree(stage)
+                module.stage_delivery(self.request(), apply=True)
+                previous_marker = self.destination / "_production/previous/keep.txt"
+                previous_marker.write_text("preserve prior archive", encoding="utf-8")
+                manifest_path = (
+                    self.destination / "_production/checks/delivery-manifest.json"
+                )
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                if mutation is None:
+                    manifest_path.unlink()
+                elif isinstance(mutation, bytes):
+                    manifest_path.write_bytes(mutation)
+                else:
+                    manifest.update(mutation)
+                    manifest_path.write_text(
+                        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+                        encoding="utf-8",
+                    )
+                before = tree_hash(self.destination)
+
+                with self.assertRaisesRegex(ValueError, "delivery manifest"):
+                    module.stage_delivery(self.request(), apply=True)
+
+                self.assertEqual(before, tree_hash(self.destination))
+                self.assertEqual(
+                    "preserve prior archive",
+                    previous_marker.read_text(encoding="utf-8"),
+                )
+                self.assertTrue(self.stages())
 
     def test_cli_prints_sorted_dry_run_result_without_mutation(self) -> None:
         output = io.StringIO()

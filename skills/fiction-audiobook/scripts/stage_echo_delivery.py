@@ -111,6 +111,31 @@ def _json_bytes(payload: object) -> bytes:
     return (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8")
 
 
+def _reject_json_constant(value: str) -> object:
+    raise ValueError(f"nonstandard JSON constant: {value}")
+
+
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
+def _load_json(path: Path, label: str) -> object:
+    try:
+        text = path.read_text(encoding="utf-8")
+        return json.loads(
+            text,
+            parse_constant=_reject_json_constant,
+            object_pairs_hook=_unique_json_object,
+        )
+    except (UnicodeDecodeError, ValueError) as error:
+        raise ValueError(f"{label} must be valid JSON: {error}") from error
+
+
 def _validate_source(request: DeliveryRequest) -> tuple[dict[str, Path], dict[str, str]]:
     if not isinstance(request.slug, str) or not SLUG_PATTERN.fullmatch(request.slug):
         raise ValueError("slug must be lowercase words or digits separated by hyphens")
@@ -137,10 +162,7 @@ def _validate_source(request: DeliveryRequest) -> tuple[dict[str, Path], dict[st
             )
         _require_regular_file(path, label)
 
-    try:
-        alignment = json.loads(Path(request.alignment).read_text(encoding="utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise ValueError(f"alignment must be valid JSON: {error}") from error
+    alignment = _load_json(Path(request.alignment), "alignment")
     if not isinstance(alignment, (dict, list)):
         raise ValueError("alignment JSON must be an object or array")
     if not alignment:
@@ -202,6 +224,42 @@ def _validate_destination(request: DeliveryRequest) -> None:
         path = production / name
         if path.is_symlink() or not path.is_dir():
             raise ValueError(f"destination _production/{name} must be a non-symlink directory")
+
+    manifest_path = production / "checks/delivery-manifest.json"
+    _require_regular_file(manifest_path, "destination delivery manifest")
+    manifest = _load_json(manifest_path, "destination delivery manifest")
+    if not isinstance(manifest, dict):
+        raise ValueError("destination delivery manifest must be a JSON object")
+    expected_fields = {"schemaVersion", "slug", "editionId", "rootArtifacts"}
+    if set(manifest) != expected_fields:
+        raise ValueError(
+            "destination delivery manifest fields conflict: "
+            + _difference_message(set(manifest), expected_fields)
+        )
+    if type(manifest["schemaVersion"]) is not int or manifest["schemaVersion"] != 1:
+        raise ValueError("destination delivery manifest schemaVersion must be integer 1")
+    if manifest["slug"] != request.slug:
+        raise ValueError("destination delivery manifest slug does not match the title")
+    edition_id = manifest["editionId"]
+    if not isinstance(edition_id, str) or not edition_id.strip():
+        raise ValueError("destination delivery manifest editionId must be nonempty")
+    recorded_hashes = manifest["rootArtifacts"]
+    expected_artifacts = _artifact_paths(request)
+    if not isinstance(recorded_hashes, dict) or set(recorded_hashes) != set(
+        expected_artifacts
+    ):
+        actual_names = (
+            set(recorded_hashes) if isinstance(recorded_hashes, dict) else set()
+        )
+        raise ValueError(
+            "destination delivery manifest root artifact names conflict: "
+            + _difference_message(actual_names, set(expected_artifacts))
+        )
+    for name in expected_artifacts:
+        if recorded_hashes[name] != _sha256(destination / name):
+            raise ValueError(
+                f"destination delivery manifest hash does not match live artifact: {name}"
+            )
 
 
 def _copy_root_artifact(source: Path, destination: Path) -> None:
