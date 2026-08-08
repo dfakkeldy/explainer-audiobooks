@@ -225,9 +225,9 @@ def _used_voices(preferences: dict[str, Any]) -> set[str]:
     }
 
 
-def _validate_cast(
-    cast: dict[str, Any], preferences: dict[str, Any], *, require_unverified: bool
-) -> dict[str, object]:
+def _validate_cast_contract(
+    cast: dict[str, Any], *, require_unverified: bool
+) -> tuple[dict[str, object], list[dict[str, Any]]]:
     schema_version = cast.get("schemaVersion")
     if type(schema_version) is not int or schema_version != 1:
         raise ValueError("cast schemaVersion must be 1")
@@ -237,9 +237,6 @@ def _validate_cast(
     if type(chapter_count) is not int or chapter_count < 1:
         raise ValueError("cast chapterCount must be a positive integer")
     default_voice = _known_voice(cast.get("defaultVoice"), "cast default voice")
-    blacklist = preferences["blacklist"]
-    if default_voice in blacklist:
-        raise ValueError(f"cast default voice is blacklisted: {default_voice}")
     chapters = _require_list(cast.get("chapters"), "cast chapters")
     if len(chapters) != chapter_count:
         raise ValueError("cast must assign every chapter exactly once")
@@ -259,8 +256,6 @@ def _validate_cast(
         if not isinstance(role, str) or not role:
             raise ValueError("cast role must be non-empty text")
         voice = _known_voice(data.get("voice"), "cast voice")
-        if voice in blacklist:
-            raise ValueError(f"cast voice is blacklisted: {voice}")
         experimental = data.get("experimental")
         if type(experimental) is not bool:
             raise ValueError("cast experimental must be a real boolean")
@@ -277,10 +272,6 @@ def _validate_cast(
         raise ValueError("cast requires three to five distinct voices")
     if len(experimental_rows) > 2:
         raise ValueError("cast allows at most two experimental rows")
-    used_voices = _used_voices(preferences)
-    for row in experimental_rows:
-        if row["voice"] in used_voices:
-            raise ValueError(f"experimental voice was already used: {row['voice']}")
 
     plan = voice_plan(default_voice, canonical_rows)
     if cast.get("voicePlanSHA256") != plan["voicePlanSHA256"]:
@@ -291,6 +282,30 @@ def _validate_cast(
         raise ValueError("cast verifiedArtifacts must be null before narration")
     if "verifiedArtifacts" not in cast:
         raise ValueError("cast verifiedArtifacts must be null before narration")
+    return plan, experimental_rows
+
+
+def _validate_cast(
+    cast: dict[str, Any], preferences: dict[str, Any], *, require_unverified: bool
+) -> dict[str, object]:
+    blacklist = preferences["blacklist"]
+    default_voice = cast.get("defaultVoice")
+    if isinstance(default_voice, str) and default_voice in blacklist:
+        raise ValueError(f"cast default voice is blacklisted: {default_voice}")
+    chapter_rows = cast.get("chapters")
+    if isinstance(chapter_rows, list):
+        for row in chapter_rows:
+            if isinstance(row, dict):
+                voice = row.get("voice")
+                if isinstance(voice, str) and voice in blacklist:
+                    raise ValueError(f"cast voice is blacklisted: {voice}")
+    plan, experimental_rows = _validate_cast_contract(
+        cast, require_unverified=require_unverified
+    )
+    used_voices = _used_voices(preferences)
+    for row in experimental_rows:
+        if row["voice"] in used_voices:
+            raise ValueError(f"experimental voice was already used: {row['voice']}")
     return plan
 
 
@@ -301,6 +316,15 @@ def validate_cast(cast: dict[str, object], preferences: dict[str, object]) -> di
         _validate_preferences(_require_dict(preferences, "preferences")),
         require_unverified=True,
     )
+
+
+def validate_completed_cast(cast: dict[str, object]) -> dict[str, object]:
+    """Validate immutable cast structure and plan without mutable preferences."""
+    data = _require_dict(cast, "cast")
+    plan, _ = _validate_cast_contract(data, require_unverified=False)
+    if not isinstance(data.get("verifiedArtifacts"), dict):
+        raise ValueError("cast verifiedArtifacts must be completed")
+    return plan
 
 
 def _regular_digest(path: Path, label: str) -> str:
@@ -331,8 +355,6 @@ def _receipt_artifacts(
             raise ValueError(f"{label} differs from success receipt")
         verified[hash_field] = actual
     plan_hash = cast["voicePlanSHA256"]
-    if receipt.get("voicePlanSHA256") != plan_hash:
-        raise ValueError("cast voice-plan hash differs from Echo success receipt")
     verified["voicePlanSHA256"] = plan_hash
     return verified
 

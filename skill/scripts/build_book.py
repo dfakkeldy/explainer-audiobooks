@@ -44,7 +44,7 @@ import zipfile
 from pathlib import Path
 
 from cover_receipts import load_selection, sha256_file, verify_package
-from fiction_production_qc import verify_fiction_receipt
+from fiction_production_qc import record_fiction_build_outputs, verify_fiction_receipt
 from prose_qc import verify_style_receipt
 
 IMG_RE = re.compile(r'^!\[(?P<alt>[^\]]*)\]\((?P<src>[^)\s]+)(?:\s+"(?P<cap>[^"]*)")?\)$')
@@ -97,7 +97,9 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
           contributor="", cover_selection=None, m4b_cover=None, prose_receipt=None,
           fiction_receipt=None, non_narrated_appendix=None):
     if fiction_receipt is not None:
-        verify_fiction_receipt(Path(chapters_dir), Path(fiction_receipt))
+        verify_fiction_receipt(
+            Path(chapters_dir), Path(fiction_receipt), verify_build_outputs=False
+        )
     if prose_receipt is not None:
         verify_style_receipt(Path(chapters_dir), Path(prose_receipt))
     selection_path = Path(cover_selection) if cover_selection else None
@@ -393,6 +395,11 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
     finally:
         if staged_epub is not None:
             Path(staged_epub).unlink(missing_ok=True)
+
+    if fiction_receipt is not None:
+        record_fiction_build_outputs(
+            Path(chapters_dir), Path(fiction_receipt), Path(out_dir), slug
+        )
 
     print("Chapters:", len(chapters))
     for i, c in enumerate(chapters):

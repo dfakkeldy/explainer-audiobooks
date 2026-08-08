@@ -76,7 +76,6 @@ class FictionVoicePreferencesTests(unittest.TestCase):
                     "audiobookSHA256": sha256(m4b),
                     "sidecarFileName": sidecar.name,
                     "sidecarSHA256": sha256(sidecar),
-                    "voicePlanSHA256": cast["voicePlanSHA256"],
                 },
                 sort_keys=True,
             )
@@ -312,30 +311,47 @@ class FictionVoicePreferencesTests(unittest.TestCase):
                 )
             path.write_bytes({epub: b"epub source", m4b: b"audiobook", sidecar: b'{"anchors": []}\n'}[path])
 
-    def test_record_use_rejects_changed_plan_and_can_resume_after_verified_cast_write(self) -> None:
+    def test_record_use_accepts_real_echo_receipt_without_voice_plan_hash(self) -> None:
         cast_path = self.root / "voice-cast.json"
         cast = self.valid_cast()
         cast_path.write_text(json.dumps(cast), encoding="utf-8")
         epub, m4b, sidecar, receipt = self.write_success_fixture(cast)
-        invalid_receipt = json.loads(receipt.read_text(encoding="utf-8"))
-        invalid_receipt["voicePlanSHA256"] = "f" * 64
-        receipt.write_text(json.dumps(invalid_receipt), encoding="utf-8")
+        success = json.loads(receipt.read_text(encoding="utf-8"))
+        self.assertNotIn("voicePlanSHA256", success)
+        receipt.write_text(json.dumps(success), encoding="utf-8")
+
+        saved = module.record_use(
+            cast_path,
+            epub,
+            m4b,
+            sidecar,
+            receipt,
+            "2026-08-08T14:00:00+00:00",
+            self.preferences_path,
+        )
+
+        self.assertEqual(1, len(saved["uses"]))
+        self.assertEqual(
+            cast["voicePlanSHA256"],
+            json.loads(cast_path.read_text(encoding="utf-8"))["verifiedArtifacts"][
+                "voicePlanSHA256"
+            ],
+        )
+
+    def test_record_use_rejects_changed_plan_and_can_resume_after_verified_cast_write(self) -> None:
+        cast_path = self.root / "voice-cast.json"
+        cast = self.valid_cast()
+        epub, m4b, sidecar, receipt = self.write_success_fixture(cast)
+        invalid_cast = copy.deepcopy(cast)
+        invalid_cast["voicePlanSHA256"] = "f" * 64
+        cast_path.write_text(json.dumps(invalid_cast), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "voice-plan hash"):
             module.record_use(
                 cast_path, epub, m4b, sidecar, receipt,
                 "2026-08-08T14:00:00+00:00", self.preferences_path,
             )
 
-        receipt.write_text(
-            json.dumps(
-                {
-                    **invalid_receipt,
-                    "voicePlanSHA256": cast["voicePlanSHA256"],
-                }
-            ),
-            encoding="utf-8",
-        )
-        sealed = json.loads(cast_path.read_text(encoding="utf-8"))
+        sealed = copy.deepcopy(cast)
         sealed["verifiedArtifacts"] = {
             "sourceEPUBSHA256": sha256(epub),
             "audiobookSHA256": sha256(m4b),
@@ -360,6 +376,43 @@ class FictionVoicePreferencesTests(unittest.TestCase):
                 cast_path, epub, m4b, sidecar, receipt,
                 "2026-08-08T14:00:00+00:00", self.preferences_path,
             )
+
+    def test_completed_cast_enforces_only_the_immutable_canonical_contract(self) -> None:
+        completed = self.valid_cast()
+        completed["verifiedArtifacts"] = {
+            "sourceEPUBSHA256": "a" * 64,
+            "audiobookSHA256": "b" * 64,
+            "sidecarSHA256": "c" * 64,
+            "voicePlanSHA256": completed["voicePlanSHA256"],
+        }
+        plan = module.validate_completed_cast(completed)
+        self.assertEqual(completed["voicePlanSHA256"], plan["voicePlanSHA256"])
+
+        cases = []
+        missing = copy.deepcopy(completed)
+        missing["chapters"].pop()
+        cases.append(("coverage", missing, "every chapter"))
+        unknown = copy.deepcopy(completed)
+        unknown["chapters"][2]["voice"] = "not_a_voice"
+        cases.append(("unknown voice", unknown, "unknown Echo voice"))
+        too_few = copy.deepcopy(completed)
+        too_few["chapters"][2]["voice"] = "bf_emma"
+        cases.append(("ensemble", too_few, "three to five"))
+        inconsistent = copy.deepcopy(completed)
+        inconsistent["chapters"][3]["voice"] = "am_michael"
+        cases.append(("recurring role", inconsistent, "recurring role"))
+        wrong_hash = copy.deepcopy(completed)
+        wrong_hash["voicePlanSHA256"] = "f" * 64
+        cases.append(("plan hash", wrong_hash, "voice-plan hash"))
+        wrong_id = copy.deepcopy(completed)
+        wrong_id["voicePlanID"] = "plan-000000000000"
+        cases.append(("plan identity", wrong_id, "voice-plan identity"))
+        unfinished = copy.deepcopy(completed)
+        unfinished["verifiedArtifacts"] = None
+        cases.append(("unfinished", unfinished, "verifiedArtifacts"))
+        for name, cast, pattern in cases:
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, pattern):
+                module.validate_completed_cast(cast)
 
 
 if __name__ == "__main__":
