@@ -108,6 +108,33 @@ class ReferenceTrimTests(unittest.TestCase):
             with self.subTest(surface="narration-style", marker=marker):
                 self.assertIn(marker, narration)
 
+    def test_drift_and_reentry_contract_survives(self) -> None:
+        def normalized(name: str) -> str:
+            text = (REFS / name).read_text(encoding="utf-8").casefold()
+            return " ".join(text.split())
+
+        road_book = normalized("road-book-mode.md")
+        learning = normalized("learning-design.md")
+        narration = normalized("narration-style.md")
+
+        for marker in (
+            "## drift and re-entry",
+            "joined cold",
+            "re-naming, not announcing",
+            "adhd",
+            "structure marks what is central",
+        ):
+            with self.subTest(surface="road-book", marker=marker):
+                self.assertIn(marker, road_book)
+
+        for marker in ("joined cold", "cannot rewind"):
+            with self.subTest(surface="narration-style", marker=marker):
+                self.assertIn(marker, narration)
+
+        for marker in ("could not re-enter",):
+            with self.subTest(surface="learning-design", marker=marker):
+                self.assertIn(marker, learning)
+
 
 if __name__ == "__main__":
     unittest.main()

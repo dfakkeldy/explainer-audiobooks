@@ -69,6 +69,7 @@ class AudiobookSkillContractTests(unittest.TestCase):
             "two to four",
             "with no new facts",
             "retrieval handles",
+            "drifted listener",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, normalized)

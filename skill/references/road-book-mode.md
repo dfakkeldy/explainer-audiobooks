@@ -56,6 +56,28 @@ A short focused lesson may use up to five temporary values and five symbolic
 steps, but it must be clearly bounded. Dense terminology has the same cost as
 arithmetic: reduce simultaneous unfamiliar terms until each does useful work.
 
+## Drift and re-entry
+
+Attention drifts during a one-pass listen — a junction, a doorbell, a stray
+thought — and a driving listener cannot rewind to recover the lost half
+minute. Listeners with ADHD, a natural audience for audio learning, drift
+more often and lose central ideas before peripheral ones. Treat drift as a
+design condition of the format, not a listener failure.
+
+Open every section so it can be joined cold: re-name the running subject in
+the first breath — the command, the person, or the mechanism by its real
+name — rather than opening on a pronoun or on a contrast whose other half
+lives in the previous section's closing line. Re-entry is re-naming, not
+announcing: an announced transition is still a banned tell, while saying the
+real name again is simply how spoken prose points backward.
+
+Let a core idea land through two different jobs — the mechanism and the
+concrete case, or the story and the rule — so one missed sentence does not
+cost the chapter. Structure marks what is central for the listener who
+drifted: position at an opening or landing, time spent, a worked example,
+recurrence by name after a gap, and membership in a `Key points` checkpoint.
+Importance adjectives do not survive a lapse of attention; structure does.
+
 ## Real-world grounding and analogy
 
 Every core mechanism needs a real application or consequence. Book-level

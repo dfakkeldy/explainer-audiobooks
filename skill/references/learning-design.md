@@ -83,6 +83,9 @@ After each chapter, ask the reviewer to record:
 - the mental model a beginner could plausibly form;
 - confusions and unstable terms;
 - the exact sentence or paragraph where the listener may become lost;
+- the places where a listener who lost the previous half minute could not
+  re-enter: an opening that leans on the prior section's closing move, or a
+  single sentence whose loss severs the thread;
 - at each checkpoint, what the listener could recall or apply without looking
   back, and whether the cue clarified or merely repeated;
 - any promise that seems unresolved;
