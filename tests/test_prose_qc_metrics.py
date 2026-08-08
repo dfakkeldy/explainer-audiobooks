@@ -44,6 +44,7 @@ class ProseQcMetricsReportTests(unittest.TestCase):
             text = out.read_text(encoding="utf-8")
             self.assertIn("Shape metrics", text)
             self.assertIn("sentence_cv", text)
+            self.assertIn("fragment_chains", text)
 
 
 class ProseQcMetricsReceiptTests(unittest.TestCase):

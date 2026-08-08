@@ -32,7 +32,19 @@ Avoid these phrase families:
 - announced transitions: `one more thing`, `which brings us`, `before we move
   on`, and chapter endings that advertise the next chapter instead of ending;
 - reflexive contrast frames: repeated `not X but Y`, `not because X but because
-  Y`, and miniature reversals used only to make a sentence sound polished;
+  Y`, the single-clause pivot `is not X — it is Y` (`The history is not just
+  colourful background — it is a map`), and miniature reversals used only to
+  make a sentence sound polished;
+- intensifier tics: `genuinely`, `precisely`, `quietly`, `remarkably`, and
+  nearby discourse adverbs used to manufacture sincerity or weight the claim
+  has not earned. Each has legitimate literal uses (`precisely calibrated`,
+  `quietly closed the door`); the tic is the free-floating intensity marker
+  (`genuinely surprising`, `quietly radical`);
+- fragment drumbeats: consecutive clipped sentences deployed as manufactured
+  emphasis — `Not once. Not ever.` — and matched sets like `No waste. No
+  guessing. No restarts.` A single short sentence after a long one is
+  deliberate emphasis and is welcome; fragments arriving in formation are the
+  tell;
 - honesty announcement language: repeated `honestly`, `the honest answer`, `to
   be honest`, `if I'm being honest`, `in all honesty`, `the honest truth`,
   `let's be honest`, `truth be told`, `to tell you the truth`, `frankly`,
@@ -45,6 +57,14 @@ Avoid these phrase families:
 The exact phrases named as disliked by the listener are a hard failure. The
 broader phrase family is a density review: an occasional necessary transition
 can survive, but synonym cycling does not evade the gate.
+
+Fixed AI-vocabulary lists age by model generation — the `delve`/`tapestry` era
+markers are already extinct in this pipeline, and the residual tics it actually
+produces (`genuinely`, `precisely`, `quietly`) appear on no generic list. So the
+named intensifier words are a starting inventory, not the check itself. The
+durable check is per-book: list the manuscript's own most-repeated discourse
+adverbs and evaluative words from the repeated-phrases report, and treat any
+word doing sincerity work in every chapter as a candidate family.
 
 ## Better Repairs
 
@@ -59,6 +79,13 @@ can survive, but synonym cycling does not evade the gate.
   matter.
 - Replace `Honestly, this result is uncertain` with the precise uncertainty:
   `The result comes from one small study and has not yet been replicated.`
+- Delete the free-floating intensifier and state what earns the intensity:
+  replace `The result is genuinely surprising` with the expectation the result
+  broke. If nothing earns it, the adverb was doing all the work.
+- Fold a fragment run back into one sentence and keep at most one clipped
+  sentence where the emphasis is real. `Not once. Not ever.` becomes `Not once
+  across ninety-six runs.` The shape-metrics block of the prose report lists
+  every run of consecutive short sentences for this review.
 - Keep an imperative only when the listener must actually picture, calculate,
   compare, recall, or do something for the lesson to work.
 - Let paragraphs end when their explanatory job is complete. Do not add a

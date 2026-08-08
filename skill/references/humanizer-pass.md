@@ -36,6 +36,11 @@ voice edit, rerun structure and beginner review over the affected material.
   adjectives, vague attributions, filler, synonym cycling, tidy rule-of-three
   lists, repetitive paragraph openings, empty conclusions, and repeated honesty
   announcements such as `honestly`, `the honest answer`, and `to be honest`.
+- Flag intensifier tics — `genuinely`, `precisely`, `quietly`, `remarkably` used
+  as free-floating sincerity markers — and runs of clipped sentences deployed as
+  a drumbeat (`Not once. Not ever.`). One clipped sentence is emphasis; a
+  matched set is the tell. Prefer restoring the evidence that earns the
+  intensity over simply deleting the adverb.
 - Vary sentence length and paragraph rhythm so narration does not sound assembled.
 - Prefer concrete scenes, objects, decisions, constraints, and consequences that
   already exist in the fact pack or manuscript.
