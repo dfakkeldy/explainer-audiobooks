@@ -36,7 +36,6 @@ The governed wrapper currently accepts only `.build/custom-learning-audiobooks/<
 **Files:**
 
 - Modify: `tests/test_echo_narration_runtime.py`
-- Modify: `tests/test_echo_narration_contract.py`
 - Modify: `skills/echo-narration/scripts/echo_pronunciation_preflight.sh`
 - Modify: `skills/echo-narration/scripts/echo_pronunciation_narrate.sh`
 - Modify: `skills/echo-narration/references/narrating.md`
@@ -160,27 +159,15 @@ canonical_resume_root="$canonical_explainer_root/.build/$RUN_FOLDER/${SLUG:-}/re
 
 Do not add a command-line flag. The environment value must survive the lease wrapper's internal `exec` and be re-attested after rendering.
 
-- [ ] **Step 6: Document and contract-test both exact lanes**
+- [ ] **Step 6: Document both exact lanes**
 
-Add a “Run lanes” section to `narrating.md` with both mappings, the default, and a fiction invocation. Add to `tests/test_echo_narration_contract.py`:
-
-```python
-def test_run_lanes_are_exact_documented_and_receipt_bound(self) -> None:
-    combined = self.narrating + self.preflight + self.narrate_wrapper
-    for marker in (
-        "ECHO_RUN_LANE", "audiobook", "fiction-audiobook",
-        "custom-learning-audiobooks", "fiction-audiobooks",
-        "run_lane=", "run_root=",
-    ):
-        self.assertIn(marker, combined)
-    self.assertNotIn(".build/$ECHO_RUN_LANE", combined)
-```
+Add a “Run lanes” section to `narrating.md` with both mappings, the backward-compatible default, and a fiction invocation. The runtime tests from Step 1 prove the mapping, sealed receipt, rejection, and resume behavior; do not add a source-text change-detector test for human-facing prose.
 
 - [ ] **Step 7: Run and commit**
 
 ```bash
 /usr/local/bin/python3 -m unittest tests.test_echo_narration_contract tests.test_echo_narration_runtime -v
-git add tests/test_echo_narration_runtime.py tests/test_echo_narration_contract.py skills/echo-narration/scripts/echo_pronunciation_preflight.sh skills/echo-narration/scripts/echo_pronunciation_narrate.sh skills/echo-narration/references/narrating.md
+git add tests/test_echo_narration_runtime.py skills/echo-narration/scripts/echo_pronunciation_preflight.sh skills/echo-narration/scripts/echo_pronunciation_narrate.sh skills/echo-narration/references/narrating.md
 git commit -m "feat: add governed fiction narration lane"
 ```
 
@@ -710,83 +697,25 @@ With deterministic support in place, add the skill that owns intake, autonomous 
 - Create: `skills/fiction-audiobook/agents/openai.yaml`
 - Create: `skills/fiction-audiobook/references/express-fiction-craft.md`
 - Create: `skills/fiction-audiobook/references/public-fiction-gate.md`
-- Create: `tests/test_fiction_audiobook_contract.py`
 - Modify: `tools/validate_skills.py`
 - Modify: `AGENTS.md`
 - Modify: `README.md`
 
-- [ ] **Step 1: Write the failing skill contract**
+- [ ] **Step 1: RED — pressure-test behavior before the skill exists**
 
-Create `tests/test_fiction_audiobook_contract.py` with:
+Dispatch fresh-context agents without the new skill, one scenario per agent. Ask each to return only its proposed workflow decisions; do not let it implement or publish anything:
 
-```python
-from __future__ import annotations
+1. `Make me a fiction audiobook about a lighthouse that appears only during storms.`
+2. `Grill me, then make me a fiction audiobook about a retired courier who can deliver letters to yesterday.`
+3. `Make me a private fiction audiobook about a family story from my attached notes.`
+4. `Make me a fiction audiobook about a moon colony. The selected Echo voice is unavailable after the EPUB is frozen.`
+5. `Redo my latest fiction audiobook, but the iCloud title folder now contains my own notes.m4a.`
 
-import unittest
-from pathlib import Path
+For each response, record in the task report whether it: asks routine questions; enters the long fiction workflow; picks a justified length; uses chapter-level stable roles; preserves a private-only request; recasts with a new immutable plan; preserves an unexpected iCloud item; keeps M4B out of Git; distinguishes PR/release/merge/listening states; or invents human acceptance. Quote the concrete failure or rationalization. This is the mandatory failing baseline, so run it before creating `skills/fiction-audiobook/`.
 
-ROOT = Path(__file__).parents[1]
+- [ ] **Step 2: Derive the minimal guidance from observed failures**
 
-
-class FictionAudiobookContractTests(unittest.TestCase):
-    def setUp(self) -> None:
-        self.root = ROOT / "skills/fiction-audiobook"
-        self.skill = (self.root / "SKILL.md").read_text(encoding="utf-8")
-
-    def test_plain_premise_is_zero_intake_and_grilling_is_one_batch(self) -> None:
-        self.assertIn("ask no questions", self.skill)
-        self.assertIn("one batched intake", self.skill)
-        self.assertIn("grill me", self.skill)
-        self.assertIn("Do not ask follow-up questions", self.skill)
-
-    def test_express_lane_never_invokes_long_fiction_development(self) -> None:
-        self.assertIn("Do not invoke `fiction-book-development`", self.skill)
-        self.assertNotIn("Use $fiction-book-development", self.skill)
-        self.assertNotIn("scene-cards/", self.skill)
-        self.assertNotIn("vertical slice", self.skill.casefold())
-
-    def test_skill_selects_the_shortest_sufficient_form(self) -> None:
-        for marker in (
-            "18k–30k", "30k–45k", "50k–80k", "80k–110k",
-            "one-sentence rationale", "brief.md",
-        ):
-            self.assertIn(marker, self.skill)
-
-    def test_ensemble_delivery_and_publication_contracts_are_explicit(self) -> None:
-        for marker in (
-            "three to five", "af_heart", "--chapter-voice",
-            "fiction-voice-preferences.json", "stage_echo_delivery.py",
-            "_production/", "public first-listen", "GitHub Release",
-            "ready pull request", "Do not auto-merge", "humanListeningStatus",
-        ):
-            self.assertIn(marker, self.skill)
-
-    def test_every_required_support_file_exists_and_is_linked(self) -> None:
-        for relative in (
-            "references/express-fiction-craft.md",
-            "references/public-fiction-gate.md",
-            "scripts/fiction_voice_preferences.py",
-            "scripts/stage_echo_delivery.py",
-            "agents/openai.yaml",
-        ):
-            self.assertTrue((self.root / relative).is_file())
-            if relative != "agents/openai.yaml":
-                self.assertIn(relative, self.skill)
-
-
-if __name__ == "__main__":
-    unittest.main()
-```
-
-Add ordering assertions that the three revision passes are story → character/continuity → ear/prose; build is before casting; casting before narration; narration verification before iCloud promotion; iCloud delivery before GitHub mutation; and public-gate failure skips all GitHub commands.
-
-- [ ] **Step 2: Run and observe failure**
-
-```bash
-/usr/local/bin/python3 -m unittest tests.test_fiction_audiobook_contract -v
-```
-
-Expected: ERROR because the skill files do not exist.
+Map each baseline failure to the smallest positive workflow recipe or explicit safety rule that prevents it. Put that mapping in the task report. Do not create a source-text assertion test: the GREEN phase is the same agents applying the skill, while `validate_skills.py` owns only mechanical frontmatter and file-layout checks.
 
 - [ ] **Step 3: Write a lean `SKILL.md` with the autonomous state machine**
 
@@ -796,11 +725,11 @@ Use frontmatter:
 ---
 name: fiction-audiobook
 description: >-
-  Use when the user says “make me a fiction audiobook about X,” wants a premise turned into a novel or novella they can listen to, or asks for an Echo-ready fictional book. Takes one sentence through autonomous story development, revision, EPUB/M4B narration, Echo-clean iCloud delivery, and public-first publication; intake occurs only when the user explicitly asks to be grilled.
+  Use when the user asks to make a fiction audiobook from a premise, wants a novel or novella they can listen to, or asks for an Echo-ready fictional book.
 ---
 ```
 
-Keep `SKILL.md` under 300 lines. Define this exact order:
+Keep `SKILL.md` lean, targeting fewer than 500 words and using the two references for detail. Define this exact order:
 
 1. classify a full listening-package request and reject manuscript-only routing;
 2. perform zero intake unless explicit grilling language requests one batch covering genre/mood, must-have characters or setting, exclusions, POV/distance, ending shape, and voice/casting preferences; never ask a follow-up;
@@ -889,19 +818,22 @@ Add:
 validate_skill("skills/fiction-audiobook", "fiction-audiobook")
 ```
 
-Require stable markers across the skill, references, scripts, and YAML: `ask no questions`, `fiction-audiobooks`, `three to five`, `af_heart`, `_production/`, `public first-listen`, `private fallback`, `$fiction-audiobook`, and both helper names.
+Mechanically require all six support paths to exist, YAML frontmatter to parse, the agent prompt to name `$fiction-audiobook`, and both helper scripts to import and answer `--help`. Do not duplicate behavioral guidance as source-text marker assertions.
 
-- [ ] **Step 8: Run and commit**
+- [ ] **Step 8: GREEN — pressure-test the completed skill, then commit**
+
+Dispatch fresh-context agents on the same five scenarios, this time instructing each to read the new `SKILL.md` and only the references it routes to. Require, respectively: zero intake and autonomous length choice; one six-topic batch and no follow-up; private delivery with zero GitHub work; explicit recast/new plan identity without prose rebuild; and preserved staging plus blocked promotion naming `notes.m4a`.
+
+Across all responses, reject long-workflow checkpoints, line-level voices, extra iCloud root audio, publication after a failed gate, inferred human acceptance, and auto-merge. If a response fails, tighten only the guidance that allowed that failure and rerun that scenario with a fresh agent until it passes. Record RED and GREEN evidence in the task report.
 
 ```bash
-/usr/local/bin/python3 -m unittest tests.test_fiction_audiobook_contract -v
 /usr/local/bin/python3 tools/validate_skills.py
 git diff --check
-git add skills/fiction-audiobook tests/test_fiction_audiobook_contract.py tools/validate_skills.py AGENTS.md README.md
+git add skills/fiction-audiobook tools/validate_skills.py AGENTS.md README.md
 git commit -m "feat: add express fiction audiobook skill"
 ```
 
-Expected: contract and validator pass, and the skill contains no unfinished marker, implementation stub, or invocation of the long workflow.
+Expected: all five behavior scenarios pass, the mechanical validator is clean, and no source-text change-detector test was added.
 
 ---
 
@@ -973,7 +905,7 @@ This is repository implementation publication, not a sample book publication. Do
 - [ ] **Step 1: Run focused validation**
 
 ```bash
-/usr/local/bin/python3 -m unittest tests.test_echo_narration_contract tests.test_echo_narration_runtime tests.test_echo_voice_plan tests.test_fiction_voice_preferences tests.test_stage_echo_delivery tests.test_verify_public_first_listen tests.test_fiction_audiobook_contract tests.test_fiction_audiobook_integration -v
+/usr/local/bin/python3 -m unittest tests.test_echo_narration_contract tests.test_echo_narration_runtime tests.test_echo_voice_plan tests.test_fiction_voice_preferences tests.test_stage_echo_delivery tests.test_verify_public_first_listen tests.test_fiction_audiobook_integration -v
 ```
 
 Expected: all focused tests pass. Echo runtime may take several minutes.
