@@ -89,9 +89,12 @@ if [[ -n "$RESUME_STATE" && "$RESUME_STATE" != /* ]]; then
   usage
   exit 64
 fi
+ECHO_RUN_LANE=${ECHO_RUN_LANE-audiobook}
+RUN_FOLDER=$(echo_pronunciation_run_folder "$ECHO_RUN_LANE") || exit $?
+export ECHO_RUN_LANE
 if (( RESUME )); then
   canonical_explainer_root=$(cd -- "${EXPLAINER_ROOT:-$SCRIPT_DIR/../../..}" && pwd -P)
-  canonical_resume_root="$canonical_explainer_root/.build/custom-learning-audiobooks/${SLUG:-}/research"
+  canonical_resume_root="$canonical_explainer_root/.build/$RUN_FOLDER/${SLUG:-}/research"
   resume_filename=${RESUME_STATE#"$canonical_resume_root/"}
   if [[ -z ${SLUG:-} || "$RESUME_STATE" == "$resume_filename" \
     || ! "$resume_filename" =~ ^echo-resume-state-[a-z0-9_-]+\.json$ \

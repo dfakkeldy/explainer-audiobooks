@@ -552,6 +552,12 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         environment["PATH"] = f"{self.fake_bin}:{environment['PATH']}"
         return environment
 
+    def use_run_lane(self, folder: str) -> None:
+        destination = self.explainer / ".build" / folder / "fixture"
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        self.run_root.rename(destination)
+        self.run_root = destination
+
     def run_preflight(
         self,
         *,
@@ -1512,6 +1518,36 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 self.assertEqual(64, result.returncode)
                 self.assertIn("positive integer", result.stderr)
 
+    def test_fiction_lane_renders_and_seals_the_exact_run_root(self) -> None:
+        self.use_run_lane("fiction-audiobooks")
+        environment = self.environment()
+        environment["ECHO_RUN_LANE"] = "fiction-audiobook"
+        result = self.run_narrate(
+            "--chapter-voice", "1=bf_emma", environment=environment
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        receipt = next(
+            (self.run_root / "research").glob("echo-render-inputs-*.env")
+        ).read_text(encoding="utf-8")
+        self.assertIn("run_lane=fiction-audiobook\n", receipt + "\n")
+        self.assertIn(f"run_root={self.run_root}\n", receipt + "\n")
+
+    def test_run_lane_rejects_unknown_or_cross_lane_roots(self) -> None:
+        for lane in ("", "fiction", "../fiction", "Fiction"):
+            with self.subTest(lane=lane):
+                environment = self.environment()
+                environment["ECHO_RUN_LANE"] = lane
+                result = self.run_preflight(environment=environment)
+                self.assertEqual(64, result.returncode)
+                self.assertIn("ECHO_RUN_LANE", result.stderr)
+
+        self.use_run_lane("fiction-audiobooks")
+        environment = self.environment()
+        environment["ECHO_RUN_LANE"] = "audiobook"
+        result = self.run_preflight(environment=environment)
+        self.assertEqual(64, result.returncode)
+        self.assertIn("canonical run path", result.stderr)
+
     def test_resume_requires_the_canonical_absolute_state_path(self) -> None:
         bare = self.run_narrate("--resume")
         self.assertEqual(64, bare.returncode)
@@ -1529,15 +1565,48 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(64, state_without_resume.returncode)
         self.assertIn("requires --resume", state_without_resume.stderr)
 
-        initial = self.run_narrate()
+        self.use_run_lane("fiction-audiobooks")
+        fiction_environment = self.environment()
+        fiction_environment["ECHO_RUN_LANE"] = "fiction-audiobook"
+        initial = self.run_narrate(environment=fiction_environment)
         self.assertEqual(0, initial.returncode, initial.stderr)
         mismatched = self.run_narrate(
             "--resume",
             "--resume-state",
             str(self.run_root / "research" / "echo-resume-state-wrong.json"),
+            environment=fiction_environment,
         )
         self.assertEqual(64, mismatched.returncode)
         self.assertIn("canonical", mismatched.stderr)
+
+        fiction_state = next(
+            (self.run_root / "research").glob("echo-resume-state-*.json")
+        )
+
+        dropped_lane = self.run_narrate(
+            "--resume", "--resume-state", str(fiction_state)
+        )
+        self.assertEqual(64, dropped_lane.returncode)
+        self.assertIn("canonical", dropped_lane.stderr)
+
+        changed_lane_environment = self.environment()
+        changed_lane_environment["ECHO_RUN_LANE"] = "audiobook"
+        changed_lane = self.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(fiction_state),
+            environment=changed_lane_environment,
+        )
+        self.assertEqual(64, changed_lane.returncode)
+        self.assertIn("canonical", changed_lane.stderr)
+
+        fiction_resume = self.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(fiction_state),
+            environment=fiction_environment,
+        )
+        self.assertEqual(0, fiction_resume.returncode, fiction_resume.stderr)
 
     def test_success_publishes_run_scoped_media_and_current_selector(self) -> None:
         result = self.run_narrate()
