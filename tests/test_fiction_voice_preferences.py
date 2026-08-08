@@ -58,24 +58,65 @@ class FictionVoicePreferencesTests(unittest.TestCase):
             "verifiedArtifacts": None,
         }
 
-    def write_success_fixture(self, cast: dict[str, object]) -> tuple[Path, Path, Path, Path]:
+    def write_success_fixture(
+        self,
+        cast: dict[str, object],
+        *,
+        receipt_plan_id: str | None = None,
+    ) -> tuple[Path, Path, Path, Path]:
         epub = self.root / "storm-lighthouse.epub"
         m4b = self.root / "storm-lighthouse.m4b"
         sidecar = self.root / "storm-lighthouse.alignment.json"
-        receipt = self.root / "echo-render-success.json"
         epub.write_bytes(b"epub source")
         m4b.write_bytes(b"audiobook")
         sidecar.write_text('{"anchors": []}\n', encoding="utf-8")
+        renderer_root = self.root / "installed-renderer"
+        renderer_build_root = renderer_root / "renderer"
+        renderer_build_root.mkdir(parents=True, exist_ok=True)
+        renderer = {
+            "rendererSchemaVersion": 1,
+            "rendererRoot": str(renderer_root),
+            "rendererBuildRoot": str(renderer_build_root),
+            "installerSourceSHA": "1" * 40,
+            "echoSourceSHA": "2" * 40,
+            "rendererManifestSHA256": "3" * 64,
+            "echoCLI_SHA256": "4" * 64,
+            "echoResourcesSHA256": "5" * 64,
+            "echoRenderVersion": 12,
+            "modelPolicyRevision": "fixture-policy-v1",
+            "modelExpectedByteCount": 123456,
+            "modelBytesAttested": False,
+        }
+        plan_id = receipt_plan_id or cast["voicePlanID"]
+        run_id = (
+            f"{sha256(epub)[:12]}-{renderer['echoCLI_SHA256'][:12]}-"
+            f"{renderer['echoResourcesSHA256'][:12]}-"
+            f"{renderer['rendererManifestSHA256'][:12]}-"
+            f"{renderer['echoSourceSHA']}-{plan_id}"
+        )
+        attempt_id = "7" * 64
+        receipt = self.root / f"echo-render-success-{run_id}-{attempt_id}.json"
         receipt.write_text(
             json.dumps(
                 {
                     "schemaVersion": 3,
+                    **renderer,
+                    "attemptID": attempt_id,
+                    "runID": run_id,
+                    "attemptReceiptSHA256": "8" * 64,
+                    "inputReceiptFileName": f"echo-render-inputs-{run_id}.env",
+                    "inputReceiptSHA256": "9" * 64,
                     "sourceEPUBFileName": epub.name,
                     "sourceEPUBSHA256": sha256(epub),
+                    "artifactRelativePath": f"echo-renders/{run_id}/{attempt_id}",
+                    "resumeStateFileName": f"echo-resume-state-{run_id}.json",
+                    "resumeStateSHA256": "a" * 64,
                     "audiobookFileName": m4b.name,
                     "audiobookSHA256": sha256(m4b),
                     "sidecarFileName": sidecar.name,
                     "sidecarSHA256": sha256(sidecar),
+                    "auditFileName": "storm-lighthouse.pronunciation-audit.json",
+                    "auditSHA256": "b" * 64,
                 },
                 sort_keys=True,
             )
@@ -337,6 +378,25 @@ class FictionVoicePreferencesTests(unittest.TestCase):
                 "voicePlanSHA256"
             ],
         )
+
+    def test_record_use_rejects_real_echo_run_derived_for_another_plan(self) -> None:
+        cast_path = self.root / "voice-cast.json"
+        cast = self.valid_cast()
+        cast_path.write_text(json.dumps(cast), encoding="utf-8")
+        epub, m4b, sidecar, receipt = self.write_success_fixture(
+            cast, receipt_plan_id="plan-000000000000"
+        )
+
+        with self.assertRaisesRegex(ValueError, "runID|voice-plan|voice plan"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                receipt,
+                "2026-08-08T14:00:00+00:00",
+                self.preferences_path,
+            )
 
     def test_record_use_rejects_changed_plan_and_can_resume_after_verified_cast_write(self) -> None:
         cast_path = self.root / "voice-cast.json"

@@ -269,7 +269,6 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.private_dir = self.root / "private"
         self.chapters = self.private_dir / "chapters"
         self.research = self.private_dir / "research"
-        self.private_dist = self.private_dir / "dist"
         self.release_m4b = self.root / "release" / "fixture-fiction.m4b"
         self.voice_cast = self.private_dir / "voice-cast.json"
         self.fiction_receipt = self.research / "fiction-production-receipt.json"
@@ -299,7 +298,6 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             self.book_dir,
             self.chapters,
             self.research,
-            self.private_dist,
             self.release_m4b.parent,
             self.private_dir / "continuity",
             self.private_dir / "revisions",
@@ -310,15 +308,21 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.epub = self.book_dir / "fixture-fiction.epub"
         self.sidecar = self.book_dir / "fixture-fiction.alignment.json"
         self.cover = self.book_dir / "cover.png"
-        self.manuscript.write_text("# Fixture Fiction\n", encoding="utf-8")
-        self.epub.write_bytes(b"epub fixture")
+        self.chapter_specs = (
+            ("ch01.md", "Chapter One", "The lamp survived."),
+            ("ch02.md", "Chapter Two", "The tide withdrew."),
+            ("ch03.md", "Chapter Three", "The signal answered."),
+        )
+        self.chapter_paths = []
+        for filename, title, body in self.chapter_specs:
+            chapter_path = self.chapters / filename
+            chapter_path.write_text(f"## {title}\n\n{body}\n", encoding="utf-8")
+            self.chapter_paths.append(chapter_path)
+        self.chapter = self.chapter_paths[0]
+        self.write_public_story_outputs()
         self.sidecar.write_text('[{"blockId":"b1","timestamp":0}]\n', encoding="utf-8")
         self.cover.write_bytes(b"portrait cover")
         self.release_m4b.write_bytes(b"release audiobook")
-        self.private_manuscript = self.private_dist / self.manuscript.name
-        self.private_epub = self.private_dist / self.epub.name
-        self.private_manuscript.write_bytes(self.manuscript.read_bytes())
-        self.private_epub.write_bytes(self.epub.read_bytes())
         self.run_id = (
             f"{self.digest(self.epub)[:12]}-"
             f"{self.renderer_identity['echoCLI_SHA256'][:12]}-"
@@ -331,8 +335,6 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             f"echo-render-success-{self.run_id}-{self.attempt_id}.json"
         )
 
-        self.chapter = self.chapters / "ch01.md"
-        self.chapter.write_text("## Chapter One\n\nThe lamp survived.\n", encoding="utf-8")
         self.fiction_artifacts = {
             "authorization": self.research / "unattended-decisions.json",
             "storyBible": self.private_dir / "story-bible.md",
@@ -357,6 +359,69 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
     def digest(path: Path) -> str:
         return hashlib.sha256(path.read_bytes()).hexdigest()
 
+    def write_public_story_outputs(self) -> None:
+        lines = [
+            "# Fixture Fiction",
+            "",
+            "by Dan Fakkeldy",
+            "",
+            "Roughly 9 words.",
+            "",
+            "---",
+            "",
+        ]
+        for _filename, title, body in self.chapter_specs:
+            lines.extend([f"## {title}", "", body, "", "---", ""])
+        self.manuscript.write_text("\n".join(lines), encoding="utf-8")
+
+        container = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
+            '<rootfiles><rootfile full-path="OEBPS/content.opf" '
+            'media-type="application/oebps-package+xml"/></rootfiles></container>'
+        )
+        manifest = [
+            '<item id="titlepage" href="titlepage.xhtml" media-type="application/xhtml+xml"/>'
+        ]
+        spine = ['<itemref idref="titlepage"/>']
+        chapter_documents = {}
+        for index, (_filename, title, body) in enumerate(self.chapter_specs, start=1):
+            item_id = f"chap{index:02d}"
+            href = f"{item_id}.xhtml"
+            manifest.append(
+                f'<item id="{item_id}" href="{href}" media-type="application/xhtml+xml"/>'
+            )
+            spine.append(f'<itemref idref="{item_id}"/>')
+            chapter_documents[f"OEBPS/{href}"] = (
+                '<?xml version="1.0" encoding="utf-8"?>'
+                '<html xmlns="http://www.w3.org/1999/xhtml" '
+                'xmlns:epub="http://www.idpf.org/2007/ops">'
+                f'<head><title>{title}</title></head><body>'
+                f'<section epub:type="chapter"><h1>{title}</h1><p>{body}</p>'
+                '</section></body></html>'
+            )
+        opf = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<package xmlns="http://www.idpf.org/2007/opf" version="3.0">'
+            '<manifest>' + "".join(manifest) + '</manifest>'
+            '<spine>' + "".join(spine) + '</spine></package>'
+        )
+        titlepage = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<html xmlns="http://www.w3.org/1999/xhtml" '
+            'xmlns:epub="http://www.idpf.org/2007/ops"><head>'
+            '<title>Fixture Fiction</title></head><body>'
+            '<section epub:type="titlepage"><h1>Fixture Fiction</h1>'
+            '</section></body></html>'
+        )
+        with zipfile.ZipFile(self.epub, "w") as archive:
+            archive.writestr("mimetype", "application/epub+zip")
+            archive.writestr("META-INF/container.xml", container)
+            archive.writestr("OEBPS/content.opf", opf)
+            archive.writestr("OEBPS/titlepage.xhtml", titlepage)
+            for name, document in chapter_documents.items():
+                archive.writestr(name, document)
+
     def write_fiction_receipt(self) -> None:
         payload = {
             "schemaVersion": 1,
@@ -365,17 +430,8 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             "privacy": "private",
             "permissionToPublish": False,
             "humanReadingStatus": "pending",
-            "canonicalChapterSHA256": {self.chapter.name: self.digest(self.chapter)},
-            "buildOutputs": {
-                "slug": "fixture-fiction",
-                "manuscript": {
-                    "path": str(self.private_manuscript.relative_to(self.private_dir)),
-                    "sha256": self.digest(self.private_manuscript),
-                },
-                "epub": {
-                    "path": str(self.private_epub.relative_to(self.private_dir)),
-                    "sha256": self.digest(self.private_epub),
-                },
+            "canonicalChapterSHA256": {
+                chapter.name: self.digest(chapter) for chapter in self.chapter_paths
             },
             "artifacts": {
                 name: {
@@ -536,6 +592,22 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         )
         self.write_publication_receipt()
 
+    def rewrite_epub_member(self, member: str, payload: str) -> None:
+        rewritten = self.root / "rewritten.epub"
+        with zipfile.ZipFile(self.epub) as source, zipfile.ZipFile(
+            rewritten, "w"
+        ) as destination:
+            found = False
+            for info in source.infolist():
+                if info.filename == member:
+                    destination.writestr(info, payload)
+                    found = True
+                else:
+                    destination.writestr(info, source.read(info))
+            if not found:
+                destination.writestr(member, payload)
+        rewritten.replace(self.epub)
+
     def probes(self):
         return mock.patch.object(
             verifier.subprocess,
@@ -639,18 +711,45 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.write_publication_receipt()
         self.assert_rejected("unknown Echo voice")
 
-    def test_rejects_public_manuscript_substituted_after_private_build(self) -> None:
+    def test_rejects_public_manuscript_substituted_from_canonical_chapters(self) -> None:
         self.manuscript.write_text("# Unrelated substituted story\n", encoding="utf-8")
         self.receipt["artifacts"]["manuscript"]["sha256"] = self.digest(
             self.manuscript
         )
         self.write_publication_receipt()
-        self.assert_rejected("private build.*manuscript|manuscript.*private build")
+        self.assert_rejected("canonical.*Markdown|Markdown.*canonical|story content")
 
-    def test_rejects_public_epub_substituted_after_private_build(self) -> None:
+    def test_rejects_public_epub_substituted_from_canonical_chapters(self) -> None:
         self.epub.write_bytes(b"unrelated substituted EPUB")
         self.rebind_changed_public_epub()
-        self.assert_rejected("private build.*EPUB|EPUB.*private build")
+        self.assert_rejected("canonical.*EPUB|EPUB.*canonical|EPUB.*story|zip")
+
+    def test_rejects_substituted_narrated_epub_spine_content(self) -> None:
+        substituted = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<html xmlns="http://www.w3.org/1999/xhtml" '
+            'xmlns:epub="http://www.idpf.org/2007/ops"><head>'
+            '<title>Chapter Two</title></head><body>'
+            '<section epub:type="chapter"><h1>Chapter Two</h1>'
+            '<p>An unrelated story replaced the narrated spine.</p>'
+            '</section></body></html>'
+        )
+        self.rewrite_epub_member("OEBPS/chap02.xhtml", substituted)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("EPUB.*canonical|canonical.*EPUB|spine.*content")
+
+    def test_rejects_extra_unspined_chapter_xhtml(self) -> None:
+        extra = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<html xmlns="http://www.w3.org/1999/xhtml" '
+            'xmlns:epub="http://www.idpf.org/2007/ops"><head>'
+            '<title>Hidden Chapter</title></head><body>'
+            '<section epub:type="chapter"><h1>Hidden Chapter</h1>'
+            '<p>Unspined canonical-looking story.</p></section></body></html>'
+        )
+        self.rewrite_epub_member("OEBPS/hidden-chapter.xhtml", extra)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("unmanifested|unspined|EPUB.*chapter")
 
     def test_rejects_local_audio_square_cover_extra_item_or_directory(self) -> None:
         for name, directory in (
@@ -928,6 +1027,47 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                 finally:
                     self.epub.write_bytes(epub_bytes)
                     self.release_m4b.write_bytes(release_bytes)
+
+    def test_external_probes_consume_immutable_bytes_during_transient_swap(self) -> None:
+        for target in ("epub", "release"):
+            with self.subTest(target=target):
+                original_path = self.epub if target == "epub" else self.release_m4b
+                original_bytes = original_path.read_bytes()
+                observed_probe_bytes = None
+
+                def transient_swap(command, **_kwargs):
+                    nonlocal observed_probe_bytes
+                    command_target = "epub" if command[0] == "unzip" else "release"
+                    if command_target == target:
+                        saved = self.root / f"saved-{target}"
+                        replacement = self.root / f"replacement-{target}"
+                        replacement.write_bytes(f"transient {target} bytes".encode())
+                        original_path.replace(saved)
+                        replacement.replace(original_path)
+                        try:
+                            observed_probe_bytes = Path(command[-1]).read_bytes()
+                        finally:
+                            original_path.unlink()
+                            saved.replace(original_path)
+                    return subprocess.CompletedProcess(
+                        args=command,
+                        returncode=0,
+                        stdout=json.dumps(
+                            {
+                                "format": {"duration": "1.0"},
+                                "chapters": [
+                                    {"start_time": "0.0", "end_time": "1.0"}
+                                ],
+                            }
+                        ),
+                        stderr="",
+                    )
+
+                with mock.patch.object(
+                    verifier.subprocess, "run", side_effect=transient_swap
+                ):
+                    self.verify()
+                self.assertEqual(original_bytes, observed_probe_bytes)
 
     def test_rejects_voice_cast_replaced_between_parse_and_hash(self) -> None:
         changed_cast = json.loads(self.voice_cast.read_text(encoding="utf-8"))

@@ -8,20 +8,16 @@ import hashlib
 import json
 import math
 import os
+import posixpath
 import re
 import stat
 import subprocess
 import sys
+import tempfile
+import xml.etree.ElementTree as ET
+import zipfile
 from dataclasses import dataclass
-from pathlib import Path
-
-ECHO_SCRIPT_DIRECTORY = (
-    Path(__file__).resolve().parents[2] / "skills" / "echo-narration" / "scripts"
-)
-if str(ECHO_SCRIPT_DIRECTORY) not in sys.path:
-    sys.path.insert(0, str(ECHO_SCRIPT_DIRECTORY))
-
-from echo_pronunciation_state import RENDERER_IDENTITY_KEYS, RUN_ID_PATTERN
+from pathlib import Path, PurePosixPath
 
 FICTION_VOICE_DIRECTORY = (
     Path(__file__).resolve().parents[2] / "skills" / "fiction-audiobook" / "scripts"
@@ -29,7 +25,10 @@ FICTION_VOICE_DIRECTORY = (
 if str(FICTION_VOICE_DIRECTORY) not in sys.path:
     sys.path.insert(0, str(FICTION_VOICE_DIRECTORY))
 
-from fiction_voice_preferences import validate_completed_cast
+from fiction_voice_preferences import (
+    validate_completed_cast,
+    validate_echo_success_receipt,
+)
 
 try:
     from .fiction_production_qc import verify_fiction_receipt
@@ -127,28 +126,6 @@ _CAST_VERIFIED_ARTIFACT_FIELDS = {
     "sidecarSHA256",
     "voicePlanSHA256",
 }
-_ECHO_SUCCESS_FIELDS = {
-    "schemaVersion",
-    *RENDERER_IDENTITY_KEYS,
-    "attemptID",
-    "runID",
-    "attemptReceiptSHA256",
-    "inputReceiptFileName",
-    "inputReceiptSHA256",
-    "sourceEPUBFileName",
-    "sourceEPUBSHA256",
-    "artifactRelativePath",
-    "resumeStateFileName",
-    "resumeStateSHA256",
-    "audiobookFileName",
-    "audiobookSHA256",
-    "sidecarFileName",
-    "sidecarSHA256",
-    "auditFileName",
-    "auditSHA256",
-}
-
-
 @dataclass(frozen=True)
 class _FileSnapshot:
     path: Path
@@ -195,7 +172,13 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _snapshot_file(path: Path, label: str, *, capture: bool = False) -> _FileSnapshot:
+def _snapshot_file(
+    path: Path,
+    label: str,
+    *,
+    capture: bool = False,
+    copy_to: Path | None = None,
+) -> _FileSnapshot:
     _reject_symlink_ancestors(path, label)
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
     try:
@@ -204,7 +187,10 @@ def _snapshot_file(path: Path, label: str, *, capture: bool = False) -> _FileSna
         raise ValueError(f"{label} is not a readable regular file") from error
     chunks: list[bytes] | None = [] if capture else None
     digest = hashlib.sha256()
+    copy_stream = None
     try:
+        if copy_to is not None:
+            copy_stream = copy_to.open("xb")
         before = os.fstat(descriptor)
         _require(stat.S_ISREG(before.st_mode), f"{label} must be a regular file")
         with os.fdopen(descriptor, "rb") as stream:
@@ -213,13 +199,23 @@ def _snapshot_file(path: Path, label: str, *, capture: bool = False) -> _FileSna
                 digest.update(chunk)
                 if chunks is not None:
                     chunks.append(chunk)
+                if copy_stream is not None:
+                    copy_stream.write(chunk)
             after = os.fstat(stream.fileno())
+        if copy_stream is not None:
+            copy_stream.flush()
+            os.fsync(copy_stream.fileno())
+            copy_stream.close()
+            copy_stream = None
+            os.chmod(copy_to, 0o400)
         current = os.lstat(path)
     except OSError as error:
         raise ValueError(f"{label} changed during verification") from error
     finally:
         if descriptor >= 0:
             os.close(descriptor)
+        if copy_stream is not None:
+            copy_stream.close()
     identity_before = (
         before.st_dev,
         before.st_ino,
@@ -610,7 +606,10 @@ def _verify_fiction_receipt_fields(receipt: dict[str, object]) -> str:
 
 
 def _verify_fiction_artifacts(
-    book_dir: Path, receipt: dict[str, object], slug: str
+    book_dir: Path,
+    receipt: dict[str, object],
+    slug: str,
+    epub_probe_copy: Path,
 ) -> tuple[dict[str, str], list[_FileSnapshot]]:
     artifacts = receipt.get("artifacts")
     _require(isinstance(artifacts, dict), "fiction artifacts must be an object")
@@ -638,7 +637,10 @@ def _verify_fiction_artifacts(
         path = book_dir / filename
         _require_regular_file(path, f"fiction {name} artifact")
         snapshot = _snapshot_file(
-            path, f"fiction {name} artifact", capture=name == "alignment"
+            path,
+            f"fiction {name} artifact",
+            capture=name in {"manuscript", "alignment"},
+            copy_to=epub_probe_copy if name == "epub" else None,
         )
         if name == "alignment":
             alignment = _json_from_snapshot(snapshot, "fiction alignment")
@@ -662,6 +664,8 @@ def _probe_fiction_media(
     release_m4b: Path,
     epub_snapshot: _FileSnapshot,
     release_snapshot: _FileSnapshot,
+    epub_probe_snapshot: _FileSnapshot,
+    release_probe_snapshot: _FileSnapshot,
 ) -> None:
     try:
         subprocess.run(
@@ -672,6 +676,7 @@ def _probe_fiction_media(
         )
     except (OSError, subprocess.CalledProcessError) as error:
         raise ValueError("fiction EPUB failed unzip -t") from error
+    _require_snapshot_unchanged(epub_probe_snapshot, "immutable fiction EPUB")
     _require_snapshot_unchanged(epub_snapshot, "fiction EPUB")
     try:
         probe = subprocess.run(
@@ -696,6 +701,7 @@ def _probe_fiction_media(
         )
     except (OSError, subprocess.CalledProcessError, json.JSONDecodeError) as error:
         raise ValueError("fiction M4B failed ffprobe") from error
+    _require_snapshot_unchanged(release_probe_snapshot, "immutable release M4B")
     _require_snapshot_unchanged(release_snapshot, "release M4B")
     _require(
         isinstance(media, dict) and set(media) == {"format", "chapters"},
@@ -753,7 +759,10 @@ def _probe_fiction_media(
 
 
 def _verify_release(
-    receipt: dict[str, object], slug: str, release_m4b: Path
+    receipt: dict[str, object],
+    slug: str,
+    release_m4b: Path,
+    release_probe_copy: Path,
 ) -> tuple[str, _FileSnapshot]:
     release = receipt.get("release")
     _require(isinstance(release, dict), "release must be an object")
@@ -774,7 +783,9 @@ def _verify_release(
         f"release M4B filename must be {expected_filename}",
     )
     expected_hash = _require_sha256(release.get("assetSHA256"), "release asset SHA-256")
-    snapshot = _snapshot_file(release_m4b, "release M4B")
+    snapshot = _snapshot_file(
+        release_m4b, "release M4B", copy_to=release_probe_copy
+    )
     actual_hash = snapshot.sha256
     _require(actual_hash == expected_hash, "release M4B SHA-256 does not match")
     return actual_hash, snapshot
@@ -792,10 +803,11 @@ def _snapshot_fiction_inputs(
                     _snapshot_file(
                         chapters_dir / filename,
                         f"canonical fiction chapter {filename}",
+                        capture=True,
                     )
                 )
     run_root = chapters_dir.parent
-    for section in (fiction.get("artifacts"), fiction.get("buildOutputs")):
+    for section in (fiction.get("artifacts"),):
         if not isinstance(section, dict):
             continue
         for record in section.values():
@@ -880,7 +892,7 @@ def _verify_private_evidence(
         "Echo success receipt SHA-256 does not match privateEvidence",
     )
     snapshots.append(success_snapshot)
-    _verify_echo_success_provenance(success, echo_success_receipt, cast)
+    validate_echo_success_receipt(success, echo_success_receipt, cast)
     expected_success = {
         "sourceEPUBFileName": f"{slug}.epub",
         "sourceEPUBSHA256": artifact_hashes["epub"],
@@ -905,152 +917,329 @@ def _verify_private_evidence(
     )
     snapshots.append(fiction_snapshot)
     fiction_inputs = _snapshot_fiction_inputs(chapters_dir, fiction)
-    verified_fiction = verify_fiction_receipt(chapters_dir, fiction_receipt)
+    verify_fiction_receipt(chapters_dir, fiction_receipt)
     for snapshot in fiction_inputs:
         _require_snapshot_unchanged(snapshot, "fiction private input")
     snapshots.extend(fiction_inputs)
-    build_outputs = verified_fiction.get("buildOutputs")
-    _require(
-        isinstance(build_outputs, dict),
-        "fiction receipt must bind private build outputs",
-    )
-    _require(
-        build_outputs.get("slug") == slug,
-        "fiction private build slug does not match publication",
-    )
-    for name, artifact_name, label in (
-        ("manuscript", "manuscript", "manuscript"),
-        ("epub", "epub", "EPUB"),
-    ):
-        record = build_outputs.get(name)
-        _require(isinstance(record, dict), f"fiction private build {label} is missing")
-        _require(
-            record.get("sha256") == artifact_hashes[artifact_name],
-            f"fiction private build {label} differs from public {label}",
-        )
     return snapshots
 
 
-def _verify_echo_success_provenance(
-    success: dict[str, object], receipt_path: Path, cast: dict[str, object]
-) -> None:
-    expected_fields = set(_ECHO_SUCCESS_FIELDS)
-    has_reel = "reelFileName" in success or "reelSHA256" in success
-    if has_reel:
-        expected_fields.update({"reelFileName", "reelSHA256"})
-    _require(
-        set(success) == expected_fields,
-        "Echo success receipt must contain exact governed provenance fields",
+def _chapter_markdown(
+    content: bytes, filename: str, label: str
+) -> tuple[str, tuple[str, ...]]:
+    try:
+        raw = content.decode("utf-8").strip()
+    except UnicodeDecodeError as error:
+        raise ValueError(f"{label} is not UTF-8") from error
+    lines = raw.split("\n")
+    title = Path(filename).stem
+    body_start = 0
+    for index, line in enumerate(lines):
+        if line.strip().startswith("#"):
+            title = re.sub(r"^#+\s*", "", line.strip())
+            body_start = index + 1
+            break
+    _require(bool(title), f"{label} title is empty")
+    body = "\n".join(lines[body_start:]).strip()
+    paragraphs: list[str] = []
+    for chunk in re.split(r"\n\s*\n", body):
+        paragraph = re.sub(r"\s*\n\s*", " ", chunk.strip())
+        if not paragraph:
+            continue
+        if paragraph.startswith("#"):
+            paragraph = re.sub(r"^#+\s*", "", paragraph)
+        _require(
+            paragraph != "---",
+            f"{label} contains an ambiguous story-section delimiter",
+        )
+        _require(
+            re.fullmatch(r"!\[[^]]*\]\([^)]*\)", paragraph) is None,
+            f"{label} contains unsupported public fiction image content",
+        )
+        paragraphs.append(paragraph)
+    _require(bool(paragraphs), f"{label} story body is empty")
+    return title, tuple(paragraphs)
+
+
+def _canonical_story(
+    chapters_dir: Path, snapshots: list[_FileSnapshot]
+) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    chapter_snapshots = sorted(
+        (
+            snapshot
+            for snapshot in snapshots
+            if snapshot.path.parent == chapters_dir
+            and snapshot.path.name.startswith("ch")
+            and snapshot.path.suffix == ".md"
+        ),
+        key=lambda snapshot: snapshot.path.name,
     )
-    _require(
-        type(success.get("schemaVersion")) is int
-        and success["schemaVersion"] == 3,
-        "Echo success receipt schemaVersion must be integer 3",
-    )
-    attempt_id = _require_sha256(success.get("attemptID"), "Echo attemptID")
-    run_id = success.get("runID")
-    _require(
-        isinstance(run_id, str) and RUN_ID_PATTERN.fullmatch(run_id) is not None,
-        "Echo success receipt runID is invalid",
-    )
-    plan_id = cast.get("voicePlanID")
-    _require(
-        isinstance(plan_id, str) and run_id.endswith(f"-{plan_id}"),
-        "Echo runID does not bind the cast voicePlanID",
-    )
-    _require(
-        receipt_path.name == f"echo-render-success-{run_id}-{attempt_id}.json",
-        "Echo success receipt filename is not derived from run and attempt",
-    )
-    _require(
-        success.get("artifactRelativePath")
-        == f"echo-renders/{run_id}/{attempt_id}",
-        "Echo artifactRelativePath is not derived from run and attempt",
-    )
-    _require(
-        success.get("inputReceiptFileName") == f"echo-render-inputs-{run_id}.env",
-        "Echo input receipt filename is not derived from runID",
-    )
-    _require(
-        success.get("resumeStateFileName") == f"echo-resume-state-{run_id}.json",
-        "Echo resume-state filename is not derived from runID",
-    )
-    for field in (
-        "attemptReceiptSHA256",
-        "inputReceiptSHA256",
-        "sourceEPUBSHA256",
-        "resumeStateSHA256",
-        "audiobookSHA256",
-        "sidecarSHA256",
-        "auditSHA256",
-    ):
-        _require_sha256(success.get(field), f"Echo success receipt {field}")
-    if has_reel:
-        _require_sha256(success.get("reelSHA256"), "Echo success receipt reelSHA256")
-    for field in ("auditFileName", "reelFileName"):
-        if field in success:
-            filename = success[field]
+    _require(bool(chapter_snapshots), "canonical fiction chapters are missing")
+    story = []
+    for snapshot in chapter_snapshots:
+        assert snapshot.content is not None
+        story.append(
+            _chapter_markdown(
+                snapshot.content,
+                snapshot.path.name,
+                f"canonical chapter {snapshot.path.name}",
+            )
+        )
+    return tuple(story)
+
+
+def _public_markdown_story(
+    snapshot: _FileSnapshot,
+) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    assert snapshot.content is not None
+    try:
+        text = snapshot.content.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise ValueError("public fiction Markdown is not UTF-8") from error
+    lines = text.splitlines()
+    try:
+        first_delimiter = lines.index("---")
+    except ValueError as error:
+        raise ValueError(
+            "public fiction Markdown story content lacks its section delimiter"
+        ) from error
+    story_lines = lines[first_delimiter + 1 :]
+    sections: list[list[str]] = []
+    current: list[str] = []
+    for line in story_lines:
+        if line == "---":
             _require(
-                isinstance(filename, str)
-                and bool(filename)
-                and Path(filename).name == filename,
-                f"Echo success receipt {field} must be a filename",
+                any(value.strip() for value in current),
+                "public fiction Markdown contains an empty story section",
+            )
+            sections.append(current)
+            current = []
+        else:
+            current.append(line)
+    _require(
+        not any(value.strip() for value in current),
+        "public fiction Markdown has extra story content after its final section",
+    )
+    story = []
+    for index, section in enumerate(sections, start=1):
+        story.append(
+            _chapter_markdown(
+                "\n".join(section).encode("utf-8"),
+                f"section-{index}.md",
+                f"public fiction Markdown section {index}",
+            )
+        )
+    return tuple(story)
+
+
+def _safe_epub_path(value: str, label: str) -> str:
+    _require(
+        isinstance(value, str)
+        and bool(value)
+        and "\\" not in value
+        and not value.startswith("/"),
+        f"{label} is an unsafe EPUB path",
+    )
+    parts = PurePosixPath(value).parts
+    _require(
+        all(part not in {"", ".", ".."} for part in parts),
+        f"{label} is an unsafe EPUB path",
+    )
+    return value
+
+
+def _epub_href(opf_path: str, href: object, label: str) -> str:
+    _require(
+        isinstance(href, str) and "#" not in href and "?" not in href,
+        f"{label} is invalid",
+    )
+    joined = posixpath.normpath(posixpath.join(posixpath.dirname(opf_path), href))
+    return _safe_epub_path(joined, label)
+
+
+def _epub_xml(
+    archive: zipfile.ZipFile,
+    entries: dict[str, zipfile.ZipInfo],
+    name: str,
+    label: str,
+) -> ET.Element:
+    _require(name in entries, f"{label} is missing from the EPUB")
+    _require(entries[name].file_size <= 16 * 1024 * 1024, f"{label} is too large")
+    try:
+        return ET.fromstring(archive.read(name))
+    except (ET.ParseError, UnicodeError, OSError, RuntimeError) as error:
+        raise ValueError(f"{label} is invalid XML") from error
+
+
+def _plain_inline_markdown(value: str) -> str:
+    value = re.sub(r"\*\*(.+?)\*\*", r"\1", value)
+    value = re.sub(r"__(.+?)__", r"\1", value)
+    value = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"\1", value)
+    return re.sub(r"(?<!_)_(?!_)(.+?)(?<!_)_(?!_)", r"\1", value)
+
+
+def _epub_story(
+    epub: Path,
+) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    try:
+        archive = zipfile.ZipFile(epub)
+    except (OSError, zipfile.BadZipFile) as error:
+        raise ValueError("public fiction EPUB is not a valid zip archive") from error
+    with archive:
+        infos = archive.infolist()
+        names = [info.filename for info in infos]
+        _require(len(names) == len(set(names)), "public fiction EPUB has duplicate files")
+        entries: dict[str, zipfile.ZipInfo] = {}
+        for info in infos:
+            name = _safe_epub_path(info.filename, "EPUB member")
+            mode = info.external_attr >> 16
+            _require(not stat.S_ISLNK(mode), f"EPUB member is a symlink: {name}")
+            entries[name] = info
+
+        container = _epub_xml(
+            archive, entries, "META-INF/container.xml", "EPUB container"
+        )
+        container_namespace = "urn:oasis:names:tc:opendocument:xmlns:container"
+        rootfiles = container.findall(
+            f".//{{{container_namespace}}}rootfile"
+        )
+        _require(len(rootfiles) == 1, "EPUB container must name exactly one package")
+        opf_path = _safe_epub_path(
+            rootfiles[0].get("full-path", ""), "EPUB package path"
+        )
+        package = _epub_xml(archive, entries, opf_path, "EPUB package")
+        opf_namespace = "http://www.idpf.org/2007/opf"
+        manifest = package.find(f"{{{opf_namespace}}}manifest")
+        spine = package.find(f"{{{opf_namespace}}}spine")
+        _require(manifest is not None and spine is not None, "EPUB lacks manifest or spine")
+
+        items: dict[str, tuple[str, str]] = {}
+        hrefs: set[str] = set()
+        for item in list(manifest):
+            _require(item.tag == f"{{{opf_namespace}}}item", "EPUB manifest is invalid")
+            item_id = item.get("id")
+            media_type = item.get("media-type")
+            _require(
+                isinstance(item_id, str)
+                and bool(item_id)
+                and item_id not in items
+                and isinstance(media_type, str),
+                "EPUB manifest item identity is invalid",
+            )
+            href = _epub_href(opf_path, item.get("href"), "EPUB manifest href")
+            _require(href not in hrefs and href in entries, "EPUB manifest href is invalid")
+            hrefs.add(href)
+            items[item_id] = (href, media_type)
+
+        xhtml_media = "application/xhtml+xml"
+        declared_xhtml = {
+            href for href, media_type in items.values() if media_type == xhtml_media
+        }
+        archived_xhtml = {name for name in entries if name.endswith(".xhtml")}
+        _require(
+            archived_xhtml == declared_xhtml,
+            "public fiction EPUB has an unmanifested chapter-like XHTML file",
+        )
+
+        epub_type = "{http://www.idpf.org/2007/ops}type"
+        documents: dict[str, tuple[str | None, ET.Element | None]] = {}
+        for item_id, (href, media_type) in items.items():
+            if media_type != xhtml_media:
+                continue
+            document = _epub_xml(archive, entries, href, f"EPUB document {href}")
+            sections = document.findall(
+                ".//{http://www.w3.org/1999/xhtml}section"
+            )
+            chapter_sections = [
+                section
+                for section in sections
+                if "chapter" in section.get(epub_type, "").split()
+            ]
+            _require(
+                len(chapter_sections) <= 1,
+                f"EPUB document {href} has multiple chapter sections",
+            )
+            if chapter_sections:
+                documents[item_id] = ("chapter", chapter_sections[0])
+            else:
+                section_type = sections[0].get(epub_type, "") if sections else None
+                documents[item_id] = (section_type, sections[0] if sections else None)
+
+        spine_ids: list[str] = []
+        for itemref in list(spine):
+            _require(itemref.tag == f"{{{opf_namespace}}}itemref", "EPUB spine is invalid")
+            item_id = itemref.get("idref")
+            _require(
+                isinstance(item_id, str)
+                and item_id in items
+                and item_id not in spine_ids,
+                "EPUB spine item identity is invalid",
+            )
+            spine_ids.append(item_id)
+        chapter_ids = [
+            item_id
+            for item_id in spine_ids
+            if documents.get(item_id, (None, None))[0] == "chapter"
+        ]
+        manifest_chapter_ids = {
+            item_id for item_id, (kind, _section) in documents.items() if kind == "chapter"
+        }
+        _require(
+            set(chapter_ids) == manifest_chapter_ids
+            and len(chapter_ids) == len(manifest_chapter_ids),
+            "public fiction EPUB contains an unspined chapter",
+        )
+        for item_id in spine_ids:
+            if item_id in chapter_ids:
+                continue
+            kind = documents.get(item_id, (None, None))[0]
+            _require(
+                isinstance(kind, str)
+                and bool({"cover", "titlepage"} & set(kind.split())),
+                "public fiction EPUB spine contains a non-narrated document",
             )
 
+        story = []
+        xhtml_namespace = "http://www.w3.org/1999/xhtml"
+        for item_id in chapter_ids:
+            section = documents[item_id][1]
+            assert section is not None
+            children = list(section)
+            _require(
+                bool(children) and children[0].tag == f"{{{xhtml_namespace}}}h1",
+                "public fiction EPUB chapter lacks its title",
+            )
+            title = "".join(children[0].itertext())
+            paragraphs = []
+            for child in children[1:]:
+                _require(
+                    child.tag == f"{{{xhtml_namespace}}}p",
+                    "public fiction EPUB chapter has non-story content",
+                )
+                paragraphs.append("".join(child.itertext()))
+            _require(bool(paragraphs), "public fiction EPUB chapter body is empty")
+            story.append((title, tuple(paragraphs)))
+        return tuple(story)
+
+
+def _verify_public_story_content(
+    manuscript: _FileSnapshot,
+    epub: Path,
+    chapters_dir: Path,
+    private_snapshots: list[_FileSnapshot],
+) -> None:
+    canonical = _canonical_story(chapters_dir, private_snapshots)
     _require(
-        type(success.get("rendererSchemaVersion")) is int
-        and success["rendererSchemaVersion"] == 1,
-        "Echo rendererSchemaVersion must be integer 1",
+        _public_markdown_story(manuscript) == canonical,
+        "public fiction Markdown story content differs from canonical chapters",
     )
-    for field in ("rendererRoot", "rendererBuildRoot"):
-        value = success.get(field)
-        _require(
-            isinstance(value, str) and Path(value).is_absolute(),
-            f"Echo success receipt {field} must be an absolute path",
-        )
-    for field in ("installerSourceSHA", "echoSourceSHA"):
-        value = success.get(field)
-        _require(
-            isinstance(value, str) and re.fullmatch(r"[0-9a-f]{40}", value) is not None,
-            f"Echo success receipt {field} must be a lowercase Git SHA",
-        )
-    for field in (
-        "rendererManifestSHA256",
-        "echoCLI_SHA256",
-        "echoResourcesSHA256",
-    ):
-        _require_sha256(success.get(field), f"Echo success receipt {field}")
-    _require(
-        type(success.get("echoRenderVersion")) is int
-        and success["echoRenderVersion"] >= 12,
-        "Echo render version must be an integer of at least 12",
-    )
-    policy = success.get("modelPolicyRevision")
-    _require(
-        isinstance(policy, str)
-        and bool(policy)
-        and "\n" not in policy
-        and "\r" not in policy,
-        "Echo modelPolicyRevision must be nonempty and single-line",
-    )
-    _require(
-        type(success.get("modelExpectedByteCount")) is int
-        and success["modelExpectedByteCount"] > 0,
-        "Echo modelExpectedByteCount must be a positive integer",
+    expected_epub = tuple(
+        (title, tuple(_plain_inline_markdown(value) for value in paragraphs))
+        for title, paragraphs in canonical
     )
     _require(
-        success.get("modelBytesAttested") is False,
-        "Echo modelBytesAttested must be false",
-    )
-    expected_run_id = (
-        f"{success['sourceEPUBSHA256'][:12]}-{success['echoCLI_SHA256'][:12]}-"
-        f"{success['echoResourcesSHA256'][:12]}-"
-        f"{success['rendererManifestSHA256'][:12]}-"
-        f"{success['echoSourceSHA']}-{plan_id}"
-    )
-    _require(
-        run_id == expected_run_id,
-        "Echo success receipt runID does not match source EPUB and renderer provenance",
+        _epub_story(epub) == expected_epub,
+        "public fiction EPUB spine content differs from canonical chapters",
     )
 
 
@@ -1102,31 +1291,65 @@ def verify_public_fiction_package(
     reject_private_values(receipt)
     slug = _verify_fiction_receipt_fields(receipt)
     _verify_fiction_public_root(book_dir, slug)
-    artifact_hashes, artifact_snapshots = _verify_fiction_artifacts(
-        book_dir, receipt, slug
-    )
-    release_hash, release_snapshot = _verify_release(receipt, slug, release_m4b)
-    epub_snapshot = next(
-        snapshot
-        for snapshot in artifact_snapshots
-        if snapshot.path.name == f"{slug}.epub"
-    )
-    _probe_fiction_media(
-        book_dir / f"{slug}.epub",
-        release_m4b,
-        epub_snapshot,
-        release_snapshot,
-    )
-    private_snapshots = _verify_private_evidence(
-        receipt,
-        slug,
-        artifact_hashes,
-        release_hash,
-        voice_cast,
-        fiction_receipt,
-        chapters_dir,
-        echo_success_receipt,
-    )
+    with tempfile.TemporaryDirectory(prefix="fiction-public-probes-") as raw_probe_dir:
+        probe_dir = Path(raw_probe_dir).resolve()
+        epub_probe_copy = probe_dir / f"{slug}.epub"
+        release_probe_copy = probe_dir / f"{slug}.m4b"
+        artifact_hashes, artifact_snapshots = _verify_fiction_artifacts(
+            book_dir, receipt, slug, epub_probe_copy
+        )
+        release_hash, release_snapshot = _verify_release(
+            receipt, slug, release_m4b, release_probe_copy
+        )
+        epub_snapshot = next(
+            snapshot
+            for snapshot in artifact_snapshots
+            if snapshot.path.name == f"{slug}.epub"
+        )
+        epub_probe_snapshot = _snapshot_file(
+            epub_probe_copy, "immutable fiction EPUB"
+        )
+        release_probe_snapshot = _snapshot_file(
+            release_probe_copy, "immutable release M4B"
+        )
+        _require(
+            epub_probe_snapshot.sha256 == epub_snapshot.sha256,
+            "immutable fiction EPUB copy differs from verified source",
+        )
+        _require(
+            release_probe_snapshot.sha256 == release_snapshot.sha256,
+            "immutable release M4B copy differs from verified source",
+        )
+        _probe_fiction_media(
+            epub_probe_copy,
+            release_probe_copy,
+            epub_snapshot,
+            release_snapshot,
+            epub_probe_snapshot,
+            release_probe_snapshot,
+        )
+        private_snapshots = _verify_private_evidence(
+            receipt,
+            slug,
+            artifact_hashes,
+            release_hash,
+            voice_cast,
+            fiction_receipt,
+            chapters_dir,
+            echo_success_receipt,
+        )
+        manuscript_snapshot = next(
+            snapshot
+            for snapshot in artifact_snapshots
+            if snapshot.path.name == f"{slug}.md"
+        )
+        _verify_public_story_content(
+            manuscript_snapshot,
+            epub_probe_copy,
+            chapters_dir,
+            private_snapshots,
+        )
+        _require_snapshot_unchanged(epub_probe_snapshot, "immutable fiction EPUB")
     cover_rights = receipt["coverRights"]
     assert isinstance(cover_rights, dict)
     _require(

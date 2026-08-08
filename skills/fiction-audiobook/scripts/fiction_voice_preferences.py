@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import tempfile
 from datetime import datetime
@@ -20,6 +21,10 @@ ECHO_VOICE_PLAN_DIRECTORY = (
 if str(ECHO_VOICE_PLAN_DIRECTORY) not in sys.path:
     sys.path.insert(0, str(ECHO_VOICE_PLAN_DIRECTORY))
 
+from echo_pronunciation_state import (
+    RENDERER_IDENTITY_KEYS,
+    RUN_ID_PATTERN,
+)
 from echo_voice_plan import VOICE_IDS, voice_plan
 
 
@@ -29,6 +34,26 @@ DEFAULT_PATH = (
 )
 INITIAL_TIMESTAMP = "1970-01-01T00:00:00+00:00"
 SHA256_LENGTH = 64
+ECHO_SUCCESS_FIELDS = {
+    "schemaVersion",
+    *RENDERER_IDENTITY_KEYS,
+    "attemptID",
+    "runID",
+    "attemptReceiptSHA256",
+    "inputReceiptFileName",
+    "inputReceiptSHA256",
+    "sourceEPUBFileName",
+    "sourceEPUBSHA256",
+    "artifactRelativePath",
+    "resumeStateFileName",
+    "resumeStateSHA256",
+    "audiobookFileName",
+    "audiobookSHA256",
+    "sidecarFileName",
+    "sidecarSHA256",
+    "auditFileName",
+    "auditSHA256",
+}
 
 
 def resolve_voice(value: str) -> str:
@@ -337,10 +362,113 @@ def _regular_digest(path: Path, label: str) -> str:
     return digest.hexdigest()
 
 
+def validate_echo_success_receipt(
+    receipt: dict[str, object], receipt_path: Path, cast: dict[str, object]
+) -> None:
+    """Validate real Echo v3 provenance and bind its run to a canonical cast."""
+    expected_fields = set(ECHO_SUCCESS_FIELDS)
+    has_reel = "reelFileName" in receipt or "reelSHA256" in receipt
+    if has_reel:
+        expected_fields.update({"reelFileName", "reelSHA256"})
+    if set(receipt) != expected_fields:
+        raise ValueError(
+            "Echo success receipt must contain exact governed provenance fields"
+        )
+    if type(receipt.get("schemaVersion")) is not int or receipt["schemaVersion"] != 3:
+        raise ValueError("Echo success receipt schemaVersion must be integer 3")
+    if (
+        type(receipt.get("rendererSchemaVersion")) is not int
+        or receipt["rendererSchemaVersion"] != 1
+    ):
+        raise ValueError("Echo rendererSchemaVersion must be integer 1")
+    for field in ("rendererRoot", "rendererBuildRoot"):
+        value = receipt.get(field)
+        if not isinstance(value, str) or not Path(value).is_absolute():
+            raise ValueError(f"Echo success receipt {field} must be an absolute path")
+    for field in ("installerSourceSHA", "echoSourceSHA"):
+        value = receipt.get(field)
+        if not isinstance(value, str) or re.fullmatch(r"[0-9a-f]{40}", value) is None:
+            raise ValueError(f"Echo success receipt {field} must be a lowercase Git SHA")
+    for field in (
+        "rendererManifestSHA256",
+        "echoCLI_SHA256",
+        "echoResourcesSHA256",
+    ):
+        _sha256(receipt.get(field), f"Echo success receipt {field}")
+    if (
+        type(receipt.get("echoRenderVersion")) is not int
+        or receipt["echoRenderVersion"] < 12
+    ):
+        raise ValueError("Echo render version must be an integer of at least 12")
+    policy = receipt.get("modelPolicyRevision")
+    if (
+        not isinstance(policy, str)
+        or not policy
+        or "\n" in policy
+        or "\r" in policy
+    ):
+        raise ValueError("Echo modelPolicyRevision must be nonempty and single-line")
+    if (
+        type(receipt.get("modelExpectedByteCount")) is not int
+        or receipt["modelExpectedByteCount"] < 1
+    ):
+        raise ValueError("Echo modelExpectedByteCount must be a positive integer")
+    if receipt.get("modelBytesAttested") is not False:
+        raise ValueError("Echo modelBytesAttested must be false")
+    attempt_id = _sha256(receipt.get("attemptID"), "Echo attemptID")
+    run_id = receipt.get("runID")
+    if not isinstance(run_id, str) or RUN_ID_PATTERN.fullmatch(run_id) is None:
+        raise ValueError("Echo success receipt runID is invalid")
+    plan_id = cast.get("voicePlanID")
+    if not isinstance(plan_id, str):
+        raise ValueError("cast voice-plan identity is invalid")
+    expected_run_id = (
+        f"{_sha256(receipt.get('sourceEPUBSHA256'), 'Echo source EPUB SHA-256')[:12]}-"
+        f"{receipt['echoCLI_SHA256'][:12]}-"
+        f"{receipt['echoResourcesSHA256'][:12]}-"
+        f"{receipt['rendererManifestSHA256'][:12]}-"
+        f"{receipt['echoSourceSHA']}-{plan_id}"
+    )
+    if run_id != expected_run_id:
+        raise ValueError(
+            "Echo success receipt runID does not match source EPUB, renderer provenance, and cast voice plan"
+        )
+    receipt_path = Path(receipt_path)
+    if receipt_path.name != f"echo-render-success-{run_id}-{attempt_id}.json":
+        raise ValueError("Echo success receipt filename is not derived from runID")
+    if receipt.get("artifactRelativePath") != f"echo-renders/{run_id}/{attempt_id}":
+        raise ValueError("Echo artifact path is not derived from runID and attemptID")
+    if receipt.get("inputReceiptFileName") != f"echo-render-inputs-{run_id}.env":
+        raise ValueError("Echo input receipt filename is not derived from runID")
+    if receipt.get("resumeStateFileName") != f"echo-resume-state-{run_id}.json":
+        raise ValueError("Echo resume-state filename is not derived from runID")
+    for field in (
+        "attemptReceiptSHA256",
+        "inputReceiptSHA256",
+        "resumeStateSHA256",
+        "audiobookSHA256",
+        "sidecarSHA256",
+        "auditSHA256",
+    ):
+        _sha256(receipt.get(field), f"Echo success receipt {field}")
+    if has_reel:
+        _sha256(receipt.get("reelSHA256"), "Echo success receipt reelSHA256")
+    for field in ("auditFileName", "reelFileName"):
+        if field in receipt:
+            filename = receipt[field]
+            if (
+                not isinstance(filename, str)
+                or not filename
+                or Path(filename).name != filename
+            ):
+                raise ValueError(f"Echo success receipt {field} must be a filename")
+
+
 def _receipt_artifacts(
     cast: dict[str, Any], epub: Path, m4b: Path, sidecar: Path, success_receipt: Path
 ) -> dict[str, str]:
     receipt = _json_object(success_receipt, "Echo success receipt")
+    validate_echo_success_receipt(receipt, success_receipt, cast)
     artifacts = (
         (epub, "sourceEPUBFileName", "sourceEPUBSHA256", "EPUB"),
         (m4b, "audiobookFileName", "audiobookSHA256", "M4B"),
