@@ -21,3 +21,6 @@ books/everything-but-the-code/
 # Reclassified private 2026-07-09 (Dan's decision) — local copies stay untracked
 books/the-long-route/
 books/the-living-knowledge-base/
+
+# Agent task worktrees checked out inside the repo
+.worktrees/
