@@ -376,16 +376,20 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
 
         container = (
             '<?xml version="1.0" encoding="utf-8"?>'
-            '<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
+            '<container version="1.0" '
+            'xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
             '<rootfiles><rootfile full-path="OEBPS/content.opf" '
             'media-type="application/oebps-package+xml"/></rootfiles></container>'
         )
         manifest = [
-            '<item id="titlepage" href="titlepage.xhtml" media-type="application/xhtml+xml"/>'
+            '<item id="css" href="style.css" media-type="text/css"/>',
+            '<item id="titlepage" href="titlepage.xhtml" media-type="application/xhtml+xml"/>',
+            '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>',
+            '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>',
         ]
         spine = ['<itemref idref="titlepage"/>']
         chapter_documents = {}
-        for index, (_filename, title, body) in enumerate(self.chapter_specs, start=1):
+        for index, (_filename, title, body) in enumerate(self.chapter_specs):
             item_id = f"chap{index:02d}"
             href = f"{item_id}.xhtml"
             manifest.append(
@@ -395,29 +399,79 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             chapter_documents[f"OEBPS/{href}"] = (
                 '<?xml version="1.0" encoding="utf-8"?>'
                 '<html xmlns="http://www.w3.org/1999/xhtml" '
-                'xmlns:epub="http://www.idpf.org/2007/ops">'
-                f'<head><title>{title}</title></head><body>'
+                'xmlns:epub="http://www.idpf.org/2007/ops" lang="en">'
+                f'<head><meta charset="utf-8"/><title>{title}</title>'
+                '<link rel="stylesheet" type="text/css" href="style.css"/></head><body>'
                 f'<section epub:type="chapter"><h1>{title}</h1><p>{body}</p>'
                 '</section></body></html>'
             )
         opf = (
             '<?xml version="1.0" encoding="utf-8"?>'
-            '<package xmlns="http://www.idpf.org/2007/opf" version="3.0">'
+            '<package xmlns="http://www.idpf.org/2007/opf" version="3.0" '
+            'unique-identifier="bookid"><metadata '
+            'xmlns:dc="http://purl.org/dc/elements/1.1/">'
+            '<dc:identifier id="bookid">urn:uuid:fixture</dc:identifier>'
+            '<dc:title>Fixture Fiction</dc:title>'
+            '<dc:creator>Dan Fakkeldy</dc:creator>'
+            '<dc:contributor>GPT-5.6</dc:contributor><dc:language>en</dc:language>'
+            '<meta property="dcterms:modified">2026-01-01T00:00:00Z</meta>'
+            '</metadata>'
             '<manifest>' + "".join(manifest) + '</manifest>'
-            '<spine>' + "".join(spine) + '</spine></package>'
+            '<spine toc="ncx">' + "".join(spine) + '</spine></package>'
         )
         titlepage = (
             '<?xml version="1.0" encoding="utf-8"?>'
             '<html xmlns="http://www.w3.org/1999/xhtml" '
-            'xmlns:epub="http://www.idpf.org/2007/ops"><head>'
-            '<title>Fixture Fiction</title></head><body>'
-            '<section epub:type="titlepage"><h1>Fixture Fiction</h1>'
+            'xmlns:epub="http://www.idpf.org/2007/ops" lang="en"><head>'
+            '<meta charset="utf-8"/><title>Fixture Fiction</title>'
+            '<link rel="stylesheet" type="text/css" href="style.css"/></head><body>'
+            '<section epub:type="titlepage" class="title-page">'
+            '<h1>Fixture Fiction</h1><p class="author">by Dan Fakkeldy</p>'
             '</section></body></html>'
         )
+        nav_items = "".join(
+            f'<li><a href="chap{index:02d}.xhtml">{title}</a></li>'
+            for index, (_filename, title, _body) in enumerate(self.chapter_specs)
+        )
+        nav = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<html xmlns="http://www.w3.org/1999/xhtml" '
+            'xmlns:epub="http://www.idpf.org/2007/ops" lang="en"><head>'
+            '<meta charset="utf-8"/><title>Table of Contents</title>'
+            '<link rel="stylesheet" type="text/css" href="style.css"/></head><body>'
+            '<nav epub:type="toc" id="toc"><h1>Table of Contents</h1><ol>'
+            + nav_items
+            + '</ol></nav></body></html>'
+        )
+        navpoints = "".join(
+            '<navPoint id="np{index}" playOrder="{order}">'
+            '<navLabel><text>{title}</text></navLabel>'
+            '<content src="chap{index:02d}.xhtml"/></navPoint>'.format(
+                index=index,
+                order=index + 1,
+                title=title,
+            )
+            for index, (_filename, title, _body) in enumerate(self.chapter_specs)
+        )
+        ncx = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">'
+            '<head><meta name="dtb:uid" content="urn:uuid:fixture"/></head>'
+            '<docTitle><text>Fixture Fiction</text></docTitle><navMap>'
+            + navpoints
+            + '</navMap></ncx>'
+        )
         with zipfile.ZipFile(self.epub, "w") as archive:
-            archive.writestr("mimetype", "application/epub+zip")
+            archive.writestr(
+                "mimetype",
+                "application/epub+zip",
+                compress_type=zipfile.ZIP_STORED,
+            )
             archive.writestr("META-INF/container.xml", container)
+            archive.writestr("OEBPS/style.css", verifier._BUILDER_EPUB_CSS)
             archive.writestr("OEBPS/content.opf", opf)
+            archive.writestr("OEBPS/nav.xhtml", nav)
+            archive.writestr("OEBPS/toc.ncx", ncx)
             archive.writestr("OEBPS/titlepage.xhtml", titlepage)
             for name, document in chapter_documents.items():
                 archive.writestr(name, document)
@@ -453,6 +507,18 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.fiction_receipt.write_text(
             json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8"
         )
+
+    def read_fiction_receipt(self) -> dict[str, object]:
+        return json.loads(self.fiction_receipt.read_text(encoding="utf-8"))
+
+    def rebind_changed_fiction_receipt(self, payload: dict[str, object]) -> None:
+        self.fiction_receipt.write_text(
+            json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.receipt["privateEvidence"]["fictionReceiptSHA256"] = self.digest(
+            self.fiction_receipt
+        )
+        self.write_publication_receipt()
 
     def write_echo_success_receipt(self) -> None:
         payload = {
@@ -552,6 +618,12 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             json.dumps(self.receipt, sort_keys=True) + "\n", encoding="utf-8"
         )
 
+    def rebind_changed_public_manuscript(self) -> None:
+        self.receipt["artifacts"]["manuscript"]["sha256"] = self.digest(
+            self.manuscript
+        )
+        self.write_publication_receipt()
+
     def rebind_changed_public_epub(self) -> None:
         epub_hash = self.digest(self.epub)
         self.receipt["artifacts"]["epub"]["sha256"] = epub_hash
@@ -607,6 +679,10 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             if not found:
                 destination.writestr(member, payload)
         rewritten.replace(self.epub)
+
+    def read_epub_member(self, member: str) -> str:
+        with zipfile.ZipFile(self.epub) as archive:
+            return archive.read(member).decode("utf-8")
 
     def probes(self):
         return mock.patch.object(
@@ -713,11 +789,29 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
 
     def test_rejects_public_manuscript_substituted_from_canonical_chapters(self) -> None:
         self.manuscript.write_text("# Unrelated substituted story\n", encoding="utf-8")
-        self.receipt["artifacts"]["manuscript"]["sha256"] = self.digest(
-            self.manuscript
-        )
-        self.write_publication_receipt()
+        self.rebind_changed_public_manuscript()
         self.assert_rejected("canonical.*Markdown|Markdown.*canonical|story content")
+
+    def test_rejects_markdown_content_before_the_builder_title(self) -> None:
+        original = self.manuscript.read_text(encoding="utf-8")
+        self.manuscript.write_text(
+            "Hidden story before the builder title.\n\n" + original,
+            encoding="utf-8",
+        )
+        self.rebind_changed_public_manuscript()
+        self.assert_rejected("Markdown.*builder|Markdown.*canonical|story content")
+
+    def test_rejects_markdown_content_before_a_canonical_chapter_heading(self) -> None:
+        original = self.manuscript.read_text(encoding="utf-8")
+        changed = original.replace(
+            "---\n\n## Chapter One",
+            "---\n\nHidden story before the chapter heading.\n\n## Chapter One",
+            1,
+        )
+        self.assertNotEqual(original, changed)
+        self.manuscript.write_text(changed, encoding="utf-8")
+        self.rebind_changed_public_manuscript()
+        self.assert_rejected("Markdown.*builder|Markdown.*canonical|story content")
 
     def test_rejects_public_epub_substituted_from_canonical_chapters(self) -> None:
         self.epub.write_bytes(b"unrelated substituted EPUB")
@@ -734,9 +828,82 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             '<p>An unrelated story replaced the narrated spine.</p>'
             '</section></body></html>'
         )
-        self.rewrite_epub_member("OEBPS/chap02.xhtml", substituted)
+        self.rewrite_epub_member("OEBPS/chap01.xhtml", substituted)
         self.rebind_changed_public_epub()
-        self.assert_rejected("EPUB.*canonical|canonical.*EPUB|spine.*content")
+        self.assert_rejected(
+            "EPUB.*canonical|canonical.*EPUB|spine.*content|EPUB chapter.*invalid"
+        )
+
+    def test_rejects_visible_xhtml_text_inside_a_chapter_section(self) -> None:
+        member = "OEBPS/chap00.xhtml"
+        original = self.read_epub_member(member)
+        changed = original.replace(
+            '<section epub:type="chapter"><h1>',
+            '<section epub:type="chapter">Hidden direct section text.<h1>',
+            1,
+        )
+        self.assertNotEqual(original, changed)
+        self.rewrite_epub_member(member, changed)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("EPUB.*content|EPUB.*structure|chapter")
+
+    def test_rejects_visible_xhtml_content_outside_the_chapter_section(self) -> None:
+        member = "OEBPS/chap00.xhtml"
+        original = self.read_epub_member(member)
+        changed = original.replace(
+            "</section></body>",
+            "</section><p>Hidden story outside the chapter section.</p></body>",
+            1,
+        )
+        self.assertNotEqual(original, changed)
+        self.rewrite_epub_member(member, changed)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("EPUB.*content|EPUB.*structure|chapter")
+
+    def test_rejects_stylesheet_generated_story_content(self) -> None:
+        self.rewrite_epub_member(
+            "OEBPS/style.css",
+            'body::before{content:"Hidden generated story content."}',
+        )
+        self.rebind_changed_public_epub()
+        self.assert_rejected("EPUB.*stylesheet|EPUB.*style|builder")
+
+    def test_rejects_a_narrated_chapter_marked_linear_no(self) -> None:
+        member = "OEBPS/content.opf"
+        original = self.read_epub_member(member)
+        changed = original.replace(
+            '<itemref idref="chap00"/>',
+            '<itemref idref="chap00" linear="no"/>',
+            1,
+        )
+        self.assertNotEqual(original, changed)
+        self.rewrite_epub_member(member, changed)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("linear|spine|narrated")
+
+    def test_rejects_unspined_bibliography_xhtml_with_story_content(self) -> None:
+        bibliography = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<html xmlns="http://www.w3.org/1999/xhtml" '
+            'xmlns:epub="http://www.idpf.org/2007/ops" lang="en"><head>'
+            '<meta charset="utf-8"/><title>Hidden Story</title>'
+            '<link rel="stylesheet" type="text/css" href="style.css"/></head><body>'
+            '<section epub:type="bibliography"><h1>Hidden Story</h1>'
+            '<p>Arbitrary unspined story content.</p></section></body></html>'
+        )
+        self.rewrite_epub_member("OEBPS/appendix.xhtml", bibliography)
+        opf_member = "OEBPS/content.opf"
+        original_opf = self.read_epub_member(opf_member)
+        changed_opf = original_opf.replace(
+            "</manifest>",
+            '<item id="appendix" href="appendix.xhtml" '
+            'media-type="application/xhtml+xml"/></manifest>',
+            1,
+        )
+        self.assertNotEqual(original_opf, changed_opf)
+        self.rewrite_epub_member(opf_member, changed_opf)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("unspined|XHTML|EPUB.*role|EPUB.*content")
 
     def test_rejects_extra_unspined_chapter_xhtml(self) -> None:
         extra = (
@@ -749,7 +916,47 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         )
         self.rewrite_epub_member("OEBPS/hidden-chapter.xhtml", extra)
         self.rebind_changed_public_epub()
-        self.assert_rejected("unmanifested|unspined|EPUB.*chapter")
+        self.assert_rejected(
+            "unmanifested|unspined|EPUB.*chapter|extra or missing package file"
+        )
+
+    def test_accepts_story_outputs_from_the_unchanged_builder(self) -> None:
+        output = self.root / "real-builder-output"
+        subprocess.run(
+            [
+                "/usr/local/bin/python3",
+                str(
+                    Path(__file__).resolve().parents[1]
+                    / "skill/scripts/build_book.py"
+                ),
+                "--chapters-dir",
+                str(self.chapters),
+                "--out-dir",
+                str(output),
+                "--title",
+                "Fixture Fiction",
+                "--subtitle",
+                "A Fixture Subtitle",
+                "--author",
+                "Dan Fakkeldy",
+                "--contributor",
+                "GPT-5.6",
+                "--cover",
+                str(self.cover),
+                "--slug",
+                "fixture-fiction",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        shutil.copy2(output / self.manuscript.name, self.manuscript)
+        shutil.copy2(output / self.epub.name, self.epub)
+        self.rebind_changed_public_manuscript()
+        self.rebind_changed_public_epub()
+
+        with self.probes():
+            self.verify()
 
     def test_rejects_local_audio_square_cover_extra_item_or_directory(self) -> None:
         for name, directory in (
@@ -787,6 +994,177 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                 self.receipt = original_receipt
                 for path, payload in file_snapshots.items():
                     path.write_bytes(payload)
+
+    def test_private_qc_delegate_consumes_only_captured_receipt_and_artifact_bytes(
+        self,
+    ) -> None:
+        real_delegate = verifier.verify_fiction_receipt
+        original_receipt = self.fiction_receipt.read_bytes()
+        original_story_bible = self.fiction_artifacts["storyBible"].read_bytes()
+        invalid_receipt = self.read_fiction_receipt()
+        invalid_receipt["status"] = "rejected"
+        invalid_receipt_bytes = (
+            json.dumps(invalid_receipt, sort_keys=True) + "\n"
+        ).encode("utf-8")
+
+        for target in ("receipt", "storyBible"):
+            with self.subTest(target=target):
+                observed = None
+                live_path = (
+                    self.fiction_receipt
+                    if target == "receipt"
+                    else self.fiction_artifacts["storyBible"]
+                )
+                replacement_bytes = (
+                    invalid_receipt_bytes
+                    if target == "receipt"
+                    else b"substituted invalid story bible bytes\n"
+                )
+
+                def delegate_probe(chapters: Path, receipt: Path):
+                    nonlocal observed
+                    saved = self.root / f"saved-private-{target}"
+                    replacement = self.root / f"replacement-private-{target}"
+                    replacement.write_bytes(replacement_bytes)
+                    live_path.replace(saved)
+                    replacement.replace(live_path)
+                    try:
+                        if target == "receipt":
+                            observed = Path(receipt).read_bytes()
+                        else:
+                            delegated_receipt = json.loads(
+                                Path(receipt).read_text(encoding="utf-8")
+                            )
+                            relative = delegated_receipt["artifacts"]["storyBible"][
+                                "path"
+                            ]
+                            observed = (
+                                Path(receipt).parent.parent / relative
+                            ).read_bytes()
+                    finally:
+                        live_path.unlink()
+                        saved.replace(live_path)
+                    return real_delegate(Path(chapters), Path(receipt))
+
+                with mock.patch.object(
+                    verifier, "verify_fiction_receipt", side_effect=delegate_probe
+                ), self.probes():
+                    self.verify()
+                expected = (
+                    original_receipt
+                    if target == "receipt"
+                    else original_story_bible
+                )
+                self.assertEqual(expected, observed)
+
+    def test_verifier_locally_rejects_nonexact_private_receipt_schema(self) -> None:
+        base = self.read_fiction_receipt()
+
+        def add_extra_artifact(payload: dict[str, object]) -> None:
+            payload["artifacts"]["unexpected"] = copy.deepcopy(
+                payload["artifacts"]["storyBible"]
+            )
+
+        def add_extra_record_field(payload: dict[str, object]) -> None:
+            payload["artifacts"]["storyBible"]["note"] = "not governed"
+
+        mutations = (
+            ("boolean schema", lambda value: value.__setitem__("schemaVersion", True)),
+            ("float schema", lambda value: value.__setitem__("schemaVersion", 1.0)),
+            ("extra top level", lambda value: value.__setitem__("unexpected", True)),
+            (
+                "wrong status",
+                lambda value: value.__setitem__("status", "governed-final"),
+            ),
+            (
+                "integer permission",
+                lambda value: value.__setitem__("permissionToPublish", 0),
+            ),
+            (
+                "extra gate",
+                lambda value: value["gates"].__setitem__("unexpected", "pass"),
+            ),
+            ("extra artifact", add_extra_artifact),
+            ("extra artifact record field", add_extra_record_field),
+        )
+        for name, mutate in mutations:
+            with self.subTest(name=name):
+                changed = copy.deepcopy(base)
+                mutate(changed)
+                self.rebind_changed_fiction_receipt(changed)
+                with mock.patch.object(
+                    verifier, "verify_fiction_receipt", return_value={}
+                ):
+                    self.assert_rejected("private fiction receipt|fiction production")
+                self.rebind_changed_fiction_receipt(base)
+
+    def test_verifier_locally_requires_exact_current_canonical_chapter_coverage(
+        self,
+    ) -> None:
+        extra = self.chapters / "ch04.md"
+        extra.write_text("## Hidden Chapter\n\nHidden story.\n", encoding="utf-8")
+        try:
+            with mock.patch.object(verifier, "verify_fiction_receipt", return_value={}):
+                self.assert_rejected("chapter coverage|canonical chapter")
+        finally:
+            extra.unlink()
+
+    def test_rejects_canonical_chapter_coverage_changed_during_private_delegate(
+        self,
+    ) -> None:
+        real_delegate = verifier.verify_fiction_receipt
+        extra = self.chapters / "ch04.md"
+
+        def add_live_chapter(chapters: Path, receipt: Path):
+            extra.write_text("## Hidden Chapter\n\nHidden story.\n", encoding="utf-8")
+            return real_delegate(Path(chapters), Path(receipt))
+
+        try:
+            with mock.patch.object(
+                verifier, "verify_fiction_receipt", side_effect=add_live_chapter
+            ), self.probes(), self.assertRaisesRegex(
+                ValueError, "chapter coverage|changed during verification"
+            ):
+                self.verify()
+        finally:
+            extra.unlink(missing_ok=True)
+
+    def test_verifier_locally_rejects_unsafe_private_artifact_paths(self) -> None:
+        base = self.read_fiction_receipt()
+        story_bytes = self.fiction_artifacts["storyBible"].read_bytes()
+        path_cases = (
+            ("absolute in root", str(self.fiction_artifacts["storyBible"])),
+            ("drive forward", "C:/private/story-bible.md"),
+            ("drive backslash", "C:\\private\\story-bible.md"),
+            ("UNC", "\\\\server\\share\\story-bible.md"),
+            ("device", "\\\\?\\C:\\story-bible.md"),
+            ("traversal", "nested/../story-bible.md"),
+        )
+        for name, relative in path_cases:
+            with self.subTest(name=name):
+                candidate = Path(relative)
+                created = False
+                if not candidate.is_absolute():
+                    candidate = self.private_dir / candidate
+                if candidate != self.fiction_artifacts["storyBible"]:
+                    candidate.parent.mkdir(parents=True, exist_ok=True)
+                    candidate.write_bytes(story_bytes)
+                    created = True
+                changed = copy.deepcopy(base)
+                changed["artifacts"]["storyBible"] = {
+                    "path": relative,
+                    "sha256": self.digest(candidate),
+                }
+                self.rebind_changed_fiction_receipt(changed)
+                try:
+                    with mock.patch.object(
+                        verifier, "verify_fiction_receipt", return_value={}
+                    ):
+                        self.assert_rejected("relative POSIX-safe|artifact path")
+                finally:
+                    self.rebind_changed_fiction_receipt(base)
+                    if created:
+                        candidate.unlink()
 
     def test_rejects_any_false_public_gate(self) -> None:
         for field in tuple(self.receipt["publicGate"]):

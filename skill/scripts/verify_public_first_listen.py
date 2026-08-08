@@ -31,9 +31,17 @@ from fiction_voice_preferences import (
 )
 
 try:
-    from .fiction_production_qc import verify_fiction_receipt
+    from .fiction_production_qc import (
+        REQUIRED_ARTIFACTS as FICTION_REQUIRED_ARTIFACTS,
+        REQUIRED_GATES as FICTION_REQUIRED_GATES,
+        verify_fiction_receipt,
+    )
 except ImportError:
-    from fiction_production_qc import verify_fiction_receipt
+    from fiction_production_qc import (
+        REQUIRED_ARTIFACTS as FICTION_REQUIRED_ARTIFACTS,
+        REQUIRED_GATES as FICTION_REQUIRED_GATES,
+        verify_fiction_receipt,
+    )
 
 
 DISCLOSURE = (
@@ -57,6 +65,7 @@ _PUBLICATION_DISCLOSURES = {
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:[\\/]")
+_WINDOWS_DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
 _FORBIDDEN_PATTERNS = (
     re.compile(r"^echo-render-", re.IGNORECASE),
     re.compile(r"pronunciation-audit", re.IGNORECASE),
@@ -125,6 +134,19 @@ _CAST_VERIFIED_ARTIFACT_FIELDS = {
     "audiobookSHA256",
     "sidecarSHA256",
     "voicePlanSHA256",
+}
+_PRIVATE_FICTION_RECEIPT_FIELDS = {
+    "schemaVersion",
+    "status",
+    "productionMode",
+    "privacy",
+    "permissionToPublish",
+    "humanReadingStatus",
+    "canonicalChapterSHA256",
+    "artifacts",
+    "gates",
+    "negativeHumanVerdictOverrides",
+    "receiptDoesNotCertifyHumanAcceptance",
 }
 @dataclass(frozen=True)
 class _FileSnapshot:
@@ -791,37 +813,218 @@ def _verify_release(
     return actual_hash, snapshot
 
 
-def _snapshot_fiction_inputs(
-    chapters_dir: Path, fiction: dict[str, object]
+def _private_relative_path(value: object, label: str) -> str:
+    _require(
+        isinstance(value, str)
+        and bool(value)
+        and "\\" not in value
+        and not value.startswith("/")
+        and _WINDOWS_DRIVE_PREFIX.match(value) is None,
+        f"{label} must be a nonempty relative POSIX-safe artifact path",
+    )
+    relative = PurePosixPath(value)
+    _require(
+        relative.as_posix() == value
+        and not relative.is_absolute()
+        and all(part not in {"", ".", ".."} for part in relative.parts),
+        f"{label} must be a nonempty relative POSIX-safe artifact path",
+    )
+    return value
+
+
+def _write_private_mirror_file(path: Path, content: bytes, label: str) -> None:
+    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    try:
+        with path.open("xb") as destination:
+            destination.write(content)
+            destination.flush()
+            os.fsync(destination.fileno())
+        os.chmod(path, 0o400)
+    except OSError as error:
+        raise ValueError(f"could not construct immutable {label}") from error
+
+
+def _verify_fiction_receipt_mirror(
+    fiction_snapshot: _FileSnapshot,
+    chapter_snapshots: dict[str, _FileSnapshot],
+    artifact_snapshots: dict[str, tuple[str, _FileSnapshot]],
+) -> None:
+    assert fiction_snapshot.content is not None
+    payloads: dict[str, bytes] = {
+        "research/fiction-production-receipt.json": fiction_snapshot.content,
+    }
+    for filename, snapshot in chapter_snapshots.items():
+        assert snapshot.content is not None
+        relative = f"chapters/{filename}"
+        _require(
+            relative not in payloads or payloads[relative] == snapshot.content,
+            "private fiction mirror has conflicting chapter content",
+        )
+        payloads[relative] = snapshot.content
+    for name, (relative, snapshot) in artifact_snapshots.items():
+        assert snapshot.content is not None
+        _require(
+            relative not in payloads or payloads[relative] == snapshot.content,
+            f"private fiction mirror has conflicting {name} content",
+        )
+        payloads[relative] = snapshot.content
+
+    with tempfile.TemporaryDirectory(
+        prefix="fiction-private-qc-mirror-"
+    ) as raw_mirror_root:
+        mirror_root = Path(raw_mirror_root).resolve()
+        mirror_snapshots: list[_FileSnapshot] = []
+        for relative, content in sorted(payloads.items()):
+            mirror_path = mirror_root.joinpath(*PurePosixPath(relative).parts)
+            _write_private_mirror_file(
+                mirror_path, content, f"fiction QC mirror file {relative}"
+            )
+            mirror_snapshots.append(
+                _snapshot_file(mirror_path, f"fiction QC mirror file {relative}")
+            )
+        mirror_receipt = mirror_root / "research/fiction-production-receipt.json"
+        mirror_chapters = mirror_root / "chapters"
+        verify_fiction_receipt(mirror_chapters, mirror_receipt)
+        for snapshot in mirror_snapshots:
+            _require_snapshot_unchanged(snapshot, "immutable fiction QC mirror file")
+
+
+def _validate_private_fiction_receipt(
+    chapters_dir: Path,
+    fiction_receipt: Path,
+    fiction: dict[str, object],
+    fiction_snapshot: _FileSnapshot,
 ) -> list[_FileSnapshot]:
-    snapshots: list[_FileSnapshot] = []
+    _require(
+        set(fiction) == _PRIVATE_FICTION_RECEIPT_FIELDS,
+        "private fiction receipt must contain exactly the production fields",
+    )
+    _require(
+        type(fiction.get("schemaVersion")) is int
+        and fiction["schemaVersion"] == 1,
+        "private fiction receipt schemaVersion must be integer 1",
+    )
+    for field, expected in (
+        ("status", "first-listen"),
+        ("productionMode", "unattended-first-listen"),
+        ("privacy", "private"),
+        ("humanReadingStatus", "pending"),
+    ):
+        _require(
+            fiction.get(field) == expected,
+            f"private fiction receipt {field} must be {expected}",
+        )
+    for field, expected in (
+        ("permissionToPublish", False),
+        ("negativeHumanVerdictOverrides", True),
+        ("receiptDoesNotCertifyHumanAcceptance", True),
+    ):
+        _require(
+            type(fiction.get(field)) is bool and fiction[field] is expected,
+            f"private fiction receipt {field} must be boolean {str(expected).lower()}",
+        )
+
     chapter_hashes = fiction.get("canonicalChapterSHA256")
-    if isinstance(chapter_hashes, dict):
-        for filename in chapter_hashes:
-            if isinstance(filename, str) and Path(filename).name == filename:
-                snapshots.append(
-                    _snapshot_file(
-                        chapters_dir / filename,
-                        f"canonical fiction chapter {filename}",
-                        capture=True,
-                    )
-                )
-    run_root = chapters_dir.parent
-    for section in (fiction.get("artifacts"),):
-        if not isinstance(section, dict):
-            continue
-        for record in section.values():
-            if not isinstance(record, dict):
-                continue
-            relative = record.get("path")
-            if not isinstance(relative, str):
-                continue
-            candidate = run_root / relative
-            try:
-                candidate.resolve().relative_to(run_root.resolve())
-            except ValueError:
-                continue
-            snapshots.append(_snapshot_file(candidate, f"fiction input {relative}"))
+    _require(
+        isinstance(chapter_hashes, dict),
+        "private fiction receipt canonicalChapterSHA256 must be an object",
+    )
+    try:
+        current_chapters = sorted(
+            (
+                path
+                for path in chapters_dir.iterdir()
+                if path.name.startswith("ch") and path.suffix == ".md"
+            ),
+            key=lambda path: path.name,
+        )
+    except OSError as error:
+        raise ValueError("canonical fiction chapter coverage is unreadable") from error
+    current_names = [path.name for path in current_chapters]
+    _require(
+        bool(current_names)
+        and set(chapter_hashes) == set(current_names)
+        and len(chapter_hashes) == len(current_names),
+        "private fiction receipt canonical chapter coverage is not exact",
+    )
+    chapter_snapshots: dict[str, _FileSnapshot] = {}
+    for path in current_chapters:
+        expected_hash = _require_sha256(
+            chapter_hashes.get(path.name),
+            f"private fiction receipt canonical chapter {path.name} SHA-256",
+        )
+        snapshot = _snapshot_file(
+            path, f"canonical fiction chapter {path.name}", capture=True
+        )
+        _require(
+            snapshot.sha256 == expected_hash,
+            f"private fiction receipt canonical chapter hash mismatch: {path.name}",
+        )
+        chapter_snapshots[path.name] = snapshot
+
+    artifacts = fiction.get("artifacts")
+    _require(
+        isinstance(artifacts, dict)
+        and set(artifacts) == set(FICTION_REQUIRED_ARTIFACTS),
+        "private fiction receipt artifacts must contain exactly the required artifacts",
+    )
+    run_root = fiction_receipt.parent.parent
+    artifact_snapshots: dict[str, tuple[str, _FileSnapshot]] = {}
+    for name in sorted(FICTION_REQUIRED_ARTIFACTS):
+        record = artifacts[name]
+        _require(
+            isinstance(record, dict) and set(record) == {"path", "sha256"},
+            f"private fiction receipt artifact {name} must contain exactly path and sha256",
+        )
+        relative = _private_relative_path(
+            record.get("path"), f"private fiction receipt artifact {name} path"
+        )
+        expected_hash = _require_sha256(
+            record.get("sha256"),
+            f"private fiction receipt artifact {name} SHA-256",
+        )
+        path = run_root.joinpath(*PurePosixPath(relative).parts)
+        snapshot = _snapshot_file(
+            path, f"private fiction receipt artifact {name}", capture=True
+        )
+        _require(
+            snapshot.sha256 == expected_hash,
+            f"private fiction receipt artifact {name} hash mismatch",
+        )
+        artifact_snapshots[name] = (relative, snapshot)
+
+    gates = fiction.get("gates")
+    _require(
+        isinstance(gates, dict) and set(gates) == set(FICTION_REQUIRED_GATES),
+        "private fiction receipt gates must contain exactly the required gates",
+    )
+    for name in sorted(FICTION_REQUIRED_GATES):
+        _require(
+            gates[name] == "pass",
+            f"private fiction receipt gate {name} must be pass",
+        )
+
+    _verify_fiction_receipt_mirror(
+        fiction_snapshot, chapter_snapshots, artifact_snapshots
+    )
+    try:
+        final_chapter_names = sorted(
+            path.name
+            for path in chapters_dir.iterdir()
+            if path.name.startswith("ch") and path.suffix == ".md"
+        )
+    except OSError as error:
+        raise ValueError("canonical fiction chapter coverage changed") from error
+    _require(
+        final_chapter_names == current_names,
+        "canonical fiction chapter coverage changed during verification",
+    )
+    snapshots = [
+        *chapter_snapshots.values(),
+        *(snapshot for _relative, snapshot in artifact_snapshots.values()),
+    ]
+    for snapshot in snapshots:
+        _require_snapshot_unchanged(snapshot, "fiction private input")
     return snapshots
 
 
@@ -916,10 +1119,12 @@ def _verify_private_evidence(
         "fiction receipt SHA-256 does not match privateEvidence",
     )
     snapshots.append(fiction_snapshot)
-    fiction_inputs = _snapshot_fiction_inputs(chapters_dir, fiction)
-    verify_fiction_receipt(chapters_dir, fiction_receipt)
-    for snapshot in fiction_inputs:
-        _require_snapshot_unchanged(snapshot, "fiction private input")
+    fiction_inputs = _validate_private_fiction_receipt(
+        chapters_dir,
+        fiction_receipt,
+        fiction,
+        fiction_snapshot,
+    )
     snapshots.extend(fiction_inputs)
     return snapshots
 
@@ -988,48 +1193,51 @@ def _canonical_story(
     return tuple(story)
 
 
-def _public_markdown_story(
+def _builder_markdown_identity(
     snapshot: _FileSnapshot,
-) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    canonical: tuple[tuple[str, tuple[str, ...]], ...],
+    author: str,
+) -> tuple[str, str]:
     assert snapshot.content is not None
     try:
         text = snapshot.content.decode("utf-8")
     except UnicodeDecodeError as error:
         raise ValueError("public fiction Markdown is not UTF-8") from error
     lines = text.splitlines()
-    try:
-        first_delimiter = lines.index("---")
-    except ValueError as error:
-        raise ValueError(
-            "public fiction Markdown story content lacks its section delimiter"
-        ) from error
-    story_lines = lines[first_delimiter + 1 :]
-    sections: list[list[str]] = []
-    current: list[str] = []
-    for line in story_lines:
-        if line == "---":
-            _require(
-                any(value.strip() for value in current),
-                "public fiction Markdown contains an empty story section",
-            )
-            sections.append(current)
-            current = []
-        else:
-            current.append(line)
     _require(
-        not any(value.strip() for value in current),
-        "public fiction Markdown has extra story content after its final section",
+        bool(lines) and lines[0].startswith("# ") and bool(lines[0][2:]),
+        "public fiction Markdown does not match the unchanged builder grammar",
     )
-    story = []
-    for index, section in enumerate(sections, start=1):
-        story.append(
-            _chapter_markdown(
-                "\n".join(section).encode("utf-8"),
-                f"section-{index}.md",
-                f"public fiction Markdown section {index}",
-            )
+    title = lines[0][2:]
+    subtitle = ""
+    if len(lines) > 2 and lines[2].startswith("_") and lines[2].endswith("_"):
+        subtitle = lines[2][1:-1]
+        _require(
+            bool(subtitle),
+            "public fiction Markdown does not match the unchanged builder grammar",
         )
-    return tuple(story)
+
+    total_words = sum(
+        len(paragraph.split())
+        for _chapter_title, paragraphs in canonical
+        for paragraph in paragraphs
+    )
+    expected = [f"# {title}", ""]
+    if subtitle:
+        expected.extend([f"_{subtitle}_", ""])
+    expected.extend(
+        [f"by {author}", "", f"Roughly {total_words:,d} words.", "", "---", ""]
+    )
+    for chapter_title, paragraphs in canonical:
+        expected.extend([f"## {chapter_title}", ""])
+        for paragraph in paragraphs:
+            expected.extend([paragraph, ""])
+        expected.extend(["---", ""])
+    _require(
+        snapshot.content == "\n".join(expected).encode("utf-8"),
+        "public fiction Markdown does not match the unchanged builder grammar and canonical story",
+    )
+    return title, subtitle
 
 
 def _safe_epub_path(value: str, label: str) -> str:
@@ -1078,9 +1286,331 @@ def _plain_inline_markdown(value: str) -> str:
     return re.sub(r"(?<!_)_(?!_)(.+?)(?<!_)_(?!_)", r"\1", value)
 
 
+_XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml"
+_XHTML = f"{{{_XHTML_NAMESPACE}}}"
+_EPUB_TYPE = "{http://www.idpf.org/2007/ops}type"
+_OPF_NAMESPACE = "http://www.idpf.org/2007/opf"
+_OPF = f"{{{_OPF_NAMESPACE}}}"
+_DC_NAMESPACE = "http://purl.org/dc/elements/1.1/"
+_DC = f"{{{_DC_NAMESPACE}}}"
+_BUILDER_EPUB_CSS = (
+    "body{font-family:Georgia,'Times New Roman',serif;line-height:1.6;margin:5% 6%;}"
+    "h1{font-size:1.5em;line-height:1.25;margin:0 0 1em;}"
+    "p{margin:0 0 1em;text-align:justify;}"
+    ".title-page{text-align:center;margin-top:25%;}.title-page h1{font-size:1.8em;}"
+    ".title-page .author{font-size:1.1em;margin-top:1.5em;font-style:italic;}"
+    ".title-page .sub{margin-top:2em;color:#444;}"
+    "figure{margin:1.5em 0;text-align:center;}"
+    "figure img{max-width:100%;height:auto;}"
+    "figcaption{font-size:0.85em;color:#555;margin-top:0.5em;font-style:italic;text-align:center;}"
+).encode("utf-8")
+
+
+def _whitespace(value: str | None) -> bool:
+    return value is None or not value.strip()
+
+
+def _exact_children(
+    element: ET.Element, tags: list[str], label: str
+) -> list[ET.Element]:
+    children = list(element)
+    _require(
+        [child.tag for child in children] == tags,
+        f"{label} has invalid structure or extra content",
+    )
+    _require(_whitespace(element.text), f"{label} has visible direct text")
+    _require(
+        all(_whitespace(child.tail) for child in children),
+        f"{label} has visible tail text",
+    )
+    return children
+
+
+def _exact_text_leaf(
+    element: ET.Element,
+    tag: str,
+    attributes: dict[str, str],
+    text: str,
+    label: str,
+) -> None:
+    _require(
+        element.tag == tag
+        and element.attrib == attributes
+        and not list(element)
+        and (element.text or "") == text,
+        f"{label} has invalid structure or content",
+    )
+
+
+def _xhtml_shell(
+    document: ET.Element, title: str, language: str, label: str
+) -> tuple[ET.Element, ET.Element]:
+    _require(
+        document.tag == f"{_XHTML}html"
+        and document.attrib == {"lang": language},
+        f"{label} has invalid html identity",
+    )
+    head, body = _exact_children(
+        document, [f"{_XHTML}head", f"{_XHTML}body"], label
+    )
+    meta, title_element, link = _exact_children(
+        head,
+        [f"{_XHTML}meta", f"{_XHTML}title", f"{_XHTML}link"],
+        f"{label} head",
+    )
+    _exact_text_leaf(
+        meta, f"{_XHTML}meta", {"charset": "utf-8"}, "", f"{label} charset"
+    )
+    _exact_text_leaf(
+        title_element, f"{_XHTML}title", {}, title, f"{label} title"
+    )
+    _exact_text_leaf(
+        link,
+        f"{_XHTML}link",
+        {"rel": "stylesheet", "type": "text/css", "href": "style.css"},
+        "",
+        f"{label} stylesheet",
+    )
+    return head, body
+
+
+def _inline_xhtml_text(element: ET.Element, label: str) -> str:
+    _require(not element.attrib, f"{label} has invalid inline attributes")
+    for child in list(element):
+        _require(
+            child.tag in {f"{_XHTML}strong", f"{_XHTML}em"},
+            f"{label} has an unsupported inline element",
+        )
+        _inline_xhtml_text(child, label)
+    return "".join(element.itertext())
+
+
+def _validate_chapter_xhtml(
+    document: ET.Element,
+    title: str,
+    paragraphs: tuple[str, ...],
+    language: str,
+    label: str,
+) -> None:
+    _head, body = _xhtml_shell(document, title, language, label)
+    (section,) = _exact_children(body, [f"{_XHTML}section"], f"{label} body")
+    _require(
+        section.attrib == {_EPUB_TYPE: "chapter"},
+        f"{label} section has invalid role",
+    )
+    children = _exact_children(
+        section,
+        [f"{_XHTML}h1"] + [f"{_XHTML}p"] * len(paragraphs),
+        f"{label} section",
+    )
+    _exact_text_leaf(children[0], f"{_XHTML}h1", {}, title, f"{label} heading")
+    for index, (paragraph, expected) in enumerate(
+        zip(children[1:], paragraphs, strict=True), start=1
+    ):
+        _require(
+            paragraph.tag == f"{_XHTML}p"
+            and _inline_xhtml_text(paragraph, f"{label} paragraph {index}")
+            == expected,
+            f"{label} paragraph {index} differs from canonical content",
+        )
+
+
+def _validate_titlepage_xhtml(
+    document: ET.Element,
+    title: str,
+    subtitle: str,
+    author: str,
+    language: str,
+) -> None:
+    _head, body = _xhtml_shell(document, title, language, "EPUB titlepage")
+    (section,) = _exact_children(
+        body, [f"{_XHTML}section"], "EPUB titlepage body"
+    )
+    _require(
+        section.attrib == {_EPUB_TYPE: "titlepage", "class": "title-page"},
+        "EPUB titlepage section has invalid role",
+    )
+    tags = [f"{_XHTML}h1", f"{_XHTML}p"]
+    if subtitle:
+        tags.append(f"{_XHTML}p")
+    children = _exact_children(section, tags, "EPUB titlepage section")
+    _exact_text_leaf(children[0], f"{_XHTML}h1", {}, title, "EPUB titlepage heading")
+    _exact_text_leaf(
+        children[1],
+        f"{_XHTML}p",
+        {"class": "author"},
+        f"by {author}",
+        "EPUB titlepage author",
+    )
+    if subtitle:
+        _exact_text_leaf(
+            children[2],
+            f"{_XHTML}p",
+            {"class": "sub"},
+            subtitle,
+            "EPUB titlepage subtitle",
+        )
+
+
+def _validate_nav_xhtml(
+    document: ET.Element,
+    canonical: tuple[tuple[str, tuple[str, ...]], ...],
+    language: str,
+) -> None:
+    _head, body = _xhtml_shell(
+        document, "Table of Contents", language, "EPUB navigation"
+    )
+    (navigation,) = _exact_children(
+        body, [f"{_XHTML}nav"], "EPUB navigation body"
+    )
+    _require(
+        navigation.attrib == {_EPUB_TYPE: "toc", "id": "toc"},
+        "EPUB navigation has invalid role",
+    )
+    heading, ordered = _exact_children(
+        navigation, [f"{_XHTML}h1", f"{_XHTML}ol"], "EPUB navigation"
+    )
+    _exact_text_leaf(
+        heading, f"{_XHTML}h1", {}, "Table of Contents", "EPUB navigation heading"
+    )
+    items = _exact_children(
+        ordered, [f"{_XHTML}li"] * len(canonical), "EPUB navigation list"
+    )
+    for index, (item, (chapter_title, _paragraphs)) in enumerate(
+        zip(items, canonical, strict=True)
+    ):
+        (link,) = _exact_children(item, [f"{_XHTML}a"], "EPUB navigation item")
+        _exact_text_leaf(
+            link,
+            f"{_XHTML}a",
+            {"href": f"chap{index:02d}.xhtml"},
+            chapter_title,
+            f"EPUB navigation item {index + 1}",
+        )
+
+
+def _validate_cover_xhtml(
+    document: ET.Element,
+    title: str,
+    language: str,
+    cover_name: str,
+) -> None:
+    _require(
+        document.tag == f"{_XHTML}html"
+        and document.attrib == {"lang": language},
+        "EPUB cover has invalid html identity",
+    )
+    head, body = _exact_children(
+        document, [f"{_XHTML}head", f"{_XHTML}body"], "EPUB cover"
+    )
+    meta, title_element, style = _exact_children(
+        head,
+        [f"{_XHTML}meta", f"{_XHTML}title", f"{_XHTML}style"],
+        "EPUB cover head",
+    )
+    _exact_text_leaf(
+        meta, f"{_XHTML}meta", {"charset": "utf-8"}, "", "EPUB cover charset"
+    )
+    _exact_text_leaf(
+        title_element, f"{_XHTML}title", {}, "Cover", "EPUB cover title"
+    )
+    _exact_text_leaf(
+        style,
+        f"{_XHTML}style",
+        {},
+        "html,body{margin:0;padding:0;height:100%}img{display:block;width:100%;height:auto}",
+        "EPUB cover style",
+    )
+    (section,) = _exact_children(body, [f"{_XHTML}section"], "EPUB cover body")
+    _require(
+        section.attrib == {_EPUB_TYPE: "cover"},
+        "EPUB cover section has invalid role",
+    )
+    (cover_image,) = _exact_children(
+        section, [f"{_XHTML}img"], "EPUB cover section"
+    )
+    _exact_text_leaf(
+        cover_image,
+        f"{_XHTML}img",
+        {"src": cover_name, "alt": f"{title} cover"},
+        "",
+        "EPUB cover image",
+    )
+
+
+def _validate_ncx(
+    root: ET.Element,
+    uid: str,
+    title: str,
+    canonical: tuple[tuple[str, tuple[str, ...]], ...],
+) -> None:
+    ncx_namespace = "http://www.daisy.org/z3986/2005/ncx/"
+    ncx = f"{{{ncx_namespace}}}"
+    _require(
+        root.tag == f"{ncx}ncx" and root.attrib == {"version": "2005-1"},
+        "EPUB NCX has invalid identity",
+    )
+    head, doc_title, nav_map = _exact_children(
+        root,
+        [f"{ncx}head", f"{ncx}docTitle", f"{ncx}navMap"],
+        "EPUB NCX",
+    )
+    (meta,) = _exact_children(head, [f"{ncx}meta"], "EPUB NCX head")
+    _exact_text_leaf(
+        meta,
+        f"{ncx}meta",
+        {"name": "dtb:uid", "content": uid},
+        "",
+        "EPUB NCX uid",
+    )
+    (title_text,) = _exact_children(
+        doc_title, [f"{ncx}text"], "EPUB NCX title"
+    )
+    _exact_text_leaf(
+        title_text, f"{ncx}text", {}, title, "EPUB NCX title text"
+    )
+    nav_points = _exact_children(
+        nav_map, [f"{ncx}navPoint"] * len(canonical), "EPUB NCX navigation"
+    )
+    for index, (point, (chapter_title, _paragraphs)) in enumerate(
+        zip(nav_points, canonical, strict=True)
+    ):
+        _require(
+            point.attrib == {"id": f"np{index}", "playOrder": str(index + 1)},
+            f"EPUB NCX item {index + 1} has invalid identity",
+        )
+        label, content = _exact_children(
+            point,
+            [f"{ncx}navLabel", f"{ncx}content"],
+            f"EPUB NCX item {index + 1}",
+        )
+        (text_element,) = _exact_children(
+            label, [f"{ncx}text"], f"EPUB NCX item {index + 1} label"
+        )
+        _exact_text_leaf(
+            text_element,
+            f"{ncx}text",
+            {},
+            chapter_title,
+            f"EPUB NCX item {index + 1} label",
+        )
+        _exact_text_leaf(
+            content,
+            f"{ncx}content",
+            {"src": f"chap{index:02d}.xhtml"},
+            "",
+            f"EPUB NCX item {index + 1} target",
+        )
+
+
 def _epub_story(
     epub: Path,
-) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    canonical: tuple[tuple[str, tuple[str, ...]], ...],
+    title: str,
+    subtitle: str,
+    author: str,
+    contributor: str,
+) -> None:
     try:
         archive = zipfile.ZipFile(epub)
     except (OSError, zipfile.BadZipFile) as error:
@@ -1089,6 +1619,13 @@ def _epub_story(
         infos = archive.infolist()
         names = [info.filename for info in infos]
         _require(len(names) == len(set(names)), "public fiction EPUB has duplicate files")
+        _require(
+            bool(infos)
+            and infos[0].filename == "mimetype"
+            and infos[0].compress_type == zipfile.ZIP_STORED
+            and archive.read("mimetype") == b"application/epub+zip",
+            "public fiction EPUB has an invalid mimetype entry",
+        )
         entries: dict[str, zipfile.ZipInfo] = {}
         for info in infos:
             name = _safe_epub_path(info.filename, "EPUB member")
@@ -1107,16 +1644,31 @@ def _epub_story(
         opf_path = _safe_epub_path(
             rootfiles[0].get("full-path", ""), "EPUB package path"
         )
+        _require(
+            opf_path == "OEBPS/content.opf"
+            and rootfiles[0].attrib
+            == {
+                "full-path": "OEBPS/content.opf",
+                "media-type": "application/oebps-package+xml",
+            },
+            "EPUB container does not match the unchanged builder structure",
+        )
         package = _epub_xml(archive, entries, opf_path, "EPUB package")
-        opf_namespace = "http://www.idpf.org/2007/opf"
-        manifest = package.find(f"{{{opf_namespace}}}manifest")
-        spine = package.find(f"{{{opf_namespace}}}spine")
-        _require(manifest is not None and spine is not None, "EPUB lacks manifest or spine")
+        _require(
+            package.tag == f"{_OPF}package"
+            and package.attrib == {"version": "3.0", "unique-identifier": "bookid"},
+            "EPUB package identity is invalid",
+        )
+        metadata, manifest, spine = _exact_children(
+            package,
+            [f"{_OPF}metadata", f"{_OPF}manifest", f"{_OPF}spine"],
+            "EPUB package",
+        )
 
-        items: dict[str, tuple[str, str]] = {}
+        items: dict[str, tuple[str, str, str | None]] = {}
         hrefs: set[str] = set()
         for item in list(manifest):
-            _require(item.tag == f"{{{opf_namespace}}}item", "EPUB manifest is invalid")
+            _require(item.tag == f"{_OPF}item", "EPUB manifest is invalid")
             item_id = item.get("id")
             media_type = item.get("media-type")
             _require(
@@ -1129,45 +1681,88 @@ def _epub_story(
             href = _epub_href(opf_path, item.get("href"), "EPUB manifest href")
             _require(href not in hrefs and href in entries, "EPUB manifest href is invalid")
             hrefs.add(href)
-            items[item_id] = (href, media_type)
+            allowed_keys = {"id", "href", "media-type"}
+            if "properties" in item.attrib:
+                allowed_keys.add("properties")
+            _require(
+                set(item.attrib) == allowed_keys
+                and _whitespace(item.text)
+                and not list(item),
+                "EPUB manifest item has extra attributes or content",
+            )
+            items[item_id] = (href, media_type, item.get("properties"))
 
-        xhtml_media = "application/xhtml+xml"
-        declared_xhtml = {
-            href for href, media_type in items.values() if media_type == xhtml_media
-        }
-        archived_xhtml = {name for name in entries if name.endswith(".xhtml")}
+        chapter_ids = [f"chap{index:02d}" for index in range(len(canonical))]
+        has_cover = "cover-image" in items or "coverpage" in items
         _require(
-            archived_xhtml == declared_xhtml,
-            "public fiction EPUB has an unmanifested chapter-like XHTML file",
+            not has_cover or {"cover-image", "coverpage"} <= set(items),
+            "EPUB cover manifest roles must be paired",
+        )
+        expected_items: dict[str, tuple[str, str, str | None]] = {
+            "css": ("OEBPS/style.css", "text/css", None),
+            "titlepage": (
+                "OEBPS/titlepage.xhtml",
+                "application/xhtml+xml",
+                None,
+            ),
+            "nav": ("OEBPS/nav.xhtml", "application/xhtml+xml", "nav"),
+            "ncx": ("OEBPS/toc.ncx", "application/x-dtbncx+xml", None),
+        }
+        expected_items.update(
+            {
+                chapter_id: (
+                    f"OEBPS/{chapter_id}.xhtml",
+                    "application/xhtml+xml",
+                    None,
+                )
+                for chapter_id in chapter_ids
+            }
+        )
+        cover_name = ""
+        if has_cover:
+            cover_path, cover_media, cover_properties = items["cover-image"]
+            cover_name = PurePosixPath(cover_path).name
+            _require(
+                (cover_name, cover_media, cover_properties)
+                in {
+                    ("cover.png", "image/png", "cover-image"),
+                    ("cover.jpg", "image/jpeg", "cover-image"),
+                },
+                "EPUB cover image manifest item is invalid",
+            )
+            expected_items["cover-image"] = (
+                f"OEBPS/{cover_name}",
+                cover_media,
+                "cover-image",
+            )
+            expected_items["coverpage"] = (
+                "OEBPS/cover.xhtml",
+                "application/xhtml+xml",
+                None,
+            )
+        _require(
+            items == expected_items,
+            "public fiction EPUB manifest differs from the unchanged builder roles",
+        )
+        expected_entries = {
+            "mimetype",
+            "META-INF/container.xml",
+            opf_path,
+            *(href for href, _media, _properties in expected_items.values()),
+        }
+        _require(
+            set(entries) == expected_entries,
+            "public fiction EPUB contains an extra or missing package file",
+        )
+        _require(
+            archive.read(entries["OEBPS/style.css"]) == _BUILDER_EPUB_CSS,
+            "public fiction EPUB stylesheet differs from the unchanged builder",
         )
 
-        epub_type = "{http://www.idpf.org/2007/ops}type"
-        documents: dict[str, tuple[str | None, ET.Element | None]] = {}
-        for item_id, (href, media_type) in items.items():
-            if media_type != xhtml_media:
-                continue
-            document = _epub_xml(archive, entries, href, f"EPUB document {href}")
-            sections = document.findall(
-                ".//{http://www.w3.org/1999/xhtml}section"
-            )
-            chapter_sections = [
-                section
-                for section in sections
-                if "chapter" in section.get(epub_type, "").split()
-            ]
-            _require(
-                len(chapter_sections) <= 1,
-                f"EPUB document {href} has multiple chapter sections",
-            )
-            if chapter_sections:
-                documents[item_id] = ("chapter", chapter_sections[0])
-            else:
-                section_type = sections[0].get(epub_type, "") if sections else None
-                documents[item_id] = (section_type, sections[0] if sections else None)
-
+        _require(spine.attrib == {"toc": "ncx"}, "EPUB spine identity is invalid")
         spine_ids: list[str] = []
         for itemref in list(spine):
-            _require(itemref.tag == f"{{{opf_namespace}}}itemref", "EPUB spine is invalid")
+            _require(itemref.tag == f"{_OPF}itemref", "EPUB spine is invalid")
             item_id = itemref.get("idref")
             _require(
                 isinstance(item_id, str)
@@ -1175,51 +1770,125 @@ def _epub_story(
                 and item_id not in spine_ids,
                 "EPUB spine item identity is invalid",
             )
-            spine_ids.append(item_id)
-        chapter_ids = [
-            item_id
-            for item_id in spine_ids
-            if documents.get(item_id, (None, None))[0] == "chapter"
-        ]
-        manifest_chapter_ids = {
-            item_id for item_id, (kind, _section) in documents.items() if kind == "chapter"
-        }
-        _require(
-            set(chapter_ids) == manifest_chapter_ids
-            and len(chapter_ids) == len(manifest_chapter_ids),
-            "public fiction EPUB contains an unspined chapter",
-        )
-        for item_id in spine_ids:
-            if item_id in chapter_ids:
-                continue
-            kind = documents.get(item_id, (None, None))[0]
             _require(
-                isinstance(kind, str)
-                and bool({"cover", "titlepage"} & set(kind.split())),
-                "public fiction EPUB spine contains a non-narrated document",
+                itemref.attrib == {"idref": item_id}
+                and not list(itemref)
+                and _whitespace(itemref.text),
+                "EPUB spine itemref has invalid attributes; narrated chapters cannot be linear=no",
+            )
+            spine_ids.append(item_id)
+        expected_spine = (["coverpage"] if has_cover else []) + [
+            "titlepage",
+            *chapter_ids,
+        ]
+        _require(
+            spine_ids == expected_spine,
+            "public fiction EPUB spine differs from the complete narrated story",
+        )
+
+        metadata_tags = [
+            f"{_DC}identifier",
+            f"{_DC}title",
+            f"{_DC}creator",
+            f"{_DC}contributor",
+            f"{_DC}language",
+            f"{_OPF}meta",
+        ]
+        if subtitle:
+            metadata_tags.append(f"{_OPF}meta")
+        if has_cover:
+            metadata_tags.append(f"{_OPF}meta")
+        metadata_children = _exact_children(metadata, metadata_tags, "EPUB metadata")
+        identifier, title_meta, creator, contributor_meta, language_meta = metadata_children[:5]
+        uid = identifier.text or ""
+        _require(bool(uid), "EPUB identifier is empty")
+        _exact_text_leaf(
+            identifier, f"{_DC}identifier", {"id": "bookid"}, uid, "EPUB identifier"
+        )
+        _exact_text_leaf(title_meta, f"{_DC}title", {}, title, "EPUB metadata title")
+        _exact_text_leaf(creator, f"{_DC}creator", {}, author, "EPUB metadata author")
+        _exact_text_leaf(
+            contributor_meta,
+            f"{_DC}contributor",
+            {},
+            contributor,
+            "EPUB metadata contributor",
+        )
+        language = language_meta.text or ""
+        _require(bool(language), "EPUB language is empty")
+        _exact_text_leaf(
+            language_meta, f"{_DC}language", {}, language, "EPUB metadata language"
+        )
+        meta_index = 5
+        _exact_text_leaf(
+            metadata_children[meta_index],
+            f"{_OPF}meta",
+            {"property": "dcterms:modified"},
+            "2026-01-01T00:00:00Z",
+            "EPUB modified metadata",
+        )
+        meta_index += 1
+        if subtitle:
+            _exact_text_leaf(
+                metadata_children[meta_index],
+                f"{_OPF}meta",
+                {"name": "calibre:subtitle", "content": subtitle},
+                "",
+                "EPUB subtitle metadata",
+            )
+            meta_index += 1
+        if has_cover:
+            _exact_text_leaf(
+                metadata_children[meta_index],
+                f"{_OPF}meta",
+                {"name": "cover", "content": "cover-image"},
+                "",
+                "EPUB cover metadata",
             )
 
-        story = []
-        xhtml_namespace = "http://www.w3.org/1999/xhtml"
-        for item_id in chapter_ids:
-            section = documents[item_id][1]
-            assert section is not None
-            children = list(section)
-            _require(
-                bool(children) and children[0].tag == f"{{{xhtml_namespace}}}h1",
-                "public fiction EPUB chapter lacks its title",
+        _validate_titlepage_xhtml(
+            _epub_xml(
+                archive, entries, "OEBPS/titlepage.xhtml", "EPUB titlepage"
+            ),
+            title,
+            subtitle,
+            author,
+            language,
+        )
+        _validate_nav_xhtml(
+            _epub_xml(archive, entries, "OEBPS/nav.xhtml", "EPUB navigation"),
+            canonical,
+            language,
+        )
+        if has_cover:
+            _validate_cover_xhtml(
+                _epub_xml(archive, entries, "OEBPS/cover.xhtml", "EPUB cover"),
+                title,
+                language,
+                cover_name,
             )
-            title = "".join(children[0].itertext())
-            paragraphs = []
-            for child in children[1:]:
-                _require(
-                    child.tag == f"{{{xhtml_namespace}}}p",
-                    "public fiction EPUB chapter has non-story content",
-                )
-                paragraphs.append("".join(child.itertext()))
-            _require(bool(paragraphs), "public fiction EPUB chapter body is empty")
-            story.append((title, tuple(paragraphs)))
-        return tuple(story)
+        expected_paragraphs = tuple(
+            (
+                chapter_title,
+                tuple(_plain_inline_markdown(value) for value in paragraphs),
+            )
+            for chapter_title, paragraphs in canonical
+        )
+        for index, (chapter_title, paragraphs) in enumerate(expected_paragraphs):
+            path = f"OEBPS/chap{index:02d}.xhtml"
+            _validate_chapter_xhtml(
+                _epub_xml(archive, entries, path, f"EPUB chapter {index + 1}"),
+                chapter_title,
+                paragraphs,
+                language,
+                f"EPUB chapter {index + 1}",
+            )
+        _validate_ncx(
+            _epub_xml(archive, entries, "OEBPS/toc.ncx", "EPUB NCX"),
+            uid,
+            title,
+            canonical,
+        )
 
 
 def _verify_public_story_content(
@@ -1227,19 +1896,18 @@ def _verify_public_story_content(
     epub: Path,
     chapters_dir: Path,
     private_snapshots: list[_FileSnapshot],
+    author: str,
+    contributor: str,
 ) -> None:
     canonical = _canonical_story(chapters_dir, private_snapshots)
-    _require(
-        _public_markdown_story(manuscript) == canonical,
-        "public fiction Markdown story content differs from canonical chapters",
-    )
-    expected_epub = tuple(
-        (title, tuple(_plain_inline_markdown(value) for value in paragraphs))
-        for title, paragraphs in canonical
-    )
-    _require(
-        _epub_story(epub) == expected_epub,
-        "public fiction EPUB spine content differs from canonical chapters",
+    title, subtitle = _builder_markdown_identity(manuscript, canonical, author)
+    _epub_story(
+        epub,
+        canonical,
+        title,
+        subtitle,
+        author,
+        contributor,
     )
 
 
@@ -1348,6 +2016,8 @@ def verify_public_fiction_package(
             epub_probe_copy,
             chapters_dir,
             private_snapshots,
+            receipt["author"],
+            receipt["contributor"],
         )
         _require_snapshot_unchanged(epub_probe_snapshot, "immutable fiction EPUB")
     cover_rights = receipt["coverRights"]
