@@ -84,10 +84,14 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
 
 
 def _refuse_symlink(path: Path, label: str) -> None:
-    if path.is_symlink():
-        raise ValueError(f"{label} must not be a symlink")
-    if path.parent.is_symlink():
-        raise ValueError(f"{label} parent must not be a symlink")
+    current = path
+    while True:
+        if current.is_symlink():
+            raise ValueError(f"{label} must not use a symlink ancestor: {current}")
+        parent = current.parent
+        if parent == current:
+            return
+        current = parent
 
 
 def _timestamp(value: object, label: str) -> str:
@@ -129,7 +133,8 @@ def _require_list(value: object, label: str) -> list[Any]:
 
 
 def _validate_preferences(preferences: dict[str, Any]) -> dict[str, Any]:
-    if preferences.get("schemaVersion") != 1:
+    schema_version = preferences.get("schemaVersion")
+    if type(schema_version) is not int or schema_version != 1:
         raise ValueError("preferences schemaVersion must be 1")
     blacklist = _require_dict(preferences.get("blacklist"), "preferences blacklist")
     verdicts = _require_dict(preferences.get("verdicts"), "preferences verdicts")
@@ -223,7 +228,8 @@ def _used_voices(preferences: dict[str, Any]) -> set[str]:
 def _validate_cast(
     cast: dict[str, Any], preferences: dict[str, Any], *, require_unverified: bool
 ) -> dict[str, object]:
-    if cast.get("schemaVersion") != 1:
+    schema_version = cast.get("schemaVersion")
+    if type(schema_version) is not int or schema_version != 1:
         raise ValueError("cast schemaVersion must be 1")
     if not isinstance(cast.get("slug"), str) or not cast["slug"]:
         raise ValueError("cast slug must be non-empty text")
@@ -412,6 +418,10 @@ def set_verdict(
             blacklist_record = {"updatedAt": at}
             if reason:
                 blacklist_record["reason"] = reason
+            elif resolved_voice == "af_heart":
+                blacklist_record["reason"] = preferences["blacklist"]["af_heart"][
+                    "reason"
+                ]
             preferences["blacklist"][resolved_voice] = blacklist_record
     preferences["updatedAt"] = at
     _atomic_json(path, preferences, "preferences store")

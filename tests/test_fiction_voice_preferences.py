@@ -31,7 +31,7 @@ def sha256(path: Path) -> str:
 class FictionVoicePreferencesTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         self.preferences_path = self.root / "private" / "preferences.json"
 
     def tearDown(self) -> None:
@@ -205,6 +205,12 @@ class FictionVoicePreferencesTests(unittest.TestCase):
             "2026-08-08T13:03:00+00:00",
         )
         self.assertIn("af_heart", module.load_preferences(self.preferences_path)["blacklist"])
+        module.set_verdict(
+            self.preferences_path, "af_heart", "blacklisted", "",
+            "2026-08-08T13:04:00+00:00",
+        )
+        heart = module.load_preferences(self.preferences_path)["blacklist"]["af_heart"]
+        self.assertEqual("standing audiobook preference", heart["reason"])
 
     def test_preference_store_rejects_symlinks_and_invalid_persisted_shapes(self) -> None:
         target = self.root / "target.json"
@@ -236,6 +242,39 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         self.preferences_path.write_text(json.dumps(invalid), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "successReceiptSHA256"):
             module.load_preferences(self.preferences_path)
+
+    def test_preference_store_refuses_a_symlink_ancestor_before_an_atomic_write(self) -> None:
+        destination = self.root / "real-private-store"
+        destination.mkdir()
+        ancestor = self.root / "linked-private-store"
+        ancestor.symlink_to(destination, target_is_directory=True)
+        through_ancestor = ancestor / "nested" / "preferences.json"
+
+        with self.assertRaisesRegex(ValueError, "symlink"):
+            module.set_verdict(
+                through_ancestor, "Bella", "liked", "", "2026-08-08T13:00:00+00:00"
+            )
+        self.assertFalse((destination / "nested" / "preferences.json").exists())
+
+    def test_schema_versions_must_be_the_integer_one_not_boolean_or_float(self) -> None:
+        for version in (True, 1.0):
+            with self.subTest(store_version=version):
+                invalid_preferences = module.initial_preferences()
+                invalid_preferences["schemaVersion"] = version
+                self.preferences_path.parent.mkdir(exist_ok=True)
+                self.preferences_path.write_text(
+                    json.dumps(invalid_preferences), encoding="utf-8"
+                )
+                with self.assertRaisesRegex(ValueError, "schemaVersion"):
+                    module.load_preferences(self.preferences_path)
+
+            with self.subTest(cast_version=version):
+                invalid_cast = self.valid_cast()
+                invalid_cast["schemaVersion"] = version
+                with self.assertRaisesRegex(ValueError, "schemaVersion"):
+                    module.validate_cast(
+                        invalid_cast, module.load_preferences(self.root / "other.json")
+                    )
 
     def test_record_use_requires_exact_artifacts_and_is_idempotent_after_cast_verification(self) -> None:
         cast_path = self.root / "voice-cast.json"
