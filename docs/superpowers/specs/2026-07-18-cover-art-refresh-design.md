@@ -136,3 +136,24 @@ merely because it is faster" (cover-art.md).
    any book: three directions of which at least one is flat-graphic or
    type-led, raster prompts constrained to print-native languages with the
    AI-tell anti-brief, and the user's explicit pair selection unchanged.
+
+## Execution note (2026-08-08)
+
+Executed on `claude/raster-creation-codex-f7a423`; the original plan branch is
+untouched and keeps its unrelated probe-fallback commit. The tree drifted
+between design and execution:
+
+- Commit `7fc34d5` (2026-07-26) deleted the custom-learning skill along with
+  `package-and-qc.md` after the Echo gates came out, so Change 1's
+  package-and-qc.md half — and the plan's later widening to both SKILL.md
+  bodies — no longer had targets. The deleted surfaces took their
+  raster-mandatory rules with them. Today's `skill/SKILL.md` delegates cover
+  work to `cover-art.md` and carries no route language.
+- Changes 1–3 therefore landed entirely in `skill/references/cover-art.md`
+  and `tests/test_skill_cover_contract.py`. The new tests pin the markers in
+  cover-art.md and assert the stale demotion phrases stay out of every surface
+  in the contract's `FILES` dict.
+- One edit beyond the plan: the Candidate Brief "not ready to render" sentence
+  also demoted vector art ("without first using an available image-generation
+  tool"), which acceptance criterion 2 forbids; it now binds to the
+  route-follows-direction rule instead.
