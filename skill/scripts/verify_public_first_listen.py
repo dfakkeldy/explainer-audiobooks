@@ -5,15 +5,19 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
+import io
 import json
 import math
 import os
 import posixpath
 import re
 import stat
+import struct
 import subprocess
 import sys
 import tempfile
+import uuid
 import xml.etree.ElementTree as ET
 import zipfile
 from dataclasses import dataclass
@@ -148,6 +152,7 @@ _PRIVATE_FICTION_RECEIPT_FIELDS = {
     "negativeHumanVerdictOverrides",
     "receiptDoesNotCertifyHumanAcceptance",
 }
+_MEDIA_PROBE_TIMEOUT_SECONDS = 30
 @dataclass(frozen=True)
 class _FileSnapshot:
     path: Path
@@ -661,7 +666,7 @@ def _verify_fiction_artifacts(
         snapshot = _snapshot_file(
             path,
             f"fiction {name} artifact",
-            capture=name in {"manuscript", "alignment"},
+            capture=name in {"manuscript", "alignment", "portraitCover"},
             copy_to=epub_probe_copy if name == "epub" else None,
         )
         if name == "alignment":
@@ -695,7 +700,10 @@ def _probe_fiction_media(
             check=True,
             capture_output=True,
             text=True,
+            timeout=_MEDIA_PROBE_TIMEOUT_SECONDS,
         )
+    except subprocess.TimeoutExpired as error:
+        raise ValueError("fiction EPUB unzip -t timed out") from error
     except (OSError, subprocess.CalledProcessError) as error:
         raise ValueError("fiction EPUB failed unzip -t") from error
     _require_snapshot_unchanged(epub_probe_snapshot, "immutable fiction EPUB")
@@ -715,12 +723,15 @@ def _probe_fiction_media(
             check=True,
             capture_output=True,
             text=True,
+            timeout=_MEDIA_PROBE_TIMEOUT_SECONDS,
         )
         media = json.loads(
             probe.stdout,
             object_pairs_hook=_unique_json_object,
             parse_constant=_reject_nonfinite_json_number,
         )
+    except subprocess.TimeoutExpired as error:
+        raise ValueError("fiction M4B ffprobe timed out") from error
     except (OSError, subprocess.CalledProcessError, json.JSONDecodeError) as error:
         raise ValueError("fiction M4B failed ffprobe") from error
     _require_snapshot_unchanged(release_probe_snapshot, "immutable release M4B")
@@ -1271,19 +1282,30 @@ def _epub_xml(
     name: str,
     label: str,
 ) -> ET.Element:
-    _require(name in entries, f"{label} is missing from the EPUB")
-    _require(entries[name].file_size <= 16 * 1024 * 1024, f"{label} is too large")
+    content = _read_epub_member(
+        archive,
+        entries,
+        name,
+        label,
+        _epub_member_limit(name),
+    )
     try:
-        return ET.fromstring(archive.read(name))
+        _validate_epub_xml_lexical_identity(content, name, label)
+        return ET.fromstring(content)
     except (ET.ParseError, UnicodeError, OSError, RuntimeError) as error:
         raise ValueError(f"{label} is invalid XML") from error
 
 
-def _plain_inline_markdown(value: str) -> str:
-    value = re.sub(r"\*\*(.+?)\*\*", r"\1", value)
-    value = re.sub(r"__(.+?)__", r"\1", value)
-    value = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"\1", value)
-    return re.sub(r"(?<!_)_(?!_)(.+?)(?<!_)_(?!_)", r"\1", value)
+def _builder_inline_html(value: str) -> str:
+    rendered = html.escape(value, quote=False)
+    rendered = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", rendered)
+    rendered = re.sub(r"__(.+?)__", r"<strong>\1</strong>", rendered)
+    rendered = re.sub(
+        r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"<em>\1</em>", rendered
+    )
+    return re.sub(
+        r"(?<!_)_(?!_)(.+?)(?<!_)_(?!_)", r"<em>\1</em>", rendered
+    )
 
 
 _XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml"
@@ -1293,6 +1315,21 @@ _OPF_NAMESPACE = "http://www.idpf.org/2007/opf"
 _OPF = f"{{{_OPF_NAMESPACE}}}"
 _DC_NAMESPACE = "http://purl.org/dc/elements/1.1/"
 _DC = f"{{{_DC_NAMESPACE}}}"
+_CONTAINER_NAMESPACE = "urn:oasis:names:tc:opendocument:xmlns:container"
+_CONTAINER = f"{{{_CONTAINER_NAMESPACE}}}"
+_NCX_NAMESPACE = "http://www.daisy.org/z3986/2005/ncx/"
+_NCX = f"{{{_NCX_NAMESPACE}}}"
+_EPUB_MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
+_EPUB_MAX_MEMBERS = 64
+_EPUB_MAX_CENTRAL_DIRECTORY_BYTES = 4 * 1024 * 1024
+_EPUB_MAX_COMPRESSED_MEMBER_BYTES = 16 * 1024 * 1024
+_EPUB_MAX_COMPRESSED_TOTAL_BYTES = 64 * 1024 * 1024
+_EPUB_MAX_UNCOMPRESSED_TOTAL_BYTES = 64 * 1024 * 1024
+_EPUB_MAX_COMPRESSION_RATIO = 100
+_EPUB_MAX_XML_BYTES = 1024 * 1024
+_EPUB_MAX_XHTML_BYTES = 4 * 1024 * 1024
+_EPUB_MAX_CSS_BYTES = 64 * 1024
+_EPUB_MAX_COVER_BYTES = 16 * 1024 * 1024
 _BUILDER_EPUB_CSS = (
     "body{font-family:Georgia,'Times New Roman',serif;line-height:1.6;margin:5% 6%;}"
     "h1{font-size:1.5em;line-height:1.25;margin:0 0 1em;}"
@@ -1304,6 +1341,221 @@ _BUILDER_EPUB_CSS = (
     "figure img{max-width:100%;height:auto;}"
     "figcaption{font-size:0.85em;color:#555;margin-top:0.5em;font-style:italic;text-align:center;}"
 ).encode("utf-8")
+
+
+def _validate_epub_xml_lexical_identity(
+    content: bytes, name: str, label: str
+) -> None:
+    declaration = b'<?xml version="1.0" encoding="utf-8"?>'
+    stripped = content.lstrip()
+    _require(
+        stripped.startswith(declaration),
+        f"{label} must use the unchanged builder XML declaration",
+    )
+    after_declaration = stripped[len(declaration) :]
+    _require(
+        b"<!--" not in content and b"<?" not in after_declaration,
+        f"{label} must not contain XML comments or processing instructions",
+    )
+    is_xhtml = name.endswith(".xhtml")
+    if is_xhtml:
+        _require(
+            after_declaration.count(b"<!DOCTYPE") == 1
+            and b"<!DOCTYPE html>" in after_declaration,
+            f"{label} must contain exactly the unchanged builder HTML doctype",
+        )
+    else:
+        _require(
+            b"<!DOCTYPE" not in after_declaration,
+            f"{label} must not contain a doctype",
+        )
+    try:
+        namespaces = [
+            namespace
+            for _event, namespace in ET.iterparse(
+                io.BytesIO(content), events=("start-ns",)
+            )
+        ]
+    except (ET.ParseError, UnicodeError) as error:
+        raise ValueError(f"{label} has invalid XML namespace declarations") from error
+    if is_xhtml:
+        expected_namespaces = [
+            ("", _XHTML_NAMESPACE),
+            ("epub", "http://www.idpf.org/2007/ops"),
+        ]
+    elif name == "OEBPS/content.opf":
+        expected_namespaces = [("", _OPF_NAMESPACE), ("dc", _DC_NAMESPACE)]
+    elif name == "META-INF/container.xml":
+        expected_namespaces = [("", _CONTAINER_NAMESPACE)]
+    elif name == "OEBPS/toc.ncx":
+        expected_namespaces = [("", _NCX_NAMESPACE)]
+    else:
+        raise ValueError(f"{label} has an unknown XML role")
+    _require(
+        namespaces == expected_namespaces,
+        f"{label} namespace declarations differ from the unchanged builder",
+    )
+
+
+def _epub_member_limit(name: str) -> int:
+    if name == "mimetype":
+        return 64
+    if name.endswith(".css"):
+        return _EPUB_MAX_CSS_BYTES
+    if PurePosixPath(name).name in {"cover.png", "cover.jpg"}:
+        return _EPUB_MAX_COVER_BYTES
+    if name.endswith(".xhtml"):
+        return _EPUB_MAX_XHTML_BYTES
+    if name.endswith((".xml", ".opf", ".ncx")):
+        return _EPUB_MAX_XML_BYTES
+    return _EPUB_MAX_XHTML_BYTES
+
+
+def _declared_epub_member_count(epub: Path, archive_size: int) -> int:
+    tail_size = min(archive_size, 65_535 + 22)
+    try:
+        with epub.open("rb") as stream:
+            stream.seek(archive_size - tail_size)
+            tail = stream.read(tail_size)
+    except OSError as error:
+        raise ValueError("public fiction EPUB central directory is unreadable") from error
+    eocd_index = tail.rfind(b"PK\x05\x06")
+    _require(eocd_index >= 0, "public fiction EPUB lacks an end record")
+    try:
+        (
+            signature,
+            disk_number,
+            central_disk,
+            disk_entries,
+            total_entries,
+            central_size,
+            central_offset,
+            comment_size,
+        ) = struct.unpack_from("<4s4H2IH", tail, eocd_index)
+    except struct.error as error:
+        raise ValueError("public fiction EPUB end record is truncated") from error
+    _require(signature == b"PK\x05\x06", "public fiction EPUB end record is invalid")
+    _require(
+        disk_number == 0
+        and central_disk == 0
+        and disk_entries == total_entries
+        and 0 < total_entries <= _EPUB_MAX_MEMBERS,
+        "public fiction EPUB declared member count exceeds its resource limit",
+    )
+    _require(
+        comment_size == 0 and eocd_index + 22 == len(tail),
+        "public fiction EPUB archive comment is not allowed",
+    )
+    eocd_offset = archive_size - tail_size + eocd_index
+    _require(
+        0 < central_size <= _EPUB_MAX_CENTRAL_DIRECTORY_BYTES
+        and central_offset + central_size == eocd_offset,
+        "public fiction EPUB central directory exceeds its resource limit",
+    )
+    return total_entries
+
+
+def _inspect_epub_archive(
+    epub: Path, *, public_cover_size: int
+) -> tuple[list[zipfile.ZipInfo], dict[str, zipfile.ZipInfo]]:
+    _reject_symlink_ancestors(epub, "immutable fiction EPUB")
+    try:
+        archive_size = epub.stat().st_size
+    except OSError as error:
+        raise ValueError("public fiction EPUB resource metadata is unreadable") from error
+    _require(
+        0 < archive_size <= _EPUB_MAX_ARCHIVE_BYTES,
+        "public fiction EPUB compressed package size exceeds its resource limit",
+    )
+    declared_member_count = _declared_epub_member_count(epub, archive_size)
+    try:
+        with zipfile.ZipFile(epub) as archive:
+            infos = archive.infolist()
+    except (OSError, zipfile.BadZipFile, zipfile.LargeZipFile) as error:
+        raise ValueError("public fiction EPUB is not a valid zip archive") from error
+    _require(
+        len(infos) == declared_member_count,
+        "public fiction EPUB member count exceeds its resource limit",
+    )
+    entries: dict[str, zipfile.ZipInfo] = {}
+    total_compressed = 0
+    total_uncompressed = 0
+    for info in infos:
+        name = _safe_epub_path(info.filename, "EPUB member")
+        _require(name not in entries, "public fiction EPUB has duplicate files")
+        _require(
+            info.comment == b"" and info.extra == b"",
+            f"EPUB member comment or extra metadata is not allowed: {name}",
+        )
+        mode = info.external_attr >> 16
+        _require(not stat.S_ISLNK(mode), f"EPUB member is a symlink: {name}")
+        _require(
+            not info.flag_bits & 0x1,
+            f"EPUB member must not be encrypted: {name}",
+        )
+        _require(
+            info.compress_type in {zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED},
+            f"EPUB member uses an unsupported compression method: {name}",
+        )
+        _require(
+            0 <= info.compress_size <= _EPUB_MAX_COMPRESSED_MEMBER_BYTES,
+            f"EPUB member compressed size exceeds its resource limit: {name}",
+        )
+        role_limit = _epub_member_limit(name)
+        _require(
+            0 <= info.file_size <= role_limit,
+            f"EPUB member uncompressed size exceeds its role resource limit: {name}",
+        )
+        if info.compress_size == 0:
+            _require(
+                info.file_size == 0,
+                f"EPUB member has a zero compressed size with nonempty content: {name}",
+            )
+        else:
+            _require(
+                info.file_size
+                <= info.compress_size * _EPUB_MAX_COMPRESSION_RATIO,
+                f"EPUB member compression ratio exceeds its resource limit: {name}",
+            )
+        total_compressed += info.compress_size
+        total_uncompressed += info.file_size
+        entries[name] = info
+    _require(
+        total_compressed <= _EPUB_MAX_COMPRESSED_TOTAL_BYTES,
+        "public fiction EPUB total compressed size exceeds its aggregate limit",
+    )
+    _require(
+        total_uncompressed <= _EPUB_MAX_UNCOMPRESSED_TOTAL_BYTES,
+        "public fiction EPUB total uncompressed size exceeds its aggregate limit",
+    )
+    _require(
+        "OEBPS/cover.png" in entries
+        and entries["OEBPS/cover.png"].file_size == public_cover_size,
+        "embedded EPUB cover size differs from the governed public cover",
+    )
+    return infos, entries
+
+
+def _read_epub_member(
+    archive: zipfile.ZipFile,
+    entries: dict[str, zipfile.ZipInfo],
+    name: str,
+    label: str,
+    maximum_bytes: int,
+) -> bytes:
+    _require(name in entries, f"{label} is missing from the EPUB")
+    info = entries[name]
+    _require(info.file_size <= maximum_bytes, f"{label} is too large")
+    try:
+        with archive.open(info, "r") as stream:
+            content = stream.read(maximum_bytes + 1)
+    except (OSError, RuntimeError, zipfile.BadZipFile) as error:
+        raise ValueError(f"{label} is unreadable") from error
+    _require(
+        len(content) == info.file_size and len(content) <= maximum_bytes,
+        f"{label} decompressed size differs from its bounded declaration",
+    )
+    return content
 
 
 def _whitespace(value: str | None) -> bool:
@@ -1353,6 +1605,10 @@ def _xhtml_shell(
     head, body = _exact_children(
         document, [f"{_XHTML}head", f"{_XHTML}body"], label
     )
+    _require(
+        not head.attrib and not body.attrib,
+        f"{label} head and body must not have attributes",
+    )
     meta, title_element, link = _exact_children(
         head,
         [f"{_XHTML}meta", f"{_XHTML}title", f"{_XHTML}link"],
@@ -1374,15 +1630,34 @@ def _xhtml_shell(
     return head, body
 
 
-def _inline_xhtml_text(element: ET.Element, label: str) -> str:
-    _require(not element.attrib, f"{label} has invalid inline attributes")
-    for child in list(element):
-        _require(
-            child.tag in {f"{_XHTML}strong", f"{_XHTML}em"},
-            f"{label} has an unsupported inline element",
-        )
-        _inline_xhtml_text(child, label)
-    return "".join(element.itertext())
+def _element_identity(element: ET.Element, *, include_tail: bool) -> tuple[object, ...]:
+    return (
+        element.tag,
+        tuple(sorted(element.attrib.items())),
+        element.text,
+        element.tail if include_tail else None,
+        tuple(
+            _element_identity(child, include_tail=True) for child in list(element)
+        ),
+    )
+
+
+def _require_builder_inline_paragraph(
+    paragraph: ET.Element, canonical_markdown: str, label: str
+) -> None:
+    expected_markup = (
+        f'<p xmlns="{_XHTML_NAMESPACE}">'
+        f"{_builder_inline_html(canonical_markdown)}</p>"
+    )
+    try:
+        expected = ET.fromstring(expected_markup)
+    except ET.ParseError as error:
+        raise ValueError(f"{label} canonical inline Markdown is invalid") from error
+    _require(
+        _element_identity(paragraph, include_tail=False)
+        == _element_identity(expected, include_tail=False),
+        f"{label} inline structure differs from canonical Markdown",
+    )
 
 
 def _validate_chapter_xhtml(
@@ -1407,11 +1682,10 @@ def _validate_chapter_xhtml(
     for index, (paragraph, expected) in enumerate(
         zip(children[1:], paragraphs, strict=True), start=1
     ):
-        _require(
-            paragraph.tag == f"{_XHTML}p"
-            and _inline_xhtml_text(paragraph, f"{label} paragraph {index}")
-            == expected,
-            f"{label} paragraph {index} differs from canonical content",
+        _require_builder_inline_paragraph(
+            paragraph,
+            expected,
+            f"{label} paragraph {index}",
         )
 
 
@@ -1470,6 +1744,7 @@ def _validate_nav_xhtml(
     heading, ordered = _exact_children(
         navigation, [f"{_XHTML}h1", f"{_XHTML}ol"], "EPUB navigation"
     )
+    _require(not ordered.attrib, "EPUB navigation list has invalid attributes")
     _exact_text_leaf(
         heading, f"{_XHTML}h1", {}, "Table of Contents", "EPUB navigation heading"
     )
@@ -1479,6 +1754,7 @@ def _validate_nav_xhtml(
     for index, (item, (chapter_title, _paragraphs)) in enumerate(
         zip(items, canonical, strict=True)
     ):
+        _require(not item.attrib, "EPUB navigation item has invalid attributes")
         (link,) = _exact_children(item, [f"{_XHTML}a"], "EPUB navigation item")
         _exact_text_leaf(
             link,
@@ -1502,6 +1778,10 @@ def _validate_cover_xhtml(
     )
     head, body = _exact_children(
         document, [f"{_XHTML}head", f"{_XHTML}body"], "EPUB cover"
+    )
+    _require(
+        not head.attrib and not body.attrib,
+        "EPUB cover head and body must not have attributes",
     )
     meta, title_element, style = _exact_children(
         head,
@@ -1544,33 +1824,35 @@ def _validate_ncx(
     title: str,
     canonical: tuple[tuple[str, tuple[str, ...]], ...],
 ) -> None:
-    ncx_namespace = "http://www.daisy.org/z3986/2005/ncx/"
-    ncx = f"{{{ncx_namespace}}}"
     _require(
-        root.tag == f"{ncx}ncx" and root.attrib == {"version": "2005-1"},
+        root.tag == f"{_NCX}ncx" and root.attrib == {"version": "2005-1"},
         "EPUB NCX has invalid identity",
     )
     head, doc_title, nav_map = _exact_children(
         root,
-        [f"{ncx}head", f"{ncx}docTitle", f"{ncx}navMap"],
+        [f"{_NCX}head", f"{_NCX}docTitle", f"{_NCX}navMap"],
         "EPUB NCX",
     )
-    (meta,) = _exact_children(head, [f"{ncx}meta"], "EPUB NCX head")
+    _require(
+        not head.attrib and not doc_title.attrib and not nav_map.attrib,
+        "EPUB NCX structural roles have invalid attributes",
+    )
+    (meta,) = _exact_children(head, [f"{_NCX}meta"], "EPUB NCX head")
     _exact_text_leaf(
         meta,
-        f"{ncx}meta",
+        f"{_NCX}meta",
         {"name": "dtb:uid", "content": uid},
         "",
         "EPUB NCX uid",
     )
     (title_text,) = _exact_children(
-        doc_title, [f"{ncx}text"], "EPUB NCX title"
+        doc_title, [f"{_NCX}text"], "EPUB NCX title"
     )
     _exact_text_leaf(
-        title_text, f"{ncx}text", {}, title, "EPUB NCX title text"
+        title_text, f"{_NCX}text", {}, title, "EPUB NCX title text"
     )
     nav_points = _exact_children(
-        nav_map, [f"{ncx}navPoint"] * len(canonical), "EPUB NCX navigation"
+        nav_map, [f"{_NCX}navPoint"] * len(canonical), "EPUB NCX navigation"
     )
     for index, (point, (chapter_title, _paragraphs)) in enumerate(
         zip(nav_points, canonical, strict=True)
@@ -1581,22 +1863,26 @@ def _validate_ncx(
         )
         label, content = _exact_children(
             point,
-            [f"{ncx}navLabel", f"{ncx}content"],
+            [f"{_NCX}navLabel", f"{_NCX}content"],
             f"EPUB NCX item {index + 1}",
         )
+        _require(
+            not label.attrib,
+            f"EPUB NCX item {index + 1} label has invalid attributes",
+        )
         (text_element,) = _exact_children(
-            label, [f"{ncx}text"], f"EPUB NCX item {index + 1} label"
+            label, [f"{_NCX}text"], f"EPUB NCX item {index + 1} label"
         )
         _exact_text_leaf(
             text_element,
-            f"{ncx}text",
+            f"{_NCX}text",
             {},
             chapter_title,
             f"EPUB NCX item {index + 1} label",
         )
         _exact_text_leaf(
             content,
-            f"{ncx}content",
+            f"{_NCX}content",
             {"src": f"chap{index:02d}.xhtml"},
             "",
             f"EPUB NCX item {index + 1} target",
@@ -1610,48 +1896,63 @@ def _epub_story(
     subtitle: str,
     author: str,
     contributor: str,
+    public_cover: _FileSnapshot,
 ) -> None:
+    infos, entries = _inspect_epub_archive(
+        epub, public_cover_size=public_cover.size
+    )
     try:
         archive = zipfile.ZipFile(epub)
     except (OSError, zipfile.BadZipFile) as error:
         raise ValueError("public fiction EPUB is not a valid zip archive") from error
     with archive:
-        infos = archive.infolist()
-        names = [info.filename for info in infos]
-        _require(len(names) == len(set(names)), "public fiction EPUB has duplicate files")
         _require(
             bool(infos)
             and infos[0].filename == "mimetype"
             and infos[0].compress_type == zipfile.ZIP_STORED
-            and archive.read("mimetype") == b"application/epub+zip",
+            and _read_epub_member(
+                archive, entries, "mimetype", "EPUB mimetype", 64
+            )
+            == b"application/epub+zip",
             "public fiction EPUB has an invalid mimetype entry",
         )
-        entries: dict[str, zipfile.ZipInfo] = {}
-        for info in infos:
-            name = _safe_epub_path(info.filename, "EPUB member")
-            mode = info.external_attr >> 16
-            _require(not stat.S_ISLNK(mode), f"EPUB member is a symlink: {name}")
-            entries[name] = info
 
         container = _epub_xml(
             archive, entries, "META-INF/container.xml", "EPUB container"
         )
-        container_namespace = "urn:oasis:names:tc:opendocument:xmlns:container"
-        rootfiles = container.findall(
-            f".//{{{container_namespace}}}rootfile"
+        _require(
+            container.tag == f"{_CONTAINER}container"
+            and container.attrib == {"version": "1.0"},
+            "EPUB container has invalid identity",
         )
-        _require(len(rootfiles) == 1, "EPUB container must name exactly one package")
+        (rootfiles,) = _exact_children(
+            container, [f"{_CONTAINER}rootfiles"], "EPUB container"
+        )
+        _require(not rootfiles.attrib, "EPUB container rootfiles has attributes")
+        (rootfile,) = _exact_children(
+            rootfiles, [f"{_CONTAINER}rootfile"], "EPUB container rootfiles"
+        )
         opf_path = _safe_epub_path(
-            rootfiles[0].get("full-path", ""), "EPUB package path"
+            rootfile.get("full-path", ""), "EPUB package path"
         )
         _require(
             opf_path == "OEBPS/content.opf"
-            and rootfiles[0].attrib
+            and rootfile.attrib
             == {
                 "full-path": "OEBPS/content.opf",
                 "media-type": "application/oebps-package+xml",
             },
             "EPUB container does not match the unchanged builder structure",
+        )
+        _exact_text_leaf(
+            rootfile,
+            f"{_CONTAINER}rootfile",
+            {
+                "full-path": "OEBPS/content.opf",
+                "media-type": "application/oebps-package+xml",
+            },
+            "",
+            "EPUB container rootfile",
         )
         package = _epub_xml(archive, entries, opf_path, "EPUB package")
         _require(
@@ -1664,10 +1965,19 @@ def _epub_story(
             [f"{_OPF}metadata", f"{_OPF}manifest", f"{_OPF}spine"],
             "EPUB package",
         )
+        _require(
+            not metadata.attrib and not manifest.attrib,
+            "EPUB metadata and manifest must not have attributes",
+        )
 
         items: dict[str, tuple[str, str, str | None]] = {}
         hrefs: set[str] = set()
-        for item in list(manifest):
+        manifest_items = _exact_children(
+            manifest,
+            [f"{_OPF}item"] * len(list(manifest)),
+            "EPUB manifest",
+        )
+        for item in manifest_items:
             _require(item.tag == f"{_OPF}item", "EPUB manifest is invalid")
             item_id = item.get("id")
             media_type = item.get("media-type")
@@ -1695,8 +2005,8 @@ def _epub_story(
         chapter_ids = [f"chap{index:02d}" for index in range(len(canonical))]
         has_cover = "cover-image" in items or "coverpage" in items
         _require(
-            not has_cover or {"cover-image", "coverpage"} <= set(items),
-            "EPUB cover manifest roles must be paired",
+            has_cover and {"cover-image", "coverpage"} <= set(items),
+            "EPUB must contain the governed public cover roles",
         )
         expected_items: dict[str, tuple[str, str, str | None]] = {
             "css": ("OEBPS/style.css", "text/css", None),
@@ -1724,10 +2034,7 @@ def _epub_story(
             cover_name = PurePosixPath(cover_path).name
             _require(
                 (cover_name, cover_media, cover_properties)
-                in {
-                    ("cover.png", "image/png", "cover-image"),
-                    ("cover.jpg", "image/jpeg", "cover-image"),
-                },
+                == ("cover.png", "image/png", "cover-image"),
                 "EPUB cover image manifest item is invalid",
             )
             expected_items["cover-image"] = (
@@ -1755,13 +2062,39 @@ def _epub_story(
             "public fiction EPUB contains an extra or missing package file",
         )
         _require(
-            archive.read(entries["OEBPS/style.css"]) == _BUILDER_EPUB_CSS,
+            _read_epub_member(
+                archive,
+                entries,
+                "OEBPS/style.css",
+                "EPUB stylesheet",
+                _EPUB_MAX_CSS_BYTES,
+            )
+            == _BUILDER_EPUB_CSS,
             "public fiction EPUB stylesheet differs from the unchanged builder",
+        )
+        assert public_cover.content is not None
+        embedded_cover = _read_epub_member(
+            archive,
+            entries,
+            "OEBPS/cover.png",
+            "embedded EPUB cover",
+            _EPUB_MAX_COVER_BYTES,
+        )
+        _require(
+            len(embedded_cover) == public_cover.size
+            and hashlib.sha256(embedded_cover).hexdigest() == public_cover.sha256
+            and embedded_cover == public_cover.content,
+            "embedded EPUB cover bytes differ from the governed public cover",
         )
 
         _require(spine.attrib == {"toc": "ncx"}, "EPUB spine identity is invalid")
         spine_ids: list[str] = []
-        for itemref in list(spine):
+        spine_items = _exact_children(
+            spine,
+            [f"{_OPF}itemref"] * len(list(spine)),
+            "EPUB spine",
+        )
+        for itemref in spine_items:
             _require(itemref.tag == f"{_OPF}itemref", "EPUB spine is invalid")
             item_id = itemref.get("idref")
             _require(
@@ -1801,7 +2134,14 @@ def _epub_story(
         metadata_children = _exact_children(metadata, metadata_tags, "EPUB metadata")
         identifier, title_meta, creator, contributor_meta, language_meta = metadata_children[:5]
         uid = identifier.text or ""
-        _require(bool(uid), "EPUB identifier is empty")
+        try:
+            parsed_uid = uuid.UUID(uid.removeprefix("urn:uuid:"))
+        except (ValueError, AttributeError) as error:
+            raise ValueError("EPUB identifier must be a valid urn:uuid UUID") from error
+        _require(
+            uid == f"urn:uuid:{parsed_uid}",
+            "EPUB identifier must be a canonical urn:uuid UUID",
+        )
         _exact_text_leaf(
             identifier, f"{_DC}identifier", {"id": "bookid"}, uid, "EPUB identifier"
         )
@@ -1815,7 +2155,10 @@ def _epub_story(
             "EPUB metadata contributor",
         )
         language = language_meta.text or ""
-        _require(bool(language), "EPUB language is empty")
+        _require(
+            language == "en",
+            "EPUB language must match the unchanged fiction builder language",
+        )
         _exact_text_leaf(
             language_meta, f"{_DC}language", {}, language, "EPUB metadata language"
         )
@@ -1867,14 +2210,7 @@ def _epub_story(
                 language,
                 cover_name,
             )
-        expected_paragraphs = tuple(
-            (
-                chapter_title,
-                tuple(_plain_inline_markdown(value) for value in paragraphs),
-            )
-            for chapter_title, paragraphs in canonical
-        )
-        for index, (chapter_title, paragraphs) in enumerate(expected_paragraphs):
+        for index, (chapter_title, paragraphs) in enumerate(canonical):
             path = f"OEBPS/chap{index:02d}.xhtml"
             _validate_chapter_xhtml(
                 _epub_xml(archive, entries, path, f"EPUB chapter {index + 1}"),
@@ -1898,6 +2234,7 @@ def _verify_public_story_content(
     private_snapshots: list[_FileSnapshot],
     author: str,
     contributor: str,
+    public_cover: _FileSnapshot,
 ) -> None:
     canonical = _canonical_story(chapters_dir, private_snapshots)
     title, subtitle = _builder_markdown_identity(manuscript, canonical, author)
@@ -1908,6 +2245,7 @@ def _verify_public_story_content(
         subtitle,
         author,
         contributor,
+        public_cover,
     )
 
 
@@ -1924,6 +2262,19 @@ def _verify_fiction_readme(book_dir: Path) -> _FileSnapshot:
         "fiction README must include the approved disclosure",
     )
     return snapshot
+
+
+def _canonical_chapter_filenames(chapters_dir: Path) -> tuple[str, ...]:
+    try:
+        return tuple(
+            sorted(
+                path.name
+                for path in chapters_dir.iterdir()
+                if path.name.startswith("ch") and path.suffix == ".md"
+            )
+        )
+    except OSError as error:
+        raise ValueError("canonical fiction chapter coverage is unreadable") from error
 
 
 def verify_public_fiction_package(
@@ -1950,6 +2301,11 @@ def verify_public_fiction_package(
     ):
         _require_regular_file(path, label)
     _require_regular_directory(chapters_dir, "chapters directory")
+    initial_chapter_filenames = _canonical_chapter_filenames(chapters_dir)
+    _require(
+        bool(initial_chapter_filenames),
+        "canonical fiction chapter coverage is empty",
+    )
 
     receipt_value, receipt_snapshot = _read_json_snapshot(
         book_dir / "publication.json", "publication.json"
@@ -1965,6 +2321,14 @@ def verify_public_fiction_package(
         release_probe_copy = probe_dir / f"{slug}.m4b"
         artifact_hashes, artifact_snapshots = _verify_fiction_artifacts(
             book_dir, receipt, slug, epub_probe_copy
+        )
+        cover_snapshot = next(
+            snapshot
+            for snapshot in artifact_snapshots
+            if snapshot.path.name == "cover.png"
+        )
+        _inspect_epub_archive(
+            epub_probe_copy, public_cover_size=cover_snapshot.size
         )
         release_hash, release_snapshot = _verify_release(
             receipt, slug, release_m4b, release_probe_copy
@@ -2018,6 +2382,7 @@ def verify_public_fiction_package(
             private_snapshots,
             receipt["author"],
             receipt["contributor"],
+            cover_snapshot,
         )
         _require_snapshot_unchanged(epub_probe_snapshot, "immutable fiction EPUB")
     cover_rights = receipt["coverRights"]
@@ -2037,6 +2402,10 @@ def verify_public_fiction_package(
     ]
     for snapshot in all_snapshots:
         _require_snapshot_unchanged(snapshot, snapshot.path.name)
+    _require(
+        _canonical_chapter_filenames(chapters_dir) == initial_chapter_filenames,
+        "canonical fiction chapter coverage changed during verification",
+    )
 
 
 def main(argv: list[str] | None = None) -> int:

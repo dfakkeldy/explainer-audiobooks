@@ -2,6 +2,7 @@ import copy
 import hashlib
 import json
 import shutil
+import struct
 import subprocess
 import tempfile
 import unittest
@@ -308,6 +309,8 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.epub = self.book_dir / "fixture-fiction.epub"
         self.sidecar = self.book_dir / "fixture-fiction.alignment.json"
         self.cover = self.book_dir / "cover.png"
+        self.cover.write_bytes(b"portrait cover")
+        self.epub_uid = "urn:uuid:00000000-0000-4000-8000-000000000001"
         self.chapter_specs = (
             ("ch01.md", "Chapter One", "The lamp survived."),
             ("ch02.md", "Chapter Two", "The tide withdrew."),
@@ -321,7 +324,6 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.chapter = self.chapter_paths[0]
         self.write_public_story_outputs()
         self.sidecar.write_text('[{"blockId":"b1","timestamp":0}]\n', encoding="utf-8")
-        self.cover.write_bytes(b"portrait cover")
         self.release_m4b.write_bytes(b"release audiobook")
         self.run_id = (
             f"{self.digest(self.epub)[:12]}-"
@@ -382,12 +384,14 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             'media-type="application/oebps-package+xml"/></rootfiles></container>'
         )
         manifest = [
+            '<item id="cover-image" href="cover.png" media-type="image/png" properties="cover-image"/>',
+            '<item id="coverpage" href="cover.xhtml" media-type="application/xhtml+xml"/>',
             '<item id="css" href="style.css" media-type="text/css"/>',
             '<item id="titlepage" href="titlepage.xhtml" media-type="application/xhtml+xml"/>',
             '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>',
             '<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>',
         ]
-        spine = ['<itemref idref="titlepage"/>']
+        spine = ['<itemref idref="coverpage"/>', '<itemref idref="titlepage"/>']
         chapter_documents = {}
         for index, (_filename, title, body) in enumerate(self.chapter_specs):
             item_id = f"chap{index:02d}"
@@ -398,6 +402,7 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             spine.append(f'<itemref idref="{item_id}"/>')
             chapter_documents[f"OEBPS/{href}"] = (
                 '<?xml version="1.0" encoding="utf-8"?>'
+                '<!DOCTYPE html>'
                 '<html xmlns="http://www.w3.org/1999/xhtml" '
                 'xmlns:epub="http://www.idpf.org/2007/ops" lang="en">'
                 f'<head><meta charset="utf-8"/><title>{title}</title>'
@@ -410,17 +415,19 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             '<package xmlns="http://www.idpf.org/2007/opf" version="3.0" '
             'unique-identifier="bookid"><metadata '
             'xmlns:dc="http://purl.org/dc/elements/1.1/">'
-            '<dc:identifier id="bookid">urn:uuid:fixture</dc:identifier>'
+            f'<dc:identifier id="bookid">{self.epub_uid}</dc:identifier>'
             '<dc:title>Fixture Fiction</dc:title>'
             '<dc:creator>Dan Fakkeldy</dc:creator>'
             '<dc:contributor>GPT-5.6</dc:contributor><dc:language>en</dc:language>'
             '<meta property="dcterms:modified">2026-01-01T00:00:00Z</meta>'
+            '<meta name="cover" content="cover-image"/>'
             '</metadata>'
             '<manifest>' + "".join(manifest) + '</manifest>'
             '<spine toc="ncx">' + "".join(spine) + '</spine></package>'
         )
         titlepage = (
             '<?xml version="1.0" encoding="utf-8"?>'
+            '<!DOCTYPE html>'
             '<html xmlns="http://www.w3.org/1999/xhtml" '
             'xmlns:epub="http://www.idpf.org/2007/ops" lang="en"><head>'
             '<meta charset="utf-8"/><title>Fixture Fiction</title>'
@@ -429,12 +436,24 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             '<h1>Fixture Fiction</h1><p class="author">by Dan Fakkeldy</p>'
             '</section></body></html>'
         )
+        coverpage = (
+            '<?xml version="1.0" encoding="utf-8"?>'
+            '<!DOCTYPE html>'
+            '<html xmlns="http://www.w3.org/1999/xhtml" '
+            'xmlns:epub="http://www.idpf.org/2007/ops" lang="en"><head>'
+            '<meta charset="utf-8"/><title>Cover</title>'
+            '<style>html,body{margin:0;padding:0;height:100%}'
+            'img{display:block;width:100%;height:auto}</style></head><body>'
+            '<section epub:type="cover"><img src="cover.png" '
+            'alt="Fixture Fiction cover"/></section></body></html>'
+        )
         nav_items = "".join(
             f'<li><a href="chap{index:02d}.xhtml">{title}</a></li>'
             for index, (_filename, title, _body) in enumerate(self.chapter_specs)
         )
         nav = (
             '<?xml version="1.0" encoding="utf-8"?>'
+            '<!DOCTYPE html>'
             '<html xmlns="http://www.w3.org/1999/xhtml" '
             'xmlns:epub="http://www.idpf.org/2007/ops" lang="en"><head>'
             '<meta charset="utf-8"/><title>Table of Contents</title>'
@@ -456,7 +475,7 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         ncx = (
             '<?xml version="1.0" encoding="utf-8"?>'
             '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">'
-            '<head><meta name="dtb:uid" content="urn:uuid:fixture"/></head>'
+            f'<head><meta name="dtb:uid" content="{self.epub_uid}"/></head>'
             '<docTitle><text>Fixture Fiction</text></docTitle><navMap>'
             + navpoints
             + '</navMap></ncx>'
@@ -473,6 +492,8 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             archive.writestr("OEBPS/nav.xhtml", nav)
             archive.writestr("OEBPS/toc.ncx", ncx)
             archive.writestr("OEBPS/titlepage.xhtml", titlepage)
+            archive.writestr("OEBPS/cover.png", self.cover.read_bytes())
+            archive.writestr("OEBPS/cover.xhtml", coverpage)
             for name, document in chapter_documents.items():
                 archive.writestr(name, document)
 
@@ -664,7 +685,7 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         )
         self.write_publication_receipt()
 
-    def rewrite_epub_member(self, member: str, payload: str) -> None:
+    def rewrite_epub_member(self, member: str, payload: str | bytes) -> None:
         rewritten = self.root / "rewritten.epub"
         with zipfile.ZipFile(self.epub) as source, zipfile.ZipFile(
             rewritten, "w"
@@ -678,6 +699,67 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                     destination.writestr(info, source.read(info))
             if not found:
                 destination.writestr(member, payload)
+        rewritten.replace(self.epub)
+
+    def add_epub_members(self, members: dict[str, bytes]) -> None:
+        rewritten = self.root / "rewritten-with-members.epub"
+        with zipfile.ZipFile(self.epub) as source, zipfile.ZipFile(
+            rewritten, "w"
+        ) as destination:
+            for info in source.infolist():
+                destination.writestr(info, source.read(info))
+            for name, payload in members.items():
+                destination.writestr(name, payload)
+        rewritten.replace(self.epub)
+
+    def rewrite_epub_central_sizes(
+        self, updates: dict[str, tuple[int, int]]
+    ) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        eocd = payload.rfind(b"PK\x05\x06")
+        self.assertNotEqual(-1, eocd)
+        entry_count = struct.unpack_from("<H", payload, eocd + 10)[0]
+        cursor = struct.unpack_from("<I", payload, eocd + 16)[0]
+        seen: set[str] = set()
+        for _index in range(entry_count):
+            self.assertEqual(b"PK\x01\x02", payload[cursor : cursor + 4])
+            filename_size, extra_size, comment_size = struct.unpack_from(
+                "<HHH", payload, cursor + 28
+            )
+            name = bytes(
+                payload[cursor + 46 : cursor + 46 + filename_size]
+            ).decode("utf-8")
+            if name in updates:
+                compressed_size, uncompressed_size = updates[name]
+                struct.pack_into("<I", payload, cursor + 20, compressed_size)
+                struct.pack_into("<I", payload, cursor + 24, uncompressed_size)
+                seen.add(name)
+            cursor += 46 + filename_size + extra_size + comment_size
+        self.assertEqual(set(updates), seen)
+        self.epub.write_bytes(payload)
+
+    def rewrite_epub_declared_member_count(self, count: int) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        eocd = payload.rfind(b"PK\x05\x06")
+        self.assertNotEqual(-1, eocd)
+        struct.pack_into("<H", payload, eocd + 8, count)
+        struct.pack_into("<H", payload, eocd + 10, count)
+        self.epub.write_bytes(payload)
+
+    def rewrite_epub_member_metadata(
+        self, member: str, *, comment: bytes = b"", extra: bytes = b""
+    ) -> None:
+        rewritten = self.root / "rewritten-metadata.epub"
+        with zipfile.ZipFile(self.epub) as source, zipfile.ZipFile(
+            rewritten, "w"
+        ) as destination:
+            destination.comment = source.comment
+            for info in source.infolist():
+                content = source.read(info)
+                if info.filename == member:
+                    info.comment = comment
+                    info.extra = extra
+                destination.writestr(info, content)
         rewritten.replace(self.epub)
 
     def read_epub_member(self, member: str) -> str:
@@ -715,6 +797,14 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
 
     def assert_rejected(self, pattern: str) -> None:
         with self.probes(), self.assertRaisesRegex(ValueError, pattern):
+            self.verify()
+
+    def assert_epub_rejected_before_probe(self, pattern: str) -> None:
+        with mock.patch.object(
+            verifier.subprocess,
+            "run",
+            side_effect=AssertionError("external probe ran before EPUB preflight"),
+        ), self.assertRaisesRegex(ValueError, pattern):
             self.verify()
 
     def test_accepts_release_backed_fiction_with_exact_public_surface(self) -> None:
@@ -816,7 +906,9 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
     def test_rejects_public_epub_substituted_from_canonical_chapters(self) -> None:
         self.epub.write_bytes(b"unrelated substituted EPUB")
         self.rebind_changed_public_epub()
-        self.assert_rejected("canonical.*EPUB|EPUB.*canonical|EPUB.*story|zip")
+        self.assert_rejected(
+            "canonical.*EPUB|EPUB.*canonical|EPUB.*story|zip|end record"
+        )
 
     def test_rejects_substituted_narrated_epub_spine_content(self) -> None:
         substituted = (
@@ -831,8 +923,261 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.rewrite_epub_member("OEBPS/chap01.xhtml", substituted)
         self.rebind_changed_public_epub()
         self.assert_rejected(
-            "EPUB.*canonical|canonical.*EPUB|spine.*content|EPUB chapter.*invalid"
+            "EPUB.*canonical|canonical.*EPUB|spine.*content|EPUB chapter.*invalid|doctype"
         )
+
+    def test_rejects_embedded_cover_substituted_from_the_public_cover(self) -> None:
+        original = self.cover.read_bytes()
+        substituted = bytes([original[0] ^ 1]) + original[1:]
+        self.assertEqual(len(original), len(substituted))
+        self.rewrite_epub_member("OEBPS/cover.png", substituted)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("embedded.*cover|cover.*public|cover.*bytes|cover.*SHA")
+
+    def test_rejects_inline_formatting_not_derived_from_canonical_markdown(self) -> None:
+        member = "OEBPS/chap00.xhtml"
+        original = self.read_epub_member(member)
+        changed = original.replace(
+            "<p>The lamp survived.</p>",
+            "<p><strong>The lamp survived.</strong></p>",
+            1,
+        )
+        self.assertNotEqual(original, changed)
+        self.rewrite_epub_member(member, changed)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("inline|canonical|paragraph")
+
+    def test_rejects_non_uuid_identifier_even_when_ncx_matches(self) -> None:
+        for member in ("OEBPS/content.opf", "OEBPS/toc.ncx"):
+            original = self.read_epub_member(member)
+            changed = original.replace(
+                self.epub_uid,
+                "Hidden arbitrary story identifier",
+                1,
+            )
+            self.assertNotEqual(original, changed)
+            self.rewrite_epub_member(member, changed)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("UUID|identifier|NCX.*uid")
+
+    def test_rejects_container_descendant_wrapper(self) -> None:
+        member = "META-INF/container.xml"
+        original = self.read_epub_member(member)
+        changed = original.replace(
+            "<rootfiles>", "<wrapper><rootfiles>", 1
+        ).replace("</rootfiles>", "</rootfiles></wrapper>", 1)
+        self.assertNotEqual(original, changed)
+        self.rewrite_epub_member(member, changed)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("container.*structure|container.*content|rootfiles")
+
+    def test_rejects_manifest_direct_story_text(self) -> None:
+        member = "OEBPS/content.opf"
+        original = self.read_epub_member(member)
+        changed = original.replace(
+            "<manifest>", "<manifest>Hidden manifest story text.", 1
+        )
+        self.assertNotEqual(original, changed)
+        self.rewrite_epub_member(member, changed)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("manifest.*text|manifest.*content|package.*content")
+
+    def test_rejects_spine_direct_story_text(self) -> None:
+        member = "OEBPS/content.opf"
+        original = self.read_epub_member(member)
+        changed = original.replace(
+            '<spine toc="ncx">',
+            '<spine toc="ncx">Hidden spine story text.',
+            1,
+        )
+        self.assertNotEqual(original, changed)
+        self.rewrite_epub_member(member, changed)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("spine.*text|spine.*content|package.*content")
+
+    def test_rejects_manifest_and_spine_child_tail_story_text(self) -> None:
+        cases = (
+            (
+                "manifest tail",
+                '<item id="css" href="style.css" media-type="text/css"/>',
+                '<item id="css" href="style.css" media-type="text/css"/>'
+                "Hidden manifest item tail.",
+            ),
+            (
+                "spine tail",
+                '<itemref idref="titlepage"/>',
+                '<itemref idref="titlepage"/>Hidden spine item tail.',
+            ),
+        )
+        baseline = self.epub.read_bytes()
+        for name, target, replacement in cases:
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                member = "OEBPS/content.opf"
+                original = self.read_epub_member(member)
+                changed = original.replace(target, replacement, 1)
+                self.assertNotEqual(original, changed)
+                self.rewrite_epub_member(member, changed)
+                self.rebind_changed_public_epub()
+                self.assert_rejected("tail|manifest.*content|spine.*content")
+
+    def test_rejects_unknown_attributes_on_epub_structural_roles(self) -> None:
+        cases = (
+            (
+                "titlepage head",
+                "OEBPS/titlepage.xhtml",
+                "<head>",
+                '<head data-story="hidden">',
+            ),
+            (
+                "navigation list",
+                "OEBPS/nav.xhtml",
+                "<ol>",
+                '<ol data-story="hidden">',
+            ),
+            (
+                "NCX navigation map",
+                "OEBPS/toc.ncx",
+                "<navMap>",
+                '<navMap data-story="hidden">',
+            ),
+        )
+        baseline = self.epub.read_bytes()
+        for name, member, target, replacement in cases:
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                original = self.read_epub_member(member)
+                changed = original.replace(target, replacement, 1)
+                self.assertNotEqual(original, changed)
+                self.rewrite_epub_member(member, changed)
+                self.rebind_changed_public_epub()
+                self.assert_rejected("attribute|structure|identity|content")
+
+    def test_rejects_xml_content_ignored_by_elementtree_structure(self) -> None:
+        cases = (
+            (
+                "comment",
+                "OEBPS/chap00.xhtml",
+                '<section epub:type="chapter">',
+                '<section epub:type="chapter"><!-- Hidden comment story. -->',
+            ),
+            (
+                "processing instruction",
+                "OEBPS/chap00.xhtml",
+                '<section epub:type="chapter">',
+                '<section epub:type="chapter"><?hidden story?>',
+            ),
+            (
+                "internal doctype",
+                "OEBPS/chap00.xhtml",
+                "<!DOCTYPE html>",
+                '<!DOCTYPE html [<!ENTITY hidden "Hidden story">]>',
+            ),
+            (
+                "unknown namespace declaration",
+                "OEBPS/chap00.xhtml",
+                '<html xmlns="http://www.w3.org/1999/xhtml"',
+                '<html xmlns:hidden="urn:hidden-story" '
+                'xmlns="http://www.w3.org/1999/xhtml"',
+            ),
+        )
+        baseline = self.epub.read_bytes()
+        for name, member, target, replacement in cases:
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                original = self.read_epub_member(member)
+                changed = original.replace(target, replacement, 1)
+                self.assertNotEqual(original, changed)
+                self.rewrite_epub_member(member, changed)
+                self.rebind_changed_public_epub()
+                self.assert_rejected("XML|comment|processing|doctype|namespace|content")
+
+    def test_rejects_zip_comments_and_member_extra_metadata(self) -> None:
+        baseline = self.epub.read_bytes()
+        for name in ("archive comment", "member comment", "member extra"):
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                if name == "archive comment":
+                    with zipfile.ZipFile(self.epub, "a") as archive:
+                        archive.comment = b"Hidden archive story."
+                elif name == "member comment":
+                    self.rewrite_epub_member_metadata(
+                        "OEBPS/chap00.xhtml", comment=b"Hidden member story."
+                    )
+                else:
+                    hidden = b"Hidden member extra story."
+                    self.rewrite_epub_member_metadata(
+                        "OEBPS/chap00.xhtml",
+                        extra=struct.pack("<HH", 0xCAFE, len(hidden)) + hidden,
+                    )
+                self.rebind_changed_public_epub()
+                self.assert_rejected("EPUB.*(comment|extra|metadata|identity)")
+
+    def test_rejects_non_builder_epub_language_even_when_all_xhtml_matches(self) -> None:
+        opf = self.read_epub_member("OEBPS/content.opf").replace(
+            "<dc:language>en</dc:language>",
+            "<dc:language>hidden-story-language</dc:language>",
+            1,
+        )
+        self.rewrite_epub_member("OEBPS/content.opf", opf)
+        for member in (
+            "OEBPS/titlepage.xhtml",
+            "OEBPS/nav.xhtml",
+            "OEBPS/cover.xhtml",
+            "OEBPS/chap00.xhtml",
+            "OEBPS/chap01.xhtml",
+            "OEBPS/chap02.xhtml",
+        ):
+            document = self.read_epub_member(member).replace(
+                'lang="en"', 'lang="hidden-story-language"', 1
+            )
+            self.rewrite_epub_member(member, document)
+        self.rebind_changed_public_epub()
+        self.assert_rejected("language|builder")
+
+    def test_rejects_epub_role_size_and_ratio_declarations_before_probe(self) -> None:
+        cases = (
+            ("oversized CSS", "OEBPS/style.css", 1_000, 70_000),
+            ("oversized cover", "OEBPS/cover.png", 1_000, 20 * 1024 * 1024),
+            ("oversized XML", "META-INF/container.xml", 1_000, 2 * 1024 * 1024),
+            ("high-ratio CSS", "OEBPS/style.css", 1, 60_000),
+            ("high-ratio cover", "OEBPS/cover.png", 1, 1_000_000),
+            ("high-ratio XML", "OEBPS/content.opf", 1, 500_000),
+            ("zero compressed nonempty", "OEBPS/chap00.xhtml", 0, 1),
+            ("oversized compressed member", "OEBPS/cover.png", 20 * 1024 * 1024, 14),
+        )
+        baseline = self.epub.read_bytes()
+        for name, member, compressed_size, uncompressed_size in cases:
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                self.rewrite_epub_central_sizes(
+                    {member: (compressed_size, uncompressed_size)}
+                )
+                self.rebind_changed_public_epub()
+                self.assert_epub_rejected_before_probe(
+                    "EPUB.*(size|ratio|compressed|resource|limit)"
+                )
+
+    def test_rejects_epub_member_count_before_probe(self) -> None:
+        self.add_epub_members(
+            {f"OEBPS/extra-{index:03d}.bin": b"" for index in range(70)}
+        )
+        self.rebind_changed_public_epub()
+        self.assert_epub_rejected_before_probe("EPUB.*(member count|too many|limit)")
+
+    def test_rejects_epub_declared_member_count_before_probe(self) -> None:
+        self.rewrite_epub_declared_member_count(65_535)
+        self.rebind_changed_public_epub()
+        self.assert_epub_rejected_before_probe("EPUB.*(member count|too many|limit)")
+
+    def test_rejects_epub_aggregate_size_declarations_before_probe(self) -> None:
+        extra_names = [f"OEBPS/extra-{index:03d}.bin" for index in range(40)]
+        self.add_epub_members({name: b"" for name in extra_names})
+        self.rewrite_epub_central_sizes(
+            {name: (1_800_000, 2_000_000) for name in extra_names}
+        )
+        self.rebind_changed_public_epub()
+        self.assert_epub_rejected_before_probe("EPUB.*(aggregate|total|compressed|limit)")
 
     def test_rejects_visible_xhtml_text_inside_a_chapter_section(self) -> None:
         member = "OEBPS/chap00.xhtml"
@@ -937,6 +1282,51 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                 "Fixture Fiction",
                 "--subtitle",
                 "A Fixture Subtitle",
+                "--author",
+                "Dan Fakkeldy",
+                "--contributor",
+                "GPT-5.6",
+                "--cover",
+                str(self.cover),
+                "--slug",
+                "fixture-fiction",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        shutil.copy2(output / self.manuscript.name, self.manuscript)
+        shutil.copy2(output / self.epub.name, self.epub)
+        self.rebind_changed_public_manuscript()
+        self.rebind_changed_public_epub()
+
+        with self.probes():
+            self.verify()
+
+    def test_accepts_builder_inline_emphasis_from_canonical_markdown(self) -> None:
+        self.chapter.write_text(
+            "## Chapter One\n\nThe **lamp** _survived_.\n",
+            encoding="utf-8",
+        )
+        private_receipt = self.read_fiction_receipt()
+        private_receipt["canonicalChapterSHA256"][self.chapter.name] = self.digest(
+            self.chapter
+        )
+        self.rebind_changed_fiction_receipt(private_receipt)
+        output = self.root / "inline-builder-output"
+        subprocess.run(
+            [
+                "/usr/local/bin/python3",
+                str(
+                    Path(__file__).resolve().parents[1]
+                    / "skill/scripts/build_book.py"
+                ),
+                "--chapters-dir",
+                str(self.chapters),
+                "--out-dir",
+                str(output),
+                "--title",
+                "Fixture Fiction",
                 "--author",
                 "Dan Fakkeldy",
                 "--contributor",
@@ -1124,6 +1514,25 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                 verifier, "verify_fiction_receipt", side_effect=add_live_chapter
             ), self.probes(), self.assertRaisesRegex(
                 ValueError, "chapter coverage|changed during verification"
+            ):
+                self.verify()
+        finally:
+            extra.unlink(missing_ok=True)
+
+    def test_rejects_canonical_chapter_added_after_all_story_consumers(self) -> None:
+        real_readme = verifier._verify_fiction_readme
+        extra = self.chapters / "ch04.md"
+
+        def add_late_chapter(book_dir: Path):
+            snapshot = real_readme(Path(book_dir))
+            extra.write_text("## Hidden Chapter\n\nHidden late story.\n", encoding="utf-8")
+            return snapshot
+
+        try:
+            with mock.patch.object(
+                verifier, "_verify_fiction_readme", side_effect=add_late_chapter
+            ), self.probes(), self.assertRaisesRegex(
+                ValueError, "chapter coverage|changed.*chapter|canonical chapter"
             ):
                 self.verify()
         finally:
@@ -1369,6 +1778,36 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                 ),
             ), self.assertRaisesRegex(ValueError, "ffprobe|duration|chapter"):
                 self.verify()
+
+    def test_external_media_probe_timeouts_fail_closed(self) -> None:
+        valid_media = json.dumps(
+            {
+                "format": {"duration": "1.0"},
+                "chapters": [{"start_time": "0.0", "end_time": "1.0"}],
+            }
+        )
+        for target in ("unzip", "ffprobe"):
+            with self.subTest(target=target):
+
+                def bounded_probe(command, **kwargs):
+                    timeout = kwargs.get("timeout")
+                    if (
+                        command[0] == target
+                        and isinstance(timeout, (int, float))
+                        and 0 < timeout <= 60
+                    ):
+                        raise subprocess.TimeoutExpired(command, timeout)
+                    return subprocess.CompletedProcess(
+                        args=command,
+                        returncode=0,
+                        stdout=valid_media,
+                        stderr="",
+                    )
+
+                with mock.patch.object(
+                    verifier.subprocess, "run", side_effect=bounded_probe
+                ), self.assertRaisesRegex(ValueError, "timed out|timeout"):
+                    self.verify()
 
     def test_rejects_epub_or_release_replaced_during_external_probe(self) -> None:
         for target in ("epub", "release"):
