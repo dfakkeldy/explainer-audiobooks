@@ -2630,7 +2630,7 @@ class FictionBlockPublicPackageVerifierTests(unittest.TestCase):
             f"{source_sha256[:12]}-{fixture.renderer_identity['echoCLI_SHA256'][:12]}-"
             f"{fixture.renderer_identity['echoResourcesSHA256'][:12]}-"
             f"{fixture.renderer_identity['rendererManifestSHA256'][:12]}-"
-            f"{fixture.renderer_identity['echoSourceSHA']}-{fixture.voice_plan_id}"
+            f"{fixture.renderer_identity['echoSourceSHA']}-plan-{self.resolved_sha256}"
         )
         fixture.echo_input_receipt = fixture.private_dir / (
             f"echo-render-inputs-{fixture.run_id}.env"
