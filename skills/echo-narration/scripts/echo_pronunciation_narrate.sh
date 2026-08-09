@@ -9,7 +9,7 @@ source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"
 
 usage() {
   printf '%s\n' \
-    'usage: echo_pronunciation_narrate.sh [--chapter-voice N=voice_id]... [--resume --resume-state ABSOLUTE_PATH] [--max-chapters N]' \
+    'usage: echo_pronunciation_narrate.sh [--voice-plan ABSOLUTE_PATH | --chapter-voice N=voice_id]... [--resume --resume-state ABSOLUTE_PATH] [--max-chapters N]' \
     '       echo_pronunciation_narrate.sh --recover-stale-lock' >&2
 }
 
@@ -18,6 +18,7 @@ RESUME_STATE=
 RECOVER_STALE_LOCK=0
 MAX_CHAPTERS=
 CHAPTER_VOICES=()
+VOICE_PLAN_SOURCE=
 INTERNAL_MODE=
 while (( $# )); do
   case "$1" in
@@ -54,6 +55,15 @@ while (( $# )); do
       CHAPTER_VOICES+=("$2")
       shift
       ;;
+    --voice-plan)
+      if [[ -n "$VOICE_PLAN_SOURCE" || -z ${2:-} || "$2" != /* ]]; then
+        printf '%s\n' '--voice-plan requires one absolute path'
+        usage
+        exit 64
+      fi
+      VOICE_PLAN_SOURCE=$2
+      shift
+      ;;
     --leased-run)
       INTERNAL_MODE=run
       ;;
@@ -74,6 +84,11 @@ while (( $# )); do
   esac
   shift
 done
+if [[ -n "$VOICE_PLAN_SOURCE" && ${#CHAPTER_VOICES[@]} -ne 0 ]]; then
+  printf '%s\n' '--voice-plan cannot be combined with --chapter-voice'
+  usage
+  exit 64
+fi
 if (( RESUME )) && [[ -z "$RESUME_STATE" ]]; then
   printf '%s\n' '--resume requires --resume-state ABSOLUTE_PATH' >&2
   usage
@@ -137,6 +152,9 @@ if [[ -z "$INTERNAL_MODE" ]]; then
   for chapter_voice in "${CHAPTER_VOICES[@]}"; do
     lease_command+=(--chapter-voice "$chapter_voice")
   done
+  if [[ -n "$VOICE_PLAN_SOURCE" ]]; then
+    lease_command+=(--voice-plan "$VOICE_PLAN_SOURCE")
+  fi
   exec "${lease_command[@]}"
 fi
 
@@ -203,6 +221,9 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     for chapter_voice in "${CHAPTER_VOICES[@]}"; do
       lease_command+=(--chapter-voice "$chapter_voice")
     done
+    if [[ -n "$VOICE_PLAN_SOURCE" ]]; then
+      lease_command+=(--voice-plan "$VOICE_PLAN_SOURCE")
+    fi
   fi
   exec "${lease_command[@]}"
 fi
@@ -628,7 +649,6 @@ narrate_command=(
   --epub "$EPUB"
   --out "$STAGE_OUTPUT"
   --sidecar "$STAGE_SIDECAR"
-  --voice "$VOICE"
   --title "$TITLE"
   --author "Dan Fakkeldy"
   --cover "$M4B_COVER"
@@ -637,9 +657,14 @@ narrate_command=(
   --jobs 1
   --threads 2
 )
-for chapter_voice in "${CHAPTER_VOICES[@]}"; do
-  narrate_command+=(--chapter-voice "$chapter_voice")
-done
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  narrate_command+=(--voice-plan "$VOICE_PLAN_CANONICAL_PATH")
+else
+  narrate_command+=(--voice "$VOICE")
+  for chapter_voice in "${CHAPTER_VOICES[@]}"; do
+    narrate_command+=(--chapter-voice "$chapter_voice")
+  done
+fi
 if (( RESUME )); then
   narrate_command+=(--resume)
 fi

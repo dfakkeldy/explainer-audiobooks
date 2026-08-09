@@ -1,7 +1,12 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
+import json
+import os
+import stat
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -61,6 +66,91 @@ class EchoVoicePlanTests(unittest.TestCase):
             with self.subTest(assignments=assignments):
                 with self.assertRaises(VOICE_PLAN.VoicePlanError):
                     VOICE_PLAN.voice_plan("am_michael", assignments)
+
+    def test_resolves_an_echo_authoritative_block_plan(self) -> None:
+        """The adapter passes only sealed absolute inputs to Echo and preserves its receipt."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            epub = root / "book.epub"
+            plan = root / "voice-plan.json"
+            echo = root / "echo-cli"
+            epub.write_bytes(b"fixture EPUB")
+            plan.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "source": {"epubSHA256": hashlib.sha256(epub.read_bytes()).hexdigest()},
+                        "defaultSpeakerID": "narrator",
+                        "speakers": [{"id": "narrator", "voiceID": "am_michael"}],
+                        "assignments": [],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            receipt = {
+                "blockCount": 2,
+                "defaultVoice": "am_michael",
+                "sourceEPUBSHA256": hashlib.sha256(epub.read_bytes()).hexdigest(),
+                "voicePlanID": "plan-" + "b" * 12,
+                "voicePlanSHA256": "b" * 64,
+            }
+            echo.write_text(
+                "#!/usr/bin/env python3\n"
+                "import json, sys\n"
+                f"assert sys.argv[1:] == ['resolve-voice-plan', '--epub', {str(epub)!r}, '--voice-plan', {str(plan)!r}]\n"
+                f"print(json.dumps({receipt!r}, sort_keys=True, separators=(',', ':')))\n",
+                encoding="utf-8",
+            )
+            echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+
+            resolved = VOICE_PLAN.resolve_block_plan(echo, epub, plan)
+
+            self.assertEqual(receipt, resolved)
+
+    def test_block_env0_has_the_exact_ordered_receipt_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            epub = root / "book.epub"
+            plan = root / "voice-plan.json"
+            canonical = root / "canonical.json"
+            resolution = root / "resolution.json"
+            echo = root / "echo-cli"
+            epub.write_bytes(b"fixture EPUB")
+            source_sha = hashlib.sha256(epub.read_bytes()).hexdigest()
+            plan.write_text(
+                json.dumps({"schemaVersion": 1, "source": {"epubSHA256": source_sha}}),
+                encoding="utf-8",
+            )
+            echo.write_text(
+                "#!/usr/bin/env python3\nimport json\nprint(json.dumps({\n"
+                f"'blockCount': 2, 'defaultVoice': 'am_michael', 'sourceEPUBSHA256': '{source_sha}', "
+                "'voicePlanID': 'plan-" + "b" * 12 + "', 'voicePlanSHA256': '" + "b" * 64 + "'\n}))\n",
+                encoding="utf-8",
+            )
+            echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+            result = __import__("subprocess").run(
+                [
+                    sys.executable, str(MODULE_PATH), "--echo-cli", str(echo),
+                    "--epub", str(epub), "--voice-plan", str(plan),
+                    "--canonical-plan", str(canonical), "--resolution", str(resolution),
+                    "--format", "env0",
+                ], capture_output=True, check=False,
+            )
+            self.assertEqual(0, result.returncode, result.stderr.decode())
+            canonical_sha = hashlib.sha256(canonical.read_bytes()).hexdigest()
+            resolution_sha = hashlib.sha256(resolution.read_bytes()).hexdigest()
+            self.assertEqual(
+                (
+                    "VOICE", "am_michael", "CHAPTER_VOICES_CANONICAL", "",
+                    "VOICE_PLAN_MODE", "block", "VOICE_PLAN_SHA256", "b" * 64,
+                    "VOICE_PLAN_ID", "plan-" + "b" * 12, "VOICE_PLAN_BLOCK_COUNT", "2",
+                    "VOICE_PLAN_CANONICAL_PATH", str(canonical),
+                    "VOICE_PLAN_CANONICAL_SHA256", canonical_sha,
+                    "VOICE_PLAN_RESOLUTION_PATH", str(resolution),
+                    "VOICE_PLAN_RESOLUTION_SHA256", resolution_sha,
+                ),
+                tuple(result.stdout.decode().split("\0")[:-1]),
+            )
 
 
 if __name__ == "__main__":

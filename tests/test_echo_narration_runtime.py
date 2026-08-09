@@ -79,6 +79,7 @@ REQUIRED_CAPABILITIES = (
     "--cover",
     "--sidecar",
     "--voice",
+    "--voice-plan",
     "--chapter-voice",
     "--db",
     "--work-dir",
@@ -87,6 +88,8 @@ REQUIRED_CAPABILITIES = (
     "--resume",
     "--max-chapters",
     "--no-pronunciation-review",
+    "export-blocks",
+    "resolve-voice-plan",
     "verify-sidecar",
 )
 
@@ -369,9 +372,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         probe_block_count = self.tmp / "probe-block-count"
         probe_block_ready = self.tmp / "probe-block-ready"
         probe_block_release = self.tmp / "probe-block-release"
-        help_text = (
-            " ".join(REQUIRED_CAPABILITIES[:-1]) if include_review_flag else "--voice"
-        )
+        help_text = " ".join(REQUIRED_CAPABILITIES[:-1]) if include_review_flag else "--voice"
         (resources / "pronunciations.json").write_text(
             json.dumps({"renderVersion": render_version}) + "\n", encoding="utf-8"
         )
@@ -470,6 +471,25 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             f"  echo 'ONNX rv{render_version} (Release)'\n"
             "elif [[ ${1:-} == narrate && ${2:-} == --help ]]; then\n"
             f"  echo '{help_text}'\n"
+            "elif [[ ${1:-} == resolve-voice-plan && ${2:-} == --help ]]; then\n"
+            "  echo 'resolve-voice-plan --epub --voice-plan'\n"
+            "elif [[ ${1:-} == export-blocks && ${2:-} == --help ]]; then\n"
+            "  echo 'export-blocks --epub'\n"
+            "elif [[ ${1:-} == resolve-voice-plan ]]; then\n"
+            "  epub= plan=\n"
+            "  shift\n"
+            "  while (( $# )); do\n"
+            "    case \"$1\" in\n"
+            "      --epub) epub=$2; shift 2 ;;\n"
+            "      --voice-plan) plan=$2; shift 2 ;;\n"
+            "      *) exit 64 ;;\n"
+            "    esac\n"
+            "  done\n"
+            "  [[ -n $epub && -n $plan ]] || exit 64\n"
+            "  if [[ -n ${FAKE_RESOLVE_LOG:-} ]]; then printf 'PLAN=%s\\n' \"$plan\" >>\"$FAKE_RESOLVE_LOG\"; fi\n"
+            "  source_sha=$(/usr/bin/shasum -a 256 \"$epub\" | awk '{print $1}')\n"
+            "  plan_sha=${FAKE_VOICE_PLAN_SHA:-$(printf '%064d' 0 | tr 0 b)}\n"
+            "  printf '{\\\"blockCount\\\":2,\\\"defaultVoice\\\":\\\"am_michael\\\",\\\"sourceEPUBSHA256\\\":\\\"%s\\\",\\\"voicePlanID\\\":\\\"plan-%s\\\",\\\"voicePlanSHA256\\\":\\\"%s\\\"}\\n' \"$source_sha\" \"${plan_sha:0:12}\" \"$plan_sha\"\n"
             "elif [[ ${1:-} == verify-sidecar ]]; then\n"
             "  if [[ ${2:-} == --help ]]; then echo 'verify-sidecar'; exit 0; fi\n"
             "  if [[ -n ${FAKE_TAMPER_RESUME_STATE_ON_VERIFY:-} ]]; then\n"
@@ -2383,6 +2403,36 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         self.assertNotEqual(0, changed.returncode)
         self.assertIn("canonical current-run receipt", changed.stderr)
+
+    def test_block_voice_plan_is_sealed_and_bound_to_the_run(self) -> None:
+        plan = self.tmp / "authored-voice-plan.json"
+        epub = self.run_root / "dist" / "fixture.epub"
+        plan.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "source": {"epubSHA256": hashlib.sha256(epub.read_bytes()).hexdigest()},
+                    "defaultSpeakerID": "narrator",
+                    "speakers": [{"id": "narrator", "voiceID": "am_michael"}],
+                    "assignments": [],
+                }
+            ),
+            encoding="utf-8",
+        )
+        environment = self.environment()
+        environment["VOICE_PLAN_SOURCE"] = str(plan)
+        result = self.run_preflight(environment=environment)
+        self.assertEqual(0, result.returncode, result.stderr)
+        fields = dict(
+            line.split("=", 1)
+            for line in next((self.run_root / "research").glob("echo-render-inputs-*.env"))
+            .read_text(encoding="utf-8")
+            .splitlines()
+        )
+        self.assertEqual("block", fields["voice_plan_mode"])
+        self.assertEqual("", fields["chapter_voices"])
+        self.assertTrue(Path(fields["voice_plan_canonical_path"]).is_file())
+        self.assertTrue(Path(fields["voice_plan_resolution_path"]).is_file())
 
     def test_renderer_identity_changes_prevent_resume_and_delivery_reuse(self) -> None:
         result = self.run_narrate()
