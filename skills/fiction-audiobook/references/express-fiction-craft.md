@@ -81,3 +81,10 @@ Set exactly these gates to `pass`: `manuscriptClosed`,
 Repair and rerun the affected pass when story, continuity, or prose fails. If
 the final manuscript still cannot pass, preserve the run root and stop before
 covers, narration, delivery, or publication.
+
+For a story redo, retain unaffected prose only after causal review. Repair the
+requested change and every downstream dependency; rerun affected portions of
+all three passes, the final front-to-back read, promise/payoff reconciliation,
+and read-aloud check. Rewrite final continuity and regenerate the schema-v1
+receipt against current chapter and evidence hashes before rebuilding EPUB or
+narration. Prior receipt, revision, QC, and package acceptance is stale.

@@ -6,52 +6,68 @@ description: >-
 
 # Fiction Audiobook
 
-Own the complete listening package autonomously. Read
-`references/express-fiction-craft.md` before story work and
-`references/public-fiction-gate.md` before publication.
+Own the package autonomously. Read `references/express-fiction-craft.md`
+for story, `references/public-fiction-gate.md` for publication, and
+`skills/echo-narration/references/narrating.md` before narration.
 
-1. Classify a complete fictional listening-package request into this express
-   lane. Never invoke `fiction-book-development`; manuscript-only planning,
-   drafting, continuation, or revision belongs there.
-2. Ask zero intake questions unless the user explicitly says “grill me,”
-   “interview me first,” or equivalent. Then ask one batch covering only:
-   genre/mood; must-have characters or setting; exclusions; POV/distance;
-   ending shape; and voice/casting preferences. Never ask a follow-up.
-3. Choose the shortest sufficient form: short novella 18k–30k, novella
-   30k–45k, novel 50k–80k, or long novel 80k–110k. Announce working title,
-   angle, form, chapters, words, and runtime; record the rationale in
+1. Full fictional listening packages use this express lane, never
+   `fiction-book-development`; route manuscript-only planning, drafting,
+   continuation, or revision there.
+2. Ask nothing unless the user explicitly requests grilling/interview. Then ask
+   one batch only: genre/mood; must-haves; exclusions; POV/distance; ending;
+   casting. Never follow up.
+3. Choose the shortest sufficient form: short novella 18k–30k, novella 30k–45k,
+   novel 50k–80k, or long novel 80k–110k. Announce title, angle, form, chapters,
+   words, and runtime; record the rationale in
    `.build/fiction-audiobooks/<slug>/brief.md`.
-4. Write a compact story bible and causal outline, then have one lead writer
-   draft sequentially while maintaining only `continuity/rolling.md`.
-5. Run the story, character/continuity, and ear/prose revision passes. Complete
-   the final checks, then bind the unchanged schema-v1 private fiction
-   production receipt described in the craft reference.
-6. Generate three paired-cover candidates, select one, and build EPUB plus
+4. Write a compact bible and causal outline; one lead writer drafts sequentially
+   while maintaining only `continuity/rolling.md`.
+5. Run the story, character/continuity, and ear/prose passes plus final checks;
+   bind the craft reference's unchanged schema-v1 private receipt.
+6. Generate three cover pairs, select one, and build EPUB plus
    combined Markdown with `skill/scripts/build_book.py --fiction-receipt`.
-7. After EPUB bytes freeze, load preferences and write an immutable
-   three-to-five-voice cast. Keep every recurring role on one chapter-level
-   voice; reserve zero-to-two suitable short chapters for untried voices.
-   Validate with `scripts/fiction_voice_preferences.py`, then render through
-   `skills/echo-narration/scripts/echo_pronunciation_narrate.sh` using
-   `ECHO_RUN_LANE=fiction-audiobook` and complete `--chapter-voice` mappings.
-8. Before recording use, run Echo `verify-delivery`, `verify-sidecar`,
-   pronunciation-audit validation, JSON validation, and `ffprobe` checks.
-9. Prepare `_production/{source,checks,narration,covers,publication,previous}`.
-   Atomically stage
+7. After EPUB freezes, load preferences and write an immutable
+   three-to-five-voice cast. Keep every recurring role on one voice; reserve
+   zero-to-two short chapters for untried voices.
+   Set `VOICE_CAST=$RUN_ROOT/_production/narration/voice-cast.json`; write
+   `schemaVersion: 1`, `slug`, `chapterCount` (unquoted integer), `defaultVoice`, and
+   `chapters` with integer `chapter`, text `role`/`voice`, boolean `experimental`;
+   add canonical `voicePlanSHA256`,
+   `voicePlanID: plan-<first-12-hash-characters>`, and
+   `verifiedArtifacts: null`. Derive the plan fields only with
+   `/usr/local/bin/python3 skills/echo-narration/scripts/echo_voice_plan.py --default-voice "$VOICE"`
+   plus every `--chapter-voice N=voice`. Set `PREFERENCES` to expanded
+   `~/Library/Application Support/Explainer Audiobooks/fiction-voice-preferences.json`,
+   then run `/usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py validate-cast --cast
+   "$VOICE_CAST" --preferences "$PREFERENCES"`.
+8. Follow the narration reference's installed-renderer approval, cover,
+   environment, selector, and receipt resolution exactly, adapting only
+   `ECHO_RUN_LANE=fiction-audiobook`, `$RUN_ROOT`, and complete per-chapter
+   mappings. Missing renderer/voice resources fail closed; recasting creates a
+   new immutable cast/plan and fresh run. Run its selector-derived
+   `$STATE_HELPER verify-delivery`, installed `$CLI verify-sidecar`, audit,
+   JSON, and `ffprobe` commands. Only then seal use with
+   `/usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py record-use --cast "$VOICE_CAST"
+   --epub "$EPUB" --m4b "$AUDIOBOOK" --sidecar "$SIDECAR"
+   --success-receipt "$SUCCESS_RECEIPT" --at "<ISO-8601 timestamp>" --preferences
+   "$PREFERENCES"`; require `verifiedArtifacts` to become non-null before
+   staging or public verification.
+9. Prepare `_production/{source,checks,narration,covers,publication,previous}`;
+   atomically stage
    `~/Library/Mobile Documents/com~apple~CloudDocs/Books/<Title>/` with
-   `scripts/stage_echo_delivery.py`; its root must contain exactly M4B, EPUB,
-   alignment JSON, `cover.png`, and `_production/`.
-10. Evaluate the public-fiction gate. On pass, stage outside `books/`, verify,
-    copy the six public files, push a public branch, open a ready PR, and create
-    the release. M4B stays out of Git. On failure, record why and make zero
-    GitHub mutations. A normal public-safe trigger is standing publication
-    authorization; `fiction-production-receipt.json` stays private and grants
-    none.
-11. Report iCloud delivery, GitHub push, ready PR, release, merge, human
-    reading, and human listening separately. Never infer human acceptance or
-    auto-merge.
-12. Redo narrowly: story changes repair causal downstream prose; voice changes
-    preserve frozen prose/covers and create a new immutable cast/plan and fresh
-    governed run; cover changes rebuild EPUB and audio; blacklist-only feedback
-    changes future preferences. Preserve verified staging and block promotion
-    on any unexpected iCloud item, naming the conflict.
+   `/usr/local/bin/python3 skills/fiction-audiobook/scripts/stage_echo_delivery.py`;
+   root: exactly M4B, EPUB, alignment JSON, `cover.png`, and `_production/`.
+10. Evaluate the public gate. Pass: stage outside `books/`, verify, copy six
+    public files, push, open a ready PR, and release; M4B stays out of Git.
+    Failure: record why, with zero GitHub mutation. A normal public-safe trigger
+    authorizes publication; the private production receipt never does.
+11. Separately report iCloud delivery, push, ready PR, release, merge, human
+    reading, and human listening. Never infer acceptance or auto-merge.
+12. Redo narrowly. Story changes repair affected and causally downstream prose;
+    rerun affected portions of all three passes plus final front-to-back,
+    promise/payoff, and read-aloud gates; regenerate the unchanged fiction
+    receipt against current chapter/evidence hashes; then rebuild EPUB and
+    narration—never reuse stale acceptance. Voice changes preserve prose/covers
+    but create a new cast/plan/run; cover changes rebuild EPUB/audio;
+    blacklist-only feedback changes future preferences. Preserve verified
+    staging and block promotion on any unexpected iCloud item, naming it.
