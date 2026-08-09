@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -504,6 +505,127 @@ class EchoNarrationContractTests(unittest.TestCase):
             'REEL="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID/',
             self.narrate_wrapper,
         )
+
+    def test_fiction_block_handoff_stops_before_wrapper_on_invalid_cast(self) -> None:
+        """A rejected block cast must not fall through to legacy narration."""
+        marker = "Forward the validator's NUL-delimited result"
+        self.assertIn(marker, self.narrating)
+        handoff = self.narrating.split(marker, 1)[1]
+        handoff = handoff.split("```bash\n", 1)[1].split("```", 1)[0].strip()
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            narration = root / "narration"
+            narration.mkdir()
+            voice_plan = (narration / "echo-voice-plan.json").resolve()
+            voice_cast = (narration / "voice-cast.json").resolve()
+            run_root = root / "run"
+            wrapper = (root / "fake-narration-wrapper.sh").resolve()
+            wrapper_log = root / "wrapper-called.log"
+
+            speakers = [
+                {"id": "narrator", "voiceID": "am_michael"},
+                {"id": "mara", "voiceID": "bf_emma"},
+                {"id": "ivo", "voiceID": "af_heart"},
+            ]
+            voice_plan.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "source": {"epubSHA256": "a" * 64},
+                        "defaultSpeakerID": "narrator",
+                        "speakers": speakers,
+                        "assignments": [],
+                    },
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            voice_cast.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 2,
+                        "slug": "invalid-cast",
+                        "narrationMode": "block",
+                        "sourceEPUBSHA256": "a" * 64,
+                        "defaultSpeakerID": "narrator",
+                        "speakers": [
+                            {
+                                "speakerID": "narrator",
+                                "role": "Narrator",
+                                "voiceID": "am_michael",
+                                "experimental": False,
+                            },
+                            {
+                                "speakerID": "mara",
+                                "role": "Mara",
+                                "voiceID": "bf_emma",
+                                "experimental": False,
+                            },
+                            {
+                                "speakerID": "ivo",
+                                "role": "Ivo",
+                                "voiceID": "af_heart",
+                                "experimental": False,
+                            },
+                        ],
+                        "authoredVoicePlan": {
+                            "fileName": voice_plan.name,
+                            "sha256": hashlib.sha256(voice_plan.read_bytes()).hexdigest(),
+                        },
+                        "resolvedVoicePlan": None,
+                        "verifiedArtifacts": None,
+                    },
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            wrapper.write_text(
+                "#!/bin/bash\n"
+                "set -euo pipefail\n"
+                "printf '%s\\n' \"$@\" >\"$WRAPPER_LOG\"\n"
+                "mkdir -p -- \"$RUN_ROOT/research\"\n"
+                "touch -- \"$RUN_ROOT/research/echo-render-inputs-unexpected.env\"\n"
+                "mkdir -p -- \"$RUN_ROOT/audio-work-unexpected\"\n"
+                "touch -- \"$RUN_ROOT/narration-unexpected.sqlite\"\n",
+                encoding="utf-8",
+            )
+            wrapper.chmod(0o700)
+
+            environment = os.environ.copy()
+            environment.update(
+                {
+                    "VOICE_CAST": str(voice_cast),
+                    "VOICE_PLAN": str(voice_plan),
+                    "PREFERENCES": str(root / "preferences.json"),
+                    "NARRATION_SCRIPT": str(wrapper),
+                    "RUN_ROOT": str(run_root),
+                    "WRAPPER_LOG": str(wrapper_log),
+                    "TMPDIR": str(root),
+                }
+            )
+            result = subprocess.run(
+                # Do not let a surrounding `set -e` mask whether the fence
+                # itself stops before calling the wrapper.
+                ["/bin/bash", "-c", "set -o pipefail\n" + handoff],
+                cwd=ROOT,
+                env=environment,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(64, result.returncode, result.stderr)
+            self.assertIn("blacklisted", result.stderr)
+            self.assertFalse(wrapper_log.exists())
+            self.assertFalse(
+                (run_root / "research" / "echo-render-inputs-unexpected.env").exists()
+            )
+            self.assertFalse((run_root / "audio-work-unexpected").exists())
+            self.assertFalse((run_root / "narration-unexpected.sqlite").exists())
+            self.assertEqual([], list(root.glob("echo-fiction-voice-arguments.*")))
 
     def test_block_runbook_uses_sealed_delivery_evidence_and_schema7_argv(self) -> None:
         """The operator command must not depend on a wrapper-child variable."""

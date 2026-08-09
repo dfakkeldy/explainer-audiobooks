@@ -271,26 +271,50 @@ five-field resolution receipt (`blockCount`, `defaultVoice`,
 never an operational identity until that resolution succeeds.
 
 Forward the validator's NUL-delimited result without `eval` or lossy
-reconstruction:
+reconstruction. `validate-cast` accepts `VOICE_PLAN` only when it is the
+canonical absolute authored-plan path. Use this status-preserving private
+scratch handoff immediately before every block-mode wrapper invocation; it
+never exports voice state:
 
 ```bash
-VOICE_ARGUMENTS=()
-while IFS= read -r -d '' token; do
-  VOICE_ARGUMENTS+=("$token")
-done < <(
-  /usr/local/bin/python3 \
+load_fiction_voice_arguments() {
+  local argv0 status token
+  argv0=$(mktemp "${TMPDIR:-/tmp}/echo-fiction-voice-arguments.XXXXXX") || return $?
+  trap 'rm -f -- "$argv0"' RETURN
+
+  if /usr/local/bin/python3 \
     skills/fiction-audiobook/scripts/fiction_voice_preferences.py \
     validate-cast --cast "$VOICE_CAST" --voice-plan "$VOICE_PLAN" \
-    --preferences "$PREFERENCES" --format argv0
-)
+    --preferences "$PREFERENCES" --format argv0 >"$argv0"; then
+    :
+  else
+    status=$?
+    return "$status"
+  fi
+
+  VOICE_ARGUMENTS=()
+  while IFS= read -r -d '' token; do
+    VOICE_ARGUMENTS+=("$token")
+  done <"$argv0"
+
+  if [[ ${#VOICE_ARGUMENTS[@]} -ne 2 ||
+        "${VOICE_ARGUMENTS[0]}" != "--voice-plan" ||
+        "${VOICE_ARGUMENTS[1]}" != "$VOICE_PLAN" ]]; then
+    printf '%s\n' 'fiction block voice handoff must be --voice-plan plus the canonical authored plan' >&2
+    return 64
+  fi
+}
+
+load_fiction_voice_arguments || exit $?
 "$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}"
 ```
 
 For block mode, do not export `VOICE`; the wrapper resolves the default from
-the sealed plan. A resume passes the identical token vector plus the canonical
-resume-state path:
+the sealed plan. Revalidate the identical token vector before a resume, then
+pass it with the canonical resume-state path:
 
 ```bash
+load_fiction_voice_arguments || exit $?
 "$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
   --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
 ```
@@ -303,9 +327,11 @@ receipts, a work directory, database, or resume state into it.
 These commands apply only to a fiction `--voice-plan` render. Keep the exact
 validated argv0 vector on every invocation; a bare resume or partial command
 silently drops the authored plan. For an accepted partial attempt, read the
-canonical resume-state path for its current `RUN_ID`, then use:
+canonical resume-state path for its current `RUN_ID`, revalidate the vector,
+then use:
 
 ```bash
+load_fiction_voice_arguments || exit $?
 "$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
   --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
 ```
@@ -314,12 +340,14 @@ For a deliberately one-block/chapter probe, preserve that same vector on both
 the first partial call and its continuation:
 
 ```bash
+load_fiction_voice_arguments || exit $?
 set +e
 "$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" --max-chapters 1
 rc=$?
 set -e
 [[ "$rc" == 2 ]]
 
+load_fiction_voice_arguments || exit $?
 set +e
 "$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
   --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json" \
