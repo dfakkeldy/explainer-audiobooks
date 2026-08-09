@@ -2434,6 +2434,30 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertTrue(Path(fields["voice_plan_canonical_path"]).is_file())
         self.assertTrue(Path(fields["voice_plan_resolution_path"]).is_file())
 
+    def test_rejected_block_plan_cleans_all_preflight_scratch_files(self) -> None:
+        """A rejected caller voice cannot leave sealed-looking plan residue behind."""
+        plan = self.tmp / "authored-voice-plan.json"
+        epub = self.run_root / "dist" / "fixture.epub"
+        plan.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 1,
+                    "source": {"epubSHA256": hashlib.sha256(epub.read_bytes()).hexdigest()},
+                    "defaultSpeakerID": "narrator",
+                    "speakers": [{"id": "narrator", "voiceID": "am_michael"}],
+                    "assignments": [],
+                }
+            ),
+            encoding="utf-8",
+        )
+        environment = self.environment()
+        environment.update({"VOICE_PLAN_SOURCE": str(plan), "VOICE": "af_heart"})
+        result = self.run_preflight(environment=environment)
+        self.assertEqual(64, result.returncode, result.stderr)
+        research = self.run_root / "research"
+        self.assertEqual([], list(research.glob(".echo-voice-plan*")))
+        self.assertEqual([], list(research.glob("echo-render-inputs-*.env")))
+
     def test_renderer_identity_changes_prevent_resume_and_delivery_reuse(self) -> None:
         result = self.run_narrate()
         self.assertEqual(0, result.returncode, result.stderr)

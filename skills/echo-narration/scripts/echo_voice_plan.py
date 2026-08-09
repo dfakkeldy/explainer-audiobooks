@@ -118,7 +118,8 @@ def validate_resolver_receipt(raw: bytes, epub: Path) -> dict[str, object]:
         raise VoicePlanError("Echo voice-plan resolver receipt has unexpected keys")
     if type(payload["blockCount"]) is not int or payload["blockCount"] <= 0:
         raise VoicePlanError("Echo voice-plan resolver blockCount must be positive")
-    if payload["defaultVoice"] not in VOICE_IDS:
+    default_voice = payload["defaultVoice"]
+    if not isinstance(default_voice, str) or default_voice not in VOICE_IDS:
         raise VoicePlanError("Echo voice-plan resolver returned an unknown default voice")
     source = payload["sourceEPUBSHA256"]
     plan_sha = payload["voicePlanSHA256"]
@@ -131,6 +132,14 @@ def validate_resolver_receipt(raw: bytes, epub: Path) -> dict[str, object]:
         raise VoicePlanError("Echo voice-plan resolver SHA-256 is invalid")
     if not isinstance(plan_id, str) or re.fullmatch(r"plan-[0-9a-f]{12}", plan_id) is None:
         raise VoicePlanError("Echo voice-plan resolver ID is invalid")
+    if plan_id != f"plan-{plan_sha[:12]}":
+        raise VoicePlanError("Echo voice-plan resolver ID does not bind its SHA-256")
+    compact = json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")
+    normalized = raw[:-1] if raw.endswith(b"\n") else raw
+    if normalized != compact:
+        raise VoicePlanError("Echo voice-plan resolver receipt is not compact canonical JSON")
     return payload
 
 

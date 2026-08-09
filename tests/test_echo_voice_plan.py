@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import stat
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -67,6 +68,20 @@ class EchoVoicePlanTests(unittest.TestCase):
                 with self.assertRaises(VOICE_PLAN.VoicePlanError):
                     VOICE_PLAN.voice_plan("am_michael", assignments)
 
+    def test_legacy_uniform_env0_bytes_are_unchanged(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(MODULE_PATH), "--default-voice", "am_michael", "--format", "env0"],
+            check=False,
+            capture_output=True,
+        )
+        self.assertEqual(0, result.returncode, result.stderr.decode())
+        self.assertEqual(
+            b"VOICE\0am_michael\0CHAPTER_VOICES_CANONICAL\0\0"
+            b"VOICE_PLAN_SHA256\0f54fe6d603ea42f277ce3cf4dc0f0da6056341034acf4ecd5b7db099a5d7cae\0"
+            b"VOICE_PLAN_ID\0am_michael\0",
+            result.stdout,
+        )
+
     def test_resolves_an_echo_authoritative_block_plan(self) -> None:
         """The adapter passes only sealed absolute inputs to Echo and preserves its receipt."""
         with tempfile.TemporaryDirectory() as directory:
@@ -121,10 +136,12 @@ class EchoVoicePlanTests(unittest.TestCase):
                 json.dumps({"schemaVersion": 1, "source": {"epubSHA256": source_sha}}),
                 encoding="utf-8",
             )
+
             echo.write_text(
                 "#!/usr/bin/env python3\nimport json\nprint(json.dumps({\n"
                 f"'blockCount': 2, 'defaultVoice': 'am_michael', 'sourceEPUBSHA256': '{source_sha}', "
-                "'voicePlanID': 'plan-" + "b" * 12 + "', 'voicePlanSHA256': '" + "b" * 64 + "'\n}))\n",
+                "'voicePlanID': 'plan-" + "b" * 12 + "', 'voicePlanSHA256': '" + "b" * 64 + "'}, "
+                "sort_keys=True, separators=(',', ':')))\n",
                 encoding="utf-8",
             )
             echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
@@ -151,6 +168,36 @@ class EchoVoicePlanTests(unittest.TestCase):
                 ),
                 tuple(result.stdout.decode().split("\0")[:-1]),
             )
+
+    def test_rejects_unbound_or_noncanonical_echo_receipts(self) -> None:
+        """A formatting or identity drift must not create a run-scoped receipt."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            epub = root / "book.epub"
+            plan = root / "voice-plan.json"
+            echo = root / "echo-cli"
+            epub.write_bytes(b"fixture EPUB")
+            plan.write_text("{}", encoding="utf-8")
+            source_sha = hashlib.sha256(epub.read_bytes()).hexdigest()
+            valid = (
+                '{"blockCount":2,"defaultVoice":"am_michael","sourceEPUBSHA256":"'
+                + source_sha + '","voicePlanID":"plan-' + "b" * 12
+                + '","voicePlanSHA256":"' + "b" * 64 + '"}'
+            )
+            for receipt in (
+                valid.replace("plan-" + "b" * 12, "plan-" + "a" * 12),
+                valid.replace('"blockCount":2,', '"blockCount":2, '),
+                valid.replace('"am_michael"', '["am_michael"]'),
+            ):
+                with self.subTest(receipt=receipt[:32]):
+                    echo.write_text(
+                        "#!/usr/bin/env python3\nimport sys\n"
+                        f"sys.stdout.buffer.write({receipt.encode()!r})\n",
+                        encoding="utf-8",
+                    )
+                    echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+                    with self.assertRaises(VOICE_PLAN.VoicePlanError):
+                        VOICE_PLAN.resolve_block_plan(echo, epub, plan)
 
 
 if __name__ == "__main__":

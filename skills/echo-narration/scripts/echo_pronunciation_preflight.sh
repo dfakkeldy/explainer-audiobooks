@@ -395,6 +395,13 @@ echo_pronunciation_receipt_text() {
     "narration_db=$DB"
 }
 
+echo_pronunciation_cleanup_block_plan_scratch() {
+  local scratch
+  for scratch in "$@"; do
+    [[ -z "$scratch" ]] || rm -f -- "$scratch"
+  done
+}
+
 echo_pronunciation_seal_block_plan() {
   local script_dir=$1 state_helper=$2
   local temporary_plan temporary_resolution output
@@ -403,17 +410,17 @@ echo_pronunciation_seal_block_plan() {
   local count_resolution=0 count_resolution_sha=0
   temporary_plan=$(mktemp "$RUN_ROOT/research/.echo-voice-plan.XXXXXX") || return 70
   temporary_resolution=$(mktemp "$RUN_ROOT/research/.echo-voice-plan-resolution.XXXXXX") || {
-    rm -f -- "$temporary_plan"
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan"
     return 70
   }
-  rm -f -- "$temporary_plan" "$temporary_resolution"
+  echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
   output=$(mktemp "${TMPDIR:-/tmp}/echo-block-voice-plan.XXXXXX") || return 70
   local requested_voice=${VOICE:-}
   if ! /usr/local/bin/python3 "$script_dir/echo_voice_plan.py" \
     --echo-cli "$CLI" --epub "$EPUB" --voice-plan "$VOICE_PLAN_SOURCE" \
     --canonical-plan "$temporary_plan" --resolution "$temporary_resolution" \
     --format env0 >"$output"; then
-    rm -f -- "$output" "$temporary_plan" "$temporary_resolution"
+    echo_pronunciation_cleanup_block_plan_scratch "$output" "$temporary_plan" "$temporary_resolution"
     return 65
   fi
   unset VOICE CHAPTER_VOICES_CANONICAL VOICE_PLAN_MODE VOICE_PLAN_SHA256
@@ -422,7 +429,7 @@ echo_pronunciation_seal_block_plan() {
   unset VOICE_PLAN_RESOLUTION_SHA256
   while IFS= read -r -d '' key; do
     IFS= read -r -d '' value || {
-      rm -f -- "$output" "$temporary_plan" "$temporary_resolution"
+      echo_pronunciation_cleanup_block_plan_scratch "$output" "$temporary_plan" "$temporary_resolution"
       printf 'incomplete Echo block voice-plan env0 record\n' >&2
       return 65
     }
@@ -438,23 +445,23 @@ echo_pronunciation_seal_block_plan() {
       VOICE_PLAN_RESOLUTION_PATH) (( count_resolution += 1 )); VOICE_PLAN_RESOLUTION_PATH=$value ;;
       VOICE_PLAN_RESOLUTION_SHA256) (( count_resolution_sha += 1 )); VOICE_PLAN_RESOLUTION_SHA256=$value ;;
       *)
-        rm -f -- "$output" "$temporary_plan" "$temporary_resolution"
+        echo_pronunciation_cleanup_block_plan_scratch "$output" "$temporary_plan" "$temporary_resolution"
         printf 'unknown Echo block voice-plan env0 key: %s\n' "$key" >&2
         return 65
         ;;
     esac
   done <"$output"
-  rm -f -- "$output"
+  echo_pronunciation_cleanup_block_plan_scratch "$output"
   if (( count_voice != 1 || count_chapters != 1 || count_mode != 1 || count_sha != 1 \
     || count_id != 1 || count_blocks != 1 || count_plan != 1 || count_plan_sha != 1 \
     || count_resolution != 1 || count_resolution_sha != 1 )) \
     || [[ "$CHAPTER_VOICES_CANONICAL" != '' || "$VOICE_PLAN_MODE" != block ]]; then
-    rm -f -- "$temporary_plan"
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
     printf 'Echo block voice-plan env0 record is incomplete or duplicated\n' >&2
     return 65
   fi
   if [[ -n "$requested_voice" && "$requested_voice" != "$VOICE" ]]; then
-    rm -f -- "$temporary_plan"
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
     printf 'VOICE must equal the Echo block-plan default voice\n' >&2
     return 64
   fi
@@ -462,29 +469,29 @@ echo_pronunciation_seal_block_plan() {
   VOICE_PLAN_RESOLUTION_PATH="$RUN_ROOT/research/echo-voice-plan-resolution-$VOICE_PLAN_ID.json"
   if [[ -e "$VOICE_PLAN_CANONICAL_PATH" || -L "$VOICE_PLAN_CANONICAL_PATH" ]]; then
     [[ ! -L "$VOICE_PLAN_CANONICAL_PATH" && -f "$VOICE_PLAN_CANONICAL_PATH" ]] || {
-      rm -f -- "$temporary_resolution"
+      echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
       return 65
     }
   else
     ln "$temporary_plan" "$VOICE_PLAN_CANONICAL_PATH" || {
-      rm -f -- "$temporary_resolution"
+      echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
       return 65
     }
   fi
-  rm -f -- "$temporary_plan"
+  echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan"
   if ! /usr/local/bin/python3 "$script_dir/echo_voice_plan.py" \
     --echo-cli "$CLI" --epub "$EPUB" --voice-plan "$VOICE_PLAN_CANONICAL_PATH" \
     --canonical-plan "$VOICE_PLAN_CANONICAL_PATH" \
     --resolution "$VOICE_PLAN_RESOLUTION_PATH" --format env0 >/dev/null; then
-    rm -f -- "$temporary_resolution"
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_resolution"
     return 65
   fi
   if ! cmp -s "$temporary_resolution" "$VOICE_PLAN_RESOLUTION_PATH"; then
-    rm -f -- "$temporary_resolution"
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_resolution"
     printf 'existing canonical voice plan resolves differently\n' >&2
     return 65
   fi
-  rm -f -- "$temporary_resolution"
+  echo_pronunciation_cleanup_block_plan_scratch "$temporary_resolution"
   VOICE_PLAN_CANONICAL_SHA256=$(/usr/bin/shasum -a 256 "$VOICE_PLAN_CANONICAL_PATH" | awk '{print $1}')
   VOICE_PLAN_RESOLUTION_SHA256=$(/usr/bin/shasum -a 256 "$VOICE_PLAN_RESOLUTION_PATH" | awk '{print $1}')
   require_sha256 VOICE_PLAN_CANONICAL_SHA256 "$VOICE_PLAN_CANONICAL_SHA256" || return $?
