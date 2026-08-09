@@ -1321,5 +1321,617 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             (destination / "_production" / "publication" / "public-gate.json").is_file()
         )
 
+    def test_three_chapter_block_workflow_is_public_safe_and_identity_bound(
+        self,
+    ) -> None:
+        """Keep the complete character-cast workflow inside one fake renderer fixture."""
+        harness = echo_narration_runtime.EchoPronunciationPreflightTests("runTest")
+        harness.setUp()
+        self.addCleanup(harness.doCleanups)
+        harness.use_run_lane("fiction-audiobooks")
+        run_root = harness.run_root
+        chapters = run_root / "chapters"
+        chapter_specs = (
+            (
+                "ch01.md",
+                "Chapter One",
+                (
+                    "The narrator watched the rain find the harbor.",
+                    "“The lantern is lit,” Mara said.",
+                    "Ivo folded the chart and faced the tide.",
+                ),
+            ),
+            (
+                "ch02.md",
+                "Chapter Two",
+                (
+                    "The narrator counted three distant bells.",
+                    "“We leave at dawn,” Mara said.",
+                    "Ivo carried the oars down to the boat.",
+                ),
+            ),
+            (
+                "ch03.md",
+                "Chapter Three",
+                (
+                    "The narrator found the harbor waiting quietly.",
+                    "“The signal held,” Mara said.",
+                    "Ivo smiled and tied the last knot.",
+                ),
+            ),
+        )
+        for filename, title, paragraphs in chapter_specs:
+            (chapters / filename).write_text(
+                f"## {title}\n\n" + "\n\n".join(paragraphs) + "\n",
+                encoding="utf-8",
+            )
+
+        portrait_cover = run_root / "dist" / "candidate-1" / "cover.png"
+        square_cover = run_root / "dist" / "candidate-1" / "m4b-cover.png"
+        build_book.build(
+            chapters,
+            run_root / "dist",
+            "Fixture Three Chapter Ensemble",
+            "Dan Fakkeldy",
+            "",
+            "fixture",
+            cover=portrait_cover,
+            m4b_cover=square_cover,
+            contributor="GPT-5.6",
+        )
+        epub = run_root / "dist" / "fixture.epub"
+        markdown = run_root / "dist" / "fixture.md"
+        source_sha256 = sha256(epub)
+        self.assertEqual(3, len(list(chapters.glob("ch*.md"))))
+        for _filename, _title, paragraphs in chapter_specs:
+            for paragraph in paragraphs:
+                self.assertIn(paragraph, markdown.read_text(encoding="utf-8"))
+
+        research = run_root / "research"
+        continuity = run_root / "continuity"
+        revisions = run_root / "revisions"
+        continuity.mkdir()
+        revisions.mkdir()
+        evidence = {
+            "authorization": research / "unattended-decisions.json",
+            "storyBible": run_root / "story-bible.md",
+            "continuity": continuity / "final.md",
+            "revisionReview": revisions / "full-manuscript-review.md",
+            "proseQC": revisions / "full-prose-qc.md",
+        }
+        for name, path in evidence.items():
+            path.write_text(f"{name}: verified\n", encoding="utf-8")
+        fiction_receipt = research / "fiction-production-receipt.json"
+        write_json(
+            fiction_receipt,
+            {
+                "schemaVersion": 1,
+                "status": "first-listen",
+                "productionMode": "unattended-first-listen",
+                "privacy": "private",
+                "permissionToPublish": False,
+                "humanReadingStatus": "pending",
+                "canonicalChapterSHA256": {
+                    filename: sha256(chapters / filename)
+                    for filename, _title, _paragraphs in chapter_specs
+                },
+                "artifacts": {
+                    name: {
+                        "path": path.relative_to(run_root).as_posix(),
+                        "sha256": sha256(path),
+                    }
+                    for name, path in evidence.items()
+                },
+                "gates": {
+                    "manuscriptClosed": "pass",
+                    "storyBibleReconciled": "pass",
+                    "continuityReconciled": "pass",
+                    "revisionPassesCompleted": "pass",
+                    "proseQCPassed": "pass",
+                },
+                "negativeHumanVerdictOverrides": True,
+                "receiptDoesNotCertifyHumanAcceptance": True,
+            },
+        )
+
+        environment = harness.environment()
+        environment.pop("VOICE")
+        environment.update(
+            {
+                "ECHO_RUN_LANE": "fiction-audiobook",
+                "FAKE_EMIT_REEL": "1",
+            }
+        )
+        inventory_command = (
+            "set -euo pipefail\n"
+            f"source {RUNTIME_PREFLIGHT}\n"
+            'EPUB="$RUN_ROOT/dist/$SLUG.epub"\n'
+            'EPUB_SHA256=$(/usr/bin/shasum -a 256 "$EPUB" | awk \'{print $1}\')\n'
+            'INVENTORY="$RUN_ROOT/research/echo-block-inventory-$EPUB_SHA256.json"\n'
+            "echo_pronunciation_resolve_installed_renderer 0\n"
+            "echo_pronunciation_validate_renderer_paths\n"
+            "echo_pronunciation_attest_renderer\n"
+            "CANONICAL_LEASE_ROOT=$(echo_pronunciation_canonical_lease_root)\n"
+            f'LEASE_HELPER="{RUNTIME_LEASE_HELPER}"\n'
+            '"$LEASE_HELPER" --lock-root "$CANONICAL_LEASE_ROOT" \\\n'
+            '  --resource "$ECHO_RENDERER_BUILD_ROOT" -- \\\n'
+            '  /usr/bin/env "ECHO_RESOURCE_DIR=$ECHO_RESOURCE_DIR" \\\n'
+            '  "$CLI" export-blocks --epub "$EPUB" --out "$INVENTORY"\n'
+        )
+        exported = subprocess.run(
+            ["bash", "-c", inventory_command],
+            cwd=harness.explainer,
+            env=environment,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, exported.returncode, exported.stderr)
+        inventory = research / f"echo-block-inventory-{source_sha256}.json"
+        inventory_payload = json.loads(inventory.read_text(encoding="utf-8"))
+        self.assertEqual(source_sha256, inventory_payload["source"]["epubSHA256"])
+        self.assertEqual(["s2-b3", "s2-b4", "s2-b5"], [
+            block["id"] for block in inventory_payload["blocks"]
+        ])
+        self.assertTrue(
+            all(
+                not any(
+                    forbidden in key.lower()
+                    for forbidden in ("speaker", "voice", "plan")
+                )
+                for block in inventory_payload["blocks"]
+                for key in block
+            )
+        )
+
+        narration = run_root / "_production" / "narration"
+        narration.mkdir(parents=True)
+        speakers = [
+            {
+                "speakerID": "narrator",
+                "role": "Narrator",
+                "voiceID": "am_michael",
+                "experimental": False,
+            },
+            {
+                "speakerID": "mara",
+                "role": "Mara",
+                "voiceID": "bf_emma",
+                "experimental": False,
+            },
+            {
+                "speakerID": "ivo",
+                "role": "Ivo",
+                "voiceID": "bm_george",
+                "experimental": False,
+            },
+        ]
+        authored_plan = narration / "echo-voice-plan.json"
+        write_json(
+            authored_plan,
+            {
+                "schemaVersion": 1,
+                "source": {"epubSHA256": source_sha256},
+                "defaultSpeakerID": "narrator",
+                "speakers": [
+                    {"id": row["speakerID"], "voiceID": row["voiceID"]}
+                    for row in speakers
+                ],
+                "assignments": [
+                    {"speakerID": "mara", "blocks": ["s2-b3"]},
+                    {
+                        "speakerID": "ivo",
+                        "range": {"start": "s2-b4", "end": "s2-b5"},
+                    },
+                ],
+            },
+        )
+        cast_path = narration / "voice-cast.json"
+        write_json(
+            cast_path,
+            {
+                "schemaVersion": 2,
+                "slug": "fixture",
+                "narrationMode": "block",
+                "sourceEPUBSHA256": source_sha256,
+                "defaultSpeakerID": "narrator",
+                "speakers": speakers,
+                "authoredVoicePlan": {
+                    "fileName": authored_plan.name,
+                    "sha256": sha256(authored_plan),
+                },
+                "resolvedVoicePlan": None,
+                "verifiedArtifacts": None,
+            },
+        )
+        preferences = run_root / "preferences.json"
+        write_json(preferences, fiction_voice_preferences.initial_preferences())
+        validated = subprocess.run(
+            [
+                sys.executable,
+                str(
+                    ROOT
+                    / "skills"
+                    / "fiction-audiobook"
+                    / "scripts"
+                    / "fiction_voice_preferences.py"
+                ),
+                "validate-cast",
+                "--cast",
+                str(cast_path),
+                "--voice-plan",
+                str(authored_plan),
+                "--preferences",
+                str(preferences),
+                "--format",
+                "argv0",
+            ],
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, validated.returncode, validated.stderr.decode())
+        voice_arguments = [
+            token.decode("utf-8") for token in validated.stdout.split(b"\0") if token
+        ]
+        self.assertEqual(["--voice-plan", str(authored_plan)], voice_arguments)
+
+        first_sha256 = "0123456789ab" + "b" * 52
+        harness.fake_voice_plan_sha.write_text(first_sha256 + "\n", encoding="utf-8")
+        partial = harness.run_narrate(
+            *voice_arguments,
+            environment=dict(environment, FAKE_NARRATE_EXIT="2"),
+        )
+        self.assertEqual(2, partial.returncode, partial.stderr)
+        first_input = next(
+            candidate
+            for candidate in research.glob("echo-render-inputs-*.env")
+            if harness.receipt_fields(candidate)["voice_plan_sha256"] == first_sha256
+        )
+        first_fields = harness.receipt_fields(first_input)
+        first_state = research / f"echo-resume-state-{first_fields['run_id']}.json"
+        first_capture = Path(first_fields["work_dir"]) / ".anchors-ch0.json"
+        self.assertTrue(first_capture.is_file())
+        self.assertEqual(
+            2,
+            json.loads(first_capture.read_text(encoding="utf-8"))["identity"][
+                "schemaVersion"
+            ],
+        )
+        partial_state = json.loads(first_state.read_text(encoding="utf-8"))
+        self.assertEqual(4, partial_state["schemaVersion"])
+        self.assertEqual(first_sha256, partial_state["voicePlanSHA256"])
+
+        resumed = harness.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(first_state),
+            *voice_arguments,
+            environment=environment,
+        )
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        selector = json.loads(
+            (research / "echo-render-current-accepted.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        success_receipt = research / selector["successReceiptFileName"]
+        success = json.loads(success_receipt.read_text(encoding="utf-8"))
+        state = json.loads(first_state.read_text(encoding="utf-8"))
+        resolution = json.loads(
+            Path(first_fields["voice_plan_resolution_path"]).read_text(
+                encoding="utf-8"
+            )
+        )
+        authored_payload = json.loads(authored_plan.read_text(encoding="utf-8"))
+        self.assertEqual(source_sha256, authored_payload["source"]["epubSHA256"])
+        self.assertEqual(source_sha256, resolution["sourceEPUBSHA256"])
+        self.assertEqual(source_sha256, success["sourceEPUBSHA256"])
+        self.assertEqual(source_sha256, sha256(epub))
+        for value in (
+            first_fields["voice_plan_sha256"],
+            state["voicePlanSHA256"],
+            success["voicePlanSHA256"],
+        ):
+            self.assertEqual(first_sha256, value)
+
+        artifact_root = run_root / "dist" / selector["artifactRelativePath"]
+        self.assertEqual(
+            {
+                "fixture.m4b",
+                "fixture.alignment.json",
+                "fixture.pronunciation-audit.json",
+            },
+            {path.name for path in artifact_root.iterdir()},
+        )
+        alignment = json.loads(
+            (artifact_root / "fixture.alignment.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual([{"blockId": "s2-b3", "timestamp": 0}], alignment)
+        self.assertTrue(
+            all(
+                not any(
+                    forbidden in key.lower()
+                    for forbidden in ("speaker", "voice", "plan")
+                )
+                for anchor in alignment
+                for key in anchor
+            )
+        )
+        audit = json.loads(
+            (artifact_root / "fixture.pronunciation-audit.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(7, audit["schemaVersion"])
+        self.assertEqual(first_sha256, audit["voicePlanSHA256"])
+        self.assertEqual(3, len(audit["blockVoices"]))
+
+        recorded = fiction_voice_preferences.record_use(
+            cast_path,
+            epub,
+            artifact_root / "fixture.m4b",
+            artifact_root / "fixture.alignment.json",
+            success_receipt,
+            "2026-08-09T14:00:00+00:00",
+            preferences,
+        )
+        completed_cast = json.loads(cast_path.read_text(encoding="utf-8"))
+        self.assertEqual(first_sha256, recorded["uses"][0]["voicePlanSHA256"])
+        self.assertEqual(
+            first_sha256,
+            completed_cast["resolvedVoicePlan"]["voicePlanSHA256"],
+        )
+        self.assertEqual(
+            source_sha256,
+            completed_cast["verifiedArtifacts"]["sourceEPUBSHA256"],
+        )
+
+        first_attempt = research / "echo-render-current-attempt.json"
+        first_attempt_bytes = first_attempt.read_bytes()
+        accepted_selector = research / "echo-render-current-accepted.json"
+        accepted_selector_bytes = accepted_selector.read_bytes()
+        changed_sha256 = "0123456789ab" + "c" * 52
+        harness.fake_voice_plan_sha.write_text(changed_sha256 + "\n", encoding="utf-8")
+        changed = harness.run_narrate(
+            "--resume",
+            "--resume-state",
+            str(first_state),
+            *voice_arguments,
+            environment=environment,
+        )
+        self.assertEqual(64, changed.returncode, changed.stderr)
+        changed_input = next(
+            candidate
+            for candidate in research.glob("echo-render-inputs-*.env")
+            if harness.receipt_fields(candidate)["voice_plan_sha256"] == changed_sha256
+        )
+        changed_fields = harness.receipt_fields(changed_input)
+        self.assertNotEqual(first_fields["run_id"], changed_fields["run_id"])
+        self.assertNotEqual(first_input, changed_input)
+        self.assertFalse(Path(changed_fields["work_dir"]).exists())
+        self.assertFalse(Path(changed_fields["narration_db"]).exists())
+        self.assertFalse(
+            (research / f"echo-resume-state-{changed_fields['run_id']}.json").exists()
+        )
+        self.assertEqual(first_attempt_bytes, first_attempt.read_bytes())
+        self.assertEqual(accepted_selector_bytes, accepted_selector.read_bytes())
+        self.assertTrue(first_capture.is_file())
+        self.assertTrue(Path(first_fields["narration_db"]).is_file())
+        self.assertTrue(success_receipt.is_file())
+
+        production = run_root / "_production"
+        for name in ("source", "checks", "narration", "covers", "publication", "previous"):
+            (production / name).mkdir(parents=True, exist_ok=True)
+        for filename, _title, _paragraphs in chapter_specs:
+            shutil.copy2(chapters / filename, production / "source" / filename)
+        for path in evidence.values():
+            shutil.copy2(path, production / "source" / path.name)
+        for path in (
+            fiction_receipt,
+            artifact_root / "fixture.pronunciation-audit.json",
+        ):
+            shutil.copy2(path, production / "checks" / path.name)
+        first_reel = research / success["reelRelativePath"]
+        for path in (
+            cast_path,
+            authored_plan,
+            Path(first_fields["voice_plan_canonical_path"]),
+            Path(first_fields["voice_plan_resolution_path"]),
+            first_input,
+            first_attempt,
+            first_state,
+            success_receipt,
+            research / "echo-render-current-accepted.json",
+            artifact_root / "fixture.alignment.json",
+        ):
+            destination = production / "narration" / path.name
+            if path != destination:
+                shutil.copy2(path, destination)
+        captures = production / "narration" / "captures"
+        captures.mkdir()
+        shutil.copy2(first_capture, captures / first_capture.name)
+        listening = production / "narration" / "listening"
+        listening.mkdir()
+        shutil.copy2(first_reel, listening / first_reel.name)
+        shutil.copy2(portrait_cover, production / "covers" / "cover.png")
+        shutil.copy2(square_cover, production / "covers" / "m4b-cover.png")
+        write_json(
+            production / "publication" / "public-gate.json",
+            {
+                "decision": "private",
+                "recordedAt": "2026-08-09T14:01:00+00:00",
+                "publicGate": {
+                    "originalFiction": True,
+                    "noPrivateSource": False,
+                    "noLivingPersonTarget": True,
+                    "noLivingAuthorImitation": True,
+                    "coverRightsVerified": True,
+                },
+                "reason": "controlled fixture remains private",
+            },
+        )
+        icloud_root = run_root / "icloud"
+        icloud_root.mkdir()
+        private_delivery = icloud_root / "fixture"
+        stage_echo_delivery.stage_delivery(
+            stage_echo_delivery.DeliveryRequest(
+                slug="fixture",
+                edition_id="fixture-private-v1",
+                m4b=artifact_root / "fixture.m4b",
+                epub=epub,
+                alignment=artifact_root / "fixture.alignment.json",
+                cover=portrait_cover,
+                production=production,
+                destination=private_delivery,
+            ),
+            apply=True,
+        )
+        self.assertEqual(
+            {
+                "fixture.m4b",
+                "fixture.epub",
+                "fixture.alignment.json",
+                "cover.png",
+                "_production",
+            },
+            {path.name for path in private_delivery.iterdir()},
+        )
+        self.assertTrue(
+            (private_delivery / "_production" / "narration" / "captures" / first_capture.name).is_file()
+        )
+        self.assertTrue(
+            (private_delivery / "_production" / "narration" / "listening" / first_reel.name).is_file()
+        )
+
+        public_stage = run_root / "public-candidate"
+        public_stage.mkdir()
+        public_markdown = public_stage / markdown.name
+        public_epub = public_stage / epub.name
+        public_alignment = public_stage / "fixture.alignment.json"
+        public_cover = public_stage / "cover.png"
+        for source, destination in (
+            (markdown, public_markdown),
+            (epub, public_epub),
+            (artifact_root / "fixture.alignment.json", public_alignment),
+            (portrait_cover, public_cover),
+        ):
+            shutil.copy2(source, destination)
+        (public_stage / "README.md").write_text(
+            verify_public_first_listen.FICTION_DISCLOSURE,
+            encoding="utf-8",
+        )
+        publication = {
+            "schemaVersion": 2,
+            "packageKind": "fiction-audiobook",
+            "slug": "fixture",
+            "editionId": "fixture-public-v1",
+            "publicationStatus": "public-first-listen",
+            "humanReadingStatus": "pending",
+            "humanListeningStatus": "pending",
+            "classification": "public-safe",
+            "permissionToPublish": True,
+            "permissionGrantedAt": "2026-08-09T14:02:00+00:00",
+            "author": "Dan Fakkeldy",
+            "contributor": "GPT-5.6",
+            "aiGenerated": True,
+            "contentLicense": "CC-BY-4.0",
+            "disclosure": verify_public_first_listen.FICTION_DISCLOSURE,
+            "publicGate": {
+                "originalFiction": True,
+                "noPrivateSource": True,
+                "noLivingPersonTarget": True,
+                "noLivingAuthorImitation": True,
+                "coverRightsVerified": True,
+            },
+            "coverRights": {
+                "basis": "generated",
+                "status": "verified",
+                "coverSHA256": sha256(public_cover),
+            },
+            "artifacts": {
+                "manuscript": {
+                    "file": public_markdown.name,
+                    "sha256": sha256(public_markdown),
+                },
+                "epub": {"file": public_epub.name, "sha256": sha256(public_epub)},
+                "alignment": {
+                    "file": public_alignment.name,
+                    "sha256": sha256(public_alignment),
+                },
+                "portraitCover": {
+                    "file": public_cover.name,
+                    "sha256": sha256(public_cover),
+                },
+            },
+            "release": {
+                "tag": "fiction-fixture-fixture-public-v1",
+                "assetFile": "fixture.m4b",
+                "assetSHA256": sha256(private_delivery / "fixture.m4b"),
+            },
+            "privateEvidence": {
+                "fictionReceiptSHA256": sha256(fiction_receipt),
+                "voiceCastSHA256": sha256(cast_path),
+                "voicePlanSHA256": first_sha256,
+                "echoSuccessReceiptSHA256": sha256(success_receipt),
+            },
+        }
+        write_json(public_stage / "publication.json", publication)
+        self.assertEqual(first_sha256, publication["privateEvidence"]["voicePlanSHA256"])
+        self.assertEqual("pending", publication["humanReadingStatus"])
+        self.assertEqual("pending", publication["humanListeningStatus"])
+
+        real_subprocess_run = subprocess.run
+
+        def run_media_probe(command: list[str], **kwargs: object) -> object:
+            if command[0] == "ffprobe":
+                return subprocess.CompletedProcess(
+                    args=command,
+                    returncode=0,
+                    stdout=json.dumps(
+                        {
+                            "format": {"duration": "12.0"},
+                            "chapters": [
+                                {"start_time": "0.0", "end_time": "4.0"},
+                                {"start_time": "4.0", "end_time": "8.0"},
+                                {"start_time": "8.0", "end_time": "12.0"},
+                            ],
+                        }
+                    ),
+                    stderr="",
+                )
+            return real_subprocess_run(command, **kwargs)
+
+        with mock.patch.object(
+            verify_public_first_listen.subprocess,
+            "run",
+            side_effect=run_media_probe,
+        ):
+            verify_public_first_listen.verify_public_fiction_package(
+                public_stage,
+                private_delivery / "fixture.m4b",
+                cast_path,
+                fiction_receipt,
+                chapters,
+                success_receipt,
+            )
+        public_files = list(public_stage.iterdir())
+        self.assertEqual(6, len(public_files))
+        self.assertEqual(
+            {
+                "README.md",
+                "cover.png",
+                "fixture.alignment.json",
+                "fixture.epub",
+                "fixture.md",
+                "publication.json",
+            },
+            {path.name for path in public_files},
+        )
+        self.assertFalse(any(path.suffix == ".m4b" for path in public_files))
+        public_bytes = b"".join(path.read_bytes() for path in public_files)
+        self.assertNotIn(str(run_root).encode("utf-8"), public_bytes)
+        self.assertNotIn(str(private_delivery).encode("utf-8"), public_bytes)
+
+
 if __name__ == "__main__":
     unittest.main()
