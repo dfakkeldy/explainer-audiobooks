@@ -2557,3 +2557,334 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                     ]
                 ),
             )
+
+
+class FictionBlockPublicPackageVerifierTests(unittest.TestCase):
+    """Exercise schema-2 casts without changing the schema-1 fixture coverage."""
+
+    def setUp(self) -> None:
+        self.fixture = FictionPublicPackageVerifierTests(
+            "test_accepts_release_backed_fiction_with_exact_public_surface"
+        )
+        self.fixture.setUp()
+        fixture = self.fixture
+        fixture.renderer_identity["echoRenderVersion"] = 22
+        source_sha256 = fixture.digest(fixture.epub)
+        self.speakers = [
+            {
+                "speakerID": "narrator",
+                "role": "Narrator",
+                "voiceID": "am_michael",
+                "experimental": False,
+            },
+            {
+                "speakerID": "mara",
+                "role": "Mara",
+                "voiceID": "bf_emma",
+                "experimental": False,
+            },
+            {
+                "speakerID": "ivo",
+                "role": "Ivo",
+                "voiceID": "bm_george",
+                "experimental": True,
+            },
+        ]
+        self.authored_plan = fixture.private_dir / "echo-voice-plan.json"
+        authored_payload = {
+            "schemaVersion": 1,
+            "source": {"epubSHA256": source_sha256},
+            "defaultSpeakerID": "narrator",
+            "speakers": [
+                {"id": row["speakerID"], "voiceID": row["voiceID"]}
+                for row in self.speakers
+            ],
+            "assignments": [{"speakerID": "mara", "blocks": ["s2-b3"]}],
+        }
+        self.authored_plan.write_text(
+            json.dumps(authored_payload, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        self.resolved_sha256 = "b" * 64
+        self.resolved = {
+            "blockCount": 2,
+            "defaultVoice": "am_michael",
+            "sourceEPUBSHA256": source_sha256,
+            "voicePlanID": f"plan-{self.resolved_sha256[:12]}",
+            "voicePlanSHA256": self.resolved_sha256,
+        }
+        self.canonical_plan = fixture.private_dir / (
+            f"echo-voice-plan-plan-{self.resolved_sha256}.json"
+        )
+        self.canonical_plan.write_bytes(self.authored_plan.read_bytes())
+        self.resolution = fixture.private_dir / (
+            f"echo-voice-plan-resolution-plan-{self.resolved_sha256}.json"
+        )
+        self.resolution.write_text(
+            json.dumps(self.resolved, sort_keys=True, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        fixture.voice_plan_sha256 = self.resolved_sha256
+        fixture.voice_plan_id = self.resolved["voicePlanID"]
+        fixture.run_id = (
+            f"{source_sha256[:12]}-{fixture.renderer_identity['echoCLI_SHA256'][:12]}-"
+            f"{fixture.renderer_identity['echoResourcesSHA256'][:12]}-"
+            f"{fixture.renderer_identity['rendererManifestSHA256'][:12]}-"
+            f"{fixture.renderer_identity['echoSourceSHA']}-{fixture.voice_plan_id}"
+        )
+        fixture.echo_input_receipt = fixture.private_dir / (
+            f"echo-render-inputs-{fixture.run_id}.env"
+        )
+        fixture.echo_input_receipt.write_text(
+            "\n".join(
+                (
+                    "voice=am_michael",
+                    "chapter_voices=",
+                    f"voice_plan_sha256={self.resolved_sha256}",
+                    f"voice_plan_id={fixture.voice_plan_id}",
+                    "voice_plan_mode=block",
+                    "voice_plan_block_count=2",
+                    f"voice_plan_canonical_path={self.canonical_plan}",
+                    f"voice_plan_canonical_sha256={fixture.digest(self.canonical_plan)}",
+                    f"voice_plan_resolution_path={self.resolution}",
+                    f"voice_plan_resolution_sha256={fixture.digest(self.resolution)}",
+                )
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        self.audit = fixture.private_dir / "fixture-fiction.pronunciation-audit.json"
+        self.audit.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 7,
+                    "voicePlanSHA256": self.resolved_sha256,
+                    "result": "pass",
+                },
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        self.reel = fixture.private_dir / "listening" / fixture.run_id / fixture.attempt_id / "pronunciation-reel.m4a"
+        self.reel.parent.mkdir(parents=True)
+        self.reel.write_bytes(b"private listening reel")
+        self.capture = fixture.private_dir / f"audio-work-{fixture.run_id}" / ".anchors-ch1.json"
+        self.capture.parent.mkdir()
+        self.capture.write_text('{"schemaVersion":2}\n', encoding="utf-8")
+        fixture.echo_success_receipt = fixture.private_dir / (
+            f"echo-render-success-{fixture.run_id}-{fixture.attempt_id}.json"
+        )
+        success = {
+            "schemaVersion": 4,
+            **fixture.renderer_identity,
+            "attemptID": fixture.attempt_id,
+            "runID": fixture.run_id,
+            "attemptReceiptSHA256": "8" * 64,
+            "inputReceiptFileName": fixture.echo_input_receipt.name,
+            "inputReceiptSHA256": fixture.digest(fixture.echo_input_receipt),
+            "sourceEPUBFileName": fixture.epub.name,
+            "sourceEPUBSHA256": source_sha256,
+            "artifactRelativePath": f"echo-renders/{fixture.run_id}/{fixture.attempt_id}",
+            "resumeStateFileName": f"echo-resume-state-{fixture.run_id}.json",
+            "resumeStateSHA256": "a" * 64,
+            "audiobookFileName": fixture.release_m4b.name,
+            "audiobookSHA256": fixture.digest(fixture.release_m4b),
+            "sidecarFileName": fixture.sidecar.name,
+            "sidecarSHA256": fixture.digest(fixture.sidecar),
+            "auditFileName": self.audit.name,
+            "auditSHA256": fixture.digest(self.audit),
+            "reelFileName": self.reel.name,
+            "reelRelativePath": f"listening/{fixture.run_id}/{fixture.attempt_id}/{self.reel.name}",
+            "reelSHA256": fixture.digest(self.reel),
+            "voicePlanMode": "block",
+            "voicePlanID": fixture.voice_plan_id,
+            "voicePlanSHA256": self.resolved_sha256,
+            "voicePlanBlockCount": 2,
+            "voicePlanCanonicalFileName": self.canonical_plan.name,
+            "voicePlanCanonicalSHA256": fixture.digest(self.canonical_plan),
+            "voicePlanResolutionFileName": self.resolution.name,
+            "voicePlanResolutionSHA256": fixture.digest(self.resolution),
+        }
+        fixture.echo_success_receipt.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        cast = {
+            "schemaVersion": 2,
+            "slug": "fixture-fiction",
+            "narrationMode": "block",
+            "sourceEPUBSHA256": source_sha256,
+            "defaultSpeakerID": "narrator",
+            "speakers": self.speakers,
+            "authoredVoicePlan": {
+                "fileName": self.authored_plan.name,
+                "sha256": fixture.digest(self.authored_plan),
+            },
+            "resolvedVoicePlan": self.resolved,
+            "verifiedArtifacts": {
+                "sourceEPUBSHA256": source_sha256,
+                "audiobookSHA256": fixture.digest(fixture.release_m4b),
+                "sidecarSHA256": fixture.digest(fixture.sidecar),
+                "voicePlanSHA256": self.resolved_sha256,
+            },
+        }
+        fixture.voice_cast.write_text(
+            json.dumps(cast, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        fixture.receipt = fixture.valid_publication_receipt()
+        fixture.write_publication_receipt()
+
+    def tearDown(self) -> None:
+        self.fixture.tearDown()
+
+    def verify(self) -> None:
+        self.fixture.verify()
+
+    def assert_rejected(self, pattern: str) -> None:
+        self.fixture.assert_rejected(pattern)
+
+    def rebind_private_evidence(self) -> None:
+        fixture = self.fixture
+        fixture.receipt["privateEvidence"]["voiceCastSHA256"] = fixture.digest(
+            fixture.voice_cast
+        )
+        fixture.receipt["privateEvidence"]["echoSuccessReceiptSHA256"] = fixture.digest(
+            fixture.echo_success_receipt
+        )
+        fixture.write_publication_receipt()
+
+    def test_accepts_a_completed_block_cast_with_internal_only_evidence(self) -> None:
+        fixture = self.fixture
+        self.assertEqual(
+            {
+                "README.md",
+                "fixture-fiction.md",
+                "fixture-fiction.epub",
+                "fixture-fiction.alignment.json",
+                "cover.png",
+                "publication.json",
+            },
+            {path.name for path in fixture.book_dir.iterdir()},
+        )
+        self.assertTrue(self.reel.is_file())
+        self.assertTrue(self.capture.is_file())
+        with fixture.probes():
+            self.verify()
+
+    def test_rejects_missing_or_changed_authored_plan(self) -> None:
+        self.authored_plan.unlink()
+        self.assert_rejected("authored voice plan|sibling")
+
+        self.authored_plan.write_text("{}\n", encoding="utf-8")
+        self.assert_rejected("authored voice-plan hash|authored voice plan")
+
+    def test_rejects_source_receipt_drift(self) -> None:
+        fixture = self.fixture
+        cast = json.loads(fixture.voice_cast.read_text(encoding="utf-8"))
+        plan = json.loads(self.authored_plan.read_text(encoding="utf-8"))
+        cast["sourceEPUBSHA256"] = "f" * 64
+        plan["source"]["epubSHA256"] = "f" * 64
+        self.authored_plan.write_text(
+            json.dumps(plan, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        )
+        cast["authoredVoicePlan"]["sha256"] = fixture.digest(self.authored_plan)
+        fixture.voice_cast.write_text(
+            json.dumps(cast, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.rebind_private_evidence()
+        self.assert_rejected("resolved.*source|source EPUB")
+
+    def test_rejects_resolution_receipt_drift(self) -> None:
+        fixture = self.fixture
+        old_resolution_sha256 = fixture.digest(self.resolution)
+        resolution = json.loads(self.resolution.read_text(encoding="utf-8"))
+        resolution["blockCount"] = 3
+        self.resolution.write_text(
+            json.dumps(resolution, sort_keys=True, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        success = json.loads(fixture.echo_success_receipt.read_text(encoding="utf-8"))
+        new_resolution_sha256 = fixture.digest(self.resolution)
+        success["voicePlanResolutionSHA256"] = new_resolution_sha256
+        fixture.echo_input_receipt.write_text(
+            fixture.echo_input_receipt.read_text(encoding="utf-8")
+            .replace("voice_plan_block_count=2", "voice_plan_block_count=3")
+            .replace(
+                "voice_plan_resolution_sha256=" + old_resolution_sha256,
+                "voice_plan_resolution_sha256=" + new_resolution_sha256,
+            ),
+            encoding="utf-8",
+        )
+        success["inputReceiptSHA256"] = fixture.digest(fixture.echo_input_receipt)
+        fixture.echo_success_receipt.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.rebind_private_evidence()
+        self.assert_rejected("voicePlanBlockCount|block count")
+
+    def test_rejects_relocated_input_evidence_without_a_safe_absolute_path(self) -> None:
+        fixture = self.fixture
+        fixture.echo_input_receipt.write_text(
+            fixture.echo_input_receipt.read_text(encoding="utf-8").replace(
+                f"voice_plan_canonical_path={self.canonical_plan}",
+                "voice_plan_canonical_path=not-a-plan.json",
+            ),
+            encoding="utf-8",
+        )
+        success = json.loads(fixture.echo_success_receipt.read_text(encoding="utf-8"))
+        success["inputReceiptSHA256"] = fixture.digest(fixture.echo_input_receipt)
+        fixture.echo_success_receipt.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.rebind_private_evidence()
+
+        self.assert_rejected("canonical voice-plan path|canonical plan filename")
+
+    def test_rejects_block_resolution_changed_after_validation(self) -> None:
+        real_validate = verifier.validate_block_echo_success_receipt
+        changed = False
+
+        def validate_then_change(*args: object, **kwargs: object) -> dict[str, object]:
+            nonlocal changed
+            resolved = real_validate(*args, **kwargs)
+            self.resolution.write_text("{}\n", encoding="utf-8")
+            changed = True
+            return resolved
+
+        with mock.patch.object(
+            verifier,
+            "validate_block_echo_success_receipt",
+            side_effect=validate_then_change,
+        ):
+            self.assert_rejected("resolution.*changed|changed.*resolution")
+        self.assertTrue(changed)
+
+    def test_rejects_schema4_success_drift(self) -> None:
+        fixture = self.fixture
+        success = json.loads(fixture.echo_success_receipt.read_text(encoding="utf-8"))
+        success["voicePlanMode"] = "chapter"
+        fixture.echo_success_receipt.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.rebind_private_evidence()
+        self.assert_rejected("schema|block")
+
+    def test_rejects_public_private_leak(self) -> None:
+        fixture = self.fixture
+        fixture.book_dir.joinpath("README.md").write_text(
+            FICTION_DISCLOSURE + "\n" + str(fixture.private_dir), encoding="utf-8"
+        )
+        self.assert_rejected("private or local path")
+
+    def test_rejects_any_root_m4b_reel_or_capture(self) -> None:
+        fixture = self.fixture
+        for name in (
+            "fixture-fiction.m4b",
+            "pronunciation-reel.m4a",
+            ".anchors-ch1.json",
+        ):
+            with self.subTest(name=name):
+                path = fixture.book_dir / name
+                path.write_bytes(b"private root leak")
+                self.assert_rejected("exactly|root|unexpected")
+                path.unlink()

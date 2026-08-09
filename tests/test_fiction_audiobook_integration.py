@@ -24,7 +24,6 @@ for scripts in (
 
 import build_book
 import cover_receipts
-import echo_voice_plan
 import fiction_voice_preferences
 import stage_echo_delivery
 from skill.scripts import verify_public_first_listen
@@ -45,6 +44,14 @@ def flat_file_bytes(directory: Path) -> dict[str, bytes]:
     if any(not path.is_file() for path in entries):
         raise AssertionError(f"expected only regular files in {directory}")
     return {path.name: path.read_bytes() for path in entries}
+
+
+def tree_file_bytes(directory: Path) -> dict[str, bytes]:
+    return {
+        path.relative_to(directory).as_posix(): path.read_bytes()
+        for path in sorted(directory.rglob("*"))
+        if path.is_file()
+    }
 
 
 class FictionAudiobookIntegrationTests(unittest.TestCase):
@@ -173,44 +180,83 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             )
             assert_fiction_receipt_unchanged()
 
-            cast_chapters = [
+            source_epub_sha256 = sha256(built_epub)
+            speakers = [
                 {
-                    "chapter": 1,
+                    "speakerID": "narrator",
+                    "role": "Narrator",
+                    "voiceID": "bf_emma",
+                    "experimental": False,
+                },
+                {
+                    "speakerID": "mara",
                     "role": "Mara",
-                    "voice": "bf_emma",
+                    "voiceID": "am_michael",
                     "experimental": False,
                 },
                 {
-                    "chapter": 2,
+                    "speakerID": "ivo",
                     "role": "Ivo",
-                    "voice": "am_michael",
-                    "experimental": False,
-                },
-                {
-                    "chapter": 3,
-                    "role": "Sera",
-                    "voice": "af_bella",
-                    "experimental": False,
+                    "voiceID": "af_bella",
+                    "experimental": True,
                 },
             ]
-            plan = echo_voice_plan.voice_plan(
-                "bf_emma",
-                [f"{row['chapter']}={row['voice']}" for row in cast_chapters],
+            authored_plan = narration / "echo-voice-plan.json"
+            write_json(
+                authored_plan,
+                {
+                    "schemaVersion": 1,
+                    "source": {"epubSHA256": source_epub_sha256},
+                    "defaultSpeakerID": "narrator",
+                    "speakers": [
+                        {"id": row["speakerID"], "voiceID": row["voiceID"]}
+                        for row in speakers
+                    ],
+                    "assignments": [
+                        {"speakerID": "mara", "blocks": ["s2-b3"]},
+                        {"speakerID": "ivo", "ranges": ["s3-b1:s3-b2"]},
+                    ],
+                },
+            )
+            resolved_plan_sha256 = "b" * 64
+            plan = {
+                "blockCount": 3,
+                "defaultVoice": "bf_emma",
+                "sourceEPUBSHA256": source_epub_sha256,
+                "voicePlanID": f"plan-{resolved_plan_sha256[:12]}",
+                "voicePlanSHA256": resolved_plan_sha256,
+            }
+            canonical_plan = narration / (
+                f"echo-voice-plan-plan-{resolved_plan_sha256}.json"
+            )
+            shutil.copy2(authored_plan, canonical_plan)
+            resolution_receipt = narration / (
+                f"echo-voice-plan-resolution-plan-{resolved_plan_sha256}.json"
+            )
+            resolution_receipt.write_text(
+                json.dumps(plan, sort_keys=True, separators=(",", ":")) + "\n",
+                encoding="utf-8",
             )
             cast = {
-                "schemaVersion": 1,
+                "schemaVersion": 2,
                 "slug": "fixture-ensemble",
-                "chapterCount": 3,
-                "defaultVoice": "bf_emma",
-                "chapters": cast_chapters,
-                "voicePlanSHA256": plan["voicePlanSHA256"],
-                "voicePlanID": plan["voicePlanID"],
+                "narrationMode": "block",
+                "sourceEPUBSHA256": source_epub_sha256,
+                "defaultSpeakerID": "narrator",
+                "speakers": speakers,
+                "authoredVoicePlan": {
+                    "fileName": authored_plan.name,
+                    "sha256": sha256(authored_plan),
+                },
+                "resolvedVoicePlan": None,
                 "verifiedArtifacts": None,
             }
             self.assertEqual(
-                plan,
-                fiction_voice_preferences.validate_cast(
-                    cast, fiction_voice_preferences.initial_preferences()
+                cast,
+                fiction_voice_preferences.validate_block_cast(
+                    cast,
+                    authored_plan,
+                    fiction_voice_preferences.initial_preferences(),
                 ),
             )
             cast_path = narration / "voice-cast.json"
@@ -248,15 +294,64 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             input_receipt = narration / f"echo-render-inputs-{run_id}.env"
             input_receipt.write_text(
                 "voice=bf_emma\n"
-                "chapter_voices=1=bf_emma,2=am_michael,3=af_bella\n"
+                "chapter_voices=\n"
+                "voice_plan_mode=block\n"
                 f"voice_plan_sha256={plan['voicePlanSHA256']}\n"
-                f"voice_plan_id={plan['voicePlanID']}\n",
+                f"voice_plan_id={plan['voicePlanID']}\n"
+                f"voice_plan_block_count={plan['blockCount']}\n"
+                f"voice_plan_canonical_path={canonical_plan}\n"
+                f"voice_plan_canonical_sha256={sha256(canonical_plan)}\n"
+                f"voice_plan_resolution_path={resolution_receipt}\n"
+                f"voice_plan_resolution_sha256={sha256(resolution_receipt)}\n",
                 encoding="utf-8",
+            )
+            audit = narration / "fixture-ensemble.pronunciation-audit.json"
+            reel = (
+                narration
+                / "listening"
+                / run_id
+                / attempt_id
+                / "fixture-ensemble.pronunciation-reel.m4a"
+            )
+            reel.parent.mkdir(parents=True)
+            reel.write_bytes(b"fixture internal listening reel")
+            capture = narration / f"audio-work-{run_id}" / ".anchors-ch1.json"
+            capture.parent.mkdir()
+            write_json(
+                capture,
+                {
+                    "schemaVersion": 2,
+                    "identity": {
+                        "schemaVersion": 2,
+                        "voicePlanSHA256": plan["voicePlanSHA256"],
+                        "chapterVoicePlanSHA256": "c" * 64,
+                    },
+                },
+            )
+            write_json(
+                audit,
+                {
+                    "schemaVersion": 7,
+                    "renderVersion": 12,
+                    "voice": "mixed",
+                    "chapterVoices": {},
+                    "voicePlanSHA256": plan["voicePlanSHA256"],
+                    "blockVoices": {"s2-b3": "am_michael"},
+                    "coverage": "complete",
+                    "legacyChapterIndexes": [],
+                    "audiobookFileName": final_m4b.name,
+                    "audiobookSHA256": sha256(final_m4b),
+                    "listeningReelFileName": reel.name,
+                    "listeningReelSHA256": sha256(reel),
+                    "watchCounts": {},
+                    "decisions": [],
+                    "diagnostics": [],
+                },
             )
             write_json(
                 success_receipt,
                 {
-                    "schemaVersion": 3,
+                    "schemaVersion": 4,
                     **renderer_identity,
                     "attemptID": attempt_id,
                     "runID": run_id,
@@ -272,8 +367,21 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                     "audiobookSHA256": sha256(final_m4b),
                     "sidecarFileName": sidecar.name,
                     "sidecarSHA256": sha256(sidecar),
-                    "auditFileName": "fixture-ensemble.pronunciation-audit.json",
-                    "auditSHA256": "b" * 64,
+                    "auditFileName": audit.name,
+                    "auditSHA256": sha256(audit),
+                    "reelFileName": reel.name,
+                    "reelRelativePath": (
+                        f"listening/{run_id}/{attempt_id}/{reel.name}"
+                    ),
+                    "reelSHA256": sha256(reel),
+                    "voicePlanMode": "block",
+                    "voicePlanID": plan["voicePlanID"],
+                    "voicePlanSHA256": plan["voicePlanSHA256"],
+                    "voicePlanBlockCount": plan["blockCount"],
+                    "voicePlanCanonicalFileName": canonical_plan.name,
+                    "voicePlanCanonicalSHA256": sha256(canonical_plan),
+                    "voicePlanResolutionFileName": resolution_receipt.name,
+                    "voicePlanResolutionSHA256": sha256(resolution_receipt),
                 },
             )
 
@@ -295,18 +403,34 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                 "voicePlanSHA256": plan["voicePlanSHA256"],
             }
             self.assertEqual(expected_verified, verified_cast["verifiedArtifacts"])
+            self.assertEqual(plan, verified_cast["resolvedVoicePlan"])
+            self.assertEqual(
+                plan,
+                fiction_voice_preferences.validate_completed_cast(
+                    verified_cast, cast_path=cast_path
+                ),
+            )
             persisted_preferences = fiction_voice_preferences.load_preferences(
                 preferences_path
             )
             self.assertEqual(saved_preferences, persisted_preferences)
             self.assertEqual(1, len(persisted_preferences["uses"]))
             self.assertEqual(
-                [
-                    {"chapter": 1, "voice": "bf_emma"},
-                    {"chapter": 2, "voice": "am_michael"},
-                    {"chapter": 3, "voice": "af_bella"},
-                ],
-                persisted_preferences["uses"][0]["chapters"],
+                {
+                    "slug": "fixture-ensemble",
+                    "recordedAt": "2026-08-08T14:00:00+00:00",
+                    "sourceEPUBSHA256": sha256(built_epub),
+                    "audiobookSHA256": sha256(final_m4b),
+                    "sidecarSHA256": sha256(sidecar),
+                    "voicePlanSHA256": plan["voicePlanSHA256"],
+                    "successReceiptSHA256": sha256(success_receipt),
+                    "narrationMode": "block",
+                    "speakers": [
+                        {"speakerID": row["speakerID"], "voice": row["voiceID"]}
+                        for row in speakers
+                    ],
+                },
+                persisted_preferences["uses"][0],
             )
             assert_fiction_receipt_unchanged()
 
@@ -333,17 +457,22 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                 fiction_receipt,
                 evidence["revisionReview"],
                 evidence["proseQC"],
+                audit,
             ):
                 shutil.copy2(path, production / "checks" / path.name)
-            shutil.copy2(cast_path, production / "narration" / cast_path.name)
-            shutil.copy2(
+            for path in (
+                cast_path,
+                authored_plan,
+                canonical_plan,
+                resolution_receipt,
                 input_receipt,
-                production / "narration" / input_receipt.name,
-            )
-            shutil.copy2(
                 success_receipt,
-                production / "narration" / success_receipt.name,
-            )
+            ):
+                shutil.copy2(path, production / "narration" / path.name)
+            for path in (reel, capture):
+                destination = production / "narration" / path.relative_to(narration)
+                destination.parent.mkdir(parents=True)
+                shutil.copy2(path, destination)
             shutil.copy2(portrait_cover, production / "covers/cover.png")
             shutil.copy2(square_cover, production / "covers/m4b-cover.png")
             expected_source_bytes = {
@@ -358,11 +487,17 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                 "fiction-production-receipt.json": original_fiction_receipt,
                 "full-manuscript-review.md": evidence["revisionReview"].read_bytes(),
                 "full-prose-qc.md": evidence["proseQC"].read_bytes(),
+                audit.name: audit.read_bytes(),
             }
             expected_narration_bytes = {
                 "voice-cast.json": cast_path.read_bytes(),
+                authored_plan.name: authored_plan.read_bytes(),
+                canonical_plan.name: canonical_plan.read_bytes(),
+                resolution_receipt.name: resolution_receipt.read_bytes(),
                 input_receipt.name: input_receipt.read_bytes(),
                 success_receipt.name: success_receipt.read_bytes(),
+                reel.relative_to(narration).as_posix(): reel.read_bytes(),
+                capture.relative_to(narration).as_posix(): capture.read_bytes(),
             }
             expected_cover_bytes = {
                 "cover.png": portrait_cover.read_bytes(),
@@ -380,7 +515,7 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             )
             self.assertEqual(
                 expected_narration_bytes,
-                flat_file_bytes(production / "narration"),
+                tree_file_bytes(production / "narration"),
             )
             self.assertEqual(
                 expected_cover_bytes, flat_file_bytes(production / "covers")
@@ -448,7 +583,7 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             )
             self.assertEqual(
                 expected_narration_bytes,
-                flat_file_bytes(staged_production / "narration"),
+                tree_file_bytes(staged_production / "narration"),
             )
             self.assertEqual(
                 expected_cover_bytes,
