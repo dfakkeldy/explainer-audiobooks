@@ -473,9 +473,9 @@ marker = dict(payload)
 marker["identity"] = identity
 (work / ".anchors-ch0.json").write_text(json.dumps(marker, sort_keys=True, separators=(",", ":")))
 out.write_bytes(b"fixture audiobook bytes")
-sidecar.write_text("{}\\n")
 words = ("able", "arithmetic", "available", "campbell", "comfortable", "content", "deepmind", "deepmind's", "fakkeldy", "filesystem", "lifecycle", "live", "lives", "pictou", "possible", "re", "read", "readme", "record", "reliable", "resume", "resumes", "résumé", "résumés", "stable", "startable", "super", "supercomputer", "supercomputers", "superforecasters", "superhuman", "superimposed", "superintelligence", "supernatural", "superposition", "supervised", "supervising", "table", "timeframe", "unsupervised", "validator", "validators", "verified", "xcassets", "xcode")
 if resolved_plan is None:
+    sidecar.write_text("{}\\n")
     audit = {
         "schemaVersion": 6, "renderVersion": __RENDER_VERSION__, "voice": voice,
         "chapterVoices": {"0": voice}, "coverage": "complete",
@@ -484,10 +484,18 @@ if resolved_plan is None:
         "audiobookSHA256": hashlib.sha256(out.read_bytes()).hexdigest(),
     }
 else:
+    sidecar.write_text('[{"blockId":"s2-b3","timestamp":0}]\\n')
+    block_count = int(resolved_plan["blockCount"])
+    block_voices = {
+        "s2-b3": "bf_emma",
+        "s2-b4": "am_michael",
+        "s2-b5": "bm_george",
+    }
+    block_voices = dict(list(block_voices.items())[:block_count])
     audit = {
         "schemaVersion": 7, "renderVersion": __RENDER_VERSION__, "voice": "mixed",
         "chapterVoices": {}, "voicePlanSHA256": resolved_plan["voicePlanSHA256"],
-        "blockVoices": {"s2-b3": "bf_emma", "s2-b4": "am_michael"},
+        "blockVoices": block_voices,
         "coverage": "complete", "watchCounts": {word: 0 for word in words},
         "decisions": [], "diagnostics": [], "legacyChapterIndexes": [],
         "audiobookFileName": out.name,
@@ -552,6 +560,19 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "  echo 'resolve-voice-plan --epub --voice-plan'\n"
             "elif [[ ${1:-} == export-blocks && ${2:-} == --help ]]; then\n"
             "  echo 'export-blocks --epub'\n"
+            "elif [[ ${1:-} == export-blocks ]]; then\n"
+            "  epub= out=\n"
+            "  shift\n"
+            "  while (( $# )); do\n"
+            "    case \"$1\" in\n"
+            "      --epub) epub=$2; shift 2 ;;\n"
+            "      --out) out=$2; shift 2 ;;\n"
+            "      *) exit 64 ;;\n"
+            "    esac\n"
+            "  done\n"
+            "  [[ -n $epub && -n $out ]] || exit 64\n"
+            "  source_sha=$(/usr/bin/shasum -a 256 \"$epub\" | awk '{print $1}')\n"
+            "  printf '{\\\"version\\\":1,\\\"source\\\":{\\\"epubSHA256\\\":\\\"%s\\\"},\\\"blocks\\\":[{\\\"id\\\":\\\"s2-b3\\\"},{\\\"id\\\":\\\"s2-b4\\\"},{\\\"id\\\":\\\"s2-b5\\\"}]}\\n' \"$source_sha\" >\"$out\"\n"
             "elif [[ ${1:-} == resolve-voice-plan ]]; then\n"
             "  epub= plan=\n"
             "  shift\n"
@@ -581,7 +602,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "  else\n"
             "    plan_sha=$(printf '%064d' 0 | tr 0 b)\n"
             "  fi\n"
-            "  printf '{\\\"blockCount\\\":2,\\\"defaultVoice\\\":\\\"am_michael\\\",\\\"sourceEPUBSHA256\\\":\\\"%s\\\",\\\"voicePlanID\\\":\\\"plan-%s\\\",\\\"voicePlanSHA256\\\":\\\"%s\\\"}\\n' \"$source_sha\" \"${plan_sha:0:12}\" \"$plan_sha\"\n"
+            "  block_count=2\n"
+            "  /usr/bin/grep -q '\"range\"' \"$plan\" && block_count=3\n"
+            "  printf '{\\\"blockCount\\\":%s,\\\"defaultVoice\\\":\\\"am_michael\\\",\\\"sourceEPUBSHA256\\\":\\\"%s\\\",\\\"voicePlanID\\\":\\\"plan-%s\\\",\\\"voicePlanSHA256\\\":\\\"%s\\\"}\\n' \"$block_count\" \"$source_sha\" \"${plan_sha:0:12}\" \"$plan_sha\"\n"
             "elif [[ ${1:-} == verify-sidecar ]]; then\n"
             "  if [[ ${2:-} == --help ]]; then echo 'verify-sidecar'; exit 0; fi\n"
             "  if [[ -n ${FAKE_TAMPER_RESUME_STATE_ON_VERIFY:-} ]]; then\n"
@@ -597,9 +620,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "  if [[ -n ${FAKE_NARRATE_LOG:-} ]]; then\n"
             '    printf \'BEGIN=%s\\n\' "$BASHPID" >>"$FAKE_NARRATE_LOG"\n'
             '    printf \'ARG=%s\\n\' "$@" >>"$FAKE_NARRATE_LOG"\n'
-            '    printf \'ENV=RUN_ID=%s INPUT_RECEIPT=%s STATE_RECEIPT=%s ARTIFACT_ROOT=%s\\n\' '
+            '    printf \'ENV=RUN_ID=%s INPUT_RECEIPT=%s STATE_RECEIPT=%s ARTIFACT_ROOT=%s VOICE=%s\\n\' '
             '"${RUN_ID-<unset>}" "${ECHO_RENDER_INPUT_RECEIPT-<unset>}" '
-            '"${STATE_RECEIPT-<unset>}" "${ARTIFACT_ROOT-<unset>}" >>"$FAKE_NARRATE_LOG"\n'
+            '"${STATE_RECEIPT-<unset>}" "${ARTIFACT_ROOT-<unset>}" "${VOICE-<unset>}" >>"$FAKE_NARRATE_LOG"\n'
             "  fi\n"
             "  work= db= out= sidecar= epub= voice= chapter_voice= voice_plan=\n"
             "  while (( $# )); do\n"
@@ -2282,6 +2305,127 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 self.assertNotEqual(0, rejected.returncode)
                 self.assertIn("block attempt contains", rejected.stderr)
                 leaked.unlink()
+
+    def test_block_delivery_evidence_comes_from_accepted_receipts_not_voice_env(
+        self,
+    ) -> None:
+        """The post-render reader must surface sealed block facts as env0."""
+        plan = self.write_block_voice_plan("delivery-evidence-plan.json")
+        environment = self.environment()
+        environment.pop("VOICE")
+        narrate_log = self.tmp / "delivery-evidence-narrate.log"
+        environment.update(
+            {"FAKE_EMIT_REEL": "1", "FAKE_NARRATE_LOG": str(narrate_log)}
+        )
+        self.assertNotIn("VOICE", environment)
+
+        rendered = self.run_narrate("--voice-plan", str(plan), environment=environment)
+        self.assertEqual(0, rendered.returncode, rendered.stderr)
+        self.assertIn(
+            "VOICE=am_michael",
+            next(
+                line
+                for line in narrate_log.read_text(encoding="utf-8").splitlines()
+                if line.startswith("ENV=")
+            ),
+        )
+        inherited_voice = self.environment()
+        inherited_voice["VOICE"] = "af_heart"
+        rejected = self.run_narrate(
+            "--voice-plan", str(plan), environment=inherited_voice
+        )
+        self.assertEqual(64, rejected.returncode, rejected.stderr)
+        self.assertIn("block-plan default voice", rejected.stderr)
+
+        research = self.run_root / "research"
+        selector = research / "echo-render-current-accepted.json"
+        accepted = json.loads(selector.read_text(encoding="utf-8"))
+        receipt = research / accepted["successReceiptFileName"]
+        input_receipt = research / accepted["inputReceiptFileName"]
+        command = [
+            "/usr/local/bin/python3",
+            str(STATE_HELPER),
+            "block-delivery-evidence",
+            "--attempt",
+            str(research / "echo-render-current-attempt.json"),
+            "--selector",
+            str(selector),
+            "--receipt",
+            str(receipt),
+            "--input-receipt",
+            str(input_receipt),
+            "--format",
+            "env0",
+        ]
+        derived = subprocess.run(command, capture_output=True, check=False)
+        self.assertEqual(0, derived.returncode, derived.stderr.decode())
+        fields = dict(
+            token.decode("utf-8").split("=", 1)
+            for token in derived.stdout.split(b"\0")
+            if token
+        )
+        success = json.loads(receipt.read_text(encoding="utf-8"))
+        self.assertEqual("block", fields["voice_plan_mode"])
+        self.assertEqual(success["reelRelativePath"], fields["reel_relative_path"])
+        self.assertEqual(success["voicePlanSHA256"], fields["voice_plan_sha256"])
+        self.assertEqual(
+            str(success["voicePlanBlockCount"]), fields["voice_plan_block_count"]
+        )
+        self.assertEqual("am_michael", fields["voice"])
+
+        artifact_root = self.run_root / "dist" / accepted["artifactRelativePath"]
+        reel = research / fields["reel_relative_path"]
+        delivered = subprocess.run(
+            [
+                "/usr/local/bin/python3",
+                str(STATE_HELPER),
+                "verify-delivery",
+                "--attempt",
+                str(research / "echo-render-current-attempt.json"),
+                "--selector",
+                str(selector),
+                "--receipt",
+                str(receipt),
+                "--input-receipt",
+                str(input_receipt),
+                "--state-receipt",
+                str(research / f"echo-resume-state-{accepted['runID']}.json"),
+                "--epub",
+                str(self.run_root / "dist" / "fixture.epub"),
+                "--audiobook",
+                str(artifact_root / "fixture.m4b"),
+                "--sidecar",
+                str(artifact_root / "fixture.alignment.json"),
+                "--audit",
+                str(artifact_root / "fixture.pronunciation-audit.json"),
+                "--reel",
+                str(reel),
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, delivered.returncode, delivered.stderr)
+        audited = subprocess.run(
+            [
+                "/usr/local/bin/python3",
+                str(AUDIT_VALIDATOR),
+                str(artifact_root / "fixture.pronunciation-audit.json"),
+                "--audiobook",
+                str(artifact_root / "fixture.m4b"),
+                "--reel",
+                str(reel),
+                "--voice-plan-sha256",
+                fields["voice_plan_sha256"],
+                "--block-count",
+                fields["voice_plan_block_count"],
+            ],
+            env=environment,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, audited.returncode, audited.stderr)
 
     def test_block_resume_reuses_only_the_same_resolved_plan_identity(self) -> None:
         compact = self.write_block_voice_plan("resume-compact-plan.json")

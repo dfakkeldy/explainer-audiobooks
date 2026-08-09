@@ -1410,19 +1410,6 @@ def validate_block_echo_success_receipt(
     plan_id = receipt.get("voicePlanID")
     if not isinstance(plan_id, str) or plan_id != f"plan-{plan_hash[:12]}":
         raise ValueError("Echo voice-plan identity does not bind its hash")
-    source_hash = _sha256(
-        receipt.get("sourceEPUBSHA256"), "Echo source EPUB SHA-256"
-    )
-    expected_run_id = (
-        f"{source_hash[:12]}-{receipt['echoCLI_SHA256'][:12]}-"
-        f"{receipt['echoResourcesSHA256'][:12]}-"
-        f"{receipt['rendererManifestSHA256'][:12]}-"
-        f"{receipt['echoSourceSHA']}-{plan_id}"
-    )
-    if run_id != expected_run_id:
-        raise ValueError(
-            "Echo success receipt runID does not match source EPUB, renderer provenance, and resolved voice plan"
-        )
     receipt_path = Path(receipt_path)
     authored = _require_dict(cast.get("authoredVoicePlan"), "authored voice plan")
     authored_filename = _filename(
@@ -1556,6 +1543,23 @@ def validate_block_echo_success_receipt(
             raise ValueError(
                 f"Echo input receipt {input_labels[key]} differs from sealed block evidence"
             )
+    # Block runs intentionally use Echo's collision-free operational component:
+    # ``plan-<full resolved SHA-256>``.  ``voicePlanID`` remains the short,
+    # human-facing display identity and must not reconstruct a block RUN_ID.
+    run_voice_identity = f"plan-{resolved['voicePlanSHA256']}"
+    source_hash = _sha256(
+        receipt.get("sourceEPUBSHA256"), "Echo source EPUB SHA-256"
+    )
+    expected_run_id = (
+        f"{source_hash[:12]}-{receipt['echoCLI_SHA256'][:12]}-"
+        f"{receipt['echoResourcesSHA256'][:12]}-"
+        f"{receipt['rendererManifestSHA256'][:12]}-"
+        f"{receipt['echoSourceSHA']}-{run_voice_identity}"
+    )
+    if run_id != expected_run_id:
+        raise ValueError(
+            "Echo success receipt runID does not match source EPUB, renderer provenance, and resolved voice plan"
+        )
     if allow_relocated_evidence:
         _validate_relocated_block_evidence_paths(
             fields, canonical_path, resolution_path, receipt_path

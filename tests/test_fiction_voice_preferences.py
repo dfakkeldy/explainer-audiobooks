@@ -149,7 +149,10 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         return epub, m4b, sidecar, receipt
 
     def write_block_fixture(
-        self, *, unfamiliar_assignments: bool = False
+        self,
+        *,
+        unfamiliar_assignments: bool = False,
+        run_voice_identity: str | None = None,
     ) -> dict[str, object]:
         """Create one source-bound schema-2 cast and Echo schema-4 receipt chain."""
         narration = self.root / "narration"
@@ -242,11 +245,12 @@ class FictionVoicePreferencesTests(unittest.TestCase):
             "modelExpectedByteCount": 123456,
             "modelBytesAttested": False,
         }
+        run_voice_identity = run_voice_identity or f"plan-{resolved_sha256}"
         run_id = (
             f"{source_sha256[:12]}-{renderer['echoCLI_SHA256'][:12]}-"
             f"{renderer['echoResourcesSHA256'][:12]}-"
             f"{renderer['rendererManifestSHA256'][:12]}-"
-            f"{renderer['echoSourceSHA']}-{resolved['voicePlanID']}"
+            f"{renderer['echoSourceSHA']}-{run_voice_identity}"
         )
         attempt_id = "7" * 64
         input_receipt = narration / f"echo-render-inputs-{run_id}.env"
@@ -647,6 +651,35 @@ class FictionVoicePreferencesTests(unittest.TestCase):
             self.preferences_path,
         )
         self.assertEqual(1, len(retried["uses"]))
+
+    def test_block_record_use_accepts_the_full_resolved_plan_run_component(self) -> None:
+        """Block runs use the full resolved-plan SHA, not the display ID."""
+        resolved_sha256 = "b" * 64
+        fixture = self.write_block_fixture(
+            run_voice_identity=f"plan-{resolved_sha256}"
+        )
+        cast_path = fixture["cast_path"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success, Path)
+
+        saved = module.record_use(
+            cast_path,
+            epub,
+            m4b,
+            sidecar,
+            success,
+            "2026-08-09T12:00:00+00:00",
+            self.preferences_path,
+        )
+
+        self.assertEqual("block", saved["uses"][0]["narrationMode"])
 
     def test_block_record_use_rejects_plan_and_receipt_agreement_drift(self) -> None:
         fixture = self.write_block_fixture()

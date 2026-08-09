@@ -474,39 +474,24 @@ class EchoNarrationContractTests(unittest.TestCase):
             with self.subTest(stale_marker=stale_marker):
                 self.assertNotIn(stale_marker, normalized)
 
-    def test_fiction_block_runbook_uses_one_leased_installed_source_plan(self) -> None:
-        """Keep the user-facing block workflow aligned with wrapper boundaries."""
+    def test_fiction_block_runbook_names_executable_boundaries(self) -> None:
+        """Keep only operator-visible command and artifact boundaries in prose."""
         heading = "## Fiction source-bound block voices"
         self.assertIn(heading, self.narrating)
         if heading not in self.narrating:
             return
         section = self.narrating.split(heading, 1)[1]
-        section = section.split("## Resuming and partial renders", 1)[0]
-        for marker in (
-            "echo-block-inventory-$EPUB_SHA256.json",
-            "resolve-new --source-sha APPROVED_ECHO_PRONUNCIATION_SHA --format env0",
-            "echo_installed_renderer.py",
-            "echo_pronunciation_resolve_installed_renderer 0",
-            "echo_pronunciation_attest_renderer",
-            '--lock-root "$CANONICAL_LEASE_ROOT"',
-            '--resource "$ECHO_RENDERER_BUILD_ROOT"',
+        section = section.split("## Chapter-mode resuming and partial renders", 1)[0]
+        for boundary in (
+            'INVENTORY="$RUN_ROOT/research/echo-block-inventory-$EPUB_SHA256.json"',
+            '"$LEASE_HELPER" --lock-root "$CANONICAL_LEASE_ROOT"',
+            '--resource "$ECHO_RENDERER_BUILD_ROOT" --',
             '"ECHO_RESOURCE_DIR=$ECHO_RESOURCE_DIR"',
             '"$CLI" export-blocks --epub "$EPUB" --out "$INVENTORY"',
-            "It receives no\nvoice plan",
-            "{version, source, blocks}",
-            "has no speaker field",
-            "resolve-voice-plan",
-            "VOICE_ARGUMENTS=()",
-            '"${VOICE_ARGUMENTS[@]}"',
-            "do not export `VOICE`",
-            "schema-2 captures",
-            "schema-4 success",
-            "schema-7 pronunciation audit",
-            "_production/narration/",
-            "one M4B",
+            '"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}"',
         ):
-            with self.subTest(marker=marker):
-                self.assertIn(marker, section)
+            with self.subTest(boundary=boundary):
+                self.assertIn(boundary, section)
 
         installed_resolver = (
             ROOT
@@ -519,6 +504,43 @@ class EchoNarrationContractTests(unittest.TestCase):
             'REEL="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID/',
             self.narrate_wrapper,
         )
+
+    def test_block_runbook_uses_sealed_delivery_evidence_and_schema7_argv(self) -> None:
+        """The operator command must not depend on a wrapper-child variable."""
+        heading = "## Audio verification"
+        self.assertIn(heading, self.narrating)
+        section = self.narrating.split(heading, 1)[1]
+        for boundary in (
+            '"$STATE_HELPER" \\\n  block-delivery-evidence',
+            "--format env0",
+            'VOICE_PLAN_MODE',
+            'REEL_RELATIVE_PATH',
+            'VOICE_PLAN_SHA256',
+            'VOICE_PLAN_BLOCK_COUNT',
+            '--audiobook "$AUDIOBOOK"',
+            '--reel "$REEL"',
+            '--voice-plan-sha256 "$VOICE_PLAN_SHA256"',
+            '--block-count "$VOICE_PLAN_BLOCK_COUNT"',
+        ):
+            with self.subTest(boundary=boundary):
+                self.assertIn(boundary, section)
+        self.assertNotIn('${VOICE_PLAN_MODE:-chapter}', section)
+
+    def test_resume_and_delivery_steps_keep_block_vectors_and_gate_order(self) -> None:
+        """Mode-specific command lines must not silently drop the block plan."""
+        self.assertIn("## Chapter-mode resuming and partial renders", self.narrating)
+        fiction = self.narrating.split("## Fiction source-bound block voices", 1)[1]
+        resume = fiction.split("## Chapter-mode resuming and partial renders", 1)[0]
+        self.assertIn('"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}"', resume)
+
+        fiction_skill = (
+            ROOT / "skills" / "fiction-audiobook" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        evidence = fiction_skill.index("Materialize the current `_production` evidence")
+        staging = fiction_skill.index("stage_echo_delivery.py")
+        github = fiction_skill.index("GitHub only after successful iCloud staging")
+        self.assertLess(evidence, staging)
+        self.assertLess(staging, github)
 
     def test_narrate_wrapper_uses_shared_preflight_functions_without_local_copies(
         self,

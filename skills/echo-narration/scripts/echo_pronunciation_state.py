@@ -1602,6 +1602,17 @@ def verify_delivery_receipt(
     block_delivery = not historical and payload.get("schemaVersion") == 4
     if block_delivery:
         require_block_success_receipt(payload, "render-success receipt")
+    # A post-render operator has the accepted receipt chain, not the child
+    # wrapper environment.  For a current chain, safely derive the renderer
+    # identity and selected default voice from those sealed inputs when callers
+    # do not explicitly supply them.  Explicit values remain cross-checked
+    # below, so this does not relax the governed boundary.
+    if not historical and installed_renderer is None:
+        installed_renderer = renderer_identity_from_payload(
+            payload, "render-success receipt"
+        )
+    if not historical and voice is None:
+        voice = input_receipt_value(input_receipt, "voice")
     require(
         historical or installed_renderer is not None,
         "current delivery verification requires installed renderer identity",
@@ -1779,6 +1790,88 @@ def verify_delivery_receipt(
         )
 
 
+def block_delivery_evidence(
+    attempt_receipt: Path,
+    selector: Path,
+    receipt: Path,
+    input_receipt: Path,
+) -> dict[str, str]:
+    """Read post-render block facts from the accepted, sealed receipt chain.
+
+    This intentionally emits only facts that the runbook needs to locate and
+    validate a completed block delivery.  It does not consult the wrapper's
+    already-exited environment or reconstruct a plan from its short display ID.
+    """
+
+    attempt = json_object(attempt_receipt, "current-attempt receipt")
+    accepted = json_object(selector, "current-accepted selector")
+    success = json_object(receipt, "render-success receipt")
+    require(
+        attempt.get("schemaVersion") == 2,
+        "current-attempt receipt schema must be 2 for block delivery",
+    )
+    require_block_success_receipt(success, "render-success receipt")
+    renderer = renderer_identity_from_payload(success, "render-success receipt")
+    require(
+        canonical_json(accepted)
+        == canonical_json(
+            accepted_selector_snapshot(attempt_receipt, receipt, renderer)
+        ),
+        "current-accepted selector does not match current attempt and render success",
+    )
+    regular_file(input_receipt, "render-input receipt")
+    require(
+        input_receipt.name == success.get("inputReceiptFileName"),
+        "render-input receipt filename differs from render-success receipt",
+    )
+    require(
+        sha256(input_receipt) == success.get("inputReceiptSHA256"),
+        "render-input receipt SHA-256 differs from render-success receipt",
+    )
+    require_block_plan_matches_input_receipt(
+        success, input_receipt, "render-success receipt"
+    )
+    voice = input_receipt_value(input_receipt, "voice")
+    require(voice in VOICE_IDS, "render-input receipt has an unapproved voice")
+    plan_sha = required_string(
+        success, "voicePlanSHA256", "render-success receipt"
+    )
+    require(
+        current_run_voice_identity(input_receipt) == f"plan-{plan_sha}",
+        "render-input receipt does not use the current block run identity",
+    )
+    reel_relative_path = required_string(
+        success, "reelRelativePath", "render-success receipt"
+    )
+    block_count = success.get("voicePlanBlockCount")
+    require(
+        type(block_count) is int and block_count > 0,
+        "render-success receipt has an invalid voicePlanBlockCount",
+    )
+    return {
+        "voice_plan_mode": "block",
+        "reel_relative_path": reel_relative_path,
+        "voice_plan_sha256": plan_sha,
+        "voice_plan_block_count": str(block_count),
+        "voice": voice,
+    }
+
+
+def write_env0(values: dict[str, str]) -> None:
+    """Write a small fixed key/value record without shell evaluation."""
+
+    for key in (
+        "voice_plan_mode",
+        "reel_relative_path",
+        "voice_plan_sha256",
+        "voice_plan_block_count",
+        "voice",
+    ):
+        value = values[key]
+        require("\0" not in key and "\0" not in value, "env0 value contains NUL")
+        sys.stdout.buffer.write(f"{key}={value}".encode("utf-8") + b"\0")
+
+
 def add_renderer_arguments(
     command: argparse.ArgumentParser, *, required: bool
 ) -> None:
@@ -1887,6 +1980,12 @@ def parser() -> argparse.ArgumentParser:
     delivery.add_argument("--audit", type=Path, required=True)
     delivery.add_argument("--reel", type=Path, required=True)
     delivery.add_argument("--voice")
+    block_evidence = commands.add_parser("block-delivery-evidence")
+    block_evidence.add_argument("--attempt", type=Path, required=True)
+    block_evidence.add_argument("--selector", type=Path, required=True)
+    block_evidence.add_argument("--receipt", type=Path, required=True)
+    block_evidence.add_argument("--input-receipt", type=Path, required=True)
+    block_evidence.add_argument("--format", choices=("env0",), required=True)
     return root
 
 
@@ -2051,6 +2150,15 @@ def main(arguments: list[str]) -> int:
                 options.reel,
                 installed_renderer,
                 options.voice,
+            )
+        elif options.command == "block-delivery-evidence":
+            write_env0(
+                block_delivery_evidence(
+                    options.attempt,
+                    options.selector,
+                    options.receipt,
+                    options.input_receipt,
+                )
             )
         return 0
     except (OSError, StateError, json.JSONDecodeError) as error:

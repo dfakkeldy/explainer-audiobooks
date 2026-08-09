@@ -298,6 +298,41 @@ resume-state path:
 If the resolved identity changes, start a new run. Never copy captures,
 receipts, a work directory, database, or resume state into it.
 
+### Block-mode resume and partial renders
+
+These commands apply only to a fiction `--voice-plan` render. Keep the exact
+validated argv0 vector on every invocation; a bare resume or partial command
+silently drops the authored plan. For an accepted partial attempt, read the
+canonical resume-state path for its current `RUN_ID`, then use:
+
+```bash
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
+  --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
+```
+
+For a deliberately one-block/chapter probe, preserve that same vector on both
+the first partial call and its continuation:
+
+```bash
+set +e
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" --max-chapters 1
+rc=$?
+set -e
+[[ "$rc" == 2 ]]
+
+set +e
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
+  --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json" \
+  --max-chapters 1
+rc=$?
+set -e
+[[ "$rc" == 2 ]]
+```
+
+If a plan edit resolves to a different identity, do not resume: let the
+wrapper create the new run and retain the earlier chain without reusing any
+captures or state.
+
 ### Fiction block evidence
 
 For a completed block run, require schema-2 captures, a schema-4 success
@@ -308,7 +343,11 @@ package files. A completed selector resolves one M4B and one delivered
 alignment sidecar. Automated block/audit checks do not complete human reading
 or listening.
 
-## Resuming and partial renders
+## Chapter-mode resuming and partial renders
+
+This entire section is for the default/chapter-voice procedure only. Fiction
+block renders use the preceding argv0-vector commands and never borrow the
+bare examples below.
 
 Use a fresh `--work-dir` and `--db` whenever the source EPUB changes or the
 Release CLI binary or Echo source revision changes. Permit `--resume` only for
@@ -403,8 +442,117 @@ the sidecar against the exact EPUB and audio bytes and must report
 
 ## Audio verification
 
-After a render completes, resolve the accepted artifacts from the current
-selector, then verify them before treating the render as done:
+### Block-mode verification
+
+For a completed fiction block run, derive the mode, sealed internal reel path,
+resolved-plan SHA-256, and block count from the accepted schema-4 success/input
+receipt chain. They are not shell variables exported by the wrapper's child
+process. The state reader below rejects a non-current selector, a non-block
+success receipt, duplicate/altered receipt JSON, mismatched input bytes, or
+plan evidence that does not bind the input receipt.
+
+```bash
+ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
+CURRENT_SELECTOR="$RUN_ROOT/research/echo-render-current-accepted.json"
+selector_value() {
+  /usr/local/bin/python3 - "$CURRENT_SELECTOR" "$1" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as source:
+    value = json.load(source).get(sys.argv[2])
+if not isinstance(value, str) or not value:
+    raise SystemExit(f"missing selector string: {sys.argv[2]}")
+print(value)
+PY
+}
+RUN_ID=$(selector_value runID)
+ATTEMPT_ID=$(selector_value attemptID)
+ARTIFACT_RELATIVE_PATH=$(selector_value artifactRelativePath)
+INPUT_RECEIPT_NAME=$(selector_value inputReceiptFileName)
+SUCCESS_RECEIPT_NAME=$(selector_value successReceiptFileName)
+STATE_RECEIPT_NAME="echo-resume-state-$RUN_ID.json"
+STATE_HELPER="$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_state.py"
+INPUT_RECEIPT="$RUN_ROOT/research/$INPUT_RECEIPT_NAME"
+SUCCESS_RECEIPT="$RUN_ROOT/research/$SUCCESS_RECEIPT_NAME"
+STATE_RECEIPT="$RUN_ROOT/research/$STATE_RECEIPT_NAME"
+
+BLOCK_EVIDENCE=$(mktemp /tmp/echo-block-delivery.XXXXXX)
+trap 'rm -f -- "$BLOCK_EVIDENCE"' EXIT
+/usr/local/bin/python3 "$STATE_HELPER" \
+  block-delivery-evidence \
+  --attempt "$ATTEMPT_RECEIPT" \
+  --selector "$CURRENT_SELECTOR" \
+  --receipt "$SUCCESS_RECEIPT" \
+  --input-receipt "$INPUT_RECEIPT" \
+  --format env0 >"$BLOCK_EVIDENCE"
+
+VOICE_PLAN_MODE= REEL_RELATIVE_PATH= VOICE_PLAN_SHA256=
+VOICE_PLAN_BLOCK_COUNT= SEALED_VOICE=
+mode_count=0 reel_count=0 sha_count=0 count_count=0 voice_count=0
+while IFS='=' read -r -d '' key value; do
+  case "$key" in
+    voice_plan_mode) VOICE_PLAN_MODE=$value; (( mode_count += 1 )) ;;
+    reel_relative_path) REEL_RELATIVE_PATH=$value; (( reel_count += 1 )) ;;
+    voice_plan_sha256) VOICE_PLAN_SHA256=$value; (( sha_count += 1 )) ;;
+    voice_plan_block_count) VOICE_PLAN_BLOCK_COUNT=$value; (( count_count += 1 )) ;;
+    voice) SEALED_VOICE=$value; (( voice_count += 1 )) ;;
+    *) printf 'unknown block delivery evidence key: %s\n' "$key" >&2; exit 65 ;;
+  esac
+done <"$BLOCK_EVIDENCE"
+rm -f -- "$BLOCK_EVIDENCE"
+trap - EXIT
+[[ $mode_count == 1 && $reel_count == 1 && $sha_count == 1 ]]
+[[ $count_count == 1 && $voice_count == 1 && $VOICE_PLAN_MODE == block ]]
+[[ "$VOICE_PLAN_BLOCK_COUNT" =~ ^[1-9][0-9]*$ ]]
+ARTIFACT_ROOT="$DIST/$ARTIFACT_RELATIVE_PATH"
+AUDIOBOOK="$ARTIFACT_ROOT/$SLUG.m4b"
+SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
+AUDIT="$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json"
+REEL="$RUN_ROOT/research/$REEL_RELATIVE_PATH"
+
+/usr/local/bin/python3 "$STATE_HELPER" \
+  verify-delivery \
+  --attempt "$ATTEMPT_RECEIPT" \
+  --selector "$CURRENT_SELECTOR" \
+  --receipt "$SUCCESS_RECEIPT" \
+  --input-receipt "$INPUT_RECEIPT" \
+  --state-receipt "$STATE_RECEIPT" \
+  --epub "$DIST/$SLUG.epub" \
+  --audiobook "$AUDIOBOOK" \
+  --sidecar "$SIDECAR" \
+  --audit "$AUDIT" \
+  --reel "$REEL"
+
+CLI=$(awk -F= '$1 == "echo_cli_path" { print substr($0, index($0, "=") + 1) }' \
+  "$INPUT_RECEIPT")
+ECHO_RESOURCE_DIR=$(awk -F= '$1 == "echo_resource_dir" { print substr($0, index($0, "=") + 1) }' \
+  "$INPUT_RECEIPT")
+export ECHO_RESOURCE_DIR
+"$CLI" verify-sidecar \
+  --epub "$DIST/$SLUG.epub" \
+  --audio "$AUDIOBOOK" \
+  --sidecar "$SIDECAR"
+
+/usr/local/bin/python3 "$EXPLAINER_ROOT/skills/echo-narration/scripts/validate_pronunciation_audit.py" \
+  "$AUDIT" \
+  --audiobook "$AUDIOBOOK" \
+  --reel "$REEL" \
+  --voice-plan-sha256 "$VOICE_PLAN_SHA256" \
+  --block-count "$VOICE_PLAN_BLOCK_COUNT"
+```
+
+Require `SIDECAR_OK` and `pronunciation_audit: clean` before `record-use`.
+The block reader owns the meaning of `SEALED_VOICE`; do not export or replace
+it with a caller-controlled `VOICE`.
+
+### Chapter-mode verification
+
+The following default/chapter-voice procedure is chapter mode only. Do not use
+it for a fiction `--voice-plan` render; use the receipt-derived block
+procedure above instead. After a chapter-mode render completes, resolve the
+accepted artifacts from the current selector, then verify them before treating
+the render as done:
 
 ```bash
 ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
@@ -442,11 +590,7 @@ SUCCESS_RECEIPT="$RUN_ROOT/research/$SUCCESS_RECEIPT_NAME"
 AUDIOBOOK="$ARTIFACT_ROOT/$SLUG.m4b"
 SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
 AUDIT="$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json"
-if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
-  REEL="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID/$SLUG.pronunciation-reel.m4b"
-else
-  REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
-fi
+REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
 
 /usr/local/bin/python3 "$STATE_HELPER" \
   verify-delivery \

@@ -62,7 +62,17 @@ block. Treat each uninterrupted narrator, POV, quoted-character, letter,
 report, or interlude run as one blank-line-delimited Markdown paragraph and
 therefore one XHTML block.
 
-Record one book-wide dialogue-attribution rule and use it consistently:
+Record one book-wide dialogue-attribution rule in the durable slot
+`story-bible.md` under `## Narration attribution convention`, then use it
+consistently. The slot contains exactly one field:
+
+```text
+dialogueAttributionRule: character-owns-complete-block
+```
+
+The only other allowed value is
+`dialogueAttributionRule: attribution-is-separate-narrator-block`. The field
+applies to the whole book, not chapter by chapter:
 
 - The character owns the complete dialogue-and-attribution block; or
 - The attribution is its own narrator block.
@@ -75,6 +85,85 @@ speaker explicitly.
 After final prose and the portrait cover are embedded, hash and freeze the
 EPUB before inventory or casting. Any later EPUB byte change restarts inventory
 and plan authoring.
+
+### Exact pre-render block-voice files
+
+After Echo exports the frozen EPUB inventory, replace the two angle-bracket
+values below with the frozen EPUB SHA-256 and the exact authored-file SHA-256.
+The IDs shown are examples of IDs from that private inventory; use only IDs
+Echo exported for this frozen EPUB. These are closed objects: do not add a
+speaker annotation to an inventory, a resolved-plan field to the authored
+files, or omit either explicit `null`.
+
+#### `echo-voice-plan.json` (schema 1)
+
+```json
+{
+  "schemaVersion": 1,
+  "source": {
+    "epubSHA256": "<SOURCE_EPUB_SHA256>"
+  },
+  "defaultSpeakerID": "narrator",
+  "speakers": [
+    {"id": "narrator", "voiceID": "am_michael"},
+    {"id": "mara", "voiceID": "bf_emma"},
+    {"id": "ivo", "voiceID": "bm_george"}
+  ],
+  "assignments": [
+    {"speakerID": "mara", "blocks": ["s2-b3", "s2-b5"]},
+    {"speakerID": "ivo", "range": {"start": "s3-b1", "end": "s3-b4"}}
+  ]
+}
+```
+
+Each assignment uses exactly one of `blocks` or `range`. The default
+speaker owns all remaining blocks. Echo, not this reference or a local helper,
+checks whether a block exists or is speakable, expands a range, and computes
+the resolved identity.
+
+#### `voice-cast.json` (schema 2)
+
+```json
+{
+  "schemaVersion": 2,
+  "slug": "lighthouse-keeper",
+  "narrationMode": "block",
+  "sourceEPUBSHA256": "<SOURCE_EPUB_SHA256>",
+  "defaultSpeakerID": "narrator",
+  "speakers": [
+    {
+      "speakerID": "narrator",
+      "role": "Narrator",
+      "voiceID": "am_michael",
+      "experimental": false
+    },
+    {
+      "speakerID": "mara",
+      "role": "Mara",
+      "voiceID": "bf_emma",
+      "experimental": false
+    },
+    {
+      "speakerID": "ivo",
+      "role": "Ivo",
+      "voiceID": "bm_george",
+      "experimental": false
+    }
+  ],
+  "authoredVoicePlan": {
+    "fileName": "echo-voice-plan.json",
+    "sha256": "<AUTHORED_PLAN_SHA256>"
+  },
+  "resolvedVoicePlan": null,
+  "verifiedArtifacts": null
+}
+```
+
+Write these siblings at `_production/narration/echo-voice-plan.json` and
+`_production/narration/voice-cast.json`. Before resolution, use
+`validate-cast --voice-plan` against these exact files; its successful argv0
+result proves the local envelope and preferences only. It never assigns a
+speaker, expands a range, or calculates a resolved Echo plan hash.
 
 ## Private receipt
 

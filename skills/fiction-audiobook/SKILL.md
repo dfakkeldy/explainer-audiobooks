@@ -74,8 +74,13 @@ Read `references/express-fiction-craft.md` and
       Require non-null `verifiedArtifacts`.
    9. Set `EDITION_ID=$(date -u +%Y%m%dT%H%M%SZ)` and
       `ICLOUD_TITLE="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Books/$TITLE"`.
-      Materialize the current `_production` evidence specified by the public
-      reference, then stage only the existing root allowlist:
+      Decide the unchanged public/private gate first. Materialize the current `_production` evidence
+      specified by the public reference **before** any delivery. Write the current `public-gate.json` in
+      `_production/publication/`; for a public decision, verify and copy the
+      unchanged schema-2 `publication.json` there before staging. A private
+      request/source or failed gate records its nonempty reason and performs
+      zero GitHub mutation.
+   10. Stage only the existing root allowlist after that evidence is complete:
 
       ```bash
       /usr/local/bin/python3 skills/fiction-audiobook/scripts/stage_echo_delivery.py \
@@ -86,10 +91,11 @@ Read `references/express-fiction-craft.md` and
 
       The iCloud title root is exactly M4B, EPUB, alignment JSON, `cover.png`,
       and `_production/`; it has no second M4B, capture, or reel.
-   10. Apply the unchanged public/private gate after private delivery and report
-       iCloud, push, PR, release, merge, human reading, and human listening as
-       separate states. A private request/source or failed gate performs zero
-       GitHub mutation; never merge.
+
+       GitHub only after successful iCloud staging. Then, and only for a
+       verified public decision, follow the public reference's six-file stage,
+       push/ready-PR/release sequence; never merge. Report iCloud, push, PR,
+       release, merge, human reading, and human listening as separate states.
 7. Redo narrowly. Story changes repair causal prose and repeat affected
    passes/gates/receipt/build/narration; cover changes rebuild the EPUB/audio.
    Voice-only feedback changes the cast/plan and starts a new resolved run
