@@ -23,6 +23,7 @@ for scripts in (
     sys.path.insert(0, str(scripts))
 
 import build_book
+import cover_receipts
 import echo_voice_plan
 import fiction_voice_preferences
 import stage_echo_delivery
@@ -37,6 +38,13 @@ def write_json(path: Path, payload: object) -> None:
     path.write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
+
+
+def flat_file_bytes(directory: Path) -> dict[str, bytes]:
+    entries = list(directory.iterdir())
+    if any(not path.is_file() for path in entries):
+        raise AssertionError(f"expected only regular files in {directory}")
+    return {path.name: path.read_bytes() for path in entries}
 
 
 class FictionAudiobookIntegrationTests(unittest.TestCase):
@@ -105,6 +113,18 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                     "receiptDoesNotCertifyHumanAcceptance": True,
                 },
             )
+            original_fiction_receipt = fiction_receipt.read_bytes()
+            original_fiction_receipt_sha256 = hashlib.sha256(
+                original_fiction_receipt
+            ).hexdigest()
+
+            def assert_fiction_receipt_unchanged() -> None:
+                current = fiction_receipt.read_bytes()
+                self.assertEqual(original_fiction_receipt, current)
+                self.assertEqual(
+                    original_fiction_receipt_sha256,
+                    hashlib.sha256(current).hexdigest(),
+                )
 
             portrait_cover = covers / "cover.png"
             square_cover = covers / "m4b-cover.png"
@@ -127,10 +147,22 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             built_epub = dist / "fixture-ensemble.epub"
             self.assertTrue(built_markdown.is_file())
             self.assertTrue(built_epub.is_file())
+            assert_fiction_receipt_unchanged()
             with zipfile.ZipFile(built_epub) as archive:
                 self.assertEqual(
                     portrait_cover.read_bytes(), archive.read("OEBPS/cover.png")
                 )
+            verified_pair = cover_receipts.verify_receipt_free_pair(
+                portrait_cover, square_cover, built_epub
+            )
+            self.assertEqual(sha256(portrait_cover), verified_pair.portrait_sha256)
+            self.assertEqual(sha256(square_cover), verified_pair.square_sha256)
+            self.assertEqual(sha256(built_epub), verified_pair.epub_sha256)
+            self.assertEqual(
+                ("portrait-png", "square-png", "epub-portrait-bytes"),
+                verified_pair.checks,
+            )
+            assert_fiction_receipt_unchanged()
 
             cast_chapters = [
                 {
@@ -246,18 +278,31 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                 "voicePlanSHA256": plan["voicePlanSHA256"],
             }
             self.assertEqual(expected_verified, verified_cast["verifiedArtifacts"])
-            self.assertEqual(1, len(saved_preferences["uses"]))
+            persisted_preferences = fiction_voice_preferences.load_preferences(
+                preferences_path
+            )
+            self.assertEqual(saved_preferences, persisted_preferences)
+            self.assertEqual(1, len(persisted_preferences["uses"]))
             self.assertEqual(
                 [
                     {"chapter": 1, "voice": "bf_emma"},
                     {"chapter": 2, "voice": "am_michael"},
                     {"chapter": 3, "voice": "af_bella"},
                 ],
-                saved_preferences["uses"][0]["chapters"],
+                persisted_preferences["uses"][0]["chapters"],
             )
+            assert_fiction_receipt_unchanged()
 
             production = run_root / "production"
-            for name in stage_echo_delivery.PRODUCTION_DIRECTORIES:
+            expected_production_directories = {
+                "source",
+                "checks",
+                "narration",
+                "covers",
+                "publication",
+                "previous",
+            }
+            for name in expected_production_directories:
                 (production / name).mkdir(parents=True)
             for path in source.iterdir():
                 shutil.copy2(path, production / "source" / path.name)
@@ -270,6 +315,47 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             )
             shutil.copy2(portrait_cover, production / "covers/cover.png")
             shutil.copy2(square_cover, production / "covers/m4b-cover.png")
+            expected_source_bytes = {
+                "ch01.md": chapters[0].read_bytes(),
+                "ch02.md": chapters[1].read_bytes(),
+                "ch03.md": chapters[2].read_bytes(),
+                "unattended-decisions.json": evidence["authorization"].read_bytes(),
+                "story-bible.md": evidence["storyBible"].read_bytes(),
+                "continuity-final.md": evidence["continuity"].read_bytes(),
+            }
+            expected_check_bytes = {
+                "fiction-production-receipt.json": original_fiction_receipt,
+                "revision-receipt.json": evidence["revisionReview"].read_bytes(),
+                "prose-qc-receipt.json": evidence["proseQC"].read_bytes(),
+            }
+            expected_narration_bytes = {
+                "voice-cast.json": cast_path.read_bytes(),
+                success_receipt.name: success_receipt.read_bytes(),
+            }
+            expected_cover_bytes = {
+                "cover.png": portrait_cover.read_bytes(),
+                "m4b-cover.png": square_cover.read_bytes(),
+            }
+            self.assertEqual(
+                expected_production_directories,
+                {path.name for path in production.iterdir()},
+            )
+            self.assertEqual(
+                expected_source_bytes, flat_file_bytes(production / "source")
+            )
+            self.assertEqual(
+                expected_check_bytes, flat_file_bytes(production / "checks")
+            )
+            self.assertEqual(
+                expected_narration_bytes,
+                flat_file_bytes(production / "narration"),
+            )
+            self.assertEqual(
+                expected_cover_bytes, flat_file_bytes(production / "covers")
+            )
+            self.assertEqual({}, flat_file_bytes(production / "publication"))
+            self.assertEqual({}, flat_file_bytes(production / "previous"))
+            assert_fiction_receipt_unchanged()
 
             library_root = run_root / "library"
             library_root.mkdir()
@@ -297,6 +383,66 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                 },
                 {path.name for path in private_delivery.iterdir()},
             )
+            staged_production = private_delivery / "_production"
+            self.assertEqual(
+                expected_production_directories,
+                {path.name for path in staged_production.iterdir()},
+            )
+            delivery_manifest = (
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "slug": "fixture-ensemble",
+                        "editionId": "first-listen-2026-08-08",
+                        "rootArtifacts": {
+                            "fixture-ensemble.m4b": sha256(final_m4b),
+                            "fixture-ensemble.epub": sha256(built_epub),
+                            "fixture-ensemble.alignment.json": sha256(sidecar),
+                            "cover.png": sha256(portrait_cover),
+                        },
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n"
+            ).encode("utf-8")
+            self.assertEqual(
+                expected_source_bytes,
+                flat_file_bytes(staged_production / "source"),
+            )
+            self.assertEqual(
+                {**expected_check_bytes, "delivery-manifest.json": delivery_manifest},
+                flat_file_bytes(staged_production / "checks"),
+            )
+            self.assertEqual(
+                expected_narration_bytes,
+                flat_file_bytes(staged_production / "narration"),
+            )
+            self.assertEqual(
+                expected_cover_bytes,
+                flat_file_bytes(staged_production / "covers"),
+            )
+            self.assertEqual({}, flat_file_bytes(staged_production / "publication"))
+            self.assertEqual({}, flat_file_bytes(staged_production / "previous"))
+            staged_fiction_receipt = (
+                staged_production / "checks/fiction-production-receipt.json"
+            )
+            self.assertEqual(
+                original_fiction_receipt, staged_fiction_receipt.read_bytes()
+            )
+            self.assertEqual(
+                original_fiction_receipt_sha256, sha256(staged_fiction_receipt)
+            )
+            for name, source_cover, dimensions in (
+                ("cover.png", portrait_cover, (1600, 2560)),
+                ("m4b-cover.png", square_cover, (2400, 2400)),
+            ):
+                staged_cover = staged_production / "covers" / name
+                self.assertEqual(source_cover.read_bytes(), staged_cover.read_bytes())
+                with Image.open(staged_cover) as image:
+                    self.assertEqual("RGB", image.mode)
+                    self.assertEqual(dimensions, image.size)
+            assert_fiction_receipt_unchanged()
 
             public_stage = Path(raw_root).resolve() / "public-stage"
             public_stage.mkdir()
@@ -312,11 +458,7 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                 verify_public_first_listen.FICTION_DISCLOSURE, encoding="utf-8"
             )
 
-            staged_production = private_delivery / "_production"
             staged_cast = staged_production / "narration/voice-cast.json"
-            staged_fiction_receipt = (
-                staged_production / "checks/fiction-production-receipt.json"
-            )
             staged_success_receipt = (
                 staged_production / "narration" / success_receipt.name
             )
@@ -370,13 +512,14 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                     "assetSHA256": sha256(private_delivery / "fixture-ensemble.m4b"),
                 },
                 "privateEvidence": {
-                    "fictionReceiptSHA256": sha256(staged_fiction_receipt),
+                    "fictionReceiptSHA256": original_fiction_receipt_sha256,
                     "voiceCastSHA256": sha256(staged_cast),
                     "voicePlanSHA256": plan["voicePlanSHA256"],
                     "echoSuccessReceiptSHA256": sha256(staged_success_receipt),
                 },
             }
             write_json(public_stage / "publication.json", publication)
+            assert_fiction_receipt_unchanged()
 
             self.assertEqual(built_markdown.read_bytes(), public_markdown.read_bytes())
             self.assertEqual(built_epub.read_bytes(), public_epub.read_bytes())
@@ -415,6 +558,10 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                     staged_production / "source",
                     staged_success_receipt,
                 )
+            assert_fiction_receipt_unchanged()
+            self.assertEqual(
+                original_fiction_receipt, staged_fiction_receipt.read_bytes()
+            )
 
             public_files = list(public_stage.iterdir())
             self.assertEqual(6, len(public_files))
