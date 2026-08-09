@@ -53,12 +53,21 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
     ) -> None:
         with tempfile.TemporaryDirectory() as raw_root:
             run_root = Path(raw_root).resolve() / "private-run"
-            source = run_root / "source"
-            checks = run_root / "checks"
+            chapters_dir = run_root / "chapters"
+            research = run_root / "research"
+            continuity = run_root / "continuity"
+            revisions = run_root / "revisions"
             covers = run_root / "covers"
             dist = run_root / "dist"
             narration = run_root / "narration"
-            for directory in (source, checks, covers, narration):
+            for directory in (
+                chapters_dir,
+                research,
+                continuity,
+                revisions,
+                covers,
+                narration,
+            ):
                 directory.mkdir(parents=True)
 
             chapter_specs = (
@@ -68,21 +77,21 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             )
             chapters: list[Path] = []
             for filename, title, body in chapter_specs:
-                chapter = source / filename
+                chapter = chapters_dir / filename
                 chapter.write_text(f"## {title}\n\n{body}\n", encoding="utf-8")
                 chapters.append(chapter)
 
             evidence = {
-                "authorization": source / "unattended-decisions.json",
-                "storyBible": source / "story-bible.md",
-                "continuity": source / "continuity-final.md",
-                "revisionReview": checks / "revision-receipt.json",
-                "proseQC": checks / "prose-qc-receipt.json",
+                "authorization": research / "unattended-decisions.json",
+                "storyBible": run_root / "story-bible.md",
+                "continuity": continuity / "final.md",
+                "revisionReview": revisions / "full-manuscript-review.md",
+                "proseQC": revisions / "full-prose-qc.md",
             }
             for name, path in evidence.items():
                 path.write_text(f"{name}: verified\n", encoding="utf-8")
 
-            fiction_receipt = checks / "fiction-production-receipt.json"
+            fiction_receipt = research / "fiction-production-receipt.json"
             write_json(
                 fiction_receipt,
                 {
@@ -132,7 +141,7 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             Image.new("RGB", (2400, 2400), (68, 42, 20)).save(square_cover)
 
             build_book.build(
-                source,
+                chapters_dir,
                 dist,
                 "Fixture Ensemble",
                 "Dan Fakkeldy",
@@ -236,6 +245,14 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             success_receipt = narration / (
                 f"echo-render-success-{run_id}-{attempt_id}.json"
             )
+            input_receipt = narration / f"echo-render-inputs-{run_id}.env"
+            input_receipt.write_text(
+                "voice=bf_emma\n"
+                "chapter_voices=1=bf_emma,2=am_michael,3=af_bella\n"
+                f"voice_plan_sha256={plan['voicePlanSHA256']}\n"
+                f"voice_plan_id={plan['voicePlanID']}\n",
+                encoding="utf-8",
+            )
             write_json(
                 success_receipt,
                 {
@@ -245,7 +262,7 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                     "runID": run_id,
                     "attemptReceiptSHA256": "8" * 64,
                     "inputReceiptFileName": f"echo-render-inputs-{run_id}.env",
-                    "inputReceiptSHA256": "9" * 64,
+                    "inputReceiptSHA256": sha256(input_receipt),
                     "sourceEPUBFileName": built_epub.name,
                     "sourceEPUBSHA256": sha256(built_epub),
                     "artifactRelativePath": f"echo-renders/{run_id}/{attempt_id}",
@@ -304,11 +321,25 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             }
             for name in expected_production_directories:
                 (production / name).mkdir(parents=True)
-            for path in source.iterdir():
+            for path in chapters:
                 shutil.copy2(path, production / "source" / path.name)
-            for path in checks.iterdir():
+            for path in (
+                evidence["authorization"],
+                evidence["storyBible"],
+                evidence["continuity"],
+            ):
+                shutil.copy2(path, production / "source" / path.name)
+            for path in (
+                fiction_receipt,
+                evidence["revisionReview"],
+                evidence["proseQC"],
+            ):
                 shutil.copy2(path, production / "checks" / path.name)
             shutil.copy2(cast_path, production / "narration" / cast_path.name)
+            shutil.copy2(
+                input_receipt,
+                production / "narration" / input_receipt.name,
+            )
             shutil.copy2(
                 success_receipt,
                 production / "narration" / success_receipt.name,
@@ -321,15 +352,16 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                 "ch03.md": chapters[2].read_bytes(),
                 "unattended-decisions.json": evidence["authorization"].read_bytes(),
                 "story-bible.md": evidence["storyBible"].read_bytes(),
-                "continuity-final.md": evidence["continuity"].read_bytes(),
+                "final.md": evidence["continuity"].read_bytes(),
             }
             expected_check_bytes = {
                 "fiction-production-receipt.json": original_fiction_receipt,
-                "revision-receipt.json": evidence["revisionReview"].read_bytes(),
-                "prose-qc-receipt.json": evidence["proseQC"].read_bytes(),
+                "full-manuscript-review.md": evidence["revisionReview"].read_bytes(),
+                "full-prose-qc.md": evidence["proseQC"].read_bytes(),
             }
             expected_narration_bytes = {
                 "voice-cast.json": cast_path.read_bytes(),
+                input_receipt.name: input_receipt.read_bytes(),
                 success_receipt.name: success_receipt.read_bytes(),
             }
             expected_cover_bytes = {
@@ -538,7 +570,9 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                             {
                                 "format": {"duration": "12.5"},
                                 "chapters": [
-                                    {"start_time": "0.0", "end_time": "12.5"}
+                                    {"start_time": "0.0", "end_time": "4.0"},
+                                    {"start_time": "4.0", "end_time": "8.0"},
+                                    {"start_time": "8.0", "end_time": "12.5"},
                                 ],
                             }
                         ),
@@ -554,8 +588,8 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
                     public_stage,
                     private_delivery / "fixture-ensemble.m4b",
                     staged_cast,
-                    staged_fiction_receipt,
-                    staged_production / "source",
+                    fiction_receipt,
+                    chapters_dir,
                     staged_success_receipt,
                 )
             assert_fiction_receipt_unchanged()

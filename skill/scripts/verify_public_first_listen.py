@@ -36,13 +36,11 @@ from fiction_voice_preferences import (
 
 try:
     from .fiction_production_qc import (
-        REQUIRED_ARTIFACTS as FICTION_REQUIRED_ARTIFACTS,
         REQUIRED_GATES as FICTION_REQUIRED_GATES,
         verify_fiction_receipt,
     )
 except ImportError:
     from fiction_production_qc import (
-        REQUIRED_ARTIFACTS as FICTION_REQUIRED_ARTIFACTS,
         REQUIRED_GATES as FICTION_REQUIRED_GATES,
         verify_fiction_receipt,
     )
@@ -151,6 +149,37 @@ _PRIVATE_FICTION_RECEIPT_FIELDS = {
     "gates",
     "negativeHumanVerdictOverrides",
     "receiptDoesNotCertifyHumanAcceptance",
+}
+_PRIVATE_FICTION_ARTIFACT_PATHS = {
+    "authorization": "research/unattended-decisions.json",
+    "storyBible": "story-bible.md",
+    "continuity": "continuity/final.md",
+    "revisionReview": "revisions/full-manuscript-review.md",
+    "proseQC": "revisions/full-prose-qc.md",
+}
+_PRIVATE_README_PATH_PATTERNS = (
+    re.compile(r"file://", re.IGNORECASE),
+    re.compile(r"(?<![A-Za-z0-9])[A-Za-z]:[\\/]"),
+    re.compile(r"(?<!\\)\\\\"),
+    re.compile(r"(?<![:/A-Za-z0-9_])/(?!/)[^\s<>()]+"),
+    re.compile(
+        r"(?:^|[^A-Za-z0-9_.-])"
+        r"(?:\.build[\\/]fiction-audiobooks|_production|research|chapters|"
+        r"continuity|revisions)[\\/]",
+        re.IGNORECASE,
+    ),
+)
+_PRIVATE_README_EVIDENCE_NAMES = {
+    "brief.md",
+    "fiction-production-receipt.json",
+    "outline.md",
+    "release-notes.md",
+    "rolling.md",
+    "voice-cast.json",
+    "unattended-decisions.json",
+    "story-bible.md",
+    "full-manuscript-review.md",
+    "full-prose-qc.md",
 }
 _MEDIA_PROBE_TIMEOUT_SECONDS = 30
 @dataclass(frozen=True)
@@ -716,7 +745,7 @@ def _probe_fiction_media(
     release_snapshot: _FileSnapshot,
     epub_probe_snapshot: _FileSnapshot,
     release_probe_snapshot: _FileSnapshot,
-) -> None:
+) -> int:
     try:
         subprocess.run(
             ["unzip", "-t", str(epub)],
@@ -812,6 +841,7 @@ def _probe_fiction_media(
             and end > start,
             f"fiction M4B chapter {index} times must be finite and increasing",
         )
+    return len(chapters)
 
 
 def _verify_release(
@@ -999,12 +1029,12 @@ def _validate_private_fiction_receipt(
     artifacts = fiction.get("artifacts")
     _require(
         isinstance(artifacts, dict)
-        and set(artifacts) == set(FICTION_REQUIRED_ARTIFACTS),
+        and set(artifacts) == set(_PRIVATE_FICTION_ARTIFACT_PATHS),
         "private fiction receipt artifacts must contain exactly the required artifacts",
     )
     run_root = fiction_receipt.parent.parent
     artifact_snapshots: dict[str, tuple[str, _FileSnapshot]] = {}
-    for name in sorted(FICTION_REQUIRED_ARTIFACTS):
+    for name in sorted(_PRIVATE_FICTION_ARTIFACT_PATHS):
         record = artifacts[name]
         _require(
             isinstance(record, dict) and set(record) == {"path", "sha256"},
@@ -1012,6 +1042,10 @@ def _validate_private_fiction_receipt(
         )
         relative = _private_relative_path(
             record.get("path"), f"private fiction receipt artifact {name} path"
+        )
+        _require(
+            relative == _PRIVATE_FICTION_ARTIFACT_PATHS[name],
+            f"private fiction receipt artifact {name} must use its canonical path",
         )
         expected_hash = _require_sha256(
             record.get("sha256"),
@@ -1071,7 +1105,7 @@ def _verify_private_evidence(
     fiction_receipt: Path,
     chapters_dir: Path,
     echo_success_receipt: Path,
-) -> list[_FileSnapshot]:
+) -> tuple[list[_FileSnapshot], int]:
     snapshots: list[_FileSnapshot] = []
     private = receipt.get("privateEvidence")
     _require(isinstance(private, dict), "privateEvidence must be an object")
@@ -1090,6 +1124,11 @@ def _verify_private_evidence(
     )
     snapshots.append(cast_snapshot)
     canonical_plan = validate_completed_cast(cast)
+    cast_chapter_count = cast.get("chapterCount")
+    _require(
+        type(cast_chapter_count) is int and cast_chapter_count > 0,
+        "voice cast chapterCount must be a positive integer",
+    )
     _require(cast.get("slug") == slug, "voice cast slug does not match publication")
     plan_hash = _require_sha256(cast.get("voicePlanSHA256"), "voice cast voicePlanSHA256")
     _require(
@@ -1160,7 +1199,7 @@ def _verify_private_evidence(
         fiction_snapshot,
     )
     snapshots.extend(fiction_inputs)
-    return snapshots
+    return snapshots, cast_chapter_count
 
 
 def _chapter_markdown(
@@ -2254,7 +2293,7 @@ def _epub_story(
     author: str,
     contributor: str,
     public_cover: _FileSnapshot,
-) -> None:
+) -> int:
     infos, entries = _inspect_epub_archive(
         epub, public_cover_size=public_cover.size
     )
@@ -2582,6 +2621,7 @@ def _epub_story(
             title,
             canonical,
         )
+    return len(chapter_ids)
 
 
 def _verify_public_story_content(
@@ -2592,10 +2632,10 @@ def _verify_public_story_content(
     author: str,
     contributor: str,
     public_cover: _FileSnapshot,
-) -> None:
+) -> int:
     canonical = _canonical_story(chapters_dir, private_snapshots)
     title, subtitle = _builder_markdown_identity(manuscript, canonical, author)
-    _epub_story(
+    return _epub_story(
         epub,
         canonical,
         title,
@@ -2606,7 +2646,9 @@ def _verify_public_story_content(
     )
 
 
-def _verify_fiction_readme(book_dir: Path) -> _FileSnapshot:
+def _verify_fiction_readme(
+    book_dir: Path, *private_evidence_paths: Path
+) -> _FileSnapshot:
     readme = book_dir / "README.md"
     try:
         snapshot = _snapshot_file(readme, "fiction README", capture=True)
@@ -2618,6 +2660,31 @@ def _verify_fiction_readme(book_dir: Path) -> _FileSnapshot:
         FICTION_DISCLOSURE in text,
         "fiction README must include the approved disclosure",
     )
+    for pattern in _PRIVATE_README_PATH_PATTERNS:
+        _require(
+            pattern.search(text) is None,
+            "fiction README must not contain a private or local path",
+        )
+    private_names = {
+        *_PRIVATE_README_EVIDENCE_NAMES,
+        *(
+            Path(path).name
+            for path in private_evidence_paths
+            if Path(path).name and Path(path).suffix
+        ),
+    }
+    lowered = text.casefold()
+    _require(
+        "echo-render-" not in lowered
+        and all(name.casefold() not in lowered for name in private_names),
+        "fiction README must not disclose private evidence names",
+    )
+    for path in private_evidence_paths:
+        private_path = str(Path(path))
+        _require(
+            not private_path or private_path.casefold() not in lowered,
+            "fiction README must not disclose private evidence paths",
+        )
     return snapshot
 
 
@@ -2709,7 +2776,7 @@ def verify_public_fiction_package(
             release_probe_snapshot.sha256 == release_snapshot.sha256,
             "immutable release M4B copy differs from verified source",
         )
-        _probe_fiction_media(
+        m4b_chapter_count = _probe_fiction_media(
             epub_probe_copy,
             release_probe_copy,
             epub_snapshot,
@@ -2717,7 +2784,7 @@ def verify_public_fiction_package(
             epub_probe_snapshot,
             release_probe_snapshot,
         )
-        private_snapshots = _verify_private_evidence(
+        private_snapshots, cast_chapter_count = _verify_private_evidence(
             receipt,
             slug,
             artifact_hashes,
@@ -2732,7 +2799,7 @@ def verify_public_fiction_package(
             for snapshot in artifact_snapshots
             if snapshot.path.name == f"{slug}.md"
         )
-        _verify_public_story_content(
+        epub_chapter_count = _verify_public_story_content(
             manuscript_snapshot,
             epub_probe_copy,
             chapters_dir,
@@ -2741,6 +2808,19 @@ def verify_public_fiction_package(
             receipt["contributor"],
             cover_snapshot,
         )
+        chapter_counts = {
+            "canonical": len(initial_chapter_filenames),
+            "EPUB narrated spine": epub_chapter_count,
+            "voice cast": cast_chapter_count,
+            "M4B": m4b_chapter_count,
+        }
+        _require(
+            len(set(chapter_counts.values())) == 1,
+            "fiction chapter count mismatch: "
+            + ", ".join(
+                f"{label}={count}" for label, count in chapter_counts.items()
+            ),
+        )
         _require_snapshot_unchanged(epub_probe_snapshot, "immutable fiction EPUB")
     cover_rights = receipt["coverRights"]
     assert isinstance(cover_rights, dict)
@@ -2748,7 +2828,13 @@ def verify_public_fiction_package(
         cover_rights["coverSHA256"] == artifact_hashes["portraitCover"],
         "coverRights cover SHA-256 does not match the public cover",
     )
-    readme_snapshot = _verify_fiction_readme(book_dir)
+    readme_snapshot = _verify_fiction_readme(
+        book_dir,
+        voice_cast,
+        fiction_receipt,
+        chapters_dir,
+        echo_success_receipt,
+    )
     _verify_fiction_public_root(book_dir, slug)
     all_snapshots = [
         receipt_snapshot,

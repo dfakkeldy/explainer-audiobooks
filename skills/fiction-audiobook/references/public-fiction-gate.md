@@ -96,8 +96,12 @@ PUBLIC_COMMIT=$(git rev-parse HEAD)
 gh release create "$RELEASE_TAG" "$AUDIOBOOK#$SLUG.m4b" \
   --target "$PUBLIC_COMMIT" \
   --title "$TITLE — public first-listen" \
-  --notes-file "$RUN_ROOT/research/release-notes.md"
+  --notes "This original AI-generated fiction edition is published under CC BY 4.0 as a public first-listen. Automated package and audio checks passed; human reading and listening reviews remain pending."
 ```
+
+The release note is deliberately the exact disclosure already verified in the
+public package. Do not upload a private notes file or interpolate private run
+metadata into the public release body.
 
 The PR must be ready: never pass `--draft` and never merge it. Verify the
 release:

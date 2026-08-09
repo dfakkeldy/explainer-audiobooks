@@ -343,8 +343,10 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             "authorization": self.research / "unattended-decisions.json",
             "storyBible": self.private_dir / "story-bible.md",
             "continuity": self.private_dir / "continuity" / "final.md",
-            "revisionReview": self.private_dir / "revisions" / "review.md",
-            "proseQC": self.private_dir / "revisions" / "prose-qc.md",
+            "revisionReview": self.private_dir
+            / "revisions"
+            / "full-manuscript-review.md",
+            "proseQC": self.private_dir / "revisions" / "full-prose-qc.md",
         }
         for name, path in self.fiction_artifacts.items():
             path.write_text(f"{name}: verified\n", encoding="utf-8")
@@ -544,6 +546,10 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.write_publication_receipt()
 
     def write_echo_success_receipt(self) -> None:
+        self.echo_input_receipt = self.research / (
+            f"echo-render-inputs-{self.run_id}.env"
+        )
+        self.write_echo_input_receipt(self.echo_input_receipt)
         payload = {
             "schemaVersion": 3,
             **self.renderer_identity,
@@ -551,7 +557,7 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
             "runID": self.run_id,
             "attemptReceiptSHA256": "8" * 64,
             "inputReceiptFileName": f"echo-render-inputs-{self.run_id}.env",
-            "inputReceiptSHA256": "9" * 64,
+            "inputReceiptSHA256": self.digest(self.echo_input_receipt),
             "sourceEPUBFileName": self.epub.name,
             "sourceEPUBSHA256": self.digest(self.epub),
             "artifactRelativePath": f"echo-renders/{self.run_id}/{self.attempt_id}",
@@ -567,6 +573,28 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         self.echo_success_receipt.write_text(
             json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8"
         )
+
+    def write_echo_input_receipt(
+        self,
+        path: Path,
+        *,
+        chapters: list[dict[str, object]] | None = None,
+        default_voice: str = "bf_emma",
+        plan_sha256: str | None = None,
+        plan_id: str | None = None,
+    ) -> None:
+        assignments = chapters if chapters is not None else self.cast_chapters
+        payload = (
+            f"voice={default_voice}\n"
+            "chapter_voices="
+            + ",".join(
+                f"{row['chapter']}={row['voice']}" for row in assignments
+            )
+            + "\n"
+            f"voice_plan_sha256={plan_sha256 or self.voice_plan_sha256}\n"
+            f"voice_plan_id={plan_id or self.voice_plan_id}\n"
+        )
+        path.write_text(payload, encoding="utf-8")
 
     def write_voice_cast(self) -> None:
         payload = {
@@ -677,7 +705,12 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         changed_path = self.research / (
             f"echo-render-success-{changed_run_id}-{self.attempt_id}.json"
         )
+        changed_input_path = self.research / success["inputReceiptFileName"]
+        self.write_echo_input_receipt(changed_input_path)
+        success["inputReceiptSHA256"] = self.digest(changed_input_path)
         self.echo_success_receipt.unlink()
+        self.echo_input_receipt.unlink()
+        self.echo_input_receipt = changed_input_path
         self.echo_success_receipt = changed_path
         self.echo_success_receipt.write_text(
             json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
@@ -860,7 +893,11 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         with zipfile.ZipFile(self.epub) as archive:
             return archive.read(member).decode("utf-8")
 
-    def probes(self):
+    def probes(self, *, chapter_count: int = 3):
+        chapters = [
+            {"start_time": f"{index}.0", "end_time": f"{index + 1}.0"}
+            for index in range(chapter_count)
+        ]
         return mock.patch.object(
             verifier.subprocess,
             "run",
@@ -869,10 +906,8 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                 returncode=0,
                 stdout=json.dumps(
                     {
-                        "format": {"duration": "1.0"},
-                        "chapters": [
-                            {"start_time": "0.0", "end_time": "1.0"}
-                        ],
+                        "format": {"duration": f"{chapter_count}.0"},
+                        "chapters": chapters,
                     }
                 ),
                 stderr="",
@@ -916,6 +951,97 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         with self.probes():
             self.verify()
 
+    def test_rejects_m4b_chapter_count_that_differs_from_canonical_story(self) -> None:
+        with self.probes(chapter_count=2), self.assertRaisesRegex(
+            ValueError, "chapter count|chapter.*coverage|cardinality"
+        ):
+            self.verify()
+
+    def test_rejects_cast_chapter_count_that_differs_from_canonical_story(self) -> None:
+        cast = json.loads(self.voice_cast.read_text(encoding="utf-8"))
+        changed_chapters = [
+            *cast["chapters"],
+            {
+                "chapter": 4,
+                "role": "Mara",
+                "voice": "bf_emma",
+                "experimental": False,
+            },
+        ]
+        canonical_plan = (
+            "default=bf_emma\n"
+            "1=bf_emma\n"
+            "2=am_michael\n"
+            "3=af_bella\n"
+            "4=bf_emma\n"
+        )
+        changed_plan_sha256 = hashlib.sha256(
+            canonical_plan.encode("utf-8")
+        ).hexdigest()
+        changed_plan_id = f"plan-{changed_plan_sha256[:12]}"
+        cast["chapterCount"] = 4
+        cast["chapters"] = changed_chapters
+        cast["voicePlanSHA256"] = changed_plan_sha256
+        cast["voicePlanID"] = changed_plan_id
+        cast["verifiedArtifacts"]["voicePlanSHA256"] = changed_plan_sha256
+        self.voice_cast.write_text(
+            json.dumps(cast, sort_keys=True) + "\n", encoding="utf-8"
+        )
+
+        success = json.loads(self.echo_success_receipt.read_text(encoding="utf-8"))
+        changed_run_id = self.run_id.rsplit("-plan-", 1)[0] + "-" + changed_plan_id
+        success["runID"] = changed_run_id
+        success["inputReceiptFileName"] = f"echo-render-inputs-{changed_run_id}.env"
+        success["artifactRelativePath"] = (
+            f"echo-renders/{changed_run_id}/{self.attempt_id}"
+        )
+        success["resumeStateFileName"] = f"echo-resume-state-{changed_run_id}.json"
+        changed_input = self.research / success["inputReceiptFileName"]
+        self.write_echo_input_receipt(
+            changed_input,
+            chapters=changed_chapters,
+            plan_sha256=changed_plan_sha256,
+            plan_id=changed_plan_id,
+        )
+        success["inputReceiptSHA256"] = self.digest(changed_input)
+        changed_success = self.research / (
+            f"echo-render-success-{changed_run_id}-{self.attempt_id}.json"
+        )
+        self.echo_success_receipt.unlink()
+        self.echo_input_receipt.unlink()
+        self.echo_input_receipt = changed_input
+        self.echo_success_receipt = changed_success
+        self.echo_success_receipt.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.receipt["privateEvidence"].update(
+            {
+                "voiceCastSHA256": self.digest(self.voice_cast),
+                "voicePlanSHA256": changed_plan_sha256,
+                "echoSuccessReceiptSHA256": self.digest(self.echo_success_receipt),
+            }
+        )
+        self.write_publication_receipt()
+
+        self.assert_rejected("chapter count|chapter.*coverage|cardinality")
+
+    def test_rejects_echo_input_receipt_not_bound_to_full_voice_plan(self) -> None:
+        payload = self.echo_input_receipt.read_text(encoding="utf-8").replace(
+            self.voice_plan_sha256, "f" * 64
+        )
+        self.echo_input_receipt.write_text(payload, encoding="utf-8")
+        success = json.loads(self.echo_success_receipt.read_text(encoding="utf-8"))
+        success["inputReceiptSHA256"] = self.digest(self.echo_input_receipt)
+        self.echo_success_receipt.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.receipt["privateEvidence"]["echoSuccessReceiptSHA256"] = self.digest(
+            self.echo_success_receipt
+        )
+        self.write_publication_receipt()
+
+        self.assert_rejected("input receipt.*voice.plan|voice.plan.*input receipt")
+
     def test_rejects_forged_minimal_echo_receipt_without_governed_provenance(self) -> None:
         forged = {
             "schemaVersion": 3,
@@ -948,7 +1074,12 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         changed_path = self.research / (
             f"echo-render-success-{changed_run_id}-{self.attempt_id}.json"
         )
+        changed_input = self.research / success["inputReceiptFileName"]
+        self.write_echo_input_receipt(changed_input)
+        success["inputReceiptSHA256"] = self.digest(changed_input)
         self.echo_success_receipt.unlink()
+        self.echo_input_receipt.unlink()
+        self.echo_input_receipt = changed_input
         self.echo_success_receipt = changed_path
         self.echo_success_receipt.write_text(
             json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
@@ -1407,8 +1538,8 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         real_fdopen = verifier.os.fdopen
         cover_identity = self.cover.stat()
 
-        def grow_cover_after_readme(book_dir: Path):
-            snapshot = real_readme(book_dir)
+        def grow_cover_after_readme(book_dir: Path, *private_paths: Path):
+            snapshot = real_readme(book_dir, *private_paths)
             os.truncate(self.cover, verifier._EPUB_MAX_COVER_BYTES + 1)
             return snapshot
 
@@ -1841,8 +1972,8 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
         real_readme = verifier._verify_fiction_readme
         extra = self.chapters / "ch04.md"
 
-        def add_late_chapter(book_dir: Path):
-            snapshot = real_readme(Path(book_dir))
+        def add_late_chapter(book_dir: Path, *sensitive_paths: Path):
+            snapshot = real_readme(Path(book_dir), *sensitive_paths)
             extra.write_text("## Hidden Chapter\n\nHidden late story.\n", encoding="utf-8")
             return snapshot
 
@@ -1892,6 +2023,67 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                     self.rebind_changed_fiction_receipt(base)
                     if created:
                         candidate.unlink()
+
+    def test_verifier_requires_exact_canonical_private_artifact_paths(self) -> None:
+        base = self.read_fiction_receipt()
+        for name, canonical_path in self.fiction_artifacts.items():
+            with self.subTest(name=name):
+                alternative = self.private_dir / "alternate" / canonical_path.name
+                alternative.parent.mkdir(parents=True, exist_ok=True)
+                alternative.write_bytes(canonical_path.read_bytes())
+                changed = copy.deepcopy(base)
+                changed["artifacts"][name] = {
+                    "path": alternative.relative_to(self.private_dir).as_posix(),
+                    "sha256": self.digest(alternative),
+                }
+                self.rebind_changed_fiction_receipt(changed)
+                try:
+                    with mock.patch.object(
+                        verifier, "verify_fiction_receipt", return_value={}
+                    ):
+                        self.assert_rejected("canonical.*path|path.*canonical")
+                finally:
+                    self.rebind_changed_fiction_receipt(base)
+                    alternative.unlink()
+
+    def test_rejects_private_paths_and_evidence_names_in_public_readme(self) -> None:
+        private_values = (
+            "/Users/alice/Secret/client-notes.md",
+            "file:///private/fixture-fiction/story-bible.md",
+            r"C:\private\fixture-fiction\voice-cast.json",
+            r"\\server\share\fixture-fiction\continuity.md",
+            r"\\?\C:\private\fixture-fiction\receipt.json",
+            ".build/fiction-audiobooks/fixture-fiction/research/notes.md",
+            "_production/narration/voice-cast.json",
+            "research/release-notes.md",
+            "chapters/ch01.md",
+            "continuity/rolling.md",
+            "revisions/full-manuscript-review.md",
+            "brief.md",
+            "outline.md",
+            self.voice_cast.name,
+            self.fiction_receipt.name,
+            self.echo_success_receipt.name,
+        )
+        readme = self.book_dir / "README.md"
+        for value in private_values:
+            with self.subTest(value=value):
+                readme.write_text(
+                    f"{FICTION_DISCLOSURE}\n\nInternal evidence: {value}\n",
+                    encoding="utf-8",
+                )
+                self.assert_rejected("README.*private|private.*README|local path|evidence")
+
+    def test_allows_public_readme_prose_without_private_evidence_references(self) -> None:
+        (self.book_dir / "README.md").write_text(
+            f"{FICTION_DISCLOSURE}\n\n"
+            "Read the public Markdown manuscript or EPUB, then download the M4B "
+            "from the GitHub release.\n",
+            encoding="utf-8",
+        )
+
+        with self.probes():
+            self.verify()
 
     def test_rejects_any_false_public_gate(self) -> None:
         for field in tuple(self.receipt["publicGate"]):
@@ -2143,9 +2335,11 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                         returncode=0,
                         stdout=json.dumps(
                             {
-                                "format": {"duration": "1.0"},
+                                "format": {"duration": "3.0"},
                                 "chapters": [
-                                    {"start_time": "0.0", "end_time": "1.0"}
+                                    {"start_time": "0.0", "end_time": "1.0"},
+                                    {"start_time": "1.0", "end_time": "2.0"},
+                                    {"start_time": "2.0", "end_time": "3.0"},
                                 ],
                             }
                         ),
@@ -2189,9 +2383,11 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                         returncode=0,
                         stdout=json.dumps(
                             {
-                                "format": {"duration": "1.0"},
+                                "format": {"duration": "3.0"},
                                 "chapters": [
-                                    {"start_time": "0.0", "end_time": "1.0"}
+                                    {"start_time": "0.0", "end_time": "1.0"},
+                                    {"start_time": "1.0", "end_time": "2.0"},
+                                    {"start_time": "2.0", "end_time": "3.0"},
                                 ],
                             }
                         ),
