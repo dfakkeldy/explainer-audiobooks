@@ -42,14 +42,14 @@ for story, `references/public-fiction-gate.md` for publication, and
    `~/Library/Application Support/Explainer Audiobooks/fiction-voice-preferences.json`,
    then run `/usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py validate-cast --cast
    "$VOICE_CAST" --preferences "$PREFERENCES"`.
-8. Follow the narration reference exactly. Override its nonfiction
+8. Follow the narration reference with these overrides. Replace its nonfiction
    `VOICE=am_michael` with the cast-derived `$VOICE`; adapt its lane/root, and
    pass mappings identical to the cast/helper. After it sets `$DIST`, run
    `export EPUB="$DIST/$SLUG.epub"; [[ -f "$EPUB" ]]`. Missing renderer/voice
-   resources fail closed; recasting creates a new cast/plan/run. Run its
-   selector-derived
-   `$STATE_HELPER verify-delivery`, installed `$CLI verify-sidecar`, audit,
-   JSON, and `ffprobe` commands. Only then seal use with
+   resources fail closed; recasting creates a new cast/plan/run. Use
+   `--epub "$EPUB"` for its selector-derived `$STATE_HELPER verify-delivery`,
+   installed `$CLI verify-sidecar`, and `record-use`; run audit/JSON/`ffprobe`.
+   Only then seal use with
    `/usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py record-use --cast "$VOICE_CAST"
    --epub "$EPUB" --m4b "$AUDIOBOOK" --sidecar "$SIDECAR"
    --success-receipt "$SUCCESS_RECEIPT" --at "<ISO-8601 timestamp>" --preferences
