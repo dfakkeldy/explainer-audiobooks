@@ -9,10 +9,12 @@ import hashlib
 import json
 import os
 import re
+import secrets
 import stat
 import sys
 import tempfile
 from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterator
@@ -214,9 +216,208 @@ def _validate_preferences(preferences: dict[str, Any]) -> dict[str, Any]:
     return preferences
 
 
+class _PreferenceTransaction:
+    """One preference mutation pinned to its locked parent directory."""
+
+    def __init__(
+        self,
+        path: Path,
+        parent_descriptor: int,
+        parent_identity: tuple[int, int],
+        lock_descriptor: int,
+        lock_identity: tuple[int, int],
+        lock_name: str,
+    ) -> None:
+        self.path = Path(path)
+        self.parent_descriptor = parent_descriptor
+        self.parent_identity = parent_identity
+        self.lock_descriptor = lock_descriptor
+        self.lock_identity = lock_identity
+        self.lock_name = lock_name
+
+    def matches(self, path: Path) -> bool:
+        return Path(path) == self.path
+
+    def attest(self) -> None:
+        parent_opened = os.fstat(self.parent_descriptor)
+        if (
+            not stat.S_ISDIR(parent_opened.st_mode)
+            or (parent_opened.st_dev, parent_opened.st_ino) != self.parent_identity
+        ):
+            raise ValueError("preferences lock parent descriptor changed")
+        try:
+            parent_at_path = os.stat(self.path.parent, follow_symlinks=False)
+        except OSError as error:
+            raise ValueError("preferences lock parent directory changed") from error
+        if (
+            not stat.S_ISDIR(parent_at_path.st_mode)
+            or (parent_at_path.st_dev, parent_at_path.st_ino) != self.parent_identity
+        ):
+            raise ValueError("preferences lock parent directory changed")
+
+        lock_opened = os.fstat(self.lock_descriptor)
+        try:
+            lock_at_path = os.stat(
+                self.lock_name,
+                dir_fd=self.parent_descriptor,
+                follow_symlinks=False,
+            )
+        except OSError as error:
+            raise ValueError("preferences lock path changed") from error
+        if (
+            not stat.S_ISREG(lock_opened.st_mode)
+            or not stat.S_ISREG(lock_at_path.st_mode)
+            or (lock_opened.st_dev, lock_opened.st_ino) != self.lock_identity
+            or (lock_at_path.st_dev, lock_at_path.st_ino) != self.lock_identity
+        ):
+            raise ValueError("preferences lock path changed")
+
+    def load(self) -> dict[str, object]:
+        self.attest()
+        flags = os.O_RDONLY | os.O_NOFOLLOW
+        if hasattr(os, "O_CLOEXEC"):
+            flags |= os.O_CLOEXEC
+        try:
+            descriptor = os.open(
+                self.path.name,
+                flags,
+                dir_fd=self.parent_descriptor,
+            )
+        except FileNotFoundError:
+            self.attest()
+            return initial_preferences()
+        except OSError as error:
+            raise ValueError("preferences store must be a regular non-symlink file") from error
+        try:
+            opened = os.fstat(descriptor)
+            if not stat.S_ISREG(opened.st_mode):
+                raise ValueError("preferences store must be a regular non-symlink file")
+            identity = (opened.st_dev, opened.st_ino)
+            stable = (
+                opened.st_mode,
+                opened.st_size,
+                opened.st_mtime_ns,
+                opened.st_ctime_ns,
+            )
+            chunks: list[bytes] = []
+            while True:
+                chunk = os.read(descriptor, 1024 * 1024)
+                if not chunk:
+                    break
+                chunks.append(chunk)
+            after_descriptor = os.fstat(descriptor)
+            try:
+                after_path = os.stat(
+                    self.path.name,
+                    dir_fd=self.parent_descriptor,
+                    follow_symlinks=False,
+                )
+            except OSError as error:
+                raise ValueError("preferences store changed while it was read") from error
+            if (
+                not stat.S_ISREG(after_descriptor.st_mode)
+                or (after_descriptor.st_dev, after_descriptor.st_ino) != identity
+                or (
+                    after_descriptor.st_mode,
+                    after_descriptor.st_size,
+                    after_descriptor.st_mtime_ns,
+                    after_descriptor.st_ctime_ns,
+                )
+                != stable
+                or (after_path.st_dev, after_path.st_ino) != identity
+                or (
+                    after_path.st_mode,
+                    after_path.st_size,
+                    after_path.st_mtime_ns,
+                    after_path.st_ctime_ns,
+                )
+                != stable
+            ):
+                raise ValueError("preferences store changed while it was read")
+        finally:
+            os.close(descriptor)
+        self.attest()
+        try:
+            value = json.loads(
+                b"".join(chunks).decode("utf-8"),
+                object_pairs_hook=_unique_object,
+            )
+        except (UnicodeError, json.JSONDecodeError) as error:
+            raise ValueError(f"preferences store is not valid JSON: {error}") from error
+        if not isinstance(value, dict):
+            raise ValueError("preferences store must be a JSON object")
+        return _validate_preferences(value)
+
+    def write(self, payload: object) -> None:
+        self.attest()
+        flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW
+        if hasattr(os, "O_CLOEXEC"):
+            flags |= os.O_CLOEXEC
+        temporary_name: str | None = None
+        descriptor: int | None = None
+        for _attempt in range(100):
+            candidate = f".{self.path.name}.{secrets.token_hex(16)}.tmp"
+            try:
+                descriptor = os.open(
+                    candidate,
+                    flags,
+                    0o600,
+                    dir_fd=self.parent_descriptor,
+                )
+            except FileExistsError:
+                continue
+            temporary_name = candidate
+            break
+        if descriptor is None or temporary_name is None:
+            raise ValueError("preferences store could not create an atomic temporary file")
+        try:
+            os.fchmod(descriptor, 0o600)
+            with os.fdopen(descriptor, "w", encoding="utf-8") as destination:
+                descriptor = None
+                json.dump(payload, destination, sort_keys=True, indent=2)
+                destination.write("\n")
+                destination.flush()
+                os.fsync(destination.fileno())
+            self.attest()
+            os.replace(
+                temporary_name,
+                self.path.name,
+                src_dir_fd=self.parent_descriptor,
+                dst_dir_fd=self.parent_descriptor,
+            )
+            temporary_name = None
+            committed = os.stat(
+                self.path.name,
+                dir_fd=self.parent_descriptor,
+                follow_symlinks=False,
+            )
+            if (
+                not stat.S_ISREG(committed.st_mode)
+                or stat.S_IMODE(committed.st_mode) != 0o600
+            ):
+                raise ValueError("preferences store atomic replacement is unsafe")
+            self.attest()
+        finally:
+            if descriptor is not None:
+                os.close(descriptor)
+            if temporary_name is not None:
+                try:
+                    os.unlink(temporary_name, dir_fd=self.parent_descriptor)
+                except FileNotFoundError:
+                    pass
+
+
+_ACTIVE_PREFERENCE_TRANSACTION: ContextVar[_PreferenceTransaction | None] = (
+    ContextVar("active_fiction_voice_preference_transaction", default=None)
+)
+
+
 def load_preferences(path: Path = DEFAULT_PATH) -> dict[str, object]:
     """Read validated preferences, or supply the durable defaults without writing."""
     path = Path(path)
+    transaction = _ACTIVE_PREFERENCE_TRANSACTION.get()
+    if transaction is not None and transaction.matches(path):
+        return transaction.load()
     _refuse_symlink(path, "preferences store")
     if not path.exists():
         return initial_preferences()
@@ -225,6 +426,10 @@ def load_preferences(path: Path = DEFAULT_PATH) -> dict[str, object]:
 
 def _atomic_json(path: Path, payload: object, label: str) -> None:
     path = Path(path)
+    transaction = _ACTIVE_PREFERENCE_TRANSACTION.get()
+    if transaction is not None and transaction.matches(path):
+        transaction.write(payload)
+        return
     _refuse_symlink(path, label)
     path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
     _refuse_symlink(path, label)
@@ -271,6 +476,8 @@ def _preferences_lock(path: Path) -> Iterator[None]:
     except OSError as error:
         raise ValueError("preferences lock parent must be a stable directory") from error
     lock_descriptor: int | None = None
+    directory_locked = False
+    transaction_token = None
     try:
         parent_opened = os.fstat(parent_descriptor)
         parent_identity = (parent_opened.st_dev, parent_opened.st_ino)
@@ -319,8 +526,25 @@ def _preferences_lock(path: Path) -> Iterator[None]:
         if (parent_at_path.st_dev, parent_at_path.st_ino) != parent_identity:
             raise ValueError("preferences lock parent directory changed")
         _refuse_symlink(path, "preferences store")
+        fcntl.flock(parent_descriptor, fcntl.LOCK_EX)
+        directory_locked = True
+        transaction = _PreferenceTransaction(
+            path,
+            parent_descriptor,
+            parent_identity,
+            lock_descriptor,
+            (lock_opened.st_dev, lock_opened.st_ino),
+            lock_path.name,
+        )
+        transaction.attest()
+        transaction_token = _ACTIVE_PREFERENCE_TRANSACTION.set(transaction)
         yield
+        transaction.attest()
     finally:
+        if transaction_token is not None:
+            _ACTIVE_PREFERENCE_TRANSACTION.reset(transaction_token)
+        if directory_locked:
+            fcntl.flock(parent_descriptor, fcntl.LOCK_UN)
         if lock_descriptor is not None:
             fcntl.flock(lock_descriptor, fcntl.LOCK_UN)
             os.close(lock_descriptor)

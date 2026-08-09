@@ -438,6 +438,120 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         self.assertTrue(swapped)
         self.assertFalse(self.preferences_path.exists())
 
+    def test_lock_replacement_after_acquire_cannot_lose_a_successful_writer(self) -> None:
+        context = multiprocessing.get_context("fork")
+        parent = self.preferences_path.parent
+        parent.mkdir()
+        lock_path = parent / f".{self.preferences_path.name}.lock"
+        displaced = parent / "displaced.lock"
+        first_ready = context.Event()
+        release_first = context.Event()
+        second_finished = context.Event()
+        outcomes = context.Queue()
+        real_dump = json.dump
+
+        def first_writer() -> None:
+            def pause_before_write(*args: object, **kwargs: object) -> object:
+                first_ready.set()
+                if not release_first.wait(timeout=5):
+                    raise RuntimeError("first writer was not released")
+                return real_dump(*args, **kwargs)
+
+            module.json.dump = pause_before_write
+            try:
+                module.set_verdict(
+                    self.preferences_path,
+                    "Bella",
+                    "liked",
+                    "first writer",
+                    "2026-08-08T13:00:00+00:00",
+                )
+            except BaseException as error:
+                outcomes.put(("first", "error", type(error).__name__, str(error)))
+            else:
+                outcomes.put(("first", "ok"))
+            finally:
+                module.json.dump = real_dump
+
+        def second_writer() -> None:
+            try:
+                module.set_verdict(
+                    self.preferences_path,
+                    "Nicole",
+                    "disliked",
+                    "second writer",
+                    "2026-08-08T13:00:01+00:00",
+                )
+            except BaseException as error:
+                outcomes.put(("second", "error", type(error).__name__, str(error)))
+            else:
+                outcomes.put(("second", "ok"))
+            finally:
+                second_finished.set()
+
+        first = context.Process(target=first_writer)
+        second = context.Process(target=second_writer)
+        first.start()
+        self.assertTrue(first_ready.wait(timeout=5))
+        lock_path.rename(displaced)
+        lock_path.write_text("replacement lock\n", encoding="utf-8")
+        second.start()
+        second_finished.wait(timeout=0.5)
+        release_first.set()
+        for worker in (first, second):
+            worker.join(timeout=10)
+            self.assertFalse(worker.is_alive())
+            self.assertEqual(0, worker.exitcode)
+
+        saved_outcomes = {
+            outcome[0]: outcome[1:] for outcome in (outcomes.get(), outcomes.get())
+        }
+        self.assertEqual("error", saved_outcomes["first"][0])
+        self.assertEqual("ValueError", saved_outcomes["first"][1])
+        self.assertRegex(saved_outcomes["first"][2], "lock path changed")
+        self.assertEqual(("ok",), saved_outcomes["second"])
+        saved = module.load_preferences(self.preferences_path)
+        self.assertNotIn("af_bella", saved["verdicts"])
+        self.assertEqual("disliked", saved["verdicts"]["af_nicole"]["verdict"])
+
+    def test_parent_swap_after_acquire_cannot_redirect_a_successful_write(self) -> None:
+        parent = self.preferences_path.parent
+        parent.mkdir()
+        preserved = self.root / "preserved-private"
+        replacement = self.root / "replacement-private"
+        real_atomic_json = module._atomic_json
+        swapped = False
+
+        def redirecting_atomic_json(path: Path, payload: object, label: str) -> None:
+            nonlocal swapped
+            if label != "preferences store":
+                real_atomic_json(path, payload, label)
+                return
+            swapped = True
+            parent.rename(preserved)
+            parent.mkdir()
+            try:
+                real_atomic_json(path, payload, label)
+            finally:
+                parent.rename(replacement)
+                preserved.rename(parent)
+
+        with mock.patch.object(
+            module, "_atomic_json", side_effect=redirecting_atomic_json
+        ):
+            with self.assertRaisesRegex(ValueError, "parent directory changed"):
+                module.set_verdict(
+                    self.preferences_path,
+                    "Bella",
+                    "liked",
+                    "must stay canonical",
+                    "2026-08-08T13:00:00+00:00",
+                )
+
+        self.assertTrue(swapped)
+        self.assertFalse(self.preferences_path.exists())
+        self.assertFalse((replacement / self.preferences_path.name).exists())
+
     def test_schema_versions_must_be_the_integer_one_not_boolean_or_float(self) -> None:
         for version in (True, 1.0):
             with self.subTest(store_version=version):
