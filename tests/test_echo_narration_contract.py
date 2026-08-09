@@ -304,6 +304,22 @@ class EchoNarrationContractTests(unittest.TestCase):
             self.narrating,
         )
 
+    def test_block_review_media_has_an_internal_path_and_exact_attempt_guard(
+        self,
+    ) -> None:
+        """A block reel is governed review evidence, never delivery media."""
+        for marker in (
+            'REEL="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID/'
+            '$SLUG.pronunciation-reel.m4b"',
+            "LISTENING_ATTEMPT_ROOT",
+            "assert_block_attempt_contents",
+            "block attempt contains prohibited review media",
+            '--audiobook "$OUTPUT"',
+            '--reel "$REEL"',
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.narrate_wrapper)
+
     def test_reference_derives_pipeline_root_from_installed_narration_script(self) -> None:
         self.assertNotIn("git rev-parse --show-toplevel", self.narrating)
         for marker in (
