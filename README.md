@@ -114,6 +114,14 @@ uses one lead writer, an approved story bible, explicit prose controls, scene-le
 causality, continuity ledgers, and staged revision. It stops at an approved
 Markdown manuscript unless production is separately requested.
 
+The **[`fiction-audiobook`](skills/fiction-audiobook/)** express skill turns one
+fiction premise into a complete listening package with zero intake by default,
+or one six-topic batch when the user asks to be grilled. It selects a coherent
+chapter-level multi-voice Echo cast, delivers a flat iCloud title folder, and
+uses public-first publication for original public-safe fiction with a
+private-delivery fallback whenever privacy, rights, or verification blocks the
+public gate.
+
 ## License
 
 This repo is dual-licensed, split by folder:

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Validate repo skill contracts without external dependencies."""
 
+import importlib.util
 from pathlib import Path
+import subprocess
 import sys
 
 
@@ -19,13 +21,27 @@ def frontmatter(markdown: str) -> dict[str, str]:
     if end == -1:
         raise AssertionError("unterminated YAML frontmatter")
     result: dict[str, str] = {}
+    block_key: str | None = None
     for line in markdown[4:end].splitlines():
         if not line.strip():
             continue
-        if ":" not in line:
+        if line[0].isspace() and block_key is not None:
+            result[block_key] = " ".join(
+                part for part in (result[block_key], line.strip()) if part
+            )
             continue
+        if ":" not in line:
+            raise AssertionError("invalid YAML frontmatter")
         key, value = line.split(":", 1)
-        result[key.strip()] = value.strip()
+        key = key.strip()
+        value = value.strip()
+        require(bool(key), "invalid YAML frontmatter key")
+        if value in {">", ">-", "|", "|-"}:
+            result[key] = ""
+            block_key = key
+        else:
+            result[key] = value
+            block_key = None
     return result
 
 
@@ -50,10 +66,51 @@ def validate_skill(path: str, name: str) -> None:
     require("TODO" not in text, f"{path}/SKILL.md still has TODO text")
 
 
+def validate_python_helper(path: str) -> None:
+    script = ROOT / path
+    module_name = f"validate_skills_{script.stem}"
+    spec = importlib.util.spec_from_file_location(module_name, script)
+    require(spec is not None and spec.loader is not None, f"cannot import {path}")
+    module = importlib.util.module_from_spec(spec)
+    previous = sys.modules.get(module_name)
+    sys.modules[module_name] = module
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        if previous is None:
+            sys.modules.pop(module_name, None)
+        else:
+            sys.modules[module_name] = previous
+    result = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    require(result.returncode == 0, f"{path} --help failed: {result.stderr.strip()}")
+    require("usage:" in result.stdout, f"{path} --help did not print usage")
+
+
 def main() -> int:
     validate_skill("skill", "audiobook")
     validate_skill("skills/longform-book-development", "longform-book-development")
     validate_skill("skills/fiction-book-development", "fiction-book-development")
+    validate_skill("skills/fiction-audiobook", "fiction-audiobook")
+
+    fiction_support = (
+        "skills/fiction-audiobook/SKILL.md",
+        "skills/fiction-audiobook/agents/openai.yaml",
+        "skills/fiction-audiobook/references/express-fiction-craft.md",
+        "skills/fiction-audiobook/references/public-fiction-gate.md",
+        "skills/fiction-audiobook/scripts/fiction_voice_preferences.py",
+        "skills/fiction-audiobook/scripts/stage_echo_delivery.py",
+    )
+    for path in fiction_support:
+        require((ROOT / path).is_file(), f"missing fiction-audiobook support path: {path}")
+    contains("skills/fiction-audiobook/agents/openai.yaml", "$fiction-audiobook")
+    for path in fiction_support[-2:]:
+        validate_python_helper(path)
 
     paired_contract = (
         "exactly three", "1600×2560", "cover.png", "2400×2400", "m4b-cover.png",

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fiction Audiobook"
+  short_description: "Turn one premise into an Echo-ready fiction book"
+  default_prompt: "Use $fiction-audiobook to turn my premise into a complete narrated fiction package."
