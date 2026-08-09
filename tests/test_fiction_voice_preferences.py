@@ -4,17 +4,24 @@ import copy
 import hashlib
 import importlib.util
 import json
+import multiprocessing
 import os
 import stat
+import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).parents[1]
 MODULE_PATH = (
     ROOT / "skills" / "fiction-audiobook" / "scripts" / "fiction_voice_preferences.py"
+)
+NARRATION_SCRIPT = (
+    ROOT / "skills" / "echo-narration" / "scripts" / "echo_pronunciation_narrate.sh"
 )
 SPEC = importlib.util.spec_from_file_location("fiction_voice_preferences_test_module", MODULE_PATH)
 if SPEC is None or SPEC.loader is None:
@@ -96,6 +103,22 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         )
         attempt_id = "7" * 64
         receipt = self.root / f"echo-render-success-{run_id}-{attempt_id}.json"
+        input_receipt = self.root / f"echo-render-inputs-{run_id}.env"
+        input_receipt.write_text(
+            "\n".join(
+                (
+                    f"voice={cast['defaultVoice']}",
+                    "chapter_voices="
+                    + ",".join(
+                        f"{row['chapter']}={row['voice']}" for row in cast["chapters"]
+                    ),
+                    f"voice_plan_sha256={cast['voicePlanSHA256']}",
+                    f"voice_plan_id={plan_id}",
+                )
+            )
+            + "\n",
+            encoding="utf-8",
+        )
         receipt.write_text(
             json.dumps(
                 {
@@ -104,8 +127,8 @@ class FictionVoicePreferencesTests(unittest.TestCase):
                     "attemptID": attempt_id,
                     "runID": run_id,
                     "attemptReceiptSHA256": "8" * 64,
-                    "inputReceiptFileName": f"echo-render-inputs-{run_id}.env",
-                    "inputReceiptSHA256": "9" * 64,
+                    "inputReceiptFileName": input_receipt.name,
+                    "inputReceiptSHA256": sha256(input_receipt),
                     "sourceEPUBFileName": epub.name,
                     "sourceEPUBSHA256": sha256(epub),
                     "artifactRelativePath": f"echo-renders/{run_id}/{attempt_id}",
@@ -124,6 +147,52 @@ class FictionVoicePreferencesTests(unittest.TestCase):
             encoding="utf-8",
         )
         return epub, m4b, sidecar, receipt
+
+    def test_validate_cast_cli_tokens_are_consumable_by_the_narration_wrapper(self) -> None:
+        cast_path = self.root / "voice-cast.json"
+        cast_path.write_text(json.dumps(self.valid_cast()), encoding="utf-8")
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(MODULE_PATH),
+                "validate-cast",
+                "--cast",
+                str(cast_path),
+                "--preferences",
+                str(self.preferences_path),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        tokens = json.loads(completed.stdout)
+        self.assertEqual(
+            [
+                "--chapter-voice", "1=bf_emma",
+                "--chapter-voice", "2=am_michael",
+                "--chapter-voice", "3=af_bella",
+                "--chapter-voice", "4=bf_emma",
+            ],
+            tokens,
+        )
+
+        environment = os.environ.copy()
+        environment["ECHO_RUN_LANE"] = "controlled-invalid-lane"
+        wrapper = subprocess.run(
+            [str(NARRATION_SCRIPT), *tokens],
+            cwd=ROOT,
+            env=environment,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(64, wrapper.returncode)
+        self.assertIn(
+            "ECHO_RUN_LANE must be audiobook or fiction-audiobook", wrapper.stderr
+        )
+        self.assertNotIn("usage:", wrapper.stderr)
 
     def test_missing_store_supplies_the_standing_heart_blacklist(self) -> None:
         preferences = module.load_preferences(self.preferences_path)
@@ -296,6 +365,79 @@ class FictionVoicePreferencesTests(unittest.TestCase):
             )
         self.assertFalse((destination / "nested" / "preferences.json").exists())
 
+    def test_preference_lock_rejects_a_transient_parent_directory_swap(self) -> None:
+        parent = self.preferences_path.parent
+        parent.mkdir()
+        replacement = self.root / "replacement-private"
+        replacement.mkdir()
+        preserved = self.root / "preserved-private"
+        lock_path = parent / f".{self.preferences_path.name}.lock"
+        original_open = os.open
+        swapped = False
+
+        def transient_open(
+            path: os.PathLike[str] | str,
+            flags: int,
+            mode: int = 0o777,
+            *,
+            dir_fd: int | None = None,
+        ) -> int:
+            nonlocal swapped
+            path_value = Path(path)
+            if not swapped and dir_fd is None and path_value in {parent, lock_path}:
+                swapped = True
+                parent.rename(preserved)
+                replacement.rename(parent)
+                try:
+                    return original_open(path, flags, mode)
+                finally:
+                    parent.rename(replacement)
+                    preserved.rename(parent)
+            if dir_fd is None:
+                return original_open(path, flags, mode)
+            return original_open(path, flags, mode, dir_fd=dir_fd)
+
+        with mock.patch.object(os, "open", transient_open):
+            with self.assertRaisesRegex(ValueError, "changed|stable|directory"):
+                module.set_verdict(
+                    self.preferences_path,
+                    "Bella",
+                    "liked",
+                    "",
+                    "2026-08-08T13:00:00+00:00",
+                )
+        self.assertTrue(swapped)
+        self.assertFalse(self.preferences_path.exists())
+
+    def test_preference_lock_rejects_lock_path_replacement_while_waiting(self) -> None:
+        parent = self.preferences_path.parent
+        parent.mkdir()
+        lock_path = parent / f".{self.preferences_path.name}.lock"
+        displaced = parent / "displaced.lock"
+        original_flock = module.fcntl.flock
+        swapped = False
+
+        def replace_after_acquire(descriptor: int, operation: int) -> object:
+            nonlocal swapped
+            result = original_flock(descriptor, operation)
+            if operation == module.fcntl.LOCK_EX and not swapped:
+                swapped = True
+                lock_path.rename(displaced)
+                lock_path.write_text("replacement", encoding="utf-8")
+            return result
+
+        with mock.patch.object(module.fcntl, "flock", replace_after_acquire):
+            with self.assertRaisesRegex(ValueError, "lock path changed"):
+                module.set_verdict(
+                    self.preferences_path,
+                    "Bella",
+                    "liked",
+                    "",
+                    "2026-08-08T13:00:00+00:00",
+                )
+        self.assertTrue(swapped)
+        self.assertFalse(self.preferences_path.exists())
+
     def test_schema_versions_must_be_the_integer_one_not_boolean_or_float(self) -> None:
         for version in (True, 1.0):
             with self.subTest(store_version=version):
@@ -378,6 +520,210 @@ class FictionVoicePreferencesTests(unittest.TestCase):
                 "voicePlanSHA256"
             ],
         )
+
+    def test_record_use_rejects_same_plan_id_with_a_different_full_plan_hash(self) -> None:
+        cast_path = self.root / "voice-cast.json"
+        cast = self.valid_cast()
+        cast_path.write_text(json.dumps(cast), encoding="utf-8")
+        epub, m4b, sidecar, receipt = self.write_success_fixture(cast)
+        success = json.loads(receipt.read_text(encoding="utf-8"))
+        input_receipt = receipt.parent / success["inputReceiptFileName"]
+        forged_hash = cast["voicePlanSHA256"][:12] + "0" * 52
+        if forged_hash == cast["voicePlanSHA256"]:
+            forged_hash = cast["voicePlanSHA256"][:12] + "1" * 52
+        input_receipt.write_text(
+            input_receipt.read_text(encoding="utf-8").replace(
+                f"voice_plan_sha256={cast['voicePlanSHA256']}",
+                f"voice_plan_sha256={forged_hash}",
+            ),
+            encoding="utf-8",
+        )
+        success["inputReceiptSHA256"] = sha256(input_receipt)
+        receipt.write_text(json.dumps(success, sort_keys=True) + "\n", encoding="utf-8")
+
+        with self.assertRaisesRegex(ValueError, "full voice-plan hash"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                receipt,
+                "2026-08-08T14:00:00+00:00",
+                self.preferences_path,
+            )
+
+    def test_echo_input_receipt_is_a_hashed_strict_regular_sibling(self) -> None:
+        cast = self.valid_cast()
+        _epub, _m4b, _sidecar, receipt = self.write_success_fixture(cast)
+        success = json.loads(receipt.read_text(encoding="utf-8"))
+        input_receipt = receipt.parent / success["inputReceiptFileName"]
+
+        input_receipt.write_text(
+            input_receipt.read_text(encoding="utf-8")
+            + f"voice_plan_id={cast['voicePlanID']}\n",
+            encoding="utf-8",
+        )
+        success["inputReceiptSHA256"] = sha256(input_receipt)
+        with self.assertRaisesRegex(ValueError, "duplicate.*voice_plan_id"):
+            module.validate_echo_success_receipt(success, receipt, cast)
+
+        input_receipt.unlink()
+        outside = self.root / "outside-input.env"
+        outside.write_text("voice=bf_emma\n", encoding="utf-8")
+        input_receipt.symlink_to(outside)
+        success["inputReceiptSHA256"] = sha256(outside)
+        with self.assertRaisesRegex(ValueError, "regular non-symlink"):
+            module.validate_echo_success_receipt(success, receipt, cast)
+
+    def test_echo_input_receipt_rejects_a_transient_path_swap_during_read(self) -> None:
+        cast = self.valid_cast()
+        _epub, _m4b, _sidecar, receipt = self.write_success_fixture(cast)
+        success = json.loads(receipt.read_text(encoding="utf-8"))
+        input_receipt = receipt.parent / success["inputReceiptFileName"]
+        initial_bytes = input_receipt.read_bytes() + b"marker=initial\n"
+        swapped_bytes = input_receipt.read_bytes() + b"marker=swapped\n"
+        input_receipt.write_bytes(initial_bytes)
+        replacement = self.root / "replacement-input.env"
+        replacement.write_bytes(swapped_bytes)
+        success["inputReceiptSHA256"] = hashlib.sha256(swapped_bytes).hexdigest()
+        original_read_bytes = Path.read_bytes
+
+        def transient_swap(path: Path) -> bytes:
+            if path != input_receipt:
+                return original_read_bytes(path)
+            preserved = self.root / "preserved-input.env"
+            input_receipt.rename(preserved)
+            replacement.rename(input_receipt)
+            try:
+                return original_read_bytes(input_receipt)
+            finally:
+                input_receipt.rename(replacement)
+                preserved.rename(input_receipt)
+
+        with mock.patch.object(Path, "read_bytes", transient_swap):
+            with self.assertRaisesRegex(ValueError, "changed|differ"):
+                module.validate_echo_success_receipt(success, receipt, cast)
+
+    def test_concurrent_feedback_and_record_use_preserve_both_updates(self) -> None:
+        context = multiprocessing.get_context("fork")
+        cast_path = self.root / "voice-cast.json"
+        cast = self.valid_cast()
+        cast_path.write_text(json.dumps(cast), encoding="utf-8")
+        epub, m4b, sidecar, receipt = self.write_success_fixture(cast)
+        write_barrier = context.Barrier(2)
+        real_atomic_json = module._atomic_json
+
+        def coordinated_atomic_json(path: Path, payload: object, label: str) -> None:
+            if label == "preferences store":
+                try:
+                    write_barrier.wait(timeout=0.5)
+                except threading.BrokenBarrierError:
+                    pass
+            real_atomic_json(path, payload, label)
+
+        def record_worker() -> None:
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                receipt,
+                "2026-08-08T14:00:00+00:00",
+                self.preferences_path,
+            )
+
+        def verdict_worker() -> None:
+            module.set_verdict(
+                self.preferences_path,
+                "Bella",
+                "liked",
+                "clear and warm",
+                "2026-08-08T14:00:01+00:00",
+            )
+
+        module._atomic_json = coordinated_atomic_json
+        try:
+            workers = (
+                context.Process(target=record_worker),
+                context.Process(target=verdict_worker),
+            )
+            for worker in workers:
+                worker.start()
+            for worker in workers:
+                worker.join(timeout=10)
+                self.assertFalse(worker.is_alive())
+                self.assertEqual(0, worker.exitcode)
+        finally:
+            module._atomic_json = real_atomic_json
+
+        saved = module.load_preferences(self.preferences_path)
+        self.assertEqual("liked", saved["verdicts"]["af_bella"]["verdict"])
+        self.assertEqual(1, len(saved["uses"]))
+        self.assertEqual(0o600, stat.S_IMODE(self.preferences_path.stat().st_mode))
+
+    def test_concurrent_first_feedback_writers_create_one_shared_lock(self) -> None:
+        context = multiprocessing.get_context("fork")
+        create_barrier = context.Barrier(2)
+        results = context.Queue()
+        original_open = os.open
+        lock_name = f".{self.preferences_path.name}.lock"
+
+        def feedback_worker(voice: str, verdict: str, timestamp: str) -> None:
+            def coordinated_open(
+                path: os.PathLike[str] | str,
+                flags: int,
+                mode: int = 0o777,
+                *,
+                dir_fd: int | None = None,
+            ) -> int:
+                if (
+                    isinstance(path, (str, bytes, os.PathLike))
+                    and Path(path).name == lock_name
+                    and flags & os.O_CREAT
+                ):
+                    create_barrier.wait(timeout=5)
+                if dir_fd is None:
+                    return original_open(path, flags, mode)
+                return original_open(path, flags, mode, dir_fd=dir_fd)
+
+            module.os.open = coordinated_open
+            try:
+                module.set_verdict(
+                    self.preferences_path,
+                    voice,
+                    verdict,
+                    "concurrent first write",
+                    timestamp,
+                )
+            except BaseException as error:
+                results.put(("error", type(error).__name__, str(error)))
+            else:
+                results.put(("ok", voice, verdict))
+            finally:
+                module.os.open = original_open
+
+        workers = (
+            context.Process(
+                target=feedback_worker,
+                args=("Bella", "liked", "2026-08-08T14:00:00+00:00"),
+            ),
+            context.Process(
+                target=feedback_worker,
+                args=("Nicole", "disliked", "2026-08-08T14:00:01+00:00"),
+            ),
+        )
+        for worker in workers:
+            worker.start()
+        for worker in workers:
+            worker.join(timeout=10)
+            self.assertFalse(worker.is_alive())
+            self.assertEqual(0, worker.exitcode)
+
+        outcomes = [results.get(timeout=1) for _ in workers]
+        self.assertEqual(["ok", "ok"], sorted(outcome[0] for outcome in outcomes))
+        saved = module.load_preferences(self.preferences_path)
+        self.assertEqual("liked", saved["verdicts"]["af_bella"]["verdict"])
+        self.assertEqual("disliked", saved["verdicts"]["af_nicole"]["verdict"])
 
     def test_record_use_rejects_real_echo_run_derived_for_another_plan(self) -> None:
         cast_path = self.root / "voice-cast.json"

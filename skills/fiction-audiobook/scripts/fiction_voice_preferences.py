@@ -4,15 +4,18 @@
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
 import re
+import stat
 import sys
 import tempfile
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 
 ECHO_VOICE_PLAN_DIRECTORY = (
@@ -34,6 +37,7 @@ DEFAULT_PATH = (
 )
 INITIAL_TIMESTAMP = "1970-01-01T00:00:00+00:00"
 SHA256_LENGTH = 64
+INPUT_RECEIPT_KEY_PATTERN = re.compile(r"[a-z][a-z0-9_]*\Z")
 ECHO_SUCCESS_FIELDS = {
     "schemaVersion",
     *RENDERER_IDENTITY_KEYS,
@@ -242,6 +246,87 @@ def _atomic_json(path: Path, payload: object, label: str) -> None:
         raise
 
 
+@contextmanager
+def _preferences_lock(path: Path) -> Iterator[None]:
+    """Serialize one preference-store read/modify/replace transaction."""
+    path = Path(path)
+    _refuse_symlink(path, "preferences store")
+    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    _refuse_symlink(path, "preferences store")
+    lock_path = path.with_name(f".{path.name}.lock")
+    _refuse_symlink(lock_path, "preferences lock")
+    if not hasattr(os, "O_NOFOLLOW") or not hasattr(os, "O_DIRECTORY"):
+        raise ValueError("preferences lock cannot be opened fail-closed")
+    try:
+        parent_before = os.stat(path.parent, follow_symlinks=False)
+    except OSError as error:
+        raise ValueError("preferences lock directory is unavailable") from error
+    if not stat.S_ISDIR(parent_before.st_mode):
+        raise ValueError("preferences lock parent must be a real directory")
+    directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    if hasattr(os, "O_CLOEXEC"):
+        directory_flags |= os.O_CLOEXEC
+    try:
+        parent_descriptor = os.open(path.parent, directory_flags)
+    except OSError as error:
+        raise ValueError("preferences lock parent must be a stable directory") from error
+    lock_descriptor: int | None = None
+    try:
+        parent_opened = os.fstat(parent_descriptor)
+        parent_identity = (parent_opened.st_dev, parent_opened.st_ino)
+        if parent_identity != (parent_before.st_dev, parent_before.st_ino):
+            raise ValueError("preferences lock parent directory changed while opening")
+        lock_flags = os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW
+        if hasattr(os, "O_CLOEXEC"):
+            lock_flags |= os.O_CLOEXEC
+        try:
+            lock_descriptor = os.open(
+                lock_path,
+                lock_flags,
+                0o600,
+            )
+        except OSError as error:
+            raise ValueError(
+                "preferences lock must be a regular non-symlink file"
+            ) from error
+        if not stat.S_ISREG(os.fstat(lock_descriptor).st_mode):
+            raise ValueError("preferences lock must be a regular non-symlink file")
+        os.fchmod(lock_descriptor, 0o600)
+        lock_opened = os.fstat(lock_descriptor)
+        lock_at_path = os.stat(
+            lock_path.name, dir_fd=parent_descriptor, follow_symlinks=False
+        )
+        if (
+            not stat.S_ISREG(lock_at_path.st_mode)
+            or (lock_at_path.st_dev, lock_at_path.st_ino)
+            != (lock_opened.st_dev, lock_opened.st_ino)
+        ):
+            raise ValueError("preferences lock path changed while opening")
+        fcntl.flock(lock_descriptor, fcntl.LOCK_EX)
+        try:
+            lock_after_acquire = os.stat(
+                lock_path.name, dir_fd=parent_descriptor, follow_symlinks=False
+            )
+        except OSError as error:
+            raise ValueError("preferences lock path changed while waiting") from error
+        if (
+            not stat.S_ISREG(lock_after_acquire.st_mode)
+            or (lock_after_acquire.st_dev, lock_after_acquire.st_ino)
+            != (lock_opened.st_dev, lock_opened.st_ino)
+        ):
+            raise ValueError("preferences lock path changed while waiting")
+        parent_at_path = os.stat(path.parent, follow_symlinks=False)
+        if (parent_at_path.st_dev, parent_at_path.st_ino) != parent_identity:
+            raise ValueError("preferences lock parent directory changed")
+        _refuse_symlink(path, "preferences store")
+        yield
+    finally:
+        if lock_descriptor is not None:
+            fcntl.flock(lock_descriptor, fcntl.LOCK_UN)
+            os.close(lock_descriptor)
+        os.close(parent_descriptor)
+
+
 def _used_voices(preferences: dict[str, Any]) -> set[str]:
     return {
         row["voice"]
@@ -362,6 +447,76 @@ def _regular_digest(path: Path, label: str) -> str:
     return digest.hexdigest()
 
 
+def _stable_regular_bytes(path: Path, label: str) -> bytes:
+    """Read one non-symlink file through a stable descriptor and path identity."""
+    path = Path(path)
+    if path.is_symlink():
+        raise ValueError(f"{label} must be a regular non-symlink sibling file")
+    _refuse_symlink(path, label)
+    try:
+        before = os.stat(path, follow_symlinks=False)
+    except OSError as error:
+        raise ValueError(f"{label} must be a readable sibling file") from error
+    if not stat.S_ISREG(before.st_mode):
+        raise ValueError(f"{label} must be a regular non-symlink sibling file")
+    flags = os.O_RDONLY
+    if hasattr(os, "O_CLOEXEC"):
+        flags |= os.O_CLOEXEC
+    if not hasattr(os, "O_NOFOLLOW"):
+        raise ValueError(f"{label} cannot be opened fail-closed on this platform")
+    flags |= os.O_NOFOLLOW
+    try:
+        descriptor = os.open(path, flags)
+    except OSError as error:
+        raise ValueError(f"{label} must be a regular non-symlink sibling file") from error
+    try:
+        opened = os.fstat(descriptor)
+        identity = (opened.st_dev, opened.st_ino)
+        stable = (
+            opened.st_mode,
+            opened.st_size,
+            opened.st_mtime_ns,
+            opened.st_ctime_ns,
+        )
+        if identity != (before.st_dev, before.st_ino):
+            raise ValueError(f"{label} path changed before it was opened")
+        chunks: list[bytes] = []
+        while True:
+            chunk = os.read(descriptor, 1024 * 1024)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        after_descriptor = os.fstat(descriptor)
+        try:
+            after_path = os.stat(path, follow_symlinks=False)
+        except OSError as error:
+            raise ValueError(f"{label} path changed while it was read") from error
+        if (
+            not stat.S_ISREG(after_descriptor.st_mode)
+            or (after_descriptor.st_dev, after_descriptor.st_ino) != identity
+            or (
+                after_descriptor.st_mode,
+                after_descriptor.st_size,
+                after_descriptor.st_mtime_ns,
+                after_descriptor.st_ctime_ns,
+            )
+            != stable
+            or (after_path.st_dev, after_path.st_ino) != identity
+            or (
+                after_path.st_mode,
+                after_path.st_size,
+                after_path.st_mtime_ns,
+                after_path.st_ctime_ns,
+            )
+            != stable
+        ):
+            raise ValueError(f"{label} path or bytes changed while it was read")
+        _refuse_symlink(path, label)
+        return b"".join(chunks)
+    finally:
+        os.close(descriptor)
+
+
 def validate_echo_success_receipt(
     receipt: dict[str, object], receipt_path: Path, cast: dict[str, object]
 ) -> None:
@@ -440,6 +595,53 @@ def validate_echo_success_receipt(
         raise ValueError("Echo artifact path is not derived from runID and attemptID")
     if receipt.get("inputReceiptFileName") != f"echo-render-inputs-{run_id}.env":
         raise ValueError("Echo input receipt filename is not derived from runID")
+    input_receipt = receipt_path.parent / str(receipt["inputReceiptFileName"])
+    input_bytes = _stable_regular_bytes(input_receipt, "Echo input receipt")
+    expected_input_hash = _sha256(
+        receipt.get("inputReceiptSHA256"), "Echo success receipt inputReceiptSHA256"
+    )
+    if hashlib.sha256(input_bytes).hexdigest() != expected_input_hash:
+        raise ValueError("Echo input receipt bytes differ from success receipt")
+    try:
+        input_text = input_bytes.decode("utf-8")
+    except UnicodeError as error:
+        raise ValueError("Echo input receipt must be strict UTF-8 key=value lines") from error
+    if (
+        not input_text.endswith("\n")
+        or "\r" in input_text
+        or "\0" in input_text
+    ):
+        raise ValueError("Echo input receipt must be newline-terminated key=value lines")
+    input_fields: dict[str, str] = {}
+    for line in input_text[:-1].split("\n"):
+        if not line or "=" not in line:
+            raise ValueError("Echo input receipt contains a malformed key=value line")
+        key, value = line.split("=", 1)
+        if INPUT_RECEIPT_KEY_PATTERN.fullmatch(key) is None:
+            raise ValueError(f"Echo input receipt contains an invalid key: {key}")
+        if key in input_fields:
+            raise ValueError(f"duplicate Echo input receipt key: {key}")
+        input_fields[key] = value
+    plan, _ = _validate_cast_contract(
+        _require_dict(cast, "cast"), require_unverified=False
+    )
+    expected_input_fields = {
+        "voice": str(plan["defaultVoice"]),
+        "chapter_voices": ",".join(plan["canonicalAssignments"]),
+        "voice_plan_sha256": str(cast["voicePlanSHA256"]),
+        "voice_plan_id": str(cast["voicePlanID"]),
+    }
+    input_labels = {
+        "voice": "default voice",
+        "chapter_voices": "canonical chapter mappings",
+        "voice_plan_sha256": "full voice-plan hash",
+        "voice_plan_id": "voice-plan identity",
+    }
+    for key, expected in expected_input_fields.items():
+        if input_fields.get(key) != expected:
+            raise ValueError(
+                f"Echo input receipt {input_labels[key]} does not match cast"
+            )
     if receipt.get("resumeStateFileName") != f"echo-resume-state-{run_id}.json":
         raise ValueError("Echo resume-state filename is not derived from runID")
     for field in (
@@ -503,40 +705,55 @@ def record_use(
     """Seal a verified cast, then append its completed use to private history."""
     _timestamp(at, "recordedAt")
     preferences_path = Path(preferences_path)
-    preferences = load_preferences(preferences_path)
-    cast_path = Path(cast_path)
-    cast = _load_cast(cast_path)
-    _validate_cast(cast, preferences, require_unverified=False)
-    verified = _receipt_artifacts(cast, Path(epub), Path(m4b), Path(sidecar), Path(success_receipt))
-    existing_verified = cast.get("verifiedArtifacts")
-    if existing_verified is None:
-        cast["verifiedArtifacts"] = verified
-        _atomic_json(cast_path, cast, "voice cast")
-    elif existing_verified != verified:
-        raise ValueError("cast verifiedArtifacts differ from the supplied governed artifacts")
+    with _preferences_lock(preferences_path):
+        preferences = load_preferences(preferences_path)
+        cast_path = Path(cast_path)
+        cast = _load_cast(cast_path)
+        _validate_cast(cast, preferences, require_unverified=False)
+        verified = _receipt_artifacts(
+            cast, Path(epub), Path(m4b), Path(sidecar), Path(success_receipt)
+        )
+        existing_verified = cast.get("verifiedArtifacts")
+        if existing_verified is None:
+            cast["verifiedArtifacts"] = verified
+            _atomic_json(cast_path, cast, "voice cast")
+        elif existing_verified != verified:
+            raise ValueError(
+                "cast verifiedArtifacts differ from the supplied governed artifacts"
+            )
 
-    use_key = (cast["slug"], verified["audiobookSHA256"], verified["voicePlanSHA256"])
-    for use in preferences["uses"]:
-        if (use["slug"], use["audiobookSHA256"], use["voicePlanSHA256"]) == use_key:
-            return preferences
-    preferences["uses"].append(
-        {
-            "slug": cast["slug"],
-            "recordedAt": at,
-            "sourceEPUBSHA256": verified["sourceEPUBSHA256"],
-            "audiobookSHA256": verified["audiobookSHA256"],
-            "sidecarSHA256": verified["sidecarSHA256"],
-            "voicePlanSHA256": verified["voicePlanSHA256"],
-            "successReceiptSHA256": _regular_digest(Path(success_receipt), "Echo success receipt"),
-            "chapters": [
-                {"chapter": row["chapter"], "voice": row["voice"]}
-                for row in cast["chapters"]
-            ],
-        }
-    )
-    preferences["updatedAt"] = at
-    _atomic_json(preferences_path, preferences, "preferences store")
-    return preferences
+        use_key = (
+            cast["slug"],
+            verified["audiobookSHA256"],
+            verified["voicePlanSHA256"],
+        )
+        for use in preferences["uses"]:
+            if (
+                use["slug"],
+                use["audiobookSHA256"],
+                use["voicePlanSHA256"],
+            ) == use_key:
+                return preferences
+        preferences["uses"].append(
+            {
+                "slug": cast["slug"],
+                "recordedAt": at,
+                "sourceEPUBSHA256": verified["sourceEPUBSHA256"],
+                "audiobookSHA256": verified["audiobookSHA256"],
+                "sidecarSHA256": verified["sidecarSHA256"],
+                "voicePlanSHA256": verified["voicePlanSHA256"],
+                "successReceiptSHA256": _regular_digest(
+                    Path(success_receipt), "Echo success receipt"
+                ),
+                "chapters": [
+                    {"chapter": row["chapter"], "voice": row["voice"]}
+                    for row in cast["chapters"]
+                ],
+            }
+        )
+        preferences["updatedAt"] = at
+        _atomic_json(preferences_path, preferences, "preferences store")
+        return preferences
 
 
 def set_verdict(
@@ -554,28 +771,29 @@ def set_verdict(
     _timestamp(at, "verdict timestamp")
     resolved_voice = resolve_voice(voice)
     path = Path(path)
-    preferences = load_preferences(path)
-    if verdict == "clear":
-        preferences["verdicts"].pop(resolved_voice, None)
-        if resolved_voice != "af_heart":
-            preferences["blacklist"].pop(resolved_voice, None)
-    else:
-        record = {"verdict": verdict, "updatedAt": at}
-        if reason:
-            record["reason"] = reason
-        preferences["verdicts"][resolved_voice] = record
-        if verdict == "blacklisted":
-            blacklist_record = {"updatedAt": at}
+    with _preferences_lock(path):
+        preferences = load_preferences(path)
+        if verdict == "clear":
+            preferences["verdicts"].pop(resolved_voice, None)
+            if resolved_voice != "af_heart":
+                preferences["blacklist"].pop(resolved_voice, None)
+        else:
+            record = {"verdict": verdict, "updatedAt": at}
             if reason:
-                blacklist_record["reason"] = reason
-            elif resolved_voice == "af_heart":
-                blacklist_record["reason"] = preferences["blacklist"]["af_heart"][
-                    "reason"
-                ]
-            preferences["blacklist"][resolved_voice] = blacklist_record
-    preferences["updatedAt"] = at
-    _atomic_json(path, preferences, "preferences store")
-    return preferences
+                record["reason"] = reason
+            preferences["verdicts"][resolved_voice] = record
+            if verdict == "blacklisted":
+                blacklist_record = {"updatedAt": at}
+                if reason:
+                    blacklist_record["reason"] = reason
+                elif resolved_voice == "af_heart":
+                    blacklist_record["reason"] = preferences["blacklist"]["af_heart"][
+                        "reason"
+                    ]
+                preferences["blacklist"][resolved_voice] = blacklist_record
+        preferences["updatedAt"] = at
+        _atomic_json(path, preferences, "preferences store")
+        return preferences
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -608,8 +826,9 @@ def main(arguments: list[str]) -> int:
             cast = _load_cast(options.cast)
             plan = validate_cast(cast, load_preferences(options.preferences))
             result: object = [
-                f"--chapter-voice {assignment}"
+                token
                 for assignment in plan["canonicalAssignments"]
+                for token in ("--chapter-voice", assignment)
             ]
         elif options.command == "record-use":
             result = record_use(
