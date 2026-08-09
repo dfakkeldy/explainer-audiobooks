@@ -14,8 +14,11 @@ outside Git.
   listener-specific learning books.
 - Use `skills/longform-book-development/` for collaborative nonfiction book
   development.
+- Use `skills/fiction-audiobook/` for complete fictional listening packages,
+  including autonomous premise-to-Echo production and package redos.
 - Use `skills/fiction-book-development/` for fiction development through an
-  accepted Markdown manuscript.
+  accepted Markdown manuscript: planning, drafting, continuation, and
+  revision-only requests stay there.
 - Once selected, the relevant skill owns the detailed production workflow. This
   root guide does not activate a production workflow by itself.
 
@@ -49,6 +52,9 @@ outside Git.
   as separate states.
 - Public-safe content is eligible for publication, but public safety alone is
   not authorization to publish or copy it elsewhere.
+- The `fiction-audiobook` express trigger supplies standing workflow
+  publication authorization for original public-safe fiction, but only its
+  fail-closed public-fiction gate may permit GitHub mutation.
 - Copy a package to iCloud Books only when the requested outcome or selected
   production workflow calls for that delivery step.
 

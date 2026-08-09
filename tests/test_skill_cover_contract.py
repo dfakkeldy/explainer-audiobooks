@@ -155,6 +155,44 @@ class SkillCoverContractTests(unittest.TestCase):
         self.assertIn("legacy artifacts only", text)
         self.assertNotIn("square-art replacement preserves", text)
 
+    def flattened(self, key: str) -> str:
+        return " ".join(FILES[key].read_text(encoding="utf-8").split())
+
+    def test_route_parity_and_flat_graphic_slot(self) -> None:
+        text = self.flattened("cover")
+        for marker in (
+            "Designed flat graphic",
+            "route follows the direction",
+            "flat graphic or type-led direction",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+        for key in FILES:
+            text = self.flattened(key)
+            for stale in (
+                "generated raster art is mandatory",
+                "Never choose SVG merely",
+                "approved vector fallback",
+                "Do not use SVG or programmatic vector artwork",
+                "Do not substitute bespoke SVG",
+            ):
+                with self.subTest(file=key, stale=stale):
+                    self.assertNotIn(stale, text)
+
+    def test_raster_prompt_bans_ai_render_tells(self) -> None:
+        text = self.flattened("cover")
+        for marker in (
+            "airbrushed radial glow",
+            "winding road or river",
+            "hyper-smooth 3D product render",
+            "melted or smeared detail",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+        for stale in ("cinematic editorial photograph", "painterly realism"):
+            with self.subTest(stale=stale):
+                self.assertNotIn(stale, text)
+
 
 if __name__ == "__main__":
     unittest.main()

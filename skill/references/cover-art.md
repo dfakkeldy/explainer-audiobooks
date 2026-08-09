@@ -102,16 +102,19 @@ afterward. Give each a one-line art-direction name and a short rationale before
 rendering.
 
 Choose the three most appropriate directions from this menu. Do not use a
-weak/placeholder direction just to fill the count.
+weak/placeholder direction just to fill the count. At least one of the three
+candidates must be a Designed flat graphic or type-led direction (Typographic
+graphic system counts), so a designed, non-generated look is always offered.
 
 | Direction | Put the style into words | Best fit |
 |---|---|---|
 | **Editorial hero object** | One oversized, surprising, precisely chosen object or scene; cinematic crop; crisp silhouette; restrained palette; the object carries the thesis before the title is read. | Science, technology, history, craft, biography, practical learning |
 | **Typographic graphic system** | Bold geometric field, repeated mark, diagrammatic rhythm, or designed pattern with generous negative space; title is treated as a major visual mass, not a caption. | Business, ideas, philosophy, systems, productivity, design |
 | **Tactile collage / illustration** | Layered paper, ink, printmaking, cut-paper, field-note, or hand-drawn language; one coherent material world; lively but not childish. | Nature, culture, creativity, memoir, learning journeys |
-| **Documentary still life** | A real or generated physical scene, tool, specimen, artifact, or close crop lit like an editorial photograph; evocative rather than stock; subtle grain and depth. | History, practical skills, food, place, science, craft |
+| **Documentary still life** | A real or generated physical scene, tool, specimen, artifact, or close crop lit like an editorial film photograph — visible grain, imperfect natural light, real-world staging; evocative rather than stock; never a glossy smooth 3D render. | History, practical skills, food, place, science, craft |
 | **Institutional artifact** | An archival card, blueprint, label, map fragment, lab plate, schematic, or dossier transformed into a beautiful object; precise hierarchy, disciplined spacing, singular accent. | Technical explainers, research, process, architecture, operations |
 | **Graphic spectacle** | High-impact colour field or dark void with one impossible visual event, distorted scale, or visual paradox; confident, sparse, emotionally immediate. | Futurism, psychology, high-concept ideas, ambitious popular nonfiction |
+| **Designed flat graphic** | Bold flat-ink illustration: one confident geometric or character mark, two-to-four flat colours, strong silhouette, mid-century poster sensibility; lively but not childish; built as compositor-native vector or flat raster art. | Technology, ideas, playful explainers, learning journeys, series identity |
 
 ### Genre Calibration
 
@@ -151,8 +154,8 @@ brief: differ in metaphor, composition, palette, material language, and title
 strategy, with typography designed per candidate.
 
 A candidate is not ready to render if its central idea could fit any book, if
-its anti-brief is empty, or if a text model produced vector art without first
-using an available image-generation tool.
+its anti-brief is empty, or if vector art was substituted for a direction whose
+render route is the image-generation tool.
 
 ## Making the Art
 
@@ -160,17 +163,18 @@ Use the strongest available original-art route for the book. Do not accept the
 first technically valid image: the bar is a beautiful, specific, image-led cover
 that could sit in a serious bookstore or audiobook storefront.
 
-1. **Generated image art** when an image-generation tool is available. Use the
-   image tool directly (for example, `image_generate`), not a cheap text model
-   inventing a generic SVG of icons, cards, arrows, or a house-shaped diagram.
-   Generate at portrait ratio, then compose the chosen art at 1600×2560. Treat
-   generated art as visual illustration, not documentary evidence.
-2. **Bespoke SVG illustration is an explicit fallback, not a peer default.** Use
-   it only when the user specifically requests vector art, or when image
-   generation is unavailable and the user approves the fallback after the
-   limitation is explained. Never choose SVG merely because it is faster,
-   deterministic, or easier for a text model to produce. SVG must still look
-   like deliberate editorial art, not a slide icon.
+1. **The render route follows the direction, not tool availability.** Designed
+   flat graphic and Typographic graphic system candidates are built as
+   compositor-native SVG or flat raster art with the same craft bar as any
+   editorial illustration — deliberate geometry, one confident mark, flat
+   inks — never a slide icon. Photographic, collage, and illustrative print
+   directions use the image-generation tool directly (for example,
+   `image_generate`), not a cheap text model inventing a generic SVG of icons,
+   cards, arrows, or a house-shaped diagram. Neither route is a fallback for
+   the other.
+2. **Generated image art** comes out of the image tool at portrait ratio; then
+   compose the chosen art at 1600×2560. Treat generated art as visual
+   illustration, not documentary evidence.
 3. **User-supplied, self-created, official, public-domain, or permissively
    licensed photography/art** only when the rights and provenance are clear.
 
@@ -201,9 +205,10 @@ may be top, bottom, side, central, interrupted, or an integrated band. The image
 should feel like finished editorial cover artwork, not an illustration for a
 slide deck.
 
-Visual language: [CHOOSE ONE: cinematic editorial photograph / tactile cut-paper
-collage / expressive ink and gouache / refined screen print / painterly realism /
-surreal editorial illustration]. Material and surface: [PAPER GRAIN, PRINT
+Visual language: [CHOOSE ONE: refined screen print / risograph print / woodcut
+or linocut / gouache poster illustration / halftone editorial illustration /
+tactile cut-paper collage / grainy film photograph with natural, imperfect
+light]. Material and surface: [PAPER GRAIN, PRINT
 TEXTURE, FABRIC, METAL, GLASS, WEATHER, OR OTHER SINGLE MATERIAL LANGUAGE]. Use a
 confident, eye-catching palette of [2–4 COLOURS], including a vivid signature
 accent [HEX COLOUR] that is visibly present in the main image. Use sophisticated
@@ -218,7 +223,11 @@ no lettering, no typography, no logo, no watermark, no border, no mockup, no boo
 mockup, no audiobook icon, no interface, no dashboard, no floating UI cards, no
 generic infographic, no stock-photo look, no random symbols, no collage of tiny
 objects, no split-screen, no decorative icon cloud, no close imitation of any
-named artist, designer, publisher, or existing book cover.
+named artist, designer, publisher, or existing book cover. No AI-render tells:
+no centered glowing object, no airbrushed radial glow, no perfectly smooth
+gradients, no paper-cut layered landscape with a winding road or river, no
+hyper-smooth 3D product render, no melted or smeared detail, no uniform digital
+sheen.
 ```
 
 For each candidate, change the **visual thesis**, central metaphor, composition,
@@ -283,6 +292,9 @@ Reject and replace any candidate that:
   candidate;
 - uses an unearned premium cliché (gold foil effect, arbitrary smoke, faux
   luxury marble, generic starfield) instead of a visual argument;
+- would be clocked as AI-generated at a glance — waxy smoothness, airbrushed
+  glow, melted or smeared detail, or a trope composition such as a glowing
+  centered orb or a paper-cut valley with a winding path;
 - uses rights-unclear web imagery, watermarks, or a misleading “documentary”
   scene for a topic that requires evidence;
 - would look out of place in a serious bookstore or audiobook storefront.
@@ -293,8 +305,8 @@ Reject and replace any candidate that:
   canvas, art placement, ordered fields/shapes/type, and bundled font IDs.
   Validate specs against `skill/schemas/cover-spec-v1.schema.json` (it accepts
   schema versions 1 and 2; new specs use version 2).
-- Raster art may be PNG, JPEG, WebP, or GIF. Self-contained SVG remains an
-  explicit-request or approved-unavailable-image-tool fallback. Use
+- Raster art may be PNG, JPEG, WebP, or GIF. Self-contained SVG is a peer
+  route for Designed flat graphic and type-led candidates. Use
   high-resolution portrait art and no external image URLs.
 - Each spec-driven render writes the full-size RGB cover, a 160×256 thumbnail,
   and a `.render.json` receipt. Treat every warning as part of human review.
@@ -309,7 +321,7 @@ Reject and replace any candidate that:
   existing calls. Do not use them for a new-book workflow.
 - A complete SVG example remains available at
   `references/cover-art-example.svg`; use it only as a structural reference for
-  an approved vector fallback, not a visual template.
+  vector-route candidates, not a visual template.
 - `skill/scripts/make_cover_contact_sheet.py` builds a side-by-side contact
   sheet of all candidate renders and thumbnails for review.
 

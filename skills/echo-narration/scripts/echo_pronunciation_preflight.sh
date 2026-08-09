@@ -49,6 +49,23 @@ echo_pronunciation_source_id() {
   printf '%s\n' "$source_sha"
 }
 
+echo_pronunciation_run_folder() {
+  case "${1:-}" in
+    audiobook) printf '%s\n' 'custom-learning-audiobooks' ;;
+    fiction-audiobook) printf '%s\n' 'fiction-audiobooks' ;;
+    *)
+      printf 'ECHO_RUN_LANE must be audiobook or fiction-audiobook\n' >&2
+      return 64
+      ;;
+  esac
+}
+
+echo_pronunciation_expected_run_root() {
+  local root=$1 slug=$2 lane=$3 folder
+  folder=$(echo_pronunciation_run_folder "$lane") || return $?
+  printf '%s/.build/%s/%s\n' "$root" "$folder" "$slug"
+}
+
 echo_pronunciation_run_id() {
   local epub_sha=${1:?epub sha is required}
   local cli_sha=${2:?cli sha is required}
@@ -361,6 +378,8 @@ echo_pronunciation_receipt_text() {
     "portrait_cover_sha256=$COVER_SHA256" \
     "m4b_cover_path=$M4B_COVER" \
     "m4b_cover_sha256=$M4B_COVER_SHA256" \
+    "run_lane=$ECHO_RUN_LANE" \
+    "run_root=$RUN_ROOT" \
     "package_sha256=$PACKAGE_SHA256" \
     "run_id=$RUN_ID" \
     "work_dir=$WORK" \
@@ -370,6 +389,8 @@ echo_pronunciation_receipt_text() {
 echo_pronunciation_preflight() {
   local original_pwd=$PWD
   local script_dir state_helper lease_helper cover_helper explainer_root lease_root
+  ECHO_RUN_LANE=${ECHO_RUN_LANE-audiobook}
+  echo_pronunciation_run_folder "$ECHO_RUN_LANE" >/dev/null || return $?
   script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
   state_helper="$script_dir/echo_pronunciation_state.py"
   lease_helper="$script_dir/echo_pronunciation_lease.py"
@@ -414,7 +435,8 @@ echo_pronunciation_preflight() {
     return 64
   fi
   local expected_run_root canonical_run_root
-  expected_run_root="$explainer_root/.build/custom-learning-audiobooks/$SLUG"
+  expected_run_root=$(echo_pronunciation_expected_run_root \
+    "$explainer_root" "$SLUG" "$ECHO_RUN_LANE") || return $?
   canonical_run_root=$(cd -- "$RUN_ROOT" 2>/dev/null && pwd -P) \
     || canonical_run_root=
   if [[ "$canonical_run_root" != "$expected_run_root" ]]; then
@@ -618,7 +640,7 @@ echo_pronunciation_preflight() {
   fi
 
   EXPLAINER_ROOT=$explainer_root
-  export EXPLAINER_ROOT APPROVED_ECHO_PRONUNCIATION_SHA
+  export EXPLAINER_ROOT ECHO_RUN_LANE APPROVED_ECHO_PRONUNCIATION_SHA
   export ECHO_SOURCE_SHA EPUB EPUB_SHA256
   export COVER_BINDING_MODE COVER_SELECTION COVER_SELECTION_SHA256 COVER COVER_SHA256
   export M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256
@@ -637,7 +659,7 @@ echo_pronunciation_attest_inputs() {
   cover_helper="$script_dir/../../../skill/scripts/cover_receipts.py"
   lease_root=$(echo_pronunciation_canonical_lease_root) || return $?
   for required in \
-    EXPLAINER_ROOT SLUG RUN_ROOT APPROVED_ECHO_PRONUNCIATION_SHA \
+    EXPLAINER_ROOT SLUG RUN_ROOT ECHO_RUN_LANE APPROVED_ECHO_PRONUNCIATION_SHA \
     ECHO_SOURCE_SHA EPUB EPUB_SHA256 COVER_BINDING_MODE \
     COVER COVER_SHA256 M4B_COVER M4B_COVER_SHA256 PACKAGE_SHA256 \
     CLI ECHO_CLI_SHA256 ECHO_RESOURCE_DIR ECHO_RESOURCES_SHA256 \
@@ -668,15 +690,16 @@ echo_pronunciation_attest_inputs() {
   fi
   echo_pronunciation_attest_renderer || return $?
 
-  local canonical_explainer_root canonical_run_root
+  local canonical_explainer_root canonical_run_root expected_run_root
   canonical_explainer_root=$(cd -- "$EXPLAINER_ROOT" 2>/dev/null && pwd -P) \
     || canonical_explainer_root=
   canonical_run_root=$(cd -- "$RUN_ROOT" 2>/dev/null && pwd -P) \
     || canonical_run_root=
+  expected_run_root=$(echo_pronunciation_expected_run_root \
+    "$EXPLAINER_ROOT" "$SLUG" "$ECHO_RUN_LANE") || return $?
   if [[ "$canonical_explainer_root" != "$EXPLAINER_ROOT" \
     || ! "$SLUG" =~ ^[a-z0-9][a-z0-9-]*$ \
-    || "$canonical_run_root" \
-      != "$EXPLAINER_ROOT/.build/custom-learning-audiobooks/$SLUG" ]]; then
+    || "$canonical_run_root" != "$expected_run_root" ]]; then
     printf 'RUN_ROOT and SLUG do not identify the canonical governed run\n' >&2
     return 64
   fi

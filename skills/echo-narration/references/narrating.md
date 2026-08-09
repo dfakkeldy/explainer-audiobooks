@@ -102,6 +102,28 @@ quarantines are preserved until an operator makes a manual disposition. The
 renderer store is local-only: it has no code-signing, notarization, or
 cross-machine distribution authority.
 
+## Run lanes
+
+The governed wrapper accepts only these exact run lanes:
+
+```text
+ECHO_RUN_LANE=audiobook          -> .build/custom-learning-audiobooks/<slug>/
+ECHO_RUN_LANE=fiction-audiobook  -> .build/fiction-audiobooks/<slug>/
+unset ECHO_RUN_LANE              -> audiobook (backward compatible)
+```
+
+For a fiction audiobook, set the lane and use the matching exact run root:
+
+```bash
+export ECHO_RUN_LANE=fiction-audiobook
+export RUN_ROOT="$PIPELINE_ROOT/.build/fiction-audiobooks/$SLUG"
+"$NARRATION_SCRIPT"
+```
+
+Any other lane value, including a path-like value, fails closed before
+narration. The lane and run root are sealed into the immutable input receipt;
+a fiction run must resume with `ECHO_RUN_LANE=fiction-audiobook`.
+
 ## Voice and invocation
 
 Invoke the wrapper only through its public entry point. Do not bypass the
