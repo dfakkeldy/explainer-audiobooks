@@ -22,10 +22,11 @@ from typing import BinaryIO, Iterator, Mapping, Sequence
 from echo_pronunciation_state import read_installed_renderer_identity
 
 
-ACCEPTED_INSTALLER_SOURCE_SHA = "d7f27b02f5a6046988d14c7e147e99904f66464b"
+ACCEPTED_INSTALLER_SOURCE_SHA = "8cb1e09de81feeb820e23b151b3a5b40efa4c1c5"
 ACCEPTED_INSTALLER_SOURCE_SHAS = frozenset(
     {
         "2f23aceedb1b9f25b7ea4410756eea32a59af8cd",
+        "d7f27b02f5a6046988d14c7e147e99904f66464b",
         ACCEPTED_INSTALLER_SOURCE_SHA,
     }
 )
@@ -39,6 +40,11 @@ _SHA256_PATTERN = re.compile(r"[0-9a-f]{64}\Z")
 _ARCHITECTURE_PATTERN = re.compile(r"[A-Za-z0-9_]+\Z")
 _VERSION_PATTERN = re.compile(r"ONNX rv([0-9]+) \(Release\)\n?\Z")
 _VERSION_NUMBER_PATTERN = re.compile(r"[0-9]+(?:\.[0-9]+){1,2}\Z")
+_ACCEPTED_SUBCOMMAND_CAPABILITIES = (
+    "export-blocks",
+    "resolve-voice-plan",
+    "verify-sidecar",
+)
 _SELECTOR_NAME = "approved-renderer.json"
 _ENV0_KEYS = (
     "ECHO_RENDERER_ROOT",
@@ -488,8 +494,21 @@ def attest_renderer(state: RendererState) -> None:
         [str(state.executable), "narrate", "--help"], environment=environment
     )
     narrate_capabilities = tuple(
-        capability for capability in state.capabilities if capability != "verify-sidecar"
+        capability for capability in state.capabilities if capability.startswith("--")
     )
+    subcommand_capabilities = tuple(
+        capability for capability in state.capabilities if not capability.startswith("--")
+    )
+    unexpected_subcommands = [
+        capability
+        for capability in subcommand_capabilities
+        if capability not in _ACCEPTED_SUBCOMMAND_CAPABILITIES
+    ]
+    if unexpected_subcommands:
+        raise ValueError(
+            "renderer manifest has unsupported subcommand capabilities: "
+            f"{unexpected_subcommands}"
+        )
     missing = [
         capability
         for capability in narrate_capabilities
@@ -498,14 +517,15 @@ def attest_renderer(state: RendererState) -> None:
     if missing:
         raise ValueError(f"live capabilities do not match the manifest: {missing}")
 
-    verify_help = _run_probe(
-        [str(state.executable), "verify-sidecar", "--help"],
-        environment=environment,
-    )
-    if "verify-sidecar" in state.capabilities and not _capability_present(
-        "verify-sidecar", verify_help
-    ):
-        raise ValueError("live capabilities do not match the manifest: verify-sidecar")
+    for capability in subcommand_capabilities:
+        subcommand_help = _run_probe(
+            [str(state.executable), capability, "--help"],
+            environment=environment,
+        )
+        if not _capability_present(capability, subcommand_help):
+            raise ValueError(
+                f"live capabilities do not match the manifest: {capability}"
+            )
 
 
 def _read_regular_file(path: Path, label: str) -> bytes:

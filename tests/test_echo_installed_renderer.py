@@ -57,13 +57,14 @@ VECTOR_ROOT = (
 
 ACCEPTED_INSTALLER_SHA = "2f23aceedb1b9f25b7ea4410756eea32a59af8cd"
 CURRENT_INSTALLER_SHA = "d7f27b02f5a6046988d14c7e147e99904f66464b"
+BLOCK_PLAN_INSTALLER_SHA = "8cb1e09de81feeb820e23b151b3a5b40efa4c1c5"
 ACCEPTED_SOURCE_SHA = "81a635df84f75f2e391706e071878b379e6fe0a0"
 ACCEPTED_MANIFEST_SHA = (
     "41bbb3c795b32c0e0273bec8847169bbd2bb9158d7b447255e9b90f587d4bdfd"
 )
 VECTOR_HASHES = {
     "canonical-manifest-v1.json": (
-        "30f857f3ac890b21775f2e7773ff70faae1e1e85e0cf05af49c4ee4d7bb92c15"
+        "f895b0fb173ebe0cc0bed21326018ff649aee1ecf6de3c063135a87eb285cbc0"
     ),
     "lease-identities-v1.json": (
         "bcde098b8b1dc902236d5f0ee383ce9a2d70f6462eb79e8a6be70059b8a806ac"
@@ -72,10 +73,16 @@ VECTOR_HASHES = {
         "c025db26fec03bbf897849898c74d134c18eef7a64dfdf097827170fee5a5132"
     ),
 }
+VECTOR_INSTALLER_SHAS = {
+    "canonical-manifest-v1.json": BLOCK_PLAN_INSTALLER_SHA,
+    "lease-identities-v1.json": ACCEPTED_INSTALLER_SHA,
+    "resource-tree-v1.json": ACCEPTED_INSTALLER_SHA,
+}
 REQUIRED_CAPABILITIES = (
     "--cover",
     "--sidecar",
     "--voice",
+    "--voice-plan",
     "--chapter-voice",
     "--db",
     "--work-dir",
@@ -84,6 +91,8 @@ REQUIRED_CAPABILITIES = (
     "--resume",
     "--max-chapters",
     "--no-pronunciation-review",
+    "export-blocks",
+    "resolve-voice-plan",
     "verify-sidecar",
 )
 
@@ -162,7 +171,7 @@ class FrozenVectorTests(unittest.TestCase):
                     "https://github.com/dfakkeldy/Echo.git",
                     entry["sourceRepository"],
                 )
-                self.assertEqual(ACCEPTED_INSTALLER_SHA, entry["installerSourceSHA"])
+                self.assertEqual(VECTOR_INSTALLER_SHAS[name], entry["installerSourceSHA"])
                 self.assertEqual(
                     f"Scripts/echo_renderer/test_vectors/{name}",
                     entry["echoRelativePath"],
@@ -313,7 +322,7 @@ class ManifestAndAttestationTests(unittest.TestCase):
         return {
             "schemaVersion": 1,
             "echoSourceSHA": ACCEPTED_SOURCE_SHA,
-            "installerSourceSHA": ACCEPTED_INSTALLER_SHA,
+            "installerSourceSHA": BLOCK_PLAN_INSTALLER_SHA,
             "executablePath": "echo-cli",
             "executable": {
                 "sha256": hashlib.sha256(self.executable_bytes).hexdigest(),
@@ -399,7 +408,7 @@ class ManifestAndAttestationTests(unittest.TestCase):
             "rendererBuildRoot": str(
                 self.renderer_root / ACCEPTED_SOURCE_SHA / manifest_sha
             ),
-            "installerSourceSHA": ACCEPTED_INSTALLER_SHA,
+            "installerSourceSHA": BLOCK_PLAN_INSTALLER_SHA,
             "echoSourceSHA": ACCEPTED_SOURCE_SHA,
             "echoCLI_SHA256": hashlib.sha256(self.executable_bytes).hexdigest(),
             "echoResourcesSHA256": expected_resource_identity(
@@ -437,7 +446,7 @@ class ManifestAndAttestationTests(unittest.TestCase):
         state = self.parse_package()
         self.assertEqual(self.renderer_root, state.renderer_root)
         self.assertEqual(ACCEPTED_SOURCE_SHA, state.source_sha)
-        self.assertEqual(ACCEPTED_INSTALLER_SHA, state.installer_source_sha)
+        self.assertEqual(BLOCK_PLAN_INSTALLER_SHA, state.installer_source_sha)
         self.assertEqual(state.manifest_sha, state.build_root.name)
         self.assertEqual(state.build_root / "renderer-manifest.json", state.manifest_path)
         self.assertEqual(state.build_root / "echo-cli", state.executable)
@@ -604,7 +613,7 @@ class ManifestAndAttestationTests(unittest.TestCase):
         expected_command = (
             "PYTHONPATH=Scripts python3 -m echo_renderer.cli install \\\n"
             "  --installer-worktree <clean-reviewed-installer-worktree> \\\n"
-            f"  --installer-sha {CURRENT_INSTALLER_SHA} \\\n"
+            f"  --installer-sha {BLOCK_PLAN_INSTALLER_SHA} \\\n"
             "  --source-worktree <clean-source-worktree-at-SHA> \\\n"
             f"  --source-sha {ACCEPTED_SOURCE_SHA} \\\n"
             "  --promote"
@@ -1074,7 +1083,15 @@ class ManifestAndAttestationTests(unittest.TestCase):
         if arguments[-1] == "--version":
             stdout = "ONNX rv15 (Release)\n"
         elif arguments[-2:] == ["narrate", "--help"]:
-            stdout = "\n".join(REQUIRED_CAPABILITIES[:-1]) + "\n"
+            stdout = "\n".join(
+                capability
+                for capability in REQUIRED_CAPABILITIES
+                if capability.startswith("--")
+            ) + "\n"
+        elif arguments[-2:] == ["export-blocks", "--help"]:
+            stdout = "Usage: echo-cli export-blocks --help\n"
+        elif arguments[-2:] == ["resolve-voice-plan", "--help"]:
+            stdout = "Usage: echo-cli resolve-voice-plan --help\n"
         elif arguments[-2:] == ["verify-sidecar", "--help"]:
             stdout = "Usage: echo-cli verify-sidecar --help\n"
         else:
@@ -1093,11 +1110,13 @@ class ManifestAndAttestationTests(unittest.TestCase):
             with mock.patch.object(RENDERER.subprocess, "run", side_effect=runner):
                 RENDERER.attest_renderer(state)
 
-        self.assertEqual(3, len(calls))
+        self.assertEqual(5, len(calls))
         self.assertEqual(
             [
                 [str(state.executable), "--version"],
                 [str(state.executable), "narrate", "--help"],
+                [str(state.executable), "export-blocks", "--help"],
+                [str(state.executable), "resolve-voice-plan", "--help"],
                 [str(state.executable), "verify-sidecar", "--help"],
             ],
             [arguments for arguments, _ in calls],
@@ -1111,6 +1130,36 @@ class ManifestAndAttestationTests(unittest.TestCase):
             self.assertEqual("/usr/bin:/bin:/usr/sbin:/sbin", kwargs["env"]["PATH"])
             self.assertEqual(canonical_home, kwargs["env"]["HOME"])
             self.assertEqual(str(state.resources), kwargs["env"]["ECHO_RESOURCE_DIR"])
+
+    def test_attestation_rejects_plan_capability_missing_from_its_own_help_surface(self):
+        for missing in ("--voice-plan", "export-blocks", "resolve-voice-plan"):
+            with self.subTest(missing=missing):
+                state = self.parse_package()
+
+                def runner(arguments, **kwargs):
+                    result = self.successful_probe(arguments, **kwargs)
+                    if missing == "--voice-plan" and arguments[-2:] == [
+                        "narrate",
+                        "--help",
+                    ]:
+                        return subprocess.CompletedProcess(
+                            arguments,
+                            0,
+                            stdout=result.stdout.replace("--voice-plan\n", ""),
+                            stderr="",
+                        )
+                    if arguments[-2:] == [missing, "--help"]:
+                        return subprocess.CompletedProcess(
+                            arguments,
+                            0,
+                            stdout="Usage: echo-cli narrate --help\n",
+                            stderr="",
+                        )
+                    return result
+
+                with mock.patch.object(RENDERER.subprocess, "run", side_effect=runner):
+                    with self.assertRaisesRegex(ValueError, "capabilities"):
+                        RENDERER.attest_renderer(state)
 
     def test_attestation_rejects_changed_bytes_forged_state_and_live_contract(self):
         state = self.parse_package()
