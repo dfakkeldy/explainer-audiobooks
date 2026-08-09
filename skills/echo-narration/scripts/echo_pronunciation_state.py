@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import hashlib
 import json
 import os
@@ -252,9 +253,20 @@ def open_regular(path: Path, label: str) -> int:
     flags = os.O_RDONLY
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
+    if hasattr(os, "O_NONBLOCK"):
+        flags |= os.O_NONBLOCK
     try:
         descriptor = os.open(path, flags)
     except OSError as error:
+        if error.errno == errno.ENOENT:
+            raise StateError(f"{label} is missing: {path}") from error
+        if error.errno == errno.ELOOP:
+            try:
+                leaf = os.lstat(path)
+            except OSError:
+                leaf = None
+            if leaf is not None and stat.S_ISLNK(leaf.st_mode):
+                raise StateError(f"{label} must not be a symlink: {path}") from error
         raise StateError(f"{label} is missing or unsafe: {path}") from error
     if not stat.S_ISREG(os.fstat(descriptor).st_mode):
         os.close(descriptor)

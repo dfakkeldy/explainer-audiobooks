@@ -2588,29 +2588,53 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                     for path_name, content in original.items():
                         paths[path_name].write_bytes(content)
 
-    def test_governed_receipt_consumers_reject_symlinked_inputs(self) -> None:
-        """Every externally supplied receipt stays behind the no-follow boundary."""
+    def test_governed_receipt_consumers_preserve_input_diagnostics(self) -> None:
+        """The one-open boundary keeps all established unsafe-input messages."""
 
         paths = self.completed_block_delivery_paths("symlinked-delivery-evidence")
+        labels = {
+            "attempt": "current-attempt receipt",
+            "selector": "current-accepted selector",
+            "receipt": "render-success receipt",
+            "input_receipt": "render-input receipt",
+        }
+        diagnostics = (
+            ("missing", "is missing"),
+            ("symlink", "must not be a symlink"),
+            ("directory", "must be a regular file"),
+        )
         for consumer in ("block-delivery-evidence", "verify-delivery"):
-            for name in ("attempt", "selector", "receipt", "input_receipt"):
-                with self.subTest(consumer=consumer, receipt=name):
-                    linked_paths = dict(paths)
-                    link = self.tmp / f"{consumer}-{name}-delivery-link"
-                    link.symlink_to(paths[name])
-                    linked_paths[name] = link
-                    command = (
-                        self.block_delivery_evidence_command(linked_paths)
-                        if consumer == "block-delivery-evidence"
-                        else self.delivery_fallback_command(linked_paths)
-                    )
-                    rejected = subprocess.run(
-                        command,
-                        capture_output=True,
-                        text=True,
-                    )
-                    self.assertEqual(65, rejected.returncode, rejected.stderr)
-                    self.assertEqual("", rejected.stdout)
+            for name, label in labels.items():
+                for kind, diagnostic in diagnostics:
+                    with self.subTest(
+                        consumer=consumer,
+                        receipt=name,
+                        input_kind=kind,
+                    ):
+                        invalid_paths = dict(paths)
+                        invalid_path = self.tmp / f"{consumer}-{name}-{kind}"
+                        if kind == "symlink":
+                            invalid_path.symlink_to(paths[name])
+                        elif kind == "directory":
+                            invalid_path.mkdir()
+                        invalid_paths[name] = invalid_path
+                        command = (
+                            self.block_delivery_evidence_command(invalid_paths)
+                            if consumer == "block-delivery-evidence"
+                            else self.delivery_fallback_command(invalid_paths)
+                        )
+                        rejected = subprocess.run(
+                            command,
+                            capture_output=True,
+                            text=True,
+                        )
+                        self.assertEqual(65, rejected.returncode, rejected.stderr)
+                        self.assertEqual("", rejected.stdout)
+                        self.assertEqual(
+                            "echo_pronunciation_state: "
+                            f"{label} {diagnostic}: {invalid_path}\n",
+                            rejected.stderr,
+                        )
 
     def test_verify_delivery_fallback_cross_checks_explicit_voice_and_renderer(
         self,
@@ -4811,36 +4835,71 @@ assert pattern.fullmatch(
                 encoding="utf-8",
             )
 
+            command = [
+                "/usr/local/bin/python3",
+                str(STATE_HELPER),
+                "verify-delivery",
+                "--attempt",
+                str(attempt),
+                "--selector",
+                str(selector),
+                "--receipt",
+                str(success),
+                "--input-receipt",
+                str(input_receipt),
+                "--state-receipt",
+                str(state_receipt),
+                "--epub",
+                str(epub),
+                "--audiobook",
+                str(audiobook),
+                "--sidecar",
+                str(sidecar),
+                "--audit",
+                str(audit),
+                "--reel",
+                str(reel),
+            ]
             result = subprocess.run(
-                [
-                    "/usr/local/bin/python3",
-                    str(STATE_HELPER),
-                    "verify-delivery",
-                    "--attempt",
-                    str(attempt),
-                    "--selector",
-                    str(selector),
-                    "--receipt",
-                    str(success),
-                    "--input-receipt",
-                    str(input_receipt),
-                    "--state-receipt",
-                    str(state_receipt),
-                    "--epub",
-                    str(epub),
-                    "--audiobook",
-                    str(audiobook),
-                    "--sidecar",
-                    str(sidecar),
-                    "--audit",
-                    str(audit),
-                    "--reel",
-                    str(reel),
-                ],
+                command,
                 capture_output=True,
                 text=True,
             )
             self.assertEqual(0, result.returncode, result.stderr)
+
+            governed_receipts = {
+                "--attempt": ("current-attempt receipt", attempt),
+                "--selector": ("current-accepted selector", selector),
+                "--receipt": ("render-success receipt", success),
+                "--input-receipt": ("render-input receipt", input_receipt),
+            }
+            diagnostics = (
+                ("missing", "is missing"),
+                ("symlink", "must not be a symlink"),
+                ("directory", "must be a regular file"),
+            )
+            for option, (label, receipt) in governed_receipts.items():
+                for kind, diagnostic in diagnostics:
+                    with self.subTest(receipt=option, input_kind=kind):
+                        invalid = root / f"legacy-{option.removeprefix('--')}-{kind}"
+                        if kind == "symlink":
+                            invalid.symlink_to(receipt)
+                        elif kind == "directory":
+                            invalid.mkdir()
+                        rejected_command = list(command)
+                        rejected_command[rejected_command.index(option) + 1] = str(invalid)
+                        rejected = subprocess.run(
+                            rejected_command,
+                            capture_output=True,
+                            text=True,
+                        )
+                        self.assertEqual(65, rejected.returncode, rejected.stderr)
+                        self.assertEqual("", rejected.stdout)
+                        self.assertEqual(
+                            "echo_pronunciation_state: "
+                            f"{label} {diagnostic}: {invalid}\n",
+                            rejected.stderr,
+                        )
 
 
 class PronunciationAuditValidatorTests(unittest.TestCase):
