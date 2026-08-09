@@ -205,6 +205,7 @@ def _snapshot_file(
     *,
     capture: bool = False,
     copy_to: Path | None = None,
+    max_bytes: int | None = None,
 ) -> _FileSnapshot:
     _reject_symlink_ancestors(path, label)
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
@@ -212,17 +213,33 @@ def _snapshot_file(
         descriptor = os.open(path, flags)
     except OSError as error:
         raise ValueError(f"{label} is not a readable regular file") from error
-    chunks: list[bytes] | None = [] if capture else None
+    chunks: list[bytes] | None = None
     digest = hashlib.sha256()
     copy_stream = None
     try:
-        if copy_to is not None:
-            copy_stream = copy_to.open("xb")
         before = os.fstat(descriptor)
         _require(stat.S_ISREG(before.st_mode), f"{label} must be a regular file")
+        _require(
+            max_bytes is None
+            or (
+                type(max_bytes) is int
+                and max_bytes >= 0
+                and before.st_size <= max_bytes
+            ),
+            f"{label} exceeds its snapshot size limit",
+        )
+        chunks = [] if capture else None
+        if copy_to is not None:
+            copy_stream = copy_to.open("xb")
+        total_bytes = 0
         with os.fdopen(descriptor, "rb") as stream:
             descriptor = -1
             for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                total_bytes += len(chunk)
+                _require(
+                    max_bytes is None or total_bytes <= max_bytes,
+                    f"{label} grew beyond its snapshot size limit",
+                )
                 digest.update(chunk)
                 if chunks is not None:
                     chunks.append(chunk)
@@ -277,8 +294,13 @@ def _snapshot_file(
     )
 
 
-def _require_snapshot_unchanged(snapshot: _FileSnapshot, label: str) -> None:
-    current = _snapshot_file(snapshot.path, label)
+def _require_snapshot_unchanged(
+    snapshot: _FileSnapshot,
+    label: str,
+    *,
+    max_bytes: int | None = None,
+) -> None:
+    current = _snapshot_file(snapshot.path, label, max_bytes=max_bytes)
     _require(
         (
             current.device,
@@ -668,6 +690,7 @@ def _verify_fiction_artifacts(
             f"fiction {name} artifact",
             capture=name in {"manuscript", "alignment", "portraitCover"},
             copy_to=epub_probe_copy if name == "epub" else None,
+            max_bytes=_EPUB_MAX_COVER_BYTES if name == "portraitCover" else None,
         )
         if name == "alignment":
             alignment = _json_from_snapshot(snapshot, "fiction alignment")
@@ -1330,6 +1353,7 @@ _EPUB_MAX_XML_BYTES = 1024 * 1024
 _EPUB_MAX_XHTML_BYTES = 4 * 1024 * 1024
 _EPUB_MAX_CSS_BYTES = 64 * 1024
 _EPUB_MAX_COVER_BYTES = 16 * 1024 * 1024
+_ZIP_DOS_SPECIAL_FILE_MASK = 0x08 | 0x10 | 0x40
 _BUILDER_EPUB_CSS = (
     "body{font-family:Georgia,'Times New Roman',serif;line-height:1.6;margin:5% 6%;}"
     "h1{font-size:1.5em;line-height:1.25;margin:0 0 1em;}"
@@ -1341,6 +1365,32 @@ _BUILDER_EPUB_CSS = (
     "figure img{max-width:100%;height:auto;}"
     "figcaption{font-size:0.85em;color:#555;margin-top:0.5em;font-style:italic;text-align:center;}"
 ).encode("utf-8")
+
+
+@dataclass(frozen=True)
+class _ClassicZipEnd:
+    member_count: int
+    central_offset: int
+    central_size: int
+    eocd_offset: int
+
+
+@dataclass(frozen=True)
+class _ClassicZipRecord:
+    name: str
+    raw_name: bytes
+    create_version: int
+    extract_version: int
+    flags: int
+    method: int
+    modified_time: int
+    modified_date: int
+    crc32: int
+    compressed_size: int
+    uncompressed_size: int
+    internal_attributes: int
+    external_attributes: int
+    local_offset: int
 
 
 def _validate_epub_xml_lexical_identity(
@@ -1411,14 +1461,33 @@ def _epub_member_limit(name: str) -> int:
     return _EPUB_MAX_XHTML_BYTES
 
 
-def _declared_epub_member_count(epub: Path, archive_size: int) -> int:
-    tail_size = min(archive_size, 65_535 + 22)
+def _read_classic_zip_bytes(
+    stream, offset: int, size: int, label: str
+) -> bytes:
+    _require(
+        offset >= 0 and size >= 0,
+        f"public fiction EPUB {label} is outside the classic ZIP envelope",
+    )
     try:
-        with epub.open("rb") as stream:
-            stream.seek(archive_size - tail_size)
-            tail = stream.read(tail_size)
+        stream.seek(offset)
+        value = stream.read(size)
     except OSError as error:
-        raise ValueError("public fiction EPUB central directory is unreadable") from error
+        raise ValueError(f"public fiction EPUB {label} is unreadable") from error
+    _require(
+        len(value) == size,
+        f"public fiction EPUB {label} is truncated",
+    )
+    return value
+
+
+def _classic_zip_end(stream, archive_size: int) -> _ClassicZipEnd:
+    tail_size = min(archive_size, 65_535 + 22)
+    tail = _read_classic_zip_bytes(
+        stream,
+        archive_size - tail_size,
+        tail_size,
+        "end record window",
+    )
     eocd_index = tail.rfind(b"PK\x05\x06")
     _require(eocd_index >= 0, "public fiction EPUB lacks an end record")
     try:
@@ -1444,7 +1513,7 @@ def _declared_epub_member_count(epub: Path, archive_size: int) -> int:
     )
     _require(
         comment_size == 0 and eocd_index + 22 == len(tail),
-        "public fiction EPUB archive comment is not allowed",
+        "public fiction EPUB archive comment or trailing bytes are not allowed",
     )
     eocd_offset = archive_size - tail_size + eocd_index
     _require(
@@ -1452,7 +1521,258 @@ def _declared_epub_member_count(epub: Path, archive_size: int) -> int:
         and central_offset + central_size == eocd_offset,
         "public fiction EPUB central directory exceeds its resource limit",
     )
-    return total_entries
+    _require(
+        central_offset not in {0xFFFFFFFF}
+        and central_size not in {0xFFFFFFFF}
+        and total_entries != 0xFFFF
+        and eocd_offset + 22 == archive_size,
+        "public fiction EPUB must use one complete classic ZIP envelope",
+    )
+    return _ClassicZipEnd(
+        member_count=total_entries,
+        central_offset=central_offset,
+        central_size=central_size,
+        eocd_offset=eocd_offset,
+    )
+
+
+def _classic_zip_records(
+    stream, end: _ClassicZipEnd
+) -> list[_ClassicZipRecord]:
+    cursor = end.central_offset
+    central_end = end.central_offset + end.central_size
+    records: list[_ClassicZipRecord] = []
+    names: set[str] = set()
+    local_offsets: set[int] = set()
+    total_compressed = 0
+    total_uncompressed = 0
+    for index in range(end.member_count):
+        fixed = _read_classic_zip_bytes(
+            stream, cursor, 46, f"central record {index + 1}"
+        )
+        try:
+            (
+                signature,
+                create_version,
+                extract_version,
+                flags,
+                method,
+                modified_time,
+                modified_date,
+                crc32,
+                compressed_size,
+                uncompressed_size,
+                filename_size,
+                extra_size,
+                comment_size,
+                disk_start,
+                internal_attributes,
+                external_attributes,
+                local_offset,
+            ) = struct.unpack("<4s6H3I5H2I", fixed)
+        except struct.error as error:
+            raise ValueError("public fiction EPUB central record is invalid") from error
+        _require(
+            signature == b"PK\x01\x02",
+            "public fiction EPUB central directory has an invalid signature",
+        )
+        variable_size = filename_size + extra_size + comment_size
+        _require(
+            cursor + 46 + variable_size <= central_end,
+            "public fiction EPUB central record exceeds its declared extent",
+        )
+        raw_name = _read_classic_zip_bytes(
+            stream, cursor + 46, filename_size, f"central filename {index + 1}"
+        )
+        _require(
+            extra_size == 0 and comment_size == 0,
+            "public fiction EPUB central member extra data or comment is not allowed",
+        )
+        _require(
+            disk_start == 0,
+            "public fiction EPUB member must not span ZIP disks",
+        )
+        _require(
+            flags == 0,
+            "public fiction EPUB member has encryption, data descriptor, or unsupported flags",
+        )
+        _require(
+            method in {zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED},
+            "public fiction EPUB member uses an unsupported compression method",
+        )
+        _require(
+            extract_version <= 20,
+            "public fiction EPUB ZIP64 or non-classic extract version is not allowed",
+        )
+        _require(
+            compressed_size != 0xFFFFFFFF
+            and uncompressed_size != 0xFFFFFFFF
+            and local_offset != 0xFFFFFFFF,
+            "public fiction EPUB ZIP64 member metadata is not allowed",
+        )
+        try:
+            name = raw_name.decode("ascii")
+        except UnicodeDecodeError as error:
+            raise ValueError(
+                "public fiction EPUB member filename is not unchanged-builder ASCII"
+            ) from error
+        name = _safe_epub_path(name, "EPUB central member")
+        _require(
+            raw_name == name.encode("ascii") and not name.endswith("/"),
+            "public fiction EPUB member filename is not an exact regular-file path",
+        )
+        _require(name not in names, "public fiction EPUB has duplicate files")
+        _require(
+            local_offset not in local_offsets and local_offset < end.central_offset,
+            "public fiction EPUB local header offsets overlap the central directory",
+        )
+        mode = external_attributes >> 16
+        _require(
+            stat.S_IFMT(mode) in {0, stat.S_IFREG}
+            and not external_attributes & _ZIP_DOS_SPECIAL_FILE_MASK,
+            f"EPUB member mode is not a regular file: {name}",
+        )
+        _require(
+            compressed_size <= _EPUB_MAX_COMPRESSED_MEMBER_BYTES,
+            f"EPUB member compressed size exceeds its resource limit: {name}",
+        )
+        _require(
+            uncompressed_size <= _epub_member_limit(name),
+            f"EPUB member uncompressed size exceeds its role resource limit: {name}",
+        )
+        if compressed_size == 0:
+            _require(
+                uncompressed_size == 0,
+                f"EPUB member has a zero compressed size with nonempty content: {name}",
+            )
+        else:
+            _require(
+                uncompressed_size
+                <= compressed_size * _EPUB_MAX_COMPRESSION_RATIO,
+                f"EPUB member compression ratio exceeds its resource limit: {name}",
+            )
+        _require(
+            method != zipfile.ZIP_STORED
+            or compressed_size == uncompressed_size,
+            f"EPUB stored member compressed and uncompressed sizes differ: {name}",
+        )
+        total_compressed += compressed_size
+        total_uncompressed += uncompressed_size
+        names.add(name)
+        local_offsets.add(local_offset)
+        records.append(
+            _ClassicZipRecord(
+                name=name,
+                raw_name=raw_name,
+                create_version=create_version,
+                extract_version=extract_version,
+                flags=flags,
+                method=method,
+                modified_time=modified_time,
+                modified_date=modified_date,
+                crc32=crc32,
+                compressed_size=compressed_size,
+                uncompressed_size=uncompressed_size,
+                internal_attributes=internal_attributes,
+                external_attributes=external_attributes,
+                local_offset=local_offset,
+            )
+        )
+        cursor += 46 + variable_size
+    _require(
+        cursor == central_end == end.eocd_offset,
+        "public fiction EPUB central directory does not fill its exact extent",
+    )
+    _require(
+        total_compressed <= _EPUB_MAX_COMPRESSED_TOTAL_BYTES,
+        "public fiction EPUB total compressed size exceeds its aggregate limit",
+    )
+    _require(
+        total_uncompressed <= _EPUB_MAX_UNCOMPRESSED_TOTAL_BYTES,
+        "public fiction EPUB total uncompressed size exceeds its aggregate limit",
+    )
+
+    by_local_offset = sorted(records, key=lambda record: record.local_offset)
+    _require(
+        bool(by_local_offset) and by_local_offset[0].local_offset == 0,
+        "public fiction EPUB has a preamble before its first local header",
+    )
+    for index, record in enumerate(by_local_offset):
+        fixed = _read_classic_zip_bytes(
+            stream,
+            record.local_offset,
+            30,
+            f"local header for {record.name}",
+        )
+        try:
+            (
+                signature,
+                extract_version,
+                flags,
+                method,
+                modified_time,
+                modified_date,
+                crc32,
+                compressed_size,
+                uncompressed_size,
+                filename_size,
+                extra_size,
+            ) = struct.unpack("<4s5H3I2H", fixed)
+        except struct.error as error:
+            raise ValueError("public fiction EPUB local header is invalid") from error
+        _require(
+            signature == b"PK\x03\x04",
+            f"public fiction EPUB local signature is invalid: {record.name}",
+        )
+        _require(
+            extra_size == 0,
+            f"public fiction EPUB local extra data is not allowed: {record.name}",
+        )
+        local_name = _read_classic_zip_bytes(
+            stream,
+            record.local_offset + 30,
+            filename_size,
+            f"local filename for {record.name}",
+        )
+        _require(
+            local_name == record.raw_name,
+            f"public fiction EPUB local filename disagrees with central metadata: {record.name}",
+        )
+        _require(
+            (
+                extract_version,
+                flags,
+                method,
+                modified_time,
+                modified_date,
+                crc32,
+                compressed_size,
+                uncompressed_size,
+            )
+            == (
+                record.extract_version,
+                record.flags,
+                record.method,
+                record.modified_time,
+                record.modified_date,
+                record.crc32,
+                record.compressed_size,
+                record.uncompressed_size,
+            ),
+            f"public fiction EPUB local header disagrees with central metadata: {record.name}",
+        )
+        data_start = record.local_offset + 30 + filename_size
+        data_end = data_start + record.compressed_size
+        next_offset = (
+            by_local_offset[index + 1].local_offset
+            if index + 1 < len(by_local_offset)
+            else end.central_offset
+        )
+        _require(
+            data_end == next_offset,
+            f"public fiction EPUB has a gap or overlap after local member: {record.name}",
+        )
+    return records
 
 
 def _inspect_epub_archive(
@@ -1467,28 +1787,65 @@ def _inspect_epub_archive(
         0 < archive_size <= _EPUB_MAX_ARCHIVE_BYTES,
         "public fiction EPUB compressed package size exceeds its resource limit",
     )
-    declared_member_count = _declared_epub_member_count(epub, archive_size)
+    try:
+        with epub.open("rb") as stream:
+            end = _classic_zip_end(stream, archive_size)
+            raw_records = _classic_zip_records(stream, end)
+    except OSError as error:
+        raise ValueError("public fiction EPUB envelope is unreadable") from error
     try:
         with zipfile.ZipFile(epub) as archive:
             infos = archive.infolist()
     except (OSError, zipfile.BadZipFile, zipfile.LargeZipFile) as error:
         raise ValueError("public fiction EPUB is not a valid zip archive") from error
     _require(
-        len(infos) == declared_member_count,
+        len(infos) == end.member_count == len(raw_records),
         "public fiction EPUB member count exceeds its resource limit",
     )
     entries: dict[str, zipfile.ZipInfo] = {}
     total_compressed = 0
     total_uncompressed = 0
-    for info in infos:
+    for info, raw_record in zip(infos, raw_records, strict=True):
         name = _safe_epub_path(info.filename, "EPUB member")
+        _require(
+            (
+                name,
+                info.create_version,
+                info.extract_version,
+                info.flag_bits,
+                info.compress_type,
+                info.CRC,
+                info.compress_size,
+                info.file_size,
+                info.internal_attr,
+                info.external_attr,
+                info.header_offset,
+            )
+            == (
+                raw_record.name,
+                raw_record.create_version & 0xFF,
+                raw_record.extract_version,
+                raw_record.flags,
+                raw_record.method,
+                raw_record.crc32,
+                raw_record.compressed_size,
+                raw_record.uncompressed_size,
+                raw_record.internal_attributes,
+                raw_record.external_attributes,
+                raw_record.local_offset,
+            ),
+            f"EPUB member central metadata is inconsistent: {name}",
+        )
         _require(name not in entries, "public fiction EPUB has duplicate files")
         _require(
             info.comment == b"" and info.extra == b"",
             f"EPUB member comment or extra metadata is not allowed: {name}",
         )
         mode = info.external_attr >> 16
-        _require(not stat.S_ISLNK(mode), f"EPUB member is a symlink: {name}")
+        _require(
+            stat.S_IFMT(mode) in {0, stat.S_IFREG},
+            f"EPUB member mode is not a regular file: {name}",
+        )
         _require(
             not info.flag_bits & 0x1,
             f"EPUB member must not be encrypted: {name}",
@@ -2401,7 +2758,13 @@ def verify_public_fiction_package(
         readme_snapshot,
     ]
     for snapshot in all_snapshots:
-        _require_snapshot_unchanged(snapshot, snapshot.path.name)
+        _require_snapshot_unchanged(
+            snapshot,
+            snapshot.path.name,
+            max_bytes=(
+                _EPUB_MAX_COVER_BYTES if snapshot is cover_snapshot else None
+            ),
+        )
     _require(
         _canonical_chapter_filenames(chapters_dir) == initial_chapter_filenames,
         "canonical fiction chapter coverage changed during verification",

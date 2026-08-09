@@ -1,7 +1,9 @@
 import copy
 import hashlib
 import json
+import os
 import shutil
+import stat
 import struct
 import subprocess
 import tempfile
@@ -762,6 +764,98 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                 destination.writestr(info, content)
         rewritten.replace(self.epub)
 
+    def epub_raw_records(
+        self, payload: bytearray
+    ) -> tuple[int, int, dict[str, tuple[int, int]]]:
+        eocd = payload.rfind(b"PK\x05\x06")
+        self.assertNotEqual(-1, eocd)
+        entry_count = struct.unpack_from("<H", payload, eocd + 10)[0]
+        central_offset = struct.unpack_from("<I", payload, eocd + 16)[0]
+        cursor = central_offset
+        records: dict[str, tuple[int, int]] = {}
+        for _index in range(entry_count):
+            self.assertEqual(b"PK\x01\x02", payload[cursor : cursor + 4])
+            filename_size, extra_size, comment_size = struct.unpack_from(
+                "<HHH", payload, cursor + 28
+            )
+            name = bytes(
+                payload[cursor + 46 : cursor + 46 + filename_size]
+            ).decode("utf-8")
+            local_offset = struct.unpack_from("<I", payload, cursor + 42)[0]
+            records[name] = (cursor, local_offset)
+            cursor += 46 + filename_size + extra_size + comment_size
+        return eocd, central_offset, records
+
+    def rewrite_epub_local_header(
+        self,
+        member: str,
+        *,
+        flags: int | None = None,
+        method: int | None = None,
+        crc: int | None = None,
+        compressed_size: int | None = None,
+        uncompressed_size: int | None = None,
+        filename: bytes | None = None,
+    ) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        _eocd, _central_offset, records = self.epub_raw_records(payload)
+        _central, local = records[member]
+        self.assertEqual(b"PK\x03\x04", payload[local : local + 4])
+        filename_size = struct.unpack_from("<H", payload, local + 26)[0]
+        if flags is not None:
+            struct.pack_into("<H", payload, local + 6, flags)
+        if method is not None:
+            struct.pack_into("<H", payload, local + 8, method)
+        if crc is not None:
+            struct.pack_into("<I", payload, local + 14, crc)
+        if compressed_size is not None:
+            struct.pack_into("<I", payload, local + 18, compressed_size)
+        if uncompressed_size is not None:
+            struct.pack_into("<I", payload, local + 22, uncompressed_size)
+        if filename is not None:
+            self.assertEqual(filename_size, len(filename))
+            payload[local + 30 : local + 30 + filename_size] = filename
+        self.epub.write_bytes(payload)
+
+    def add_epub_local_extra(self, member: str, extra: bytes) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        old_eocd, old_central_offset, records = self.epub_raw_records(payload)
+        _central, local = records[member]
+        self.assertEqual(max(offset for _central, offset in records.values()), local)
+        filename_size, old_extra_size = struct.unpack_from("<HH", payload, local + 26)
+        self.assertEqual(0, old_extra_size)
+        data_start = local + 30 + filename_size
+        payload[data_start:data_start] = extra
+        struct.pack_into("<H", payload, local + 28, len(extra))
+        new_eocd = old_eocd + len(extra)
+        struct.pack_into("<I", payload, new_eocd + 16, old_central_offset + len(extra))
+        self.epub.write_bytes(payload)
+
+    def add_epub_gap_before_central_directory(self, hidden: bytes) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        old_eocd, old_central_offset, _records = self.epub_raw_records(payload)
+        payload[old_central_offset:old_central_offset] = hidden
+        new_eocd = old_eocd + len(hidden)
+        struct.pack_into("<I", payload, new_eocd + 16, old_central_offset + len(hidden))
+        self.epub.write_bytes(payload)
+
+    def add_epub_preamble(self, hidden: bytes) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        old_eocd, old_central_offset, records = self.epub_raw_records(payload)
+        payload[:0] = hidden
+        shift = len(hidden)
+        for old_central, old_local in records.values():
+            struct.pack_into("<I", payload, old_central + shift + 42, old_local + shift)
+        struct.pack_into("<I", payload, old_eocd + shift + 16, old_central_offset + shift)
+        self.epub.write_bytes(payload)
+
+    def rewrite_epub_external_attributes(self, member: str, attributes: int) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        _eocd, _central_offset, records = self.epub_raw_records(payload)
+        central, _local = records[member]
+        struct.pack_into("<I", payload, central + 38, attributes)
+        self.epub.write_bytes(payload)
+
     def read_epub_member(self, member: str) -> str:
         with zipfile.ZipFile(self.epub) as archive:
             return archive.read(member).decode("utf-8")
@@ -1112,6 +1206,230 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                     )
                 self.rebind_changed_public_epub()
                 self.assert_rejected("EPUB.*(comment|extra|metadata|identity)")
+
+    def test_rejects_local_only_zip_extra_before_probe(self) -> None:
+        self.add_epub_local_extra(
+            "OEBPS/chap02.xhtml",
+            struct.pack("<HH", 0xCAFE, 19) + b"Hidden local story.",
+        )
+        self.rebind_changed_public_epub()
+        self.assert_epub_rejected_before_probe("EPUB.*(local|extra|envelope)")
+
+    def test_rejects_local_zip_method_and_flag_disagreement_before_probe(self) -> None:
+        baseline = self.epub.read_bytes()
+        cases = (
+            ("method", {"method": zipfile.ZIP_DEFLATED}),
+            ("encryption flag", {"flags": 0x1}),
+            ("data descriptor flag", {"flags": 0x8}),
+        )
+        for name, fields in cases:
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                self.rewrite_epub_local_header("OEBPS/chap00.xhtml", **fields)
+                self.rebind_changed_public_epub()
+                self.assert_epub_rejected_before_probe(
+                    "EPUB.*(local|method|flag|encryption|descriptor|envelope)"
+                )
+
+    def test_rejects_nonregular_zip_member_modes_before_probe(self) -> None:
+        baseline = self.epub.read_bytes()
+        cases = (
+            ("FIFO", (stat.S_IFIFO | 0o600) << 16),
+            ("character device", (stat.S_IFCHR | 0o600) << 16),
+            ("socket", (stat.S_IFSOCK | 0o600) << 16),
+            ("directory", (stat.S_IFDIR | 0o700) << 16),
+            ("DOS directory", 0x10),
+            ("DOS device", 0x40),
+        )
+        for name, attributes in cases:
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                self.rewrite_epub_external_attributes(
+                    "OEBPS/chap00.xhtml", attributes
+                )
+                self.rebind_changed_public_epub()
+                self.assert_epub_rejected_before_probe(
+                    "EPUB.*(regular|mode|special|directory|device|envelope)"
+                )
+
+    def test_rejects_zip_preamble_and_hidden_gap_before_probe(self) -> None:
+        baseline = self.epub.read_bytes()
+        for name in ("preamble", "gap"):
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                if name == "preamble":
+                    self.add_epub_preamble(b"Hidden preamble story.")
+                else:
+                    self.add_epub_gap_before_central_directory(
+                        b"Hidden gap story."
+                    )
+                self.rebind_changed_public_epub()
+                self.assert_epub_rejected_before_probe(
+                    "EPUB.*(preamble|gap|envelope|local)"
+                )
+
+    def test_rejects_zip_local_name_size_and_crc_disagreement_before_probe(self) -> None:
+        baseline = self.epub.read_bytes()
+        payload = bytearray(baseline)
+        _eocd, _central_offset, records = self.epub_raw_records(payload)
+        central, _local = records["OEBPS/chap00.xhtml"]
+        central_crc = struct.unpack_from("<I", payload, central + 16)[0]
+        central_compressed = struct.unpack_from("<I", payload, central + 20)[0]
+        central_uncompressed = struct.unpack_from("<I", payload, central + 24)[0]
+        cases = (
+            ("filename", {"filename": b"OEBPS/xhap00.xhtml"}),
+            ("CRC", {"crc": central_crc ^ 1}),
+            ("compressed size", {"compressed_size": central_compressed + 1}),
+            ("uncompressed size", {"uncompressed_size": central_uncompressed + 1}),
+        )
+        for name, fields in cases:
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                self.rewrite_epub_local_header("OEBPS/chap00.xhtml", **fields)
+                self.rebind_changed_public_epub()
+                self.assert_epub_rejected_before_probe(
+                    "EPUB.*(filename|size|CRC|local|envelope)"
+                )
+
+    def test_rejects_stored_member_with_different_uncompressed_size(self) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        _eocd, _central_offset, records = self.epub_raw_records(payload)
+        central, _local = records["mimetype"]
+        compressed_size = struct.unpack_from("<I", payload, central + 20)[0]
+        uncompressed_size = struct.unpack_from("<I", payload, central + 24)[0]
+        self.assertEqual(compressed_size, uncompressed_size)
+        self.rewrite_epub_central_sizes(
+            {"mimetype": (compressed_size, uncompressed_size + 1)}
+        )
+        self.rewrite_epub_local_header(
+            "mimetype", uncompressed_size=uncompressed_size + 1
+        )
+        self.rebind_changed_public_epub()
+        self.assert_epub_rejected_before_probe("EPUB.*(stored|size|envelope)")
+
+    def test_rejects_zip64_extract_version_without_zip64_fields(self) -> None:
+        payload = bytearray(self.epub.read_bytes())
+        _eocd, _central_offset, records = self.epub_raw_records(payload)
+        central, local = records["OEBPS/chap00.xhtml"]
+        struct.pack_into("<H", payload, central + 6, 45)
+        struct.pack_into("<H", payload, local + 4, 45)
+        self.epub.write_bytes(payload)
+        self.rebind_changed_public_epub()
+        self.assert_epub_rejected_before_probe("EPUB.*(ZIP64|classic|version|envelope)")
+
+    def test_rejects_zip_trailing_bytes_before_probe(self) -> None:
+        with self.epub.open("ab") as stream:
+            stream.write(b"Hidden trailing story.")
+        self.rebind_changed_public_epub()
+        self.assert_epub_rejected_before_probe("EPUB.*(trailing|end|comment|envelope)")
+
+    def test_rejects_oversized_public_cover_before_content_read(self) -> None:
+        os.truncate(self.cover, verifier._EPUB_MAX_COVER_BYTES + 1)
+        cover_identity = self.cover.stat()
+        real_fdopen = verifier.os.fdopen
+
+        def fail_if_cover_content_is_opened(descriptor, *args, **kwargs):
+            opened = os.fstat(descriptor)
+            if (opened.st_dev, opened.st_ino) == (
+                cover_identity.st_dev,
+                cover_identity.st_ino,
+            ):
+                raise AssertionError("oversized cover content was opened")
+            return real_fdopen(descriptor, *args, **kwargs)
+
+        with mock.patch.object(
+            verifier.os, "fdopen", side_effect=fail_if_cover_content_is_opened
+        ), self.assertRaisesRegex(ValueError, "[Cc]over.*(large|size|limit)"):
+            self.verify()
+
+    def test_snapshot_capture_accepts_exact_cover_size_limit(self) -> None:
+        os.truncate(self.cover, verifier._EPUB_MAX_COVER_BYTES)
+        snapshot = verifier._snapshot_file(
+            self.cover,
+            "fiction portraitCover artifact",
+            capture=True,
+            max_bytes=verifier._EPUB_MAX_COVER_BYTES,
+        )
+        self.assertEqual(verifier._EPUB_MAX_COVER_BYTES, snapshot.size)
+        self.assertEqual(verifier._EPUB_MAX_COVER_BYTES, len(snapshot.content or b""))
+
+    def test_snapshot_capture_enforces_limit_if_file_grows_during_read(self) -> None:
+        self.cover.write_bytes(b"x")
+        cover_identity = self.cover.stat()
+        cover_path = self.cover
+        real_fdopen = verifier.os.fdopen
+        grew = False
+
+        class GrowingStream:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __enter__(self):
+                self.stream.__enter__()
+                return self
+
+            def __exit__(self, *args):
+                return self.stream.__exit__(*args)
+
+            def fileno(self):
+                return self.stream.fileno()
+
+            def read(self, size=-1):
+                nonlocal grew
+                chunk = self.stream.read(size)
+                if not grew:
+                    grew = True
+                    os.truncate(cover_path, verifier._EPUB_MAX_COVER_BYTES + 1)
+                return chunk
+
+        def growing_cover_stream(descriptor, *args, **kwargs):
+            stream = real_fdopen(descriptor, *args, **kwargs)
+            opened = os.fstat(stream.fileno())
+            if (opened.st_dev, opened.st_ino) == (
+                cover_identity.st_dev,
+                cover_identity.st_ino,
+            ):
+                return GrowingStream(stream)
+            return stream
+
+        with mock.patch.object(
+            verifier.os, "fdopen", side_effect=growing_cover_stream
+        ), self.assertRaisesRegex(ValueError, "[Cc]over.*(grew|large|size|limit)"):
+            verifier._snapshot_file(
+                self.cover,
+                "fiction portraitCover artifact",
+                capture=True,
+                max_bytes=verifier._EPUB_MAX_COVER_BYTES,
+            )
+
+    def test_final_cover_reattest_rechecks_cap_before_content_read(self) -> None:
+        real_readme = verifier._verify_fiction_readme
+        real_fdopen = verifier.os.fdopen
+        cover_identity = self.cover.stat()
+
+        def grow_cover_after_readme(book_dir: Path):
+            snapshot = real_readme(book_dir)
+            os.truncate(self.cover, verifier._EPUB_MAX_COVER_BYTES + 1)
+            return snapshot
+
+        def fail_if_oversized_cover_is_opened(descriptor, *args, **kwargs):
+            opened = os.fstat(descriptor)
+            if (
+                (opened.st_dev, opened.st_ino)
+                == (cover_identity.st_dev, cover_identity.st_ino)
+                and opened.st_size > verifier._EPUB_MAX_COVER_BYTES
+            ):
+                raise AssertionError("oversized cover was read during final reattestation")
+            return real_fdopen(descriptor, *args, **kwargs)
+
+        with mock.patch.object(
+            verifier, "_verify_fiction_readme", side_effect=grow_cover_after_readme
+        ), mock.patch.object(
+            verifier.os, "fdopen", side_effect=fail_if_oversized_cover_is_opened
+        ), self.probes(), self.assertRaisesRegex(
+            ValueError, "[Cc]over.*(large|size|limit|changed)"
+        ):
+            self.verify()
 
     def test_rejects_non_builder_epub_language_even_when_all_xhtml_matches(self) -> None:
         opf = self.read_epub_member("OEBPS/content.opf").replace(
