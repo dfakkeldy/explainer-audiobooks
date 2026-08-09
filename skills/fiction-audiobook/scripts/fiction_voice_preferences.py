@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import fcntl
 import hashlib
+import io
 import json
 import os
 import re
@@ -17,7 +18,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any, Callable, Iterator
 
 
 ECHO_VOICE_PLAN_DIRECTORY = (
@@ -234,6 +235,10 @@ class _PreferenceTransaction:
         self.lock_descriptor = lock_descriptor
         self.lock_identity = lock_identity
         self.lock_name = lock_name
+        self.committed_descriptor: int | None = None
+        self.committed_identity: tuple[int, int] | None = None
+        self.committed_bytes: bytes | None = None
+        self.committed_sha256: str | None = None
 
     def matches(self, path: Path) -> bool:
         return Path(path) == self.path
@@ -271,6 +276,88 @@ class _PreferenceTransaction:
             or (lock_at_path.st_dev, lock_at_path.st_ino) != self.lock_identity
         ):
             raise ValueError("preferences lock path changed")
+        self._attest_committed()
+
+    def _attest_committed(self) -> None:
+        if self.committed_descriptor is None:
+            return
+        assert self.committed_identity is not None
+        assert self.committed_bytes is not None
+        assert self.committed_sha256 is not None
+        bound = os.fstat(self.committed_descriptor)
+        if (
+            not stat.S_ISREG(bound.st_mode)
+            or (bound.st_dev, bound.st_ino) != self.committed_identity
+            or stat.S_IMODE(bound.st_mode) != 0o600
+            or bound.st_size != len(self.committed_bytes)
+        ):
+            raise ValueError("preferences store committed file changed")
+        flags = os.O_RDONLY | os.O_NOFOLLOW
+        if hasattr(os, "O_CLOEXEC"):
+            flags |= os.O_CLOEXEC
+        try:
+            descriptor = os.open(
+                self.path.name,
+                flags,
+                dir_fd=self.parent_descriptor,
+            )
+        except OSError as error:
+            raise ValueError("preferences store committed path changed") from error
+        try:
+            opened = os.fstat(descriptor)
+            stable = (
+                opened.st_mode,
+                opened.st_size,
+                opened.st_mtime_ns,
+                opened.st_ctime_ns,
+            )
+            chunks: list[bytes] = []
+            while True:
+                chunk = os.read(descriptor, 1024 * 1024)
+                if not chunk:
+                    break
+                chunks.append(chunk)
+            after_descriptor = os.fstat(descriptor)
+            try:
+                after_path = os.stat(
+                    self.path.name,
+                    dir_fd=self.parent_descriptor,
+                    follow_symlinks=False,
+                )
+            except OSError as error:
+                raise ValueError("preferences store committed path changed") from error
+            actual_bytes = b"".join(chunks)
+            if (
+                not stat.S_ISREG(opened.st_mode)
+                or (opened.st_dev, opened.st_ino) != self.committed_identity
+                or (
+                    after_descriptor.st_mode,
+                    after_descriptor.st_size,
+                    after_descriptor.st_mtime_ns,
+                    after_descriptor.st_ctime_ns,
+                )
+                != stable
+                or (after_path.st_dev, after_path.st_ino) != self.committed_identity
+                or (
+                    after_path.st_mode,
+                    after_path.st_size,
+                    after_path.st_mtime_ns,
+                    after_path.st_ctime_ns,
+                )
+                != stable
+                or stat.S_IMODE(opened.st_mode) != 0o600
+                or actual_bytes != self.committed_bytes
+                or hashlib.sha256(actual_bytes).hexdigest()
+                != self.committed_sha256
+            ):
+                raise ValueError("preferences store committed bytes changed")
+        finally:
+            os.close(descriptor)
+
+    def close(self) -> None:
+        if self.committed_descriptor is not None:
+            os.close(self.committed_descriptor)
+            self.committed_descriptor = None
 
     def load(self) -> dict[str, object]:
         self.attest()
@@ -350,7 +437,7 @@ class _PreferenceTransaction:
 
     def write(self, payload: object) -> None:
         self.attest()
-        flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW
+        flags = os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW
         if hasattr(os, "O_CLOEXEC"):
             flags |= os.O_CLOEXEC
         temporary_name: str | None = None
@@ -372,12 +459,47 @@ class _PreferenceTransaction:
             raise ValueError("preferences store could not create an atomic temporary file")
         try:
             os.fchmod(descriptor, 0o600)
-            with os.fdopen(descriptor, "w", encoding="utf-8") as destination:
-                descriptor = None
-                json.dump(payload, destination, sort_keys=True, indent=2)
-                destination.write("\n")
-                destination.flush()
-                os.fsync(destination.fileno())
+            serialized = io.StringIO()
+            json.dump(payload, serialized, sort_keys=True, indent=2)
+            expected_bytes = (serialized.getvalue() + "\n").encode("utf-8")
+            remaining = memoryview(expected_bytes)
+            while remaining:
+                written = os.write(descriptor, remaining)
+                if written < 1:
+                    raise OSError("preferences store atomic write made no progress")
+                remaining = remaining[written:]
+            os.fsync(descriptor)
+            temporary_opened = os.fstat(descriptor)
+            os.lseek(descriptor, 0, os.SEEK_SET)
+            chunks: list[bytes] = []
+            while True:
+                chunk = os.read(descriptor, 1024 * 1024)
+                if not chunk:
+                    break
+                chunks.append(chunk)
+            temporary_after = os.fstat(descriptor)
+            temporary_at_path = os.stat(
+                temporary_name,
+                dir_fd=self.parent_descriptor,
+                follow_symlinks=False,
+            )
+            temporary_identity = (
+                temporary_opened.st_dev,
+                temporary_opened.st_ino,
+            )
+            actual_bytes = b"".join(chunks)
+            if (
+                not stat.S_ISREG(temporary_opened.st_mode)
+                or stat.S_IMODE(temporary_opened.st_mode) != 0o600
+                or (temporary_after.st_dev, temporary_after.st_ino)
+                != temporary_identity
+                or (temporary_at_path.st_dev, temporary_at_path.st_ino)
+                != temporary_identity
+                or temporary_after.st_size != len(expected_bytes)
+                or temporary_at_path.st_size != len(expected_bytes)
+                or actual_bytes != expected_bytes
+            ):
+                raise ValueError("preferences store atomic temporary file changed")
             self.attest()
             os.replace(
                 temporary_name,
@@ -386,16 +508,14 @@ class _PreferenceTransaction:
                 dst_dir_fd=self.parent_descriptor,
             )
             temporary_name = None
-            committed = os.stat(
-                self.path.name,
-                dir_fd=self.parent_descriptor,
-                follow_symlinks=False,
-            )
-            if (
-                not stat.S_ISREG(committed.st_mode)
-                or stat.S_IMODE(committed.st_mode) != 0o600
-            ):
-                raise ValueError("preferences store atomic replacement is unsafe")
+            previous_descriptor = self.committed_descriptor
+            self.committed_descriptor = descriptor
+            self.committed_identity = temporary_identity
+            self.committed_bytes = expected_bytes
+            self.committed_sha256 = hashlib.sha256(expected_bytes).hexdigest()
+            descriptor = None
+            if previous_descriptor is not None:
+                os.close(previous_descriptor)
             self.attest()
         finally:
             if descriptor is not None:
@@ -478,6 +598,7 @@ def _preferences_lock(path: Path) -> Iterator[None]:
     lock_descriptor: int | None = None
     directory_locked = False
     transaction_token = None
+    transaction: _PreferenceTransaction | None = None
     try:
         parent_opened = os.fstat(parent_descriptor)
         parent_identity = (parent_opened.st_dev, parent_opened.st_ino)
@@ -543,6 +664,8 @@ def _preferences_lock(path: Path) -> Iterator[None]:
     finally:
         if transaction_token is not None:
             _ACTIVE_PREFERENCE_TRANSACTION.reset(transaction_token)
+        if transaction is not None:
+            transaction.close()
         if directory_locked:
             fcntl.flock(parent_descriptor, fcntl.LOCK_UN)
         if lock_descriptor is not None:
@@ -742,7 +865,11 @@ def _stable_regular_bytes(path: Path, label: str) -> bytes:
 
 
 def validate_echo_success_receipt(
-    receipt: dict[str, object], receipt_path: Path, cast: dict[str, object]
+    receipt: dict[str, object],
+    receipt_path: Path,
+    cast: dict[str, object],
+    *,
+    input_receipt_loader: Callable[[Path, str], bytes] | None = None,
 ) -> None:
     """Validate real Echo v3 provenance and bind its run to a canonical cast."""
     expected_fields = set(ECHO_SUCCESS_FIELDS)
@@ -820,7 +947,8 @@ def validate_echo_success_receipt(
     if receipt.get("inputReceiptFileName") != f"echo-render-inputs-{run_id}.env":
         raise ValueError("Echo input receipt filename is not derived from runID")
     input_receipt = receipt_path.parent / str(receipt["inputReceiptFileName"])
-    input_bytes = _stable_regular_bytes(input_receipt, "Echo input receipt")
+    loader = input_receipt_loader or _stable_regular_bytes
+    input_bytes = loader(input_receipt, "Echo input receipt")
     expected_input_hash = _sha256(
         receipt.get("inputReceiptSHA256"), "Echo success receipt inputReceiptSHA256"
     )

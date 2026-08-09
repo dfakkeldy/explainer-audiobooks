@@ -411,7 +411,11 @@ def _dry_run_matches(
 
 
 def _rename_with_kernel_guarantee(
-    source: Path, destination: Path, *, exchange: bool
+    source: Path,
+    destination: Path,
+    *,
+    exchange: bool,
+    nofollow_any: bool = True,
 ) -> None:
     """Atomically exchange paths or rename without replacing an existing path."""
     library = ctypes.CDLL(None, use_errno=True)
@@ -422,6 +426,8 @@ def _rename_with_kernel_guarantee(
         rename.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint)
         rename.restype = ctypes.c_int
         flags = 0x00000002 if exchange else 0x00000004
+        if nofollow_any:
+            flags |= 0x00000010
         result = rename(source_bytes, destination_bytes, flags)
     elif sys.platform.startswith("linux") and hasattr(library, "renameat2"):
         rename = library.renameat2
@@ -450,6 +456,12 @@ def _rename_exclusive(source: Path, destination: Path) -> None:
     _rename_with_kernel_guarantee(source, destination, exchange=False)
 
 
+def _rename_recovery_exclusive(source: Path, destination: Path) -> None:
+    _rename_with_kernel_guarantee(
+        source, destination, exchange=False, nofollow_any=False
+    )
+
+
 def _rename_exchange(source: Path, destination: Path) -> None:
     _rename_with_kernel_guarantee(source, destination, exchange=True)
 
@@ -470,8 +482,19 @@ def _promote(
     if expected_destination is None:
         if destination.exists() or destination.is_symlink():
             raise ValueError("destination appeared after validation")
-        _rename_stage(stage, destination)
-        _require_snapshot(destination, expected_stage, "promoted delivery")
+        renamed = False
+        try:
+            _rename_stage(stage, destination)
+            renamed = True
+            _require_snapshot(destination, expected_stage, "promoted delivery")
+        except BaseException:
+            if (
+                renamed
+                and (destination.exists() or destination.is_symlink())
+                and not (stage.exists() or stage.is_symlink())
+            ):
+                _rename_recovery_exclusive(destination, stage)
+            raise
         return
 
     _require_snapshot(destination, expected_destination, "destination")
@@ -489,15 +512,18 @@ def _promote(
         prior_moved = True
         _require_snapshot(prior, expected_destination, "archived prior destination")
     except BaseException:
+        restore_previous_directory = False
         if prior_moved and prior.exists():
             if stage.exists() or stage.is_symlink():
                 raise ValueError(
                     "staging path appeared during rollback; prior edition remains preserved"
                 )
             _rename_exclusive(prior, stage)
-            prior.mkdir()
+            restore_previous_directory = True
         if stage.exists() and destination.exists():
             _rename_exchange(stage, destination)
+        if restore_previous_directory:
+            (stage / "_production/previous").mkdir()
         raise
 
 

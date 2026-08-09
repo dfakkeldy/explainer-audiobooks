@@ -159,6 +159,13 @@ _PRIVATE_FICTION_ARTIFACT_PATHS = {
 }
 _PRIVATE_README_PATH_PATTERNS = (
     re.compile(r"file://", re.IGNORECASE),
+    re.compile(
+        r"(?<![A-Za-z0-9_])(?:~(?:[A-Za-z0-9._-]+)?|"
+        r"\$(?:HOME|USERPROFILE|HOMEPATH)|"
+        r"\$\{(?:HOME|USERPROFILE|HOMEPATH)\}|"
+        r"%(?:HOME|USERPROFILE|HOMEPATH)%)[\\/]",
+        re.IGNORECASE,
+    ),
     re.compile(r"(?<![A-Za-z0-9])[A-Za-z]:[\\/]"),
     re.compile(r"(?<!\\)\\\\"),
     re.compile(r"(?<![:/A-Za-z0-9_])/(?!/)[^\s<>()]+"),
@@ -1168,7 +1175,30 @@ def _verify_private_evidence(
         "Echo success receipt SHA-256 does not match privateEvidence",
     )
     snapshots.append(success_snapshot)
-    validate_echo_success_receipt(success, echo_success_receipt, cast)
+    input_receipt_snapshots: list[_FileSnapshot] = []
+
+    def capture_input_receipt(path: Path, label: str) -> bytes:
+        snapshot = _snapshot_file(path, label, capture=True)
+        assert snapshot.content is not None
+        input_receipt_snapshots.append(snapshot)
+        return snapshot.content
+
+    validate_echo_success_receipt(
+        success,
+        echo_success_receipt,
+        cast,
+        input_receipt_loader=capture_input_receipt,
+    )
+    _require(
+        len(input_receipt_snapshots) == 1,
+        "Echo input receipt was not captured exactly once",
+    )
+    input_receipt_snapshot = input_receipt_snapshots[0]
+    _require(
+        input_receipt_snapshot.sha256 == success.get("inputReceiptSHA256"),
+        "Echo input receipt bytes differ from success receipt",
+    )
+    snapshots.append(input_receipt_snapshot)
     expected_success = {
         "sourceEPUBFileName": f"{slug}.epub",
         "sourceEPUBSHA256": artifact_hashes["epub"],

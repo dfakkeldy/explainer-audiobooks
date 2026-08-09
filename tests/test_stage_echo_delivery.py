@@ -148,6 +148,30 @@ class StageEchoDeliveryTests(unittest.TestCase):
         self.assertEqual([], list(self.destination.iterdir()))
         self.assertTrue(self.stages())
 
+    def test_stage_symlink_rejected_during_first_promotion_is_rolled_back(self) -> None:
+        real_rename_stage = module._rename_stage
+        parked_stage: Path | None = None
+
+        def replace_stage_with_symlink(stage: Path, destination: Path) -> None:
+            nonlocal parked_stage
+            parked_stage = stage.with_name(f"{stage.name}.parked")
+            stage.rename(parked_stage)
+            stage.symlink_to(parked_stage, target_is_directory=True)
+            real_rename_stage(stage, destination)
+
+        with mock.patch.object(
+            module, "_rename_stage", side_effect=replace_stage_with_symlink
+        ), self.assertRaises((OSError, ValueError)):
+            module.stage_delivery(self.request(), apply=True)
+
+        self.assertFalse(self.destination.exists())
+        self.assertFalse(self.destination.is_symlink())
+        stages = self.stages()
+        self.assertEqual(2, len(stages))
+        self.assertEqual(1, sum(path.is_symlink() for path in stages))
+        self.assertIsNotNone(parked_stage)
+        self.assertTrue(parked_stage.is_dir())
+
     def test_unexpected_root_item_is_preserved_and_blocks_promotion(self) -> None:
         module.stage_delivery(self.request(), apply=True)
         note = self.destination / "my-note.txt"
@@ -249,6 +273,35 @@ class StageEchoDeliveryTests(unittest.TestCase):
         self.assertEqual(b"audio", (self.destination / "fixture.m4b").read_bytes())
         self.assertTrue(self.stages())
         self.assertEqual([], list(self.destination.parent.glob(".fixture.backup-*")))
+
+    def test_rollback_restores_old_live_before_staging_repair_failure(self) -> None:
+        module.stage_delivery(self.request(), apply=True)
+        self.m4b.write_bytes(b"replacement")
+        real_rename_exclusive = module._rename_exclusive
+        real_mkdir = module.Path.mkdir
+
+        def mutate_prior_then_archive(source: Path, destination: Path) -> None:
+            if destination.name == "previous":
+                (source / "notes.m4a").write_bytes(b"late user recording")
+            real_rename_exclusive(source, destination)
+
+        def fail_previous_recreation(path: Path, *args: object, **kwargs: object):
+            if path.name == "previous":
+                raise OSError("injected previous mkdir failure")
+            return real_mkdir(path, *args, **kwargs)
+
+        with mock.patch.object(
+            module, "_rename_exclusive", side_effect=mutate_prior_then_archive
+        ), mock.patch.object(
+            module.Path, "mkdir", autospec=True, side_effect=fail_previous_recreation
+        ), self.assertRaisesRegex(OSError, "injected previous mkdir failure"):
+            module.stage_delivery(self.request(), apply=True)
+
+        self.assertEqual(b"audio", (self.destination / "fixture.m4b").read_bytes())
+        self.assertEqual(
+            b"late user recording", (self.destination / "notes.m4a").read_bytes()
+        )
+        self.assertTrue(self.stages())
 
     def test_prior_destination_is_never_recursively_deleted_after_promotion(self) -> None:
         module.stage_delivery(self.request(), apply=True)

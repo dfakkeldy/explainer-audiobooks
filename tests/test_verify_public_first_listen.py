@@ -1042,6 +1042,29 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
 
         self.assert_rejected("input receipt.*voice.plan|voice.plan.*input receipt")
 
+    def test_rejects_echo_input_receipt_changed_after_provenance_validation(
+        self,
+    ) -> None:
+        real_validate = verifier.validate_echo_success_receipt
+        changed = False
+
+        def validate_then_change(*args: object, **kwargs: object) -> None:
+            nonlocal changed
+            real_validate(*args, **kwargs)
+            self.echo_input_receipt.write_text(
+                "voice=af_bella\nchapter_voices=1=af_bella\n",
+                encoding="utf-8",
+            )
+            changed = True
+
+        with mock.patch.object(
+            verifier,
+            "validate_echo_success_receipt",
+            side_effect=validate_then_change,
+        ):
+            self.assert_rejected("input.*changed|changed.*input")
+        self.assertTrue(changed)
+
     def test_rejects_forged_minimal_echo_receipt_without_governed_provenance(self) -> None:
         forged = {
             "schemaVersion": 3,
@@ -2073,6 +2096,27 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                     encoding="utf-8",
                 )
                 self.assert_rejected("README.*private|private.*README|local path|evidence")
+
+    def test_rejects_home_expansion_paths_in_public_readme(self) -> None:
+        private_values = (
+            "$HOME/Library/Application Support/Explainer Audiobooks/"
+            "fiction-voice-preferences.json",
+            "$HOME\\Library\\Application Support\\Explainer Audiobooks\\"
+            "fiction-voice-preferences.json",
+            "${HOME}/Library/Application Support/private-notes.md",
+            "${HOME}\\Library\\Application Support\\private-notes.md",
+            "~/Library/Application Support/private-notes.md",
+            "$USERPROFILE\\AppData\\Local\\private-notes.md",
+            "%USERPROFILE%\\AppData\\Local\\private-notes.md",
+        )
+        readme = self.book_dir / "README.md"
+        for value in private_values:
+            with self.subTest(value=value):
+                readme.write_text(
+                    f"{FICTION_DISCLOSURE}\n\nInternal evidence: {value}\n",
+                    encoding="utf-8",
+                )
+                self.assert_rejected("README.*private|private.*README|local path")
 
     def test_allows_public_readme_prose_without_private_evidence_references(self) -> None:
         (self.book_dir / "README.md").write_text(

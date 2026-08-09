@@ -552,6 +552,43 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         self.assertFalse(self.preferences_path.exists())
         self.assertFalse((replacement / self.preferences_path.name).exists())
 
+    def test_target_replacement_after_atomic_commit_cannot_report_success(self) -> None:
+        parent = self.preferences_path.parent
+        parent.mkdir()
+        attacker_path = parent / "attacker-preferences.json"
+        attacker_path.write_text(
+            json.dumps(module.initial_preferences(), sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        attacker_path.chmod(0o600)
+        real_replace = os.replace
+        replaced = False
+
+        def replace_then_substitute(
+            source: object, destination: object, *args: object, **kwargs: object
+        ) -> None:
+            nonlocal replaced
+            real_replace(source, destination, *args, **kwargs)
+            if destination == self.preferences_path.name:
+                replaced = True
+                real_replace(attacker_path, self.preferences_path)
+
+        with mock.patch.object(
+            module.os, "replace", side_effect=replace_then_substitute
+        ):
+            with self.assertRaisesRegex(ValueError, "preferences store.*changed"):
+                module.set_verdict(
+                    self.preferences_path,
+                    "Bella",
+                    "liked",
+                    "must remain the committed bytes",
+                    "2026-08-08T13:00:00+00:00",
+                )
+
+        self.assertTrue(replaced)
+        saved = module.load_preferences(self.preferences_path)
+        self.assertNotIn("af_bella", saved["verdicts"])
+
     def test_schema_versions_must_be_the_integer_one_not_boolean_or_float(self) -> None:
         for version in (True, 1.0):
             with self.subTest(store_version=version):
