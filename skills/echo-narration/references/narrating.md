@@ -117,18 +117,21 @@ For a fiction audiobook, set the lane and use the matching exact run root:
 ```bash
 export ECHO_RUN_LANE=fiction-audiobook
 export RUN_ROOT="$PIPELINE_ROOT/.build/fiction-audiobooks/$SLUG"
-"$NARRATION_SCRIPT"
 ```
 
 Any other lane value, including a path-like value, fails closed before
 narration. The lane and run root are sealed into the immutable input receipt;
-a fiction run must resume with `ECHO_RUN_LANE=fiction-audiobook`.
+a fiction run must resume with `ECHO_RUN_LANE=fiction-audiobook`. Fiction uses
+the source-bound block procedure below; do not invoke a bare wrapper or
+`--chapter-voice` mapping for a fiction character cast.
 
 ## Voice and invocation
 
 Invoke the wrapper only through its public entry point. Do not bypass the
 wrapper with a direct CLI command. This is installed renderer work, never
-narration-time build work. Stop immediately on any failure:
+narration-time build work. The generic default/chapter examples in this section
+do not apply to a fiction character cast; use `Fiction source-bound block
+voices` below for that case. Stop immediately on any failure:
 
 ```bash
 set -euo pipefail
@@ -186,6 +189,124 @@ progressing render because it may take several hours, or replace it with
 Apple/macOS/system voice narration for convenience. Native Echo/Kokoro output
 is the only accepted narrator; the only automatic fallback is from
 `am_michael` to `am_puck` when the preferred Echo voice is unavailable.
+
+## Fiction source-bound block voices
+
+Use this procedure for a fiction character cast. It is block mode, not the
+chapter-voice mapping above. Before it starts, the craft workflow has recorded
+each blank-line source paragraph's intended speaker and frozen the final EPUB.
+Do not infer a speaker from quotation marks, attribution, prose, model output,
+or an Echo block. Do not calculate a plan hash or identity outside Echo.
+
+### Export the installed-Echo inventory
+
+Set `EPUB` to the absolute frozen EPUB and derive `EPUB_SHA256` from those
+unchanged bytes. Store the private inventory only at:
+
+```text
+$RUN_ROOT/research/echo-block-inventory-$EPUB_SHA256.json
+```
+
+Resolve the installed renderer for this new inventory with the shared resolver:
+`resolve-new --source-sha APPROVED_ECHO_PRONUNCIATION_SHA --format env0`.
+The shared `echo_pronunciation_resolve_installed_renderer 0` below invokes
+that exact `echo_installed_renderer.py` command, accepts only its fixed env0
+record exactly once, and rejects incomplete, duplicate, or unknown keys without
+`eval`. It sets `CLI`, `ECHO_RESOURCE_DIR`, and
+`ECHO_RENDERER_BUILD_ROOT`; validate and live-attest that installed package
+before the leased inventory command:
+
+```bash
+EPUB="$RUN_ROOT/dist/$SLUG.epub"
+EPUB_SHA256=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
+INVENTORY="$RUN_ROOT/research/echo-block-inventory-$EPUB_SHA256.json"
+source "$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_preflight.sh"
+# Internally: echo_installed_renderer.py resolve-new \
+#   --source-sha "$APPROVED_ECHO_PRONUNCIATION_SHA" --format env0
+echo_pronunciation_resolve_installed_renderer 0
+echo_pronunciation_validate_renderer_paths
+echo_pronunciation_attest_renderer
+```
+
+Derive `CANONICAL_LEASE_ROOT` with the same effective-account helper as the
+governed wrapper, not an arbitrary project lock directory. Lease the selected
+`ECHO_RENDERER_BUILD_ROOT` and set `ECHO_RESOURCE_DIR` explicitly in the child:
+
+```bash
+CANONICAL_LEASE_ROOT=$(echo_pronunciation_canonical_lease_root)
+LEASE_HELPER="$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_lease.py"
+"$LEASE_HELPER" --lock-root "$CANONICAL_LEASE_ROOT" \
+  --resource "$ECHO_RENDERER_BUILD_ROOT" -- \
+  /usr/bin/env "ECHO_RESOURCE_DIR=$ECHO_RESOURCE_DIR" \
+  "$CLI" export-blocks --epub "$EPUB" --out "$INVENTORY"
+```
+
+This is exactly the installed command `echo-cli export-blocks --epub
+ABSOLUTE_FROZEN_EPUB --out ABSOLUTE_PRIVATE_INVENTORY_JSON`. It receives no
+voice plan and emits only Echo schema-1 `{version, source, blocks}`. Its
+inventory has no speaker field and makes no assignment. Never substitute a
+checkout or PATH-selected CLI.
+
+### Author, validate, and resolve the plan
+
+Set `VOICE_CAST="$RUN_ROOT/_production/narration/voice-cast.json"` and
+`VOICE_PLAN="$RUN_ROOT/_production/narration/echo-voice-plan.json"`. From the
+installed inventory, write the schema-2 cast with three-to-five stable,
+nonblacklisted voices and the exact sibling schema-1 Echo plan. The lead writer
+assigns every block intentionally. Local validation checks the cast and
+preferences; it does not infer dialogue or decide which blocks exist:
+
+```bash
+/usr/local/bin/python3 \
+  skills/fiction-audiobook/scripts/fiction_voice_preferences.py \
+  validate-cast --cast "$VOICE_CAST" --voice-plan "$VOICE_PLAN" \
+  --preferences "$PREFERENCES" --format argv0
+```
+
+The governed wrapper then runs the leased installed `resolve-voice-plan` gate
+before it narrates. Require success. Echo alone decides block existence,
+speakability, range expansion, resolved identity, canonical plan bytes, and the
+five-field resolution receipt (`blockCount`, `defaultVoice`,
+`sourceEPUBSHA256`, `voicePlanID`, and `voicePlanSHA256`). A local plan is
+never an operational identity until that resolution succeeds.
+
+Forward the validator's NUL-delimited result without `eval` or lossy
+reconstruction:
+
+```bash
+VOICE_ARGUMENTS=()
+while IFS= read -r -d '' token; do
+  VOICE_ARGUMENTS+=("$token")
+done < <(
+  /usr/local/bin/python3 \
+    skills/fiction-audiobook/scripts/fiction_voice_preferences.py \
+    validate-cast --cast "$VOICE_CAST" --voice-plan "$VOICE_PLAN" \
+    --preferences "$PREFERENCES" --format argv0
+)
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}"
+```
+
+For block mode, do not export `VOICE`; the wrapper resolves the default from
+the sealed plan. A resume passes the identical token vector plus the canonical
+resume-state path:
+
+```bash
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
+  --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
+```
+
+If the resolved identity changes, start a new run. Never copy captures,
+receipts, a work directory, database, or resume state into it.
+
+### Fiction block evidence
+
+For a completed block run, require schema-2 captures, a schema-4 success
+receipt, and a schema-7 pronunciation audit tied to the same resolved plan.
+Keep captures and the pronunciation reel under private
+`_production/narration/` evidence; they are never title-root media or public
+package files. A completed selector resolves one M4B and one delivered
+alignment sidecar. Automated block/audit checks do not complete human reading
+or listening.
 
 ## Resuming and partial renders
 
@@ -321,7 +442,11 @@ SUCCESS_RECEIPT="$RUN_ROOT/research/$SUCCESS_RECEIPT_NAME"
 AUDIOBOOK="$ARTIFACT_ROOT/$SLUG.m4b"
 SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
 AUDIT="$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json"
-REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  REEL="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID/$SLUG.pronunciation-reel.m4b"
+else
+  REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
+fi
 
 /usr/local/bin/python3 "$STATE_HELPER" \
   verify-delivery \

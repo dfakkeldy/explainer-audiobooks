@@ -474,6 +474,52 @@ class EchoNarrationContractTests(unittest.TestCase):
             with self.subTest(stale_marker=stale_marker):
                 self.assertNotIn(stale_marker, normalized)
 
+    def test_fiction_block_runbook_uses_one_leased_installed_source_plan(self) -> None:
+        """Keep the user-facing block workflow aligned with wrapper boundaries."""
+        heading = "## Fiction source-bound block voices"
+        self.assertIn(heading, self.narrating)
+        if heading not in self.narrating:
+            return
+        section = self.narrating.split(heading, 1)[1]
+        section = section.split("## Resuming and partial renders", 1)[0]
+        for marker in (
+            "echo-block-inventory-$EPUB_SHA256.json",
+            "resolve-new --source-sha APPROVED_ECHO_PRONUNCIATION_SHA --format env0",
+            "echo_installed_renderer.py",
+            "echo_pronunciation_resolve_installed_renderer 0",
+            "echo_pronunciation_attest_renderer",
+            '--lock-root "$CANONICAL_LEASE_ROOT"',
+            '--resource "$ECHO_RENDERER_BUILD_ROOT"',
+            '"ECHO_RESOURCE_DIR=$ECHO_RESOURCE_DIR"',
+            '"$CLI" export-blocks --epub "$EPUB" --out "$INVENTORY"',
+            "It receives no\nvoice plan",
+            "{version, source, blocks}",
+            "has no speaker field",
+            "resolve-voice-plan",
+            "VOICE_ARGUMENTS=()",
+            '"${VOICE_ARGUMENTS[@]}"',
+            "do not export `VOICE`",
+            "schema-2 captures",
+            "schema-4 success",
+            "schema-7 pronunciation audit",
+            "_production/narration/",
+            "one M4B",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, section)
+
+        installed_resolver = (
+            ROOT
+            / "skills/echo-narration/scripts/echo_installed_renderer.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn('"export-blocks"', installed_resolver)
+        self.assertIn('"resolve-voice-plan"', installed_resolver)
+        self.assertIn("--voice-plan", self.narrate_wrapper)
+        self.assertIn(
+            'REEL="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID/',
+            self.narrate_wrapper,
+        )
+
     def test_narrate_wrapper_uses_shared_preflight_functions_without_local_copies(
         self,
     ) -> None:

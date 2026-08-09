@@ -76,16 +76,20 @@ evidence tree; `previous/` starts empty and only the stager fills it:
 | Directory | Exact current-edition contents |
 |---|---|
 | `source/` | `brief.md`, `story-bible.md`, `outline.md`, `chapters/`, `continuity/`, `research/unattended-decisions.json`, unchanged `research/fiction-production-receipt.json`, `revisions/`, and `feedback.jsonl` (empty is valid) |
-| `checks/` | pronunciation audit plus captured successful `verify-delivery`, `verify-sidecar`, sidecar-JSON, audit-validator, and `ffprobe` results |
-| `narration/` | sealed cast; accepted input, success, resume, attempt, and selector receipts; delivered alignment sidecar; retained reels/captures only here |
+| `checks/` | schema-7 pronunciation audit plus captured successful `verify-delivery`, `verify-sidecar`, sidecar-JSON, audit-validator, and `ffprobe` results |
+| `narration/` | completed schema-2 `voice-cast.json`; authored `echo-voice-plan.json`; sealed canonical plan; five-field resolution receipt; accepted input, attempt, resume, success, and selector receipts; delivered alignment sidecar; retained captures/reel only here |
 | `covers/` | selected portrait/square pair, thumbnails, source art, specs, rights/provenance, render receipts, and selection receipt |
 | `publication/` | `public-gate.json` and, on pass, the identical verified `publication.json`; on failure, the decision contains the nonempty reason |
 | `previous/` | empty |
 
 Copy canonical bytes from the run root; never summarize or edit receipts. Keep
 all alternate audio, audits, logs, checksums, manuscripts, and alternate covers
-below `_production`, never at the iCloud title root. Write `public-gate.json`
+below `_production`, never at the iCloud title root or in the public six-file
+package. Do not add a seventh production directory. Write `public-gate.json`
 with `decision` (`public` or `private`), timestamp, gate booleans, and reason.
+Keep `publication.json` schema 2 and its current disclosure unchanged. A
+private request/source or failed public gate performs zero GitHub mutation, and
+automated block/audit checks do not set human reading or listening to complete.
 
 ## Stage and verify the public candidate
 

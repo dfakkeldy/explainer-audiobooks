@@ -23,62 +23,83 @@ Read `references/express-fiction-craft.md` and
 4. Follow craft reference: compact bible/causal outline, sequential lead writer,
    rolling continuity, three passes/final checks, unchanged private receipt.
 5. Generate three paired covers in `$RUN_ROOT/dist/candidate-{1,2,3}`, select
-   one, set `export PAIR="$RUN_ROOT/dist/candidate-N"`, then build EPUB and
-   combined Markdown with `skill/scripts/build_book.py --fiction-receipt`.
-6. After EPUB freezes, run fresh
-   `mkdir -p "$RUN_ROOT"/_production/{source,checks,narration,covers,publication,previous}`;
-   require `previous` empty. Set
-   `PREFERENCES="$HOME/Library/Application Support/Explainer Audiobooks/fiction-voice-preferences.json"`
-   and `VOICE_CAST="$RUN_ROOT/_production/narration/voice-cast.json"`. Write
-   schema-1 immutable cast: slug, integer chapter count, default voice, every
-   chapter's stable role/voice and boolean experimental, canonical plan hash/ID,
-   `verifiedArtifacts: null`. Choose three-to-five nonblacklisted voices from the
-   premise for POV/role/character/tone/accent fit, stable recurring roles, and
-   zero-to-two suitable untried short chapters.
-7. Export cast `VOICE`. Run `echo_voice_plan.py` with its default and mappings,
-   then `/usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py
-   validate-cast --cast "$VOICE_CAST" --preferences "$PREFERENCES"`. Decode its
-   JSON argv vector without `eval`; pass tokens unchanged to every
-   `"$NARRATION_SCRIPT"` call. Follow narration reference with
-   `ECHO_RUN_LANE=fiction-audiobook`, fiction `$RUN_ROOT`, selected `$PAIR`, and
-   `$EPUB="$DIST/$SLUG.epub"`. Unavailable resources fail closed; recast to new
-   plan/run.
-8. Run selector `verify-delivery --epub`, installed `verify-sidecar`, audit,
-   JSON, `ffprobe`. Set
-   `COMPLETED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)`, then seal use:
+   one, and set `export PAIR="$RUN_ROOT/dist/candidate-N"`. The portrait cover
+   must be embedded before the final EPUB is frozen.
+6. Run the fiction source-bound block-voice pipeline in this order:
 
-   ```bash
-   /usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py record-use \
-     --cast "$VOICE_CAST" --epub "$EPUB" --m4b "$AUDIOBOOK" --sidecar "$SIDECAR" \
-     --success-receipt "$SUCCESS_RECEIPT" --at "$COMPLETED_AT" --preferences "$PREFERENCES"
-   ```
+   1. Author explicit uninterrupted-speaker paragraphs and record the single
+      dialogue-attribution rule from the craft reference. Do not infer speakers
+      from dialogue or attribution.
+   2. Build the final EPUB and combined Markdown with
+      `skill/scripts/build_book.py --fiction-receipt`. Hash and freeze the final
+      EPUB; it is the only source for inventory, casting, and narration.
+   3. Follow the narration reference to export the private installed-Echo block
+      inventory from the frozen EPUB. Echo owns block IDs and speakability; the
+      inventory does not assign speakers.
+   4. Run fresh `mkdir -p "$RUN_ROOT"/_production/{source,checks,narration,covers,publication,previous}`
+      and require `previous` empty. Set
+      `PREFERENCES="$HOME/Library/Application Support/Explainer Audiobooks/fiction-voice-preferences.json"`,
+      `VOICE_CAST="$RUN_ROOT/_production/narration/voice-cast.json"`, and
+      `VOICE_PLAN="$RUN_ROOT/_production/narration/echo-voice-plan.json"`.
+      Write schema-2 `voice-cast.json` and the exact sibling authored Echo plan
+      from the inventory with three-to-five stable, nonblacklisted voices. The
+      lead writer assigns every intended speaker. A locally blacklisted voice is
+      recast before Echo resolution; unavailable resources fail closed.
+   5. Validate the cast and local preferences, then require installed Echo
+      `resolve-voice-plan` success before narration:
 
-   Require non-null `verifiedArtifacts`.
-9. Set `EDITION_ID=$(date -u +%Y%m%dT%H%M%SZ)` and
-   `ICLOUD_TITLE="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Books/$TITLE"`.
-   Materialize the public reference's exact evidence inventory and record its
-   public/private decision before delivery, then run:
+      ```bash
+      /usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py \
+        validate-cast --cast "$VOICE_CAST" --voice-plan "$VOICE_PLAN" \
+        --preferences "$PREFERENCES" --format argv0
+      ```
 
-   ```bash
-   /usr/local/bin/python3 skills/fiction-audiobook/scripts/stage_echo_delivery.py \
-     --slug "$SLUG" --edition-id "$EDITION_ID" --m4b "$AUDIOBOOK" \
-     --epub "$EPUB" --alignment "$SIDECAR" --cover "$PAIR/cover.png" \
-     --production "$RUN_ROOT/_production" --destination "$ICLOUD_TITLE" --apply
-   ```
+   6. Invoke only the governed narration wrapper through the safe argv0 vector
+      in the narration reference, with `--voice-plan`. In block mode do not
+      export `VOICE`; the wrapper resolves it from the sealed Echo plan. Set
+      `ECHO_RUN_LANE=fiction-audiobook`, use the exact fiction `RUN_ROOT`, and
+      set `EPUB="$DIST/$SLUG.epub"` before the governed call.
+   7. Verify schema-2 captures, schema-7 pronunciation audit, final M4B,
+      alignment sidecar, and internal reel/capture path through the current
+      selector and installed `verify-sidecar`.
+   8. Set `COMPLETED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)` and record completed
+      use only after schema-4 success:
 
-   Its root is exactly M4B, EPUB, alignment JSON, `cover.png`, `_production/`.
-10. After iCloud succeeds, a pass publishes six M4B-free Git files, ready PR,
-    release. A private request/source or failure delivers iCloud with its reason
-    and performs zero GitHub mutation. Original public-safe
-    triggers authorize; the private receipt does not. Never merge.
-11. Separately report iCloud/push/PR/release/merge/human reading/listening;
-    never infer acceptance.
-12. Redo narrowly. Story changes repair causal prose and repeat affected
-    passes/gates/receipt/build/narration; recasts create a plan/run; cover changes
-    rebuild EPUB/audio. Every package change repeats verification, `record-use`,
-    evidence, staging, and public/release reconciliation while preserving the
-    complete prior chain. Append feedback, change, and resulting delivery/publication
-    states to `_production/source/feedback.jsonl`. For listener feedback run:
+      ```bash
+      /usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py record-use \
+        --cast "$VOICE_CAST" --epub "$EPUB" --m4b "$AUDIOBOOK" --sidecar "$SIDECAR" \
+        --success-receipt "$SUCCESS_RECEIPT" --at "$COMPLETED_AT" --preferences "$PREFERENCES"
+      ```
+
+      Require non-null `verifiedArtifacts`.
+   9. Set `EDITION_ID=$(date -u +%Y%m%dT%H%M%SZ)` and
+      `ICLOUD_TITLE="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Books/$TITLE"`.
+      Materialize the current `_production` evidence specified by the public
+      reference, then stage only the existing root allowlist:
+
+      ```bash
+      /usr/local/bin/python3 skills/fiction-audiobook/scripts/stage_echo_delivery.py \
+        --slug "$SLUG" --edition-id "$EDITION_ID" --m4b "$AUDIOBOOK" \
+        --epub "$EPUB" --alignment "$SIDECAR" --cover "$PAIR/cover.png" \
+        --production "$RUN_ROOT/_production" --destination "$ICLOUD_TITLE" --apply
+      ```
+
+      The iCloud title root is exactly M4B, EPUB, alignment JSON, `cover.png`,
+      and `_production/`; it has no second M4B, capture, or reel.
+   10. Apply the unchanged public/private gate after private delivery and report
+       iCloud, push, PR, release, merge, human reading, and human listening as
+       separate states. A private request/source or failed gate performs zero
+       GitHub mutation; never merge.
+7. Redo narrowly. Story changes repair causal prose and repeat affected
+   passes/gates/receipt/build/narration; cover changes rebuild the EPUB/audio.
+   Voice-only feedback changes the cast/plan and starts a new resolved run
+   without rewriting prose or covers. Segmentation feedback changes chapter
+   bytes, so rebuild the EPUB and invalidate the old source-bound plan; never
+   copy captures into the new run. Every package change repeats verification,
+   `record-use`, evidence, staging, and public/release reconciliation while
+   preserving the complete prior chain. Append feedback, change, and resulting
+   delivery/publication states to `_production/source/feedback.jsonl`. For
+   listener feedback run:
 
     ```bash
     PREFERENCES="${HOME:?}/Library/Application Support/Explainer Audiobooks/fiction-voice-preferences.json"

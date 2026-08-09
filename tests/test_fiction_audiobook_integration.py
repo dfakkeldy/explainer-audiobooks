@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -24,6 +25,7 @@ for scripts in (
 
 import build_book
 import cover_receipts
+import echo_voice_plan
 import fiction_voice_preferences
 import stage_echo_delivery
 from skill.scripts import verify_public_first_listen
@@ -739,6 +741,568 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             public_bytes = b"".join(path.read_bytes() for path in public_files)
             self.assertNotIn(str(run_root).encode("utf-8"), public_bytes)
             self.assertNotIn(str(private_delivery).encode("utf-8"), public_bytes)
+
+    def test_frozen_epub_block_cast_workflow_uses_installed_inventory_and_one_root_m4b(
+        self,
+    ) -> None:
+        """Exercise the documented fiction block-cast boundary with local fakes.
+
+        This does not narrate: the fake installed CLI and fake governed wrapper
+        make the source-bound inventory, plan, resume, receipts, and staging
+        contract deterministic.
+        """
+        with tempfile.TemporaryDirectory() as raw_root:
+            run_root = Path(raw_root).resolve() / "private-run"
+            chapters = run_root / "chapters"
+            dist = run_root / "dist"
+            research = run_root / "research"
+            narration = run_root / "_production/narration"
+            covers = run_root / "covers"
+            for directory in (chapters, research, narration, covers):
+                directory.mkdir(parents=True)
+
+            chapter = chapters / "ch01.md"
+            chapter.write_text(
+                "## Chapter One\n\n"
+                "The beacon waited for the storm.\n\n"
+                "“Go now,” Mara said.\n\n"
+                "Ivo took the oars without answering.\n",
+                encoding="utf-8",
+            )
+            portrait_cover = covers / "cover.png"
+            square_cover = covers / "m4b-cover.png"
+            Image.new("RGB", (1600, 2560), (20, 42, 68)).save(portrait_cover)
+            Image.new("RGB", (2400, 2400), (68, 42, 20)).save(square_cover)
+            build_book.build(
+                chapters,
+                dist,
+                "Fixture Block Ensemble",
+                "Dan Fakkeldy",
+                "",
+                "fixture-block-ensemble",
+                cover=portrait_cover,
+                m4b_cover=square_cover,
+            )
+            epub = dist / "fixture-block-ensemble.epub"
+            markdown = dist / "fixture-block-ensemble.md"
+            self.assertIn(
+                "The beacon waited for the storm.\n\n"
+                "“Go now,” Mara said.\n\n"
+                "Ivo took the oars without answering.",
+                markdown.read_text(encoding="utf-8"),
+            )
+            epub_sha256 = sha256(epub)
+
+            fake_cli = run_root / "installed-renderer/echo-cli"
+            fake_cli.parent.mkdir(parents=True)
+            fake_cli.write_text(
+                """#!/usr/bin/env python3
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+
+def option(arguments, name):
+    return arguments[arguments.index(name) + 1]
+
+
+arguments = sys.argv[1:]
+if not arguments:
+    raise SystemExit(64)
+if arguments[0] == "export-blocks":
+    if set(arguments[1::2]) != {"--epub", "--out"} or "--voice-plan" in arguments:
+        raise SystemExit(64)
+    epub = Path(option(arguments, "--epub"))
+    output = Path(option(arguments, "--out"))
+    payload = {
+        "version": 1,
+        "source": {"epubSHA256": hashlib.sha256(epub.read_bytes()).hexdigest()},
+        "blocks": [
+            {"id": "s1-b1", "text": "The beacon waited for the storm."},
+            {"id": "s1-b2", "text": "“Go now,” Mara said."},
+            {"id": "s1-b3", "text": "Ivo took the oars without answering."},
+        ],
+    }
+    output.write_text(json.dumps(payload, sort_keys=True) + "\\n", encoding="utf-8")
+elif arguments[0] == "resolve-voice-plan":
+    if set(arguments[1::2]) != {"--epub", "--voice-plan"}:
+        raise SystemExit(64)
+    epub = Path(option(arguments, "--epub"))
+    plan = Path(option(arguments, "--voice-plan"))
+    plan_sha256 = hashlib.sha256(plan.read_bytes()).hexdigest()
+    payload = {
+        "blockCount": 3,
+        "defaultVoice": "bf_emma",
+        "sourceEPUBSHA256": hashlib.sha256(epub.read_bytes()).hexdigest(),
+        "voicePlanID": f"plan-{plan_sha256[:12]}",
+        "voicePlanSHA256": plan_sha256,
+    }
+    sys.stdout.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+else:
+    raise SystemExit(64)
+""",
+                encoding="utf-8",
+            )
+            fake_cli.chmod(0o755)
+
+            inventory = research / f"echo-block-inventory-{epub_sha256}.json"
+            exported = subprocess.run(
+                [
+                    str(fake_cli),
+                    "export-blocks",
+                    "--epub",
+                    str(epub),
+                    "--out",
+                    str(inventory),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, exported.returncode, exported.stderr)
+            self.assertEqual(
+                {
+                    "version": 1,
+                    "source": {"epubSHA256": epub_sha256},
+                    "blocks": [
+                        {"id": "s1-b1", "text": "The beacon waited for the storm."},
+                        {"id": "s1-b2", "text": "“Go now,” Mara said."},
+                        {
+                            "id": "s1-b3",
+                            "text": "Ivo took the oars without answering.",
+                        },
+                    ],
+                },
+                json.loads(inventory.read_text(encoding="utf-8")),
+            )
+
+            speakers = [
+                {
+                    "speakerID": "narrator",
+                    "role": "Narrator",
+                    "voiceID": "bf_emma",
+                    "experimental": False,
+                },
+                {
+                    "speakerID": "mara",
+                    "role": "Mara",
+                    "voiceID": "af_bella",
+                    "experimental": False,
+                },
+                {
+                    "speakerID": "ivo",
+                    "role": "Ivo",
+                    "voiceID": "am_michael",
+                    "experimental": False,
+                },
+            ]
+            authored_plan = narration / "echo-voice-plan.json"
+            write_json(
+                authored_plan,
+                {
+                    "schemaVersion": 1,
+                    "source": {"epubSHA256": epub_sha256},
+                    "defaultSpeakerID": "narrator",
+                    "speakers": [
+                        {"id": row["speakerID"], "voiceID": row["voiceID"]}
+                        for row in speakers
+                    ],
+                    "assignments": [
+                        {"speakerID": "mara", "blocks": ["s1-b2"]},
+                        {"speakerID": "ivo", "blocks": ["s1-b3"]},
+                    ],
+                },
+            )
+            authored_plan_sha256 = sha256(authored_plan)
+            canonical_plan = narration / (
+                f"echo-voice-plan-plan-{authored_plan_sha256}.json"
+            )
+            resolution = narration / (
+                f"echo-voice-plan-resolution-plan-{authored_plan_sha256}.json"
+            )
+            cast_path = narration / "voice-cast.json"
+            cast = {
+                "schemaVersion": 2,
+                "slug": "fixture-block-ensemble",
+                "narrationMode": "block",
+                "sourceEPUBSHA256": epub_sha256,
+                "defaultSpeakerID": "narrator",
+                "speakers": speakers,
+                "authoredVoicePlan": {
+                    "fileName": authored_plan.name,
+                    "sha256": authored_plan_sha256,
+                },
+                "resolvedVoicePlan": None,
+                "verifiedArtifacts": None,
+            }
+            write_json(cast_path, cast)
+            preferences = run_root / "preferences.json"
+            write_json(preferences, fiction_voice_preferences.initial_preferences())
+            self.assertEqual(
+                cast,
+                fiction_voice_preferences.validate_block_cast(
+                    cast,
+                    authored_plan,
+                    fiction_voice_preferences.load_preferences(preferences),
+                ),
+            )
+
+            validated = subprocess.run(
+                [
+                    sys.executable,
+                    str(
+                        ROOT
+                        / "skills/fiction-audiobook/scripts/"
+                        "fiction_voice_preferences.py"
+                    ),
+                    "validate-cast",
+                    "--cast",
+                    str(cast_path),
+                    "--voice-plan",
+                    str(authored_plan),
+                    "--preferences",
+                    str(preferences),
+                    "--format",
+                    "argv0",
+                ],
+                check=False,
+                capture_output=True,
+            )
+            self.assertEqual(0, validated.returncode, validated.stderr.decode())
+            voice_arguments = [
+                token.decode("utf-8")
+                for token in validated.stdout.split(b"\0")
+                if token
+            ]
+            self.assertEqual(["--voice-plan", str(authored_plan)], voice_arguments)
+
+            sealed = echo_voice_plan.seal_block_plan(
+                fake_cli, epub, authored_plan, canonical_plan, resolution
+            )
+            resolved_plan = {
+                key: sealed[key] for key in echo_voice_plan.RESOLVER_KEYS
+            }
+            self.assertEqual(3, resolved_plan["blockCount"])
+            self.assertEqual(epub_sha256, resolved_plan["sourceEPUBSHA256"])
+            self.assertEqual(
+                f"plan-{resolved_plan['voicePlanSHA256'][:12]}",
+                resolved_plan["voicePlanID"],
+            )
+
+            renderer_identity = {
+                "rendererSchemaVersion": 1,
+                "rendererRoot": str(run_root / "installed-renderer"),
+                "rendererBuildRoot": str(run_root / "installed-renderer/build"),
+                "installerSourceSHA": "1" * 40,
+                "echoSourceSHA": "2" * 40,
+                "rendererManifestSHA256": "3" * 64,
+                "echoCLI_SHA256": sha256(fake_cli),
+                "echoResourcesSHA256": "5" * 64,
+                "echoRenderVersion": 12,
+                "modelPolicyRevision": "fixture-policy-v1",
+                "modelExpectedByteCount": 123456,
+                "modelBytesAttested": False,
+            }
+            run_id = (
+                f"{epub_sha256[:12]}-{renderer_identity['echoCLI_SHA256'][:12]}-"
+                f"{renderer_identity['echoResourcesSHA256'][:12]}-"
+                f"{renderer_identity['rendererManifestSHA256'][:12]}-"
+                f"{renderer_identity['echoSourceSHA']}-"
+                f"{resolved_plan['voicePlanID']}"
+            )
+            attempt_id = "7" * 64
+            artifact_root = dist / "echo-renders" / run_id / attempt_id
+            audiobook = artifact_root / "fixture-block-ensemble.m4b"
+            sidecar = artifact_root / "fixture-block-ensemble.alignment.json"
+            audit = artifact_root / "fixture-block-ensemble.pronunciation-audit.json"
+            reel = (
+                narration
+                / "listening"
+                / run_id
+                / attempt_id
+                / "fixture-block-ensemble.pronunciation-reel.m4b"
+            )
+            capture = narration / "captures" / run_id / ".anchors-ch1.json"
+            resume_state = research / f"echo-resume-state-{run_id}.json"
+            wrapper_calls = research / "wrapper-calls.json"
+            fake_wrapper = run_root / "fake-governed-wrapper.py"
+            fake_wrapper.write_text(
+                """#!/usr/bin/env python3
+import json
+import os
+import sys
+from pathlib import Path
+
+
+arguments = sys.argv[1:]
+voice_plan = os.environ["FAKE_VOICE_PLAN"]
+resume_state = os.environ["FAKE_RESUME_STATE"]
+if arguments == ["--voice-plan", voice_plan]:
+    pass
+elif arguments == [
+    "--voice-plan",
+    voice_plan,
+    "--resume",
+    "--resume-state",
+    resume_state,
+]:
+    pass
+else:
+    raise SystemExit(64)
+call_log = Path(os.environ["FAKE_CALL_LOG"])
+calls = json.loads(call_log.read_text(encoding="utf-8")) if call_log.exists() else []
+calls.append(arguments)
+call_log.write_text(json.dumps(calls), encoding="utf-8")
+for environment_name, contents in (
+    ("FAKE_AUDIOBOOK", b"fixture governed m4b"),
+    ("FAKE_REEL", b"fixture internal reel"),
+):
+    path = Path(os.environ[environment_name])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(contents)
+sidecar = Path(os.environ["FAKE_SIDECAR"])
+sidecar.parent.mkdir(parents=True, exist_ok=True)
+sidecar.write_text('[{"blockId":"s1-b1","timestamp":0}]\\n', encoding="utf-8")
+capture = Path(os.environ["FAKE_CAPTURE"])
+capture.parent.mkdir(parents=True, exist_ok=True)
+capture.write_text(
+    json.dumps(
+        {
+            "schemaVersion": 2,
+            "identity": {
+                "schemaVersion": 2,
+                "voicePlanSHA256": os.environ["FAKE_VOICE_PLAN_SHA256"],
+                "chapterVoicePlanSHA256": "c" * 64,
+            },
+        }
+    )
+    + "\\n",
+    encoding="utf-8",
+)
+state = Path(resume_state)
+state.parent.mkdir(parents=True, exist_ok=True)
+state.write_text(json.dumps({"runID": os.environ["FAKE_RUN_ID"]}) + "\\n", encoding="utf-8")
+""",
+                encoding="utf-8",
+            )
+            fake_wrapper.chmod(0o755)
+            wrapper_environment = os.environ.copy()
+            wrapper_environment.update(
+                {
+                    "FAKE_AUDIOBOOK": str(audiobook),
+                    "FAKE_SIDECAR": str(sidecar),
+                    "FAKE_REEL": str(reel),
+                    "FAKE_CAPTURE": str(capture),
+                    "FAKE_RESUME_STATE": str(resume_state),
+                    "FAKE_CALL_LOG": str(wrapper_calls),
+                    "FAKE_RUN_ID": run_id,
+                    "FAKE_VOICE_PLAN": str(authored_plan),
+                    "FAKE_VOICE_PLAN_SHA256": str(
+                        resolved_plan["voicePlanSHA256"]
+                    ),
+                }
+            )
+            first_render = subprocess.run(
+                [str(fake_wrapper), *voice_arguments],
+                check=False,
+                capture_output=True,
+                text=True,
+                env=wrapper_environment,
+            )
+            self.assertEqual(0, first_render.returncode, first_render.stderr)
+            resumed_render = subprocess.run(
+                [
+                    str(fake_wrapper),
+                    *voice_arguments,
+                    "--resume",
+                    "--resume-state",
+                    str(resume_state),
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                env=wrapper_environment,
+            )
+            self.assertEqual(0, resumed_render.returncode, resumed_render.stderr)
+            self.assertEqual(
+                [
+                    voice_arguments,
+                    [*voice_arguments, "--resume", "--resume-state", str(resume_state)],
+                ],
+                json.loads(wrapper_calls.read_text(encoding="utf-8")),
+            )
+            self.assertEqual(2, json.loads(capture.read_text(encoding="utf-8"))["schemaVersion"])
+
+            write_json(
+                audit,
+                {
+                    "schemaVersion": 7,
+                    "renderVersion": 12,
+                    "voice": "mixed",
+                    "chapterVoices": {},
+                    "voicePlanSHA256": resolved_plan["voicePlanSHA256"],
+                    "blockVoices": {
+                        "s1-b2": "af_bella",
+                        "s1-b3": "am_michael",
+                    },
+                    "coverage": "complete",
+                    "legacyChapterIndexes": [],
+                    "audiobookFileName": audiobook.name,
+                    "audiobookSHA256": sha256(audiobook),
+                    "listeningReelFileName": reel.name,
+                    "listeningReelSHA256": sha256(reel),
+                    "watchCounts": {},
+                    "decisions": [],
+                    "diagnostics": [],
+                },
+            )
+            attempt_receipt = research / "echo-render-current-attempt.json"
+            write_json(attempt_receipt, {"runID": run_id, "attemptID": attempt_id})
+            selector_receipt = research / "echo-render-current-accepted.json"
+            write_json(selector_receipt, {"runID": run_id, "attemptID": attempt_id})
+            input_receipt = narration / f"echo-render-inputs-{run_id}.env"
+            input_receipt.write_text(
+                "voice=bf_emma\n"
+                "chapter_voices=\n"
+                "voice_plan_mode=block\n"
+                f"voice_plan_sha256={resolved_plan['voicePlanSHA256']}\n"
+                f"voice_plan_id={resolved_plan['voicePlanID']}\n"
+                f"voice_plan_block_count={resolved_plan['blockCount']}\n"
+                f"voice_plan_canonical_path={canonical_plan}\n"
+                f"voice_plan_canonical_sha256={sha256(canonical_plan)}\n"
+                f"voice_plan_resolution_path={resolution}\n"
+                f"voice_plan_resolution_sha256={sha256(resolution)}\n",
+                encoding="utf-8",
+            )
+            success_receipt = narration / (
+                f"echo-render-success-{run_id}-{attempt_id}.json"
+            )
+            write_json(
+                success_receipt,
+                {
+                    "schemaVersion": 4,
+                    **renderer_identity,
+                    "attemptID": attempt_id,
+                    "runID": run_id,
+                    "attemptReceiptSHA256": sha256(attempt_receipt),
+                    "inputReceiptFileName": input_receipt.name,
+                    "inputReceiptSHA256": sha256(input_receipt),
+                    "sourceEPUBFileName": epub.name,
+                    "sourceEPUBSHA256": epub_sha256,
+                    "artifactRelativePath": f"echo-renders/{run_id}/{attempt_id}",
+                    "resumeStateFileName": resume_state.name,
+                    "resumeStateSHA256": sha256(resume_state),
+                    "audiobookFileName": audiobook.name,
+                    "audiobookSHA256": sha256(audiobook),
+                    "sidecarFileName": sidecar.name,
+                    "sidecarSHA256": sha256(sidecar),
+                    "auditFileName": audit.name,
+                    "auditSHA256": sha256(audit),
+                    "reelFileName": reel.name,
+                    "reelRelativePath": (
+                        f"listening/{run_id}/{attempt_id}/{reel.name}"
+                    ),
+                    "reelSHA256": sha256(reel),
+                    "voicePlanMode": "block",
+                    "voicePlanID": resolved_plan["voicePlanID"],
+                    "voicePlanSHA256": resolved_plan["voicePlanSHA256"],
+                    "voicePlanBlockCount": resolved_plan["blockCount"],
+                    "voicePlanCanonicalFileName": canonical_plan.name,
+                    "voicePlanCanonicalSHA256": sha256(canonical_plan),
+                    "voicePlanResolutionFileName": resolution.name,
+                    "voicePlanResolutionSHA256": sha256(resolution),
+                },
+            )
+            fiction_voice_preferences.record_use(
+                cast_path,
+                epub,
+                audiobook,
+                sidecar,
+                success_receipt,
+                "2026-08-09T14:00:00+00:00",
+                preferences,
+            )
+            completed_cast = json.loads(cast_path.read_text(encoding="utf-8"))
+            self.assertEqual(resolved_plan, completed_cast["resolvedVoicePlan"])
+            self.assertEqual(
+                {
+                    "sourceEPUBSHA256": epub_sha256,
+                    "audiobookSHA256": sha256(audiobook),
+                    "sidecarSHA256": sha256(sidecar),
+                    "voicePlanSHA256": resolved_plan["voicePlanSHA256"],
+                },
+                completed_cast["verifiedArtifacts"],
+            )
+
+            production = run_root / "_production"
+            for directory in (
+                "source",
+                "checks",
+                "narration",
+                "covers",
+                "publication",
+                "previous",
+            ):
+                (production / directory).mkdir(parents=True, exist_ok=True)
+            shutil.copy2(chapter, production / "source/ch01.md")
+            shutil.copy2(audit, production / "checks" / audit.name)
+            for path in (
+                cast_path,
+                authored_plan,
+                canonical_plan,
+                resolution,
+                input_receipt,
+                success_receipt,
+                resume_state,
+                attempt_receipt,
+                selector_receipt,
+                sidecar,
+                reel,
+                capture,
+            ):
+                if path.is_relative_to(narration):
+                    destination = production / "narration" / path.relative_to(narration)
+                else:
+                    destination = production / "narration" / path.name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                if destination != path:
+                    shutil.copy2(path, destination)
+            shutil.copy2(portrait_cover, production / "covers/cover.png")
+
+            library = run_root / "library"
+            library.mkdir()
+            destination = library / "fixture-block-ensemble"
+            stage_echo_delivery.stage_delivery(
+                stage_echo_delivery.DeliveryRequest(
+                    slug="fixture-block-ensemble",
+                    edition_id="fixture-block-v1",
+                    m4b=audiobook,
+                    epub=epub,
+                    alignment=sidecar,
+                    cover=portrait_cover,
+                    production=production,
+                    destination=destination,
+                ),
+                apply=True,
+            )
+            self.assertEqual(
+                {
+                    "fixture-block-ensemble.m4b",
+                    "fixture-block-ensemble.epub",
+                    "fixture-block-ensemble.alignment.json",
+                    "cover.png",
+                    "_production",
+                },
+                {path.name for path in destination.iterdir()},
+            )
+            staged_narration = destination / "_production/narration"
+            self.assertTrue(
+                (staged_narration / reel.relative_to(narration)).is_file()
+            )
+            self.assertTrue(
+                (staged_narration / capture.relative_to(narration)).is_file()
+            )
 
 
 if __name__ == "__main__":

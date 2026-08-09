@@ -55,6 +55,27 @@ in `full-prose-qc.md`. Then read front to back without editing, repair accepted
 whole-book findings, reconcile every promise/payoff or deliberate ambiguity,
 perform the read-aloud check, and write `continuity/final.md` from final bytes.
 
+## Source segmentation before EPUB freeze
+
+Before EPUB build, one lead writer records the intended speaker for every
+block. Treat each uninterrupted narrator, POV, quoted-character, letter,
+report, or interlude run as one blank-line-delimited Markdown paragraph and
+therefore one XHTML block.
+
+Record one book-wide dialogue-attribution rule and use it consistently:
+
+- The character owns the complete dialogue-and-attribution block; or
+- The attribution is its own narrator block.
+
+Never split a sentence merely to increase voice variety. Never encode a speaker
+in invisible spans or expect Echo to read `data-speaker`. No model or Echo
+inference fills unknown dialogue: revise the source paragraph or record the
+speaker explicitly.
+
+After final prose and the portrait cover are embedded, hash and freeze the
+EPUB before inventory or casting. Any later EPUB byte change restarts inventory
+and plan authoring.
+
 ## Private receipt
 
 Create the unchanged schema-v1 receipt with `status: first-listen`,
