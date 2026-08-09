@@ -46,6 +46,13 @@ class DeliveryResult:
     root_files: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class _DirectorySnapshot:
+    device: int
+    inode: int
+    tree: dict[str, tuple[str, str]]
+
+
 def _artifact_paths(request: DeliveryRequest) -> dict[str, Path]:
     return {
         f"{request.slug}.m4b": Path(request.m4b),
@@ -329,6 +336,35 @@ def _tree_snapshot(root: Path, *, omit_previous: bool = False) -> dict[str, tupl
     return snapshot
 
 
+def _directory_snapshot(root: Path, label: str) -> _DirectorySnapshot:
+    """Capture one stable directory identity and all descendant bytes."""
+    _reject_symlink_components(root, label)
+    try:
+        before = root.stat(follow_symlinks=False)
+    except OSError as error:
+        raise ValueError(f"{label} is unavailable") from error
+    if not root.is_dir() or root.is_symlink():
+        raise ValueError(f"{label} must be a non-symlink directory")
+    tree = _tree_snapshot(root)
+    try:
+        after = root.stat(follow_symlinks=False)
+    except OSError as error:
+        raise ValueError(f"{label} changed while it was inspected") from error
+    stable_fields = ("st_dev", "st_ino", "st_mtime_ns", "st_ctime_ns")
+    if any(getattr(before, field) != getattr(after, field) for field in stable_fields):
+        raise ValueError(f"{label} changed while it was inspected")
+    return _DirectorySnapshot(before.st_dev, before.st_ino, tree)
+
+
+def _require_snapshot(
+    root: Path, expected: _DirectorySnapshot, label: str
+) -> _DirectorySnapshot:
+    actual = _directory_snapshot(root, label)
+    if actual != expected:
+        raise ValueError(f"{label} changed after validation")
+    return actual
+
+
 def _same_edition(stage: Path, destination: Path, root_files: tuple[str, ...]) -> bool:
     if any(
         _sha256(stage / name) != _sha256(destination / name) for name in root_files
@@ -386,17 +422,33 @@ def _rename_stage(stage: Path, destination: Path) -> None:
     stage.rename(destination)
 
 
-def _promote(stage: Path, destination: Path, slug: str) -> None:
-    if not destination.exists():
+def _promote(
+    stage: Path,
+    destination: Path,
+    slug: str,
+    expected_destination: _DirectorySnapshot | None,
+) -> None:
+    expected_stage = _directory_snapshot(stage, "staged delivery")
+    if expected_destination is None:
+        if destination.exists() or destination.is_symlink():
+            raise ValueError("destination appeared after validation")
         _rename_stage(stage, destination)
+        _require_snapshot(destination, expected_stage, "promoted delivery")
         return
 
+    _require_snapshot(destination, expected_destination, "destination")
     backup = destination.parent / f".{slug}.backup-{uuid.uuid4().hex}"
     destination.rename(backup)
     try:
+        _require_snapshot(backup, expected_destination, "renamed destination backup")
         _rename_stage(stage, destination)
+        _require_snapshot(destination, expected_stage, "promoted delivery")
+        _require_snapshot(backup, expected_destination, "destination backup")
     except BaseException:
-        backup.rename(destination)
+        if destination.exists() and not stage.exists():
+            destination.rename(stage)
+        if backup.exists() and not destination.exists():
+            backup.rename(destination)
         raise
     shutil.rmtree(backup)
 
@@ -430,7 +482,14 @@ def stage_delivery(request: DeliveryRequest, *, apply: bool = False) -> Delivery
         stage = _build_stage(request, artifacts, root_hashes)
         verified = True
         _validate_destination(request)
+        expected_destination = (
+            _directory_snapshot(destination, "destination")
+            if destination.exists()
+            else None
+        )
         if destination.exists() and _same_edition(stage, destination, root_files):
+            assert expected_destination is not None
+            _require_snapshot(destination, expected_destination, "destination")
             shutil.rmtree(stage)
             return DeliveryResult(
                 decision="reuse",
@@ -442,7 +501,7 @@ def stage_delivery(request: DeliveryRequest, *, apply: bool = False) -> Delivery
         if destination.exists():
             _archive_previous(stage, destination, root_files)
         staging_directory = str(stage)
-        _promote(stage, destination, request.slug)
+        _promote(stage, destination, request.slug, expected_destination)
         return DeliveryResult(
             decision="promoted",
             destination=str(destination),

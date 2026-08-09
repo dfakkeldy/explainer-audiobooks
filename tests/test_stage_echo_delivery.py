@@ -139,6 +139,33 @@ class StageEchoDeliveryTests(unittest.TestCase):
         self.assertEqual(b"audio", (self.destination / "fixture.m4b").read_bytes())
         self.assertTrue(self.stages())
 
+    def test_item_added_after_validation_is_preserved_and_blocks_promotion(self) -> None:
+        module.stage_delivery(self.request(), apply=True)
+        before = tree_hash(self.destination)
+        self.m4b.write_bytes(b"replacement")
+        real_promote = module._promote
+        note = self.destination / "notes.m4a"
+
+        def inject_then_promote(
+            stage: Path,
+            destination: Path,
+            slug: str,
+            expected_destination: object,
+        ) -> None:
+            note.write_bytes(b"user recording")
+            real_promote(stage, destination, slug, expected_destination)
+
+        with mock.patch.object(
+            module, "_promote", side_effect=inject_then_promote
+        ), self.assertRaisesRegex(ValueError, "notes.m4a|changed.*validation"):
+            module.stage_delivery(self.request(), apply=True)
+
+        self.assertEqual(b"user recording", note.read_bytes())
+        note.unlink()
+        self.assertEqual(before, tree_hash(self.destination))
+        self.assertTrue(self.stages())
+        self.assertEqual([], list(self.destination.parent.glob(".fixture.backup-*")))
+
     def test_promotion_failure_restores_the_complete_old_edition(self) -> None:
         module.stage_delivery(self.request(), apply=True)
         before = tree_hash(self.destination)
@@ -149,6 +176,29 @@ class StageEchoDeliveryTests(unittest.TestCase):
                 module.stage_delivery(self.request(), apply=True)
 
         self.assertEqual(before, tree_hash(self.destination))
+
+    def test_item_added_to_renamed_backup_is_restored_instead_of_deleted(self) -> None:
+        module.stage_delivery(self.request(), apply=True)
+        self.m4b.write_bytes(b"replacement")
+        real_rename_stage = module._rename_stage
+
+        def mutate_backup_then_rename(stage: Path, destination: Path) -> None:
+            backups = list(destination.parent.glob(".fixture.backup-*"))
+            self.assertEqual(1, len(backups))
+            (backups[0] / "notes.m4a").write_bytes(b"late user recording")
+            real_rename_stage(stage, destination)
+
+        with mock.patch.object(
+            module, "_rename_stage", side_effect=mutate_backup_then_rename
+        ), self.assertRaisesRegex(ValueError, "backup.*changed"):
+            module.stage_delivery(self.request(), apply=True)
+
+        self.assertEqual(
+            b"late user recording", (self.destination / "notes.m4a").read_bytes()
+        )
+        self.assertEqual(b"audio", (self.destination / "fixture.m4b").read_bytes())
+        self.assertTrue(self.stages())
+        self.assertEqual([], list(self.destination.parent.glob(".fixture.backup-*")))
 
     def test_redo_archives_one_prior_generated_edition_and_is_idempotent(self) -> None:
         module.stage_delivery(self.request(), apply=True)
