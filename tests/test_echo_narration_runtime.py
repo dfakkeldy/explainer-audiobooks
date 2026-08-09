@@ -769,6 +769,129 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         finally:
             sys.path.remove(script_directory)
 
+    def completed_block_delivery_paths(self, fixture: str) -> dict[str, Path]:
+        """Create one governed block chain backed by the installed fake renderer."""
+
+        plan = self.write_block_voice_plan(f"{fixture}.json")
+        environment = self.environment()
+        environment["FAKE_EMIT_REEL"] = "1"
+        rendered = self.run_narrate("--voice-plan", str(plan), environment=environment)
+        self.assertEqual(0, rendered.returncode, rendered.stderr)
+
+        research = self.run_root / "research"
+        selector = research / "echo-render-current-accepted.json"
+        accepted = json.loads(selector.read_text(encoding="utf-8"))
+        receipt = research / str(accepted["successReceiptFileName"])
+        success = json.loads(receipt.read_text(encoding="utf-8"))
+        artifact_root = self.run_root / "dist" / str(accepted["artifactRelativePath"])
+        return {
+            "attempt": research / "echo-render-current-attempt.json",
+            "selector": selector,
+            "receipt": receipt,
+            "input_receipt": research / str(accepted["inputReceiptFileName"]),
+            "state_receipt": research / f"echo-resume-state-{accepted['runID']}.json",
+            "epub": self.run_root / "dist" / "fixture.epub",
+            "audiobook": artifact_root / "fixture.m4b",
+            "sidecar": artifact_root / "fixture.alignment.json",
+            "audit": artifact_root / "fixture.pronunciation-audit.json",
+            "reel": research / str(success["reelRelativePath"]),
+        }
+
+    @staticmethod
+    def write_canonical_receipt(path: Path, payload: dict[str, object]) -> None:
+        path.write_bytes(
+            (
+                json.dumps(
+                    payload,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    ensure_ascii=False,
+                )
+                + "\n"
+            ).encode("utf-8")
+        )
+
+    def rebind_block_attempt_chain(
+        self,
+        paths: dict[str, Path],
+        mutate: Callable[[dict[str, object]], None],
+    ) -> None:
+        """Rebind the mutable current chain so schema validation is the gate."""
+
+        attempt = json.loads(paths["attempt"].read_text(encoding="utf-8"))
+        mutate(attempt)
+        self.write_canonical_receipt(paths["attempt"], attempt)
+        attempt_hash = hashlib.sha256(paths["attempt"].read_bytes()).hexdigest()
+
+        success = json.loads(paths["receipt"].read_text(encoding="utf-8"))
+        success["attemptReceiptSHA256"] = attempt_hash
+        self.write_canonical_receipt(paths["receipt"], success)
+        success_hash = hashlib.sha256(paths["receipt"].read_bytes()).hexdigest()
+
+        selector = json.loads(paths["selector"].read_text(encoding="utf-8"))
+        selector["attemptReceiptSHA256"] = attempt_hash
+        selector["successReceiptSHA256"] = success_hash
+        self.write_canonical_receipt(paths["selector"], selector)
+
+    @staticmethod
+    def block_delivery_evidence_command(paths: dict[str, Path]) -> list[str]:
+        return [
+            "/usr/local/bin/python3",
+            str(STATE_HELPER),
+            "block-delivery-evidence",
+            "--attempt",
+            str(paths["attempt"]),
+            "--selector",
+            str(paths["selector"]),
+            "--receipt",
+            str(paths["receipt"]),
+            "--input-receipt",
+            str(paths["input_receipt"]),
+            "--format",
+            "env0",
+        ]
+
+    def delivery_fallback_command(
+        self,
+        paths: dict[str, Path],
+        *,
+        renderer_arguments: tuple[str, ...] = (),
+        voice: str | None = None,
+    ) -> list[str]:
+        command = [
+            "/usr/local/bin/python3",
+            str(STATE_HELPER),
+            "verify-delivery",
+            *renderer_arguments,
+        ]
+        if voice is not None:
+            command.extend(("--voice", voice))
+        command.extend(
+            (
+                "--attempt",
+                str(paths["attempt"]),
+                "--selector",
+                str(paths["selector"]),
+                "--receipt",
+                str(paths["receipt"]),
+                "--input-receipt",
+                str(paths["input_receipt"]),
+                "--state-receipt",
+                str(paths["state_receipt"]),
+                "--epub",
+                str(paths["epub"]),
+                "--audiobook",
+                str(paths["audiobook"]),
+                "--sidecar",
+                str(paths["sidecar"]),
+                "--audit",
+                str(paths["audit"]),
+                "--reel",
+                str(paths["reel"]),
+            )
+        )
+        return command
+
     def verify_state_command(
         self,
         state: Path,
@@ -2426,6 +2549,159 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             check=False,
         )
         self.assertEqual(0, audited.returncode, audited.stderr)
+
+    def test_block_delivery_evidence_requires_the_exact_current_attempt_schema(
+        self,
+    ) -> None:
+        """A rehashed mutable chain still cannot add or remove attempt fields."""
+
+        paths = self.completed_block_delivery_paths("exact-attempt-schema")
+        original = {
+            name: paths[name].read_bytes()
+            for name in ("attempt", "selector", "receipt")
+        }
+        mutations: tuple[tuple[str, Callable[[dict[str, object]], None]], ...] = (
+            (
+                "extra",
+                lambda payload: payload.__setitem__("unexpected", "drift"),
+            ),
+            (
+                "missing",
+                lambda payload: payload.pop("modelPolicyRevision"),
+            ),
+        )
+        for name, mutate in mutations:
+            with self.subTest(mutation=name):
+                try:
+                    self.rebind_block_attempt_chain(paths, mutate)
+                    rejected = subprocess.run(
+                        self.block_delivery_evidence_command(paths),
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(65, rejected.returncode, rejected.stderr)
+                    self.assertIn(
+                        "not the exact current attempt schema", rejected.stderr
+                    )
+                    self.assertEqual("", rejected.stdout)
+                finally:
+                    for path_name, content in original.items():
+                        paths[path_name].write_bytes(content)
+
+    def test_governed_receipt_consumers_reject_symlinked_inputs(self) -> None:
+        """Every externally supplied receipt stays behind the no-follow boundary."""
+
+        paths = self.completed_block_delivery_paths("symlinked-delivery-evidence")
+        for consumer in ("block-delivery-evidence", "verify-delivery"):
+            for name in ("attempt", "selector", "receipt", "input_receipt"):
+                with self.subTest(consumer=consumer, receipt=name):
+                    linked_paths = dict(paths)
+                    link = self.tmp / f"{consumer}-{name}-delivery-link"
+                    link.symlink_to(paths[name])
+                    linked_paths[name] = link
+                    command = (
+                        self.block_delivery_evidence_command(linked_paths)
+                        if consumer == "block-delivery-evidence"
+                        else self.delivery_fallback_command(linked_paths)
+                    )
+                    rejected = subprocess.run(
+                        command,
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(65, rejected.returncode, rejected.stderr)
+                    self.assertEqual("", rejected.stdout)
+
+    def test_verify_delivery_fallback_cross_checks_explicit_voice_and_renderer(
+        self,
+    ) -> None:
+        """Receipt-derived fallback never permits conflicting caller overrides."""
+
+        paths = self.completed_block_delivery_paths("fallback-cross-checks")
+        attempt = json.loads(paths["attempt"].read_text(encoding="utf-8"))
+        mismatched_renderer = self.renderer_identity_from_receipt(attempt)
+        mismatched_renderer["echoCLI_SHA256"] = "0" * 64
+        cases = (
+            ("voice", (), "af_heart"),
+            (
+                "renderer",
+                self.renderer_state_arguments(mismatched_renderer),
+                None,
+            ),
+        )
+        for name, renderer_arguments, voice in cases:
+            with self.subTest(mismatch=name):
+                rejected = subprocess.run(
+                    self.delivery_fallback_command(
+                        paths,
+                        renderer_arguments=renderer_arguments,
+                        voice=voice,
+                    ),
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(65, rejected.returncode, rejected.stderr)
+                self.assertEqual("", rejected.stdout)
+
+    def test_governed_receipt_replacement_fails_closed_for_block_evidence_and_fallback(
+        self,
+    ) -> None:
+        """No post-render consumer may mix data across atomic receipt replaces."""
+
+        paths = self.completed_block_delivery_paths("atomic-replacement")
+        consumers = ("block_delivery_evidence", "verify_delivery_receipt")
+        for consumer in consumers:
+            for name in ("attempt", "selector", "receipt", "input_receipt"):
+                with self.subTest(consumer=consumer, receipt=name):
+                    namespace = self.state_namespace()
+                    target = paths[name]
+                    replacement = self.tmp / f"{consumer}-{name}-replacement"
+                    replacement.write_bytes(target.read_bytes())
+                    runtime_globals = namespace["snapshot_regular_file"].__globals__
+                    original_open_regular = runtime_globals["open_regular"]
+                    replaced = False
+                    open_count = 0
+
+                    def replace_after_open(path: Path, label: str) -> int:
+                        nonlocal open_count, replaced
+                        descriptor = original_open_regular(path, label)
+                        if path == target:
+                            open_count += 1
+                            if not replaced:
+                                os.replace(replacement, target)
+                                replaced = True
+                        return descriptor
+
+                    runtime_globals["open_regular"] = replace_after_open
+                    state_error = namespace["StateError"]
+                    try:
+                        with self.assertRaises(state_error):
+                            if consumer == "block_delivery_evidence":
+                                namespace["block_delivery_evidence"](
+                                    paths["attempt"],
+                                    paths["selector"],
+                                    paths["receipt"],
+                                    paths["input_receipt"],
+                                )
+                            else:
+                                namespace["verify_delivery_receipt"](
+                                    paths["attempt"],
+                                    paths["selector"],
+                                    paths["receipt"],
+                                    paths["input_receipt"],
+                                    paths["state_receipt"],
+                                    paths["epub"],
+                                    paths["audiobook"],
+                                    paths["sidecar"],
+                                    paths["audit"],
+                                    paths["reel"],
+                                    None,
+                                    None,
+                                )
+                    finally:
+                        runtime_globals["open_regular"] = original_open_regular
+                    self.assertTrue(replaced)
+                    self.assertEqual(1, open_count)
 
     def test_block_resume_reuses_only_the_same_resolved_plan_identity(self) -> None:
         compact = self.write_block_voice_plan("resume-compact-plan.json")
