@@ -1235,11 +1235,14 @@ def _verify_private_evidence(
             resolution_snapshots.append(snapshot)
             return snapshot.content
 
+        assert authored_snapshot.content is not None
         resolved = validate_block_echo_success_receipt(
             success,
             echo_success_receipt,
             cast,
             epub,
+            authored_plan_path=authored_snapshot.path,
+            authored_plan_bytes=authored_snapshot.content,
             input_receipt_loader=capture_input_receipt,
             canonical_plan_loader=capture_canonical_plan,
             resolution_loader=capture_resolution,

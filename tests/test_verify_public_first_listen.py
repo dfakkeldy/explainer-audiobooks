@@ -2771,6 +2771,25 @@ class FictionBlockPublicPackageVerifierTests(unittest.TestCase):
         with fixture.probes():
             self.verify()
 
+    def test_accepts_one_relocated_block_evidence_sibling_set(self) -> None:
+        fixture = self.fixture
+        relocated = fixture.private_dir.parent / "relocated-block-evidence"
+        relocated.mkdir()
+        for source in (
+            fixture.echo_input_receipt,
+            self.canonical_plan,
+            self.resolution,
+        ):
+            target = relocated / source.name
+            target.write_bytes(source.read_bytes())
+        relocated_success = relocated / fixture.echo_success_receipt.name
+        relocated_success.write_bytes(fixture.echo_success_receipt.read_bytes())
+        fixture.echo_success_receipt = relocated_success
+        self.rebind_private_evidence()
+
+        with fixture.probes():
+            self.verify()
+
     def test_rejects_missing_or_changed_authored_plan(self) -> None:
         self.authored_plan.unlink()
         self.assert_rejected("authored voice plan|sibling")
@@ -2839,6 +2858,102 @@ class FictionBlockPublicPackageVerifierTests(unittest.TestCase):
         self.rebind_private_evidence()
 
         self.assert_rejected("canonical voice-plan path|canonical plan filename")
+
+    def test_rejects_relocated_canonical_plan_that_differs_from_authored(self) -> None:
+        fixture = self.fixture
+        authored_payload = json.loads(self.authored_plan.read_text(encoding="utf-8"))
+        canonical_payload = copy.deepcopy(authored_payload)
+        canonical_payload["speakers"][1]["voiceID"] = "bf_isabella"
+        canonical_payload["assignments"] = [
+            {"speakerID": "ivo", "ranges": ["future-s9-b1:future-s9-b2"]}
+        ]
+        self.assertEqual(authored_payload["source"], canonical_payload["source"])
+        self.assertEqual(
+            authored_payload["defaultSpeakerID"],
+            canonical_payload["defaultSpeakerID"],
+        )
+        old_canonical_sha256 = fixture.digest(self.canonical_plan)
+        self.canonical_plan.write_text(
+            json.dumps(canonical_payload, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        fixture.echo_input_receipt.write_text(
+            fixture.echo_input_receipt.read_text(encoding="utf-8").replace(
+                "voice_plan_canonical_sha256=" + old_canonical_sha256,
+                "voice_plan_canonical_sha256=" + fixture.digest(self.canonical_plan),
+            ),
+            encoding="utf-8",
+        )
+        success = json.loads(fixture.echo_success_receipt.read_text(encoding="utf-8"))
+        success["voicePlanCanonicalSHA256"] = fixture.digest(self.canonical_plan)
+        success["inputReceiptSHA256"] = fixture.digest(fixture.echo_input_receipt)
+        fixture.echo_success_receipt.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.rebind_private_evidence()
+
+        self.assert_rejected("canonical voice plan.*authored")
+
+    def test_rejects_relocated_block_evidence_with_split_historical_parents(self) -> None:
+        fixture = self.fixture
+        historical_plan = "/historical-plan/" + self.canonical_plan.name
+        historical_resolution = "/historical-resolution/" + self.resolution.name
+        fixture.echo_input_receipt.write_text(
+            fixture.echo_input_receipt.read_text(encoding="utf-8")
+            .replace(
+                "voice_plan_canonical_path=" + str(self.canonical_plan),
+                "voice_plan_canonical_path=" + historical_plan,
+            )
+            .replace(
+                "voice_plan_resolution_path=" + str(self.resolution),
+                "voice_plan_resolution_path=" + historical_resolution,
+            ),
+            encoding="utf-8",
+        )
+        success = json.loads(fixture.echo_success_receipt.read_text(encoding="utf-8"))
+        success["inputReceiptSHA256"] = fixture.digest(fixture.echo_input_receipt)
+        fixture.echo_success_receipt.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        self.rebind_private_evidence()
+
+        self.assert_rejected("relocated.*parent|same.*parent|sibling")
+
+    def test_rejects_relocated_plan_input_and_evidence_name_substitutions(self) -> None:
+        fixture = self.fixture
+        cases = (
+            (
+                "input",
+                lambda success: success.__setitem__(
+                    "inputReceiptFileName", "substituted-input-receipt.env"
+                ),
+                "input receipt filename",
+            ),
+            (
+                "canonical",
+                lambda success: success.__setitem__(
+                    "voicePlanCanonicalFileName", self.resolution.name
+                ),
+                "voicePlanCanonicalFileName|canonical",
+            ),
+            (
+                "resolution",
+                lambda success: success.__setitem__(
+                    "voicePlanResolutionFileName", self.canonical_plan.name
+                ),
+                "voicePlanResolutionFileName|resolution",
+            ),
+        )
+        original = fixture.echo_success_receipt.read_text(encoding="utf-8")
+        for name, substitute, pattern in cases:
+            with self.subTest(name=name):
+                success = json.loads(original)
+                substitute(success)
+                fixture.echo_success_receipt.write_text(
+                    json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+                )
+                self.rebind_private_evidence()
+                self.assert_rejected(pattern)
 
     def test_rejects_block_resolution_changed_after_validation(self) -> None:
         real_validate = verifier.validate_block_echo_success_receipt

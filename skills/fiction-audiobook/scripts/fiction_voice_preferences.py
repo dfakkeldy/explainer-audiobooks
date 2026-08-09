@@ -16,6 +16,7 @@ import sys
 import tempfile
 from contextlib import contextmanager
 from contextvars import ContextVar
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Iterator
@@ -110,6 +111,20 @@ VERIFIED_ARTIFACT_FIELDS = {
 }
 
 
+@dataclass(frozen=True)
+class _StableFileSnapshot:
+    path: Path
+    label: str
+    device: int
+    inode: int
+    mode: int
+    size: int
+    mtime_ns: int
+    ctime_ns: int
+    content: bytes
+    sha256: str
+
+
 def resolve_voice(value: str) -> str:
     """Resolve an exact Echo ID or a unique human-friendly name."""
     if not isinstance(value, str):
@@ -160,6 +175,42 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
             raise ValueError(f"duplicate JSON key: {key}")
         result[key] = value
     return result
+
+
+def _reject_nonfinite_json_number(value: str) -> None:
+    raise ValueError(f"non-finite JSON number: {value}")
+
+
+def _strict_json_object_bytes(content: bytes, label: str) -> dict[str, Any]:
+    try:
+        payload = json.loads(
+            content.decode("utf-8"),
+            object_pairs_hook=_unique_object,
+            parse_constant=_reject_nonfinite_json_number,
+        )
+    except (UnicodeError, json.JSONDecodeError, ValueError) as error:
+        raise ValueError(f"{label} is not valid UTF-8 JSON") from error
+    if not isinstance(payload, dict):
+        raise ValueError(f"{label} must be a JSON object")
+    return payload
+
+
+def _same_json_value(left: object, right: object) -> bool:
+    """Compare decoded JSON without assigning meaning to opaque assignments."""
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, dict):
+        return (
+            isinstance(right, dict)
+            and left.keys() == right.keys()
+            and all(_same_json_value(value, right[key]) for key, value in left.items())
+        )
+    if isinstance(left, list):
+        return isinstance(right, list) and len(left) == len(right) and all(
+            _same_json_value(value, right[index])
+            for index, value in enumerate(left)
+        )
+    return left == right
 
 
 def _refuse_symlink(path: Path, label: str) -> None:
@@ -859,7 +910,7 @@ def _validate_cast(
 
 
 def _authored_block_plan(
-    cast: dict[str, Any], voice_plan_path: Path
+    cast: dict[str, Any], voice_plan_path: Path, *, content: bytes | None = None
 ) -> tuple[dict[str, Any], bytes]:
     authored = _require_dict(cast.get("authoredVoicePlan"), "authored voice plan")
     if set(authored) != {"fileName", "sha256"}:
@@ -871,15 +922,11 @@ def _authored_block_plan(
         raise ValueError("authored voice plan must be a canonical absolute path")
     if path.name != filename:
         raise ValueError("authored voice plan filename differs from voice cast")
-    content = _stable_regular_bytes(path, "authored voice plan")
+    if content is None:
+        content = _stable_regular_bytes(path, "authored voice plan")
     if hashlib.sha256(content).hexdigest() != expected_hash:
         raise ValueError("authored voice-plan hash differs from voice cast")
-    try:
-        payload = json.loads(content.decode("utf-8"), object_pairs_hook=_unique_object)
-    except (UnicodeError, json.JSONDecodeError) as error:
-        raise ValueError("authored voice plan is not valid UTF-8 JSON") from error
-    if not isinstance(payload, dict):
-        raise ValueError("authored voice plan must be a JSON object")
+    payload = _strict_json_object_bytes(content, "authored voice plan")
     if set(payload) != AUTHORED_VOICE_PLAN_FIELDS:
         raise ValueError("authored voice plan must contain exact Echo schema-1 fields")
     if type(payload.get("schemaVersion")) is not int or payload["schemaVersion"] != 1:
@@ -907,7 +954,11 @@ def _authored_block_plan(
 
 
 def _validate_block_cast_contract(
-    cast: dict[str, Any], voice_plan_path: Path, *, require_unverified: bool
+    cast: dict[str, Any],
+    voice_plan_path: Path,
+    *,
+    require_unverified: bool,
+    authored_plan_content: bytes | None = None,
 ) -> dict[str, Any]:
     if set(cast) != BLOCK_CAST_FIELDS:
         raise ValueError("block voice cast must contain exact schema-2 fields")
@@ -953,7 +1004,7 @@ def _validate_block_cast_contract(
         raise ValueError("block cast requires three to five distinct voices")
     if len(experimental_rows) > 2:
         raise ValueError("block cast allows at most two experimental speakers")
-    _authored_block_plan(cast, voice_plan_path)
+    _authored_block_plan(cast, voice_plan_path, content=authored_plan_content)
     if require_unverified and cast.get("resolvedVoicePlan") is not None:
         raise ValueError("block cast resolvedVoicePlan must be null before narration")
     if require_unverified and cast.get("verifiedArtifacts") is not None:
@@ -1081,7 +1132,9 @@ def _regular_digest(path: Path, label: str) -> str:
     return digest.hexdigest()
 
 
-def _stable_regular_bytes(path: Path, label: str) -> bytes:
+def _read_stable_regular_file(
+    path: Path, label: str
+) -> tuple[bytes, tuple[int, int, int, int, int, int]]:
     """Read one non-symlink file through a stable descriptor and path identity."""
     path = Path(path)
     if path.is_symlink():
@@ -1146,9 +1199,64 @@ def _stable_regular_bytes(path: Path, label: str) -> bytes:
         ):
             raise ValueError(f"{label} path or bytes changed while it was read")
         _refuse_symlink(path, label)
-        return b"".join(chunks)
+        return b"".join(chunks), (
+            opened.st_dev,
+            opened.st_ino,
+            opened.st_mode,
+            opened.st_size,
+            opened.st_mtime_ns,
+            opened.st_ctime_ns,
+        )
     finally:
         os.close(descriptor)
+
+
+def _stable_regular_bytes(path: Path, label: str) -> bytes:
+    return _read_stable_regular_file(path, label)[0]
+
+
+def _stable_regular_snapshot(path: Path, label: str) -> _StableFileSnapshot:
+    content, identity = _read_stable_regular_file(path, label)
+    return _StableFileSnapshot(
+        path=Path(path),
+        label=label,
+        device=identity[0],
+        inode=identity[1],
+        mode=identity[2],
+        size=identity[3],
+        mtime_ns=identity[4],
+        ctime_ns=identity[5],
+        content=content,
+        sha256=hashlib.sha256(content).hexdigest(),
+    )
+
+
+def _require_stable_snapshots_unchanged(
+    snapshots: tuple[_StableFileSnapshot, ...]
+) -> None:
+    for snapshot in snapshots:
+        current = _stable_regular_snapshot(snapshot.path, snapshot.label)
+        if (
+            current.content != snapshot.content
+            or current.sha256 != snapshot.sha256
+            or (
+                current.device,
+                current.inode,
+                current.mode,
+                current.size,
+                current.mtime_ns,
+                current.ctime_ns,
+            )
+            != (
+                snapshot.device,
+                snapshot.inode,
+                snapshot.mode,
+                snapshot.size,
+                snapshot.mtime_ns,
+                snapshot.ctime_ns,
+            )
+        ):
+            raise ValueError(f"{snapshot.label} changed after validation")
 
 
 def _input_receipt_fields(input_bytes: bytes) -> dict[str, str]:
@@ -1175,12 +1283,69 @@ def _input_receipt_fields(input_bytes: bytes) -> dict[str, str]:
     return input_fields
 
 
+def _relocated_block_evidence_path(
+    value: object, expected_name: str, label: str
+) -> Path:
+    path = Path(value) if isinstance(value, str) else None
+    if (
+        path is None
+        or not path.is_absolute()
+        or str(path) != value
+        or any(part in {".", ".."} for part in path.parts)
+        or path.name != expected_name
+    ):
+        raise ValueError(
+            f"Echo input receipt {label} is not a canonical plan filename"
+        )
+    return path
+
+
+def _validate_relocated_block_evidence_paths(
+    fields: dict[str, str], canonical_path: Path, resolution_path: Path, receipt_path: Path
+) -> None:
+    """Bind relocated source paths as one sibling set, not independent names."""
+    historical_canonical = _relocated_block_evidence_path(
+        fields.get("voice_plan_canonical_path"),
+        canonical_path.name,
+        "canonical voice-plan path",
+    )
+    historical_resolution = _relocated_block_evidence_path(
+        fields.get("voice_plan_resolution_path"),
+        resolution_path.name,
+        "voice-plan resolution path",
+    )
+    captured_parent = receipt_path.parent
+    if (
+        historical_canonical.parent != historical_resolution.parent
+        or canonical_path.parent != captured_parent
+        or resolution_path.parent != captured_parent
+    ):
+        raise ValueError(
+            "Echo relocated block evidence must map one sibling parent to the captured success-receipt directory"
+        )
+    original_parent = historical_canonical.parent
+    expected_mapping = {
+        original_parent / canonical_path.name: captured_parent / canonical_path.name,
+        original_parent / resolution_path.name: captured_parent / resolution_path.name,
+    }
+    actual_mapping = {
+        historical_canonical: canonical_path,
+        historical_resolution: resolution_path,
+    }
+    if actual_mapping != expected_mapping:
+        raise ValueError(
+            "Echo relocated block evidence does not map the original sibling set to the captured success-receipt directory"
+        )
+
+
 def validate_block_echo_success_receipt(
     receipt: dict[str, object],
     receipt_path: Path,
     cast: dict[str, Any],
     epub: Path,
     *,
+    authored_plan_path: Path | None = None,
+    authored_plan_bytes: bytes | None = None,
     input_receipt_loader: Callable[[Path, str], bytes] | None = None,
     canonical_plan_loader: Callable[[Path, str], bytes] | None = None,
     resolution_loader: Callable[[Path, str], bytes] | None = None,
@@ -1192,6 +1357,8 @@ def validate_block_echo_success_receipt(
     Callers that set ``allow_relocated_evidence`` still bind the names and hashes to
     the captured sibling files, while the production recorder keeps exact paths.
     """
+    if type(receipt.get("schemaVersion")) is not int or receipt["schemaVersion"] != 4:
+        raise ValueError("Echo success receipt schemaVersion must be integer 4")
     try:
         require_block_success_receipt(receipt, "Echo success receipt")
     except StateError as error:
@@ -1257,6 +1424,18 @@ def validate_block_echo_success_receipt(
             "Echo success receipt runID does not match source EPUB, renderer provenance, and resolved voice plan"
         )
     receipt_path = Path(receipt_path)
+    authored = _require_dict(cast.get("authoredVoicePlan"), "authored voice plan")
+    authored_filename = _filename(
+        authored.get("fileName"), "authored voice plan filename"
+    )
+    authored_path = (
+        Path(authored_plan_path)
+        if authored_plan_path is not None
+        else receipt_path.parent / authored_filename
+    )
+    authored_payload, _ = _authored_block_plan(
+        cast, authored_path, content=authored_plan_bytes
+    )
     if receipt_path.name != f"echo-render-success-{run_id}-{attempt_id}.json":
         raise ValueError("Echo success receipt filename is not derived from runID")
     if receipt.get("artifactRelativePath") != f"echo-renders/{run_id}/{attempt_id}":
@@ -1294,17 +1473,22 @@ def validate_block_echo_success_receipt(
         "Echo success receipt voicePlanCanonicalSHA256",
     ):
         raise ValueError("Echo canonical voice-plan bytes differ from success receipt")
-    try:
-        canonical_payload = json.loads(
-            canonical_bytes.decode("utf-8"), object_pairs_hook=_unique_object
+    canonical_payload = _strict_json_object_bytes(
+        canonical_bytes, "Echo canonical voice plan"
+    )
+    if canonical_bytes != (
+        json.dumps(
+            canonical_payload,
+            sort_keys=True,
+            indent=2,
+            ensure_ascii=False,
+            allow_nan=False,
         )
-    except (UnicodeError, json.JSONDecodeError) as error:
-        raise ValueError("Echo canonical voice plan is not valid UTF-8 JSON") from error
-    if not isinstance(canonical_payload, dict) or canonical_bytes != (
-        json.dumps(canonical_payload, sort_keys=True, indent=2, ensure_ascii=False)
         + "\n"
     ).encode("utf-8"):
         raise ValueError("Echo canonical voice plan is not canonical JSON")
+    if not _same_json_value(canonical_payload, authored_payload):
+        raise ValueError("Echo canonical voice plan differs from authored voice plan")
 
     resolution_path = receipt_path.parent / str(receipt["voicePlanResolutionFileName"])
     resolution_bytes = (resolution_loader or _stable_regular_bytes)(
@@ -1367,24 +1551,15 @@ def validate_block_echo_success_receipt(
             "voice_plan_canonical_path",
             "voice_plan_resolution_path",
         }:
-            relocated = fields.get(key)
-            expected_name = Path(value).name
-            relocated_path = Path(relocated) if isinstance(relocated, str) else None
-            if (
-                relocated_path is None
-                or not relocated_path.is_absolute()
-                or str(relocated_path) != relocated
-                or any(part in {".", ".."} for part in relocated_path.parts)
-                or relocated_path.name != expected_name
-            ):
-                raise ValueError(
-                    f"Echo input receipt {input_labels[key]} is not a canonical plan filename"
-                )
             continue
         if fields.get(key) != value:
             raise ValueError(
                 f"Echo input receipt {input_labels[key]} differs from sealed block evidence"
             )
+    if allow_relocated_evidence:
+        _validate_relocated_block_evidence_paths(
+            fields, canonical_path, resolution_path, receipt_path
+        )
     return resolved
 
 
@@ -1571,11 +1746,55 @@ def _block_receipt_artifacts(
     m4b: Path,
     sidecar: Path,
     success_receipt: Path,
-) -> tuple[dict[str, str], dict[str, object]]:
-    receipt = _json_object(success_receipt, "Echo success receipt")
-    resolved = validate_block_echo_success_receipt(
-        receipt, success_receipt, cast, epub
+    authored_plan_snapshot: _StableFileSnapshot,
+) -> tuple[
+    dict[str, str],
+    dict[str, object],
+    str,
+    tuple[_StableFileSnapshot, ...],
+]:
+    success_snapshot = _stable_regular_snapshot(
+        success_receipt, "Echo success receipt"
     )
+    receipt = _strict_json_object_bytes(
+        success_snapshot.content, "Echo success receipt"
+    )
+    input_receipt_snapshots: list[_StableFileSnapshot] = []
+    canonical_plan_snapshots: list[_StableFileSnapshot] = []
+    resolution_snapshots: list[_StableFileSnapshot] = []
+
+    def capture_input_receipt(path: Path, label: str) -> bytes:
+        snapshot = _stable_regular_snapshot(path, label)
+        input_receipt_snapshots.append(snapshot)
+        return snapshot.content
+
+    def capture_canonical_plan(path: Path, label: str) -> bytes:
+        snapshot = _stable_regular_snapshot(path, label)
+        canonical_plan_snapshots.append(snapshot)
+        return snapshot.content
+
+    def capture_resolution(path: Path, label: str) -> bytes:
+        snapshot = _stable_regular_snapshot(path, label)
+        resolution_snapshots.append(snapshot)
+        return snapshot.content
+
+    resolved = validate_block_echo_success_receipt(
+        receipt,
+        success_receipt,
+        cast,
+        epub,
+        authored_plan_path=authored_plan_snapshot.path,
+        authored_plan_bytes=authored_plan_snapshot.content,
+        input_receipt_loader=capture_input_receipt,
+        canonical_plan_loader=capture_canonical_plan,
+        resolution_loader=capture_resolution,
+    )
+    if len(input_receipt_snapshots) != 1:
+        raise ValueError("Echo input receipt was not captured exactly once")
+    if len(canonical_plan_snapshots) != 1:
+        raise ValueError("Echo canonical voice plan was not captured exactly once")
+    if len(resolution_snapshots) != 1:
+        raise ValueError("Echo voice-plan resolution was not captured exactly once")
     artifacts = (
         (epub, "sourceEPUBFileName", "sourceEPUBSHA256", "EPUB"),
         (m4b, "audiobookFileName", "audiobookSHA256", "M4B"),
@@ -1592,7 +1811,18 @@ def _block_receipt_artifacts(
     if verified["sourceEPUBSHA256"] != cast["sourceEPUBSHA256"]:
         raise ValueError("block cast source EPUB differs from supplied EPUB")
     verified["voicePlanSHA256"] = str(resolved["voicePlanSHA256"])
-    return verified, resolved
+    return (
+        verified,
+        resolved,
+        success_snapshot.sha256,
+        (
+            authored_plan_snapshot,
+            success_snapshot,
+            input_receipt_snapshots[0],
+            canonical_plan_snapshots[0],
+            resolution_snapshots[0],
+        ),
+    )
 
 
 def _load_cast(path: Path) -> dict[str, Any]:
@@ -1611,10 +1841,23 @@ def _record_block_use(
     preferences_path: Path,
 ) -> dict[str, object]:
     plan_path = _block_sibling_plan_path(cast, cast_path)
-    _validate_block_cast_contract(cast, plan_path, require_unverified=False)
+    authored_plan_snapshot = _stable_regular_snapshot(plan_path, "authored voice plan")
+    _validate_block_cast_contract(
+        cast,
+        plan_path,
+        require_unverified=False,
+        authored_plan_content=authored_plan_snapshot.content,
+    )
     _validate_block_preferences(cast, preferences, check_used_voices=False)
-    verified, resolved = _block_receipt_artifacts(
-        cast, epub, m4b, sidecar, success_receipt
+    verified, resolved, success_receipt_sha256, governed_snapshots = (
+        _block_receipt_artifacts(
+            cast,
+            epub,
+            m4b,
+            sidecar,
+            success_receipt,
+            authored_plan_snapshot,
+        )
     )
     changed_cast = False
     existing_resolved = cast.get("resolvedVoicePlan")
@@ -1634,6 +1877,7 @@ def _record_block_use(
             "block cast verifiedArtifacts differ from the supplied governed artifacts"
         )
     if changed_cast:
+        _require_stable_snapshots_unchanged(governed_snapshots)
         _atomic_json(cast_path, cast, "voice cast")
 
     use_key = (cast["slug"], verified["audiobookSHA256"], verified["voicePlanSHA256"])
@@ -1653,9 +1897,7 @@ def _record_block_use(
             "audiobookSHA256": verified["audiobookSHA256"],
             "sidecarSHA256": verified["sidecarSHA256"],
             "voicePlanSHA256": verified["voicePlanSHA256"],
-            "successReceiptSHA256": _regular_digest(
-                success_receipt, "Echo success receipt"
-            ),
+            "successReceiptSHA256": success_receipt_sha256,
             "narrationMode": "block",
             "speakers": [
                 {"speakerID": row["speakerID"], "voice": row["voiceID"]}
@@ -1664,6 +1906,7 @@ def _record_block_use(
         }
     )
     preferences["updatedAt"] = at
+    _require_stable_snapshots_unchanged(governed_snapshots)
     _atomic_json(preferences_path, preferences, "preferences store")
     return preferences
 
