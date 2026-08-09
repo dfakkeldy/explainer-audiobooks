@@ -1859,56 +1859,69 @@ def _record_block_use(
             authored_plan_snapshot,
         )
     )
+    proposed_cast = dict(cast)
     changed_cast = False
-    existing_resolved = cast.get("resolvedVoicePlan")
+    existing_resolved = proposed_cast.get("resolvedVoicePlan")
     if existing_resolved is None:
-        cast["resolvedVoicePlan"] = resolved
+        proposed_cast["resolvedVoicePlan"] = resolved
         changed_cast = True
     elif existing_resolved != resolved:
         raise ValueError(
             "block cast resolvedVoicePlan differs from the supplied sealed resolution"
         )
-    existing_verified = cast.get("verifiedArtifacts")
+    existing_verified = proposed_cast.get("verifiedArtifacts")
     if existing_verified is None:
-        cast["verifiedArtifacts"] = verified
+        proposed_cast["verifiedArtifacts"] = verified
         changed_cast = True
     elif existing_verified != verified:
         raise ValueError(
             "block cast verifiedArtifacts differ from the supplied governed artifacts"
         )
-    if changed_cast:
-        _require_stable_snapshots_unchanged(governed_snapshots)
-        _atomic_json(cast_path, cast, "voice cast")
 
-    use_key = (cast["slug"], verified["audiobookSHA256"], verified["voicePlanSHA256"])
-    for use in preferences["uses"]:
-        if (
+    use_key = (
+        proposed_cast["slug"],
+        verified["audiobookSHA256"],
+        verified["voicePlanSHA256"],
+    )
+    existing_use = any(
+        (
             use["slug"],
             use["audiobookSHA256"],
             use["voicePlanSHA256"],
-        ) == use_key:
-            return preferences
-    _validate_block_preferences(cast, preferences)
-    preferences["uses"].append(
-        {
-            "slug": cast["slug"],
-            "recordedAt": at,
-            "sourceEPUBSHA256": verified["sourceEPUBSHA256"],
-            "audiobookSHA256": verified["audiobookSHA256"],
-            "sidecarSHA256": verified["sidecarSHA256"],
-            "voicePlanSHA256": verified["voicePlanSHA256"],
-            "successReceiptSHA256": success_receipt_sha256,
-            "narrationMode": "block",
-            "speakers": [
-                {"speakerID": row["speakerID"], "voice": row["voiceID"]}
-                for row in cast["speakers"]
-            ],
-        }
+        )
+        == use_key
+        for use in preferences["uses"]
     )
-    preferences["updatedAt"] = at
+    proposed_preferences = preferences
+    if not existing_use:
+        _validate_block_preferences(proposed_cast, preferences)
+        proposed_preferences = dict(preferences)
+        proposed_preferences["uses"] = [
+            *preferences["uses"],
+            {
+                "slug": proposed_cast["slug"],
+                "recordedAt": at,
+                "sourceEPUBSHA256": verified["sourceEPUBSHA256"],
+                "audiobookSHA256": verified["audiobookSHA256"],
+                "sidecarSHA256": verified["sidecarSHA256"],
+                "voicePlanSHA256": verified["voicePlanSHA256"],
+                "successReceiptSHA256": success_receipt_sha256,
+                "narrationMode": "block",
+                "speakers": [
+                    {"speakerID": row["speakerID"], "voice": row["voiceID"]}
+                    for row in proposed_cast["speakers"]
+                ],
+            },
+        ]
+        proposed_preferences["updatedAt"] = at
+        _validate_preferences(proposed_preferences)
     _require_stable_snapshots_unchanged(governed_snapshots)
-    _atomic_json(preferences_path, preferences, "preferences store")
-    return preferences
+    if changed_cast:
+        _atomic_json(cast_path, proposed_cast, "voice cast")
+    if existing_use:
+        return preferences
+    _atomic_json(preferences_path, proposed_preferences, "preferences store")
+    return proposed_preferences
 
 
 def record_use(

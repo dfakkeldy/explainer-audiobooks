@@ -970,6 +970,119 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         self.assertIsNone(sealed["verifiedArtifacts"])
         self.assertFalse(self.preferences_path.exists())
 
+    def test_block_record_use_rejects_historical_experimental_voice_reuse_without_persisting(
+        self,
+    ) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        preferences = module.initial_preferences()
+        preferences["uses"].append(
+            {
+                "slug": "earlier-story",
+                "recordedAt": "2026-08-08T12:00:00+00:00",
+                "sourceEPUBSHA256": "a" * 64,
+                "audiobookSHA256": "c" * 64,
+                "sidecarSHA256": "d" * 64,
+                "voicePlanSHA256": "e" * 64,
+                "successReceiptSHA256": "f" * 64,
+                "narrationMode": "block",
+                "speakers": [{"speakerID": "old-ivo", "voice": "bm_george"}],
+            }
+        )
+        self.preferences_path.parent.mkdir()
+        self.preferences_path.write_text(
+            json.dumps(preferences, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        original_cast = cast_path.read_bytes()
+        original_preferences = self.preferences_path.read_bytes()
+
+        with self.assertRaisesRegex(
+            ValueError, "experimental voice was already used: bm_george"
+        ):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+        self.assertEqual(original_cast, cast_path.read_bytes())
+        self.assertEqual(original_preferences, self.preferences_path.read_bytes())
+
+    def test_block_record_use_rejects_a_governed_snapshot_mutated_during_final_policy_check_without_persisting(
+        self,
+    ) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        canonical = fixture["canonical"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(canonical, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        self.preferences_path.parent.mkdir()
+        self.preferences_path.write_text(
+            json.dumps(module.initial_preferences(), sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        original_cast = cast_path.read_bytes()
+        original_preferences = self.preferences_path.read_bytes()
+        original_canonical = canonical.read_bytes()
+        real_validate = module._validate_block_preferences
+        changed = False
+
+        def validate_then_mutate(
+            checked_cast: dict[str, object],
+            checked_preferences: dict[str, object],
+            *,
+            check_used_voices: bool = True,
+        ) -> None:
+            nonlocal changed
+            real_validate(
+                checked_cast,
+                checked_preferences,
+                check_used_voices=check_used_voices,
+            )
+            if check_used_voices:
+                canonical.write_bytes(original_canonical + b" ")
+                changed = True
+
+        with mock.patch.object(
+            module,
+            "_validate_block_preferences",
+            side_effect=validate_then_mutate,
+        ), self.assertRaisesRegex(ValueError, "canonical.*changed|changed.*canonical"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+        self.assertTrue(changed)
+        self.assertEqual(original_cast, cast_path.read_bytes())
+        self.assertEqual(original_preferences, self.preferences_path.read_bytes())
+
     def test_used_voices_accepts_one_history_shape_and_rejects_ambiguous_uses(self) -> None:
         preferences = module.initial_preferences()
         preferences["uses"].append(
