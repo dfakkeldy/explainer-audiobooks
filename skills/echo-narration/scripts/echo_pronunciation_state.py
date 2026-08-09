@@ -33,7 +33,7 @@ VOICE_ID_PATTERN = "|".join(re.escape(voice) for voice in sorted(VOICE_IDS))
 RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
     r"[0-9a-f]{12}-[0-9a-f]{40}"
-    rf"-(?:{VOICE_ID_PATTERN}|plan-[0-9a-f]{{12}})"
+    rf"-(?:{VOICE_ID_PATTERN}|plan-[0-9a-f]{{12}}|plan-[0-9a-f]{{64}})"
 )
 LEGACY_RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
@@ -149,11 +149,11 @@ def require_block_plan_receipt_evidence(
     canonical_name = payload.get("voicePlanCanonicalFileName")
     resolution_name = payload.get("voicePlanResolutionFileName")
     require(
-        canonical_name == f"echo-voice-plan-{plan_id}.json",
+        canonical_name == f"echo-voice-plan-plan-{plan_sha}.json",
         f"{label} has an invalid voicePlanCanonicalFileName",
     )
     require(
-        resolution_name == f"echo-voice-plan-resolution-{plan_id}.json",
+        resolution_name == f"echo-voice-plan-resolution-plan-{plan_sha}.json",
         f"{label} has an invalid voicePlanResolutionFileName",
     )
     for field in ("voicePlanCanonicalSHA256", "voicePlanResolutionSHA256"):
@@ -254,6 +254,39 @@ def read_regular_bytes(path: Path, label: str) -> bytes:
     descriptor = open_regular(path, label)
     with os.fdopen(descriptor, "rb", closefd=True) as input_file:
         return input_file.read()
+
+
+class RegularFileSnapshot:
+    """One descriptor's exact bytes and the facts derived from those bytes."""
+
+    def __init__(
+        self, content: bytes | None, sha256: str, byte_count: int
+    ) -> None:
+        self.content = content
+        self.sha256 = sha256
+        self.byte_count = byte_count
+
+
+def snapshot_regular_file(
+    path: Path, label: str, *, retain_content: bool = False
+) -> RegularFileSnapshot:
+    """Read/hash/count one no-follow descriptor without reopening its pathname."""
+
+    descriptor = open_regular(path, label)
+    digest = hashlib.sha256()
+    byte_count = 0
+    chunks: list[bytes] | None = [] if retain_content else None
+    with os.fdopen(descriptor, "rb", closefd=True) as input_file:
+        while chunk := input_file.read(1_048_576):
+            digest.update(chunk)
+            byte_count += len(chunk)
+            if chunks is not None:
+                chunks.append(chunk)
+    return RegularFileSnapshot(
+        b"".join(chunks) if chunks is not None else None,
+        digest.hexdigest(),
+        byte_count,
+    )
 
 
 def renderer_identity(
@@ -489,9 +522,7 @@ def read_installed_renderer_identity(path: Path) -> tuple[str, str]:
 
 
 def sha256(path: Path) -> str:
-    descriptor = open_regular(path, "hashed file")
-    with os.fdopen(descriptor, "rb", closefd=True) as input_file:
-        return hashlib.file_digest(input_file, "sha256").hexdigest()
+    return snapshot_regular_file(path, "hashed file").sha256
 
 
 def hash_tree(root: Path) -> str:
@@ -545,7 +576,10 @@ def safe_atomic_write(path: Path, content: bytes, *, immutable: bool) -> None:
         return
 
     descriptor, temporary_name = tempfile.mkstemp(
-        prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
+        # Full Echo plan digests intentionally appear in block run paths.  Do
+        # not repeat an already near-limit receipt basename in a private temp
+        # name, or the atomic writer itself exceeds NAME_MAX.
+        prefix=".echo-receipt-", suffix=".tmp", dir=path.parent
     )
     temporary = Path(temporary_name)
     try:
@@ -645,12 +679,12 @@ def block_plan_evidence(
         require(path.resolve(strict=False) == path, f"{label} must be canonical")
         regular_file(path, label)
     require(
-        voice_plan_path.name == f"echo-voice-plan-{voice_plan_id}.json",
+        voice_plan_path.name == f"echo-voice-plan-plan-{voice_plan_sha256}.json",
         "canonical block voice-plan filename is invalid",
     )
     require(
         voice_plan_resolution.name
-        == f"echo-voice-plan-resolution-{voice_plan_id}.json",
+        == f"echo-voice-plan-resolution-plan-{voice_plan_sha256}.json",
         "block voice-plan resolution filename is invalid",
     )
     canonical_bytes = read_regular_bytes(voice_plan_path, "canonical block voice plan")
@@ -787,9 +821,18 @@ def capture_snapshot(
         not work.is_symlink() and work.is_dir(),
         f"resume work directory is unsafe: {work}",
     )
-    regular_file(database, "resume database")
-    regular_file(input_receipt, "render-input receipt")
-    lines = receipt_lines(input_receipt)
+    database_snapshot = snapshot_regular_file(database, "resume database")
+    input_receipt_snapshot = snapshot_regular_file(
+        input_receipt, "render-input receipt", retain_content=True
+    )
+    require(
+        input_receipt_snapshot.content is not None,
+        "render-input receipt could not be read",
+    )
+    try:
+        lines = input_receipt_snapshot.content.decode("utf-8").splitlines()
+    except UnicodeDecodeError as error:
+        raise StateError("render-input receipt is not UTF-8") from error
     require_receipt_value(lines, "render_version", render_version, "resume render version")
     expected_receipt_identity = {
         "renderer_schema_version": installed_renderer["rendererSchemaVersion"],
@@ -831,16 +874,20 @@ def capture_snapshot(
     )
     require(marker_paths, "resume state has no completed capture markers")
     for display_chapter, marker in enumerate(marker_paths, start=1):
-        regular_file(marker, "capture marker")
         match = MARKER_PATTERN.fullmatch(marker.name)
         require(match is not None, f"malformed capture marker name: {marker.name}")
         filename_index = int(match.group(1))
         require(filename_index not in indexes, "duplicate capture chapter index")
         indexes.add(filename_index)
+        marker_snapshot = snapshot_regular_file(
+            marker, "capture marker", retain_content=True
+        )
+        require(
+            marker_snapshot.content is not None,
+            f"capture marker could not be read: {marker.name}",
+        )
         try:
-            payload = json.loads(
-                read_regular_bytes(marker, "capture marker").decode("utf-8")
-            )
+            payload = json.loads(marker_snapshot.content.decode("utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError) as error:
             raise StateError(
                 f"capture marker is not valid JSON: {marker.name}"
@@ -941,14 +988,14 @@ def capture_snapshot(
             f"resume state has unsafe audio filename: {marker.name}",
         )
         audio = work / audio_name
-        regular_file(audio, "capture audio")
+        audio_snapshot = snapshot_regular_file(audio, "capture audio")
         require(
             type(identity.get("audioFileByteCount")) is int
             and identity["audioFileByteCount"] >= 0
-            and identity["audioFileByteCount"] == audio.stat().st_size,
+            and identity["audioFileByteCount"] == audio_snapshot.byte_count,
             f"resume capture audio size differs: {audio_name}",
         )
-        audio_hash = sha256(audio)
+        audio_hash = audio_snapshot.sha256
         require(
             identity["audioSHA256"] == audio_hash,
             f"resume capture audio SHA-256 differs: {audio_name}",
@@ -961,7 +1008,7 @@ def capture_snapshot(
             {
                 "chapterIndex": filename_index,
                 "markerFileName": marker.name,
-                "markerSHA256": sha256(marker),
+                "markerSHA256": marker_snapshot.sha256,
                 "audioFileName": audio_name,
                 "audioSHA256": audio_hash,
                 "payloadSHA256": identity["payloadSHA256"],
@@ -976,9 +1023,9 @@ def capture_snapshot(
             **block_plan,
             "renderVersion": render_version,
             "captureSetID": capture_set_id,
-            "inputReceiptSHA256": sha256(input_receipt),
-            "databaseSHA256": sha256(database),
-            "databaseByteCount": database.stat().st_size,
+            "inputReceiptSHA256": input_receipt_snapshot.sha256,
+            "databaseSHA256": database_snapshot.sha256,
+            "databaseByteCount": database_snapshot.byte_count,
             "captures": captures,
         }
     require(plan is not None, "legacy resume state lacks a chapter voice plan")
@@ -994,9 +1041,9 @@ def capture_snapshot(
         "voicePlanSHA256": voice_plan_sha256,
         "renderVersion": render_version,
         "captureSetID": capture_set_id,
-        "inputReceiptSHA256": sha256(input_receipt),
-        "databaseSHA256": sha256(database),
-        "databaseByteCount": database.stat().st_size,
+        "inputReceiptSHA256": input_receipt_snapshot.sha256,
+        "databaseSHA256": database_snapshot.sha256,
+        "databaseByteCount": database_snapshot.byte_count,
         "captures": captures,
     }
 
@@ -1237,8 +1284,19 @@ def canonical_json(payload: dict[str, object]) -> bytes:
 
 def json_object(path: Path, label: str) -> dict[str, object]:
     regular_file(path, label)
+
+    def reject_duplicates(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        payload: dict[str, object] = {}
+        for key, value in pairs:
+            require(key not in payload, f"{label} duplicates key: {key}")
+            payload[key] = value
+        return payload
+
     try:
-        payload = json.loads(read_regular_bytes(path, label).decode("utf-8"))
+        payload = json.loads(
+            read_regular_bytes(path, label).decode("utf-8"),
+            object_pairs_hook=reject_duplicates,
+        )
     except (json.JSONDecodeError, UnicodeDecodeError) as error:
         raise StateError(f"{label} is not valid JSON") from error
     require(isinstance(payload, dict), f"{label} root must be an object")
@@ -1269,6 +1327,29 @@ def input_receipt_value(path: Path, key: str) -> str:
         f"render-input receipt has invalid {key}",
     )
     return values[0]
+
+
+def current_run_voice_identity(input_receipt: Path) -> str:
+    """Return the collision-free block component without changing legacy IDs."""
+
+    lines = receipt_lines(input_receipt)
+    modes = [
+        line.removeprefix("voice_plan_mode=")
+        for line in lines
+        if line.startswith("voice_plan_mode=")
+    ]
+    if not modes:
+        return input_receipt_value(input_receipt, "voice_plan_id")
+    require(
+        modes == ["block"],
+        "render-input receipt has invalid voice_plan_mode",
+    )
+    plan_sha = input_receipt_value(input_receipt, "voice_plan_sha256")
+    require(
+        SHA256_PATTERN.fullmatch(plan_sha) is not None,
+        "render-input receipt has invalid voice_plan_sha256",
+    )
+    return f"plan-{plan_sha}"
 
 
 def require_block_plan_matches_input_receipt(
@@ -1326,12 +1407,12 @@ def attempt_snapshot(
             installed_renderer is not None,
             "current attempt requires installed renderer identity",
         )
-        voice_plan_id = input_receipt_value(input_receipt, "voice_plan_id")
+        run_voice_identity = current_run_voice_identity(input_receipt)
         expected_run_id = (
             f"{sha256(epub)[:12]}-{installed_renderer['echoCLI_SHA256'][:12]}-"
             f"{installed_renderer['echoResourcesSHA256'][:12]}-"
             f"{installed_renderer['rendererManifestSHA256'][:12]}-"
-            f"{installed_renderer['echoSourceSHA']}-{voice_plan_id}"
+            f"{installed_renderer['echoSourceSHA']}-{run_voice_identity}"
         )
         require(
             run_id == expected_run_id,
@@ -1549,12 +1630,12 @@ def verify_delivery_receipt(
             voice == input_receipt_value(input_receipt, "voice"),
             "current delivery voice differs from render-input receipt",
         )
-        voice_plan_id = input_receipt_value(input_receipt, "voice_plan_id")
+        run_voice_identity = current_run_voice_identity(input_receipt)
         expected_run_id = (
             f"{sha256(epub)[:12]}-{installed_renderer['echoCLI_SHA256'][:12]}-"
             f"{installed_renderer['echoResourcesSHA256'][:12]}-"
             f"{installed_renderer['rendererManifestSHA256'][:12]}-"
-            f"{installed_renderer['echoSourceSHA']}-{voice_plan_id}"
+            f"{installed_renderer['echoSourceSHA']}-{run_voice_identity}"
         )
         require(
             run_id == expected_run_id,

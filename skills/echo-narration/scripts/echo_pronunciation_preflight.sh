@@ -465,8 +465,11 @@ echo_pronunciation_seal_block_plan() {
     printf 'VOICE must equal the Echo block-plan default voice\n' >&2
     return 64
   fi
-  VOICE_PLAN_CANONICAL_PATH="$RUN_ROOT/research/echo-voice-plan-$VOICE_PLAN_ID.json"
-  VOICE_PLAN_RESOLUTION_PATH="$RUN_ROOT/research/echo-voice-plan-resolution-$VOICE_PLAN_ID.json"
+  # Echo's display ID deliberately contains only a short digest.  It remains
+  # useful provenance, but cannot select an operational path: two full Echo
+  # resolution digests can share those first twelve characters.
+  VOICE_PLAN_CANONICAL_PATH="$RUN_ROOT/research/echo-voice-plan-plan-$VOICE_PLAN_SHA256.json"
+  VOICE_PLAN_RESOLUTION_PATH="$RUN_ROOT/research/echo-voice-plan-resolution-plan-$VOICE_PLAN_SHA256.json"
   if [[ -e "$VOICE_PLAN_CANONICAL_PATH" || -L "$VOICE_PLAN_CANONICAL_PATH" ]]; then
     [[ ! -L "$VOICE_PLAN_CANONICAL_PATH" && -f "$VOICE_PLAN_CANONICAL_PATH" ]] || {
       echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
@@ -705,11 +708,15 @@ echo_pronunciation_preflight() {
     fi
     VOICE_PLAN_MODE=chapter
   fi
-  local echo_source_id
+  local echo_source_id run_voice_identity
   echo_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
+  run_voice_identity=$VOICE_PLAN_ID
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    run_voice_identity="plan-$VOICE_PLAN_SHA256"
+  fi
   RUN_ID=$(echo_pronunciation_run_id \
     "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
-    "$ECHO_RENDERER_MANIFEST_SHA256" "$echo_source_id" "$VOICE_PLAN_ID")
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$echo_source_id" "$run_voice_identity")
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
@@ -835,8 +842,8 @@ echo_pronunciation_attest_inputs() {
   voice_plan_helper="$script_dir/echo_voice_plan.py"
   if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
     if [[ "$VOICE_PLAN_SOURCE" != "$VOICE_PLAN_CANONICAL_PATH" \
-      || "$VOICE_PLAN_CANONICAL_PATH" != "$RUN_ROOT/research/echo-voice-plan-$VOICE_PLAN_ID.json" \
-      || "$VOICE_PLAN_RESOLUTION_PATH" != "$RUN_ROOT/research/echo-voice-plan-resolution-$VOICE_PLAN_ID.json" \
+      || "$VOICE_PLAN_CANONICAL_PATH" != "$RUN_ROOT/research/echo-voice-plan-plan-$VOICE_PLAN_SHA256.json" \
+      || "$VOICE_PLAN_RESOLUTION_PATH" != "$RUN_ROOT/research/echo-voice-plan-resolution-plan-$VOICE_PLAN_SHA256.json" \
       || -L "$VOICE_PLAN_CANONICAL_PATH" || ! -f "$VOICE_PLAN_CANONICAL_PATH" \
       || -L "$VOICE_PLAN_RESOLUTION_PATH" || ! -f "$VOICE_PLAN_RESOLUTION_PATH" ]]; then
       printf 'sealed block voice-plan paths changed while narration lease was held\n' >&2
@@ -956,11 +963,15 @@ echo_pronunciation_attest_inputs() {
     return 65
   fi
 
-  local expected_source_id expected_run_id expected_receipt
+  local expected_source_id expected_run_id expected_receipt expected_run_voice_identity
   expected_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
+  expected_run_voice_identity=$VOICE_PLAN_ID
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    expected_run_voice_identity="plan-$VOICE_PLAN_SHA256"
+  fi
   expected_run_id=$(echo_pronunciation_run_id \
     "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
-    "$ECHO_RENDERER_MANIFEST_SHA256" "$expected_source_id" "$VOICE_PLAN_ID")
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$expected_source_id" "$expected_run_voice_identity")
   expected_receipt="$RUN_ROOT/research/echo-render-inputs-$expected_run_id.env"
   if [[ "$RUN_ID" != "$expected_run_id" \
     || "$WORK" != "$RUN_ROOT/audio-work-$expected_run_id" \

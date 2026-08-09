@@ -7,9 +7,12 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
+import stat
 import subprocess
 import sys
+import tempfile
 from collections import Counter
 from pathlib import Path
 
@@ -204,13 +207,102 @@ def file_sha256(path: Path) -> str:
         return hashlib.file_digest(input_file, "sha256").hexdigest()
 
 
+class StableMediaSnapshot:
+    """A private copy whose bytes, hash, size, and duration stay bound together."""
+
+    def __init__(self, path: Path, sha256: str, byte_count: int) -> None:
+        self.path = path
+        self.sha256 = sha256
+        self.byte_count = byte_count
+
+
+def require_canonical_explicit_path(path: Path, label: str) -> None:
+    require(path.is_absolute(), f"--{label} must be an absolute path")
+    try:
+        resolved = path.resolve(strict=True)
+    except OSError as error:
+        raise AuditValidationError(
+            f"explicit {label} is missing, a symlink, or not a file"
+        ) from error
+    require(
+        resolved == path,
+        f"explicit {label} must have canonical symlink-free ancestry",
+    )
+    ancestor = path.parent
+    while ancestor != ancestor.parent:
+        require(
+            not ancestor.is_symlink(),
+            f"explicit {label} must have canonical symlink-free ancestry",
+        )
+        ancestor = ancestor.parent
+
+
+def open_regular_descriptor(path: Path, label: str) -> int:
+    flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    try:
+        descriptor = os.open(path, flags)
+    except OSError as error:
+        raise AuditValidationError(
+            f"explicit {label} is missing, a symlink, or not a file"
+        ) from error
+    if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+        os.close(descriptor)
+        raise AuditValidationError(
+            f"explicit {label} is missing, a symlink, or not a file"
+        )
+    return descriptor
+
+
+def stable_explicit_media_snapshot(path: Path, label: str) -> StableMediaSnapshot:
+    """Copy one no-follow descriptor so ffprobe sees the exact hashed bytes.
+
+    `ffprobe` consumes a pathname and cannot attest the descriptor it opens.  A
+    private `mkstemp` copy is therefore the stable byte boundary: hashing and
+    byte counting happen while copying the original descriptor, and duration is
+    read only from that completed private copy.
+    """
+
+    require_canonical_explicit_path(path, label)
+    descriptor = open_regular_descriptor(path, label)
+    temporary_descriptor = -1
+    temporary_path: Path | None = None
+    try:
+        temporary_descriptor, temporary_name = tempfile.mkstemp(
+            prefix="echo-pronunciation-audit-",
+            suffix=path.suffix or ".media",
+        )
+        temporary_path = Path(temporary_name)
+        os.fchmod(temporary_descriptor, 0o600)
+        digest = hashlib.sha256()
+        byte_count = 0
+        with os.fdopen(descriptor, "rb", closefd=True) as source:
+            descriptor = -1
+            with os.fdopen(temporary_descriptor, "wb", closefd=True) as destination:
+                temporary_descriptor = -1
+                while chunk := source.read(1_048_576):
+                    digest.update(chunk)
+                    byte_count += len(chunk)
+                    destination.write(chunk)
+                destination.flush()
+                os.fsync(destination.fileno())
+        require_canonical_explicit_path(path, label)
+        return StableMediaSnapshot(temporary_path, digest.hexdigest(), byte_count)
+    except Exception:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+        raise
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+        if temporary_descriptor >= 0:
+            os.close(temporary_descriptor)
+
+
 def require_explicit_media(path: Path | None, label: str) -> Path:
     require(path is not None, f"schema 7 requires --{label}")
-    require(path.is_absolute(), f"--{label} must be an absolute path")
-    require(
-        path.is_file() and not path.is_symlink(),
-        f"explicit {label} is missing, a symlink, or not a file",
-    )
+    require_canonical_explicit_path(path, label)
     return path
 
 
@@ -338,14 +430,22 @@ def validate(
     block_count: int | None = None,
 ) -> None:
     try:
-        payload = json.loads(
-            audit_path.read_text(encoding="utf-8"),
-            object_pairs_hook=reject_duplicate_keys,
-        )
+        raw_manifest = audit_path.read_text(encoding="utf-8")
+        payload = json.loads(raw_manifest)
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
         raise AuditValidationError("manifest is not valid UTF-8 JSON") from error
     require(isinstance(payload, dict), "manifest root must be an object")
     schema_version = payload.get("schemaVersion")
+    if schema_version == 7:
+        try:
+            payload = json.loads(
+                raw_manifest,
+                object_pairs_hook=reject_duplicate_keys,
+            )
+        except json.JSONDecodeError as error:
+            raise AuditValidationError("manifest is not valid UTF-8 JSON") from error
+        require(isinstance(payload, dict), "manifest root must be an object")
+        schema_version = payload.get("schemaVersion")
     require(
         type(schema_version) is int and 2 <= schema_version <= 7,
         "schemaVersion must be between 2 and 7",
@@ -510,11 +610,24 @@ def validate(
         )
         audiobook_binding = "exact explicit audiobook bytes"
     audiobook_sha256 = require_sha256(payload["audiobookSHA256"], "audiobookSHA256")
-    require(
-        file_sha256(audiobook_path) == audiobook_sha256,
-        f"audiobookSHA256 does not match {audiobook_binding}",
-    )
-    audiobook_duration = media_duration(audiobook_path)
+    if schema_7:
+        audiobook_snapshot = stable_explicit_media_snapshot(
+            audiobook_path, "audiobook"
+        )
+        try:
+            require(
+                audiobook_snapshot.sha256 == audiobook_sha256,
+                f"audiobookSHA256 does not match {audiobook_binding}",
+            )
+            audiobook_duration = media_duration(audiobook_snapshot.path)
+        finally:
+            audiobook_snapshot.path.unlink(missing_ok=True)
+    else:
+        require(
+            file_sha256(audiobook_path) == audiobook_sha256,
+            f"audiobookSHA256 does not match {audiobook_binding}",
+        )
+        audiobook_duration = media_duration(audiobook_path)
 
     decisions = [
         validate_decision(decision, index)
@@ -612,12 +725,22 @@ def validate(
                 "listed listening reel is missing, a symlink, or not a file",
             )
         expected_reel_sha256 = require_sha256(reel_sha256, "listeningReelSHA256")
-        require(
-            file_sha256(reel_path) == expected_reel_sha256,
-            "listeningReelSHA256 does not match exact "
-            + ("explicit" if schema_7 else "sibling")
-            + " reel bytes",
-        )
+        if schema_7:
+            reel_snapshot = stable_explicit_media_snapshot(reel_path, "reel")
+            try:
+                require(
+                    reel_snapshot.sha256 == expected_reel_sha256,
+                    "listeningReelSHA256 does not match exact explicit reel bytes",
+                )
+                media_duration(reel_snapshot.path)
+            finally:
+                reel_snapshot.path.unlink(missing_ok=True)
+        else:
+            require(
+                file_sha256(reel_path) == expected_reel_sha256,
+                "listeningReelSHA256 does not match exact sibling reel bytes",
+            )
+            media_duration(reel_path)
         require(
             any(
                 decision.get("chapterRelativeAudioRange") is not None
@@ -627,7 +750,6 @@ def validate(
             ),
             "listed listening reel requires an eligible timed pronunciation decision",
         )
-        media_duration(reel_path)
 
 
 def main(arguments: list[str]) -> int:

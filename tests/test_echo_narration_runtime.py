@@ -8,6 +8,7 @@ import os
 import platform
 import pwd
 import re
+import runpy
 import shlex
 import signal
 import socket
@@ -91,6 +92,53 @@ REQUIRED_CAPABILITIES = (
     "export-blocks",
     "resolve-voice-plan",
     "verify-sidecar",
+)
+LEGACY_FIXTURE_WATCH_WORDS = (
+    "able",
+    "arithmetic",
+    "available",
+    "campbell",
+    "comfortable",
+    "content",
+    "deepmind",
+    "deepmind's",
+    "fakkeldy",
+    "filesystem",
+    "lifecycle",
+    "live",
+    "lives",
+    "pictou",
+    "possible",
+    "re",
+    "read",
+    "readme",
+    "record",
+    "reliable",
+    "resume",
+    "resumes",
+    "résumé",
+    "résumés",
+    "stable",
+    "startable",
+    "super",
+    "supercomputer",
+    "supercomputers",
+    "superforecasters",
+    "superhuman",
+    "superimposed",
+    "superintelligence",
+    "supernatural",
+    "superposition",
+    "supervised",
+    "supervising",
+    "table",
+    "timeframe",
+    "unsupervised",
+    "validator",
+    "validators",
+    "verified",
+    "xcassets",
+    "xcode",
 )
 
 
@@ -627,7 +675,11 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         return environment
 
     def write_block_voice_plan(
-        self, filename: str, *, sorted_keys: bool = False
+        self,
+        filename: str,
+        *,
+        sorted_keys: bool = False,
+        add_unused_speaker: bool = False,
     ) -> Path:
         """Write one valid authored document; formatting is deliberately caller-owned."""
         plan = self.tmp / filename
@@ -642,6 +694,10 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "speakers": [{"id": "narrator", "voiceID": "am_michael"}],
             "assignments": [],
         }
+        if add_unused_speaker:
+            payload["speakers"].append(
+                {"id": "analyst", "voiceID": "af_heart"}
+            )
         if sorted_keys:
             plan.write_text(
                 json.dumps(payload, indent=4, sort_keys=True) + "\n",
@@ -680,6 +736,15 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "modelBytesAttested",
             )
         }
+
+    @staticmethod
+    def state_namespace() -> dict[str, object]:
+        script_directory = str(STATE_HELPER.parent)
+        sys.path.insert(0, script_directory)
+        try:
+            return runpy.run_path(str(STATE_HELPER))
+        finally:
+            sys.path.remove(script_directory)
 
     def verify_state_command(
         self,
@@ -795,6 +860,157 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             f"narration_db={self.run_root / f'narration-{run_id}.sqlite'}\n"
         ).encode("utf-8")
         return run_id, receipt
+
+    def expected_legacy_state_and_success_receipts(
+        self,
+        *,
+        run_id: str,
+        input_receipt: bytes,
+        voice_plan_sha: str,
+        chapter_voices: dict[str, str],
+        capture_voice: str,
+        attempt_id: str,
+    ) -> tuple[bytes, bytes]:
+        """Hand-built schema-3 goldens for the unchanged legacy wire format."""
+        epub = self.run_root / "dist" / "fixture.epub"
+        epub_bytes = epub.read_bytes()
+        source_epub_sha = hashlib.sha256(epub_bytes).hexdigest()
+
+        def frame(value: str) -> bytes:
+            encoded = value.encode("utf-8")
+            return str(len(encoded)).encode("ascii") + b":" + encoded
+
+        source_fingerprint = hashlib.sha256(
+            frame("source-kind=epub")
+            + frame(f"bytes={len(epub_bytes)}")
+            + epub_bytes
+        ).hexdigest()
+        cli_sha = hashlib.sha256(self.cli.read_bytes()).hexdigest()
+        resources_sha, _ = resource_tree_identity(self.resources)
+        renderer_identity = {
+            "rendererSchemaVersion": 1,
+            "rendererRoot": str(self.renderer_root),
+            "rendererBuildRoot": str(self.renderer_build_root),
+            "installerSourceSHA": self.installer_source_sha,
+            "echoSourceSHA": self.source_sha,
+            "rendererManifestSHA256": self.renderer_manifest_sha,
+            "echoCLI_SHA256": cli_sha,
+            "echoResourcesSHA256": resources_sha,
+            "echoRenderVersion": 12,
+            "modelPolicyRevision": self.model_policy_revision,
+            "modelExpectedByteCount": self.model_expected_byte_count,
+            "modelBytesAttested": False,
+        }
+        capture_payload = {
+            "duration": 1.0,
+            "anchors": [],
+            "pronunciationEvidence": {"decisions": [], "diagnostics": []},
+        }
+        capture_payload_bytes = json.dumps(
+            capture_payload,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+        capture_audio = b"fixture chapter audio"
+        marker_payload = {
+            **capture_payload,
+            "identity": {
+                "schemaVersion": 1,
+                "captureSetID": "c" * 64,
+                "sourceFingerprint": source_fingerprint,
+                "voice": capture_voice,
+                "renderVersion": 12,
+                "rendererIdentity": "fixture-renderer",
+                "normalizationMode": "spoken",
+                "chapterIndex": 0,
+                "chapterContentSignature": "d" * 16,
+                "audioFileName": "chapter-0.m4a",
+                "audioFileByteCount": len(capture_audio),
+                "audioSHA256": hashlib.sha256(capture_audio).hexdigest(),
+                "payloadSHA256": hashlib.sha256(capture_payload_bytes).hexdigest(),
+            },
+        }
+        marker_bytes = json.dumps(
+            marker_payload,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        state_payload = {
+            "schemaVersion": 3,
+            **renderer_identity,
+            "sourceFingerprint": source_fingerprint,
+            "voice": "am_michael",
+            "chapterVoices": chapter_voices,
+            "voicePlanSHA256": voice_plan_sha,
+            "renderVersion": 12,
+            "captureSetID": "c" * 64,
+            "inputReceiptSHA256": hashlib.sha256(input_receipt).hexdigest(),
+            "databaseSHA256": hashlib.sha256(b"fixture database").hexdigest(),
+            "databaseByteCount": len(b"fixture database"),
+            "captures": [
+                {
+                    "chapterIndex": 0,
+                    "markerFileName": ".anchors-ch0.json",
+                    "markerSHA256": hashlib.sha256(marker_bytes).hexdigest(),
+                    "audioFileName": "chapter-0.m4a",
+                    "audioSHA256": hashlib.sha256(capture_audio).hexdigest(),
+                    "payloadSHA256": hashlib.sha256(capture_payload_bytes).hexdigest(),
+                }
+            ],
+        }
+        state_bytes = canonical_json(state_payload)
+        attempt_payload = {
+            "schemaVersion": 2,
+            "attemptID": attempt_id,
+            "runID": run_id,
+            "inputReceiptFileName": f"echo-render-inputs-{run_id}.env",
+            "inputReceiptSHA256": hashlib.sha256(input_receipt).hexdigest(),
+            "sourceEPUBFileName": epub.name,
+            "sourceEPUBSHA256": source_epub_sha,
+            "artifactRelativePath": f"echo-renders/{run_id}/{attempt_id}",
+            **renderer_identity,
+        }
+        attempt_bytes = canonical_json(attempt_payload)
+        audiobook = b"fixture audiobook bytes"
+        sidecar = b"{}\n"
+        audit_payload = {
+            "schemaVersion": 6,
+            "renderVersion": 12,
+            "voice": capture_voice,
+            "chapterVoices": {"0": capture_voice},
+            "coverage": "complete",
+            "watchCounts": {
+                word: 0 for word in LEGACY_FIXTURE_WATCH_WORDS
+            },
+            "decisions": [],
+            "diagnostics": [],
+            "legacyChapterIndexes": [],
+            "audiobookFileName": "fixture.m4b",
+            "audiobookSHA256": hashlib.sha256(audiobook).hexdigest(),
+        }
+        audit = json.dumps(audit_payload).encode("utf-8")
+        success_payload = {
+            "schemaVersion": 3,
+            **renderer_identity,
+            "attemptID": attempt_id,
+            "runID": run_id,
+            "attemptReceiptSHA256": hashlib.sha256(attempt_bytes).hexdigest(),
+            "inputReceiptFileName": f"echo-render-inputs-{run_id}.env",
+            "inputReceiptSHA256": hashlib.sha256(input_receipt).hexdigest(),
+            "sourceEPUBFileName": epub.name,
+            "sourceEPUBSHA256": source_epub_sha,
+            "artifactRelativePath": f"echo-renders/{run_id}/{attempt_id}",
+            "resumeStateFileName": f"echo-resume-state-{run_id}.json",
+            "resumeStateSHA256": hashlib.sha256(state_bytes).hexdigest(),
+            "audiobookFileName": "fixture.m4b",
+            "audiobookSHA256": hashlib.sha256(audiobook).hexdigest(),
+            "sidecarFileName": "fixture.alignment.json",
+            "sidecarSHA256": hashlib.sha256(sidecar).hexdigest(),
+            "auditFileName": "fixture.pronunciation-audit.json",
+            "auditSHA256": hashlib.sha256(audit).hexdigest(),
+        }
+        return state_bytes, canonical_json(success_payload)
 
     def use_run_lane(self, folder: str) -> None:
         destination = self.explainer / ".build" / folder / "fixture"
@@ -3071,6 +3287,176 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertNotEqual(0, capture_set_drift.returncode)
         self.assertIn("different capture sets", capture_set_drift.stderr)
 
+    def test_block_capture_snapshots_keep_marker_and_database_bytes_stable(self) -> None:
+        """One descriptor must bind each marker/database hash and byte count."""
+        plan = self.write_block_voice_plan("stable-capture-plan.json")
+        initial = self.run_narrate("--voice-plan", str(plan))
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        research = self.run_root / "research"
+        state = json.loads(
+            next(research.glob("echo-resume-state-*.json")).read_text(
+                encoding="utf-8"
+            )
+        )
+        input_receipt = next(research.glob("echo-render-inputs-*.env"))
+        fields = self.receipt_fields(input_receipt)
+        work = Path(fields["work_dir"])
+        database = Path(fields["narration_db"])
+        marker = work / ".anchors-ch0.json"
+        namespace = self.state_namespace()
+        capture_snapshot = namespace["capture_snapshot"]
+        function_globals = capture_snapshot.__globals__
+        original_open_regular = function_globals["open_regular"]
+        identity = self.renderer_identity_from_receipt(state)
+        block_plan = {
+            key: state[key]
+            for key in (
+                "voicePlanMode",
+                "voicePlanID",
+                "voicePlanSHA256",
+                "voicePlanBlockCount",
+                "voicePlanCanonicalFileName",
+                "voicePlanCanonicalSHA256",
+                "voicePlanResolutionFileName",
+                "voicePlanResolutionSHA256",
+            )
+        }
+
+        def snapshot() -> dict[str, object]:
+            return capture_snapshot(
+                work,
+                database,
+                self.run_root / "dist" / "fixture.epub",
+                self.source_sha,
+                fields["voice"],
+                [],
+                fields["voice_plan_sha256"],
+                int(fields["render_version"]),
+                input_receipt,
+                identity,
+                block_plan,
+            )
+
+        original_marker = marker.read_bytes()
+        replacement_marker = self.tmp / "replacement-marker.json"
+        replacement_marker.write_bytes(original_marker + b" \n")
+        marker_swapped = False
+
+        def swap_marker_after_open(path: Path, label: str) -> int:
+            nonlocal marker_swapped
+            descriptor = original_open_regular(path, label)
+            if path == marker and label == "capture marker" and not marker_swapped:
+                marker_swapped = True
+                os.replace(replacement_marker, marker)
+            return descriptor
+
+        function_globals["open_regular"] = swap_marker_after_open
+        marker_snapshot = snapshot()
+        self.assertTrue(marker_swapped, "marker swap hook did not run")
+        self.assertEqual(
+            hashlib.sha256(original_marker).hexdigest(),
+            marker_snapshot["captures"][0]["markerSHA256"],
+        )
+
+        marker.write_bytes(original_marker)
+        original_database = database.read_bytes()
+        replacement_database = self.tmp / "replacement-database.sqlite"
+        replacement_database.write_bytes(b"replacement database with different size")
+        database_swapped = False
+
+        def swap_database_after_open(path: Path, label: str) -> int:
+            nonlocal database_swapped
+            descriptor = original_open_regular(path, label)
+            if path == database and not database_swapped:
+                database_swapped = True
+                os.replace(replacement_database, database)
+            return descriptor
+
+        function_globals["open_regular"] = swap_database_after_open
+        database_snapshot = snapshot()
+        self.assertTrue(database_swapped, "database swap hook did not run")
+        self.assertEqual(
+            hashlib.sha256(original_database).hexdigest(),
+            database_snapshot["databaseSHA256"],
+        )
+        self.assertEqual(len(original_database), database_snapshot["databaseByteCount"])
+
+        database.write_bytes(original_database)
+        audio = work / "chapter-0.m4a"
+        original_audio = audio.read_bytes()
+        replacement_audio = self.tmp / "replacement-audio.m4a"
+        replacement_audio.write_bytes(b"replacement audio bytes")
+        audio_stat_seen = False
+        audio_swapped = False
+        original_path_stat = Path.stat
+
+        def observe_audio_stat(path: Path, *args: object, **kwargs: object) -> os.stat_result:
+            nonlocal audio_stat_seen
+            result = original_path_stat(path, *args, **kwargs)
+            if path == audio:
+                audio_stat_seen = True
+            return result
+
+        def swap_audio_around_open(path: Path, label: str) -> int:
+            nonlocal audio_swapped
+            if path == audio and audio_stat_seen:
+                os.replace(replacement_audio, audio)
+                audio_swapped = True
+                return original_open_regular(path, label)
+            descriptor = original_open_regular(path, label)
+            if path == audio and not audio_swapped:
+                os.replace(replacement_audio, audio)
+                audio_swapped = True
+            return descriptor
+
+        function_globals["open_regular"] = swap_audio_around_open
+        Path.stat = observe_audio_stat
+        try:
+            audio_snapshot = snapshot()
+        finally:
+            Path.stat = original_path_stat
+        self.assertTrue(audio_swapped, "audio swap hook did not run")
+        self.assertEqual(
+            hashlib.sha256(original_audio).hexdigest(),
+            audio_snapshot["captures"][0]["audioSHA256"],
+        )
+
+    def test_block_receipt_readers_reject_duplicate_keys_before_cross_checks(self) -> None:
+        """The governed attempt, state, success, and selector are closed JSON objects."""
+        plan = self.write_block_voice_plan("duplicate-receipt-plan.json")
+        initial = self.run_narrate("--voice-plan", str(plan), environment=self.environment())
+        self.assertEqual(0, initial.returncode, initial.stderr)
+        research = self.run_root / "research"
+        paths = (
+            (research / "echo-render-current-attempt.json", "current-attempt receipt", "schemaVersion"),
+            (next(research.glob("echo-resume-state-*.json")), "resume-state receipt", "voicePlanSHA256"),
+            (next(research.glob("echo-render-success-*.json")), "render-success receipt", "voicePlanSHA256"),
+            (research / "echo-render-current-accepted.json", "current-accepted selector", "schemaVersion"),
+        )
+        namespace = self.state_namespace()
+        json_object = namespace["json_object"]
+        state_error = namespace["StateError"]
+        for path, label, key in paths:
+            with self.subTest(label=label):
+                raw = path.read_text(encoding="utf-8")
+                duplicate = raw.replace(
+                    f'"{key}":', f'"{key}":', 1
+                )
+                value_start = duplicate.index(f'"{key}":')
+                value_end = duplicate.find(",", value_start)
+                if value_end == -1:
+                    value_end = duplicate.find("}", value_start)
+                duplicate = (
+                    duplicate[:value_end]
+                    + ","
+                    + duplicate[value_start:value_end]
+                    + duplicate[value_end:]
+                )
+                path.write_text(duplicate, encoding="utf-8")
+                with self.assertRaises(state_error) as raised:
+                    json_object(path, label)
+                self.assertIn("duplicates key", str(raised.exception))
+
     def test_block_state_rejects_input_or_canonical_plan_evidence_drift(self) -> None:
         plan = self.write_block_voice_plan("plan-evidence-drift.json")
         initial = self.run_narrate("--voice-plan", str(plan))
@@ -3235,7 +3621,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
 
         def render_for(resolved_sha: str) -> tuple[dict[str, str], Path, Path, Path]:
             self.fake_voice_plan_sha.write_text(resolved_sha + "\n", encoding="utf-8")
-            narrate_log = self.tmp / f"hash-fanout-{resolved_sha[:1]}.log"
+            narrate_log = self.tmp / f"hash-fanout-{resolved_sha[-1]}.log"
             environment = self.environment()
             environment.update(
                 {
@@ -3270,15 +3656,25 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             artifact_root = Path(narrate_environment["ARTIFACT_ROOT"])
             return fields, receipt, state, artifact_root
 
-        first = render_for("b" * 64)
-        second = render_for("c" * 64)
+        shared_prefix = "0123456789ab"
+        first = render_for(shared_prefix + "b" * 52)
+        second = render_for(shared_prefix + "c" * 52)
         first_fields, first_receipt, first_state, first_artifact_root = first
         second_fields, second_receipt, second_state, second_artifact_root = second
 
         self.assertNotEqual(
             first_fields["voice_plan_sha256"], second_fields["voice_plan_sha256"]
         )
-        for field in ("run_id", "work_dir", "narration_db"):
+        self.assertEqual(
+            first_fields["voice_plan_id"], second_fields["voice_plan_id"]
+        )
+        for field in (
+            "run_id",
+            "work_dir",
+            "narration_db",
+            "voice_plan_canonical_path",
+            "voice_plan_resolution_path",
+        ):
             with self.subTest(field=field):
                 self.assertNotEqual(first_fields[field], second_fields[field])
         self.assertNotEqual(first_receipt, second_receipt)
@@ -3302,10 +3698,18 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
 
     def test_equivalent_authored_block_plan_syntax_reuses_the_sealed_run(self) -> None:
-        """Echo-equivalent drafts must not fork a canonical plan or run identity."""
+        """Different authored documents reuse a run when Echo resolves them alike."""
         compact = self.write_block_voice_plan("compact-authored-plan.json")
-        pretty = self.write_block_voice_plan("pretty-authored-plan.json", sorted_keys=True)
+        pretty = self.write_block_voice_plan(
+            "pretty-authored-plan.json",
+            sorted_keys=True,
+            add_unused_speaker=True,
+        )
         self.assertNotEqual(compact.read_bytes(), pretty.read_bytes())
+        self.assertNotEqual(
+            json.loads(compact.read_text(encoding="utf-8")),
+            json.loads(pretty.read_text(encoding="utf-8")),
+        )
         environment = self.environment()
         environment["VOICE_PLAN_SOURCE"] = str(compact)
         first_result = self.run_preflight(environment=environment)
@@ -3429,6 +3833,69 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         self.assertNotEqual(uniform_run_id, chapter_run_id)
         self.assertEqual(chapter_bytes, chapter_receipt.read_bytes())
+
+    def test_legacy_schema_3_resume_and_success_receipts_are_byte_goldens(self) -> None:
+        """Task-3 block evidence cannot alter either legacy schema-3 wire receipt."""
+        uniform_sha = hashlib.sha256(b"default=am_michael\n").hexdigest()
+        chapter_sha = hashlib.sha256(
+            b"default=am_michael\n1=af_heart\n"
+        ).hexdigest()
+        cases = (
+            (
+                (),
+                "",
+                uniform_sha,
+                "am_michael",
+                {},
+                "am_michael",
+            ),
+            (
+                ("--chapter-voice", "1=af_heart"),
+                "1=af_heart",
+                chapter_sha,
+                f"plan-{chapter_sha[:12]}",
+                {"1": "af_heart"},
+                "af_heart",
+            ),
+        )
+        for (
+            arguments,
+            chapter_voice_text,
+            plan_sha,
+            plan_id,
+            chapter_voices,
+            capture_voice,
+        ) in cases:
+            with self.subTest(arguments=arguments):
+                run_id, input_bytes = self.expected_legacy_input_receipt(
+                    chapter_voices=chapter_voice_text,
+                    voice_plan_sha=plan_sha,
+                    voice_plan_id=plan_id,
+                )
+                result = self.run_narrate(*arguments)
+                self.assertEqual(0, result.returncode, result.stderr)
+                research = self.run_root / "research"
+                input_receipt = research / f"echo-render-inputs-{run_id}.env"
+                self.assertEqual(input_bytes, input_receipt.read_bytes())
+                attempt = json.loads(
+                    (research / "echo-render-current-attempt.json").read_text(
+                        encoding="utf-8"
+                    )
+                )
+                state_bytes, success_bytes = self.expected_legacy_state_and_success_receipts(
+                    run_id=run_id,
+                    input_receipt=input_bytes,
+                    voice_plan_sha=plan_sha,
+                    chapter_voices=chapter_voices,
+                    capture_voice=capture_voice,
+                    attempt_id=attempt["attemptID"],
+                )
+                state = research / f"echo-resume-state-{run_id}.json"
+                success = research / (
+                    f"echo-render-success-{run_id}-{attempt['attemptID']}.json"
+                )
+                self.assertEqual(state_bytes, state.read_bytes())
+                self.assertEqual(success_bytes, success.read_bytes())
 
     def test_renderer_identity_changes_prevent_resume_and_delivery_reuse(self) -> None:
         result = self.run_narrate()
@@ -3776,9 +4243,9 @@ class EchoPronunciationStateCompatibilityTests(unittest.TestCase):
                     "voicePlanID": "plan-aaaaaaaaaaaa",
                     "voicePlanSHA256": "a" * 64,
                     "voicePlanBlockCount": 2,
-                    "voicePlanCanonicalFileName": "echo-voice-plan-plan-aaaaaaaaaaaa.json",
+                    "voicePlanCanonicalFileName": "echo-voice-plan-plan-" + "a" * 64 + ".json",
                     "voicePlanCanonicalSHA256": "b" * 64,
-                    "voicePlanResolutionFileName": "echo-voice-plan-resolution-plan-aaaaaaaaaaaa.json",
+                    "voicePlanResolutionFileName": "echo-voice-plan-resolution-plan-" + "a" * 64 + ".json",
                     "voicePlanResolutionSHA256": "c" * 64,
                 },
             }
@@ -3814,6 +4281,9 @@ assert pattern.fullmatch(current)
 assert pattern.fullmatch(legacy) is None
 assert legacy_pattern.fullmatch(legacy)
 assert legacy_pattern.fullmatch(current)
+
+block = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{'e' * 12}-{commit}-plan-{'f' * 64}"
+assert pattern.fullmatch(block)
 
 dirty = f"{'a' * 12}-{'b' * 12}-{'c' * 12}-{commit}-dirty-{'9' * 8}-am_michael"
 assert pattern.fullmatch(dirty) is None
@@ -3957,7 +4427,7 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
-        self.tmp = Path(self.temporary.name)
+        self.tmp = Path(self.temporary.name).resolve()
         self.audit = self.tmp / "fixture.pronunciation-audit.json"
         self.audiobook = self.tmp / "fixture.m4b"
         self.audiobook.write_bytes(b"fixture audiobook bytes")
@@ -4004,8 +4474,19 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
 
     def run_validator(self, *arguments: str) -> subprocess.CompletedProcess[str]:
         self.audit.write_text(json.dumps(self.payload), encoding="utf-8")
+        return self.run_validator_bytes(self.audit.read_bytes(), *arguments)
+
+    def run_validator_bytes(
+        self,
+        payload: bytes,
+        *arguments: str,
+        extra_environment: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess[str]:
+        self.audit.write_bytes(payload)
         environment = os.environ.copy()
         environment["PATH"] = f"{self.fake_bin}:{environment['PATH']}"
+        if extra_environment is not None:
+            environment.update(extra_environment)
         return subprocess.run(
             [
                 "/usr/local/bin/python3",
@@ -4142,6 +4623,146 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
 
         self.assertNotEqual(0, result.returncode)
         self.assertIn("duplicate JSON key", result.stderr)
+
+    def test_schemas_two_through_six_preserve_last_key_wins_json_parsing(self) -> None:
+        """Schema 7 is strict; historical audits keep Python JSON's old semantics."""
+        for schema_version in range(2, 7):
+            with self.subTest(schema_version=schema_version):
+                payload = copy.deepcopy(self.payload)
+                payload["schemaVersion"] = schema_version
+                if schema_version >= 3:
+                    payload["chapterVoices"] = {"0": "am_michael"}
+                encoded = json.dumps(payload, separators=(",", ":"))
+                duplicate_voice = encoded.replace(
+                    '"voice":"am_michael"',
+                    '"voice":"not_a_voice","voice":"am_michael"',
+                    1,
+                ).encode("utf-8")
+                result = self.run_validator_bytes(duplicate_voice)
+                self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_schema_7_rejects_extra_top_level_key_and_accepts_a_sole_voice(self) -> None:
+        self.payload = self.schema_7_payload()
+        self.payload["voice"] = "am_michael"
+        self.payload["blockVoices"] = {
+            "s2-b3": "am_michael",
+            "s2-b4": "am_michael",
+        }
+        sole_voice = self.run_validator(*self.schema_7_arguments())
+        self.assertEqual(0, sole_voice.returncode, sole_voice.stderr)
+
+        self.payload["unexpected"] = True
+        unexpected = self.run_validator(*self.schema_7_arguments())
+        self.assertNotEqual(0, unexpected.returncode)
+        self.assertIn("unexpected top-level keys", unexpected.stderr)
+
+    def test_schema_7_requires_exact_plan_and_conditional_reel_options(self) -> None:
+        self.payload = self.schema_7_payload()
+        for arguments in (
+            (),
+            ("--audiobook", str(self.audiobook)),
+            (
+                "--audiobook",
+                str(self.audiobook),
+                "--voice-plan-sha256",
+                "b" * 64,
+            ),
+            (
+                "--audiobook",
+                str(self.audiobook),
+                "--block-count",
+                "2",
+            ),
+        ):
+            with self.subTest(arguments=arguments):
+                result = self.run_validator(*arguments)
+                self.assertNotEqual(0, result.returncode)
+
+        extra_reel = self.tmp / "unexpected.pronunciation-reel.m4b"
+        extra_reel.write_bytes(b"unexpected reel")
+        supplied_without_manifest = self.run_validator(
+            *self.schema_7_arguments(reel=extra_reel)
+        )
+        self.assertNotEqual(0, supplied_without_manifest.returncode)
+
+        self.payload["listeningReelFileName"] = extra_reel.name
+        self.payload["listeningReelSHA256"] = hashlib.sha256(
+            extra_reel.read_bytes()
+        ).hexdigest()
+        missing_when_manifested = self.run_validator(*self.schema_7_arguments())
+        self.assertNotEqual(0, missing_when_manifested.returncode)
+
+        self.payload = {
+            **copy.deepcopy(self.payload),
+            "schemaVersion": 6,
+            "voice": "am_michael",
+            "chapterVoices": {"0": "am_michael"},
+        }
+        self.payload.pop("voicePlanSHA256", None)
+        self.payload.pop("blockVoices", None)
+        self.payload.pop("listeningReelFileName", None)
+        self.payload.pop("listeningReelSHA256", None)
+        for arguments in (
+            ("--voice-plan-sha256", "b" * 64),
+            ("--block-count", "2"),
+            ("--voice-plan-sha256", "b" * 64, "--block-count", "2"),
+        ):
+            with self.subTest(legacy_arguments=arguments):
+                forbidden_for_legacy = self.run_validator(*arguments)
+                self.assertNotEqual(0, forbidden_for_legacy.returncode)
+                self.assertIn("require schema 7", forbidden_for_legacy.stderr)
+
+    def test_schema_7_explicit_media_uses_one_stable_snapshot_and_canonical_ancestry(
+        self,
+    ) -> None:
+        self.payload = self.schema_7_payload()
+        decision = self.valid_decision()
+        decision["blockID"] = "s2-b3"
+        self.payload["decisions"] = [decision]
+        self.payload["watchCounts"]["filesystem"] = 1
+        reel = self.tmp / "fixture.pronunciation-reel.m4b"
+        reel.write_bytes(b"fixture listening reel")
+        self.payload["listeningReelFileName"] = reel.name
+        self.payload["listeningReelSHA256"] = hashlib.sha256(reel.read_bytes()).hexdigest()
+        replacement = self.tmp / "replacement.m4b"
+        replacement.write_bytes(b"replacement bytes")
+        ffprobe = self.fake_bin / "ffprobe"
+        ffprobe.write_text(
+            "#!/usr/bin/env bash\n"
+            "set -euo pipefail\n"
+            'target=${SWAP_TARGET:?}\n'
+            'replacement=${SWAP_REPLACEMENT:?}\n'
+            'media=${!#}\n'
+            'if [[ -e $replacement ]]; then mv -- "$replacement" "$target"; fi\n'
+            'if [[ $(<"$media") == "fixture audiobook bytes" ]]; then\n'
+            "  printf '%s\\n' '{\"format\":{\"duration\":\"5.0\"}}'\n"
+            "else\n"
+            "  printf '%s\\n' '{\"format\":{\"duration\":\"1.0\"}}'\n"
+            "fi\n",
+            encoding="utf-8",
+        )
+        ffprobe.chmod(ffprobe.stat().st_mode | stat.S_IXUSR)
+        result = self.run_validator_bytes(
+            json.dumps(self.payload).encode("utf-8"),
+            *self.schema_7_arguments(reel=reel),
+            extra_environment={
+                "SWAP_TARGET": str(self.audiobook),
+                "SWAP_REPLACEMENT": str(replacement),
+            },
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(b"replacement bytes", self.audiobook.read_bytes())
+
+        actual = self.tmp / "actual-media"
+        actual.mkdir()
+        sibling = actual / self.audiobook.name
+        sibling.write_bytes(b"fixture audiobook bytes")
+        linked_parent = self.tmp / "linked-media"
+        linked_parent.symlink_to(actual, target_is_directory=True)
+        self.audiobook = linked_parent / self.audiobook.name
+        self.payload = self.schema_7_payload()
+        symlinked_ancestry = self.run_validator(*self.schema_7_arguments())
+        self.assertNotEqual(0, symlinked_ancestry.returncode)
 
     def test_schema_7_binds_an_explicit_reel_outside_the_artifact_directory(
         self,
