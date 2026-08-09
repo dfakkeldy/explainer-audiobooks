@@ -77,7 +77,7 @@ class EchoVoicePlanTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr.decode())
         self.assertEqual(
             b"VOICE\0am_michael\0CHAPTER_VOICES_CANONICAL\0\0"
-            b"VOICE_PLAN_SHA256\0f54fe6d603ea42f277ce3cf4dc0f0da6056341034acf4ecd5b7db099a5d7cae\0"
+            b"VOICE_PLAN_SHA256\0f54fe6d603ea42f277ce3cf4dc0f0da6056341034acf4ec6d5b7db099a5d7cae\0"
             b"VOICE_PLAN_ID\0am_michael\0",
             result.stdout,
         )
@@ -198,6 +198,75 @@ class EchoVoicePlanTests(unittest.TestCase):
                     echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
                     with self.assertRaises(VOICE_PLAN.VoicePlanError):
                         VOICE_PLAN.resolve_block_plan(echo, epub, plan)
+
+    def test_rejects_every_invalid_resolver_boundary(self) -> None:
+        """No malformed Echo receipt or unsafe adapter input reaches sealing."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            epub = root / "book.epub"
+            plan = root / "voice-plan.json"
+            echo = root / "echo-cli"
+            epub.write_bytes(b"fixture EPUB")
+            plan.write_text("{}", encoding="utf-8")
+            source_sha = hashlib.sha256(epub.read_bytes()).hexdigest()
+            receipt = {
+                "blockCount": 2, "defaultVoice": "am_michael",
+                "sourceEPUBSHA256": source_sha, "voicePlanID": "plan-" + "b" * 12,
+                "voicePlanSHA256": "b" * 64,
+            }
+            cases = []
+            for key, value in (
+                ("sourceEPUBSHA256", "a" * 64), ("defaultVoice", "not_a_voice"),
+                ("blockCount", 0), ("blockCount", -1),
+            ):
+                payload = dict(receipt)
+                payload[key] = value
+                cases.append(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode())
+            cases.extend((
+                json.dumps({key: value for key, value in receipt.items() if key != "blockCount"}, sort_keys=True, separators=(",", ":")).encode(),
+                json.dumps({**receipt, "extra": True}, sort_keys=True, separators=(",", ":")).encode(),
+                b'{"blockCount":2,"blockCount":2,"defaultVoice":"am_michael","sourceEPUBSHA256":"' + source_sha.encode() + b'","voicePlanID":"plan-' + b"b" * 12 + b'","voicePlanSHA256":"' + b"b" * 64 + b'"}',
+                b"x" * (64 * 1024 + 1),
+            ))
+            for raw in cases:
+                with self.subTest(raw=raw[:16]):
+                    echo.write_text("#!/usr/bin/env python3\nimport sys\n" f"sys.stdout.buffer.write({raw!r})\n")
+                    echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+                    with self.assertRaises(VOICE_PLAN.VoicePlanError):
+                        VOICE_PLAN.resolve_block_plan(echo, epub, plan)
+            echo.write_text("#!/usr/bin/env python3\nimport sys\nsys.stderr.write('noisy')\n" f"sys.stdout.buffer.write({json.dumps(receipt, sort_keys=True, separators=(',', ':')).encode()!r})\n")
+            echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+            with self.assertRaises(VOICE_PLAN.VoicePlanError):
+                VOICE_PLAN.resolve_block_plan(echo, epub, plan)
+            echo.write_text("#!/usr/bin/env python3\nraise SystemExit(7)\n")
+            echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+            with self.assertRaises(VOICE_PLAN.VoicePlanError):
+                VOICE_PLAN.resolve_block_plan(echo, epub, plan)
+
+    def test_rejects_unsafe_inputs_and_duplicate_authored_json_before_sealing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            epub = root / "book.epub"
+            plan = root / "voice-plan.json"
+            echo = root / "echo-cli"
+            canonical = root / "canonical.json"
+            resolution = root / "resolution.json"
+            epub.write_bytes(b"fixture EPUB")
+            plan.write_text('{"schemaVersion":1,"schemaVersion":1}', encoding="utf-8")
+            echo.write_text("#!/usr/bin/env python3\nraise SystemExit(0)\n")
+            echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+            with self.assertRaises(VOICE_PLAN.VoicePlanError):
+                VOICE_PLAN.seal_block_plan(echo, epub, plan, canonical, resolution)
+            self.assertFalse(canonical.exists())
+            self.assertFalse(resolution.exists())
+            directory_path = root / "directory"
+            directory_path.mkdir()
+            link = root / "echo-link"
+            link.symlink_to(echo)
+            for candidate in (Path("relative"), root / "missing", directory_path, link):
+                with self.subTest(candidate=candidate):
+                    with self.assertRaises(VOICE_PLAN.VoicePlanError):
+                        VOICE_PLAN.resolve_block_plan(candidate, epub, plan)
 
 
 if __name__ == "__main__":

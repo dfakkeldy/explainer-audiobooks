@@ -2458,6 +2458,28 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual([], list(research.glob(".echo-voice-plan*")))
         self.assertEqual([], list(research.glob("echo-render-inputs-*.env")))
 
+    def test_outer_block_option_rejects_chapter_and_unsafe_plan_paths_without_mutation(self) -> None:
+        plan = self.tmp / "voice-plan.json"
+        plan.write_text("{}", encoding="utf-8")
+        link = self.tmp / "voice-plan-link.json"
+        link.symlink_to(plan)
+        directory = self.tmp / "voice-plan-directory"
+        directory.mkdir()
+        cases = (
+            (64, ("--voice-plan", str(plan), "--chapter-voice", "1=af_heart")),
+            (64, ("--voice-plan", "relative.json")),
+            (66, ("--voice-plan", str(self.tmp / "missing.json"))),
+            (66, ("--voice-plan", str(directory))),
+            (66, ("--voice-plan", str(link))),
+        )
+        for expected, arguments in cases:
+            with self.subTest(arguments=arguments):
+                result = self.run_narrate(*arguments)
+                self.assertEqual(expected, result.returncode, result.stderr)
+                research = self.run_root / "research"
+                self.assertEqual([], list(research.glob("echo-render-inputs-*.env")))
+                self.assertEqual([], list(research.glob(".echo-voice-plan*")))
+
     def test_renderer_identity_changes_prevent_resume_and_delivery_reuse(self) -> None:
         result = self.run_narrate()
         self.assertEqual(0, result.returncode, result.stderr)
