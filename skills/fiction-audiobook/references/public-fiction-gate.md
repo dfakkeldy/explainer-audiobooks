@@ -81,7 +81,7 @@ outside Git. `README.md` must include the exact disclosure from
   --voice-cast "$VOICE_CAST" \
   --fiction-receipt "$RUN_ROOT/research/fiction-production-receipt.json" \
   --chapters-dir "$RUN_ROOT/chapters" \
-  --echo-success-receipt "$ECHO_SUCCESS_RECEIPT"
+  --echo-success-receipt "$SUCCESS_RECEIPT"
 ```
 
 Only after success, copy the six public files into `books/<slug>/`, update the

@@ -10,30 +10,32 @@ Own the package autonomously. Read `references/express-fiction-craft.md`,
 `skill/references/cover-art.md`, `skills/echo-narration/references/narrating.md`,
 then `references/public-fiction-gate.md` at its gate.
 
-1. Route complete fictional listening packages here, never through
-   `fiction-book-development`; planning, drafting, continuation, and
-   revision-only requests stay there.
-2. Ask nothing unless grilling/interview is explicit. Then ask one batch only:
+1. Complete fictional listening packages use this; manuscript-only work uses
+   `fiction-book-development`.
+2. Ask nothing unless grilling/interview is explicit; then one batch only:
    genre/mood; must-haves; exclusions; POV/distance; ending; casting. Never
    follow up.
-3. Choose the shortest sufficient form: short novella 18k–30k, novella
+3. Choose shortest sufficient: short novella 18k–30k, novella
    30k–45k, novel 50k–80k, or long novel 80k–110k. Announce title, angle, form,
-   chapters, words, runtime; record the rationale in
+   chapters, words, runtime; record rationale in
    `.build/fiction-audiobooks/<slug>/brief.md`.
-4. Follow the craft reference: compact bible/causal outline, one lead writer,
+4. Follow craft reference: compact bible/causal outline, one lead writer,
    sequential chapters, only `continuity/rolling.md`, three passes, final
    checks, and the unchanged schema-v1 private receipt.
 5. Generate three paired covers in `$RUN_ROOT/dist/candidate-{1,2,3}`, select
    one, set `export PAIR="$RUN_ROOT/dist/candidate-N"`, then build EPUB and
    combined Markdown with `skill/scripts/build_book.py --fiction-receipt`.
-6. After EPUB freezes, set
+6. After EPUB freezes, run
+   `mkdir -p "$RUN_ROOT"/_production/{source,checks,narration,covers,publication,previous}`;
+   require `previous` empty. Set
    `PREFERENCES="$HOME/Library/Application Support/Explainer Audiobooks/fiction-voice-preferences.json"`
    and `VOICE_CAST="$RUN_ROOT/_production/narration/voice-cast.json"`. Write its
    immutable JSON: schema 1,
    slug, integer chapter count, default voice, every integer chapter with stable
    role/voice and boolean experimental, canonical full plan hash/ID, and
-   `verifiedArtifacts: null`. Use three-to-five voices, zero-to-two suitable
-   untried short chapters, and no blacklisted voice.
+   `verifiedArtifacts: null`. Choose from the premise: fit POV, role, character,
+   tone, and accent first; novelty second. Use three-to-five voices, stable
+   recurring roles, zero-to-two suitable untried short chapters, and no blacklist.
 7. Export `VOICE` from the cast. Run `echo_voice_plan.py` with its default and
    every mapping, then `/usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py
    validate-cast --cast "$VOICE_CAST" --preferences "$PREFERENCES"`. Its JSON is a true argv token
@@ -52,9 +54,8 @@ then `references/public-fiction-gate.md` at its gate.
    ```
 
    Require non-null `verifiedArtifacts`.
-9. Prepare `$RUN_ROOT/_production/{source,checks,narration,covers,publication,previous}`;
-   `previous` starts empty and only the stager populates it. Set nonempty
-   `$EDITION_ID` and
+9. Validate those six production directories; only the stager populates empty
+   `previous`. Set nonempty `$EDITION_ID` and
    `ICLOUD_TITLE="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Books/$TITLE"`,
    then run:
 
@@ -70,14 +71,15 @@ then `references/public-fiction-gate.md` at its gate.
     PR, release. Fail/private source/private request: record why; zero GitHub
     mutation. Normal original public-safe triggers authorize; the private
     receipt does not. Never merge.
-11. Report iCloud, push, PR, release, merge, human reading, and listening
-    separately. Never infer acceptance.
+11. Report iCloud/push/PR/release/merge/human reading/listening separately.
+    Never infer acceptance.
 12. Redo narrowly. Story changes repair causal downstream prose and repeat
     affected passes/final gates/receipt/build/narration. Recast means a new
     plan/run; cover changes rebuild EPUB/audio. For liked, disliked,
     blacklisted, or clear feedback run:
 
     ```bash
+    : "${FEEDBACK_REASON:=}"
     /usr/local/bin/python3 skills/fiction-audiobook/scripts/fiction_voice_preferences.py set-verdict \
       --voice "$FEEDBACK_VOICE" --verdict "$VERDICT" --at "$FEEDBACK_AT" \
       --reason "$FEEDBACK_REASON" --preferences "$PREFERENCES"
