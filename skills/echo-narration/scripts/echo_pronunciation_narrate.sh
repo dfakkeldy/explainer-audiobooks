@@ -649,6 +649,11 @@ narrate_command=(
   --epub "$EPUB"
   --out "$STAGE_OUTPUT"
   --sidecar "$STAGE_SIDECAR"
+)
+if [[ ${VOICE_PLAN_MODE:-chapter} != block ]]; then
+  narrate_command+=(--voice "$VOICE")
+fi
+narrate_command+=(
   --title "$TITLE"
   --author "Dan Fakkeldy"
   --cover "$M4B_COVER"
@@ -660,7 +665,6 @@ narrate_command=(
 if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
   narrate_command+=(--voice-plan "$VOICE_PLAN_CANONICAL_PATH")
 else
-  narrate_command+=(--voice "$VOICE")
   for chapter_voice in "${CHAPTER_VOICES[@]}"; do
     narrate_command+=(--chapter-voice "$chapter_voice")
   done

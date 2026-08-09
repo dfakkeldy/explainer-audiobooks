@@ -159,6 +159,9 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         self.installer_source_sha = ACCEPTED_INSTALLER_SHA
         self.model_policy_revision = "kokoro-fixture-revision"
         self.model_expected_byte_count = 163234740
+        self.fake_voice_plan_sha = self.tmp / "fake-voice-plan-sha"
+        self.fake_resolve_lease_probe = self.tmp / "fake-resolve-lease-probe"
+        self.fake_resolve_lease_log = self.tmp / "fake-resolve-lease.log"
         # Mirrors echo_pronunciation_canonical_lease_root (echo_pronunciation_preflight.sh),
         # which derives this root from the passwd database and so ignores both $HOME and
         # $ECHO_PRONUNCIATION_LEASE_ROOT — the wrappers overwrite that variable with the
@@ -487,8 +490,23 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "  done\n"
             "  [[ -n $epub && -n $plan ]] || exit 64\n"
             "  if [[ -n ${FAKE_RESOLVE_LOG:-} ]]; then printf 'PLAN=%s\\n' \"$plan\" >>\"$FAKE_RESOLVE_LOG\"; fi\n"
+            f"  if [[ -e {shlex.quote(str(self.fake_resolve_lease_probe))} ]]; then\n"
+            "    lease_status=0\n"
+            f"    if /usr/local/bin/python3 {shlex.quote(str(LEASE_HELPER))} "
+            f"--lock-root {shlex.quote(str(self.lease_root))} --resource \"$script_dir\" "
+            "-- /usr/bin/true >/dev/null 2>&1; then\n"
+            "      lease_status=0\n"
+            "    else\n"
+            "      lease_status=$?\n"
+            "    fi\n"
+            f"    printf 'LEASE_STATUS=%s RESOURCE=%s\\n' \"$lease_status\" \"$script_dir\" >>{shlex.quote(str(self.fake_resolve_lease_log))}\n"
+            "  fi\n"
             "  source_sha=$(/usr/bin/shasum -a 256 \"$epub\" | awk '{print $1}')\n"
-            "  plan_sha=${FAKE_VOICE_PLAN_SHA:-$(printf '%064d' 0 | tr 0 b)}\n"
+            f"  if [[ -s {shlex.quote(str(self.fake_voice_plan_sha))} ]]; then\n"
+            f"    IFS= read -r plan_sha <{shlex.quote(str(self.fake_voice_plan_sha))}\n"
+            "  else\n"
+            "    plan_sha=$(printf '%064d' 0 | tr 0 b)\n"
+            "  fi\n"
             "  printf '{\\\"blockCount\\\":2,\\\"defaultVoice\\\":\\\"am_michael\\\",\\\"sourceEPUBSHA256\\\":\\\"%s\\\",\\\"voicePlanID\\\":\\\"plan-%s\\\",\\\"voicePlanSHA256\\\":\\\"%s\\\"}\\n' \"$source_sha\" \"${plan_sha:0:12}\" \"$plan_sha\"\n"
             "elif [[ ${1:-} == verify-sidecar ]]; then\n"
             "  if [[ ${2:-} == --help ]]; then echo 'verify-sidecar'; exit 0; fi\n"
@@ -505,8 +523,11 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "  if [[ -n ${FAKE_NARRATE_LOG:-} ]]; then\n"
             '    printf \'BEGIN=%s\\n\' "$BASHPID" >>"$FAKE_NARRATE_LOG"\n'
             '    printf \'ARG=%s\\n\' "$@" >>"$FAKE_NARRATE_LOG"\n'
+            '    printf \'ENV=RUN_ID=%s INPUT_RECEIPT=%s STATE_RECEIPT=%s ARTIFACT_ROOT=%s\\n\' '
+            '"${RUN_ID-<unset>}" "${ECHO_RENDER_INPUT_RECEIPT-<unset>}" '
+            '"${STATE_RECEIPT-<unset>}" "${ARTIFACT_ROOT-<unset>}" >>"$FAKE_NARRATE_LOG"\n'
             "  fi\n"
-            "  work= db= out= sidecar= epub= voice= chapter_voice=\n"
+            "  work= db= out= sidecar= epub= voice= chapter_voice= voice_plan=\n"
             "  while (( $# )); do\n"
             '    case "$1" in\n'
             "      --work-dir) work=$2; shift 2 ;;\n"
@@ -515,6 +536,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "      --sidecar) sidecar=$2; shift 2 ;;\n"
             "      --epub) epub=$2; shift 2 ;;\n"
             "      --voice) voice=$2; shift 2 ;;\n"
+            "      --voice-plan) voice_plan=$2; voice=am_michael; shift 2 ;;\n"
             "      --chapter-voice) chapter_voice=$2; shift 2 ;;\n"
             "      --resume) shift ;;\n"
             "      *) shift ;;\n"
@@ -525,7 +547,9 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "  if [[ -n ${FAKE_NARRATE_RELEASE:-} ]]; then\n"
             "    while [[ ! -e $FAKE_NARRATE_RELEASE ]]; do sleep 0.05; done\n"
             "  fi\n"
-            '  "$script_dir/EchoNarrationResources/fake_echo_emit.py" "$epub" "$out" "$sidecar" "$work" "$db" "$voice"\n'
+            "  if [[ -z ${FAKE_SKIP_CAPTURE:-} ]]; then\n"
+            '    "$script_dir/EchoNarrationResources/fake_echo_emit.py" "$epub" "$out" "$sidecar" "$work" "$db" "$voice"\n'
+            "  fi\n"
             '  exit "${FAKE_NARRATE_EXIT:-0}"\n'
             "else\n"
             "  exit 64\n"
@@ -571,6 +595,104 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         )
         environment["PATH"] = f"{self.fake_bin}:{environment['PATH']}"
         return environment
+
+    def write_block_voice_plan(
+        self, filename: str, *, sorted_keys: bool = False
+    ) -> Path:
+        """Write one valid authored document; formatting is deliberately caller-owned."""
+        plan = self.tmp / filename
+        payload = {
+            "schemaVersion": 1,
+            "source": {
+                "epubSHA256": hashlib.sha256(
+                    (self.run_root / "dist" / "fixture.epub").read_bytes()
+                ).hexdigest()
+            },
+            "defaultSpeakerID": "narrator",
+            "speakers": [{"id": "narrator", "voiceID": "am_michael"}],
+            "assignments": [],
+        }
+        if sorted_keys:
+            plan.write_text(
+                json.dumps(payload, indent=4, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+        else:
+            plan.write_text(
+                json.dumps(payload, separators=(",", ":")) + "\n",
+                encoding="utf-8",
+            )
+        return plan
+
+    @staticmethod
+    def receipt_fields(receipt: Path) -> dict[str, str]:
+        return dict(
+            line.split("=", 1)
+            for line in receipt.read_text(encoding="utf-8").splitlines()
+        )
+
+    def expected_legacy_input_receipt(
+        self,
+        *,
+        chapter_voices: str,
+        voice_plan_sha: str,
+        voice_plan_id: str,
+    ) -> tuple[str, bytes]:
+        """Hand-written snapshot of the unchanged legacy wrapper receipt contract."""
+        epub = self.run_root / "dist" / "fixture.epub"
+        epub_sha = hashlib.sha256(epub.read_bytes()).hexdigest()
+        cover_sha = hashlib.sha256(self.portrait.read_bytes()).hexdigest()
+        m4b_cover_sha = hashlib.sha256(self.square.read_bytes()).hexdigest()
+        package_sha = hashlib.sha256(
+            (
+                f"epub={epub_sha}\n"
+                "cover_selection=receipt-free-private\n"
+                f"portrait_cover={cover_sha}\n"
+                f"square_cover={m4b_cover_sha}\n"
+            ).encode("utf-8")
+        ).hexdigest()
+        cli_sha = hashlib.sha256(self.cli.read_bytes()).hexdigest()
+        resources_sha, _ = resource_tree_identity(self.resources)
+        run_id = (
+            f"{epub_sha[:12]}-{cli_sha[:12]}-{resources_sha[:12]}-"
+            f"{self.renderer_manifest_sha[:12]}-{self.source_sha}-{voice_plan_id}"
+        )
+        receipt = (
+            "renderer_schema_version=1\n"
+            f"renderer_root={self.renderer_root}\n"
+            f"renderer_build_root={self.renderer_build_root}\n"
+            f"installer_source_sha={self.installer_source_sha}\n"
+            f"approved_echo_pronunciation_sha={self.source_sha}\n"
+            f"echo_source_sha={self.source_sha}\n"
+            f"renderer_manifest_sha256={self.renderer_manifest_sha}\n"
+            f"echo_cli_sha256={cli_sha}\n"
+            f"echo_cli_path={self.cli}\n"
+            f"echo_resources_sha256={resources_sha}\n"
+            f"echo_resource_dir={self.resources}\n"
+            "render_version=12\n"
+            f"model_policy_revision={self.model_policy_revision}\n"
+            f"model_expected_byte_count={self.model_expected_byte_count}\n"
+            "model_bytes_attested=false\n"
+            "voice=am_michael\n"
+            f"chapter_voices={chapter_voices}\n"
+            f"voice_plan_sha256={voice_plan_sha}\n"
+            f"voice_plan_id={voice_plan_id}\n"
+            f"epub_sha256={epub_sha}\n"
+            "cover_binding_mode=receipt-free-private\n"
+            "cover_selection_path=\n"
+            "cover_selection_sha256=\n"
+            f"portrait_cover_path={self.portrait}\n"
+            f"portrait_cover_sha256={cover_sha}\n"
+            f"m4b_cover_path={self.square}\n"
+            f"m4b_cover_sha256={m4b_cover_sha}\n"
+            "run_lane=audiobook\n"
+            f"run_root={self.run_root}\n"
+            f"package_sha256={package_sha}\n"
+            f"run_id={run_id}\n"
+            f"work_dir={self.run_root / f'audio-work-{run_id}'}\n"
+            f"narration_db={self.run_root / f'narration-{run_id}.sqlite'}\n"
+        ).encode("utf-8")
+        return run_id, receipt
 
     def use_run_lane(self, folder: str) -> None:
         destination = self.explainer / ".build" / folder / "fixture"
@@ -2479,6 +2601,267 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 research = self.run_root / "research"
                 self.assertEqual([], list(research.glob("echo-render-inputs-*.env")))
                 self.assertEqual([], list(research.glob(".echo-voice-plan*")))
+                self.assertEqual([], list(self.run_root.glob("audio-work-*")))
+                self.assertEqual([], list(self.run_root.glob("narration-*.sqlite")))
+
+    def test_block_resolver_only_runs_while_exact_installed_build_root_is_leased(
+        self,
+    ) -> None:
+        """A competing lease acquisition must fail at every fake resolver call."""
+        plan = self.write_block_voice_plan("leased-resolver-plan.json")
+        self.fake_resolve_lease_probe.touch()
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_SKIP_CAPTURE": "1",
+                "FAKE_NARRATE_EXIT": "42",
+            }
+        )
+
+        result = self.run_narrate("--voice-plan", str(plan), environment=environment)
+
+        self.assertEqual(42, result.returncode, result.stderr)
+        lines = self.fake_resolve_lease_log.read_text(encoding="utf-8").splitlines()
+        self.assertGreaterEqual(len(lines), 2)
+        self.assertEqual(
+            {f"LEASE_STATUS=75 RESOURCE={self.renderer_build_root}"}, set(lines)
+        )
+
+    def test_block_narration_uses_only_the_sealed_canonical_plan_argv(self) -> None:
+        """The renderer must never receive a caller-controlled plan path or --voice."""
+        plan = self.write_block_voice_plan("mutable-caller-plan.json")
+        narrate_log = self.tmp / "block-narrate-arguments.log"
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_LOG": str(narrate_log),
+                "FAKE_SKIP_CAPTURE": "1",
+                "FAKE_NARRATE_EXIT": "42",
+            }
+        )
+
+        result = self.run_narrate("--voice-plan", str(plan), environment=environment)
+
+        self.assertEqual(42, result.returncode, result.stderr)
+        arguments = [
+            line.removeprefix("ARG=")
+            for line in narrate_log.read_text(encoding="utf-8").splitlines()
+            if line.startswith("ARG=")
+        ]
+        receipt = next((self.run_root / "research").glob("echo-render-inputs-*.env"))
+        fields = self.receipt_fields(receipt)
+        canonical_plan = Path(fields["voice_plan_canonical_path"])
+        self.assertNotEqual(plan, canonical_plan)
+        self.assertIn("--voice-plan", arguments)
+        self.assertEqual(
+            str(canonical_plan), arguments[arguments.index("--voice-plan") + 1]
+        )
+        self.assertNotIn("--voice", arguments)
+        self.assertNotIn(str(plan), arguments)
+
+    def test_changed_block_resolver_hash_fans_out_to_every_run_scoped_path(
+        self,
+    ) -> None:
+        """A new Echo receipt identity must select a wholly new governed run."""
+        plan = self.write_block_voice_plan("hash-fanout-plan.json")
+        research = self.run_root / "research"
+
+        def render_for(resolved_sha: str) -> tuple[dict[str, str], Path, Path, Path]:
+            self.fake_voice_plan_sha.write_text(resolved_sha + "\n", encoding="utf-8")
+            narrate_log = self.tmp / f"hash-fanout-{resolved_sha[:1]}.log"
+            environment = self.environment()
+            environment.update(
+                {
+                    "FAKE_NARRATE_LOG": str(narrate_log),
+                    "FAKE_SKIP_CAPTURE": "1",
+                    "FAKE_NARRATE_EXIT": "42",
+                }
+            )
+            result = self.run_narrate(
+                "--voice-plan", str(plan), environment=environment
+            )
+            self.assertEqual(42, result.returncode, result.stderr)
+            receipt = next(
+                path
+                for path in research.glob("echo-render-inputs-*.env")
+                if self.receipt_fields(path)["voice_plan_sha256"] == resolved_sha
+            )
+            fields = self.receipt_fields(receipt)
+            narrate_environment = dict(
+                pair.split("=", 1)
+                for pair in next(
+                    line.removeprefix("ENV=")
+                    for line in narrate_log.read_text(encoding="utf-8").splitlines()
+                    if line.startswith("ENV=")
+                ).split()
+            )
+            self.assertEqual(fields["run_id"], narrate_environment["RUN_ID"])
+            self.assertEqual(
+                str(receipt), narrate_environment["INPUT_RECEIPT"]
+            )
+            state = Path(narrate_environment["STATE_RECEIPT"])
+            artifact_root = Path(narrate_environment["ARTIFACT_ROOT"])
+            return fields, receipt, state, artifact_root
+
+        first = render_for("b" * 64)
+        second = render_for("c" * 64)
+        first_fields, first_receipt, first_state, first_artifact_root = first
+        second_fields, second_receipt, second_state, second_artifact_root = second
+
+        self.assertNotEqual(
+            first_fields["voice_plan_sha256"], second_fields["voice_plan_sha256"]
+        )
+        for field in ("run_id", "work_dir", "narration_db"):
+            with self.subTest(field=field):
+                self.assertNotEqual(first_fields[field], second_fields[field])
+        self.assertNotEqual(first_receipt, second_receipt)
+        self.assertNotEqual(first_state, second_state)
+        self.assertNotEqual(first_artifact_root, second_artifact_root)
+        self.assertEqual(
+            self.run_root / "dist" / "echo-renders" / first_fields["run_id"],
+            first_artifact_root.parent,
+        )
+        self.assertEqual(
+            self.run_root / "dist" / "echo-renders" / second_fields["run_id"],
+            second_artifact_root.parent,
+        )
+        self.assertTrue(first_receipt.is_file())
+        self.assertTrue(second_receipt.is_file())
+        self.assertEqual(
+            research / f"echo-resume-state-{first_fields['run_id']}.json", first_state
+        )
+        self.assertEqual(
+            research / f"echo-resume-state-{second_fields['run_id']}.json", second_state
+        )
+
+    def test_equivalent_authored_block_plan_syntax_reuses_the_sealed_run(self) -> None:
+        """Echo-equivalent drafts must not fork a canonical plan or run identity."""
+        compact = self.write_block_voice_plan("compact-authored-plan.json")
+        pretty = self.write_block_voice_plan("pretty-authored-plan.json", sorted_keys=True)
+        self.assertNotEqual(compact.read_bytes(), pretty.read_bytes())
+        environment = self.environment()
+        environment["VOICE_PLAN_SOURCE"] = str(compact)
+        first_result = self.run_preflight(environment=environment)
+        self.assertEqual(0, first_result.returncode, first_result.stderr)
+        research = self.run_root / "research"
+        first_receipt = next(research.glob("echo-render-inputs-*.env"))
+        first_fields = self.receipt_fields(first_receipt)
+        canonical_plan = Path(first_fields["voice_plan_canonical_path"])
+        resolution = Path(first_fields["voice_plan_resolution_path"])
+        sealed_plan_bytes = canonical_plan.read_bytes()
+        sealed_resolution_bytes = resolution.read_bytes()
+
+        environment["VOICE_PLAN_SOURCE"] = str(pretty)
+        second_result = self.run_preflight(environment=environment)
+
+        self.assertEqual(0, second_result.returncode, second_result.stderr)
+        second_receipt = next(research.glob("echo-render-inputs-*.env"))
+        second_fields = self.receipt_fields(second_receipt)
+        self.assertEqual(first_fields, second_fields)
+        self.assertEqual(canonical_plan, Path(second_fields["voice_plan_canonical_path"]))
+        self.assertEqual(resolution, Path(second_fields["voice_plan_resolution_path"]))
+        self.assertEqual(sealed_plan_bytes, canonical_plan.read_bytes())
+        self.assertEqual(sealed_resolution_bytes, resolution.read_bytes())
+        self.assertEqual(
+            [canonical_plan], list(research.glob(f"{canonical_plan.name}"))
+        )
+        self.assertEqual([resolution], list(research.glob(f"{resolution.name}")))
+
+    def test_block_narration_rejects_plan_or_resolution_mutation_after_render(
+        self,
+    ) -> None:
+        """Post-render re-attestation must fail closed on either sealed byte drift."""
+        for label, field, replacement in (
+            ("plan", "voice_plan_canonical_path", b"{\"tampered\":true}\n"),
+            (
+                "resolution",
+                "voice_plan_resolution_path",
+                b"{\"tampered\":true}\n",
+            ),
+        ):
+            with self.subTest(label=label):
+                plan = self.write_block_voice_plan(f"{label}-drift-plan.json")
+                resolved_sha = ("d" if label == "plan" else "e") * 64
+                self.fake_voice_plan_sha.write_text(
+                    resolved_sha + "\n",
+                    encoding="utf-8",
+                )
+                ready = self.tmp / f"{label}-drift-ready"
+                release = self.tmp / f"{label}-drift-release"
+                environment = self.environment()
+                environment.update(
+                    {
+                        "FAKE_NARRATE_READY": str(ready),
+                        "FAKE_NARRATE_RELEASE": str(release),
+                        "FAKE_SKIP_CAPTURE": "1",
+                        "FAKE_NARRATE_EXIT": "42",
+                    }
+                )
+                process = subprocess.Popen(
+                    [str(NARRATE_WRAPPER), "--voice-plan", str(plan)],
+                    cwd=self.explainer,
+                    env=environment,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                self.addCleanup(lambda: process.poll() is None and process.kill())
+                self.wait_for_path(ready, process)
+                receipt = next(
+                    path
+                    for path in (self.run_root / "research").glob(
+                        "echo-render-inputs-*.env"
+                    )
+                    if self.receipt_fields(path)["voice_plan_sha256"] == resolved_sha
+                )
+                Path(self.receipt_fields(receipt)[field]).write_bytes(replacement)
+                release.touch()
+                stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
+
+                self.assertEqual(65, process.returncode, f"{stdout}\n{stderr}")
+                self.assertIn(
+                    "sealed block voice-plan bytes changed while narration lease was held",
+                    stderr,
+                )
+                self.assertFalse(list((self.run_root / "dist").glob("echo-renders/**/*")))
+
+    def test_legacy_wrapper_run_ids_and_input_receipts_are_byte_for_byte_unchanged(
+        self,
+    ) -> None:
+        """Uniform and chapter wrapper receipts remain the pre-block-mode bytes."""
+        uniform_sha = hashlib.sha256(b"default=am_michael\n").hexdigest()
+        uniform_run_id, uniform_bytes = self.expected_legacy_input_receipt(
+            chapter_voices="",
+            voice_plan_sha=uniform_sha,
+            voice_plan_id="am_michael",
+        )
+
+        uniform = self.run_narrate()
+
+        self.assertEqual(0, uniform.returncode, uniform.stderr)
+        uniform_receipt = (
+            self.run_root / "research" / f"echo-render-inputs-{uniform_run_id}.env"
+        )
+        self.assertEqual(uniform_bytes, uniform_receipt.read_bytes())
+
+        chapter_sha = hashlib.sha256(
+            b"default=am_michael\n1=af_heart\n"
+        ).hexdigest()
+        chapter_id = f"plan-{chapter_sha[:12]}"
+        chapter_run_id, chapter_bytes = self.expected_legacy_input_receipt(
+            chapter_voices="1=af_heart",
+            voice_plan_sha=chapter_sha,
+            voice_plan_id=chapter_id,
+        )
+
+        chapter = self.run_narrate("--chapter-voice", "1=af_heart")
+
+        self.assertEqual(0, chapter.returncode, chapter.stderr)
+        chapter_receipt = (
+            self.run_root / "research" / f"echo-render-inputs-{chapter_run_id}.env"
+        )
+        self.assertNotEqual(uniform_run_id, chapter_run_id)
+        self.assertEqual(chapter_bytes, chapter_receipt.read_bytes())
 
     def test_renderer_identity_changes_prevent_resume_and_delivery_reuse(self) -> None:
         result = self.run_narrate()
