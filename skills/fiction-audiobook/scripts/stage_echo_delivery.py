@@ -4,12 +4,15 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
+import errno
 import hashlib
 import json
+import os
 import re
 import shutil
+import sys
 import tempfile
-import uuid
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -407,25 +410,60 @@ def _dry_run_matches(
     return True
 
 
-def _archive_previous(stage: Path, destination: Path, root_files: tuple[str, ...]) -> None:
-    previous = stage / "_production/previous"
-    for name in root_files:
-        shutil.copy2(destination / name, previous / name)
-    prior_production = previous / "_production"
-    prior_production.mkdir()
-    for name in PRODUCTION_DIRECTORIES:
-        if name != "previous":
-            shutil.copytree(destination / "_production" / name, prior_production / name)
+def _rename_with_kernel_guarantee(
+    source: Path, destination: Path, *, exchange: bool
+) -> None:
+    """Atomically exchange paths or rename without replacing an existing path."""
+    library = ctypes.CDLL(None, use_errno=True)
+    source_bytes = os.fsencode(source)
+    destination_bytes = os.fsencode(destination)
+    if sys.platform == "darwin":
+        rename = library.renamex_np
+        rename.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint)
+        rename.restype = ctypes.c_int
+        flags = 0x00000002 if exchange else 0x00000004
+        result = rename(source_bytes, destination_bytes, flags)
+    elif sys.platform.startswith("linux") and hasattr(library, "renameat2"):
+        rename = library.renameat2
+        rename.argtypes = (
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_uint,
+        )
+        rename.restype = ctypes.c_int
+        flags = 0x00000002 if exchange else 0x00000001
+        result = rename(-100, source_bytes, -100, destination_bytes, flags)
+    else:
+        raise OSError(
+            errno.ENOTSUP,
+            "atomic no-replace directory promotion is unavailable",
+            str(destination),
+        )
+    if result != 0:
+        error_number = ctypes.get_errno()
+        raise OSError(error_number, os.strerror(error_number), str(destination))
+
+
+def _rename_exclusive(source: Path, destination: Path) -> None:
+    _rename_with_kernel_guarantee(source, destination, exchange=False)
+
+
+def _rename_exchange(source: Path, destination: Path) -> None:
+    _rename_with_kernel_guarantee(source, destination, exchange=True)
 
 
 def _rename_stage(stage: Path, destination: Path) -> None:
-    stage.rename(destination)
+    try:
+        _rename_exclusive(stage, destination)
+    except FileExistsError as error:
+        raise ValueError("destination appeared before exclusive promotion") from error
 
 
 def _promote(
     stage: Path,
     destination: Path,
-    slug: str,
     expected_destination: _DirectorySnapshot | None,
 ) -> None:
     expected_stage = _directory_snapshot(stage, "staged delivery")
@@ -437,20 +475,30 @@ def _promote(
         return
 
     _require_snapshot(destination, expected_destination, "destination")
-    backup = destination.parent / f".{slug}.backup-{uuid.uuid4().hex}"
-    destination.rename(backup)
+    _rename_exchange(stage, destination)
+    prior = destination / "_production/previous"
+    prior_moved = False
     try:
-        _require_snapshot(backup, expected_destination, "renamed destination backup")
-        _rename_stage(stage, destination)
         _require_snapshot(destination, expected_stage, "promoted delivery")
-        _require_snapshot(backup, expected_destination, "destination backup")
+        _require_snapshot(stage, expected_destination, "exchanged prior destination")
+        prior.rmdir()
+        try:
+            _rename_exclusive(stage, prior)
+        except FileExistsError as error:
+            raise ValueError("production previous changed during promotion") from error
+        prior_moved = True
+        _require_snapshot(prior, expected_destination, "archived prior destination")
     except BaseException:
-        if destination.exists() and not stage.exists():
-            destination.rename(stage)
-        if backup.exists() and not destination.exists():
-            backup.rename(destination)
+        if prior_moved and prior.exists():
+            if stage.exists() or stage.is_symlink():
+                raise ValueError(
+                    "staging path appeared during rollback; prior edition remains preserved"
+                )
+            _rename_exclusive(prior, stage)
+            prior.mkdir()
+        if stage.exists() and destination.exists():
+            _rename_exchange(stage, destination)
         raise
-    shutil.rmtree(backup)
 
 
 def stage_delivery(request: DeliveryRequest, *, apply: bool = False) -> DeliveryResult:
@@ -498,10 +546,8 @@ def stage_delivery(request: DeliveryRequest, *, apply: bool = False) -> Delivery
                 applied=True,
                 root_files=root_files,
             )
-        if destination.exists():
-            _archive_previous(stage, destination, root_files)
         staging_directory = str(stage)
-        _promote(stage, destination, request.slug, expected_destination)
+        _promote(stage, destination, expected_destination)
         return DeliveryResult(
             decision="promoted",
             destination=str(destination),

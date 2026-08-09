@@ -126,6 +126,28 @@ class StageEchoDeliveryTests(unittest.TestCase):
             manifest["rootArtifacts"],
         )
 
+    def test_empty_destination_created_in_rename_window_is_not_replaced(self) -> None:
+        real_rename_stage = module._rename_stage
+        intruder_identity: tuple[int, int] | None = None
+
+        def create_destination_then_rename(stage: Path, destination: Path) -> None:
+            nonlocal intruder_identity
+            destination.mkdir()
+            opened = destination.stat(follow_symlinks=False)
+            intruder_identity = (opened.st_dev, opened.st_ino)
+            real_rename_stage(stage, destination)
+
+        with mock.patch.object(
+            module, "_rename_stage", side_effect=create_destination_then_rename
+        ), self.assertRaisesRegex(ValueError, "appeared|destination|exclusive"):
+            module.stage_delivery(self.request(), apply=True)
+
+        self.assertIsNotNone(intruder_identity)
+        current = self.destination.stat(follow_symlinks=False)
+        self.assertEqual(intruder_identity, (current.st_dev, current.st_ino))
+        self.assertEqual([], list(self.destination.iterdir()))
+        self.assertTrue(self.stages())
+
     def test_unexpected_root_item_is_preserved_and_blocks_promotion(self) -> None:
         module.stage_delivery(self.request(), apply=True)
         note = self.destination / "my-note.txt"
@@ -149,11 +171,10 @@ class StageEchoDeliveryTests(unittest.TestCase):
         def inject_then_promote(
             stage: Path,
             destination: Path,
-            slug: str,
             expected_destination: object,
         ) -> None:
             note.write_bytes(b"user recording")
-            real_promote(stage, destination, slug, expected_destination)
+            real_promote(stage, destination, expected_destination)
 
         with mock.patch.object(
             module, "_promote", side_effect=inject_then_promote
@@ -166,12 +187,42 @@ class StageEchoDeliveryTests(unittest.TestCase):
         self.assertTrue(self.stages())
         self.assertEqual([], list(self.destination.parent.glob(".fixture.backup-*")))
 
+    def test_destination_replaced_before_atomic_exchange_preserves_every_tree(self) -> None:
+        module.stage_delivery(self.request(), apply=True)
+        self.m4b.write_bytes(b"replacement")
+        moved_original = self.destination.parent / "externally-moved-original"
+        real_exchange = module._rename_exchange
+        replaced = False
+
+        def replace_then_exchange(source: Path, destination: Path) -> None:
+            nonlocal replaced
+            if not replaced:
+                replaced = True
+                destination.rename(moved_original)
+                destination.mkdir()
+                (destination / "notes.m4a").write_bytes(b"user replacement")
+            real_exchange(source, destination)
+
+        with mock.patch.object(
+            module, "_rename_exchange", side_effect=replace_then_exchange
+        ), self.assertRaisesRegex(ValueError, "prior destination.*changed"):
+            module.stage_delivery(self.request(), apply=True)
+
+        self.assertEqual(
+            b"user replacement", (self.destination / "notes.m4a").read_bytes()
+        )
+        self.assertEqual(b"audio", (moved_original / "fixture.m4b").read_bytes())
+        self.assertTrue(self.stages())
+        self.assertEqual([], list(self.destination.parent.glob(".fixture.backup-*")))
+
     def test_promotion_failure_restores_the_complete_old_edition(self) -> None:
         module.stage_delivery(self.request(), apply=True)
         before = tree_hash(self.destination)
         self.m4b.write_bytes(b"replacement")
 
-        with mock.patch.object(module, "_rename_stage", side_effect=OSError("injected")):
+        with mock.patch.object(
+            module, "_rename_exchange", side_effect=OSError("injected")
+        ):
             with self.assertRaisesRegex(OSError, "injected"):
                 module.stage_delivery(self.request(), apply=True)
 
@@ -180,17 +231,16 @@ class StageEchoDeliveryTests(unittest.TestCase):
     def test_item_added_to_renamed_backup_is_restored_instead_of_deleted(self) -> None:
         module.stage_delivery(self.request(), apply=True)
         self.m4b.write_bytes(b"replacement")
-        real_rename_stage = module._rename_stage
+        real_rename_exclusive = module._rename_exclusive
 
-        def mutate_backup_then_rename(stage: Path, destination: Path) -> None:
-            backups = list(destination.parent.glob(".fixture.backup-*"))
-            self.assertEqual(1, len(backups))
-            (backups[0] / "notes.m4a").write_bytes(b"late user recording")
-            real_rename_stage(stage, destination)
+        def mutate_prior_then_archive(source: Path, destination: Path) -> None:
+            if destination.name == "previous":
+                (source / "notes.m4a").write_bytes(b"late user recording")
+            real_rename_exclusive(source, destination)
 
         with mock.patch.object(
-            module, "_rename_stage", side_effect=mutate_backup_then_rename
-        ), self.assertRaisesRegex(ValueError, "backup.*changed"):
+            module, "_rename_exclusive", side_effect=mutate_prior_then_archive
+        ), self.assertRaisesRegex(ValueError, "archived prior destination.*changed"):
             module.stage_delivery(self.request(), apply=True)
 
         self.assertEqual(
@@ -199,6 +249,25 @@ class StageEchoDeliveryTests(unittest.TestCase):
         self.assertEqual(b"audio", (self.destination / "fixture.m4b").read_bytes())
         self.assertTrue(self.stages())
         self.assertEqual([], list(self.destination.parent.glob(".fixture.backup-*")))
+
+    def test_prior_destination_is_never_recursively_deleted_after_promotion(self) -> None:
+        module.stage_delivery(self.request(), apply=True)
+        self.m4b.write_bytes(b"replacement")
+        real_rmtree = module.shutil.rmtree
+
+        def reject_old_destination_deletion(path: Path, *args: object, **kwargs: object):
+            if Path(path).name.startswith(".fixture.backup-"):
+                raise AssertionError("validated prior destination must never be deleted")
+            return real_rmtree(path, *args, **kwargs)
+
+        with mock.patch.object(
+            module.shutil, "rmtree", side_effect=reject_old_destination_deletion
+        ):
+            result = module.stage_delivery(self.request(), apply=True)
+
+        self.assertEqual("promoted", result.decision)
+        previous = self.destination / "_production/previous"
+        self.assertEqual(b"audio", (previous / "fixture.m4b").read_bytes())
 
     def test_redo_archives_one_prior_generated_edition_and_is_idempotent(self) -> None:
         module.stage_delivery(self.request(), apply=True)
@@ -209,12 +278,28 @@ class StageEchoDeliveryTests(unittest.TestCase):
         self.assertEqual(b"audio", (previous / "fixture.m4b").read_bytes())
         self.assertEqual(b"epub", (previous / "fixture.epub").read_bytes())
         self.assertTrue((previous / "_production/checks/checks.txt").is_file())
-        self.assertFalse((previous / "_production/previous").exists())
+        self.assertTrue((previous / "_production/previous").is_dir())
+        self.assertEqual([], list((previous / "_production/previous").iterdir()))
 
         before = tree_hash(self.destination)
         result = module.stage_delivery(self.request(), apply=True)
         self.assertEqual("reuse", result.decision)
         self.assertEqual(before, tree_hash(self.destination))
+        self.assertEqual([], self.stages())
+
+    def test_repeated_promotions_preserve_the_complete_prior_chain(self) -> None:
+        module.stage_delivery(self.request(), apply=True)
+        self.m4b.write_bytes(b"second")
+        module.stage_delivery(self.request(), apply=True)
+        self.m4b.write_bytes(b"third")
+        module.stage_delivery(self.request(), apply=True)
+
+        previous = self.destination / "_production/previous"
+        first = previous / "_production/previous"
+        self.assertEqual(b"third", (self.destination / "fixture.m4b").read_bytes())
+        self.assertEqual(b"second", (previous / "fixture.m4b").read_bytes())
+        self.assertEqual(b"audio", (first / "fixture.m4b").read_bytes())
+        self.assertEqual([], list(self.destination.parent.glob(".fixture.backup-*")))
         self.assertEqual([], self.stages())
 
     def test_m4b_epub_and_sidecar_must_have_the_slug_stem(self) -> None:
