@@ -1,9 +1,10 @@
 # Public Fiction Gate And Runbook
 
-Private delivery completes before this gate. An explicit private request,
-private source, rights uncertainty, or any failed condition means private-only:
-record the reason below `_production/publication/` and perform zero GitHub
-mutation. Automated checks never establish human reading or listening.
+Evaluate and record this gate before final iCloud staging; mutate GitHub only
+after iCloud succeeds. An explicit private request, private source, rights
+uncertainty, or failed condition means private-only: deliver the reason below
+`_production/publication/` and perform zero GitHub mutation. Automated checks
+never establish human reading or listening.
 
 ## Exact schema-v2 publication receipt
 
@@ -67,7 +68,41 @@ of a living author; and verified cover rights. Cover basis is exactly one of
 The cover may be original, generated, public-domain, permissively licensed, or
 explicitly permissioned—never merely found online.
 
-## Stage and verify
+## Production evidence before delivery
+
+Set `PRODUCTION="$RUN_ROOT/_production"`. Materialize one current, non-symlinked
+evidence tree; `previous/` starts empty and only the stager fills it:
+
+| Directory | Exact current-edition contents |
+|---|---|
+| `source/` | `brief.md`, `story-bible.md`, `outline.md`, `chapters/`, `continuity/`, `research/unattended-decisions.json`, unchanged `research/fiction-production-receipt.json`, `revisions/`, and `feedback.jsonl` (empty is valid) |
+| `checks/` | pronunciation audit plus captured successful `verify-delivery`, `verify-sidecar`, sidecar-JSON, audit-validator, and `ffprobe` results |
+| `narration/` | sealed cast; accepted input, success, resume, attempt, and selector receipts; delivered alignment sidecar; retained reels/captures only here |
+| `covers/` | selected portrait/square pair, thumbnails, source art, specs, rights/provenance, render receipts, and selection receipt |
+| `publication/` | `public-gate.json` and, on pass, the identical verified `publication.json`; on failure, the decision contains the nonempty reason |
+| `previous/` | empty |
+
+Copy canonical bytes from the run root; never summarize or edit receipts. Keep
+all alternate audio, audits, logs, checksums, manuscripts, and alternate covers
+below `_production`, never at the iCloud title root. Write `public-gate.json`
+with `decision` (`public` or `private`), timestamp, gate booleans, and reason.
+
+## Stage and verify the public candidate
+
+A private decision skips this section and proceeds to the skill's final iCloud
+stager. A public decision derives all shell state under `set -u`:
+
+```bash
+PIPELINE_ROOT=$(git rev-parse --show-toplevel)
+: "${RUN_ROOT:?}" "${SLUG:?}" "${EDITION_ID:?}"
+[[ "$PIPELINE_ROOT" == /* ]]
+[[ "$RUN_ROOT" == "$PIPELINE_ROOT/.build/fiction-audiobooks/$SLUG" ]]
+PUBLIC_STAGE="$RUN_ROOT/public-stage-$EDITION_ID"
+RELEASE_TAG="fiction-$SLUG-$EDITION_ID"
+[[ "$PUBLIC_STAGE" != "$PIPELINE_ROOT/books/"* ]]
+if [[ ! -e "$PUBLIC_STAGE" ]]; then mkdir "$PUBLIC_STAGE"; fi
+[[ -d "$PUBLIC_STAGE" && ! -L "$PUBLIC_STAGE" ]]
+```
 
 Stage outside `books/`. `$PUBLIC_STAGE` must contain exactly `README.md`,
 `publication.json`, `<slug>.md`, `<slug>.epub`,
@@ -84,7 +119,9 @@ outside Git. `README.md` must include the exact disclosure from
   --echo-success-receipt "$SUCCESS_RECEIPT"
 ```
 
-Only after success, copy the six public files into `books/<slug>/`, update the
+After verifier success, copy `publication.json` unchanged into
+`$PRODUCTION/publication/`; then run the skill's iCloud stager. Only after that
+delivery succeeds, copy the six public files into `books/<slug>/`, update the
 README catalogue, and publish in this order:
 
 ```bash
@@ -113,3 +150,6 @@ gh release view "$RELEASE_TAG" --json tagName,targetCommitish,assets,url
 Compare tag, target commit, asset name, and—when GitHub supplies one—asset
 digest. A GitHub failure does not undo successful iCloud delivery: preserve
 the verified publication stage and report the GitHub state as retryable.
+For a redo, reconcile the existing ready PR when one is open or create a new
+ready PR, use the new derived release tag, verify the new asset, preserve prior
+release bytes, and never merge.
