@@ -239,6 +239,32 @@ class StageEchoDeliveryTests(unittest.TestCase):
         self.assertTrue(self.stages())
         self.assertEqual([], list(self.destination.parent.glob(".fixture.backup-*")))
 
+    def test_dangling_stage_symlink_during_exchange_restores_old_destination(self) -> None:
+        module.stage_delivery(self.request(), apply=True)
+        self.m4b.write_bytes(b"replacement")
+        real_exchange = module._rename_exchange
+        parked_stage: Path | None = None
+        swapped = False
+
+        def replace_stage_then_exchange(source: Path, destination: Path) -> None:
+            nonlocal parked_stage, swapped
+            if not swapped:
+                swapped = True
+                parked_stage = source.with_name(f"{source.name}.verified")
+                source.rename(parked_stage)
+                source.symlink_to(source.parent / "missing-stage-target")
+            real_exchange(source, destination)
+
+        with mock.patch.object(
+            module, "_rename_exchange", side_effect=replace_stage_then_exchange
+        ), self.assertRaisesRegex(ValueError, "promoted delivery|symlink"):
+            module.stage_delivery(self.request(), apply=True)
+
+        self.assertEqual(b"audio", (self.destination / "fixture.m4b").read_bytes())
+        self.assertEqual(1, sum(path.is_symlink() for path in self.stages()))
+        self.assertIsNotNone(parked_stage)
+        self.assertEqual(b"replacement", (parked_stage / "fixture.m4b").read_bytes())
+
     def test_promotion_failure_restores_the_complete_old_edition(self) -> None:
         module.stage_delivery(self.request(), apply=True)
         before = tree_hash(self.destination)

@@ -520,7 +520,9 @@ def _promote(
                 )
             _rename_exclusive(prior, stage)
             restore_previous_directory = True
-        if stage.exists() and destination.exists():
+        if (stage.exists() or stage.is_symlink()) and (
+            destination.exists() or destination.is_symlink()
+        ):
             _rename_exchange(stage, destination)
         if restore_previous_directory:
             (stage / "_production/previous").mkdir()
