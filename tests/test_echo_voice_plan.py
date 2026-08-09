@@ -234,13 +234,31 @@ class EchoVoicePlanTests(unittest.TestCase):
                     echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
                     with self.assertRaises(VOICE_PLAN.VoicePlanError):
                         VOICE_PLAN.resolve_block_plan(echo, epub, plan)
+            for field, value in (
+                ("blockCount", "2"), ("sourceEPUBSHA256", 3),
+                ("voicePlanID", 3), ("voicePlanSHA256", 3),
+            ):
+                payload = dict(receipt)
+                payload[field] = value
+                raw = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+                echo.write_text("#!/usr/bin/env python3\nimport sys\n" f"sys.stdout.buffer.write({raw!r})\n")
+                echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+                with self.subTest(field=field):
+                    with self.assertRaises(VOICE_PLAN.VoicePlanError):
+                        VOICE_PLAN.resolve_block_plan(echo, epub, plan)
+            oversized = json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode() + b" " * (64 * 1024)
+            echo.write_text("#!/usr/bin/env python3\nimport sys\n" f"sys.stdout.buffer.write({oversized!r})\n")
+            echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
+            with self.assertRaisesRegex(VOICE_PLAN.VoicePlanError, "exceeds 64 KiB"):
+                VOICE_PLAN.resolve_block_plan(echo, epub, plan)
             echo.write_text("#!/usr/bin/env python3\nimport sys\nsys.stderr.write('noisy')\n" f"sys.stdout.buffer.write({json.dumps(receipt, sort_keys=True, separators=(',', ':')).encode()!r})\n")
             echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
             with self.assertRaises(VOICE_PLAN.VoicePlanError):
                 VOICE_PLAN.resolve_block_plan(echo, epub, plan)
-            echo.write_text("#!/usr/bin/env python3\nraise SystemExit(7)\n")
+            valid_raw = json.dumps(receipt, sort_keys=True, separators=(",", ":")).encode()
+            echo.write_text("#!/usr/bin/env python3\nimport sys\n" f"sys.stdout.buffer.write({valid_raw!r})\nraise SystemExit(7)\n")
             echo.chmod(echo.stat().st_mode | stat.S_IXUSR)
-            with self.assertRaises(VOICE_PLAN.VoicePlanError):
+            with self.assertRaisesRegex(VOICE_PLAN.VoicePlanError, "status 7"):
                 VOICE_PLAN.resolve_block_plan(echo, epub, plan)
 
     def test_rejects_unsafe_inputs_and_duplicate_authored_json_before_sealing(self) -> None:
@@ -263,7 +281,8 @@ class EchoVoicePlanTests(unittest.TestCase):
             directory_path.mkdir()
             link = root / "echo-link"
             link.symlink_to(echo)
-            for candidate in (Path("relative"), root / "missing", directory_path, link):
+            lexical = directory_path / ".." / "echo-cli"
+            for candidate in (Path("relative"), root / "missing", directory_path, link, lexical):
                 with self.subTest(candidate=candidate):
                     with self.assertRaises(VOICE_PLAN.VoicePlanError):
                         VOICE_PLAN.resolve_block_plan(candidate, epub, plan)
