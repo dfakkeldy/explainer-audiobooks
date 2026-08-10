@@ -15,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 MODULE_PATH = ROOT / "skill" / "scripts" / "semantic_voice_cast.py"
+SEMANTIC_REFERENCE = ROOT / "skill" / "references" / "semantic-voice-casting.md"
 SPEC = importlib.util.spec_from_file_location("semantic_voice_cast_test_module", MODULE_PATH)
 if SPEC is None or SPEC.loader is None:
     raise RuntimeError(f"cannot load {MODULE_PATH}")
@@ -132,6 +133,14 @@ class SemanticVoiceCastTests(unittest.TestCase):
         return module.validate_cast(current.cast, current.inventory, current.plan, current.epub)
 
     @staticmethod
+    def documented_json_example(text: str, heading: str) -> tuple[str, dict[str, object]]:
+        section = text.split(heading, 1)[1]
+        body = section.split("```json\n", 1)[1].split("\n```", 1)[0]
+        value = json.loads(body)
+        assert isinstance(value, dict)
+        return body, value
+
+    @staticmethod
     def _write_bound_cast(
         fixture: SemanticCastFixture,
         *,
@@ -180,6 +189,54 @@ class SemanticVoiceCastTests(unittest.TestCase):
         self.assertEqual(20, result.paragraph_block_count)
         self.assertEqual(19, result.guide_block_count)
         self.assertEqual({"memory": 1}, result.role_block_counts)
+
+    def test_documented_cast_examples_are_canonical_and_validate_when_materialized(self) -> None:
+        reference = SEMANTIC_REFERENCE.read_text(encoding="utf-8")
+        normal_bytes, normal_cast = self.documented_json_example(
+            reference, "### Minimal normal cast"
+        )
+        waiver_bytes, waiver_cast = self.documented_json_example(
+            reference, "### Minimal guide-only waiver cast"
+        )
+        normal_plan_bytes, normal_plan = self.documented_json_example(
+            reference, "### Authored Echo voice-plan shapes"
+        )
+        waiver_section = reference.split("A guide-only waiver has one guide speaker", 1)[1]
+        waiver_plan_body = waiver_section.split("```json\n", 1)[1].split("\n```", 1)[0]
+        waiver_plan = json.loads(waiver_plan_body)
+        assert isinstance(waiver_plan, dict)
+
+        for name, raw, payload in (
+            ("normal cast", normal_bytes, normal_cast),
+            ("waiver cast", waiver_bytes, waiver_cast),
+            ("normal plan", normal_plan_bytes, normal_plan),
+            ("waiver plan", waiver_plan_body, waiver_plan),
+        ):
+            with self.subTest(name=name):
+                self.assertEqual(module.canonical_json(payload), (raw + "\n").encode("utf-8"))
+
+        normal_fixture = self.fresh_fixture()
+        normal_cast["source"] = normal_fixture.cast_payload()["source"]
+        normal_plan["source"] = {"epubSHA256": digest(normal_fixture.epub)}
+        normal_fixture.write_json(normal_fixture.plan, normal_plan)
+        normal_authored = normal_cast["authoredVoicePlan"]
+        assert isinstance(normal_authored, dict)
+        normal_authored["fileName"] = normal_fixture.plan.name
+        normal_authored["sha256"] = digest(normal_fixture.plan)
+        normal_fixture.write_json(normal_fixture.cast, normal_cast)
+        self.validate(normal_fixture)
+
+        waiver_fixture = self.fresh_fixture()
+        waiver_cast["source"] = waiver_fixture.cast_payload()["source"]
+        waiver_plan["source"] = {"epubSHA256": digest(waiver_fixture.epub)}
+        waiver_fixture.write_json(waiver_fixture.plan, waiver_plan)
+        waiver_authored = waiver_cast["authoredVoicePlan"]
+        assert isinstance(waiver_authored, dict)
+        waiver_authored["fileName"] = waiver_fixture.plan.name
+        waiver_authored["sha256"] = digest(waiver_fixture.plan)
+        waiver_fixture.write_json(waiver_fixture.cast, waiver_cast)
+        result = self.validate(waiver_fixture)
+        self.assertEqual({}, result.role_block_counts)
 
     def test_rejects_duplicate_unknown_and_noncanonical_json(self) -> None:
         cases: list[tuple[str, bytes, str]] = []

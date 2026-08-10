@@ -146,9 +146,12 @@ A packet is production-ready when it includes:
 - chapter purposes and section-level argument jobs;
 - source locators, story material, and the exact names production must preserve;
 - a voice direction with positive examples and disliked patterns;
-- a Semantic Voice Plan with roles, candidate Echo voices, earned secondary
-  role jobs, listener preferences/exclusions, the
-  `<BOOK_ROOT>/source/narration-role-ledger.md`, and the frozen EPUB boundary;
+- a Semantic Voice Plan in its declared route: a normal cast requires earned
+  secondary-role jobs, candidate Echo voices, listener preferences/exclusions,
+  the `<BOOK_ROOT>/source/narration-role-ledger.md`, and the frozen EPUB
+  boundary; a guide-only waiver requires cited `source/brief.md` listener
+  evidence and guide only with no `memory`, secondary-role jobs, groups, or
+  assignments;
 - a rights-aware picture plan, including a zero-figure decision when relevant;
 - the preserve-on-revision notes for any existing edition;
 - the five separate craft passes and blind beginner review;

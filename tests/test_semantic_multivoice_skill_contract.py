@@ -93,6 +93,9 @@ class SemanticMultivoiceSkillContractTests(unittest.TestCase):
     def test_longform_handoff_has_exclusive_normal_and_guide_only_waiver_routes(self) -> None:
         normal = self.packet.split("### Normal cast", 1)[1].split("### Guide-only waiver", 1)[0]
         waiver = self.packet.split("### Guide-only waiver", 1)[1].split("## Figure Plan", 1)[0]
+        readiness = " ".join(
+            self.packet.split("## Required-field check", 1)[1].lower().split()
+        )
         for document in (self.longform, self.packet):
             with self.subTest(document=document):
                 self.assertIn("source/brief.md", document)
@@ -109,6 +112,13 @@ class SemanticMultivoiceSkillContractTests(unittest.TestCase):
         ):
             with self.subTest(requirement=requirement):
                 self.assertIn(requirement, waiver.lower())
+        for requirement in (
+            "normal cast requires earned secondary-role jobs",
+            "guide-only waiver requires cited `source/brief.md` listener evidence",
+            "guide only with no `memory`, secondary-role jobs, groups, or assignments",
+        ):
+            with self.subTest(requirement=requirement):
+                self.assertIn(requirement, readiness)
 
     def test_semantic_reference_links_schema_and_shows_authorable_operational_shapes(self) -> None:
         for marker in (

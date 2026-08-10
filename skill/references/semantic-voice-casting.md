@@ -73,27 +73,39 @@ each illustrative hash with the exact lowercase SHA-256 of the named bytes.
 
 ```json
 {
-  "schemaVersion": 1,
+  "authoredVoicePlan": {
+    "fileName": "echo-voice-plan.json",
+    "sha256": "<authored plan SHA-256>"
+  },
+  "defaultRoleID": "guide",
+  "groups": [
+    {
+      "blocks": [
+        "s0-b4"
+      ],
+      "groupID": "memory-001",
+      "roleID": "memory"
+    }
+  ],
   "narrationMode": "semantic-block",
+  "roles": [
+    {
+      "roleID": "guide",
+      "voiceID": "am_michael"
+    },
+    {
+      "roleID": "memory",
+      "voiceID": "bf_emma"
+    }
+  ],
+  "schemaVersion": 1,
+  "singleVoiceWaiver": null,
   "source": {
     "epubFileName": "book.epub",
     "epubSHA256": "<frozen EPUB SHA-256>",
     "inventoryFileName": "echo-block-inventory-book.json",
     "inventorySHA256": "<frozen inventory SHA-256>"
-  },
-  "defaultRoleID": "guide",
-  "roles": [
-    {"roleID": "guide", "voiceID": "am_michael"},
-    {"roleID": "memory", "voiceID": "bf_emma"}
-  ],
-  "groups": [
-    {"groupID": "memory-001", "roleID": "memory", "blocks": ["s0-b4"]}
-  ],
-  "authoredVoicePlan": {
-    "fileName": "echo-voice-plan.json",
-    "sha256": "<authored plan SHA-256>"
-  },
-  "singleVoiceWaiver": null
+  }
 }
 ```
 
@@ -101,24 +113,29 @@ each illustrative hash with the exact lowercase SHA-256 of the named bytes.
 
 ```json
 {
-  "schemaVersion": 1,
+  "authoredVoicePlan": {
+    "fileName": "echo-voice-plan.json",
+    "sha256": "<authored plan SHA-256>"
+  },
+  "defaultRoleID": "guide",
+  "groups": [],
   "narrationMode": "semantic-block",
+  "roles": [
+    {
+      "roleID": "guide",
+      "voiceID": "am_michael"
+    }
+  ],
+  "schemaVersion": 1,
+  "singleVoiceWaiver": {
+    "reason": "Listener explicitly requested one voice.",
+    "recordedIn": "source/brief.md"
+  },
   "source": {
     "epubFileName": "book.epub",
     "epubSHA256": "<frozen EPUB SHA-256>",
     "inventoryFileName": "echo-block-inventory-book.json",
     "inventorySHA256": "<frozen inventory SHA-256>"
-  },
-  "defaultRoleID": "guide",
-  "roles": [{"roleID": "guide", "voiceID": "am_michael"}],
-  "groups": [],
-  "authoredVoicePlan": {
-    "fileName": "echo-voice-plan.json",
-    "sha256": "<authored plan SHA-256>"
-  },
-  "singleVoiceWaiver": {
-    "recordedIn": "source/brief.md",
-    "reason": "Listener explicitly requested one voice."
   }
 }
 ```
@@ -130,14 +147,29 @@ guide and memory speakers plus the matching group assignment:
 
 ```json
 {
-  "schemaVersion": 1,
-  "source": {"epubSHA256": "<frozen EPUB SHA-256>"},
-  "defaultSpeakerID": "guide",
-  "speakers": [
-    {"id": "guide", "voiceID": "am_michael"},
-    {"id": "memory", "voiceID": "bf_emma"}
+  "assignments": [
+    {
+      "blocks": [
+        "s0-b4"
+      ],
+      "speakerID": "memory"
+    }
   ],
-  "assignments": [{"speakerID": "memory", "blocks": ["s0-b4"]}]
+  "defaultSpeakerID": "guide",
+  "schemaVersion": 1,
+  "source": {
+    "epubSHA256": "<frozen EPUB SHA-256>"
+  },
+  "speakers": [
+    {
+      "id": "guide",
+      "voiceID": "am_michael"
+    },
+    {
+      "id": "memory",
+      "voiceID": "bf_emma"
+    }
+  ]
 }
 ```
 
@@ -145,11 +177,18 @@ A guide-only waiver has one guide speaker and no assignments:
 
 ```json
 {
-  "schemaVersion": 1,
-  "source": {"epubSHA256": "<frozen EPUB SHA-256>"},
+  "assignments": [],
   "defaultSpeakerID": "guide",
-  "speakers": [{"id": "guide", "voiceID": "am_michael"}],
-  "assignments": []
+  "schemaVersion": 1,
+  "source": {
+    "epubSHA256": "<frozen EPUB SHA-256>"
+  },
+  "speakers": [
+    {
+      "id": "guide",
+      "voiceID": "am_michael"
+    }
+  ]
 }
 ```
 

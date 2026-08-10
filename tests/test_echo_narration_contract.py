@@ -58,6 +58,7 @@ class EchoNarrationContractTests(unittest.TestCase):
         self.assertIn("load_fiction_voice_arguments()", self.narrating)
         self.assertGreaterEqual(self.narrating.count("must be --voice-plan"), 2)
         self.assertIsNone(re.search(r"\beval\b", self.narrating))
+        self.assertIsNone(re.search(r"\beval\b", semantic_reference))
 
     def test_semantic_block_handoff_stops_before_wrapper_on_invalid_cast(self) -> None:
         """A rejected semantic cast must not invoke the governed wrapper."""
