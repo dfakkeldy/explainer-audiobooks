@@ -151,7 +151,14 @@ def _run_root(cast_path: Path) -> Path:
     return run_root
 
 
-def _validate_cast(cast: dict[str, object]) -> tuple[dict[str, object], list[dict[str, object]]]:
+def _require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SemanticVoiceCastError(message)
+
+
+def _validate_cast(
+    cast: dict[str, object],
+) -> tuple[dict[str, object], list[dict[str, object]], list[dict[str, object]], object]:
     if type(cast["schemaVersion"]) is not int or cast["schemaVersion"] != 1:
         raise SemanticVoiceCastError("cast schemaVersion must be 1")
     if cast["narrationMode"] != "semantic-block":
@@ -167,6 +174,7 @@ def _validate_cast(cast: dict[str, object]) -> tuple[dict[str, object], list[dic
     roles = cast["roles"]
     if not isinstance(roles, list) or not 1 <= len(roles) <= len(ROLES):
         raise SemanticVoiceCastError("cast roles must contain one to four entries")
+    checked_roles: list[dict[str, object]] = []
     for index, value in enumerate(roles):
         role = _require_object(value, f"cast role {index}", ROLE_KEYS)
         if role["roleID"] not in ROLES:
@@ -174,6 +182,7 @@ def _validate_cast(cast: dict[str, object]) -> tuple[dict[str, object], list[dic
         voice = _require_string(role["voiceID"], f"cast role {index} voiceID")
         if voice not in VOICE_IDS:
             raise SemanticVoiceCastError(f"cast role {index} has an unknown Echo voice")
+        checked_roles.append(role)
 
     groups = cast["groups"]
     if not isinstance(groups, list):
@@ -185,7 +194,7 @@ def _validate_cast(cast: dict[str, object]) -> tuple[dict[str, object], list[dic
         if GROUP_ID.fullmatch(group_id) is None:
             raise SemanticVoiceCastError(f"cast group {index} groupID is invalid")
         if group["roleID"] not in SECONDARY_ROLES:
-            raise SemanticVoiceCastError(f"cast group {index} roleID is invalid")
+            raise SemanticVoiceCastError(f"cast group {index} must use a secondary role")
         blocks = group["blocks"]
         if not isinstance(blocks, list) or not 1 <= len(blocks) <= 4:
             raise SemanticVoiceCastError(f"cast group {index} must contain one to four blocks")
@@ -202,7 +211,7 @@ def _validate_cast(cast: dict[str, object]) -> tuple[dict[str, object], list[dic
         waiver_data = _require_object(waiver, "singleVoiceWaiver", WAIVER_KEYS)
         _require_string(waiver_data["recordedIn"], "singleVoiceWaiver recordedIn")
         _require_string(waiver_data["reason"], "singleVoiceWaiver reason")
-    return source, checked_groups
+    return source, checked_roles, checked_groups, waiver
 
 
 def _validate_inventory(inventory: dict[str, object], epub_hash: str) -> set[str]:
@@ -270,6 +279,124 @@ def _validate_authored_plan(plan: dict[str, object], epub_hash: str) -> None:
             raise SemanticVoiceCastError(f"authored voice plan assignment {index} blocks must be an array")
 
 
+def _validate_role_semantics(
+    roles: list[dict[str, object]], groups: list[dict[str, object]], waiver: object
+) -> None:
+    role_ids = [role["roleID"] for role in roles]
+    voices = [role["voiceID"] for role in roles]
+    assert all(isinstance(role, str) for role in role_ids)
+    assert all(isinstance(voice, str) for voice in voices)
+    _require(len(set(role_ids)) == len(role_ids), "cast roles contain a duplicate role")
+    _require(len(set(voices)) == len(voices), "cast roles contain a duplicate voice")
+    role_indexes = [ROLES.index(role) for role in role_ids]
+    _require(role_indexes == sorted(role_indexes), "cast roles are not in stable order")
+
+    if waiver is None:
+        _require(
+            len(roles) >= 2,
+            "normal cast requires memory; a single guide role requires a waiver",
+        )
+        _require(role_ids[0] == "guide", "cast roles must begin with guide")
+        _require("memory" in role_ids, "cast roles must include memory")
+    else:
+        assert isinstance(waiver, dict)
+        _require(
+            waiver == {
+                "recordedIn": "source/brief.md",
+                "reason": "Listener explicitly requested one voice.",
+            },
+            "singleVoiceWaiver must use the exact approved listener record",
+        )
+        _require(role_ids == ["guide"], "singleVoiceWaiver permits only the guide role")
+        _require(not groups, "singleVoiceWaiver requires no groups")
+
+    declared = set(role_ids)
+    group_ids: set[str] = set()
+    for index, group in enumerate(groups):
+        group_id = group["groupID"]
+        role = group["roleID"]
+        assert isinstance(group_id, str) and isinstance(role, str)
+        _require(group_id not in group_ids, "cast groups contain a duplicate groupID")
+        group_ids.add(group_id)
+        _require(group_id.split("-", 1)[0] == role, f"cast group {index} groupID does not match roleID")
+        _require(role in declared, f"cast group {index} roleID is not declared")
+    for role in role_ids:
+        if role in SECONDARY_ROLES:
+            _require(any(group["roleID"] == role for group in groups), f"declared {role} role requires a group")
+
+
+def _validate_plan_agreement(
+    plan: dict[str, object], roles: list[dict[str, object]], groups: list[dict[str, object]]
+) -> None:
+    _require(plan["defaultSpeakerID"] == "guide", "authored voice plan defaultSpeakerID must be guide")
+    expected_speakers = [
+        {"id": role["roleID"], "voiceID": role["voiceID"]}
+        for role in roles
+    ]
+    expected_assignments = [
+        {"speakerID": group["roleID"], "blocks": group["blocks"]}
+        for group in groups
+    ]
+    _require(plan["speakers"] == expected_speakers, "authored voice plan speakers differ from cast roles")
+    _require(plan["assignments"] == expected_assignments, "authored voice plan assignments differ from cast groups")
+
+
+def _validate_group_semantics(
+    inventory_blocks: list[object], groups: list[dict[str, object]]
+) -> tuple[int, dict[str, int]]:
+    eligible = [
+        block
+        for block in inventory_blocks
+        if isinstance(block, dict)
+        and block["kind"] == "paragraph"
+        and isinstance(block["text"], str)
+        and block["text"].strip()
+        and type(block["wordCount"]) is int
+        and block["wordCount"] > 0
+    ]
+    eligible.sort(key=lambda block: block["sequenceIndex"])
+    positions = {block["id"]: index for index, block in enumerate(eligible)}
+    assigned: set[str] = set()
+    previous_end = -3
+    role_counts: dict[str, int] = {}
+    for index, group in enumerate(groups):
+        blocks = group["blocks"]
+        assert isinstance(blocks, list)
+        _require(len(set(blocks)) == len(blocks), f"cast group {index} contains a duplicate block")
+        positions_in_group: list[int] = []
+        for block in blocks:
+            assert isinstance(block, str)
+            _require(block in positions, "cast group block is not an eligible paragraph in inventory")
+            _require(block not in assigned, "cast groups contain a duplicate block")
+            assigned.add(block)
+            positions_in_group.append(positions[block])
+        start = positions_in_group[0]
+        _require(
+            positions_in_group == list(range(start, start + len(positions_in_group))),
+            f"cast group {index} blocks must be consecutive eligible paragraphs",
+        )
+        _require(start > previous_end, "cast groups must be ordered")
+        if index:
+            _require(start - previous_end - 1 >= 2, "cast groups require two guide paragraphs between groups")
+        previous_end = positions_in_group[-1]
+        role = group["roleID"]
+        assert isinstance(role, str)
+        role_counts[role] = role_counts.get(role, 0) + len(blocks)
+
+    paragraph_count = len(eligible)
+    memory_count = role_counts.get("memory", 0)
+    field_count = role_counts.get("field", 0)
+    coach_count = role_counts.get("coach", 0)
+    secondary_count = sum(role_counts.values())
+    _require(memory_count * 100 <= paragraph_count * 15, "memory exceeds 15 percent")
+    _require(
+        (field_count + coach_count) * 100 <= paragraph_count * 15,
+        "field plus coach exceeds 15 percent",
+    )
+    _require(secondary_count * 100 <= paragraph_count * 25, "secondary roles exceed 25 percent")
+    return paragraph_count, role_counts
+
+
 def validate_cast(
     cast_path: Path,
     inventory_path: Path,
@@ -292,7 +419,7 @@ def validate_cast(
     if cast_path.read_bytes() != canonical_json(cast):
         raise SemanticVoiceCastError("cast is not canonical JSON")
     run_root = _run_root(cast_path)
-    source, groups = _validate_cast(cast)
+    source, roles, groups, waiver = _validate_cast(cast)
     epub_name = _require_filename(source["epubFileName"], "source EPUB filename")
     inventory_name = _require_filename(source["inventoryFileName"], "source inventory filename")
     plan_name = _require_filename(
@@ -318,28 +445,15 @@ def validate_cast(
     _validate_inventory(inventory, epub_hash)
     plan = read_closed_json(voice_plan_path, "authored voice plan", PLAN_KEYS)
     _validate_authored_plan(plan, epub_hash)
+    _validate_role_semantics(roles, groups, waiver)
+    _validate_plan_agreement(plan, roles, groups)
     inventory_blocks = inventory["blocks"]
     assert isinstance(inventory_blocks, list)
-    paragraph_ids = {
-        value["id"]
-        for value in inventory_blocks
-        if isinstance(value, dict) and value["kind"] == "paragraph" and bool(value["text"].strip())
-    }
-    assigned_blocks = [block for group in groups for block in group["blocks"]]
-    assigned = set(assigned_blocks)
-    if not assigned <= paragraph_ids:
-        raise SemanticVoiceCastError("cast group block is not a nonempty paragraph in inventory")
-    role_counts: dict[str, int] = {}
-    for group in groups:
-        role = group["roleID"]
-        blocks = group["blocks"]
-        assert isinstance(role, str) and isinstance(blocks, list)
-        role_counts[role] = role_counts.get(role, 0) + len(blocks)
-    paragraph_count = len(paragraph_ids)
+    paragraph_count, role_counts = _validate_group_semantics(inventory_blocks, groups)
     return ValidationResult(
         voice_plan=voice_plan_path,
         paragraph_block_count=paragraph_count,
-        guide_block_count=paragraph_count - len(assigned),
+        guide_block_count=paragraph_count - sum(role_counts.values()),
         role_block_counts=role_counts,
     )
 
@@ -361,7 +475,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         result = validate_cast(options.cast, options.inventory, options.voice_plan, options.epub)
     except SemanticVoiceCastError as error:
-        print(f"semantic_voice_cast: {error}", file=sys.stderr)
+        print(f"semantic voice cast: {error}", file=sys.stderr)
         return 65
     if options.format == "argv0":
         sys.stdout.buffer.write(b"--voice-plan\0" + str(result.voice_plan).encode("utf-8") + b"\0")

@@ -4,6 +4,8 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -128,6 +130,46 @@ class SemanticVoiceCastTests(unittest.TestCase):
         current = fixture or self.fixture
         return module.validate_cast(current.cast, current.inventory, current.plan, current.epub)
 
+    @staticmethod
+    def _write_bound_cast(
+        fixture: SemanticCastFixture,
+        *,
+        roles: list[dict[str, object]] | None = None,
+        groups: list[dict[str, object]] | None = None,
+        waiver: object = None,
+        use_waiver: bool = False,
+        plan: dict[str, object] | None = None,
+    ) -> None:
+        cast = fixture.cast_payload()
+        if roles is not None:
+            cast["roles"] = roles
+        if groups is not None:
+            cast["groups"] = groups
+        if use_waiver:
+            cast["singleVoiceWaiver"] = waiver
+        if plan is None:
+            cast_roles = cast["roles"]
+            cast_groups = cast["groups"]
+            assert isinstance(cast_roles, list) and isinstance(cast_groups, list)
+            plan = fixture.plan_payload()
+            plan["speakers"] = [
+                {"id": role["roleID"], "voiceID": role["voiceID"]}
+                for role in cast_roles
+            ]
+            plan["assignments"] = [
+                {"speakerID": group["roleID"], "blocks": group["blocks"]}
+                for group in cast_groups
+            ]
+        fixture.write_json(fixture.plan, plan)
+        authored = cast["authoredVoicePlan"]
+        assert isinstance(authored, dict)
+        authored["sha256"] = digest(fixture.plan)
+        fixture.write_json(fixture.cast, cast)
+
+    @staticmethod
+    def _group(role: str, *blocks: str, number: int = 1) -> dict[str, object]:
+        return {"groupID": f"{role}-{number:03d}", "roleID": role, "blocks": list(blocks)}
+
     def test_valid_cast_binds_epub_inventory_roles_and_plan(self) -> None:
         result = module.validate_cast(
             self.fixture.cast, self.fixture.inventory,
@@ -224,6 +266,218 @@ class SemanticVoiceCastTests(unittest.TestCase):
                     arguments[("cast", "inventory", "plan", "epub").index(attribute)] = replacement
                     with self.assertRaises(module.SemanticVoiceCastError):
                         module.validate_cast(*arguments)
+
+    def test_roles_are_ordered_unique_known_stable_and_used(self) -> None:
+        guide = {"roleID": "guide", "voiceID": "am_michael"}
+        memory = {"roleID": "memory", "voiceID": "bf_emma"}
+        field = {"roleID": "field", "voiceID": "af_heart"}
+        invalid = (
+            ("missing-memory", [guide], [], "memory"),
+            ("wrong-order", [memory, guide], [self._group("memory", "s0-b4")], "order"),
+            ("duplicate-role", [guide, memory, memory], [self._group("memory", "s0-b4")], "duplicate role"),
+            ("duplicate-voice", [guide, {"roleID": "memory", "voiceID": "am_michael"}], [self._group("memory", "s0-b4")], "duplicate voice"),
+            ("unknown-voice", [guide, {"roleID": "memory", "voiceID": "not_a_voice"}], [self._group("memory", "s0-b4")], "unknown Echo voice"),
+            ("unused-field", [guide, memory, field], [self._group("memory", "s0-b4")], "field.*group"),
+            ("guide-group", [guide, memory], [{"groupID": "memory-001", "roleID": "guide", "blocks": ["s0-b4"]}], "secondary"),
+        )
+        for name, roles, groups, pattern in invalid:
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                self._write_bound_cast(fixture, roles=roles, groups=groups)
+                with self.assertRaisesRegex(module.SemanticVoiceCastError, pattern):
+                    self.validate(fixture)
+
+    def test_cast_groups_match_echo_assignments_exactly(self) -> None:
+        for name, mutate in (
+            ("speaker order", lambda p: p.__setitem__("speakers", list(reversed(p["speakers"])))),
+            ("default speaker", lambda p: p.__setitem__("defaultSpeakerID", "memory")),
+            ("speaker voice", lambda p: p["speakers"][1].__setitem__("voiceID", "af_heart")),
+            ("assignment order", lambda p: p.__setitem__("assignments", list(reversed(p["assignments"]))),),
+            ("speaker ID", lambda p: p["assignments"][0].__setitem__("speakerID", "guide")),
+            ("block order", lambda p: p["assignments"][0].__setitem__("blocks", ["s0-b5", "s0-b4"])),
+            ("range", lambda p: p["assignments"][0].__setitem__("range", {"start": "s0-b4", "end": "s0-b4"})),
+            ("omitted group", lambda p: p.__setitem__("assignments", [])),
+            ("unrecorded assignment", lambda p: p.__setitem__("assignments", p["assignments"] + [{"speakerID": "memory", "blocks": ["s0-b5"]}])),
+        ):
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                roles = [
+                    {"roleID": "guide", "voiceID": "am_michael"},
+                    {"roleID": "memory", "voiceID": "bf_emma"},
+                    {"roleID": "field", "voiceID": "af_heart"},
+                ]
+                groups = [self._group("memory", "s0-b4"), self._group("field", "s0-b7")]
+                plan = fixture.plan_payload()
+                plan["speakers"] = [{"id": item["roleID"], "voiceID": item["voiceID"]} for item in roles]
+                plan["assignments"] = [{"speakerID": group["roleID"], "blocks": group["blocks"]} for group in groups]
+                mutate(plan)
+                self._write_bound_cast(fixture, roles=roles, groups=groups, plan=plan)
+                with self.assertRaises(module.SemanticVoiceCastError):
+                    self.validate(fixture)
+
+    def test_accepts_budget_boundaries(self) -> None:
+        cases = (
+            ("memory 3/20", [
+                {"roleID": "guide", "voiceID": "am_michael"},
+                {"roleID": "memory", "voiceID": "bf_emma"},
+            ], [self._group("memory", "s0-b4", "s0-b5", "s0-b6")], {"memory": 3}),
+            ("field plus coach 3/20", [
+                {"roleID": "guide", "voiceID": "am_michael"},
+                {"roleID": "memory", "voiceID": "bf_emma"},
+                {"roleID": "field", "voiceID": "af_heart"},
+                {"roleID": "coach", "voiceID": "af_bella"},
+            ], [self._group("memory", "s0-b2"), self._group("field", "s0-b5", "s0-b6"), self._group("coach", "s0-b9")], {"memory": 1, "field": 2, "coach": 1}),
+            ("all secondary 5/20", [
+                {"roleID": "guide", "voiceID": "am_michael"},
+                {"roleID": "memory", "voiceID": "bf_emma"},
+                {"roleID": "field", "voiceID": "af_heart"},
+                {"roleID": "coach", "voiceID": "af_bella"},
+            ], [self._group("memory", "s0-b2", "s0-b3"), self._group("field", "s0-b6", "s0-b7"), self._group("coach", "s0-b10")], {"memory": 2, "field": 2, "coach": 1}),
+        )
+        for name, roles, groups, counts in cases:
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                self._write_bound_cast(fixture, roles=roles, groups=groups)
+                result = self.validate(fixture)
+                self.assertEqual(counts, result.role_block_counts)
+
+    def test_rejects_budget_excesses(self) -> None:
+        guide = {"roleID": "guide", "voiceID": "am_michael"}
+        memory = {"roleID": "memory", "voiceID": "bf_emma"}
+        field = {"roleID": "field", "voiceID": "af_heart"}
+        coach = {"roleID": "coach", "voiceID": "af_bella"}
+        cases = (
+            ("memory", [guide, memory], [self._group("memory", "s0-b4", "s0-b5", "s0-b6", "s0-b7")], "memory exceeds"),
+            ("field coach", [guide, memory, field, coach], [self._group("memory", "s0-b2"), self._group("field", "s0-b5", "s0-b6"), self._group("coach", "s0-b9", "s0-b10")], "field plus coach exceeds"),
+            ("all secondary", [guide, memory, field, coach], [self._group("memory", "s0-b2", "s0-b3", "s0-b4"), self._group("field", "s0-b7", "s0-b8"), self._group("coach", "s0-b11")], "secondary roles exceed"),
+        )
+        for name, roles, groups, pattern in cases:
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                self._write_bound_cast(fixture, roles=roles, groups=groups)
+                with self.assertRaisesRegex(module.SemanticVoiceCastError, pattern):
+                    self.validate(fixture)
+
+    def test_rejects_invalid_semantic_groups_and_inventory(self) -> None:
+        for name, alter_inventory, groups, pattern in (
+            ("heading", lambda inventory: inventory["blocks"][4].__setitem__("kind", "heading"), [self._group("memory", "s0-b4")], "eligible paragraph"),
+            ("image", lambda inventory: self._make_image(inventory, 4), [self._group("memory", "s0-b4")], "eligible paragraph"),
+            ("code", lambda inventory: inventory["blocks"][4].__setitem__("kind", "code"), [self._group("memory", "s0-b4")], "eligible paragraph"),
+            ("empty paragraph", lambda inventory: inventory["blocks"][4].__setitem__("text", "  "), [self._group("memory", "s0-b4")], "eligible paragraph"),
+            ("duplicate block", lambda inventory: None, [self._group("memory", "s0-b4", "s0-b4")], "duplicate"),
+            ("more than four", lambda inventory: None, [self._group("memory", "s0-b4", "s0-b5", "s0-b6", "s0-b7", "s0-b8")], "one to four"),
+            ("mixed group ID", lambda inventory: None, [{"groupID": "field-001", "roleID": "memory", "blocks": ["s0-b4"]}], "groupID"),
+            ("noncontiguous", lambda inventory: None, [self._group("memory", "s0-b4", "s0-b6")], "consecutive"),
+            ("zero guide gap", lambda inventory: None, [self._group("memory", "s0-b4"), self._group("field", "s0-b5")], "guide paragraphs"),
+            ("one guide gap", lambda inventory: None, [self._group("memory", "s0-b4"), self._group("field", "s0-b6")], "guide paragraphs"),
+            ("unsorted", lambda inventory: None, [self._group("memory", "s0-b8"), self._group("field", "s0-b4")], "ordered"),
+        ):
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                inventory = fixture.inventory_payload()
+                alter_inventory(inventory)
+                fixture.write_json(fixture.inventory, inventory)
+                roles = [
+                    {"roleID": "guide", "voiceID": "am_michael"},
+                    {"roleID": "memory", "voiceID": "bf_emma"},
+                ]
+                if any(group["roleID"] == "field" for group in groups):
+                    roles.append({"roleID": "field", "voiceID": "af_heart"})
+                self._write_bound_cast(fixture, roles=roles, groups=groups)
+                with self.assertRaisesRegex(module.SemanticVoiceCastError, pattern):
+                    self.validate(fixture)
+
+        for name, mutate in (
+            ("duplicate ID", lambda inventory: inventory["blocks"][1].__setitem__("id", "s0-b0")),
+            ("duplicate sequence", lambda inventory: inventory["blocks"][1].__setitem__("sequenceIndex", 0)),
+        ):
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                inventory = fixture.inventory_payload()
+                mutate(inventory)
+                fixture.write_json(fixture.inventory, inventory)
+                self._write_bound_cast(fixture)
+                with self.assertRaisesRegex(module.SemanticVoiceCastError, "duplicate"):
+                    self.validate(fixture)
+
+    @staticmethod
+    def _make_image(inventory: dict[str, object], index: int) -> None:
+        block = inventory["blocks"][index]
+        assert isinstance(block, dict)
+        block["kind"] = "image"
+        block["imagePath"] = "figure.png"
+
+    def test_single_voice_waiver_is_exact_and_fail_closed(self) -> None:
+        guide = [{"roleID": "guide", "voiceID": "am_michael"}]
+        waiver = {"recordedIn": "source/brief.md", "reason": "Listener explicitly requested one voice."}
+        fixture = self.fresh_fixture()
+        self._write_bound_cast(fixture, roles=guide, groups=[])
+        with self.assertRaisesRegex(module.SemanticVoiceCastError, "waiver"):
+            self.validate(fixture)
+
+        fixture = self.fresh_fixture()
+        self._write_bound_cast(fixture, roles=guide, groups=[], waiver=waiver, use_waiver=True)
+        result = self.validate(fixture)
+        self.assertEqual(20, result.guide_block_count)
+        self.assertEqual({}, result.role_block_counts)
+
+        invalid = (
+            ("memory", [{"roleID": "guide", "voiceID": "am_michael"}, {"roleID": "memory", "voiceID": "bf_emma"}], []),
+            ("group", guide, [self._group("memory", "s0-b4")]),
+            ("recordedIn", guide, []),
+            ("empty reason", guide, []),
+            ("extra", guide, []),
+        )
+        for name, roles, groups in invalid:
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                altered = copy.deepcopy(waiver)
+                if name == "recordedIn":
+                    altered["recordedIn"] = "source/other.md"
+                elif name == "empty reason":
+                    altered["reason"] = ""
+                elif name == "extra":
+                    altered["extra"] = True
+                self._write_bound_cast(fixture, roles=roles, groups=groups, waiver=altered, use_waiver=True)
+                with self.assertRaises(module.SemanticVoiceCastError):
+                    self.validate(fixture)
+
+    def test_cli_emits_compact_json_and_exact_argv0(self) -> None:
+        command = [
+            sys.executable, str(MODULE_PATH), "validate-cast",
+            "--cast", str(self.fixture.cast),
+            "--inventory", str(self.fixture.inventory),
+            "--voice-plan", str(self.fixture.plan),
+            "--epub", str(self.fixture.epub),
+        ]
+        expected = json.dumps({
+            "guideBlockCount": 19,
+            "paragraphBlockCount": 20,
+            "roleBlockCounts": {"memory": 1},
+            "voicePlan": str(self.fixture.plan),
+        }, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+        json_run = subprocess.run(command + ["--format", "json"], capture_output=True)
+        self.assertEqual(0, json_run.returncode)
+        self.assertEqual(expected, json_run.stdout)
+        argv_run = subprocess.run(command + ["--format", "argv0"], capture_output=True)
+        self.assertEqual(b"--voice-plan\0" + os.fsencode(self.fixture.plan) + b"\0", argv_run.stdout)
+        self.assertEqual(b"", argv_run.stderr)
+
+    def test_cli_failure_emits_no_handoff_and_exits_65(self) -> None:
+        self.fixture.cast.write_bytes(self.fixture.cast.read_bytes() + b" ")
+        command = [
+            sys.executable, str(MODULE_PATH), "validate-cast",
+            "--cast", str(self.fixture.cast),
+            "--inventory", str(self.fixture.inventory),
+            "--voice-plan", str(self.fixture.plan),
+            "--epub", str(self.fixture.epub),
+        ]
+        for output_format in ("json", "argv0"):
+            with self.subTest(output_format=output_format):
+                result = subprocess.run(command + ["--format", output_format], capture_output=True)
+                self.assertEqual(65, result.returncode)
+                self.assertEqual(b"", result.stdout)
+                self.assertRegex(result.stderr.decode(), r"^semantic voice cast: .+\n$")
 
 
 if __name__ == "__main__":
