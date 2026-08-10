@@ -243,6 +243,14 @@ def main() -> int:
     for path in fiction_support[-2:]:
         validate_python_helper(path)
 
+    semantic_support = (
+        "skill/schemas/semantic-voice-cast-v1.schema.json",
+        "skill/scripts/semantic_voice_cast.py",
+    )
+    for path in semantic_support:
+        require((ROOT / path).is_file(), f"missing semantic voice-cast support path: {path}")
+    validate_python_helper("skill/scripts/semantic_voice_cast.py")
+
     paired_contract = (
         "exactly three", "1600×2560", "cover.png", "2400×2400", "m4b-cover.png",
     )
