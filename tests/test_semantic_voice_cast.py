@@ -400,6 +400,35 @@ class SemanticVoiceCastTests(unittest.TestCase):
                 with self.assertRaisesRegex(module.SemanticVoiceCastError, "duplicate"):
                     self.validate(fixture)
 
+    def test_rejects_unhashable_group_role_id_in_api_and_cli(self) -> None:
+        fixture = self.fresh_fixture()
+        self._write_bound_cast(
+            fixture,
+            groups=[{"groupID": "memory-001", "roleID": [], "blocks": ["s0-b4"]}],
+        )
+        with self.assertRaisesRegex(
+            module.SemanticVoiceCastError,
+            "cast group 0 roleID must be a secondary role",
+        ):
+            self.validate(fixture)
+
+        command = [
+            sys.executable, str(MODULE_PATH), "validate-cast",
+            "--cast", str(fixture.cast),
+            "--inventory", str(fixture.inventory),
+            "--voice-plan", str(fixture.plan),
+            "--epub", str(fixture.epub),
+        ]
+        for output_format in ("json", "argv0"):
+            with self.subTest(output_format=output_format):
+                result = subprocess.run(command + ["--format", output_format], capture_output=True)
+                self.assertEqual(65, result.returncode)
+                self.assertEqual(b"", result.stdout)
+                self.assertEqual(
+                    b"semantic voice cast: cast group 0 roleID must be a secondary role\n",
+                    result.stderr,
+                )
+
     @staticmethod
     def _make_image(inventory: dict[str, object], index: int) -> None:
         block = inventory["blocks"][index]

@@ -193,8 +193,8 @@ def _validate_cast(
         group_id = _require_string(group["groupID"], f"cast group {index} groupID")
         if GROUP_ID.fullmatch(group_id) is None:
             raise SemanticVoiceCastError(f"cast group {index} groupID is invalid")
-        if group["roleID"] not in SECONDARY_ROLES:
-            raise SemanticVoiceCastError(f"cast group {index} must use a secondary role")
+        if not isinstance(group["roleID"], str) or group["roleID"] not in SECONDARY_ROLES:
+            raise SemanticVoiceCastError(f"cast group {index} roleID must be a secondary role")
         blocks = group["blocks"]
         if not isinstance(blocks, list) or not 1 <= len(blocks) <= 4:
             raise SemanticVoiceCastError(f"cast group {index} must contain one to four blocks")
