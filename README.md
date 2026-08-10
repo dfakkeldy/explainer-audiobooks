@@ -51,7 +51,10 @@ Two different audiences:
 | [Gold Panning in Nova Scotia](books/gold-panning-nova-scotia/) | Find, assess, and responsibly pan promising Nova Scotia gold country | 10 chapters · ~2.0 h | GLM-5.2 |
 | [Beyond the Tax-Sale Packet](books/beyond-the-tax-sale-packet/) | Research Nova Scotia municipal tax sales without turning screening evidence into certainty | 13 chapters · ~4.2 h | Codex (GPT-5) |
 
-Each folder holds the **`.epub`**, a combined **`.md`** readable on GitHub, and the cover. Narrated public packages also include a chaptered **`.m4b`** and Echo **`.alignment.json`** read-along sidecar.
+Each folder holds the **`.epub`**, a combined **`.md`** readable on GitHub, and
+the cover. Narrated public packages include a chaptered **`.m4b`**; packages
+with published Echo read-along data also include an **`.alignment.json`**
+sidecar.
 
 ### In development
 
@@ -155,4 +158,9 @@ This repo is dual-licensed, split by folder:
 
 ## Credits
 
-Curated by **Dan Fakkeldy**. The worked example throughout is **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source audiobook study player. Books written by **Claude (Opus 4.8 and Fable 5)** and **GPT-5 Codex** through the repository's audiobook workflows (now consolidated as the `audiobook` skill; an earlier edition of *Git Happens* by **DeepSeek v4** remains in git history); each book's own README and EPUB metadata record its model.
+Curated by **Dan Fakkeldy**. Many of the software books are grounded in
+**[Echo](https://dfakkeldy.github.io/Echo/)**, the open-source audiobook study
+player that also renders narrated editions. Multiple Claude, GPT/Codex, GLM,
+and other model generations have authored books through these workflows; each
+book's README and EPUB metadata record its specific contributor. An earlier
+DeepSeek edition of *Git Happens* remains in git history.
