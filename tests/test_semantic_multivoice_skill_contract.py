@@ -18,6 +18,8 @@ PACKET = (
     / "references"
     / "handoff-packet.md"
 )
+FICTION = REPO / "skills" / "fiction-audiobook" / "SKILL.md"
+README = REPO / "README.md"
 
 
 class SemanticMultivoiceSkillContractTests(unittest.TestCase):
@@ -29,6 +31,8 @@ class SemanticMultivoiceSkillContractTests(unittest.TestCase):
         self.narration = NARRATION.read_text(encoding="utf-8")
         self.longform = LONGFORM.read_text(encoding="utf-8")
         self.packet = PACKET.read_text(encoding="utf-8")
+        self.fiction = FICTION.read_text(encoding="utf-8")
+        self.readme = README.read_text(encoding="utf-8")
         self.combined = " ".join(
             "\n".join(
                 (
@@ -110,6 +114,13 @@ class SemanticMultivoiceSkillContractTests(unittest.TestCase):
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.semantic_reference)
+
+    def test_fiction_uses_standard_source_bound_character_level_casting(self) -> None:
+        for document in (self.fiction, self.readme):
+            for marker in ("character-level", "source-bound", "standard"):
+                with self.subTest(document=document, marker=marker):
+                    self.assertIn(marker, document)
+            self.assertNotIn("chapter-level multi-voice Echo cast", document)
 
 
 if __name__ == "__main__":

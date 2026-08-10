@@ -35,6 +35,26 @@ class EchoNarrationContractTests(unittest.TestCase):
     def normalized(text: str) -> str:
         return " ".join(text.split())
 
+    def test_source_bound_runbook_supports_semantic_and_character_casts(self) -> None:
+        normalized = self.normalized(self.narrating)
+        for marker in (
+            "Nonfiction semantic cast",
+            "Fiction character cast",
+            "semantic_voice_cast.py",
+            "fiction_voice_preferences.py",
+            "export-blocks",
+            "resolve-voice-plan",
+            "--voice-plan",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, normalized)
+        self.assertIn("Echo alone decides block existence", normalized)
+
+    def test_block_handoffs_reject_invalid_casts_before_the_wrapper(self) -> None:
+        self.assertGreaterEqual(self.narrating.count("load_"), 2)
+        self.assertGreaterEqual(self.narrating.count("must be --voice-plan"), 2)
+        self.assertNotIn("`eval`", self.narrating)
+
     def test_builds_and_preflights_the_exact_release_cli(self) -> None:
         combined = self.normalized(self.narrating + "\n" + self.preflight)
         for marker in (
@@ -477,7 +497,7 @@ class EchoNarrationContractTests(unittest.TestCase):
 
     def test_fiction_block_runbook_names_executable_boundaries(self) -> None:
         """Keep only operator-visible command and artifact boundaries in prose."""
-        heading = "## Fiction source-bound block voices"
+        heading = "## Source-bound block voices"
         self.assertIn(heading, self.narrating)
         if heading not in self.narrating:
             return
@@ -651,7 +671,7 @@ class EchoNarrationContractTests(unittest.TestCase):
     def test_resume_and_delivery_steps_keep_block_vectors_and_gate_order(self) -> None:
         """Mode-specific command lines must not silently drop the block plan."""
         self.assertIn("## Chapter-mode resuming and partial renders", self.narrating)
-        fiction = self.narrating.split("## Fiction source-bound block voices", 1)[1]
+        fiction = self.narrating.split("## Source-bound block voices", 1)[1]
         resume = fiction.split("## Chapter-mode resuming and partial renders", 1)[0]
         self.assertIn('"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}"', resume)
 
