@@ -78,6 +78,11 @@ drifted: position at an opening or landing, time spent, a worked example,
 recurrence by name after a gap, and membership in a `Key points` checkpoint.
 Importance adjectives do not survive a lapse of attention; structure does.
 
+A stable memory voice can help re-entry and retrieval after the guide has
+taught an idea, but it cannot substitute for recurrence, clear prose, or a
+cold opening that names the subject again. A listener may miss the preceding
+thirty seconds, including the voice cue.
+
 ## Real-world grounding and analogy
 
 Every core mechanism needs a real application or consequence. Book-level

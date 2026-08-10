@@ -20,6 +20,13 @@ class AudiobookSkillContractTests(unittest.TestCase):
         lines = self.text.splitlines()
         self.assertLess(len(lines), 200, f"SKILL.md is {len(lines)} lines")
 
+    def test_semantic_voice_casting_reference_is_routed(self) -> None:
+        self.assertIn("references/semantic-voice-casting.md", self.text)
+
+    def test_production_validates_the_semantic_cast_before_handoff(self) -> None:
+        self.assertIn("validate the semantic cast", " ".join(self.text.split()))
+        self.assertNotIn("validate the\nsemantic ledger", self.text)
+
     def test_intake_asks_five_questions_then_starts(self) -> None:
         for needle in (
             "what should the listener be able to do",

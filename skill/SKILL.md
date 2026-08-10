@@ -34,12 +34,11 @@ once for exactly these five questions:
 ### Complete longform handoff
 
 When `$longform-book-development` supplies a complete handoff packet, skip the five-question intake.
-A handoff is complete enough when it settles the audience,
-outcome, length, privacy and listening context; governing question, narrative
-spine, chapter and section jobs; source locators and story material; voice and
-figure plan; five craft passes and blind beginner review; narration risks,
-author, contributor, and delivery boundary. An incomplete packet follows the
-ordinary-request route.
+A handoff is complete enough when it settles the audience, outcome, length,
+privacy and listening context; governing question, narrative spine, chapter and
+section jobs; source locators, story material, figure and semantic voice plan;
+five craft passes, blind beginner review, narration risks, author, contributor,
+and delivery boundary. An incomplete packet follows the ordinary-request route.
 
 After either route, state the plan in one line — title, angle, chapter count,
 estimated runtime — and start with no approval pause.
@@ -49,7 +48,8 @@ Apply silent defaults and write them to `source/brief.md`:
 | Choice | Default |
 |---|---|
 | Listening | `road-book`, for driving and delivering mail |
-| Narrator | `am_michael`, then `am_puck`; never `af_heart` |
+| Semantic cast | guide am_michael; memory plus optional field/coach; never af_heart |
+| Guide fallback | `am_puck` only when the guide voice is unavailable; record it; never `af_heart` |
 | Credits | author `Dan Fakkeldy`; model name in `--contributor` |
 | Voice | warm, second-person, spoken |
 | Privacy | private |
@@ -86,7 +86,9 @@ pause.
 
 Choose the learning shape with `references/curriculum-patterns.md`. Protect the
 driving context with `references/road-book-mode.md`, and use the chapter
-teaching plan and blind review in `references/learning-design.md`.
+teaching plan and blind review in `references/learning-design.md`. Plan the
+semantic roles, candidate Echo voices, listener exclusions, and frozen EPUB
+boundary in `references/semantic-voice-casting.md`.
 
 ## Draft
 
@@ -147,8 +149,9 @@ Run `skill/scripts/build_book.py` with the chapters, chosen covers, title,
 author `Dan Fakkeldy`, and model in `--contributor`. Resolve the absolute
 `NARRATION_SCRIPT` from this installed skill or its repository, then follow
 `skills/echo-narration/references/narrating.md` for the mandatory invocation
-and accepted-artifact verification contract. Never derive the pipeline root
-from the subject repository.
+and accepted-artifact verification contract. Freeze, inventory, validate the
+semantic cast, and pass its argv0 vector to that reference; never derive the
+pipeline root from the subject repository.
 
 For this Dan-specific personal workflow, the original request is standing
 private iCloud authorization. Record that authorization in

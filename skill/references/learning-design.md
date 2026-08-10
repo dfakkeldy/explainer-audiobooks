@@ -20,8 +20,9 @@ Before drafting, define:
 
 For each section, write its job, argument, supporting evidence and locator,
 throughline advance, practical example or analogy plan, landing beat, listening
-checkpoint (`Key points`, retrieval question, action rehearsal, or `none`), and
-what it must not repeat. A title such as "Chapter 4: APIs" is not a section job.
+checkpoint (`Key points`, retrieval question, action rehearsal, or `none`),
+semantic role when earned, and what it must not repeat. A title such as
+"Chapter 4: APIs" is not a section job.
 
 ## Chapter teaching plan
 
@@ -39,6 +40,9 @@ Each chapter plan states:
 - **Listening checkpoints:** the natural boundaries and two to four points the
   listener should be able to recall or act on at each one, or `none` for a minor
   transition.
+- **Semantic role:** `memory` only after teaching, `field` only for a concrete
+  case or evidence, `coach` only for a brief action or reflection, or `guide`
+  when no secondary role earns a complete paragraph group.
 - **Misconception:** the tempting wrong mental model to prevent.
 - **Expected ability:** the observable understanding the chapter should leave.
 

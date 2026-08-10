@@ -154,7 +154,14 @@ user means before creating a new one.
    style notes, AI-writing patterns to avoid, and the instruction to preserve
    facts, citations, technical names, and intentional teaching repetition. The
    packet must name listener-requested and author-anticipated pronunciation
-   risks, including every spoken variant that needs special attention.
+   risks, including every spoken variant that needs special attention. For a
+   nonfiction audiobook, add the Semantic Voice Plan using one mutually exclusive
+   route: a normal `guide` plus `memory` cast with earned secondary jobs, or a
+   guide-only explicit listener waiver cited from `source/brief.md`, with no
+   `memory`, secondary-role jobs, groups, or assignments. Include stable roles,
+   candidate Echo voices, listener preferences/exclusions, and the frozen EPUB
+   mapping boundary, but no guessed Echo block IDs. Include the
+   editorial ledger path `<BOOK_ROOT>/source/narration-role-ledger.md`.
    Define the later production loop explicitly: draft section by section with
    the full outline, grounded evidence, voice exemplar, previous-section text or
    running summary, section job, and must-not-repeat list. Require
@@ -216,6 +223,10 @@ settled enough to hand to production:
   plan of separate single-job passes including ear-pass,
 - source/research plan,
 - figure/image plan with provenance,
+- semantic voice roles, candidate Echo voices, earned paragraph jobs, listener
+  preferences/exclusions, and the frozen EPUB mapping boundary for audiobook
+  production, its `<BOOK_ROOT>/source/narration-role-ledger.md`, and no Echo
+  block IDs,
 - handoff packet ready for `audiobook`.
 
 The handoff also records whether the bounded `humanizer` pass is required,

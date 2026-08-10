@@ -130,8 +130,8 @@ the source-bound block procedure below; do not invoke a bare wrapper or
 Invoke the wrapper only through its public entry point. Do not bypass the
 wrapper with a direct CLI command. This is installed renderer work, never
 narration-time build work. The generic default/chapter examples in this section
-do not apply to a fiction character cast; use `Fiction source-bound block
-voices` below for that case. Stop immediately on any failure:
+do not apply to a fiction character cast; use `Source-bound block voices`
+below for that case. Stop immediately on any failure:
 
 ```bash
 set -euo pipefail
@@ -190,13 +190,34 @@ Apple/macOS/system voice narration for convenience. Native Echo/Kokoro output
 is the only accepted narrator; the only automatic fallback is from
 `am_michael` to `am_puck` when the preferred Echo voice is unavailable.
 
-## Fiction source-bound block voices
+## Source-bound block voices
 
-Use this procedure for a fiction character cast. It is block mode, not the
-chapter-voice mapping above. Before it starts, the craft workflow has recorded
-each blank-line source paragraph's intended speaker and frozen the final EPUB.
-Do not infer a speaker from quotation marks, attribution, prose, model output,
-or an Echo block. Do not calculate a plan hash or identity outside Echo.
+Use this block-mode procedure, not the chapter-voice mapping above, for either
+a Nonfiction semantic cast or a Fiction character cast. Each mode starts from
+an authored, frozen EPUB source and sends its validated plan to the same
+installed Echo resolver and governed wrapper. Do not calculate a plan hash or
+identity outside Echo.
+
+### Select and validate the cast mode
+
+- **Nonfiction semantic cast:** Follow
+  `skill/references/semantic-voice-casting.md`, then load its validated argv0
+  vector with `load_semantic_voice_arguments`. Its
+  `semantic_voice_cast.py validate-cast` handoff binds the semantic cast,
+  inventory, authored plan, and frozen EPUB before the wrapper.
+- **Fiction character cast:** Follow `express-fiction-craft.md`. Before it
+  starts, that workflow records each blank-line source paragraph's intended
+  speaker and freezes the final EPUB. Load
+  `fiction_voice_preferences.py validate-cast` argv0 with
+  `load_fiction_voice_arguments` below. Do not infer a character speaker from
+  quotation marks, attribution, prose, model output, or an Echo block.
+
+Neither validator infers speakers, expands ranges, or computes resolved
+identity. Echo alone decides block existence, speakability, range expansion,
+resolved identity, canonical plan bytes, and the resolution receipt. Before
+every first, resume, or partial block invocation, load the selected validator's
+NUL-delimited vector again. It must be --voice-plan plus the canonical authored
+plan; pass that exact vector unchanged to the wrapper.
 
 ### Export the installed-Echo inventory
 
@@ -212,7 +233,7 @@ Resolve the installed renderer for this new inventory with the shared resolver:
 The shared `echo_pronunciation_resolve_installed_renderer 0` below invokes
 that exact `echo_installed_renderer.py` command, accepts only its fixed env0
 record exactly once, and rejects incomplete, duplicate, or unknown keys without
-`eval`. It sets `CLI`, `ECHO_RESOURCE_DIR`, and
+interpreting shell text. It sets `CLI`, `ECHO_RESOURCE_DIR`, and
 `ECHO_RENDERER_BUILD_ROOT`; validate and live-attest that installed package
 before the leased inventory command:
 
@@ -243,11 +264,22 @@ LEASE_HELPER="$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_l
 
 This is exactly the installed command `echo-cli export-blocks --epub
 ABSOLUTE_FROZEN_EPUB --out ABSOLUTE_PRIVATE_INVENTORY_JSON`. It receives no
-voice plan and emits only Echo schema-1 `{version, source, blocks}`. Its
-inventory has no speaker field and makes no assignment. Never substitute a
-checkout or PATH-selected CLI.
+voice plan and emits only Echo inventory version 2 `{blocks, source, version}`.
+Its source is exactly `{epub, epubSHA256}`: `epub` is the frozen regular EPUB
+filename and `epubSHA256` is the lowercase SHA-256 of its exact bytes. An
+expanded directory may report a null digest but is intentionally invalid for
+semantic narration; do not substitute it for a frozen EPUB. `export-blocks`
+rejects PDFs, containers, symlinks, and nonregular inputs; this handoff must
+therefore preserve the direct regular frozen EPUB boundary. The inventory has
+no speaker field and makes no assignment. Never substitute a checkout or
+PATH-selected CLI.
 
-### Author, validate, and resolve the plan
+### Author, validate, and resolve the fiction plan
+
+The nonfiction semantic reference owns its distinct cast and prevalidation;
+continue there for its authoring inputs and use the shared inventory, resolver,
+wrapper, and evidence flow here. Do not use the fiction schema-2 cast or local
+preferences for a semantic role cast.
 
 Set `VOICE_CAST="$RUN_ROOT/_production/narration/voice-cast.json"` and
 `VOICE_PLAN="$RUN_ROOT/_production/narration/echo-voice-plan.json"`. From the
@@ -270,7 +302,7 @@ five-field resolution receipt (`blockCount`, `defaultVoice`,
 `sourceEPUBSHA256`, `voicePlanID`, and `voicePlanSHA256`). A local plan is
 never an operational identity until that resolution succeeds.
 
-Forward the validator's NUL-delimited result without `eval` or lossy
+Forward the validator's NUL-delimited result without shell interpretation or lossy
 reconstruction. `validate-cast` accepts `VOICE_PLAN` only when it is the
 canonical absolute authored-plan path. Use this status-preserving private
 scratch handoff immediately before every block-mode wrapper invocation; it
@@ -313,6 +345,11 @@ For block mode, do not export `VOICE`; the wrapper resolves the default from
 the sealed plan. Revalidate the identical token vector before a resume, then
 pass it with the canonical resume-state path:
 
+The `load_fiction_voice_arguments` calls below are the fiction form of the
+shared commands. For nonfiction, call `load_semantic_voice_arguments` at the
+same positions and pass its resulting `VOICE_ARGUMENTS` unchanged; do not
+substitute a bare wrapper call.
+
 ```bash
 load_fiction_voice_arguments || exit $?
 "$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
@@ -324,7 +361,7 @@ receipts, a work directory, database, or resume state into it.
 
 ### Block-mode resume and partial renders
 
-These commands apply only to a fiction `--voice-plan` render. Keep the exact
+These commands apply only to a source-bound `--voice-plan` render. Keep the exact
 validated argv0 vector on every invocation; a bare resume or partial command
 silently drops the authored plan. For an accepted partial attempt, read the
 canonical resume-state path for its current `RUN_ID`, revalidate the vector,
@@ -361,7 +398,7 @@ If a plan edit resolves to a different identity, do not resume: let the
 wrapper create the new run and retain the earlier chain without reusing any
 captures or state.
 
-### Fiction block evidence
+### Block-mode evidence
 
 For a completed block run, require schema-2 captures, a schema-4 success
 receipt, and a schema-7 pronunciation audit tied to the same resolved plan.
@@ -373,8 +410,8 @@ or listening.
 
 ## Chapter-mode resuming and partial renders
 
-This entire section is for the default/chapter-voice procedure only. Fiction
-block renders use the preceding argv0-vector commands and never borrow the
+This entire section is for the default/chapter-voice procedure only.
+Source-bound block renders use the preceding argv0-vector commands and never borrow the
 bare examples below.
 
 Use a fresh `--work-dir` and `--db` whenever the source EPUB changes or the
@@ -472,7 +509,7 @@ the sidecar against the exact EPUB and audio bytes and must report
 
 ### Block-mode verification
 
-For a completed fiction block run, derive the mode, sealed internal reel path,
+For a completed source-bound block run, derive the mode, sealed internal reel path,
 resolved-plan SHA-256, and block count from the accepted schema-4 success/input
 receipt chain. They are not shell variables exported by the wrapper's child
 process. The state reader below rejects a non-current selector, a non-block
@@ -577,7 +614,7 @@ it with a caller-controlled `VOICE`.
 ### Chapter-mode verification
 
 The following default/chapter-voice procedure is chapter mode only. Do not use
-it for a fiction `--voice-plan` render; use the receipt-derived block
+it for a source-bound `--voice-plan` render; use the receipt-derived block
 procedure above instead. After a chapter-mode render completes, resolve the
 accepted artifacts from the current selector, then verify them before treating
 the render as done:

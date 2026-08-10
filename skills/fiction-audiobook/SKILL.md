@@ -13,6 +13,8 @@ Read `references/express-fiction-craft.md` and
 
 1. Listening packages use this; `fiction-book-development` for manuscript-only
    work.
+   New editions use the landed source-bound character-level Echo cast as the
+   standard narration path.
 2. Ask nothing unless grilling/interview explicit; then one batch only:
    genre/mood; must-haves; exclusions; POV/distance; ending; casting. Never
    follow up.

@@ -877,7 +877,7 @@ echo-cli export-blocks --epub ABSOLUTE_FROZEN_EPUB \
   --out ABSOLUTE_PRIVATE_INVENTORY_JSON
 ```
 
-Resolve `CLI`, `ECHO_RESOURCE_DIR`, and `ECHO_RENDERER_BUILD_ROOT` through `echo_installed_renderer.py resolve-new --source-sha APPROVED_ECHO_PRONUNCIATION_SHA --format env0`; invoke the command through `echo_pronunciation_lease.py --lock-root CANONICAL_LEASE_ROOT --resource ECHO_RENDERER_BUILD_ROOT --`; and set `ECHO_RESOURCE_DIR` explicitly in the child environment. Never use a checkout or PATH-selected CLI. The inventory command must not receive the voice plan; it only emits Echo's schema-1 `{version, source, blocks}` document.
+Resolve `CLI`, `ECHO_RESOURCE_DIR`, and `ECHO_RENDERER_BUILD_ROOT` through `echo_installed_renderer.py resolve-new --source-sha APPROVED_ECHO_PRONUNCIATION_SHA --format env0`; invoke the command through `echo_pronunciation_lease.py --lock-root CANONICAL_LEASE_ROOT --resource ECHO_RENDERER_BUILD_ROOT --`; and set `ECHO_RESOURCE_DIR` explicitly in the child environment. Never use a checkout or PATH-selected CLI. The inventory command must not receive the voice plan; it emits Echo inventory version 2 with exact root `{blocks, source, version}` and exact source `{epub, epubSHA256}`. `epub` is the direct frozen regular EPUB filename and `epubSHA256` is its lowercase exact-byte digest. The authored Echo voice plan remains schema 1.
 
 The inventory is for an author to choose block IDs; it has no speaker field and makes no assignment. Write the exact Echo schema-1 plan under `_production/narration/echo-voice-plan.json`, then require `resolve-voice-plan` success before narration. Explain that only Echo decides block existence/speakability, range expansion, and resolved identity.
 

@@ -82,6 +82,10 @@ class AudiobookLongformHandoffContractTests(unittest.TestCase):
             "author",
             "contributor",
             "delivery",
+            "semantic",
+            "role",
+            "candidate echo voices",
+            "frozen epub",
         )
         for requirement in shared_requirements:
             with self.subTest(requirement=requirement):

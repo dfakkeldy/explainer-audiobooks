@@ -129,6 +129,8 @@ verification tooling. A compatible agent host can use it to make a book about a
 technical system, practical skill, place, or idea, grounded in sources it can
 inspect. The Claude Code installation example is in
 **[`docs/make-your-own.md`](docs/make-your-own.md)**.
+New nonfiction learning books use stable semantic guide, memory, field, and
+coach roles when a multi-voice cast earns them.
 
 The **[`longform-book-development`](skills/longform-book-development/)** skill is
 the slower front door for book ideas that need several rounds of shaping before
@@ -144,7 +146,8 @@ Markdown manuscript unless production is separately requested.
 The **[`fiction-audiobook`](skills/fiction-audiobook/)** express skill turns one
 fiction premise into a complete listening package with zero intake by default,
 or one six-topic batch when the user asks to be grilled. It selects a coherent
-chapter-level multi-voice Echo cast, delivers a flat iCloud title folder, and
+source-bound character-level Echo cast as the standard, delivers a flat iCloud
+title folder, and
 uses public-first publication for original public-safe fiction with a
 private-delivery fallback whenever privacy, rights, or verification blocks the
 public gate.

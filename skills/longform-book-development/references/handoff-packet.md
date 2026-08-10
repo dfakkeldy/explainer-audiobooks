@@ -69,6 +69,31 @@ case, and distinct teaching beats. For each section, record:
 - Facts, citations, technical names, and examples that must not change:
 - De-Claudification gate: required
 
+## Semantic Voice Plan
+
+Choose exactly one mutually exclusive route; never write a reduced normal cast
+as though it were a waiver.
+
+### Normal cast
+
+- Selected roles: `guide` plus `memory`, with `field` and `coach` only when
+  their paragraph jobs are earned.
+- Candidate Echo voices, audition passage, and selected role/voice pairs:
+- Passages or section jobs expected to earn each secondary role:
+- Listener preferences and exclusions:
+- Editorial narration role ledger: `<BOOK_ROOT>/source/narration-role-ledger.md`,
+  recording each planned secondary passage, role, learning job, and source location.
+- Frozen EPUB mapping boundary: production creates the Echo inventory only after
+  the EPUB freezes and maps the ledger to it; this handoff does not contain Echo block IDs.
+
+### Guide-only waiver
+
+- Explicit listener waiver cited from `source/brief.md`:
+- Selected role: `guide` only.
+- No `memory`, no secondary-role jobs, no groups, and no assignments.
+- Candidate guide voice, audition passage, listener preferences/exclusions, and
+  the same frozen EPUB mapping boundary; this handoff does not contain Echo block IDs.
+
 ## Figure Plan
 
 For every figure:
@@ -121,6 +146,12 @@ A packet is production-ready when it includes:
 - chapter purposes and section-level argument jobs;
 - source locators, story material, and the exact names production must preserve;
 - a voice direction with positive examples and disliked patterns;
+- a Semantic Voice Plan in its declared route: a normal cast requires earned
+  secondary-role jobs, candidate Echo voices, listener preferences/exclusions,
+  the `<BOOK_ROOT>/source/narration-role-ledger.md`, and the frozen EPUB
+  boundary; a guide-only waiver requires cited `source/brief.md` listener
+  evidence and guide only with no `memory`, secondary-role jobs, groups, or
+  assignments;
 - a rights-aware picture plan, including a zero-figure decision when relevant;
 - the preserve-on-revision notes for any existing edition;
 - the five separate craft passes and blind beginner review;
