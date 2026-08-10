@@ -192,11 +192,15 @@ A guide-only waiver has one guide speaker and no assignments:
 }
 ```
 
-Echo's installed `export-blocks` creates the inventory; it is the boundary for
-actual block IDs, paragraph status, and order. Map the already-authored ledger
-to that frozen inventory as whole paragraph groups. Never guess IDs, construct
-ranges, infer roles, or treat local validation as a decision about Echo
-speakability or plan identity.
+Echo's installed `export-blocks` v2 creates the inventory; it is the boundary
+for actual block IDs, paragraph status, and order. Its root is exactly
+`{blocks, source, version}` and its `source` is exactly `{epub, epubSHA256}`:
+the EPUB is the frozen regular EPUB filename and the digest is its lowercase
+SHA-256. The semantic validator requires version `2`, that exact filename, and
+that exact digest. A null digest from an expanded directory is not a semantic
+narration input. Map the already-authored ledger to that frozen inventory as
+whole paragraph groups. Never guess IDs, construct ranges, infer roles, or
+treat local validation as a decision about Echo speakability or plan identity.
 
 ## Validate and hand off
 

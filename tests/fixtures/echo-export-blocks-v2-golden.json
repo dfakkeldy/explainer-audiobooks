@@ -1,0 +1,169 @@
+{
+  "blocks" : [
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b0",
+      "kind" : "paragraph",
+      "sequenceIndex" : 0,
+      "text" : "Synthetic fixture paragraph zero.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b1",
+      "kind" : "paragraph",
+      "sequenceIndex" : 1,
+      "text" : "Synthetic fixture paragraph one.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b2",
+      "kind" : "paragraph",
+      "sequenceIndex" : 2,
+      "text" : "Synthetic fixture paragraph two.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b3",
+      "kind" : "paragraph",
+      "sequenceIndex" : 3,
+      "text" : "Synthetic fixture paragraph three.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b4",
+      "kind" : "paragraph",
+      "sequenceIndex" : 4,
+      "text" : "Synthetic fixture paragraph four.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b5",
+      "kind" : "paragraph",
+      "sequenceIndex" : 5,
+      "text" : "Synthetic fixture paragraph five.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b6",
+      "kind" : "paragraph",
+      "sequenceIndex" : 6,
+      "text" : "Synthetic fixture paragraph six.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b7",
+      "kind" : "paragraph",
+      "sequenceIndex" : 7,
+      "text" : "Synthetic fixture paragraph seven.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b8",
+      "kind" : "paragraph",
+      "sequenceIndex" : 8,
+      "text" : "Synthetic fixture paragraph eight.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b9",
+      "kind" : "paragraph",
+      "sequenceIndex" : 9,
+      "text" : "Synthetic fixture paragraph nine.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b10",
+      "kind" : "paragraph",
+      "sequenceIndex" : 10,
+      "text" : "Synthetic fixture paragraph ten.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b11",
+      "kind" : "paragraph",
+      "sequenceIndex" : 11,
+      "text" : "Synthetic fixture paragraph eleven.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b12",
+      "kind" : "paragraph",
+      "sequenceIndex" : 12,
+      "text" : "Synthetic fixture paragraph twelve.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b13",
+      "kind" : "paragraph",
+      "sequenceIndex" : 13,
+      "text" : "Synthetic fixture paragraph thirteen.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b14",
+      "kind" : "paragraph",
+      "sequenceIndex" : 14,
+      "text" : "Synthetic fixture paragraph fourteen.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b15",
+      "kind" : "paragraph",
+      "sequenceIndex" : 15,
+      "text" : "Synthetic fixture paragraph fifteen.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b16",
+      "kind" : "paragraph",
+      "sequenceIndex" : 16,
+      "text" : "Synthetic fixture paragraph sixteen.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b17",
+      "kind" : "paragraph",
+      "sequenceIndex" : 17,
+      "text" : "Synthetic fixture paragraph seventeen.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b18",
+      "kind" : "paragraph",
+      "sequenceIndex" : 18,
+      "text" : "Synthetic fixture paragraph eighteen.",
+      "wordCount" : 4
+    },
+    {
+      "chapterIndex" : 0,
+      "id" : "s0-b19",
+      "kind" : "paragraph",
+      "sequenceIndex" : 19,
+      "text" : "Synthetic fixture paragraph nineteen.",
+      "wordCount" : 4
+    }
+  ],
+  "source" : {
+    "epub" : "fixture.epub",
+    "epubSHA256" : "6f3071adf33912937ea8c05de85606c836ddc85c199f32de2fb121f1416e5375"
+  },
+  "version" : 2
+}

@@ -1,7 +1,8 @@
 # Semantic Multi-Voice Audiobooks Design
 
 Date: 2026-08-09
-Status: approved for implementation
+Status: approved design; amended 2026-08-10 for the reviewed Echo
+`export-blocks` v2 source-binding contract.
 
 ## Purpose
 
@@ -129,6 +130,13 @@ assignment.
 IDs. The default speaker is `guide`. Nonfiction assignments use explicit block
 lists only; range assignments fail local validation so sparse-role and switching
 rules remain inspectable without reimplementing Echo's range semantics.
+
+The Echo inventory is version 2, not an authored plan schema change. Its root
+has exactly `blocks`, `source`, and `version`; `source` has exactly `epub` and
+`epubSHA256`. Semantic narration accepts only a direct frozen regular EPUB when
+that filename and lowercase SHA-256 agree with the cast and the actual bytes.
+An expanded directory's null digest fails closed. Cast schema 1 and authored
+Echo voice-plan schema 1 remain unchanged.
 
 ## Production Flow
 

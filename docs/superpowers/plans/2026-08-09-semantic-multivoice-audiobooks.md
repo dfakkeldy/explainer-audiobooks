@@ -4,14 +4,21 @@
 
 **Goal:** Make source-bound character voices standard for new fiction audiobooks and add sparse, role-based semantic voices as the default for new nonfiction learning audiobooks.
 
-**Architecture:** Keep the landed Echo schema-1 block plan and governed narration wrapper unchanged. Add one closed nonfiction cast envelope plus a deterministic Python validator that joins the frozen EPUB, Echo inventory, semantic cast, and authored plan before the wrapper invokes Echo's authoritative resolver. Keep detailed pedagogy in a new progressively loaded reference so `skill/SKILL.md` stays below its 200-line contract.
+**Architecture:** Keep cast schema-1, Echo authored voice-plan schema-1, and the governed narration wrapper unchanged. Add one closed nonfiction cast envelope plus a deterministic Python validator that joins the frozen EPUB, Echo inventory v2, semantic cast, and authored plan before the wrapper invokes Echo's authoritative resolver. Keep detailed pedagogy in a new progressively loaded reference so `skill/SKILL.md` stays below its 200-line contract.
+
+> **2026-08-10 amendment:** The original audiobook work did not change Echo.
+> This user-authorized follow-up consumes the reviewed `export-blocks` v2
+> contract from separate Echo commit `f02c045f`: root `{blocks, source,
+> version}`, version `2`, and exact source `{epub, epubSHA256}`. No Echo
+> install, promotion, render, or Apple build occurred for this amendment; Echo
+> verification remains separately gated.
 
 **Tech Stack:** Python 3.11 via `/usr/local/bin/python3`, standard-library `argparse`/`dataclasses`/`hashlib`/`json`, JSON Schema draft 2020-12, Markdown skills and references, `unittest`, Bash wrapper contracts, installed Echo PRs 531–533.
 
 ## Global Constraints
 
 - Preserve the unrelated `CLAUDE.md` modification in the canonical checkout; work only in the isolated `codex/semantic-multivoice-audiobooks` worktree.
-- Do not build, install, repair, or promote Echo; consume the already-landed `export-blocks`, `resolve-voice-plan`, and `--voice-plan` interfaces.
+- Do not build, install, repair, or promote Echo in this audiobook worktree; consume the reviewed `export-blocks` v2, `resolve-voice-plan`, and `--voice-plan` interfaces. The Echo contract change is a separate user-authorized Echo PR.
 - Do not modify the governed narration wrapper unless a failing nonfiction-lane test proves it incompatible.
 - Do not add a third-party dependency; the validator must use the Python standard library.
 - Echo remains authoritative for block existence, speakability, range expansion, resolved plan bytes, and plan identity.
@@ -91,6 +98,16 @@ The only allowed roles, in declaration order, are `guide`, `memory`, `field`, an
 ```
 
 When the waiver is present, `roles` contains only `guide`, `groups` and Echo `assignments` are empty, and the authored plan still binds the frozen EPUB and guide voice.
+
+### Echo export-blocks inventory v2
+
+The inventory root has exactly `blocks`, `source`, and `version`; `version` is
+the integer `2`. Its `source` has exactly `epub` and `epubSHA256`. `epub` is a
+safe filename that must equal both the cast's `source.epubFileName` and the
+actual frozen regular EPUB filename. `epubSHA256` is the lowercase 64-hex
+digest of those exact bytes and must not be null. Expanded directories are not
+valid semantic narration inputs. This changes neither cast schemaVersion `1`
+nor authored Echo voice-plan schemaVersion `1`.
 
 ### Python API and CLI
 
@@ -284,7 +301,7 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 ```
 
-Validate the cast's closed nested objects and types directly rather than importing a JSON Schema runtime. Derive the run root from the exact `_production/narration/semantic-voice-cast.json` suffix and require the plan, inventory, and EPUB at the stable paths defined above. Validate the Echo inventory as version 1 with exact `source.epubSHA256` and a block array containing unique IDs and sequence indexes. Accept only the documented Echo block keys: `id`, `kind`, `text`, `chapterIndex`, `sequenceIndex`, `wordCount`, plus `imagePath` only for image blocks.
+Validate the cast's closed nested objects and types directly rather than importing a JSON Schema runtime. Derive the run root from the exact `_production/narration/semantic-voice-cast.json` suffix and require the plan, inventory, and EPUB at the stable paths defined above. Validate the Echo inventory as version 2 with exact `source.epub` and `source.epubSHA256`; require the safe filename to equal the cast and frozen EPUB name, and require the lowercase digest to equal the frozen EPUB bytes. A null digest or expanded directory fails closed. Require a block array containing unique IDs and sequence indexes. Accept only the documented Echo block keys: `id`, `kind`, `text`, `chapterIndex`, `sequenceIndex`, `wordCount`, plus `imagePath` only for image blocks.
 
 Load `echo_voice_plan.py` from the repository-relative path and reuse `VOICE_IDS`. Do not import fiction preferences or duplicate the catalog.
 

@@ -957,7 +957,8 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             run_root / "research" / f"echo-block-inventory-{source_sha256}.json"
         )
         inventory_payload = json.loads(inventory.read_text(encoding="utf-8"))
-        self.assertEqual(1, inventory_payload["version"])
+        self.assertEqual(2, inventory_payload["version"])
+        self.assertEqual(epub.name, inventory_payload["source"]["epub"])
         self.assertEqual(source_sha256, inventory_payload["source"]["epubSHA256"])
         self.assertEqual(["s2-b3", "s2-b4", "s2-b5"], [
             block["id"] for block in inventory_payload["blocks"]
@@ -1469,6 +1470,8 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
         self.assertEqual(0, exported.returncode, exported.stderr)
         inventory = research / f"echo-block-inventory-{source_sha256}.json"
         inventory_payload = json.loads(inventory.read_text(encoding="utf-8"))
+        self.assertEqual(2, inventory_payload["version"])
+        self.assertEqual(epub.name, inventory_payload["source"]["epub"])
         self.assertEqual(source_sha256, inventory_payload["source"]["epubSHA256"])
         self.assertEqual(["s2-b3", "s2-b4", "s2-b5"], [
             block["id"] for block in inventory_payload["blocks"]

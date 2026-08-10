@@ -16,6 +16,11 @@ from pathlib import Path
 ROOT = Path(__file__).parents[1]
 MODULE_PATH = ROOT / "skill" / "scripts" / "semantic_voice_cast.py"
 SEMANTIC_REFERENCE = ROOT / "skill" / "references" / "semantic-voice-casting.md"
+ECHO_V2_GOLDEN_INVENTORY = ROOT / "tests" / "fixtures" / "echo-export-blocks-v2-golden.json"
+# Contract reviewed from Echo f02c045f: export-blocks v2 emits only blocks,
+# source, and version, with source.epub plus source.epubSHA256.  This is
+# audiobook-side fixture evidence, not a claim that Echo was built or run here.
+ECHO_EXPORT_BLOCKS_V2_CONTRACT_COMMIT = "f02c045f"
 SPEC = importlib.util.spec_from_file_location("semantic_voice_cast_test_module", MODULE_PATH)
 if SPEC is None or SPEC.loader is None:
     raise RuntimeError(f"cannot load {MODULE_PATH}")
@@ -66,8 +71,8 @@ class SemanticCastFixture:
             for index in range(20)
         ]
         return {
-            "version": 1,
-            "source": {"epubSHA256": digest(self.epub)},
+            "version": 2,
+            "source": {"epub": self.epub.name, "epubSHA256": digest(self.epub)},
             "blocks": blocks,
         }
 
@@ -190,6 +195,24 @@ class SemanticVoiceCastTests(unittest.TestCase):
         self.assertEqual(19, result.guide_block_count)
         self.assertEqual({"memory": 1}, result.role_block_counts)
 
+    def test_validates_synthetic_echo_v2_golden_inventory_with_matching_frozen_epub(self) -> None:
+        """Reject a validator regression that accepts v1 or omits the EPUB name."""
+        fixture = self.fresh_fixture()
+        inventory = json.loads(ECHO_V2_GOLDEN_INVENTORY.read_text(encoding="utf-8"))
+        self.assertEqual(["blocks", "source", "version"], list(inventory))
+        source = inventory["source"]
+        assert isinstance(source, dict)
+        self.assertEqual(["epub", "epubSHA256"], list(source))
+        self.assertEqual(2, inventory["version"])
+        fixture.epub.write_bytes(b"Echo v2 golden fixture EPUB bytes\n")
+        self.assertEqual(fixture.epub.name, source["epub"])
+        self.assertEqual(digest(fixture.epub), source["epubSHA256"])
+        fixture.inventory.write_bytes(ECHO_V2_GOLDEN_INVENTORY.read_bytes())
+        fixture.write_plan()
+        fixture.write_cast()
+
+        self.validate(fixture)
+
     def test_documented_cast_examples_are_canonical_and_validate_when_materialized(self) -> None:
         reference = SEMANTIC_REFERENCE.read_text(encoding="utf-8")
         normal_bytes, normal_cast = self.documented_json_example(
@@ -282,6 +305,28 @@ class SemanticVoiceCastTests(unittest.TestCase):
 
         with self.assertRaisesRegex(module.SemanticVoiceCastError, "inventory source EPUB hash"):
             self.validate()
+
+    def test_rejects_v1_or_unbound_echo_inventory_source(self) -> None:
+        cases = (
+            ("v1", lambda source, inventory: inventory.__setitem__("version", 1), "inventory version"),
+            ("null digest", lambda source, inventory: source.__setitem__("epubSHA256", None), "inventory source EPUB hash"),
+            ("wrong digest", lambda source, inventory: source.__setitem__("epubSHA256", "f" * 64), "inventory source EPUB hash"),
+            ("wrong filename", lambda source, inventory: source.__setitem__("epub", "other.epub"), "inventory source EPUB filename"),
+            ("unknown source key", lambda source, inventory: source.__setitem__("extra", True), "inventory source"),
+            ("unknown root key", lambda source, inventory: inventory.__setitem__("extra", True), "inventory has unexpected keys"),
+            ("path filename", lambda source, inventory: source.__setitem__("epub", "dist/fixture.epub"), "inventory source EPUB filename"),
+        )
+        for name, mutate, pattern in cases:
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                inventory = fixture.inventory_payload()
+                source = inventory["source"]
+                assert isinstance(source, dict)
+                mutate(source, inventory)
+                fixture.write_json(fixture.inventory, inventory)
+                fixture.write_cast()
+                with self.assertRaisesRegex(module.SemanticVoiceCastError, pattern):
+                    self.validate(fixture)
 
     @staticmethod
     def _rewrite_cast(fixture: SemanticCastFixture, key: str, value: str) -> None:

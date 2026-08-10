@@ -87,8 +87,8 @@ class EchoNarrationContractTests(unittest.TestCase):
             inventory.write_text(
                 json.dumps(
                     {
-                        "version": 1,
-                        "source": {"epubSHA256": epub_hash},
+                        "version": 2,
+                        "source": {"epub": epub.name, "epubSHA256": epub_hash},
                         "blocks": [
                             {
                                 "id": "s0-b0",

@@ -264,9 +264,15 @@ LEASE_HELPER="$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_l
 
 This is exactly the installed command `echo-cli export-blocks --epub
 ABSOLUTE_FROZEN_EPUB --out ABSOLUTE_PRIVATE_INVENTORY_JSON`. It receives no
-voice plan and emits only Echo schema-1 `{version, source, blocks}`. Its
-inventory has no speaker field and makes no assignment. Never substitute a
-checkout or PATH-selected CLI.
+voice plan and emits only Echo inventory version 2 `{blocks, source, version}`.
+Its source is exactly `{epub, epubSHA256}`: `epub` is the frozen regular EPUB
+filename and `epubSHA256` is the lowercase SHA-256 of its exact bytes. An
+expanded directory may report a null digest but is intentionally invalid for
+semantic narration; do not substitute it for a frozen EPUB. `export-blocks`
+rejects PDFs, containers, symlinks, and nonregular inputs; this handoff must
+therefore preserve the direct regular frozen EPUB boundary. The inventory has
+no speaker field and makes no assignment. Never substitute a checkout or
+PATH-selected CLI.
 
 ### Author, validate, and resolve the fiction plan
 
