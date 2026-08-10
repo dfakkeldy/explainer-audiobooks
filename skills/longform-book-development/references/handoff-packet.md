@@ -69,6 +69,16 @@ case, and distinct teaching beats. For each section, record:
 - Facts, citations, technical names, and examples that must not change:
 - De-Claudification gate: required
 
+## Semantic Voice Plan
+
+- Selected roles: `guide` plus `memory`, with `field` and `coach` only when
+  their paragraph jobs are earned.
+- Candidate Echo voices, audition passage, and selected role/voice pairs:
+- Passages or section jobs expected to earn each secondary role:
+- Listener preferences and exclusions:
+- Frozen EPUB mapping boundary: production creates the Echo inventory only after
+  the EPUB freezes and maps the ledger to it; this handoff does not contain Echo block IDs.
+
 ## Figure Plan
 
 For every figure:
@@ -121,6 +131,8 @@ A packet is production-ready when it includes:
 - chapter purposes and section-level argument jobs;
 - source locators, story material, and the exact names production must preserve;
 - a voice direction with positive examples and disliked patterns;
+- a Semantic Voice Plan with roles, candidate Echo voices, earned secondary
+  role jobs, listener preferences/exclusions, and the frozen EPUB boundary;
 - a rights-aware picture plan, including a zero-figure decision when relevant;
 - the preserve-on-revision notes for any existing edition;
 - the five separate craft passes and blind beginner review;

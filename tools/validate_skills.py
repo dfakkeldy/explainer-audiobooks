@@ -246,6 +246,7 @@ def main() -> int:
     semantic_support = (
         "skill/schemas/semantic-voice-cast-v1.schema.json",
         "skill/scripts/semantic_voice_cast.py",
+        "skill/references/semantic-voice-casting.md",
     )
     for path in semantic_support:
         require((ROOT / path).is_file(), f"missing semantic voice-cast support path: {path}")

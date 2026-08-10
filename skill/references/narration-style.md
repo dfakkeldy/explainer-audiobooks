@@ -101,6 +101,17 @@ KEY-POINTS CHECKPOINTS — make understanding testable:
   every detail, turn it into a visual bullet list, or attach the same recap to
   every minor section. A narrative bridge may need no checkpoint.
 
+SEMANTIC VOICES — reinforce a learning job, never decorate prose:
+- The guide remains the continuous narrator. A secondary role gets only a
+  complete, self-contained paragraph after its job is earned; never switch for
+  an isolated word, term, heading, title fragment, or accent.
+- A memory paragraph follows teaching and retrieves an already-taught idea for
+  a listener who missed the preceding thirty seconds. It introduces no new
+  checkpoint facts.
+- A field paragraph grounds a concrete example or evidence; a coach paragraph
+  prompts a brief action or reflection. Neither replaces explanation, and no
+  secondary voice may introduce a new checkpoint fact.
+
 EMPHASIS — say it once, plainly, then move on:
 - When something genuinely matters, say so in ordinary words, once, and let the
   explanation itself carry the weight. The clearest writing rarely announces its

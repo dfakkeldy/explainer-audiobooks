@@ -154,7 +154,10 @@ user means before creating a new one.
    style notes, AI-writing patterns to avoid, and the instruction to preserve
    facts, citations, technical names, and intentional teaching repetition. The
    packet must name listener-requested and author-anticipated pronunciation
-   risks, including every spoken variant that needs special attention.
+   risks, including every spoken variant that needs special attention. For a
+   nonfiction audiobook, add the Semantic Voice Plan: stable roles, candidate
+   Echo voices, earned paragraph jobs, listener preferences/exclusions, and the
+   frozen EPUB mapping boundary, but no guessed Echo block IDs.
    Define the later production loop explicitly: draft section by section with
    the full outline, grounded evidence, voice exemplar, previous-section text or
    running summary, section job, and must-not-repeat list. Require
@@ -216,6 +219,9 @@ settled enough to hand to production:
   plan of separate single-job passes including ear-pass,
 - source/research plan,
 - figure/image plan with provenance,
+- semantic voice roles, candidate Echo voices, earned paragraph jobs, listener
+  preferences/exclusions, and the frozen EPUB mapping boundary for audiobook
+  production, without Echo block IDs,
 - handoff packet ready for `audiobook`.
 
 The handoff also records whether the bounded `humanizer` pass is required,
