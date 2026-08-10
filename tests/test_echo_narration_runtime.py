@@ -5025,6 +5025,74 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
 
         self.assertEqual(0, result.returncode, result.stderr)
 
+    def test_schema_7_accepts_imported_decision_block_id_with_planned_suffix(
+        self,
+    ) -> None:
+        self.payload = self.schema_7_payload()
+        decision = self.valid_decision()
+        decision["blockID"] = (
+            "epub-runner-the-human-exception-ch09-multivoice-acceptance-"
+            "the-human-exception-ch09-multivoice-acceptance.epub-s2-b3"
+        )
+        self.payload["decisions"] = [decision]
+        self.payload["watchCounts"]["filesystem"] = 1
+        reel = self.tmp / "fixture.pronunciation-reel.m4b"
+        reel.write_bytes(b"fixture listening reel")
+        self.payload["listeningReelFileName"] = reel.name
+        self.payload["listeningReelSHA256"] = hashlib.sha256(reel.read_bytes()).hexdigest()
+
+        result = self.run_validator(*self.schema_7_arguments(reel=reel))
+
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_schema_7_rejects_imported_decision_block_id_with_unplanned_suffix(
+        self,
+    ) -> None:
+        self.payload = self.schema_7_payload()
+        decision = self.valid_decision()
+        decision["blockID"] = (
+            "epub-runner-the-human-exception-ch09-multivoice-acceptance-"
+            "the-human-exception-ch09-multivoice-acceptance.epub-s2-b99"
+        )
+        self.payload["decisions"] = [decision]
+        self.payload["watchCounts"]["filesystem"] = 1
+        reel = self.tmp / "fixture.pronunciation-reel.m4b"
+        reel.write_bytes(b"fixture listening reel")
+        self.payload["listeningReelFileName"] = reel.name
+        self.payload["listeningReelSHA256"] = hashlib.sha256(reel.read_bytes()).hexdigest()
+
+        result = self.run_validator(*self.schema_7_arguments(reel=reel))
+
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(
+            "decisions[0].blockID is absent from blockVoices",
+            result.stderr,
+        )
+
+    def test_schema_7_rejects_imported_decision_block_id_with_trailing_newline(
+        self,
+    ) -> None:
+        self.payload = self.schema_7_payload()
+        decision = self.valid_decision()
+        decision["blockID"] = (
+            "epub-runner-the-human-exception-ch09-multivoice-acceptance-"
+            "the-human-exception-ch09-multivoice-acceptance.epub-s2-b3\n"
+        )
+        self.payload["decisions"] = [decision]
+        self.payload["watchCounts"]["filesystem"] = 1
+        reel = self.tmp / "fixture.pronunciation-reel.m4b"
+        reel.write_bytes(b"fixture listening reel")
+        self.payload["listeningReelFileName"] = reel.name
+        self.payload["listeningReelSHA256"] = hashlib.sha256(reel.read_bytes()).hexdigest()
+
+        result = self.run_validator(*self.schema_7_arguments(reel=reel))
+
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(
+            "decisions[0].blockID is absent from blockVoices",
+            result.stderr,
+        )
+
     def test_schema_7_rejects_unbound_block_provenance(self) -> None:
         cases: list[tuple[str, Callable[[dict[str, object]], None], tuple[str, ...]]] = []
 

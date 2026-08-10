@@ -92,7 +92,7 @@ SCHEMA_7_REQUIRED_FIELDS = {
     "diagnostics",
 }
 SCHEMA_7_REEL_FIELDS = {"listeningReelFileName", "listeningReelSHA256"}
-BLOCK_ID_PATTERN = re.compile(r"s[0-9]+-b[0-9]+")
+BLOCK_ID_PATTERN = re.compile(r"s[0-9]+-b[0-9]+\Z")
 DECISION_REQUIRED_FIELDS = {
     "blockID",
     "wordStart",
@@ -635,8 +635,10 @@ def validate(
     ]
     if schema_7:
         for index, decision in enumerate(decisions):
+            portable_block_id = BLOCK_ID_PATTERN.search(decision["blockID"])
             require(
-                decision["blockID"] in block_voices,
+                portable_block_id is not None
+                and portable_block_id.group(0) in block_voices,
                 f"decisions[{index}].blockID is absent from blockVoices",
             )
     elif schema_version >= 3:
