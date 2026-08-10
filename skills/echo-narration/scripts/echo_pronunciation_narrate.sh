@@ -9,7 +9,7 @@ source "$SCRIPT_DIR/echo_pronunciation_preflight.sh"
 
 usage() {
   printf '%s\n' \
-    'usage: echo_pronunciation_narrate.sh [--chapter-voice N=voice_id]... [--resume --resume-state ABSOLUTE_PATH] [--max-chapters N]' \
+    'usage: echo_pronunciation_narrate.sh [--voice-plan ABSOLUTE_PATH | --chapter-voice N=voice_id]... [--resume --resume-state ABSOLUTE_PATH] [--max-chapters N]' \
     '       echo_pronunciation_narrate.sh --recover-stale-lock' >&2
 }
 
@@ -18,6 +18,7 @@ RESUME_STATE=
 RECOVER_STALE_LOCK=0
 MAX_CHAPTERS=
 CHAPTER_VOICES=()
+VOICE_PLAN_SOURCE=
 INTERNAL_MODE=
 while (( $# )); do
   case "$1" in
@@ -54,6 +55,15 @@ while (( $# )); do
       CHAPTER_VOICES+=("$2")
       shift
       ;;
+    --voice-plan)
+      if [[ -n "$VOICE_PLAN_SOURCE" || -z ${2:-} || "$2" != /* ]]; then
+        printf '%s\n' '--voice-plan requires one absolute path'
+        usage
+        exit 64
+      fi
+      VOICE_PLAN_SOURCE=$2
+      shift
+      ;;
     --leased-run)
       INTERNAL_MODE=run
       ;;
@@ -74,6 +84,11 @@ while (( $# )); do
   esac
   shift
 done
+if [[ -n "$VOICE_PLAN_SOURCE" && ${#CHAPTER_VOICES[@]} -ne 0 ]]; then
+  printf '%s\n' '--voice-plan cannot be combined with --chapter-voice'
+  usage
+  exit 64
+fi
 if (( RESUME )) && [[ -z "$RESUME_STATE" ]]; then
   printf '%s\n' '--resume requires --resume-state ABSOLUTE_PATH' >&2
   usage
@@ -137,6 +152,9 @@ if [[ -z "$INTERNAL_MODE" ]]; then
   for chapter_voice in "${CHAPTER_VOICES[@]}"; do
     lease_command+=(--chapter-voice "$chapter_voice")
   done
+  if [[ -n "$VOICE_PLAN_SOURCE" ]]; then
+    lease_command+=(--voice-plan "$VOICE_PLAN_SOURCE")
+  fi
   exec "${lease_command[@]}"
 fi
 
@@ -160,7 +178,11 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
   OUTPUT="$ARTIFACT_ROOT/$SLUG.m4b"
   SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
   AUDIT="$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json"
-  REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    REEL="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID/$SLUG.pronunciation-reel.m4b"
+  else
+    REEL="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
+  fi
   OWNER_FILE="$RUN_ROOT/research/echo-render-output.owner.env"
   STATE_RECEIPT="$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
   ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
@@ -203,6 +225,9 @@ if [[ "$INTERNAL_MODE" == preflight ]]; then
     for chapter_voice in "${CHAPTER_VOICES[@]}"; do
       lease_command+=(--chapter-voice "$chapter_voice")
     done
+    if [[ -n "$VOICE_PLAN_SOURCE" ]]; then
+      lease_command+=(--voice-plan "$VOICE_PLAN_SOURCE")
+    fi
   fi
   exec "${lease_command[@]}"
 fi
@@ -252,12 +277,16 @@ if [[ ! "$ATTEMPT_ID" =~ ^[0-9a-f]{64}$ ]]; then
 fi
 expected_artifact_relative_path="echo-renders/$RUN_ID/$ATTEMPT_ID"
 expected_artifact_root="$DIST/$expected_artifact_relative_path"
+expected_reel="$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b"
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  expected_reel="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID/$SLUG.pronunciation-reel.m4b"
+fi
 if [[ "$ARTIFACT_RELATIVE_PATH" != "$expected_artifact_relative_path" \
   || "$ARTIFACT_ROOT" != "$expected_artifact_root" \
   || "$OUTPUT" != "$ARTIFACT_ROOT/$SLUG.m4b" \
   || "$SIDECAR" != "$ARTIFACT_ROOT/$SLUG.alignment.json" \
   || "$AUDIT" != "$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json" \
-  || "$REEL" != "$ARTIFACT_ROOT/$SLUG.pronunciation-reel.m4b" \
+  || "$REEL" != "$expected_reel" \
   || "$OWNER_FILE" != "$RUN_ROOT/research/echo-render-output.owner.env" \
   || "$STATE_RECEIPT" != "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json" \
   || "$ATTEMPT_RECEIPT" != "$RUN_ROOT/research/echo-render-current-attempt.json" \
@@ -357,6 +386,9 @@ load_owner_metadata() {
     validate-run-id "$LOCK_RUN_ID" >/dev/null 2>&1; then
     return 1
   fi
+  local expected_artifact_reel expected_listening_reel
+  expected_artifact_reel="$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.pronunciation-reel.m4b"
+  expected_listening_reel="$RUN_ROOT/research/listening/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.pronunciation-reel.m4b"
   if [[ "$LOCK_SCHEMA" != 2 \
     || ! "$LOCK_OWNER_TOKEN" =~ ^[0-9a-f]{64}$ \
     || ! "$LOCK_OWNER_PID" =~ ^[1-9][0-9]*$ \
@@ -368,7 +400,8 @@ load_owner_metadata() {
     || "$LOCK_OUTPUT" != "$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.m4b" \
     || "$LOCK_SIDECAR" != "$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.alignment.json" \
     || "$LOCK_AUDIT" != "$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.pronunciation-audit.json" \
-    || "$LOCK_REEL" != "$RUN_ROOT/dist/echo-renders/$LOCK_RUN_ID/$LOCK_ATTEMPT_ID/$SLUG.pronunciation-reel.m4b" ]]; then
+    || ( "$LOCK_REEL" != "$expected_artifact_reel" \
+      && "$LOCK_REEL" != "$expected_listening_reel" ) ]]; then
     return 1
   fi
   LOCK_OWNER_FILE_SHA=$(shasum -a 256 "$OWNER_FILE" | awk '{print $1}')
@@ -545,6 +578,48 @@ verify_locked_inputs() {
     --artifact-relative-path "$ARTIFACT_RELATIVE_PATH"
 }
 
+assert_block_attempt_contents() {
+  if [[ ${VOICE_PLAN_MODE:-chapter} != block ]]; then
+    return
+  fi
+  local entry relative entry_count=0
+  for entry in "$OUTPUT" "$SIDECAR" "$AUDIT"; do
+    if [[ -L "$entry" || ! -f "$entry" ]]; then
+      printf 'block attempt contains missing or unsafe delivery media: %s\n' \
+        "$entry" >&2
+      return 65
+    fi
+  done
+  while IFS= read -r -d '' entry; do
+    ((entry_count += 1))
+    relative=${entry#"$ARTIFACT_ROOT"/}
+    case "$entry" in
+      "$OUTPUT" | "$SIDECAR" | "$AUDIT")
+        if [[ -L "$entry" || ! -f "$entry" ]]; then
+          printf 'block attempt contains unsafe delivery media: %s\n' \
+            "$relative" >&2
+          return 65
+        fi
+        ;;
+      *.m4a | *.wav | *.pcm | */.anchors-ch*.json | \
+        *.pronunciation-reel.m4b)
+        printf 'block attempt contains prohibited review media: %s\n' \
+          "$relative" >&2
+        return 65
+        ;;
+      *)
+        printf 'block attempt contains unexpected entry: %s\n' "$relative" >&2
+        return 65
+        ;;
+    esac
+  done < <(/usr/bin/find "$ARTIFACT_ROOT" -mindepth 1 -print0)
+  if (( entry_count != 3 )); then
+    printf 'block attempt contains %s entries instead of the three delivery files\n' \
+      "$entry_count" >&2
+    return 65
+  fi
+}
+
 for governed_artifact_dir in \
   "$DIST/echo-renders" "$DIST/echo-renders/$RUN_ID" "$ARTIFACT_ROOT"; do
   if [[ -L "$governed_artifact_dir" \
@@ -557,6 +632,25 @@ done
 if [[ -e "$ARTIFACT_ROOT" ]]; then
   printf 'attempt artifact directory already exists: %s\n' "$ARTIFACT_ROOT" >&2
   exit 65
+fi
+LISTENING_ATTEMPT_ROOT="$RUN_ROOT/research/listening/$RUN_ID/$ATTEMPT_ID"
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  for governed_listening_dir in \
+    "$RUN_ROOT/research/listening" \
+    "$RUN_ROOT/research/listening/$RUN_ID" \
+    "$LISTENING_ATTEMPT_ROOT"; do
+    if [[ -L "$governed_listening_dir" \
+      || ( -e "$governed_listening_dir" && ! -d "$governed_listening_dir" ) ]]; then
+      printf 'governed listening directory is unsafe: %s\n' \
+        "$governed_listening_dir" >&2
+      exit 65
+    fi
+  done
+  if [[ -e "$LISTENING_ATTEMPT_ROOT" ]]; then
+    printf 'listening attempt directory already exists: %s\n' \
+      "$LISTENING_ATTEMPT_ROOT" >&2
+    exit 65
+  fi
 fi
 for governed_receipt in \
   "$ATTEMPT_RECEIPT" "$CURRENT_SELECTOR" "$SUCCESS_RECEIPT"; do
@@ -587,6 +681,14 @@ state_command=(
   --input-receipt "$ECHO_RENDER_INPUT_RECEIPT"
   --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
 )
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  state_command+=(
+    --voice-plan "$VOICE_PLAN_CANONICAL_PATH"
+    --voice-plan-id "$VOICE_PLAN_ID"
+    --voice-plan-block-count "$VOICE_PLAN_BLOCK_COUNT"
+    --voice-plan-resolution "$VOICE_PLAN_RESOLUTION_PATH"
+  )
+fi
 for chapter_voice in "${CHAPTER_VOICES[@]}"; do
   state_command+=(--chapter-voice "$chapter_voice")
 done
@@ -628,7 +730,11 @@ narrate_command=(
   --epub "$EPUB"
   --out "$STAGE_OUTPUT"
   --sidecar "$STAGE_SIDECAR"
-  --voice "$VOICE"
+)
+if [[ ${VOICE_PLAN_MODE:-chapter} != block ]]; then
+  narrate_command+=(--voice "$VOICE")
+fi
+narrate_command+=(
   --title "$TITLE"
   --author "Dan Fakkeldy"
   --cover "$M4B_COVER"
@@ -637,9 +743,13 @@ narrate_command=(
   --jobs 1
   --threads 2
 )
-for chapter_voice in "${CHAPTER_VOICES[@]}"; do
-  narrate_command+=(--chapter-voice "$chapter_voice")
-done
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  narrate_command+=(--voice-plan "$VOICE_PLAN_CANONICAL_PATH")
+else
+  for chapter_voice in "${CHAPTER_VOICES[@]}"; do
+    narrate_command+=(--chapter-voice "$chapter_voice")
+  done
+fi
 if (( RESUME )); then
   narrate_command+=(--resume)
 fi
@@ -687,7 +797,20 @@ ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --epub "$EPUB" \
   --audio "$STAGE_OUTPUT" \
   --sidecar "$STAGE_SIDECAR"
-/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$STAGE_AUDIT"
+audit_command=(
+  /usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$STAGE_AUDIT"
+)
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  audit_command+=(
+    --audiobook "$STAGE_OUTPUT"
+    --voice-plan-sha256 "$VOICE_PLAN_SHA256"
+    --block-count "$VOICE_PLAN_BLOCK_COUNT"
+  )
+  if [[ -f "$STAGE_REEL" && ! -L "$STAGE_REEL" ]]; then
+    audit_command+=(--reel "$STAGE_REEL")
+  fi
+fi
+"${audit_command[@]}"
 verify_locked_inputs
 
 for final_output in "$OUTPUT" "$SIDECAR" "$AUDIT" "$REEL"; do
@@ -707,16 +830,35 @@ mv -- "$STAGE_OUTPUT" "$OUTPUT"
 mv -- "$STAGE_SIDECAR" "$SIDECAR"
 mv -- "$STAGE_AUDIT" "$AUDIT"
 if [[ -f "$STAGE_REEL" && ! -L "$STAGE_REEL" ]]; then
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    mkdir -p -- "$RUN_ROOT/research/listening/$RUN_ID"
+    mkdir -- "$LISTENING_ATTEMPT_ROOT"
+  fi
   mv -- "$STAGE_REEL" "$REEL"
 fi
 rmdir -- "$STAGE"
 STAGE_CREATED=0
 
+assert_block_attempt_contents
+
 ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" verify-sidecar \
   --epub "$EPUB" \
   --audio "$OUTPUT" \
   --sidecar "$SIDECAR"
-/usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
+audit_command=(
+  /usr/local/bin/python3 "$SCRIPT_DIR/validate_pronunciation_audit.py" "$AUDIT"
+)
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  audit_command+=(
+    --audiobook "$OUTPUT"
+    --voice-plan-sha256 "$VOICE_PLAN_SHA256"
+    --block-count "$VOICE_PLAN_BLOCK_COUNT"
+  )
+  if [[ -f "$REEL" && ! -L "$REEL" ]]; then
+    audit_command+=(--reel "$REEL")
+  fi
+fi
+"${audit_command[@]}"
 verify_locked_inputs
 if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   verify-state "${state_command[@]}"; then
@@ -745,6 +887,14 @@ success_command=(
   --selection-resource "$SELECTION_RESOURCE" \
   --lock-root "$ECHO_PRONUNCIATION_LEASE_ROOT"
 )
+if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+  success_command+=(
+    --voice-plan "$VOICE_PLAN_CANONICAL_PATH"
+    --voice-plan-id "$VOICE_PLAN_ID"
+    --voice-plan-block-count "$VOICE_PLAN_BLOCK_COUNT"
+    --voice-plan-resolution "$VOICE_PLAN_RESOLUTION_PATH"
+  )
+fi
 for chapter_voice in "${CHAPTER_VOICES[@]}"; do
   success_command+=(--chapter-voice "$chapter_voice")
 done

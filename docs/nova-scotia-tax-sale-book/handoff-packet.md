@@ -1,5 +1,11 @@
 # Beyond the Tax-Sale Packet — handoff packet
 
+> **Historical record — superseded.** This handoff captures the
+> pre-publication state on 2026-07-20. The governed-final 54-figure edition was
+> later published and accepted. See the [packet README](README.md) and
+> [final publication receipt](research/audiobook-54-figure-publication-receipt.json)
+> for current status. The original handoff evidence is preserved below.
+
 **Status: sequential canonical manuscript drafting authorized — final figures,
 narration, packaging and publication remain gated.** The production-map-led
 direction was approved by Dan Fakkeldy on 2026-07-20. The first-section voice is

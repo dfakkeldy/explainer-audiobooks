@@ -117,18 +117,21 @@ For a fiction audiobook, set the lane and use the matching exact run root:
 ```bash
 export ECHO_RUN_LANE=fiction-audiobook
 export RUN_ROOT="$PIPELINE_ROOT/.build/fiction-audiobooks/$SLUG"
-"$NARRATION_SCRIPT"
 ```
 
 Any other lane value, including a path-like value, fails closed before
 narration. The lane and run root are sealed into the immutable input receipt;
-a fiction run must resume with `ECHO_RUN_LANE=fiction-audiobook`.
+a fiction run must resume with `ECHO_RUN_LANE=fiction-audiobook`. Fiction uses
+the source-bound block procedure below; do not invoke a bare wrapper or
+`--chapter-voice` mapping for a fiction character cast.
 
 ## Voice and invocation
 
 Invoke the wrapper only through its public entry point. Do not bypass the
 wrapper with a direct CLI command. This is installed renderer work, never
-narration-time build work. Stop immediately on any failure:
+narration-time build work. The generic default/chapter examples in this section
+do not apply to a fiction character cast; use `Fiction source-bound block
+voices` below for that case. Stop immediately on any failure:
 
 ```bash
 set -euo pipefail
@@ -187,7 +190,192 @@ Apple/macOS/system voice narration for convenience. Native Echo/Kokoro output
 is the only accepted narrator; the only automatic fallback is from
 `am_michael` to `am_puck` when the preferred Echo voice is unavailable.
 
-## Resuming and partial renders
+## Fiction source-bound block voices
+
+Use this procedure for a fiction character cast. It is block mode, not the
+chapter-voice mapping above. Before it starts, the craft workflow has recorded
+each blank-line source paragraph's intended speaker and frozen the final EPUB.
+Do not infer a speaker from quotation marks, attribution, prose, model output,
+or an Echo block. Do not calculate a plan hash or identity outside Echo.
+
+### Export the installed-Echo inventory
+
+Set `EPUB` to the absolute frozen EPUB and derive `EPUB_SHA256` from those
+unchanged bytes. Store the private inventory only at:
+
+```text
+$RUN_ROOT/research/echo-block-inventory-$EPUB_SHA256.json
+```
+
+Resolve the installed renderer for this new inventory with the shared resolver:
+`resolve-new --source-sha APPROVED_ECHO_PRONUNCIATION_SHA --format env0`.
+The shared `echo_pronunciation_resolve_installed_renderer 0` below invokes
+that exact `echo_installed_renderer.py` command, accepts only its fixed env0
+record exactly once, and rejects incomplete, duplicate, or unknown keys without
+`eval`. It sets `CLI`, `ECHO_RESOURCE_DIR`, and
+`ECHO_RENDERER_BUILD_ROOT`; validate and live-attest that installed package
+before the leased inventory command:
+
+```bash
+EPUB="$RUN_ROOT/dist/$SLUG.epub"
+EPUB_SHA256=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
+INVENTORY="$RUN_ROOT/research/echo-block-inventory-$EPUB_SHA256.json"
+source "$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_preflight.sh"
+# Internally: echo_installed_renderer.py resolve-new \
+#   --source-sha "$APPROVED_ECHO_PRONUNCIATION_SHA" --format env0
+echo_pronunciation_resolve_installed_renderer 0
+echo_pronunciation_validate_renderer_paths
+echo_pronunciation_attest_renderer
+```
+
+Derive `CANONICAL_LEASE_ROOT` with the same effective-account helper as the
+governed wrapper, not an arbitrary project lock directory. Lease the selected
+`ECHO_RENDERER_BUILD_ROOT` and set `ECHO_RESOURCE_DIR` explicitly in the child:
+
+```bash
+CANONICAL_LEASE_ROOT=$(echo_pronunciation_canonical_lease_root)
+LEASE_HELPER="$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_lease.py"
+"$LEASE_HELPER" --lock-root "$CANONICAL_LEASE_ROOT" \
+  --resource "$ECHO_RENDERER_BUILD_ROOT" -- \
+  /usr/bin/env "ECHO_RESOURCE_DIR=$ECHO_RESOURCE_DIR" \
+  "$CLI" export-blocks --epub "$EPUB" --out "$INVENTORY"
+```
+
+This is exactly the installed command `echo-cli export-blocks --epub
+ABSOLUTE_FROZEN_EPUB --out ABSOLUTE_PRIVATE_INVENTORY_JSON`. It receives no
+voice plan and emits only Echo schema-1 `{version, source, blocks}`. Its
+inventory has no speaker field and makes no assignment. Never substitute a
+checkout or PATH-selected CLI.
+
+### Author, validate, and resolve the plan
+
+Set `VOICE_CAST="$RUN_ROOT/_production/narration/voice-cast.json"` and
+`VOICE_PLAN="$RUN_ROOT/_production/narration/echo-voice-plan.json"`. From the
+installed inventory, write the schema-2 cast with three-to-five stable,
+nonblacklisted voices and the exact sibling schema-1 Echo plan. The lead writer
+assigns every block intentionally. Local validation checks the cast and
+preferences; it does not infer dialogue or decide which blocks exist:
+
+```bash
+/usr/local/bin/python3 \
+  skills/fiction-audiobook/scripts/fiction_voice_preferences.py \
+  validate-cast --cast "$VOICE_CAST" --voice-plan "$VOICE_PLAN" \
+  --preferences "$PREFERENCES" --format argv0
+```
+
+The governed wrapper then runs the leased installed `resolve-voice-plan` gate
+before it narrates. Require success. Echo alone decides block existence,
+speakability, range expansion, resolved identity, canonical plan bytes, and the
+five-field resolution receipt (`blockCount`, `defaultVoice`,
+`sourceEPUBSHA256`, `voicePlanID`, and `voicePlanSHA256`). A local plan is
+never an operational identity until that resolution succeeds.
+
+Forward the validator's NUL-delimited result without `eval` or lossy
+reconstruction. `validate-cast` accepts `VOICE_PLAN` only when it is the
+canonical absolute authored-plan path. Use this status-preserving private
+scratch handoff immediately before every block-mode wrapper invocation; it
+never exports voice state:
+
+```bash
+load_fiction_voice_arguments() {
+  local argv0 status token
+  argv0=$(mktemp "${TMPDIR:-/tmp}/echo-fiction-voice-arguments.XXXXXX") || return $?
+  trap 'rm -f -- "$argv0"' RETURN
+
+  if /usr/local/bin/python3 \
+    skills/fiction-audiobook/scripts/fiction_voice_preferences.py \
+    validate-cast --cast "$VOICE_CAST" --voice-plan "$VOICE_PLAN" \
+    --preferences "$PREFERENCES" --format argv0 >"$argv0"; then
+    :
+  else
+    status=$?
+    return "$status"
+  fi
+
+  VOICE_ARGUMENTS=()
+  while IFS= read -r -d '' token; do
+    VOICE_ARGUMENTS+=("$token")
+  done <"$argv0"
+
+  if [[ ${#VOICE_ARGUMENTS[@]} -ne 2 ||
+        "${VOICE_ARGUMENTS[0]}" != "--voice-plan" ||
+        "${VOICE_ARGUMENTS[1]}" != "$VOICE_PLAN" ]]; then
+    printf '%s\n' 'fiction block voice handoff must be --voice-plan plus the canonical authored plan' >&2
+    return 64
+  fi
+}
+
+load_fiction_voice_arguments || exit $?
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}"
+```
+
+For block mode, do not export `VOICE`; the wrapper resolves the default from
+the sealed plan. Revalidate the identical token vector before a resume, then
+pass it with the canonical resume-state path:
+
+```bash
+load_fiction_voice_arguments || exit $?
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
+  --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
+```
+
+If the resolved identity changes, start a new run. Never copy captures,
+receipts, a work directory, database, or resume state into it.
+
+### Block-mode resume and partial renders
+
+These commands apply only to a fiction `--voice-plan` render. Keep the exact
+validated argv0 vector on every invocation; a bare resume or partial command
+silently drops the authored plan. For an accepted partial attempt, read the
+canonical resume-state path for its current `RUN_ID`, revalidate the vector,
+then use:
+
+```bash
+load_fiction_voice_arguments || exit $?
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
+  --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json"
+```
+
+For a deliberately one-block/chapter probe, preserve that same vector on both
+the first partial call and its continuation:
+
+```bash
+load_fiction_voice_arguments || exit $?
+set +e
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" --max-chapters 1
+rc=$?
+set -e
+[[ "$rc" == 2 ]]
+
+load_fiction_voice_arguments || exit $?
+set +e
+"$NARRATION_SCRIPT" "${VOICE_ARGUMENTS[@]}" \
+  --resume --resume-state "$RUN_ROOT/research/echo-resume-state-$RUN_ID.json" \
+  --max-chapters 1
+rc=$?
+set -e
+[[ "$rc" == 2 ]]
+```
+
+If a plan edit resolves to a different identity, do not resume: let the
+wrapper create the new run and retain the earlier chain without reusing any
+captures or state.
+
+### Fiction block evidence
+
+For a completed block run, require schema-2 captures, a schema-4 success
+receipt, and a schema-7 pronunciation audit tied to the same resolved plan.
+Keep captures and the pronunciation reel under private
+`_production/narration/` evidence; they are never title-root media or public
+package files. A completed selector resolves one M4B and one delivered
+alignment sidecar. Automated block/audit checks do not complete human reading
+or listening.
+
+## Chapter-mode resuming and partial renders
+
+This entire section is for the default/chapter-voice procedure only. Fiction
+block renders use the preceding argv0-vector commands and never borrow the
+bare examples below.
 
 Use a fresh `--work-dir` and `--db` whenever the source EPUB changes or the
 Release CLI binary or Echo source revision changes. Permit `--resume` only for
@@ -282,8 +470,117 @@ the sidecar against the exact EPUB and audio bytes and must report
 
 ## Audio verification
 
-After a render completes, resolve the accepted artifacts from the current
-selector, then verify them before treating the render as done:
+### Block-mode verification
+
+For a completed fiction block run, derive the mode, sealed internal reel path,
+resolved-plan SHA-256, and block count from the accepted schema-4 success/input
+receipt chain. They are not shell variables exported by the wrapper's child
+process. The state reader below rejects a non-current selector, a non-block
+success receipt, duplicate/altered receipt JSON, mismatched input bytes, or
+plan evidence that does not bind the input receipt.
+
+```bash
+ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"
+CURRENT_SELECTOR="$RUN_ROOT/research/echo-render-current-accepted.json"
+selector_value() {
+  /usr/local/bin/python3 - "$CURRENT_SELECTOR" "$1" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as source:
+    value = json.load(source).get(sys.argv[2])
+if not isinstance(value, str) or not value:
+    raise SystemExit(f"missing selector string: {sys.argv[2]}")
+print(value)
+PY
+}
+RUN_ID=$(selector_value runID)
+ATTEMPT_ID=$(selector_value attemptID)
+ARTIFACT_RELATIVE_PATH=$(selector_value artifactRelativePath)
+INPUT_RECEIPT_NAME=$(selector_value inputReceiptFileName)
+SUCCESS_RECEIPT_NAME=$(selector_value successReceiptFileName)
+STATE_RECEIPT_NAME="echo-resume-state-$RUN_ID.json"
+STATE_HELPER="$EXPLAINER_ROOT/skills/echo-narration/scripts/echo_pronunciation_state.py"
+INPUT_RECEIPT="$RUN_ROOT/research/$INPUT_RECEIPT_NAME"
+SUCCESS_RECEIPT="$RUN_ROOT/research/$SUCCESS_RECEIPT_NAME"
+STATE_RECEIPT="$RUN_ROOT/research/$STATE_RECEIPT_NAME"
+
+BLOCK_EVIDENCE=$(mktemp /tmp/echo-block-delivery.XXXXXX)
+trap 'rm -f -- "$BLOCK_EVIDENCE"' EXIT
+/usr/local/bin/python3 "$STATE_HELPER" \
+  block-delivery-evidence \
+  --attempt "$ATTEMPT_RECEIPT" \
+  --selector "$CURRENT_SELECTOR" \
+  --receipt "$SUCCESS_RECEIPT" \
+  --input-receipt "$INPUT_RECEIPT" \
+  --format env0 >"$BLOCK_EVIDENCE"
+
+VOICE_PLAN_MODE= REEL_RELATIVE_PATH= VOICE_PLAN_SHA256=
+VOICE_PLAN_BLOCK_COUNT= SEALED_VOICE=
+mode_count=0 reel_count=0 sha_count=0 count_count=0 voice_count=0
+while IFS='=' read -r -d '' key value; do
+  case "$key" in
+    voice_plan_mode) VOICE_PLAN_MODE=$value; (( mode_count += 1 )) ;;
+    reel_relative_path) REEL_RELATIVE_PATH=$value; (( reel_count += 1 )) ;;
+    voice_plan_sha256) VOICE_PLAN_SHA256=$value; (( sha_count += 1 )) ;;
+    voice_plan_block_count) VOICE_PLAN_BLOCK_COUNT=$value; (( count_count += 1 )) ;;
+    voice) SEALED_VOICE=$value; (( voice_count += 1 )) ;;
+    *) printf 'unknown block delivery evidence key: %s\n' "$key" >&2; exit 65 ;;
+  esac
+done <"$BLOCK_EVIDENCE"
+rm -f -- "$BLOCK_EVIDENCE"
+trap - EXIT
+[[ $mode_count == 1 && $reel_count == 1 && $sha_count == 1 ]]
+[[ $count_count == 1 && $voice_count == 1 && $VOICE_PLAN_MODE == block ]]
+[[ "$VOICE_PLAN_BLOCK_COUNT" =~ ^[1-9][0-9]*$ ]]
+ARTIFACT_ROOT="$DIST/$ARTIFACT_RELATIVE_PATH"
+AUDIOBOOK="$ARTIFACT_ROOT/$SLUG.m4b"
+SIDECAR="$ARTIFACT_ROOT/$SLUG.alignment.json"
+AUDIT="$ARTIFACT_ROOT/$SLUG.pronunciation-audit.json"
+REEL="$RUN_ROOT/research/$REEL_RELATIVE_PATH"
+
+/usr/local/bin/python3 "$STATE_HELPER" \
+  verify-delivery \
+  --attempt "$ATTEMPT_RECEIPT" \
+  --selector "$CURRENT_SELECTOR" \
+  --receipt "$SUCCESS_RECEIPT" \
+  --input-receipt "$INPUT_RECEIPT" \
+  --state-receipt "$STATE_RECEIPT" \
+  --epub "$DIST/$SLUG.epub" \
+  --audiobook "$AUDIOBOOK" \
+  --sidecar "$SIDECAR" \
+  --audit "$AUDIT" \
+  --reel "$REEL"
+
+CLI=$(awk -F= '$1 == "echo_cli_path" { print substr($0, index($0, "=") + 1) }' \
+  "$INPUT_RECEIPT")
+ECHO_RESOURCE_DIR=$(awk -F= '$1 == "echo_resource_dir" { print substr($0, index($0, "=") + 1) }' \
+  "$INPUT_RECEIPT")
+export ECHO_RESOURCE_DIR
+"$CLI" verify-sidecar \
+  --epub "$DIST/$SLUG.epub" \
+  --audio "$AUDIOBOOK" \
+  --sidecar "$SIDECAR"
+
+/usr/local/bin/python3 "$EXPLAINER_ROOT/skills/echo-narration/scripts/validate_pronunciation_audit.py" \
+  "$AUDIT" \
+  --audiobook "$AUDIOBOOK" \
+  --reel "$REEL" \
+  --voice-plan-sha256 "$VOICE_PLAN_SHA256" \
+  --block-count "$VOICE_PLAN_BLOCK_COUNT"
+```
+
+Require `SIDECAR_OK` and `pronunciation_audit: clean` before `record-use`.
+The block reader owns the meaning of `SEALED_VOICE`; do not export or replace
+it with a caller-controlled `VOICE`.
+
+### Chapter-mode verification
+
+The following default/chapter-voice procedure is chapter mode only. Do not use
+it for a fiction `--voice-plan` render; use the receipt-derived block
+procedure above instead. After a chapter-mode render completes, resolve the
+accepted artifacts from the current selector, then verify them before treating
+the render as done:
 
 ```bash
 ATTEMPT_RECEIPT="$RUN_ROOT/research/echo-render-current-attempt.json"

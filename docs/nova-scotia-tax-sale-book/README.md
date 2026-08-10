@@ -8,14 +8,16 @@ publication authorization. The two Touquoy passages were accepted in context,
 but their canonical pronunciation remains unverified. Portrait/landscape video
 publication and second-device proof remain separate.
 
-This packet develops a long, spoken-first educational book about Nova Scotia
+This packet records the development of a long, spoken-first educational book about Nova Scotia
 municipal tax sales: terminology, the statutory process, municipal variation,
 property research, auction behaviour, purchaser responsibilities, and the
 questions that remain for qualified professionals. Inverness County's August
 11, 2026 auction is the principal current case, with other Nova Scotia
 municipalities used to distinguish provincial law from local procedure.
 
-The intended final book is public. Its purpose is civic explanation and a
+The finished public book is available at
+[`books/beyond-the-tax-sale-packet/`](../../books/beyond-the-tax-sale-packet/).
+Its purpose is civic explanation and a
 demonstration of careful research—not investment promotion, a live-property
 ranking, or an advertisement disguised as education.
 
@@ -44,9 +46,9 @@ ranking, or an advertisement disguised as education.
   and its access, intended-use, environmental, title, cost, auction, tender,
   payment, and failed-sale branches;
   and
-- `chapters/images/`: the complete 54-figure landscape review set, including 14
-  refreshed 2560-by-1440 NS Marks The Spot walkthrough screenshots; none is yet accepted
-  or embedded in a manuscript.
+- `chapters/images/`: the complete 54-figure landscape set, including 14
+  refreshed 2560-by-1440 NS Marks The Spot walkthrough screenshots. All 54 are
+  embedded in the governed-final public EPUB.
 
 ![Inverness County auction orientation proof](maps/exports/inverness-all-properties-orientation.png)
 
@@ -79,104 +81,50 @@ source commit `a7ba7da9ad5f8a5dcc1c67c79888bb76b6bae108`. This repository owns t
 book-development packet, its reproducible QGIS proofs and version-stamped
 chapter screenshots.
 
-## Current production gates
+## Current publication status
 
-The approved text edition has completed governed whole-manuscript review. Dan
-approved the prior
-twelve-chapter outline and forty-figure visual direction on 2026-07-19, accepted
-the exact three-card Inverness Packet Atlas direction with “I like them,” and
-accepted the exact first-section teaching and voice with “Let’s go for the
-voice.” On 2026-07-20 he authorized redesigning the map chapter and
-review figures around the production workflow: notice → parcel → context →
-unknowns → handoff, then explicitly approved that thirteen-chapter, 51-figure
-direction for pilot development. On 2026-07-22 he approved expanding the same
-direction to 54 figures with paired landscape and genuine mobile-browser map
-captures. The current four-chapter wording refresh is an exact-hash review
-candidate recorded in `research/review-revision-receipt.json`; it does not
-inherit the earlier manuscript, narration, listening, figure, video or
-publication approvals. Deep research,
-structured chapter plans, coverage paths, two QGIS proofs, eight reproducible
-diagram candidates and three accepted-direction atlas prototypes exist. The
-actual Echo/video-stage atlas proof, atlas batch authorization, accepted final
-figures and full-audio human acceptance all remain pending. The exact earlier
-Pictou-fixed M4B is separately authorized for public-first-listen publication;
-that authorization does not transfer to the revised 54-figure candidate.
-The final-hash structure and blind sequential beginner reviews,
-bounded humanizer/tightening pass, rendered ear-pass diagnostics and governed
-text-only EPUB build are complete. The public reader package is under
-`books/beyond-the-tax-sale-packet/`; the governed M4B is included, while no
-video is claimed.
+The governed-final public edition is complete. It contains 13 chapters, 54
+embedded figures, the selected *The Packet Lifts* portrait and square covers, a
+4:12:50 chaptered `am_michael` M4B, and a 735-anchor alignment sidecar. Package
+checks passed, Dan completed the full listening review, and he explicitly
+authorized publication on 2026-07-23.
 
-The governed nonpackage pilot rendered on 2026-07-20 at 14:27 with verified
-alignment and a clean pronunciation audit. Its exact SHA-256 is
-`c94570d369b1c5f3842f111f151a9e4bb880db2d84ceeed86f3cfed44c974f1c`;
-Dan accepted that exact pilot for continued drafting with “continue” at
-2026-07-20T08:55:51-03:00. Canonical Chapters 1–13 now total 32,189 Markdown
-words after the initial independent review and the bounded humanizer pass
-recorded in `research/editorial-review.md` and
-`research/humanizer-decisions.json`. Eight local style edits remove generic
-chapter navigation, and three post-edit beginner-review repairs clarify the
-parcel-register record, expand NSPRD at first use and preserve the treasurer as
-the certificate-registration actor.
-Dan approved the exact thirteen-chapter EPUB manuscript text for public
-publication on 2026-07-21 and requested the anonymous Chapter 5
-mineral-occurrence revision on 2026-07-22. The approval is hash-bound in
-research/publication-authorization.json; any chapter-byte change requires a new
-manuscript verdict. Dan selected Candidate 1, *The Packet Lifts*, as the paired
-EPUB/audiobook cover on 2026-07-21; `covers/cover-selection.json` binds the
-portrait, square and source-art hashes. The remaining figure, ear-pass, package,
-full-narration and video gates remain separate. The governed public EPUB embeds
-the selected portrait cover byte-for-byte and is verified at SHA-256
-`12a0822a8c89babc26b160f75d44128ea4056c1624707961dcd9c2061464b37a`.
+The final publication receipt is
+[`research/audiobook-54-figure-publication-receipt.json`](research/audiobook-54-figure-publication-receipt.json).
+It binds the accepted human verdict and authorization to the exact EPUB, M4B,
+alignment, Markdown, covers, and figures. The public reader package is
+[`books/beyond-the-tax-sale-packet/`](../../books/beyond-the-tax-sale-packet/).
 
-The earlier 3:57:37 ear-pass render remains diagnostic evidence rather than a
-promotable package. `research/audiobook-candidate-audit.md` records why a
-controlled wrapper-only rebuild from the frozen public EPUB is required, and
-`audiobook-acceptance-checklist.md` defines the next human gate. Neither file
-claims pronunciation acceptance, full-audio acceptance, publication, website
-deployment, video work, figure promotion, or second-device proof.
+The rendered Touquoy passages were accepted in the complete listen for this
+edition, but the receipt does not claim that their pronunciation is canonical.
+Second-device proof was not required for publication and remains incomplete.
+No portrait or landscape video edition is published.
 
-Dan rejected that first controlled candidate after hearing **Pictou** as
-“picktoau” and specified **“PICK-toe.”** The exact negative verdict remains
-bound in `research/audiobook-human-listening-verdicts.json`; it did not reopen
-the approved text or cover.
+## Historical production timeline
 
-A fresh wrapper-only replacement is now complete as a private first-listen
-candidate: 13 chapters, 14,256.597333 seconds, exact M4B SHA-256
-`f675ba1fde72aed5f7885931289f2d0dbb1b94e361f063012ab5bacbaeb1d4b8`.
-Its complete automated audit proves all five Pictou occurrences use the
-long-o `pˈɪktO` override and none use rejected `pˈɪktaʊ`. The selector-bound
-delivery chain, 612-anchor sidecar, selected square-cover identity, archive
-integrity, full decode and acoustic scan pass.
-`research/audiobook-candidate-receipt.json` preserves those machine results
-while leaving replacement pronunciation and full-book human listening
-pending. The M4B and renderer work state remain outside the public repository.
+- On 2026-07-19, Dan approved the earlier 12-chapter, 40-figure direction.
+- On 2026-07-20, he approved the production-map-led 13-chapter, 51-figure
+  direction and accepted the narrated comprehension pilot for continued
+  drafting.
+- On 2026-07-21 and 2026-07-22, he approved the manuscript and Chapter 5
+  mineral-occurrence revision and selected Candidate 1, *The Packet Lifts*, as
+  the paired cover.
+- The first controlled audiobook candidate was rejected because **Pictou** was
+  pronounced incorrectly. A replacement enforced the accepted **PICK-toe**
+  reading for all five occurrences.
+- On 2026-07-22, the visual edition expanded to 54 figures and received a fresh
+  governed first-listen render.
+- On 2026-07-23, Dan completed the full listen and authorized the exact
+  54-figure edition for public release.
 
-The revised 54-figure edition now also has a fresh private first-listen M4B:
-13 chapters, 15,170.090667 seconds (4:12:50.091), exact SHA-256
-`f56220fea72c767a225a1538ad70c0e160763830bd15bb9bc2cb9f0fe474c505`.
-It is bound to the current 54-figure EPUB at SHA-256
-`b2399f3850e98050fe58e913ba1bd8cfd1cc5a86331b4b3a4f884959f82d666d`.
-The selector-bound delivery chain, complete 248-decision pronunciation audit,
-735-anchor alignment sidecar, 13 ordered chapter markers, selected cover,
-archive integrity, full decode and acoustic scan pass. All five Pictou
-occurrences use the accepted long-o override. The audit also exposes two
-Touquoy occurrences produced by generic fallback; no authoritative
-pronunciation guide was found during the unattended pass, so those samples are
-explicit priority human checks rather than accepted pronunciations.
-`research/audiobook-54-figure-first-listen-receipt.json` preserves the exact
-machine evidence. Dan then reported “I listened, sounds good” and explicitly
-authorized publication on the tax-sale page and in the Listening Room.
-`research/audiobook-54-figure-publication-receipt.json` binds that verdict and
-authorization to the exact M4B. The public package now carries the matching
-54-figure EPUB, M4B and alignment. Private renderer work state remains outside
-the repository. The rendered Touquoy passages are accepted for this edition,
-but the receipt does not claim that their pronunciation is canonical.
+The pre-publication [handoff packet](handoff-packet.md) and
+[full-audio acceptance checklist](audiobook-acceptance-checklist.md) remain in
+place as superseded historical records. Their pending gates describe the dated
+candidates they governed, not the current public edition.
 
-The three accepted-direction atlas prototypes remain development evidence, but
-the remaining 42-card batch is paused. Review should first decide whether the
-living map now performs most parcel-orientation work more accurately and
-usefully than a static owner-free atlas.
+The three accepted-direction atlas prototypes also remain development evidence.
+The proposed remaining 42-card atlas batch is paused while the living map is
+evaluated as the more useful parcel-orientation surface.
 
 ## Safety and currency
 

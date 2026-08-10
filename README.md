@@ -1,20 +1,27 @@
 # Explainer Audiobooks
 
-> Long, listenable, **grounded** beginner guides — generated from real source code, written for the ear.
+> Long, listenable, **grounded** beginner guides — built from real sources and written for the ear.
 
 ## What this is
 
-A method (and the tooling that runs it) for turning a technical subject into a book-length **audiobook course** — taught through a real, open-source codebase, and written so a text-to-speech voice can read it aloud without a single line of code being spoken.
+A method (and the tooling that runs it) for turning a subject into a book-length
+**audiobook course**. Each book is grounded in material the authoring model can
+inspect—source code, primary documentation, public records, research, or a real
+place—and written so a text-to-speech voice can teach it naturally.
 
 Plus a growing collection of finished books made with it.
 
-The books teach how to **build and ship software**, and most are taught through one real app: **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source (GPL‑3) audiobook study player. So instead of a toy "hello world," you learn from a real, shipping app — what it's made of, how it's designed, how it's built, how it's debugged, and how it's versioned. (One book steps back from Echo to teach App Store Optimization for *any* small app, grounded in a real launch's real data.)
+The collection began with books about building and shipping software, many
+taught through **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source
+(GPL-3) audiobook study player. It now also includes practical field guides,
+civic explainers, and evidence-led books about AI and consciousness. The common
+thread is not software; it is a real, inspectable grounding source.
 
 ## Why it might interest you
 
 Two different audiences:
 
-- **If you want to learn** — there are more than 51 hours of beginner guides below, free, mostly grounded in real code and public technical sources. Every book has an EPUB, and selected books also include a chaptered M4B with Echo read-along data.
+- **If you want to learn** — there are more than 75 hours of beginner guides below, free, grounded in real code, primary documentation, public records, and research. Every listed book has an EPUB, and selected books also include a chaptered M4B with Echo read-along data.
 - **If you build with AI agents** — the genuinely interesting part is the *method*: how to make a language model sustain a long, accurate explanation by grounding claims in real sources, keeping one lead author responsible for the manuscript, and verifying the result independently. That's in **[docs/how-these-were-made.md](docs/how-these-were-made.md)**.
 
 ## The collection
@@ -28,6 +35,7 @@ Two different audiences:
 | [An Unsettling Conversation](books/an-unsettling-conversation/) | J-Space, working memory, and the evidence limits around machine consciousness | 13 chapters · ~5.5 h | Codex (GPT-5) |
 | [J-Space: Inside the Machine](books/jspace-inside-the-machine/) | Parameters, activations, working memory, J-Space, and the question of consciousness | 13 chapters · ~3.9 h | Codex (GPT-5) |
 | [Is There Anyone in Here?](books/is-there-anyone-in-here/) | One language model examines the evidence for and against its own consciousness | 10 chapters · ~1.8 h | Claude Fable 5 |
+| [The Case Against Me](books/the-case-against-me/) | A language model cross-examines its own testimony about machine consciousness | 9 chapters · ~1.9 h | Claude Opus 5 |
 | [Echo, From the Inside](books/echo-from-the-inside/) | What an iOS app actually is | 17 chapters · ~5.4 h | Opus 4.8 |
 | [Why It Feels Right](books/why-it-feels-right/) | Apple's Human Interface Guidelines | 18 chapters · ~5.0 h | Fable 5 |
 | [You Are the Architect](books/you-are-the-architect/) | Vibe‑coding real iOS apps with Claude Code | 20 chapters · ~5.1 h | Fable 5 |
@@ -41,21 +49,34 @@ Two different audiences:
 | [The New Deal](books/the-new-deal/) | Canada Post, CUPW, and the future of rural mail | 9 chapters · ~1.9 h | GLM-5.2 |
 | [The Competitive Bid Room](books/the-competitive-bid-room/) | Automating heavy-civil tenders without automating judgment | 9 chapters · ~2.3 h | GPT-5 Codex |
 | [The Human Exception](books/the-human-exception/) | A humane exceptions officer discovers that human judgment survives only as ceremonial liability | 24 chapters · ~7.9 h | OpenAI Codex (GPT-5) |
+| [Gold Panning in Nova Scotia](books/gold-panning-nova-scotia/) | Find, assess, and responsibly pan promising Nova Scotia gold country | 10 chapters · ~2.0 h | GLM-5.2 |
+| [Beyond the Tax-Sale Packet](books/beyond-the-tax-sale-packet/) | Research Nova Scotia municipal tax sales without turning screening evidence into certainty | 13 chapters · ~4.2 h | Codex (GPT-5) |
 
-Each folder holds the **`.epub`**, a combined **`.md`** readable on GitHub, and the cover. Narrated public packages also include a chaptered **`.m4b`** and Echo **`.alignment.json`** read-along sidecar.
+Each folder holds the **`.epub`**, a combined **`.md`** readable on GitHub, and
+the cover. Narrated public packages include a chaptered **`.m4b`**; packages
+with published Echo read-along data also include an **`.alignment.json`**
+sidecar.
 
 ### In development
 
-- [Beyond the Tax-Sale Packet](docs/nova-scotia-tax-sale-book/) is a public-safe
-  Nova Scotia municipal tax-sale research and visual-development packet. It
-  includes an Inverness-heavy official-source dossier, a twelve-chapter
-  argument outline, a 38-figure plan, an owner-free August 2026 listing
-  snapshot, and reproducible QGIS 4 map proofs. It is not yet a manuscript,
-  EPUB, audiobook, legal review, or finished public edition.
+- [The Best Job You Can Get From Here](books/the-best-job-you-can-get-from-here/)
+  is a public-safe version 0 job-search guide for Inverness County. It has a
+  substantial manuscript and worksheets, but still needs author additions,
+  local review, refreshed perishable claims, final editing, covers, and package
+  validation before it can be described as publication-ready.
 
-Together they trace the life of a real app — *what it's made of* → *how it should look* → *how to build it with AI* → *how to test it* → *how to debug it* → *how to version it* → *how to get it found* — mostly through the same real codebase.
+The software books still trace the life of a real app—what it is made of, how it
+should look, how to build it with AI, how to test and debug it, how to version
+it, and how to get it found. The newer books apply the same source-disciplined
+method beyond software.
 
-**Model-agnostic, on purpose.** The method doesn't care which model runs it; each book's EPUB metadata records the model that wrote it (as the `contributor`), with the human curator as the author. *Git Happens* makes the point twice over: it was first written by **DeepSeek v4**, then rewritten by **Opus 4.8** (the original DeepSeek edition is preserved in this repo's git history).
+**Vendor-neutral and model-routed, on purpose.** The method does not require one
+model vendor, but it uses frontier models for authorship and bounded workers for
+checkable research, review, and production tasks. Each book's EPUB metadata
+records the model that wrote it as the `contributor`, with the human curator as
+the author. *Git Happens* makes the point twice over: it was first written by
+**DeepSeek v4**, then rewritten by **Opus 4.8**; the original edition remains in
+git history.
 
 ## How it works (the short version)
 
@@ -71,25 +92,28 @@ Public promotion is separate. A user-authorized public edition follows
 for human pair selection, receipts, immutable re-narration when square art
 changes, verification, and governed public/iCloud/site sync.
 
-The *Rodents in the Walls* exclusion applies only to the current five-book
-migration because that edition already has approved square art. It is not a
-universal future rule; future editions use this same paired contract.
-This five-book migration exception is historical scope, not ongoing policy.
-
-1. **Pin the brief** — subject, the real worked example, target length, voice.
-2. **Outline** — one chapter per concept, in teaching order, each grounded in one real piece of the example.
-3. **Fact packs + story ledger + argument outline** — before prose is written, distill *accurate*
-   facts from the real docs and source into each chapter's evidence, then map each
-   core concept to a real example, a knowledge delta, and a purposeful later
-   retrieval. This keeps tens of thousands of AI-written words accurate and
-   prevents definition-shaped padding.
-4. **Frontier-author Markdown** — one frontier model writes every substantive
-   chapter in sequence, using a continuity record to preserve the book's voice,
-   examples, and promises. Cheaper workers research, diagnose, render, and
-   package; they do not replace chapters.
-5. **QC + assemble** — prose diagnostics and citation-first reader reports flag
-   exact repair candidates, then build a chaptered EPUB (with a generated cover)
-   and a combined Markdown file from the reviewed manuscript.
+1. **Pin the brief** — a direct nonfiction request answers five questions about
+   subject and outcome, audience, prior knowledge, length, and the real repo,
+   product, place, or document that should ground the book. A complete longform
+   handoff can supply those decisions instead.
+2. **Research the real thing** — build source-traceable evidence notes,
+   per-chapter fact packs, and a story ledger with actors, place, date, source,
+   concept, and reversal.
+3. **Outline the argument** — define the governing question, durable outcomes,
+   narrative spine, varied chapter jobs, throughlines, grounded cases, and
+   purposeful returns before spending money on prose.
+4. **Author canonical Markdown** — one frontier model writes every substantive
+   section in sequence, carrying a compact continuity note. Road-book sections
+   support drift and re-entry, use practical situation-choice-consequence cases,
+   and include spoken `Key points` checkpoints at natural learning boundaries.
+5. **Revise deliberately** — run claim traceability, tightening,
+   de-listification, sentence-rhythm, and rendered ear passes, followed by a
+   blind beginner review, prose QC, and a bounded humanizer pass. The frontier
+   author owns every substantive repair.
+6. **Produce and deliver** — render exactly three coordinated portrait/square
+   cover pairs, build EPUB and Markdown, narrate a chaptered M4B, verify the
+   package, and keep private delivery separate from explicitly authorized public
+   promotion.
 
 The full method, and *why* each step exists, is in **[docs/how-these-were-made.md](docs/how-these-were-made.md)**. To make your own, see **[docs/make-your-own.md](docs/make-your-own.md)**.
 
@@ -99,10 +123,12 @@ These books are **written by AI** (the specific model is noted per book and reco
 
 ## The skills
 
-The long technical explainer pipeline is packaged as a Claude Code skill in
-**[`skill/`](skill/)** — `SKILL.md` plus a cover generator, an EPUB builder, and
-the narration style guide. Point Claude Code at it and ask for a book on any
-subject, grounded in any codebase you can read.
+The direct nonfiction pipeline is packaged as the **[`audiobook`](skill/)**
+skill—`SKILL.md` plus the research, writing, cover, EPUB, narration, and
+verification tooling. A compatible agent host can use it to make a book about a
+technical system, practical skill, place, or idea, grounded in sources it can
+inspect. The Claude Code installation example is in
+**[`docs/make-your-own.md`](docs/make-your-own.md)**.
 
 The **[`longform-book-development`](skills/longform-book-development/)** skill is
 the slower front door for book ideas that need several rounds of shaping before
@@ -133,4 +159,9 @@ This repo is dual-licensed, split by folder:
 
 ## Credits
 
-Curated by **Dan Fakkeldy**. The worked example throughout is **[Echo](https://dfakkeldy.github.io/Echo/)**, an open-source audiobook study player. Books written by **Claude (Opus 4.8 and Fable 5)** and **GPT-5 Codex** through the repository's audiobook workflows (now consolidated as the `audiobook` skill; an earlier edition of *Git Happens* by **DeepSeek v4** remains in git history); each book's own README and EPUB metadata record its model.
+Curated by **Dan Fakkeldy**. Many of the software books are grounded in
+**[Echo](https://dfakkeldy.github.io/Echo/)**, the open-source audiobook study
+player that also renders narrated editions. Multiple Claude, GPT/Codex, GLM,
+and other model generations have authored books through these workflows; each
+book's README and EPUB metadata record its specific contributor. An earlier
+DeepSeek edition of *Git Happens* remains in git history.

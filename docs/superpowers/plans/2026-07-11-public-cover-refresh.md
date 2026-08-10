@@ -512,7 +512,7 @@ Replace statements claiming SVG, old candidate names, or old provenance. Use thi
 ```markdown
 ## Cover
 
-Refreshed in July 2026 with original raster artwork generated through the built-in image-generation tool, then composed with the repository cover tool. The previous public cover is preserved as `cover-legacy.png`; generation prompt and selection evidence are recorded in the collection [cover-refresh manifest](../../docs/cover-refresh-2026-07/manifest.md).
+Refreshed in July 2026 with original raster artwork generated through the built-in image-generation tool, then composed with the repository cover tool. The previous public cover is preserved as `cover-legacy.png`; generation prompt and selection evidence are recorded in the collection [cover-refresh manifest](../../cover-refresh-2026-07/manifest.md).
 ```
 
 Do not add this section to README files that already link cleanly to the central manifest without making a stale claim.
