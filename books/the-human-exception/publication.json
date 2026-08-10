@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 2,
+  "packageKind": "fiction-audiobook",
+  "slug": "the-human-exception",
+  "editionId": "20260810T003034Z",
+  "publicationStatus": "public-first-listen",
+  "humanReadingStatus": "pending",
+  "humanListeningStatus": "pending",
+  "classification": "public-safe",
+  "permissionToPublish": true,
+  "permissionGrantedAt": "2026-08-10T00:30:34Z",
+  "author": "Dan Fakkeldy",
+  "contributor": "OpenAI Codex (GPT-5)",
+  "aiGenerated": true,
+  "contentLicense": "CC-BY-4.0",
+  "disclosure": "This original AI-generated fiction edition is published under CC BY 4.0 as a public first-listen. Automated package and audio checks passed; human reading and listening reviews remain pending.",
+  "publicGate": {
+    "originalFiction": true,
+    "noPrivateSource": true,
+    "noLivingPersonTarget": true,
+    "noLivingAuthorImitation": true,
+    "coverRightsVerified": true
+  },
+  "coverRights": {
+    "basis": "generated",
+    "status": "verified",
+    "coverSHA256": "98944231497bf97e71105600073072c72ba4d0e2e07883a06fe3454f2caeaf17"
+  },
+  "artifacts": {
+    "manuscript": {
+      "file": "the-human-exception.md",
+      "sha256": "ac94b7c851dedf65dfa8d6f00c4aecd00778070465f0045429d6ba6390192657"
+    },
+    "epub": {
+      "file": "the-human-exception.epub",
+      "sha256": "27d42b0dceaa54a68553c71dcbd630212054c07cec77159ead0bc3a381136b7f"
+    },
+    "alignment": {
+      "file": "the-human-exception.alignment.json",
+      "sha256": "21ca965a3de5220b948dfd3c2eb4beb9b73dbeb96599de84aab951d5aef5aedb"
+    },
+    "portraitCover": {
+      "file": "cover.png",
+      "sha256": "98944231497bf97e71105600073072c72ba4d0e2e07883a06fe3454f2caeaf17"
+    }
+  },
+  "release": {
+    "tag": "fiction-the-human-exception-20260810T003034Z",
+    "assetFile": "the-human-exception.m4b",
+    "assetSHA256": "a987eef9ccd64e4ab8fbded2e16b96c792fd02e01f1caf358f5373b7d0df6636"
+  },
+  "privateEvidence": {
+    "fictionReceiptSHA256": "b613e5072f288f2128878edf88ecb46f0f51a9539b4a61c13e15f72b12f8da67",
+    "voiceCastSHA256": "c1abad017c130f0d56483569af42b6b409fbddc4a228ee9d040b20fb207f5aef",
+    "voicePlanSHA256": "855fbfee6eac7c6404b98331b21882ff965aaef148b2d2e5171953cdb3fe67af",
+    "echoSuccessReceiptSHA256": "b3ab9712ec150eca5583e277512a5f5643ccbb3951cfff1f834182c7ccda17d8"
+  }
+}

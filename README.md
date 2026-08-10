@@ -40,6 +40,7 @@ Two different audiences:
 | [Rodents in the Walls](books/rodents-in-the-walls/) | Identify, exclude, and clean up after house-invading rodents | 9 chapters · ~2.0 h | GPT-5.6 Sol |
 | [The New Deal](books/the-new-deal/) | Canada Post, CUPW, and the future of rural mail | 9 chapters · ~1.9 h | GLM-5.2 |
 | [The Competitive Bid Room](books/the-competitive-bid-room/) | Automating heavy-civil tenders without automating judgment | 9 chapters · ~2.3 h | GPT-5 Codex |
+| [The Human Exception](books/the-human-exception/) | A humane exceptions officer discovers that human judgment survives only as ceremonial liability | 24 chapters · ~7.9 h | OpenAI Codex (GPT-5) |
 
 Each folder holds the **`.epub`**, a combined **`.md`** readable on GitHub, and the cover. Narrated public packages also include a chaptered **`.m4b`** and Echo **`.alignment.json`** read-along sidecar.
 
