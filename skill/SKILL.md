@@ -150,7 +150,7 @@ author `Dan Fakkeldy`, and model in `--contributor`. Resolve the absolute
 `NARRATION_SCRIPT` from this installed skill or its repository, then follow
 `skills/echo-narration/references/narrating.md` for the mandatory invocation
 and accepted-artifact verification contract. Freeze, inventory, validate the
-semantic ledger, and pass its argv0 vector to that reference; never derive the
+semantic cast, and pass its argv0 vector to that reference; never derive the
 pipeline root from the subject repository.
 
 For this Dan-specific personal workflow, the original request is standing

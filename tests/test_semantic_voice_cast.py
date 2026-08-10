@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -400,6 +401,38 @@ class SemanticVoiceCastTests(unittest.TestCase):
                 with self.assertRaisesRegex(module.SemanticVoiceCastError, "duplicate"):
                     self.validate(fixture)
 
+    def test_rejects_unhashable_inventory_kind_in_api_and_cli(self) -> None:
+        fixture = self.fresh_fixture()
+        inventory = fixture.inventory_payload()
+        blocks = inventory["blocks"]
+        assert isinstance(blocks, list) and isinstance(blocks[0], dict)
+        blocks[0]["kind"] = []
+        fixture.write_json(fixture.inventory, inventory)
+        self._write_bound_cast(fixture)
+
+        with self.assertRaisesRegex(
+            module.SemanticVoiceCastError,
+            "inventory block 0 has an invalid kind",
+        ):
+            self.validate(fixture)
+
+        command = [
+            sys.executable, str(MODULE_PATH), "validate-cast",
+            "--cast", str(fixture.cast),
+            "--inventory", str(fixture.inventory),
+            "--voice-plan", str(fixture.plan),
+            "--epub", str(fixture.epub),
+        ]
+        for output_format in ("json", "argv0"):
+            with self.subTest(output_format=output_format):
+                result = subprocess.run(command + ["--format", output_format], capture_output=True)
+                self.assertEqual(65, result.returncode)
+                self.assertEqual(b"", result.stdout)
+                self.assertEqual(
+                    b"semantic voice cast: inventory block 0 has an invalid kind\n",
+                    result.stderr,
+                )
+
     def test_rejects_unhashable_group_role_id_in_api_and_cli(self) -> None:
         fixture = self.fresh_fixture()
         self._write_bound_cast(
@@ -428,6 +461,37 @@ class SemanticVoiceCastTests(unittest.TestCase):
                     b"semantic voice cast: cast group 0 roleID must be a secondary role\n",
                     result.stderr,
                 )
+
+    def test_filename_runtime_matches_schema_for_control_characters(self) -> None:
+        schema = json.loads(
+            (ROOT / "skill" / "schemas" / "semantic-voice-cast-v1.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        top_level = schema["properties"]
+        assert isinstance(top_level, dict)
+        source = top_level["source"]
+        assert isinstance(source, dict)
+        source_properties = source["properties"]
+        assert isinstance(source_properties, dict)
+        authored_plan = top_level["authoredVoicePlan"]
+        assert isinstance(authored_plan, dict)
+        authored_properties = authored_plan["properties"]
+        assert isinstance(authored_properties, dict)
+        definitions = (
+            ("epubFileName", source_properties["epubFileName"]),
+            ("inventoryFileName", source_properties["inventoryFileName"]),
+            ("authoredVoicePlan.fileName", authored_properties["fileName"]),
+        )
+        for key, definition in definitions:
+            assert isinstance(definition, dict)
+            pattern = definition["pattern"]
+            assert isinstance(pattern, str)
+            for value in ("line\nbreak.epub", "line\rbreak.epub"):
+                with self.subTest(key=key, value=repr(value)):
+                    self.assertIsNone(re.fullmatch(pattern, value))
+                    with self.assertRaisesRegex(module.SemanticVoiceCastError, "safe filename"):
+                        module._require_filename(value, key)
 
     @staticmethod
     def _make_image(inventory: dict[str, object], index: int) -> None:

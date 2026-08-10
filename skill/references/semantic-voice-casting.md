@@ -65,6 +65,94 @@ then require the private paths
 `$RUN_ROOT/dist/$EPUB_FILE_NAME`. The cast binds the frozen EPUB and inventory
 bytes by filename and SHA-256.
 
+The closed cast format is [semantic voice-cast v1](../schemas/semantic-voice-cast-v1.schema.json).
+Author canonical JSON after the EPUB and installed-Echo inventory freeze; replace
+each illustrative hash with the exact lowercase SHA-256 of the named bytes.
+
+### Minimal normal cast
+
+```json
+{
+  "schemaVersion": 1,
+  "narrationMode": "semantic-block",
+  "source": {
+    "epubFileName": "book.epub",
+    "epubSHA256": "<frozen EPUB SHA-256>",
+    "inventoryFileName": "echo-block-inventory-book.json",
+    "inventorySHA256": "<frozen inventory SHA-256>"
+  },
+  "defaultRoleID": "guide",
+  "roles": [
+    {"roleID": "guide", "voiceID": "am_michael"},
+    {"roleID": "memory", "voiceID": "bf_emma"}
+  ],
+  "groups": [
+    {"groupID": "memory-001", "roleID": "memory", "blocks": ["s0-b4"]}
+  ],
+  "authoredVoicePlan": {
+    "fileName": "echo-voice-plan.json",
+    "sha256": "<authored plan SHA-256>"
+  },
+  "singleVoiceWaiver": null
+}
+```
+
+### Minimal guide-only waiver cast
+
+```json
+{
+  "schemaVersion": 1,
+  "narrationMode": "semantic-block",
+  "source": {
+    "epubFileName": "book.epub",
+    "epubSHA256": "<frozen EPUB SHA-256>",
+    "inventoryFileName": "echo-block-inventory-book.json",
+    "inventorySHA256": "<frozen inventory SHA-256>"
+  },
+  "defaultRoleID": "guide",
+  "roles": [{"roleID": "guide", "voiceID": "am_michael"}],
+  "groups": [],
+  "authoredVoicePlan": {
+    "fileName": "echo-voice-plan.json",
+    "sha256": "<authored plan SHA-256>"
+  },
+  "singleVoiceWaiver": {
+    "recordedIn": "source/brief.md",
+    "reason": "Listener explicitly requested one voice."
+  }
+}
+```
+
+### Authored Echo voice-plan shapes
+
+The sibling plan must mirror the selected cast exactly. A normal cast has its
+guide and memory speakers plus the matching group assignment:
+
+```json
+{
+  "schemaVersion": 1,
+  "source": {"epubSHA256": "<frozen EPUB SHA-256>"},
+  "defaultSpeakerID": "guide",
+  "speakers": [
+    {"id": "guide", "voiceID": "am_michael"},
+    {"id": "memory", "voiceID": "bf_emma"}
+  ],
+  "assignments": [{"speakerID": "memory", "blocks": ["s0-b4"]}]
+}
+```
+
+A guide-only waiver has one guide speaker and no assignments:
+
+```json
+{
+  "schemaVersion": 1,
+  "source": {"epubSHA256": "<frozen EPUB SHA-256>"},
+  "defaultSpeakerID": "guide",
+  "speakers": [{"id": "guide", "voiceID": "am_michael"}],
+  "assignments": []
+}
+```
+
 Echo's installed `export-blocks` creates the inventory; it is the boundary for
 actual block IDs, paragraph status, and order. Map the already-authored ledger
 to that frozen inventory as whole paragraph groups. Never guess IDs, construct

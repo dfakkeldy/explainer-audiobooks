@@ -71,6 +71,11 @@ case, and distinct teaching beats. For each section, record:
 
 ## Semantic Voice Plan
 
+Choose exactly one mutually exclusive route; never write a reduced normal cast
+as though it were a waiver.
+
+### Normal cast
+
 - Selected roles: `guide` plus `memory`, with `field` and `coach` only when
   their paragraph jobs are earned.
 - Candidate Echo voices, audition passage, and selected role/voice pairs:
@@ -80,6 +85,14 @@ case, and distinct teaching beats. For each section, record:
   recording each planned secondary passage, role, learning job, and source location.
 - Frozen EPUB mapping boundary: production creates the Echo inventory only after
   the EPUB freezes and maps the ledger to it; this handoff does not contain Echo block IDs.
+
+### Guide-only waiver
+
+- Explicit listener waiver cited from `source/brief.md`:
+- Selected role: `guide` only.
+- No `memory`, no secondary-role jobs, no groups, and no assignments.
+- Candidate guide voice, audition passage, listener preferences/exclusions, and
+  the same frozen EPUB mapping boundary; this handoff does not contain Echo block IDs.
 
 ## Figure Plan
 

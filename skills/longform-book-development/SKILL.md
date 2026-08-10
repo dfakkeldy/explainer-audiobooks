@@ -155,9 +155,12 @@ user means before creating a new one.
    facts, citations, technical names, and intentional teaching repetition. The
    packet must name listener-requested and author-anticipated pronunciation
    risks, including every spoken variant that needs special attention. For a
-   nonfiction audiobook, add the Semantic Voice Plan: stable roles, candidate
-   Echo voices, earned paragraph jobs, listener preferences/exclusions, and the
-   frozen EPUB mapping boundary, but no guessed Echo block IDs. Include the
+   nonfiction audiobook, add the Semantic Voice Plan using one mutually exclusive
+   route: a normal `guide` plus `memory` cast with earned secondary jobs, or a
+   guide-only explicit listener waiver cited from `source/brief.md`, with no
+   `memory`, secondary-role jobs, groups, or assignments. Include stable roles,
+   candidate Echo voices, listener preferences/exclusions, and the frozen EPUB
+   mapping boundary, but no guessed Echo block IDs. Include the
    editorial ledger path `<BOOK_ROOT>/source/narration-role-ledger.md`.
    Define the later production loop explicitly: draft section by section with
    the full outline, grounded evidence, voice exemplar, previous-section text or

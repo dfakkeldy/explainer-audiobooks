@@ -90,6 +90,39 @@ class SemanticMultivoiceSkillContractTests(unittest.TestCase):
             self.assertIn(marker, self.packet)
         self.assertIn("does not contain Echo block IDs", self.packet)
 
+    def test_longform_handoff_has_exclusive_normal_and_guide_only_waiver_routes(self) -> None:
+        normal = self.packet.split("### Normal cast", 1)[1].split("### Guide-only waiver", 1)[0]
+        waiver = self.packet.split("### Guide-only waiver", 1)[1].split("## Figure Plan", 1)[0]
+        for document in (self.longform, self.packet):
+            with self.subTest(document=document):
+                self.assertIn("source/brief.md", document)
+                self.assertIn("mutually exclusive", document)
+        self.assertIn("`guide` plus `memory`", normal)
+        self.assertIn("narration-role-ledger.md", normal)
+        for requirement in (
+            "explicit listener waiver",
+            "`guide` only",
+            "no `memory`",
+            "no secondary-role jobs",
+            "no groups",
+            "no assignments",
+        ):
+            with self.subTest(requirement=requirement):
+                self.assertIn(requirement, waiver.lower())
+
+    def test_semantic_reference_links_schema_and_shows_authorable_operational_shapes(self) -> None:
+        for marker in (
+            "../schemas/semantic-voice-cast-v1.schema.json",
+            "### Minimal normal cast",
+            "### Minimal guide-only waiver cast",
+            "### Authored Echo voice-plan shapes",
+            '"singleVoiceWaiver": null',
+            '"singleVoiceWaiver": {',
+            '"assignments": []',
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.semantic_reference)
+
     def test_single_voice_requires_an_explicit_listener_waiver(self) -> None:
         self.assertIn("single-voice", self.combined)
         self.assertIn("source/brief.md", self.combined)

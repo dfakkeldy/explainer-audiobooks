@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import subprocess
 import tempfile
 import unittest
@@ -11,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[1]
 NARRATING = ROOT / "skills" / "echo-narration" / "references" / "narrating.md"
+SEMANTIC_REFERENCE = ROOT / "skill" / "references" / "semantic-voice-casting.md"
 NARRATE_WRAPPER = (
     ROOT / "skills" / "echo-narration" / "scripts" / "echo_pronunciation_narrate.sh"
 )
@@ -51,9 +53,154 @@ class EchoNarrationContractTests(unittest.TestCase):
         self.assertIn("Echo alone decides block existence", normalized)
 
     def test_block_handoffs_reject_invalid_casts_before_the_wrapper(self) -> None:
-        self.assertGreaterEqual(self.narrating.count("load_"), 2)
+        semantic_reference = SEMANTIC_REFERENCE.read_text(encoding="utf-8")
+        self.assertIn("load_semantic_voice_arguments()", semantic_reference)
+        self.assertIn("load_fiction_voice_arguments()", self.narrating)
         self.assertGreaterEqual(self.narrating.count("must be --voice-plan"), 2)
-        self.assertNotIn("`eval`", self.narrating)
+        self.assertIsNone(re.search(r"\beval\b", self.narrating))
+
+    def test_semantic_block_handoff_stops_before_wrapper_on_invalid_cast(self) -> None:
+        """A rejected semantic cast must not invoke the governed wrapper."""
+        semantic_reference = SEMANTIC_REFERENCE.read_text(encoding="utf-8")
+        marker = "Forward only the validator's NUL-delimited argv0 result."
+        self.assertIn(marker, semantic_reference)
+        handoff = semantic_reference.split(marker, 1)[1]
+        handoff = handoff.split("```bash\n", 1)[1].split("```", 1)[0].strip()
+
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw).resolve()
+            run_root = root / "run"
+            narration = run_root / "_production" / "narration"
+            research = run_root / "research"
+            dist = run_root / "dist"
+            for directory in (narration, research, dist):
+                directory.mkdir(parents=True)
+            epub = (dist / "fixture.epub").resolve()
+            inventory = (research / "echo-block-inventory-fixture.json").resolve()
+            voice_plan = (narration / "echo-voice-plan.json").resolve()
+            voice_cast = (narration / "semantic-voice-cast.json").resolve()
+            wrapper = (root / "fake-narration-wrapper.sh").resolve()
+            wrapper_log = root / "wrapper-called.log"
+            epub.write_bytes(b"frozen fixture EPUB")
+            epub_hash = hashlib.sha256(epub.read_bytes()).hexdigest()
+            inventory.write_text(
+                json.dumps(
+                    {
+                        "version": 1,
+                        "source": {"epubSHA256": epub_hash},
+                        "blocks": [
+                            {
+                                "id": "s0-b0",
+                                "kind": [],
+                                "text": "Malformed kind.",
+                                "chapterIndex": 0,
+                                "sequenceIndex": 0,
+                                "wordCount": 2,
+                            }
+                        ],
+                    },
+                    sort_keys=True,
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            voice_plan.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "source": {"epubSHA256": epub_hash},
+                        "defaultSpeakerID": "guide",
+                        "speakers": [
+                            {"id": "guide", "voiceID": "am_michael"},
+                            {"id": "memory", "voiceID": "bf_emma"},
+                        ],
+                        "assignments": [{"speakerID": "memory", "blocks": ["s0-b0"]}],
+                    },
+                    sort_keys=True,
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            voice_cast.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "narrationMode": "semantic-block",
+                        "source": {
+                            "epubFileName": epub.name,
+                            "epubSHA256": epub_hash,
+                            "inventoryFileName": inventory.name,
+                            "inventorySHA256": hashlib.sha256(inventory.read_bytes()).hexdigest(),
+                        },
+                        "defaultRoleID": "guide",
+                        "roles": [
+                            {"roleID": "guide", "voiceID": "am_michael"},
+                            {"roleID": "memory", "voiceID": "bf_emma"},
+                        ],
+                        "groups": [
+                            {"groupID": "memory-001", "roleID": "memory", "blocks": ["s0-b0"]}
+                        ],
+                        "authoredVoicePlan": {
+                            "fileName": voice_plan.name,
+                            "sha256": hashlib.sha256(voice_plan.read_bytes()).hexdigest(),
+                        },
+                        "singleVoiceWaiver": None,
+                    },
+                    sort_keys=True,
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            wrapper.write_text(
+                "#!/bin/bash\n"
+                "set -euo pipefail\n"
+                "printf '%s\\n' \"$@\" >\"$WRAPPER_LOG\"\n"
+                "mkdir -p -- \"$RUN_ROOT/research\"\n"
+                "touch -- \"$RUN_ROOT/research/echo-render-inputs-unexpected.env\"\n"
+                "mkdir -p -- \"$RUN_ROOT/audio-work-unexpected\"\n"
+                "touch -- \"$RUN_ROOT/narration-unexpected.sqlite\"\n",
+                encoding="utf-8",
+            )
+            wrapper.chmod(0o700)
+
+            environment = os.environ.copy()
+            environment.update(
+                {
+                    "EXPLAINER_ROOT": str(ROOT),
+                    "SEMANTIC_CAST": str(voice_cast),
+                    "INVENTORY": str(inventory),
+                    "VOICE_PLAN": str(voice_plan),
+                    "EPUB": str(epub),
+                    "NARRATION_SCRIPT": str(wrapper),
+                    "RUN_ROOT": str(run_root),
+                    "WRAPPER_LOG": str(wrapper_log),
+                    "TMPDIR": str(root),
+                }
+            )
+            result = subprocess.run(
+                ["/bin/bash", "-c", "set -o pipefail\n" + handoff],
+                cwd=ROOT,
+                env=environment,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(65, result.returncode, result.stderr)
+            self.assertEqual(
+                "semantic voice cast: inventory block 0 has an invalid kind\n",
+                result.stderr,
+            )
+            self.assertFalse(wrapper_log.exists())
+            self.assertFalse(
+                (run_root / "research" / "echo-render-inputs-unexpected.env").exists()
+            )
+            self.assertFalse((run_root / "audio-work-unexpected").exists())
+            self.assertFalse((run_root / "narration-unexpected.sqlite").exists())
+            self.assertEqual([], list(root.glob("echo-semantic-voice-arguments.*")))
 
     def test_builds_and_preflights_the_exact_release_cli(self) -> None:
         combined = self.normalized(self.narrating + "\n" + self.preflight)

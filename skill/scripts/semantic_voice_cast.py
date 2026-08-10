@@ -130,7 +130,14 @@ def _require_string(value: object, label: str) -> str:
 
 def _require_filename(value: object, label: str) -> str:
     filename = _require_string(value, label)
-    if filename in {".", ".."} or "/" in filename or "\\" in filename or "\0" in filename:
+    if (
+        filename in {".", ".."}
+        or "/" in filename
+        or "\\" in filename
+        or "\0" in filename
+        or "\r" in filename
+        or "\n" in filename
+    ):
         raise SemanticVoiceCastError(f"{label} must be a safe filename")
     return filename
 
@@ -238,7 +245,9 @@ def _validate_inventory(inventory: dict[str, object], epub_hash: str) -> set[str
         if not isinstance(block_id, str) or BLOCK_ID.fullmatch(block_id) is None or block_id in ids:
             raise SemanticVoiceCastError(f"inventory block {index} has a duplicate or invalid ID")
         ids.add(block_id)
-        if kind not in {"heading", "paragraph", "sentence", "image", "code"}:
+        if not isinstance(kind, str) or kind not in {
+            "heading", "paragraph", "sentence", "image", "code"
+        }:
             raise SemanticVoiceCastError(f"inventory block {index} has an invalid kind")
         if not isinstance(value["text"], str):
             raise SemanticVoiceCastError(f"inventory block {index} text must be text")
