@@ -48,6 +48,7 @@ Two different audiences:
 | [Rodents in the Walls](books/rodents-in-the-walls/) | Identify, exclude, and clean up after house-invading rodents | 9 chapters · ~2.0 h | GPT-5.6 Sol |
 | [The New Deal](books/the-new-deal/) | Canada Post, CUPW, and the future of rural mail | 9 chapters · ~1.9 h | GLM-5.2 |
 | [The Competitive Bid Room](books/the-competitive-bid-room/) | Automating heavy-civil tenders without automating judgment | 9 chapters · ~2.3 h | GPT-5 Codex |
+| [The Human Exception](books/the-human-exception/) | A humane exceptions officer discovers that human judgment survives only as ceremonial liability | 24 chapters · ~7.9 h | OpenAI Codex (GPT-5) |
 | [Gold Panning in Nova Scotia](books/gold-panning-nova-scotia/) | Find, assess, and responsibly pan promising Nova Scotia gold country | 10 chapters · ~2.0 h | GLM-5.2 |
 | [Beyond the Tax-Sale Packet](books/beyond-the-tax-sale-packet/) | Research Nova Scotia municipal tax sales without turning screening evidence into certainty | 13 chapters · ~4.2 h | Codex (GPT-5) |
 
