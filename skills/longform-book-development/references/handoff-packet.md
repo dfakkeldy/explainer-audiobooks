@@ -76,6 +76,8 @@ case, and distinct teaching beats. For each section, record:
 - Candidate Echo voices, audition passage, and selected role/voice pairs:
 - Passages or section jobs expected to earn each secondary role:
 - Listener preferences and exclusions:
+- Editorial narration role ledger: `<BOOK_ROOT>/source/narration-role-ledger.md`,
+  recording each planned secondary passage, role, learning job, and source location.
 - Frozen EPUB mapping boundary: production creates the Echo inventory only after
   the EPUB freezes and maps the ledger to it; this handoff does not contain Echo block IDs.
 
@@ -132,7 +134,8 @@ A packet is production-ready when it includes:
 - source locators, story material, and the exact names production must preserve;
 - a voice direction with positive examples and disliked patterns;
 - a Semantic Voice Plan with roles, candidate Echo voices, earned secondary
-  role jobs, listener preferences/exclusions, and the frozen EPUB boundary;
+  role jobs, listener preferences/exclusions, the
+  `<BOOK_ROOT>/source/narration-role-ledger.md`, and the frozen EPUB boundary;
 - a rights-aware picture plan, including a zero-figure decision when relevant;
 - the preserve-on-revision notes for any existing edition;
 - the five separate craft passes and blind beginner review;

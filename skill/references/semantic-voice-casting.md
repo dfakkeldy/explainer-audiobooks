@@ -40,14 +40,15 @@ no assignments; it is not a fallback for time, availability, or uncertainty.
 
 ## Plan while writing
 
-Keep the private semantic ledger at
-`$RUN_ROOT/_production/narration/semantic-voice-ledger.md`. While drafting,
-mark only earned paragraph groups and their learning jobs; do not assign Echo
-block IDs. `memory` comes after the guide has taught the idea, recalls it in a
-self-contained paragraph, and must make sense to a listener who missed the
-preceding thirty seconds. `field` adds concrete evidence only when the example
-does work that guide prose cannot. `coach` asks for a short action or reflection
-only when it strengthens the next decision.
+Keep the private editorial ledger at
+`<BOOK_ROOT>/source/narration-role-ledger.md`. It records each planned secondary
+passage, its semantic role, learning job, and source location before packaging.
+While drafting, mark only earned paragraph groups; do not assign Echo block IDs.
+`memory` comes after the guide has taught the idea, recalls it in a self-contained
+paragraph, and must make sense to a listener who missed the preceding thirty
+seconds. `field` adds concrete evidence only when the example does work that
+guide prose cannot. `coach` asks for a short action or reflection only when it
+strengthens the next decision.
 
 Keep guide prose sufficient on its own: voices reinforce recurrence and
 retrieval, rather than replacing clear explanation, cold re-entry, or
@@ -81,7 +82,9 @@ existence, speakability, resolved plan bytes, and plan identity. Follow
 
 Forward only the validator's NUL-delimited argv0 result. This private function
 preserves a validation failure status and requires exactly `--voice-plan` plus
-the canonical authored plan:
+the canonical authored plan. Before invoking it, `SEMANTIC_CAST`, `INVENTORY`,
+`VOICE_PLAN`, and `EPUB` must be absolute canonical regular file paths; reject
+relative paths, symlinks, and directories rather than calling the wrapper:
 
 ```bash
 load_semantic_voice_arguments() {

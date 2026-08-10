@@ -92,6 +92,25 @@ class SemanticMultivoiceSkillContractTests(unittest.TestCase):
         self.assertIn("explicit listener waiver", self.combined)
         self.assertNotIn("silently fall back", self.combined)
 
+    def test_editorial_ledger_uses_the_canonical_book_root_path(self) -> None:
+        ledger = "<BOOK_ROOT>/source/narration-role-ledger.md"
+        for document in (self.semantic_reference, self.longform, self.packet):
+            with self.subTest(document=document):
+                self.assertIn(ledger, document)
+        self.assertNotIn("semantic-voice-ledger.md", self.combined)
+
+    def test_validator_handoff_requires_canonical_absolute_regular_files(self) -> None:
+        for marker in (
+            "SEMANTIC_CAST",
+            "INVENTORY",
+            "VOICE_PLAN",
+            "EPUB",
+            "absolute canonical regular file paths",
+            "relative paths, symlinks, and directories",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, self.semantic_reference)
+
 
 if __name__ == "__main__":
     unittest.main()
