@@ -92,7 +92,7 @@ SCHEMA_7_REQUIRED_FIELDS = {
     "diagnostics",
 }
 SCHEMA_7_REEL_FIELDS = {"listeningReelFileName", "listeningReelSHA256"}
-BLOCK_ID_PATTERN = re.compile(r"s[0-9]+-b[0-9]+$")
+BLOCK_ID_PATTERN = re.compile(r"s[0-9]+-b[0-9]+\Z")
 DECISION_REQUIRED_FIELDS = {
     "blockID",
     "wordStart",
