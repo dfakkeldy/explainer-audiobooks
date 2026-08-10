@@ -35,7 +35,7 @@ GROUP_KEYS = frozenset({"groupID", "roleID", "blocks"})
 AUTHORED_PLAN_KEYS = frozenset({"fileName", "sha256"})
 WAIVER_KEYS = frozenset({"recordedIn", "reason"})
 INVENTORY_KEYS = frozenset({"version", "source", "blocks"})
-INVENTORY_SOURCE_KEYS = frozenset({"epub"})
+INVENTORY_SOURCE_KEYS = frozenset({"epubSHA256"})
 PLAN_KEYS = frozenset(
     {"schemaVersion", "source", "defaultSpeakerID", "speakers", "assignments"}
 )
@@ -205,12 +205,12 @@ def _validate_cast(cast: dict[str, object]) -> tuple[dict[str, object], list[dic
     return source, checked_groups
 
 
-def _validate_inventory(inventory: dict[str, object], epub_name: str) -> set[str]:
+def _validate_inventory(inventory: dict[str, object], epub_hash: str) -> set[str]:
     if type(inventory["version"]) is not int or inventory["version"] != 1:
         raise SemanticVoiceCastError("inventory version must be 1")
     source = _require_object(inventory["source"], "inventory source", INVENTORY_SOURCE_KEYS)
-    if source["epub"] != epub_name:
-        raise SemanticVoiceCastError("inventory source EPUB filename differs")
+    if _require_sha256(source["epubSHA256"], "inventory source EPUB hash") != epub_hash:
+        raise SemanticVoiceCastError("inventory source EPUB hash differs")
     blocks = inventory["blocks"]
     if not isinstance(blocks, list):
         raise SemanticVoiceCastError("inventory blocks must be an array")
@@ -315,7 +315,7 @@ def validate_cast(
     if sha256(voice_plan_path) != _require_sha256(authored["sha256"], "authored voice-plan hash"):
         raise SemanticVoiceCastError("authored voice-plan hash differs")
     inventory = read_closed_json(inventory_path, "inventory", INVENTORY_KEYS)
-    _validate_inventory(inventory, epub_name)
+    _validate_inventory(inventory, epub_hash)
     plan = read_closed_json(voice_plan_path, "authored voice plan", PLAN_KEYS)
     _validate_authored_plan(plan, epub_hash)
     inventory_blocks = inventory["blocks"]

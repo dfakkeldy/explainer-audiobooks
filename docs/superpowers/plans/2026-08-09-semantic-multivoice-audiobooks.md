@@ -284,7 +284,7 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 ```
 
-Validate the cast's closed nested objects and types directly rather than importing a JSON Schema runtime. Derive the run root from the exact `_production/narration/semantic-voice-cast.json` suffix and require the plan, inventory, and EPUB at the stable paths defined above. Validate the Echo inventory as version 1 with exact `source.epub` and a block array containing unique IDs and sequence indexes. Accept only the documented Echo block keys: `id`, `kind`, `text`, `chapterIndex`, `sequenceIndex`, `wordCount`, plus `imagePath` only for image blocks.
+Validate the cast's closed nested objects and types directly rather than importing a JSON Schema runtime. Derive the run root from the exact `_production/narration/semantic-voice-cast.json` suffix and require the plan, inventory, and EPUB at the stable paths defined above. Validate the Echo inventory as version 1 with exact `source.epubSHA256` and a block array containing unique IDs and sequence indexes. Accept only the documented Echo block keys: `id`, `kind`, `text`, `chapterIndex`, `sequenceIndex`, `wordCount`, plus `imagePath` only for image blocks.
 
 Load `echo_voice_plan.py` from the repository-relative path and reuse `VOICE_IDS`. Do not import fiction preferences or duplicate the catalog.
 

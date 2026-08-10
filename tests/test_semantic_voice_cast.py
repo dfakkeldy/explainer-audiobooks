@@ -63,7 +63,7 @@ class SemanticCastFixture:
         ]
         return {
             "version": 1,
-            "source": {"epub": self.epub.name},
+            "source": {"epubSHA256": digest(self.epub)},
             "blocks": blocks,
         }
 
@@ -171,6 +171,17 @@ class SemanticVoiceCastTests(unittest.TestCase):
                 mutate(fixture)
                 with self.assertRaisesRegex(module.SemanticVoiceCastError, pattern):
                     self.validate(fixture)
+
+    def test_rejects_inventory_with_a_stale_epub_digest(self) -> None:
+        inventory = self.fixture.inventory_payload()
+        source = inventory["source"]
+        assert isinstance(source, dict)
+        source["epubSHA256"] = "f" * 64
+        self.fixture.write_json(self.fixture.inventory, inventory)
+        self.fixture.write_cast()
+
+        with self.assertRaisesRegex(module.SemanticVoiceCastError, "inventory source EPUB hash"):
+            self.validate()
 
     @staticmethod
     def _rewrite_cast(fixture: SemanticCastFixture, key: str, value: str) -> None:
