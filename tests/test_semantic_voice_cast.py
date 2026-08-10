@@ -535,6 +535,44 @@ class SemanticVoiceCastTests(unittest.TestCase):
                     result.stderr,
                 )
 
+    def test_cli_rejects_malformed_v2_inventory_shapes_without_handoff(self) -> None:
+        """A malformed v2 inventory must never reach either CLI handoff format."""
+        cases = (
+            ("version", lambda inventory: inventory.__setitem__("version", "2"), "inventory version must be 2"),
+            ("source", lambda inventory: inventory.__setitem__("source", []), "inventory source has unexpected keys"),
+            ("epub", lambda inventory: inventory["source"].__setitem__("epub", []), "inventory source EPUB filename must be nonempty text"),
+            ("epubSHA256", lambda inventory: inventory["source"].__setitem__("epubSHA256", []), "inventory source EPUB hash must be a lowercase SHA-256"),
+            ("blocks", lambda inventory: inventory.__setitem__("blocks", {}), "inventory blocks must be an array"),
+        )
+        for name, mutate, message in cases:
+            with self.subTest(name=name):
+                fixture = self.fresh_fixture()
+                inventory = fixture.inventory_payload()
+                mutate(inventory)
+                fixture.write_json(fixture.inventory, inventory)
+                fixture.write_cast()
+                with self.assertRaisesRegex(module.SemanticVoiceCastError, message):
+                    self.validate(fixture)
+
+                command = [
+                    sys.executable, str(MODULE_PATH), "validate-cast",
+                    "--cast", str(fixture.cast),
+                    "--inventory", str(fixture.inventory),
+                    "--voice-plan", str(fixture.plan),
+                    "--epub", str(fixture.epub),
+                ]
+                for output_format in ("json", "argv0"):
+                    with self.subTest(name=name, output_format=output_format):
+                        result = subprocess.run(
+                            command + ["--format", output_format], capture_output=True
+                        )
+                        self.assertEqual(65, result.returncode)
+                        self.assertEqual(b"", result.stdout)
+                        self.assertEqual(
+                            f"semantic voice cast: {message}\n".encode("utf-8"),
+                            result.stderr,
+                        )
+
     def test_rejects_unhashable_group_role_id_in_api_and_cli(self) -> None:
         fixture = self.fresh_fixture()
         self._write_bound_cast(
