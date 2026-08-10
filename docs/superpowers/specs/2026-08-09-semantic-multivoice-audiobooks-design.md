@@ -1,6 +1,6 @@
 # Semantic Multi-Voice Audiobooks Design
 
-Date: 2026-08-09  
+Date: 2026-08-09
 Status: approved for implementation
 
 ## Purpose
