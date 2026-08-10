@@ -1,5 +1,13 @@
 # Beyond the Tax-Sale Packet — full-audio acceptance checklist
 
+> **Historical record — superseded.** This checklist governed the 2026-07-22
+> replacement candidate before the later 54-figure edition completed its full
+> listening review and received publication authorization. See the
+> [packet README](README.md) and
+> [final publication receipt](research/audiobook-54-figure-publication-receipt.json)
+> for current status. The original checklist and pending gates are preserved
+> below as dated evidence.
+
 This checklist is for the private governed audiobook candidate. The approved
 EPUB manuscript and *The Packet Lifts* cover are frozen. Listening may identify
 audio repairs; it does not authorize a text or cover revision.
