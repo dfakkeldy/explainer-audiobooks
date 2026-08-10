@@ -204,6 +204,6 @@ git diff origin/main...HEAD -- README.md docs/
 
 Expected: no whitespace errors; only the approved documentation files, design, and implementation plan are changed.
 
-- [ ] **Step 4: Commit and publish**
+- [x] **Step 4: Commit and publish**
 
 Stage only the approved paths, commit the implementation, push `codex/refresh-documentation`, and open one ready pull request against `main` using the repository's GitHub workflow.
