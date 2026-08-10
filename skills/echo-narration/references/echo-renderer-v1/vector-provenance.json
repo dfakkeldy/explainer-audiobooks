@@ -4,9 +4,9 @@
     {
       "fileName": "canonical-manifest-v1.json",
       "sourceRepository": "https://github.com/dfakkeldy/Echo.git",
-      "installerSourceSHA": "2f23aceedb1b9f25b7ea4410756eea32a59af8cd",
+      "installerSourceSHA": "8cb1e09de81feeb820e23b151b3a5b40efa4c1c5",
       "echoRelativePath": "Scripts/echo_renderer/test_vectors/canonical-manifest-v1.json",
-      "sha256": "30f857f3ac890b21775f2e7773ff70faae1e1e85e0cf05af49c4ee4d7bb92c15"
+      "sha256": "f895b0fb173ebe0cc0bed21326018ff649aee1ecf6de3c063135a87eb285cbc0"
     },
     {
       "fileName": "lease-identities-v1.json",

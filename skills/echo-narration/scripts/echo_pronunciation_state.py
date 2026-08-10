@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import hashlib
 import json
 import os
@@ -15,7 +16,14 @@ import tempfile
 from pathlib import Path
 
 from echo_pronunciation_lease import load_capability, validate_capability
-from echo_voice_plan import VOICE_IDS, effective_voice, voice_plan
+from echo_voice_plan import (
+    VOICE_IDS,
+    VoicePlanError,
+    effective_voice,
+    read_authored_plan,
+    validate_resolver_receipt,
+    voice_plan,
+)
 
 
 SHA256_PATTERN = re.compile(r"[0-9a-f]{64}")
@@ -26,7 +34,7 @@ VOICE_ID_PATTERN = "|".join(re.escape(voice) for voice in sorted(VOICE_IDS))
 RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
     r"[0-9a-f]{12}-[0-9a-f]{40}"
-    rf"-(?:{VOICE_ID_PATTERN}|plan-[0-9a-f]{{12}})"
+    rf"-(?:{VOICE_ID_PATTERN}|plan-[0-9a-f]{{12}}|plan-[0-9a-f]{{64}})"
 )
 LEGACY_RUN_ID_PATTERN = re.compile(
     r"[0-9a-f]{12}-[0-9a-f]{12}-[0-9a-f]{12}-"
@@ -48,6 +56,69 @@ RENDERER_IDENTITY_KEYS = (
     "modelExpectedByteCount",
     "modelBytesAttested",
 )
+BLOCK_PLAN_RECEIPT_KEYS = frozenset(
+    {
+        "voicePlanMode",
+        "voicePlanID",
+        "voicePlanSHA256",
+        "voicePlanBlockCount",
+        "voicePlanCanonicalFileName",
+        "voicePlanCanonicalSHA256",
+        "voicePlanResolutionFileName",
+        "voicePlanResolutionSHA256",
+    }
+)
+BLOCK_REEL_RECEIPT_KEYS = frozenset(
+    {"reelFileName", "reelRelativePath", "reelSHA256"}
+)
+STATE_RECEIPT_COMMON_KEYS = frozenset(
+    {
+        "schemaVersion",
+        "echoSourceSHA",
+        "rendererManifestSHA256",
+        "sourceFingerprint",
+        "voice",
+        "renderVersion",
+        "captureSetID",
+        "inputReceiptSHA256",
+        "databaseSHA256",
+        "databaseByteCount",
+        "captures",
+    }
+) | frozenset(RENDERER_IDENTITY_KEYS)
+SUCCESS_RECEIPT_COMMON_KEYS = frozenset(
+    {
+        "schemaVersion",
+        "attemptID",
+        "runID",
+        "attemptReceiptSHA256",
+        "inputReceiptFileName",
+        "inputReceiptSHA256",
+        "sourceEPUBFileName",
+        "sourceEPUBSHA256",
+        "artifactRelativePath",
+        "resumeStateFileName",
+        "resumeStateSHA256",
+        "audiobookFileName",
+        "audiobookSHA256",
+        "sidecarFileName",
+        "sidecarSHA256",
+        "auditFileName",
+        "auditSHA256",
+    }
+) | frozenset(RENDERER_IDENTITY_KEYS)
+CURRENT_ATTEMPT_RECEIPT_KEYS = frozenset(
+    {
+        "schemaVersion",
+        "attemptID",
+        "runID",
+        "inputReceiptFileName",
+        "inputReceiptSHA256",
+        "sourceEPUBFileName",
+        "sourceEPUBSHA256",
+        "artifactRelativePath",
+    }
+) | frozenset(RENDERER_IDENTITY_KEYS)
 
 
 class StateError(ValueError):
@@ -57,6 +128,107 @@ class StateError(ValueError):
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise StateError(message)
+
+
+def require_block_plan_receipt_evidence(
+    payload: dict[str, object], label: str
+) -> None:
+    """Validate stored plan facts without attempting Echo's chapter digest."""
+
+    require(
+        payload.get("voicePlanMode") == "block",
+        f"{label} is not a block voice-plan receipt",
+    )
+    plan_id = payload.get("voicePlanID")
+    plan_sha = payload.get("voicePlanSHA256")
+    block_count = payload.get("voicePlanBlockCount")
+    require(
+        isinstance(plan_id, str)
+        and re.fullmatch(r"plan-[0-9a-f]{12}", plan_id) is not None,
+        f"{label} has an invalid voicePlanID",
+    )
+    require(
+        isinstance(plan_sha, str) and SHA256_PATTERN.fullmatch(plan_sha) is not None,
+        f"{label} has an invalid voicePlanSHA256",
+    )
+    require(
+        plan_id == f"plan-{plan_sha[:12]}",
+        f"{label} voicePlanID does not bind voicePlanSHA256",
+    )
+    require(
+        type(block_count) is int and block_count > 0,
+        f"{label} has an invalid voicePlanBlockCount",
+    )
+    canonical_name = payload.get("voicePlanCanonicalFileName")
+    resolution_name = payload.get("voicePlanResolutionFileName")
+    require(
+        canonical_name == f"echo-voice-plan-plan-{plan_sha}.json",
+        f"{label} has an invalid voicePlanCanonicalFileName",
+    )
+    require(
+        resolution_name == f"echo-voice-plan-resolution-plan-{plan_sha}.json",
+        f"{label} has an invalid voicePlanResolutionFileName",
+    )
+    for field in ("voicePlanCanonicalSHA256", "voicePlanResolutionSHA256"):
+        require(
+            isinstance(payload.get(field), str)
+            and SHA256_PATTERN.fullmatch(payload[field]) is not None,
+            f"{label} has an invalid {field}",
+        )
+
+
+def require_block_state_receipt(payload: dict[str, object], label: str) -> None:
+    require(
+        set(payload) == STATE_RECEIPT_COMMON_KEYS | BLOCK_PLAN_RECEIPT_KEYS,
+        f"{label} is not the exact block resume schema 4",
+    )
+    require(
+        payload.get("schemaVersion") == 4,
+        f"{label} schemaVersion must be 4 for a block receipt",
+    )
+    require_block_plan_receipt_evidence(payload, label)
+
+
+def require_block_success_receipt(payload: dict[str, object], label: str) -> None:
+    reel_keys = set(payload) & BLOCK_REEL_RECEIPT_KEYS
+    require(
+        reel_keys in (set(), set(BLOCK_REEL_RECEIPT_KEYS)),
+        f"{label} block reel fields must be all present or all absent",
+    )
+    expected_keys = SUCCESS_RECEIPT_COMMON_KEYS | BLOCK_PLAN_RECEIPT_KEYS | reel_keys
+    require(
+        set(payload) == expected_keys,
+        f"{label} is not the exact block success schema 4",
+    )
+    require(
+        payload.get("schemaVersion") == 4,
+        f"{label} schemaVersion must be 4 for a block receipt",
+    )
+    require_block_plan_receipt_evidence(payload, label)
+    if reel_keys:
+        reel_name = payload.get("reelFileName")
+        run_id = payload.get("runID")
+        attempt_id = payload.get("attemptID")
+        require(
+            isinstance(reel_name, str)
+            and bool(reel_name)
+            and Path(reel_name).name == reel_name,
+            f"{label} has an invalid reelFileName",
+        )
+        require(
+            isinstance(run_id, str) and isinstance(attempt_id, str),
+            f"{label} lacks the run identity for its listening reel",
+        )
+        require(
+            payload.get("reelRelativePath")
+            == f"listening/{run_id}/{attempt_id}/{reel_name}",
+            f"{label} has an invalid reelRelativePath",
+        )
+        require(
+            isinstance(payload.get("reelSHA256"), str)
+            and SHA256_PATTERN.fullmatch(payload["reelSHA256"]) is not None,
+            f"{label} has an invalid reelSHA256",
+        )
 
 
 def require_mutation_leases(lock_root: Path, resources: tuple[Path, ...]) -> None:
@@ -81,9 +253,20 @@ def open_regular(path: Path, label: str) -> int:
     flags = os.O_RDONLY
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
+    if hasattr(os, "O_NONBLOCK"):
+        flags |= os.O_NONBLOCK
     try:
         descriptor = os.open(path, flags)
     except OSError as error:
+        if error.errno == errno.ENOENT:
+            raise StateError(f"{label} is missing: {path}") from error
+        if error.errno == errno.ELOOP:
+            try:
+                leaf = os.lstat(path)
+            except OSError:
+                leaf = None
+            if leaf is not None and stat.S_ISLNK(leaf.st_mode):
+                raise StateError(f"{label} must not be a symlink: {path}") from error
         raise StateError(f"{label} is missing or unsafe: {path}") from error
     if not stat.S_ISREG(os.fstat(descriptor).st_mode):
         os.close(descriptor)
@@ -95,6 +278,83 @@ def read_regular_bytes(path: Path, label: str) -> bytes:
     descriptor = open_regular(path, label)
     with os.fdopen(descriptor, "rb", closefd=True) as input_file:
         return input_file.read()
+
+
+class RegularFileSnapshot:
+    """One descriptor's exact bytes and the facts derived from those bytes."""
+
+    def __init__(
+        self,
+        path: Path,
+        content: bytes | None,
+        sha256: str,
+        byte_count: int,
+        identity: tuple[int, int, int, int, int, int],
+    ) -> None:
+        self.path = path
+        self.content = content
+        self.sha256 = sha256
+        self.byte_count = byte_count
+        self.identity = identity
+
+
+def regular_file_identity(info: os.stat_result) -> tuple[int, int, int, int, int, int]:
+    """Return the stable regular-file facts used to reject replacement races."""
+
+    return (
+        info.st_dev,
+        info.st_ino,
+        stat.S_IFMT(info.st_mode),
+        info.st_size,
+        info.st_mtime_ns,
+        info.st_ctime_ns,
+    )
+
+
+def attest_regular_file_snapshot(snapshot: RegularFileSnapshot, label: str) -> None:
+    """Fail closed if a pathname no longer names the descriptor snapshot's file."""
+
+    try:
+        current = os.lstat(snapshot.path)
+    except FileNotFoundError as error:
+        raise StateError(f"{label} changed after snapshot: {snapshot.path}") from error
+    require(
+        stat.S_ISREG(current.st_mode),
+        f"{label} changed after snapshot: {snapshot.path}",
+    )
+    require(
+        regular_file_identity(current) == snapshot.identity,
+        f"{label} changed after snapshot: {snapshot.path}",
+    )
+
+
+def snapshot_regular_file(
+    path: Path, label: str, *, retain_content: bool = False
+) -> RegularFileSnapshot:
+    """Read/hash/count one no-follow descriptor without reopening its pathname."""
+
+    descriptor = open_regular(path, label)
+    digest = hashlib.sha256()
+    byte_count = 0
+    chunks: list[bytes] | None = [] if retain_content else None
+    with os.fdopen(descriptor, "rb", closefd=True) as input_file:
+        identity = regular_file_identity(os.fstat(input_file.fileno()))
+        while chunk := input_file.read(1_048_576):
+            digest.update(chunk)
+            byte_count += len(chunk)
+            if chunks is not None:
+                chunks.append(chunk)
+        require(
+            regular_file_identity(os.fstat(input_file.fileno())) == identity,
+            f"{label} changed while reading: {path}",
+        )
+    return RegularFileSnapshot(
+        path,
+        b"".join(chunks) if chunks is not None else None,
+        digest.hexdigest(),
+        byte_count,
+        identity,
+    )
 
 
 def renderer_identity(
@@ -291,14 +551,27 @@ def read_installed_renderer_identity(path: Path) -> tuple[str, str]:
     } | set(RENDERER_IDENTITY_KEYS)
     if schema_version == 3:
         expected_keys |= {"chapterVoices", "voicePlanSHA256"}
+    elif schema_version == 4:
+        expected_keys |= {
+            "voicePlanMode",
+            "voicePlanID",
+            "voicePlanSHA256",
+            "voicePlanBlockCount",
+            "voicePlanCanonicalFileName",
+            "voicePlanCanonicalSHA256",
+            "voicePlanResolutionFileName",
+            "voicePlanResolutionSHA256",
+        }
     require(
         set(payload) == expected_keys,
         "resume-state receipt is not the exact installed-renderer schema",
     )
     require(
-        type(schema_version) is int and schema_version in {2, 3},
-        "resume-state receipt is not installed-renderer schema 2 or 3",
+        type(schema_version) is int and schema_version in {2, 3, 4},
+        "resume-state receipt is not installed-renderer schema 2, 3, or 4",
     )
+    if schema_version == 4:
+        require_block_state_receipt(payload, "resume-state receipt")
     identity = renderer_identity_from_payload(payload, "resume-state receipt")
     require_receipt_renderer_identity(payload, identity, "resume-state receipt")
     source_sha = payload["echoSourceSHA"]
@@ -317,9 +590,7 @@ def read_installed_renderer_identity(path: Path) -> tuple[str, str]:
 
 
 def sha256(path: Path) -> str:
-    descriptor = open_regular(path, "hashed file")
-    with os.fdopen(descriptor, "rb", closefd=True) as input_file:
-        return hashlib.file_digest(input_file, "sha256").hexdigest()
+    return snapshot_regular_file(path, "hashed file").sha256
 
 
 def hash_tree(root: Path) -> str:
@@ -373,7 +644,10 @@ def safe_atomic_write(path: Path, content: bytes, *, immutable: bool) -> None:
         return
 
     descriptor, temporary_name = tempfile.mkstemp(
-        prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
+        # Full Echo plan digests intentionally appear in block run paths.  Do
+        # not repeat an already near-limit receipt basename in a private temp
+        # name, or the atomic writer itself exceeds NAME_MAX.
+        prefix=".echo-receipt-", suffix=".tmp", dir=path.parent
     )
     temporary = Path(temporary_name)
     try:
@@ -415,6 +689,169 @@ def epub_fingerprint(epub: Path) -> str:
     ).hexdigest()
 
 
+def receipt_lines_from_bytes(content: bytes, label: str) -> list[str]:
+    try:
+        return content.decode("utf-8").splitlines()
+    except UnicodeDecodeError as error:
+        raise StateError(f"{label} is not UTF-8") from error
+
+
+def snapshot_receipt_lines(
+    input_receipt: Path, label: str = "render-input receipt"
+) -> tuple[RegularFileSnapshot, list[str]]:
+    snapshot = snapshot_regular_file(input_receipt, label, retain_content=True)
+    require(snapshot.content is not None, f"{label} could not be read")
+    return snapshot, receipt_lines_from_bytes(snapshot.content, label)
+
+
+def receipt_lines(input_receipt: Path) -> list[str]:
+    _, lines = snapshot_receipt_lines(input_receipt)
+    return lines
+
+
+def require_receipt_value(
+    lines: list[str], key: str, value: object, label: str
+) -> None:
+    require(
+        [line for line in lines if line.startswith(f"{key}=")]
+        == [f"{key}={value}"],
+        f"{label} differs from render-input receipt: {key}",
+    )
+
+
+def block_plan_evidence(
+    voice_plan_path: Path,
+    voice_plan_id: str,
+    voice_plan_sha256: str,
+    voice_plan_block_count: int,
+    voice_plan_resolution: Path,
+    epub: Path,
+    input_receipt: Path,
+    voice: str,
+) -> dict[str, object]:
+    """Validate Echo-sealed plan evidence without deriving Echo block digests."""
+
+    require(
+        isinstance(voice_plan_id, str)
+        and re.fullmatch(r"plan-[0-9a-f]{12}", voice_plan_id) is not None,
+        "block voice-plan ID is invalid",
+    )
+    require(
+        isinstance(voice_plan_sha256, str)
+        and SHA256_PATTERN.fullmatch(voice_plan_sha256) is not None,
+        "block voice-plan SHA-256 is invalid",
+    )
+    require(
+        voice_plan_id == f"plan-{voice_plan_sha256[:12]}",
+        "block voice-plan ID does not bind its SHA-256",
+    )
+    require(
+        type(voice_plan_block_count) is int and voice_plan_block_count > 0,
+        "block voice-plan block count must be positive",
+    )
+    for path, label in (
+        (voice_plan_path, "canonical block voice plan"),
+        (voice_plan_resolution, "block voice-plan resolution"),
+    ):
+        require(path.is_absolute(), f"{label} must be absolute")
+        require(path.resolve(strict=False) == path, f"{label} must be canonical")
+        regular_file(path, label)
+    require(
+        voice_plan_path.name == f"echo-voice-plan-plan-{voice_plan_sha256}.json",
+        "canonical block voice-plan filename is invalid",
+    )
+    require(
+        voice_plan_resolution.name
+        == f"echo-voice-plan-resolution-plan-{voice_plan_sha256}.json",
+        "block voice-plan resolution filename is invalid",
+    )
+    canonical_bytes = read_regular_bytes(voice_plan_path, "canonical block voice plan")
+    resolution_bytes = read_regular_bytes(
+        voice_plan_resolution, "block voice-plan resolution"
+    )
+    try:
+        require(
+            read_authored_plan(voice_plan_path) == canonical_bytes,
+            "canonical block voice plan is not canonical JSON",
+        )
+        resolved = validate_resolver_receipt(resolution_bytes, epub)
+    except VoicePlanError as error:
+        raise StateError(f"sealed block voice-plan evidence is invalid: {error}") from error
+    require(
+        resolved["voicePlanID"] == voice_plan_id,
+        "block voice-plan ID differs from sealed resolution",
+    )
+    require(
+        resolved["voicePlanSHA256"] == voice_plan_sha256,
+        "block voice-plan SHA-256 differs from sealed resolution",
+    )
+    require(
+        resolved["blockCount"] == voice_plan_block_count,
+        "block voice-plan count differs from sealed resolution",
+    )
+    require(
+        resolved["defaultVoice"] == voice,
+        "block voice-plan default voice differs from the selected voice",
+    )
+    lines = receipt_lines(input_receipt)
+    values = {
+        "voice_plan_mode": "block",
+        "voice_plan_sha256": voice_plan_sha256,
+        "voice_plan_id": voice_plan_id,
+        "voice_plan_block_count": voice_plan_block_count,
+        "voice_plan_canonical_path": voice_plan_path,
+        "voice_plan_canonical_sha256": hashlib.sha256(canonical_bytes).hexdigest(),
+        "voice_plan_resolution_path": voice_plan_resolution,
+        "voice_plan_resolution_sha256": hashlib.sha256(resolution_bytes).hexdigest(),
+    }
+    for key, value in values.items():
+        require_receipt_value(lines, key, value, "block voice-plan evidence")
+    require_receipt_value(lines, "chapter_voices", "", "block voice-plan evidence")
+    return {
+        "voicePlanMode": "block",
+        "voicePlanID": voice_plan_id,
+        "voicePlanSHA256": voice_plan_sha256,
+        "voicePlanBlockCount": voice_plan_block_count,
+        "voicePlanCanonicalFileName": voice_plan_path.name,
+        "voicePlanCanonicalSHA256": values["voice_plan_canonical_sha256"],
+        "voicePlanResolutionFileName": voice_plan_resolution.name,
+        "voicePlanResolutionSHA256": values["voice_plan_resolution_sha256"],
+    }
+
+
+def block_plan_evidence_from_options(
+    options: argparse.Namespace,
+) -> dict[str, object] | None:
+    structural_names = (
+        "voice_plan",
+        "voice_plan_id",
+        "voice_plan_block_count",
+        "voice_plan_resolution",
+    )
+    structural_values = [getattr(options, name) for name in structural_names]
+    if all(value is None for value in structural_values):
+        return None
+    require(
+        all(value is not None for value in structural_values)
+        and options.voice_plan_sha256 is not None,
+        "block voice-plan options must be supplied as one complete set",
+    )
+    require(
+        not options.chapter_voice,
+        "block voice-plan options cannot be combined with chapter voices",
+    )
+    return block_plan_evidence(
+        options.voice_plan,
+        options.voice_plan_id,
+        options.voice_plan_sha256,
+        options.voice_plan_block_count,
+        options.voice_plan_resolution,
+        options.epub,
+        options.input_receipt,
+        options.voice,
+    )
+
+
 def capture_snapshot(
     work: Path,
     database: Path,
@@ -426,18 +863,26 @@ def capture_snapshot(
     render_version: int,
     input_receipt: Path,
     installed_renderer: dict[str, object],
+    block_plan: dict[str, object] | None = None,
 ) -> dict[str, object]:
     require(
         SHA256_PATTERN.fullmatch(source_sha) is not None
         or re.fullmatch(r"[0-9a-f]{40}", source_sha) is not None,
         "source SHA is invalid",
     )
-    plan = voice_plan(voice, chapter_voice_values)
-    voice_plan_sha256 = voice_plan_sha256 or plan["voicePlanSHA256"]
-    require(
-        plan["voicePlanSHA256"] == voice_plan_sha256,
-        "resume voice-plan SHA-256 is invalid",
-    )
+    plan: dict[str, object] | None = None
+    if block_plan is None:
+        plan = voice_plan(voice, chapter_voice_values)
+        voice_plan_sha256 = voice_plan_sha256 or plan["voicePlanSHA256"]
+        require(
+            plan["voicePlanSHA256"] == voice_plan_sha256,
+            "resume voice-plan SHA-256 is invalid",
+        )
+    else:
+        require(
+            voice_plan_sha256 == block_plan["voicePlanSHA256"],
+            "resume block voice-plan SHA-256 is invalid",
+        )
     require(
         type(render_version) is int and render_version >= 12,
         "resume render version must be an integer of at least 12",
@@ -454,21 +899,19 @@ def capture_snapshot(
         not work.is_symlink() and work.is_dir(),
         f"resume work directory is unsafe: {work}",
     )
-    regular_file(database, "resume database")
-    regular_file(input_receipt, "render-input receipt")
+    database_snapshot = snapshot_regular_file(database, "resume database")
+    input_receipt_snapshot = snapshot_regular_file(
+        input_receipt, "render-input receipt", retain_content=True
+    )
+    require(
+        input_receipt_snapshot.content is not None,
+        "render-input receipt could not be read",
+    )
     try:
-        receipt_lines = read_regular_bytes(
-            input_receipt, "render-input receipt"
-        ).decode("utf-8").splitlines()
+        lines = input_receipt_snapshot.content.decode("utf-8").splitlines()
     except UnicodeDecodeError as error:
         raise StateError("render-input receipt is not UTF-8") from error
-    render_version_lines = [
-        line for line in receipt_lines if line.startswith("render_version=")
-    ]
-    require(
-        render_version_lines == [f"render_version={render_version}"],
-        "resume render version differs from render-input receipt",
-    )
+    require_receipt_value(lines, "render_version", render_version, "resume render version")
     expected_receipt_identity = {
         "renderer_schema_version": installed_renderer["rendererSchemaVersion"],
         "renderer_root": installed_renderer["rendererRoot"],
@@ -487,16 +930,16 @@ def capture_snapshot(
         ],
         "model_bytes_attested": "false",
         "voice": voice,
-        "chapter_voices": ",".join(plan["canonicalAssignments"]),
+        "chapter_voices": ""
+        if block_plan is not None
+        else ",".join(plan["canonicalAssignments"]),
         "voice_plan_sha256": voice_plan_sha256,
-        "voice_plan_id": plan["voicePlanID"],
+        "voice_plan_id": (
+            block_plan["voicePlanID"] if block_plan is not None else plan["voicePlanID"]
+        ),
     }
     for key, value in expected_receipt_identity.items():
-        require(
-            [line for line in receipt_lines if line.startswith(f"{key}=")]
-            == [f"{key}={value}"],
-            f"render-input receipt renderer identity differs: {key}",
-        )
+        require_receipt_value(lines, key, value, "render-input receipt renderer identity")
     expected_source = epub_fingerprint(epub)
     captures: list[dict[str, object]] = []
     capture_set_id: str | None = None
@@ -509,16 +952,20 @@ def capture_snapshot(
     )
     require(marker_paths, "resume state has no completed capture markers")
     for display_chapter, marker in enumerate(marker_paths, start=1):
-        regular_file(marker, "capture marker")
         match = MARKER_PATTERN.fullmatch(marker.name)
         require(match is not None, f"malformed capture marker name: {marker.name}")
         filename_index = int(match.group(1))
         require(filename_index not in indexes, "duplicate capture chapter index")
         indexes.add(filename_index)
+        marker_snapshot = snapshot_regular_file(
+            marker, "capture marker", retain_content=True
+        )
+        require(
+            marker_snapshot.content is not None,
+            f"capture marker could not be read: {marker.name}",
+        )
         try:
-            payload = json.loads(
-                read_regular_bytes(marker, "capture marker").decode("utf-8")
-            )
+            payload = json.loads(marker_snapshot.content.decode("utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError) as error:
             raise StateError(
                 f"capture marker is not valid JSON: {marker.name}"
@@ -532,11 +979,28 @@ def capture_snapshot(
             isinstance(identity, dict),
             f"resume state requires a sealed Echo identity: {marker.name}",
         )
-        require(
-            type(identity.get("schemaVersion")) is int
-            and identity["schemaVersion"] == 1,
-            f"resume state requires capture schema 1: {marker.name}",
-        )
+        if block_plan is None:
+            require(
+                type(identity.get("schemaVersion")) is int
+                and identity["schemaVersion"] == 1,
+                f"resume state requires capture schema 1: {marker.name}",
+            )
+        else:
+            require(
+                type(identity.get("schemaVersion")) is int
+                and identity["schemaVersion"] == 2,
+                f"resume state requires capture schema 2: {marker.name}",
+            )
+            require(
+                identity.get("voicePlanSHA256") == block_plan["voicePlanSHA256"],
+                f"resume state voice-plan SHA-256 differs: {marker.name}",
+            )
+            require(
+                isinstance(identity.get("chapterVoicePlanSHA256"), str)
+                and SHA256_PATTERN.fullmatch(identity["chapterVoicePlanSHA256"])
+                is not None,
+                f"resume state has invalid chapterVoicePlanSHA256: {marker.name}",
+            )
         require(
             type(identity.get("renderVersion")) is int
             and identity["renderVersion"] == render_version,
@@ -546,13 +1010,20 @@ def capture_snapshot(
             identity.get("sourceFingerprint") == expected_source,
             f"resume state source fingerprint differs: {marker.name}",
         )
-        expected_voice = effective_voice(
-            voice, plan["chapterVoices"], display_chapter
-        )
-        require(
-            identity.get("voice") == expected_voice,
-            f"resume state voice differs: {marker.name}",
-        )
+        if block_plan is None:
+            require(plan is not None, "legacy resume state lacks a chapter voice plan")
+            expected_voice = effective_voice(
+                voice, plan["chapterVoices"], display_chapter
+            )
+            require(
+                identity.get("voice") == expected_voice,
+                f"resume state voice differs: {marker.name}",
+            )
+        else:
+            require(
+                identity.get("voice") in VOICE_IDS,
+                f"resume state has an unknown block voice: {marker.name}",
+            )
         require(
             type(identity.get("chapterIndex")) is int
             and identity["chapterIndex"] == filename_index,
@@ -595,14 +1066,14 @@ def capture_snapshot(
             f"resume state has unsafe audio filename: {marker.name}",
         )
         audio = work / audio_name
-        regular_file(audio, "capture audio")
+        audio_snapshot = snapshot_regular_file(audio, "capture audio")
         require(
             type(identity.get("audioFileByteCount")) is int
             and identity["audioFileByteCount"] >= 0
-            and identity["audioFileByteCount"] == audio.stat().st_size,
+            and identity["audioFileByteCount"] == audio_snapshot.byte_count,
             f"resume capture audio size differs: {audio_name}",
         )
-        audio_hash = sha256(audio)
+        audio_hash = audio_snapshot.sha256
         require(
             identity["audioSHA256"] == audio_hash,
             f"resume capture audio SHA-256 differs: {audio_name}",
@@ -615,12 +1086,27 @@ def capture_snapshot(
             {
                 "chapterIndex": filename_index,
                 "markerFileName": marker.name,
-                "markerSHA256": sha256(marker),
+                "markerSHA256": marker_snapshot.sha256,
                 "audioFileName": audio_name,
                 "audioSHA256": audio_hash,
                 "payloadSHA256": identity["payloadSHA256"],
             }
         )
+    if block_plan is not None:
+        return {
+            "schemaVersion": 4,
+            **installed_renderer,
+            "sourceFingerprint": expected_source,
+            "voice": voice,
+            **block_plan,
+            "renderVersion": render_version,
+            "captureSetID": capture_set_id,
+            "inputReceiptSHA256": input_receipt_snapshot.sha256,
+            "databaseSHA256": database_snapshot.sha256,
+            "databaseByteCount": database_snapshot.byte_count,
+            "captures": captures,
+        }
+    require(plan is not None, "legacy resume state lacks a chapter voice plan")
     return {
         "schemaVersion": 3,
         **installed_renderer,
@@ -633,11 +1119,122 @@ def capture_snapshot(
         "voicePlanSHA256": voice_plan_sha256,
         "renderVersion": render_version,
         "captureSetID": capture_set_id,
-        "inputReceiptSHA256": sha256(input_receipt),
-        "databaseSHA256": sha256(database),
-        "databaseByteCount": database.stat().st_size,
+        "inputReceiptSHA256": input_receipt_snapshot.sha256,
+        "databaseSHA256": database_snapshot.sha256,
+        "databaseByteCount": database_snapshot.byte_count,
         "captures": captures,
     }
+
+
+def block_attempt_root(
+    attempt_receipt: Path, artifact_relative_path: str
+) -> Path:
+    require(
+        attempt_receipt.is_absolute(),
+        "block attempt receipt path must be absolute",
+    )
+    path_parts = artifact_relative_path.split("/")
+    require(
+        len(path_parts) == 3
+        and path_parts[0] == "echo-renders"
+        and all(path_parts[1:]),
+        "block attempt artifact path is malformed",
+    )
+    return attempt_receipt.parent.parent / "dist" / artifact_relative_path
+
+
+def require_block_attempt_contents(
+    attempt_receipt: Path,
+    artifact_relative_path: str,
+    audiobook: Path,
+    sidecar: Path,
+    audit: Path,
+) -> None:
+    """Allow only final delivery media beneath a schema-4 attempt root."""
+
+    artifact_root = block_attempt_root(attempt_receipt, artifact_relative_path)
+    require(
+        audiobook.parent == artifact_root
+        and sidecar.parent == artifact_root
+        and audit.parent == artifact_root,
+        "block attempt media paths are not derived from the current attempt",
+    )
+    require(
+        not artifact_root.is_symlink() and artifact_root.is_dir(),
+        f"block attempt contains an unsafe artifact root: {artifact_root}",
+    )
+    expected = {audiobook.name, sidecar.name, audit.name}
+    require(
+        len(expected) == 3,
+        "block attempt delivery media filenames must be distinct",
+    )
+    for path, expected_suffix in (
+        (audiobook, ".m4b"),
+        (sidecar, ".alignment.json"),
+        (audit, ".pronunciation-audit.json"),
+    ):
+        require(
+            path.name.endswith(expected_suffix),
+            f"block attempt contains an invalid delivery filename: {path.name}",
+        )
+    actual: set[str] = set()
+    for directory, directory_names, file_names in os.walk(
+        artifact_root, followlinks=False
+    ):
+        directory_path = Path(directory)
+        for name in directory_names:
+            raise StateError(
+                f"block attempt contains a nested or symlinked directory: "
+                f"{(directory_path / name).relative_to(artifact_root)}"
+            )
+        for name in file_names:
+            path = directory_path / name
+            relative = path.relative_to(artifact_root).as_posix()
+            if path.is_symlink() or not path.is_file():
+                raise StateError(f"block attempt contains unsafe entry: {relative}")
+            if (
+                name.endswith((".m4a", ".wav", ".pcm"))
+                or re.fullmatch(r"\.anchors-ch[0-9]+\.json", name) is not None
+                or name.endswith(".pronunciation-reel.m4b")
+            ):
+                raise StateError(
+                    f"block attempt contains prohibited review media: {relative}"
+                )
+            if relative not in expected:
+                raise StateError(f"block attempt contains unexpected entry: {relative}")
+            actual.add(relative)
+    require(
+        actual == expected,
+        "block attempt contains an incomplete delivery media set",
+    )
+
+
+def block_reel_path(
+    state_receipt: Path, run_id: str, attempt_id: str, audiobook: Path
+) -> Path:
+    require(state_receipt.is_absolute(), "block state receipt path must be absolute")
+    return (
+        state_receipt.parent
+        / "listening"
+        / run_id
+        / attempt_id
+        / f"{audiobook.stem}.pronunciation-reel.m4b"
+    )
+
+
+def require_block_reel_path(
+    reel: Path,
+    state_receipt: Path,
+    run_id: str,
+    attempt_id: str,
+    audiobook: Path,
+    label: str,
+) -> None:
+    expected = block_reel_path(state_receipt, run_id, attempt_id, audiobook)
+    require(
+        reel == expected,
+        f"{label} reel path is not the current internal listening path",
+    )
 
 
 def success_snapshot(
@@ -660,6 +1257,7 @@ def success_snapshot(
     audit: Path,
     reel: Path,
     installed_renderer: dict[str, object],
+    block_plan: dict[str, object] | None = None,
 ) -> dict[str, object]:
     for path, label in (
         (input_receipt, "render-input receipt"),
@@ -696,6 +1294,7 @@ def success_snapshot(
             render_version,
             input_receipt,
             installed_renderer,
+            block_plan,
         )
     )
     require(
@@ -703,8 +1302,24 @@ def success_snapshot(
         "resume state receipt does not match final WORK, DB, or captures",
     )
     require(audiobook.stat().st_size > 0, "audiobook is empty")
+    if block_plan is not None:
+        require_block_attempt_contents(
+            attempt_receipt,
+            artifact_relative_path,
+            audiobook,
+            sidecar,
+            audit,
+        )
+        require_block_reel_path(
+            reel,
+            state_receipt,
+            run_id,
+            attempt_id,
+            audiobook,
+            "render-success receipt",
+        )
     payload: dict[str, object] = {
-        "schemaVersion": 3,
+        "schemaVersion": 4 if block_plan is not None else 3,
         **installed_renderer,
         "attemptID": attempt_id,
         "runID": run_id,
@@ -723,10 +1338,18 @@ def success_snapshot(
         "auditFileName": audit.name,
         "auditSHA256": sha256(audit),
     }
+    if block_plan is not None:
+        payload.update(block_plan)
     if reel.exists() or reel.is_symlink():
         regular_file(reel, "pronunciation reel")
         payload["reelFileName"] = reel.name
+        if block_plan is not None:
+            payload["reelRelativePath"] = (
+                f"listening/{run_id}/{attempt_id}/{reel.name}"
+            )
         payload["reelSHA256"] = sha256(reel)
+    if block_plan is not None:
+        require_block_success_receipt(payload, "render-success receipt")
     return payload
 
 
@@ -737,13 +1360,35 @@ def canonical_json(payload: dict[str, object]) -> bytes:
     ).encode("utf-8")
 
 
-def json_object(path: Path, label: str) -> dict[str, object]:
-    regular_file(path, label)
+def json_object_from_bytes(content: bytes, label: str) -> dict[str, object]:
+    def reject_duplicates(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        payload: dict[str, object] = {}
+        for key, value in pairs:
+            require(key not in payload, f"{label} duplicates key: {key}")
+            payload[key] = value
+        return payload
+
     try:
-        payload = json.loads(read_regular_bytes(path, label).decode("utf-8"))
+        payload = json.loads(
+            content.decode("utf-8"),
+            object_pairs_hook=reject_duplicates,
+        )
     except (json.JSONDecodeError, UnicodeDecodeError) as error:
         raise StateError(f"{label} is not valid JSON") from error
     require(isinstance(payload, dict), f"{label} root must be an object")
+    return payload
+
+
+def snapshot_json_object(
+    path: Path, label: str
+) -> tuple[RegularFileSnapshot, dict[str, object]]:
+    snapshot = snapshot_regular_file(path, label, retain_content=True)
+    require(snapshot.content is not None, f"{label} could not be read")
+    return snapshot, json_object_from_bytes(snapshot.content, label)
+
+
+def json_object(path: Path, label: str) -> dict[str, object]:
+    _, payload = snapshot_json_object(path, label)
     return payload
 
 
@@ -753,14 +1398,18 @@ def required_string(payload: dict[str, object], field: str, label: str) -> str:
     return value
 
 
-def input_receipt_value(path: Path, key: str) -> str:
-    regular_file(path, "render-input receipt")
-    try:
-        lines = read_regular_bytes(path, "render-input receipt").decode(
-            "utf-8"
-        ).splitlines()
-    except UnicodeDecodeError as error:
-        raise StateError("render-input receipt is not UTF-8") from error
+def require_current_attempt_schema(payload: dict[str, object], label: str) -> None:
+    require(
+        set(payload) == CURRENT_ATTEMPT_RECEIPT_KEYS,
+        f"{label} is not the exact current attempt schema",
+    )
+    require(
+        payload.get("schemaVersion") == 2,
+        f"{label} schema must be 2",
+    )
+
+
+def input_receipt_value_from_lines(lines: list[str], key: str) -> str:
     values = [
         line.removeprefix(f"{key}=")
         for line in lines
@@ -773,11 +1422,78 @@ def input_receipt_value(path: Path, key: str) -> str:
     return values[0]
 
 
-def attempt_snapshot(
+def input_receipt_value(path: Path, key: str) -> str:
+    return input_receipt_value_from_lines(receipt_lines(path), key)
+
+
+def current_run_voice_identity_from_lines(lines: list[str]) -> str:
+    """Return the collision-free block component without changing legacy IDs."""
+
+    modes = [
+        line.removeprefix("voice_plan_mode=")
+        for line in lines
+        if line.startswith("voice_plan_mode=")
+    ]
+    if not modes:
+        return input_receipt_value_from_lines(lines, "voice_plan_id")
+    require(
+        modes == ["block"],
+        "render-input receipt has invalid voice_plan_mode",
+    )
+    plan_sha = input_receipt_value_from_lines(lines, "voice_plan_sha256")
+    require(
+        SHA256_PATTERN.fullmatch(plan_sha) is not None,
+        "render-input receipt has invalid voice_plan_sha256",
+    )
+    return f"plan-{plan_sha}"
+
+
+def current_run_voice_identity(input_receipt: Path) -> str:
+    return current_run_voice_identity_from_lines(receipt_lines(input_receipt))
+
+
+def require_block_plan_matches_input_lines(
+    payload: dict[str, object], lines: list[str], label: str
+) -> None:
+    require_block_plan_receipt_evidence(payload, label)
+    for receipt_key, payload_key in (
+        ("voice_plan_mode", "voicePlanMode"),
+        ("voice_plan_sha256", "voicePlanSHA256"),
+        ("voice_plan_id", "voicePlanID"),
+        ("voice_plan_block_count", "voicePlanBlockCount"),
+        ("voice_plan_canonical_sha256", "voicePlanCanonicalSHA256"),
+        ("voice_plan_resolution_sha256", "voicePlanResolutionSHA256"),
+    ):
+        require(
+            input_receipt_value_from_lines(lines, receipt_key)
+            == str(payload[payload_key]),
+            f"{label} {payload_key} differs from render-input receipt",
+        )
+    for receipt_key, payload_key in (
+        ("voice_plan_canonical_path", "voicePlanCanonicalFileName"),
+        ("voice_plan_resolution_path", "voicePlanResolutionFileName"),
+    ):
+        require(
+            Path(input_receipt_value_from_lines(lines, receipt_key)).name
+            == payload[payload_key],
+            f"{label} {payload_key} differs from render-input receipt",
+        )
+
+
+def require_block_plan_matches_input_receipt(
+    payload: dict[str, object], input_receipt: Path, label: str
+) -> None:
+    require_block_plan_matches_input_lines(payload, receipt_lines(input_receipt), label)
+
+
+def attempt_snapshot_from_snapshots(
     attempt_id: str,
     run_id: str,
     input_receipt: Path,
+    input_snapshot: RegularFileSnapshot,
+    input_lines: list[str],
     epub: Path,
+    epub_snapshot: RegularFileSnapshot,
     artifact_relative_path: str,
     installed_renderer: dict[str, object] | None = None,
     *,
@@ -793,19 +1509,17 @@ def attempt_snapshot(
         historical or installed_renderer is not None,
         "current attempt requires installed renderer identity",
     )
-    regular_file(input_receipt, "render-input receipt")
-    regular_file(epub, "source EPUB")
     if not historical:
         require(
             installed_renderer is not None,
             "current attempt requires installed renderer identity",
         )
-        voice_plan_id = input_receipt_value(input_receipt, "voice_plan_id")
+        run_voice_identity = current_run_voice_identity_from_lines(input_lines)
         expected_run_id = (
-            f"{sha256(epub)[:12]}-{installed_renderer['echoCLI_SHA256'][:12]}-"
+            f"{epub_snapshot.sha256[:12]}-{installed_renderer['echoCLI_SHA256'][:12]}-"
             f"{installed_renderer['echoResourcesSHA256'][:12]}-"
             f"{installed_renderer['rendererManifestSHA256'][:12]}-"
-            f"{installed_renderer['echoSourceSHA']}-{voice_plan_id}"
+            f"{installed_renderer['echoSourceSHA']}-{run_voice_identity}"
         )
         require(
             run_id == expected_run_id,
@@ -821,14 +1535,40 @@ def attempt_snapshot(
         "attemptID": attempt_id,
         "runID": run_id,
         "inputReceiptFileName": input_receipt.name,
-        "inputReceiptSHA256": sha256(input_receipt),
+        "inputReceiptSHA256": input_snapshot.sha256,
         "sourceEPUBFileName": epub.name,
-        "sourceEPUBSHA256": sha256(epub),
+        "sourceEPUBSHA256": epub_snapshot.sha256,
         "artifactRelativePath": artifact_relative_path,
     }
     if installed_renderer is not None:
         payload.update(installed_renderer)
     return payload
+
+
+def attempt_snapshot(
+    attempt_id: str,
+    run_id: str,
+    input_receipt: Path,
+    epub: Path,
+    artifact_relative_path: str,
+    installed_renderer: dict[str, object] | None = None,
+    *,
+    historical: bool = False,
+) -> dict[str, object]:
+    input_snapshot, input_lines = snapshot_receipt_lines(input_receipt)
+    epub_snapshot = snapshot_regular_file(epub, "source EPUB")
+    return attempt_snapshot_from_snapshots(
+        attempt_id,
+        run_id,
+        input_receipt,
+        input_snapshot,
+        input_lines,
+        epub,
+        epub_snapshot,
+        artifact_relative_path,
+        installed_renderer,
+        historical=historical,
+    )
 
 
 def validate_attempt(
@@ -856,23 +1596,34 @@ def validate_attempt(
     return expected
 
 
-def accepted_selector_snapshot(
+def accepted_selector_from_snapshots(
     attempt_receipt: Path,
+    attempt_file_snapshot: RegularFileSnapshot,
+    attempt: dict[str, object],
     success_receipt: Path,
+    success_file_snapshot: RegularFileSnapshot,
+    success: dict[str, object],
     installed_renderer: dict[str, object] | None = None,
     *,
     historical: bool = False,
 ) -> dict[str, object]:
-    attempt = json_object(attempt_receipt, "current-attempt receipt")
-    success = json_object(success_receipt, "render-success receipt")
-    require(
-        attempt.get("schemaVersion") == (1 if historical else 2),
-        f"current-attempt receipt schema must be {1 if historical else 2}",
-    )
-    require(
-        success.get("schemaVersion") == (2 if historical else 3),
-        f"render-success schema must be {2 if historical else 3}",
-    )
+    if historical:
+        require(
+            attempt.get("schemaVersion") == 1,
+            "current-attempt receipt schema must be 1",
+        )
+        require(
+            success.get("schemaVersion") == 2,
+            "render-success schema must be 2 for a historical receipt chain",
+        )
+    else:
+        require_current_attempt_schema(attempt, "current-attempt receipt")
+        require(
+            success.get("schemaVersion") in {3, 4},
+            "render-success schema must be 3 or 4 for a current receipt chain",
+        )
+        if success.get("schemaVersion") == 4:
+            require_block_success_receipt(success, "render-success receipt")
     if not historical:
         require(installed_renderer is not None, "acceptance requires renderer identity")
         require_receipt_renderer_identity(
@@ -927,7 +1678,7 @@ def accepted_selector_snapshot(
             f"render-success receipt {field} differs from current attempt",
         )
     require(
-        success.get("attemptReceiptSHA256") == sha256(attempt_receipt),
+        success.get("attemptReceiptSHA256") == attempt_file_snapshot.sha256,
         "render-success receipt is not bound to the current attempt",
     )
     require(
@@ -943,9 +1694,9 @@ def accepted_selector_snapshot(
         "schemaVersion": 1 if historical else 2,
         "attemptID": attempt_id,
         "runID": run_id,
-        "attemptReceiptSHA256": sha256(attempt_receipt),
+        "attemptReceiptSHA256": attempt_file_snapshot.sha256,
         "successReceiptFileName": success_receipt.name,
-        "successReceiptSHA256": sha256(success_receipt),
+        "successReceiptSHA256": success_file_snapshot.sha256,
         "inputReceiptFileName": input_receipt_name,
         "inputReceiptSHA256": input_receipt_sha,
         "sourceEPUBFileName": source_epub_name,
@@ -955,6 +1706,31 @@ def accepted_selector_snapshot(
     if installed_renderer is not None:
         payload.update(installed_renderer)
     return payload
+
+
+def accepted_selector_snapshot(
+    attempt_receipt: Path,
+    success_receipt: Path,
+    installed_renderer: dict[str, object] | None = None,
+    *,
+    historical: bool = False,
+) -> dict[str, object]:
+    attempt_snapshot, attempt = snapshot_json_object(
+        attempt_receipt, "current-attempt receipt"
+    )
+    success_snapshot, success = snapshot_json_object(
+        success_receipt, "render-success receipt"
+    )
+    return accepted_selector_from_snapshots(
+        attempt_receipt,
+        attempt_snapshot,
+        attempt,
+        success_receipt,
+        success_snapshot,
+        success,
+        installed_renderer,
+        historical=historical,
+    )
 
 
 def verify_delivery_receipt(
@@ -971,9 +1747,16 @@ def verify_delivery_receipt(
     installed_renderer: dict[str, object] | None,
     voice: str | None,
 ) -> None:
-    attempt = json_object(attempt_receipt, "current-attempt receipt")
-    accepted = json_object(selector, "current-accepted selector")
-    payload = json_object(receipt, "render-success receipt")
+    attempt_snapshot, attempt = snapshot_json_object(
+        attempt_receipt, "current-attempt receipt"
+    )
+    selector_snapshot, accepted = snapshot_json_object(
+        selector, "current-accepted selector"
+    )
+    success_snapshot, payload = snapshot_json_object(
+        receipt, "render-success receipt"
+    )
+    input_snapshot, input_lines = snapshot_receipt_lines(input_receipt)
     schemas = (
         attempt.get("schemaVersion"),
         accepted.get("schemaVersion"),
@@ -981,9 +1764,25 @@ def verify_delivery_receipt(
     )
     historical = schemas == (1, 1, 2)
     require(
-        historical or schemas == (2, 2, 3),
+        historical or schemas in {(2, 2, 3), (2, 2, 4)},
         "receipt chain does not use a supported historical or current schema",
     )
+    if not historical:
+        require_current_attempt_schema(attempt, "current-attempt receipt")
+    block_delivery = not historical and payload.get("schemaVersion") == 4
+    if block_delivery:
+        require_block_success_receipt(payload, "render-success receipt")
+    # A post-render operator has the accepted receipt chain, not the child
+    # wrapper environment.  For a current chain, safely derive the renderer
+    # identity and selected default voice from those sealed inputs when callers
+    # do not explicitly supply them.  Explicit values remain cross-checked
+    # below, so this does not relax the governed boundary.
+    if not historical and installed_renderer is None:
+        installed_renderer = renderer_identity_from_payload(
+            payload, "render-success receipt"
+        )
+    if not historical and voice is None:
+        voice = input_receipt_value_from_lines(input_lines, "voice")
     require(
         historical or installed_renderer is not None,
         "current delivery verification requires installed renderer identity",
@@ -1003,21 +1802,22 @@ def verify_delivery_receipt(
             )
     attempt_id = required_string(attempt, "attemptID", "current-attempt receipt")
     run_id = required_string(attempt, "runID", "current-attempt receipt")
+    epub_snapshot = snapshot_regular_file(epub, "source EPUB")
     if not historical:
         require(
             installed_renderer is not None,
             "current delivery verification requires installed renderer identity",
         )
         require(
-            voice == input_receipt_value(input_receipt, "voice"),
+            voice == input_receipt_value_from_lines(input_lines, "voice"),
             "current delivery voice differs from render-input receipt",
         )
-        voice_plan_id = input_receipt_value(input_receipt, "voice_plan_id")
+        run_voice_identity = current_run_voice_identity_from_lines(input_lines)
         expected_run_id = (
-            f"{sha256(epub)[:12]}-{installed_renderer['echoCLI_SHA256'][:12]}-"
+            f"{epub_snapshot.sha256[:12]}-{installed_renderer['echoCLI_SHA256'][:12]}-"
             f"{installed_renderer['echoResourcesSHA256'][:12]}-"
             f"{installed_renderer['rendererManifestSHA256'][:12]}-"
-            f"{installed_renderer['echoSourceSHA']}-{voice_plan_id}"
+            f"{installed_renderer['echoSourceSHA']}-{run_voice_identity}"
         )
         require(
             run_id == expected_run_id,
@@ -1026,11 +1826,14 @@ def verify_delivery_receipt(
     artifact_relative_path = required_string(
         attempt, "artifactRelativePath", "current-attempt receipt"
     )
-    expected_attempt = attempt_snapshot(
+    expected_attempt = attempt_snapshot_from_snapshots(
         attempt_id,
         run_id,
         input_receipt,
+        input_snapshot,
+        input_lines,
         epub,
+        epub_snapshot,
         artifact_relative_path,
         installed_renderer,
         historical=historical,
@@ -1041,12 +1844,16 @@ def verify_delivery_receipt(
     )
     require(
         accepted.get("attemptID") == attempt.get("attemptID")
-        and accepted.get("attemptReceiptSHA256") == sha256(attempt_receipt),
+        and accepted.get("attemptReceiptSHA256") == attempt_snapshot.sha256,
         "current-accepted selector does not match the current attempt",
     )
-    expected_selector = accepted_selector_snapshot(
+    expected_selector = accepted_selector_from_snapshots(
         attempt_receipt,
+        attempt_snapshot,
+        attempt,
         receipt,
+        success_snapshot,
+        payload,
         installed_renderer,
         historical=historical,
     )
@@ -1054,22 +1861,28 @@ def verify_delivery_receipt(
         canonical_json(accepted) == canonical_json(expected_selector),
         "current-accepted selector does not match current attempt and success receipt",
     )
-    for path, name_field, hash_field, label in (
+    for path, file_snapshot, name_field, hash_field, label in (
         (
             input_receipt,
+            input_snapshot,
             "inputReceiptFileName",
             "inputReceiptSHA256",
             "render-input receipt",
         ),
-        (epub, "sourceEPUBFileName", "sourceEPUBSHA256", "source EPUB"),
+        (
+            epub,
+            epub_snapshot,
+            "sourceEPUBFileName",
+            "sourceEPUBSHA256",
+            "source EPUB",
+        ),
     ):
-        regular_file(path, label)
         require(
             attempt.get(name_field) == path.name,
             f"{label} filename differs from current-attempt receipt",
         )
         require(
-            attempt.get(hash_field) == sha256(path),
+            attempt.get(hash_field) == file_snapshot.sha256,
             f"{label} SHA-256 differs from current-attempt receipt",
         )
         require(
@@ -1091,14 +1904,37 @@ def verify_delivery_receipt(
         "render-success receipt has invalid resume-state SHA-256",
     )
     regular_file(state_receipt, "resume-state receipt")
+    state_snapshot = snapshot_regular_file(
+        state_receipt, "resume-state receipt", retain_content=block_delivery
+    )
     require(
         state_receipt.name == resume_state_name,
         "resume-state receipt filename differs from render-success receipt",
     )
     require(
-        sha256(state_receipt) == resume_state_hash,
+        state_snapshot.sha256 == resume_state_hash,
         "resume-state receipt SHA-256 differs from render-success receipt",
     )
+    if block_delivery:
+        require(
+            state_snapshot.content is not None,
+            "resume-state receipt could not be read",
+        )
+        state_payload = json_object_from_bytes(
+            state_snapshot.content, "resume-state receipt"
+        )
+        require_block_state_receipt(state_payload, "resume-state receipt")
+        require_block_plan_matches_input_lines(
+            state_payload, input_lines, "resume-state receipt"
+        )
+        require_block_plan_matches_input_lines(
+            payload, input_lines, "render-success receipt"
+        )
+        for field in BLOCK_PLAN_RECEIPT_KEYS:
+            require(
+                payload.get(field) == state_payload.get(field),
+                f"render-success receipt {field} differs from resume-state receipt",
+            )
     for path, name_field, hash_field, label in (
         (audiobook, "audiobookFileName", "audiobookSHA256", "audiobook"),
         (sidecar, "sidecarFileName", "sidecarSHA256", "alignment sidecar"),
@@ -1112,6 +1948,22 @@ def verify_delivery_receipt(
         require(
             payload.get(hash_field) == sha256(path),
             f"{label} SHA-256 differs from render-success receipt",
+        )
+    if block_delivery:
+        require_block_attempt_contents(
+            attempt_receipt,
+            artifact_relative_path,
+            audiobook,
+            sidecar,
+            audit,
+        )
+        require_block_reel_path(
+            reel,
+            state_receipt,
+            run_id,
+            attempt_id,
+            audiobook,
+            "render-success receipt",
         )
     expected_reel = payload.get("reelFileName")
     if expected_reel is None:
@@ -1129,6 +1981,113 @@ def verify_delivery_receipt(
             payload.get("reelSHA256") == sha256(reel),
             "pronunciation reel SHA-256 differs from render-success receipt",
         )
+    for snapshot, label in (
+        (attempt_snapshot, "current-attempt receipt"),
+        (selector_snapshot, "current-accepted selector"),
+        (success_snapshot, "render-success receipt"),
+        (input_snapshot, "render-input receipt"),
+    ):
+        attest_regular_file_snapshot(snapshot, label)
+
+
+def block_delivery_evidence(
+    attempt_receipt: Path,
+    selector: Path,
+    receipt: Path,
+    input_receipt: Path,
+) -> dict[str, str]:
+    """Read post-render block facts from the accepted, sealed receipt chain.
+
+    This intentionally emits only facts that the runbook needs to locate and
+    validate a completed block delivery.  It does not consult the wrapper's
+    already-exited environment or reconstruct a plan from its short display ID.
+    """
+
+    attempt_snapshot, attempt = snapshot_json_object(
+        attempt_receipt, "current-attempt receipt"
+    )
+    selector_snapshot, accepted = snapshot_json_object(
+        selector, "current-accepted selector"
+    )
+    success_snapshot, success = snapshot_json_object(
+        receipt, "render-success receipt"
+    )
+    input_snapshot, input_lines = snapshot_receipt_lines(input_receipt)
+    require_current_attempt_schema(attempt, "current-attempt receipt")
+    require_block_success_receipt(success, "render-success receipt")
+    renderer = renderer_identity_from_payload(success, "render-success receipt")
+    require(
+        canonical_json(accepted)
+        == canonical_json(
+            accepted_selector_from_snapshots(
+                attempt_receipt,
+                attempt_snapshot,
+                attempt,
+                receipt,
+                success_snapshot,
+                success,
+                renderer,
+            )
+        ),
+        "current-accepted selector does not match current attempt and render success",
+    )
+    require(
+        input_receipt.name == success.get("inputReceiptFileName"),
+        "render-input receipt filename differs from render-success receipt",
+    )
+    require(
+        input_snapshot.sha256 == success.get("inputReceiptSHA256"),
+        "render-input receipt SHA-256 differs from render-success receipt",
+    )
+    require_block_plan_matches_input_lines(
+        success, input_lines, "render-success receipt"
+    )
+    voice = input_receipt_value_from_lines(input_lines, "voice")
+    require(voice in VOICE_IDS, "render-input receipt has an unapproved voice")
+    plan_sha = required_string(
+        success, "voicePlanSHA256", "render-success receipt"
+    )
+    require(
+        current_run_voice_identity_from_lines(input_lines) == f"plan-{plan_sha}",
+        "render-input receipt does not use the current block run identity",
+    )
+    reel_relative_path = required_string(
+        success, "reelRelativePath", "render-success receipt"
+    )
+    block_count = success.get("voicePlanBlockCount")
+    require(
+        type(block_count) is int and block_count > 0,
+        "render-success receipt has an invalid voicePlanBlockCount",
+    )
+    for snapshot, label in (
+        (attempt_snapshot, "current-attempt receipt"),
+        (selector_snapshot, "current-accepted selector"),
+        (success_snapshot, "render-success receipt"),
+        (input_snapshot, "render-input receipt"),
+    ):
+        attest_regular_file_snapshot(snapshot, label)
+    return {
+        "voice_plan_mode": "block",
+        "reel_relative_path": reel_relative_path,
+        "voice_plan_sha256": plan_sha,
+        "voice_plan_block_count": str(block_count),
+        "voice": voice,
+    }
+
+
+def write_env0(values: dict[str, str]) -> None:
+    """Write a small fixed key/value record without shell evaluation."""
+
+    for key in (
+        "voice_plan_mode",
+        "reel_relative_path",
+        "voice_plan_sha256",
+        "voice_plan_block_count",
+        "voice",
+    ):
+        value = values[key]
+        require("\0" not in key and "\0" not in value, "env0 value contains NUL")
+        sys.stdout.buffer.write(f"{key}={value}".encode("utf-8") + b"\0")
 
 
 def add_renderer_arguments(
@@ -1168,6 +2127,10 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--voice", required=True)
         command.add_argument("--chapter-voice", action="append", default=[])
         command.add_argument("--voice-plan-sha256")
+        command.add_argument("--voice-plan", type=Path)
+        command.add_argument("--voice-plan-id")
+        command.add_argument("--voice-plan-block-count", type=int)
+        command.add_argument("--voice-plan-resolution", type=Path)
         command.add_argument("--render-version", type=int, required=True)
         command.add_argument("--input-receipt", type=Path, required=True)
         command.add_argument("--lock-root", type=Path)
@@ -1204,6 +2167,10 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--voice", required=True)
         command.add_argument("--chapter-voice", action="append", default=[])
         command.add_argument("--voice-plan-sha256")
+        command.add_argument("--voice-plan", type=Path)
+        command.add_argument("--voice-plan-id")
+        command.add_argument("--voice-plan-block-count", type=int)
+        command.add_argument("--voice-plan-resolution", type=Path)
         command.add_argument("--render-version", type=int, required=True)
         command.add_argument("--audiobook", type=Path, required=True)
         command.add_argument("--sidecar", type=Path, required=True)
@@ -1231,6 +2198,12 @@ def parser() -> argparse.ArgumentParser:
     delivery.add_argument("--audit", type=Path, required=True)
     delivery.add_argument("--reel", type=Path, required=True)
     delivery.add_argument("--voice")
+    block_evidence = commands.add_parser("block-delivery-evidence")
+    block_evidence.add_argument("--attempt", type=Path, required=True)
+    block_evidence.add_argument("--selector", type=Path, required=True)
+    block_evidence.add_argument("--receipt", type=Path, required=True)
+    block_evidence.add_argument("--input-receipt", type=Path, required=True)
+    block_evidence.add_argument("--format", choices=("env0",), required=True)
     return root
 
 
@@ -1248,6 +2221,7 @@ def main(arguments: list[str]) -> int:
             )
         elif options.command in {"record-state", "verify-state"}:
             installed_renderer = renderer_identity_from_options(options)
+            block_plan = block_plan_evidence_from_options(options)
             payload = capture_snapshot(
                 options.work,
                 options.db,
@@ -1259,6 +2233,7 @@ def main(arguments: list[str]) -> int:
                 options.render_version,
                 options.input_receipt,
                 installed_renderer,
+                block_plan,
             )
             content = canonical_json(payload)
             if options.command == "record-state":
@@ -1318,6 +2293,7 @@ def main(arguments: list[str]) -> int:
                 )
         elif options.command in {"write-success", "verify-success"}:
             installed_renderer = renderer_identity_from_options(options)
+            block_plan = block_plan_evidence_from_options(options)
             if options.command == "write-success":
                 require(
                     options.lock_root is not None
@@ -1356,6 +2332,7 @@ def main(arguments: list[str]) -> int:
                 options.audit,
                 options.reel,
                 installed_renderer,
+                block_plan,
             )
             content = canonical_json(payload)
             if options.command == "write-success":
@@ -1391,6 +2368,15 @@ def main(arguments: list[str]) -> int:
                 options.reel,
                 installed_renderer,
                 options.voice,
+            )
+        elif options.command == "block-delivery-evidence":
+            write_env0(
+                block_delivery_evidence(
+                    options.attempt,
+                    options.selector,
+                    options.receipt,
+                    options.input_receipt,
+                )
             )
         return 0
     except (OSError, StateError, json.JSONDecodeError) as error:

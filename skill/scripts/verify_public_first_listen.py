@@ -30,6 +30,7 @@ if str(FICTION_VOICE_DIRECTORY) not in sys.path:
     sys.path.insert(0, str(FICTION_VOICE_DIRECTORY))
 
 from fiction_voice_preferences import (
+    validate_block_echo_success_receipt,
     validate_completed_cast,
     validate_echo_success_receipt,
 )
@@ -1112,7 +1113,8 @@ def _verify_private_evidence(
     fiction_receipt: Path,
     chapters_dir: Path,
     echo_success_receipt: Path,
-) -> tuple[list[_FileSnapshot], int]:
+    epub: Path,
+) -> tuple[list[_FileSnapshot], int | None]:
     snapshots: list[_FileSnapshot] = []
     private = receipt.get("privateEvidence")
     _require(isinstance(private, dict), "privateEvidence must be an object")
@@ -1130,14 +1132,48 @@ def _verify_private_evidence(
         "voice cast SHA-256 does not match privateEvidence",
     )
     snapshots.append(cast_snapshot)
-    canonical_plan = validate_completed_cast(cast)
-    cast_chapter_count = cast.get("chapterCount")
-    _require(
-        type(cast_chapter_count) is int and cast_chapter_count > 0,
-        "voice cast chapterCount must be a positive integer",
-    )
+    is_block_cast = cast.get("schemaVersion") == 2
+    canonical_plan = validate_completed_cast(cast, cast_path=voice_cast)
+    cast_chapter_count: int | None
+    if is_block_cast:
+        cast_chapter_count = None
+        authored_plan = cast.get("authoredVoicePlan")
+        _require(
+            isinstance(authored_plan, dict),
+            "block voice cast authoredVoicePlan must be an object",
+        )
+        authored_filename = authored_plan.get("fileName")
+        _require(
+            isinstance(authored_filename, str)
+            and authored_filename
+            and Path(authored_filename).name == authored_filename,
+            "block voice cast authored plan filename is invalid",
+        )
+        authored_snapshot = _snapshot_file(
+            voice_cast.parent / authored_filename,
+            "authored voice plan",
+            capture=True,
+        )
+        _require(
+            authored_snapshot.sha256 == authored_plan.get("sha256"),
+            "authored voice plan bytes differ from voice cast",
+        )
+        snapshots.append(authored_snapshot)
+    else:
+        cast_chapter_count = cast.get("chapterCount")
+        _require(
+            type(cast_chapter_count) is int and cast_chapter_count > 0,
+            "voice cast chapterCount must be a positive integer",
+        )
     _require(cast.get("slug") == slug, "voice cast slug does not match publication")
-    plan_hash = _require_sha256(cast.get("voicePlanSHA256"), "voice cast voicePlanSHA256")
+    plan_hash = _require_sha256(
+        (
+            canonical_plan.get("voicePlanSHA256")
+            if is_block_cast
+            else cast.get("voicePlanSHA256")
+        ),
+        "voice cast voicePlanSHA256",
+    )
     _require(
         canonical_plan["voicePlanSHA256"] == plan_hash,
         "voice cast voice-plan hash differs from its canonical plan",
@@ -1183,12 +1219,66 @@ def _verify_private_evidence(
         input_receipt_snapshots.append(snapshot)
         return snapshot.content
 
-    validate_echo_success_receipt(
-        success,
-        echo_success_receipt,
-        cast,
-        input_receipt_loader=capture_input_receipt,
-    )
+    if is_block_cast:
+        canonical_plan_snapshots: list[_FileSnapshot] = []
+        resolution_snapshots: list[_FileSnapshot] = []
+
+        def capture_canonical_plan(path: Path, label: str) -> bytes:
+            snapshot = _snapshot_file(path, label, capture=True)
+            assert snapshot.content is not None
+            canonical_plan_snapshots.append(snapshot)
+            return snapshot.content
+
+        def capture_resolution(path: Path, label: str) -> bytes:
+            snapshot = _snapshot_file(path, label, capture=True)
+            assert snapshot.content is not None
+            resolution_snapshots.append(snapshot)
+            return snapshot.content
+
+        assert authored_snapshot.content is not None
+        resolved = validate_block_echo_success_receipt(
+            success,
+            echo_success_receipt,
+            cast,
+            epub,
+            authored_plan_path=authored_snapshot.path,
+            authored_plan_bytes=authored_snapshot.content,
+            input_receipt_loader=capture_input_receipt,
+            canonical_plan_loader=capture_canonical_plan,
+            resolution_loader=capture_resolution,
+            allow_relocated_evidence=True,
+        )
+        _require(
+            resolved == canonical_plan,
+            "Echo sealed resolution differs from block voice cast",
+        )
+        _require(
+            len(canonical_plan_snapshots) == 1,
+            "Echo canonical voice plan was not captured exactly once",
+        )
+        _require(
+            len(resolution_snapshots) == 1,
+            "Echo voice-plan resolution was not captured exactly once",
+        )
+        canonical_plan_snapshot = canonical_plan_snapshots[0]
+        resolution_snapshot = resolution_snapshots[0]
+        _require(
+            canonical_plan_snapshot.sha256
+            == success.get("voicePlanCanonicalSHA256"),
+            "Echo canonical voice-plan bytes differ from success receipt",
+        )
+        _require(
+            resolution_snapshot.sha256 == success.get("voicePlanResolutionSHA256"),
+            "Echo voice-plan resolution bytes differ from success receipt",
+        )
+        snapshots.extend((canonical_plan_snapshot, resolution_snapshot))
+    else:
+        validate_echo_success_receipt(
+            success,
+            echo_success_receipt,
+            cast,
+            input_receipt_loader=capture_input_receipt,
+        )
     _require(
         len(input_receipt_snapshots) == 1,
         "Echo input receipt was not captured exactly once",
@@ -2755,6 +2845,10 @@ def verify_public_fiction_package(
     ):
         _require_regular_file(path, label)
     _require_regular_directory(chapters_dir, "chapters directory")
+    voice_cast = voice_cast.resolve(strict=True)
+    fiction_receipt = fiction_receipt.resolve(strict=True)
+    chapters_dir = chapters_dir.resolve(strict=True)
+    echo_success_receipt = echo_success_receipt.resolve(strict=True)
     initial_chapter_filenames = _canonical_chapter_filenames(chapters_dir)
     _require(
         bool(initial_chapter_filenames),
@@ -2823,6 +2917,7 @@ def verify_public_fiction_package(
             fiction_receipt,
             chapters_dir,
             echo_success_receipt,
+            epub_probe_copy,
         )
         manuscript_snapshot = next(
             snapshot
@@ -2838,12 +2933,13 @@ def verify_public_fiction_package(
             receipt["contributor"],
             cover_snapshot,
         )
-        chapter_counts = {
+        chapter_counts: dict[str, int] = {
             "canonical": len(initial_chapter_filenames),
             "EPUB narrated spine": epub_chapter_count,
-            "voice cast": cast_chapter_count,
             "M4B": m4b_chapter_count,
         }
+        if cast_chapter_count is not None:
+            chapter_counts["voice cast"] = cast_chapter_count
         _require(
             len(set(chapter_counts.values())) == 1,
             "fiction chapter count mismatch: "

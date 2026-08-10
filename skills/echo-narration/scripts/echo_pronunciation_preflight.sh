@@ -365,6 +365,15 @@ echo_pronunciation_renderer_receipt_text() {
     "chapter_voices=$CHAPTER_VOICES_CANONICAL" \
     "voice_plan_sha256=$VOICE_PLAN_SHA256" \
     "voice_plan_id=$VOICE_PLAN_ID"
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    printf '%s\n' \
+      'voice_plan_mode=block' \
+      "voice_plan_block_count=$VOICE_PLAN_BLOCK_COUNT" \
+      "voice_plan_canonical_path=$VOICE_PLAN_CANONICAL_PATH" \
+      "voice_plan_canonical_sha256=$VOICE_PLAN_CANONICAL_SHA256" \
+      "voice_plan_resolution_path=$VOICE_PLAN_RESOLUTION_PATH" \
+      "voice_plan_resolution_sha256=$VOICE_PLAN_RESOLUTION_SHA256"
+  fi
 }
 
 echo_pronunciation_receipt_text() {
@@ -384,6 +393,113 @@ echo_pronunciation_receipt_text() {
     "run_id=$RUN_ID" \
     "work_dir=$WORK" \
     "narration_db=$DB"
+}
+
+echo_pronunciation_cleanup_block_plan_scratch() {
+  local scratch
+  for scratch in "$@"; do
+    [[ -z "$scratch" ]] || rm -f -- "$scratch"
+  done
+}
+
+echo_pronunciation_seal_block_plan() {
+  local script_dir=$1 state_helper=$2
+  local temporary_plan temporary_resolution output
+  local key value count_voice=0 count_chapters=0 count_mode=0 count_sha=0
+  local count_id=0 count_blocks=0 count_plan=0 count_plan_sha=0
+  local count_resolution=0 count_resolution_sha=0
+  temporary_plan=$(mktemp "$RUN_ROOT/research/.echo-voice-plan.XXXXXX") || return 70
+  temporary_resolution=$(mktemp "$RUN_ROOT/research/.echo-voice-plan-resolution.XXXXXX") || {
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan"
+    return 70
+  }
+  echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
+  output=$(mktemp "${TMPDIR:-/tmp}/echo-block-voice-plan.XXXXXX") || return 70
+  local requested_voice=${VOICE:-}
+  if ! /usr/local/bin/python3 "$script_dir/echo_voice_plan.py" \
+    --echo-cli "$CLI" --epub "$EPUB" --voice-plan "$VOICE_PLAN_SOURCE" \
+    --canonical-plan "$temporary_plan" --resolution "$temporary_resolution" \
+    --format env0 >"$output"; then
+    echo_pronunciation_cleanup_block_plan_scratch "$output" "$temporary_plan" "$temporary_resolution"
+    return 65
+  fi
+  unset VOICE CHAPTER_VOICES_CANONICAL VOICE_PLAN_MODE VOICE_PLAN_SHA256
+  unset VOICE_PLAN_ID VOICE_PLAN_BLOCK_COUNT VOICE_PLAN_CANONICAL_PATH
+  unset VOICE_PLAN_CANONICAL_SHA256 VOICE_PLAN_RESOLUTION_PATH
+  unset VOICE_PLAN_RESOLUTION_SHA256
+  while IFS= read -r -d '' key; do
+    IFS= read -r -d '' value || {
+      echo_pronunciation_cleanup_block_plan_scratch "$output" "$temporary_plan" "$temporary_resolution"
+      printf 'incomplete Echo block voice-plan env0 record\n' >&2
+      return 65
+    }
+    case "$key" in
+      VOICE) (( count_voice += 1 )); VOICE=$value ;;
+      CHAPTER_VOICES_CANONICAL) (( count_chapters += 1 )); CHAPTER_VOICES_CANONICAL=$value ;;
+      VOICE_PLAN_MODE) (( count_mode += 1 )); VOICE_PLAN_MODE=$value ;;
+      VOICE_PLAN_SHA256) (( count_sha += 1 )); VOICE_PLAN_SHA256=$value ;;
+      VOICE_PLAN_ID) (( count_id += 1 )); VOICE_PLAN_ID=$value ;;
+      VOICE_PLAN_BLOCK_COUNT) (( count_blocks += 1 )); VOICE_PLAN_BLOCK_COUNT=$value ;;
+      VOICE_PLAN_CANONICAL_PATH) (( count_plan += 1 )); VOICE_PLAN_CANONICAL_PATH=$value ;;
+      VOICE_PLAN_CANONICAL_SHA256) (( count_plan_sha += 1 )); VOICE_PLAN_CANONICAL_SHA256=$value ;;
+      VOICE_PLAN_RESOLUTION_PATH) (( count_resolution += 1 )); VOICE_PLAN_RESOLUTION_PATH=$value ;;
+      VOICE_PLAN_RESOLUTION_SHA256) (( count_resolution_sha += 1 )); VOICE_PLAN_RESOLUTION_SHA256=$value ;;
+      *)
+        echo_pronunciation_cleanup_block_plan_scratch "$output" "$temporary_plan" "$temporary_resolution"
+        printf 'unknown Echo block voice-plan env0 key: %s\n' "$key" >&2
+        return 65
+        ;;
+    esac
+  done <"$output"
+  echo_pronunciation_cleanup_block_plan_scratch "$output"
+  if (( count_voice != 1 || count_chapters != 1 || count_mode != 1 || count_sha != 1 \
+    || count_id != 1 || count_blocks != 1 || count_plan != 1 || count_plan_sha != 1 \
+    || count_resolution != 1 || count_resolution_sha != 1 )) \
+    || [[ "$CHAPTER_VOICES_CANONICAL" != '' || "$VOICE_PLAN_MODE" != block ]]; then
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
+    printf 'Echo block voice-plan env0 record is incomplete or duplicated\n' >&2
+    return 65
+  fi
+  if [[ -n "$requested_voice" && "$requested_voice" != "$VOICE" ]]; then
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
+    printf 'VOICE must equal the Echo block-plan default voice\n' >&2
+    return 64
+  fi
+  # Echo's display ID deliberately contains only a short digest.  It remains
+  # useful provenance, but cannot select an operational path: two full Echo
+  # resolution digests can share those first twelve characters.
+  VOICE_PLAN_CANONICAL_PATH="$RUN_ROOT/research/echo-voice-plan-plan-$VOICE_PLAN_SHA256.json"
+  VOICE_PLAN_RESOLUTION_PATH="$RUN_ROOT/research/echo-voice-plan-resolution-plan-$VOICE_PLAN_SHA256.json"
+  if [[ -e "$VOICE_PLAN_CANONICAL_PATH" || -L "$VOICE_PLAN_CANONICAL_PATH" ]]; then
+    [[ ! -L "$VOICE_PLAN_CANONICAL_PATH" && -f "$VOICE_PLAN_CANONICAL_PATH" ]] || {
+      echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
+      return 65
+    }
+  else
+    ln "$temporary_plan" "$VOICE_PLAN_CANONICAL_PATH" || {
+      echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan" "$temporary_resolution"
+      return 65
+    }
+  fi
+  echo_pronunciation_cleanup_block_plan_scratch "$temporary_plan"
+  if ! /usr/local/bin/python3 "$script_dir/echo_voice_plan.py" \
+    --echo-cli "$CLI" --epub "$EPUB" --voice-plan "$VOICE_PLAN_CANONICAL_PATH" \
+    --canonical-plan "$VOICE_PLAN_CANONICAL_PATH" \
+    --resolution "$VOICE_PLAN_RESOLUTION_PATH" --format env0 >/dev/null; then
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_resolution"
+    return 65
+  fi
+  if ! cmp -s "$temporary_resolution" "$VOICE_PLAN_RESOLUTION_PATH"; then
+    echo_pronunciation_cleanup_block_plan_scratch "$temporary_resolution"
+    printf 'existing canonical voice plan resolves differently\n' >&2
+    return 65
+  fi
+  echo_pronunciation_cleanup_block_plan_scratch "$temporary_resolution"
+  VOICE_PLAN_CANONICAL_SHA256=$(/usr/bin/shasum -a 256 "$VOICE_PLAN_CANONICAL_PATH" | awk '{print $1}')
+  VOICE_PLAN_RESOLUTION_SHA256=$(/usr/bin/shasum -a 256 "$VOICE_PLAN_RESOLUTION_PATH" | awk '{print $1}')
+  require_sha256 VOICE_PLAN_CANONICAL_SHA256 "$VOICE_PLAN_CANONICAL_SHA256" || return $?
+  require_sha256 VOICE_PLAN_RESOLUTION_SHA256 "$VOICE_PLAN_RESOLUTION_SHA256" || return $?
+  VOICE_PLAN_SOURCE=$VOICE_PLAN_CANONICAL_PATH
 }
 
 echo_pronunciation_preflight() {
@@ -528,78 +644,79 @@ echo_pronunciation_preflight() {
     | /usr/bin/shasum -a 256 | awk '{print $1}')
   require_sha256 PACKAGE_SHA256 "$PACKAGE_SHA256" || return $?
 
-  VOICE=${VOICE:-am_michael}
-  local voice_plan_helper voice_plan_output voice_plan_key voice_plan_value
-  local voice_plan_count_voice=0 voice_plan_count_chapters=0
-  local voice_plan_count_sha=0 voice_plan_count_id=0
-  voice_plan_helper="$script_dir/echo_voice_plan.py"
-  voice_plan_output=$(mktemp "${TMPDIR:-/tmp}/echo-voice-plan.XXXXXX") \
-    || return 70
-  local voice_plan_command=(
-    /usr/local/bin/python3 "$voice_plan_helper"
-    --default-voice "$VOICE"
-    --format env0
-  )
-  local chapter_voice
-  for chapter_voice in "${CHAPTER_VOICES[@]:-}"; do
-    [[ -z "$chapter_voice" ]] || voice_plan_command+=(--chapter-voice "$chapter_voice")
-  done
-  if ! "${voice_plan_command[@]}" >"$voice_plan_output"; then
-    rm -f -- "$voice_plan_output"
-    return 64
-  fi
-  unset CHAPTER_VOICES_CANONICAL VOICE_PLAN_SHA256 VOICE_PLAN_ID
-  while :; do
-    voice_plan_key=
-    if ! IFS= read -r -d '' voice_plan_key; then
-      [[ -z "$voice_plan_key" ]] || {
+  if [[ -n ${VOICE_PLAN_SOURCE:-} ]]; then
+    [[ "$VOICE_PLAN_SOURCE" == /* && ! -L "$VOICE_PLAN_SOURCE" && -f "$VOICE_PLAN_SOURCE" ]] || {
+      printf 'voice plan is missing or unsafe: %s\n' "$VOICE_PLAN_SOURCE" >&2
+      return 66
+    }
+    echo_pronunciation_seal_block_plan "$script_dir" "$state_helper" || return $?
+  else
+    VOICE=${VOICE:-am_michael}
+    local voice_plan_helper voice_plan_output voice_plan_key voice_plan_value
+    local voice_plan_count_voice=0 voice_plan_count_chapters=0
+    local voice_plan_count_sha=0 voice_plan_count_id=0
+    voice_plan_helper="$script_dir/echo_voice_plan.py"
+    voice_plan_output=$(mktemp "${TMPDIR:-/tmp}/echo-voice-plan.XXXXXX") \
+      || return 70
+    local voice_plan_command=(
+      /usr/local/bin/python3 "$voice_plan_helper"
+      --default-voice "$VOICE"
+      --format env0
+    )
+    local chapter_voice
+    for chapter_voice in "${CHAPTER_VOICES[@]:-}"; do
+      [[ -z "$chapter_voice" ]] || voice_plan_command+=(--chapter-voice "$chapter_voice")
+    done
+    if ! "${voice_plan_command[@]}" >"$voice_plan_output"; then
+      rm -f -- "$voice_plan_output"
+      return 64
+    fi
+    unset CHAPTER_VOICES_CANONICAL VOICE_PLAN_SHA256 VOICE_PLAN_ID
+    while :; do
+      voice_plan_key=
+      if ! IFS= read -r -d '' voice_plan_key; then
+        [[ -z "$voice_plan_key" ]] || {
+          printf 'incomplete Echo voice-plan env0 record\n' >&2
+          rm -f -- "$voice_plan_output"
+          return 65
+        }
+        break
+      fi
+      voice_plan_value=
+      if ! IFS= read -r -d '' voice_plan_value; then
         printf 'incomplete Echo voice-plan env0 record\n' >&2
         rm -f -- "$voice_plan_output"
         return 65
-      }
-      break
-    fi
-    voice_plan_value=
-    if ! IFS= read -r -d '' voice_plan_value; then
-      printf 'incomplete Echo voice-plan env0 record\n' >&2
-      rm -f -- "$voice_plan_output"
+      fi
+      case "$voice_plan_key" in
+        VOICE) (( voice_plan_count_voice += 1 )); VOICE=$voice_plan_value ;;
+        CHAPTER_VOICES_CANONICAL) (( voice_plan_count_chapters += 1 )); CHAPTER_VOICES_CANONICAL=$voice_plan_value ;;
+        VOICE_PLAN_SHA256) (( voice_plan_count_sha += 1 )); VOICE_PLAN_SHA256=$voice_plan_value ;;
+        VOICE_PLAN_ID) (( voice_plan_count_id += 1 )); VOICE_PLAN_ID=$voice_plan_value ;;
+        *)
+          printf 'unknown Echo voice-plan env0 key: %s\n' "$voice_plan_key" >&2
+          rm -f -- "$voice_plan_output"
+          return 65
+          ;;
+      esac
+    done <"$voice_plan_output"
+    rm -f -- "$voice_plan_output"
+    if (( voice_plan_count_voice != 1 || voice_plan_count_chapters != 1 \
+      || voice_plan_count_sha != 1 || voice_plan_count_id != 1 )); then
+      printf 'Echo voice-plan env0 record is incomplete or duplicated\n' >&2
       return 65
     fi
-    case "$voice_plan_key" in
-      VOICE)
-        (( voice_plan_count_voice += 1 ))
-        VOICE=$voice_plan_value
-        ;;
-      CHAPTER_VOICES_CANONICAL)
-        (( voice_plan_count_chapters += 1 ))
-        CHAPTER_VOICES_CANONICAL=$voice_plan_value
-        ;;
-      VOICE_PLAN_SHA256)
-        (( voice_plan_count_sha += 1 ))
-        VOICE_PLAN_SHA256=$voice_plan_value
-        ;;
-      VOICE_PLAN_ID)
-        (( voice_plan_count_id += 1 ))
-        VOICE_PLAN_ID=$voice_plan_value
-        ;;
-      *)
-        printf 'unknown Echo voice-plan env0 key: %s\n' "$voice_plan_key" >&2
-        rm -f -- "$voice_plan_output"
-        return 65
-        ;;
-    esac
-  done <"$voice_plan_output"
-  rm -f -- "$voice_plan_output"
-  if (( voice_plan_count_voice != 1 || voice_plan_count_chapters != 1 \
-    || voice_plan_count_sha != 1 || voice_plan_count_id != 1 )); then
-    printf 'Echo voice-plan env0 record is incomplete or duplicated\n' >&2
-    return 65
+    VOICE_PLAN_MODE=chapter
   fi
-  local echo_source_id
+  local echo_source_id run_voice_identity
   echo_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
+  run_voice_identity=$VOICE_PLAN_ID
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    run_voice_identity="plan-$VOICE_PLAN_SHA256"
+  fi
   RUN_ID=$(echo_pronunciation_run_id \
     "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
-    "$ECHO_RENDERER_MANIFEST_SHA256" "$echo_source_id" "$VOICE_PLAN_ID")
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$echo_source_id" "$run_voice_identity")
   WORK="$RUN_ROOT/audio-work-$RUN_ID"
   DB="$RUN_ROOT/narration-$RUN_ID.sqlite"
   mkdir -p "$RUN_ROOT/research"
@@ -648,8 +765,11 @@ echo_pronunciation_preflight() {
   export ECHO_RENDERER_ROOT ECHO_RENDERER_BUILD_ROOT ECHO_RENDERER_MANIFEST
   export ECHO_RENDERER_MANIFEST_SHA256 APPROVED_ECHO_INSTALLER_SHA
   export ECHO_MODEL_REVISION ECHO_MODEL_EXPECTED_BYTES ECHO_MODEL_BYTES_ATTESTED
-  export ECHO_RENDER_VERSION VOICE CHAPTER_VOICES_CANONICAL
-  export VOICE_PLAN_SHA256 VOICE_PLAN_ID RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
+  export ECHO_RENDER_VERSION VOICE CHAPTER_VOICES_CANONICAL VOICE_PLAN_MODE
+  export VOICE_PLAN_SOURCE VOICE_PLAN_SHA256 VOICE_PLAN_ID VOICE_PLAN_BLOCK_COUNT
+  export VOICE_PLAN_CANONICAL_PATH VOICE_PLAN_CANONICAL_SHA256
+  export VOICE_PLAN_RESOLUTION_PATH VOICE_PLAN_RESOLUTION_SHA256
+  export RUN_ID WORK DB ECHO_RENDER_INPUT_RECEIPT
 }
 
 echo_pronunciation_attest_inputs() {
@@ -682,6 +802,17 @@ echo_pronunciation_attest_inputs() {
     printf 'sealed preflight state is missing: CHAPTER_VOICES_CANONICAL\n' >&2
     return 70
   fi
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    for required in \
+      VOICE_PLAN_SOURCE VOICE_PLAN_BLOCK_COUNT VOICE_PLAN_CANONICAL_PATH \
+      VOICE_PLAN_CANONICAL_SHA256 VOICE_PLAN_RESOLUTION_PATH \
+      VOICE_PLAN_RESOLUTION_SHA256; do
+      if [[ -z ${!required:-} ]]; then
+        printf 'sealed preflight state is missing: %s\n' "$required" >&2
+        return 70
+      fi
+    done
+  fi
   echo_pronunciation_validate_renderer_paths || return $?
   if ! "$lease_helper" --assert-held --lock-root "$lease_root" \
     --resource "$ECHO_RENDERER_BUILD_ROOT" >/dev/null 2>&1; then
@@ -709,24 +840,47 @@ echo_pronunciation_attest_inputs() {
   fi
   local voice_plan_helper voice_plan_lines
   voice_plan_helper="$script_dir/echo_voice_plan.py"
-  local voice_plan_command=(
-    /usr/local/bin/python3 "$voice_plan_helper"
-    --default-voice "$VOICE"
-  )
-  local chapter_voice
-  for chapter_voice in "${CHAPTER_VOICES[@]:-}"; do
-    [[ -z "$chapter_voice" ]] || voice_plan_command+=(--chapter-voice "$chapter_voice")
-  done
-  voice_plan_lines=$("${voice_plan_command[@]}") || return $?
-  local expected_voice_plan_lines
-  expected_voice_plan_lines=$(printf '%s\n' \
-    "VOICE=$VOICE" \
-    "CHAPTER_VOICES_CANONICAL=$CHAPTER_VOICES_CANONICAL" \
-    "VOICE_PLAN_SHA256=$VOICE_PLAN_SHA256" \
-    "VOICE_PLAN_ID=$VOICE_PLAN_ID")
-  if [[ "$voice_plan_lines" != "$expected_voice_plan_lines" ]]; then
-    printf 'sealed chapter-voice plan changed while narration lease was held\n' >&2
-    return 65
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    if [[ "$VOICE_PLAN_SOURCE" != "$VOICE_PLAN_CANONICAL_PATH" \
+      || "$VOICE_PLAN_CANONICAL_PATH" != "$RUN_ROOT/research/echo-voice-plan-plan-$VOICE_PLAN_SHA256.json" \
+      || "$VOICE_PLAN_RESOLUTION_PATH" != "$RUN_ROOT/research/echo-voice-plan-resolution-plan-$VOICE_PLAN_SHA256.json" \
+      || -L "$VOICE_PLAN_CANONICAL_PATH" || ! -f "$VOICE_PLAN_CANONICAL_PATH" \
+      || -L "$VOICE_PLAN_RESOLUTION_PATH" || ! -f "$VOICE_PLAN_RESOLUTION_PATH" ]]; then
+      printf 'sealed block voice-plan paths changed while narration lease was held\n' >&2
+      return 65
+    fi
+    local current_plan_sha current_resolution_sha
+    current_plan_sha=$(/usr/bin/shasum -a 256 "$VOICE_PLAN_CANONICAL_PATH" | awk '{print $1}')
+    current_resolution_sha=$(/usr/bin/shasum -a 256 "$VOICE_PLAN_RESOLUTION_PATH" | awk '{print $1}')
+    if [[ "$current_plan_sha" != "$VOICE_PLAN_CANONICAL_SHA256" \
+      || "$current_resolution_sha" != "$VOICE_PLAN_RESOLUTION_SHA256" ]]; then
+      printf 'sealed block voice-plan bytes changed while narration lease was held\n' >&2
+      return 65
+    fi
+    /usr/local/bin/python3 "$voice_plan_helper" \
+      --echo-cli "$CLI" --epub "$EPUB" --voice-plan "$VOICE_PLAN_CANONICAL_PATH" \
+      --canonical-plan "$VOICE_PLAN_CANONICAL_PATH" \
+      --resolution "$VOICE_PLAN_RESOLUTION_PATH" --format env0 >/dev/null || return 65
+  else
+    local voice_plan_command=(
+      /usr/local/bin/python3 "$voice_plan_helper"
+      --default-voice "$VOICE"
+    )
+    local chapter_voice
+    for chapter_voice in "${CHAPTER_VOICES[@]:-}"; do
+      [[ -z "$chapter_voice" ]] || voice_plan_command+=(--chapter-voice "$chapter_voice")
+    done
+    voice_plan_lines=$("${voice_plan_command[@]}") || return $?
+    local expected_voice_plan_lines
+    expected_voice_plan_lines=$(printf '%s\n' \
+      "VOICE=$VOICE" \
+      "CHAPTER_VOICES_CANONICAL=$CHAPTER_VOICES_CANONICAL" \
+      "VOICE_PLAN_SHA256=$VOICE_PLAN_SHA256" \
+      "VOICE_PLAN_ID=$VOICE_PLAN_ID")
+    if [[ "$voice_plan_lines" != "$expected_voice_plan_lines" ]]; then
+      printf 'sealed chapter-voice plan changed while narration lease was held\n' >&2
+      return 65
+    fi
   fi
 
   local expected_epub expected_cover_selection selected_pair_dir cover_input
@@ -809,11 +963,15 @@ echo_pronunciation_attest_inputs() {
     return 65
   fi
 
-  local expected_source_id expected_run_id expected_receipt
+  local expected_source_id expected_run_id expected_receipt expected_run_voice_identity
   expected_source_id=$(echo_pronunciation_source_id "$ECHO_SOURCE_SHA")
+  expected_run_voice_identity=$VOICE_PLAN_ID
+  if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
+    expected_run_voice_identity="plan-$VOICE_PLAN_SHA256"
+  fi
   expected_run_id=$(echo_pronunciation_run_id \
     "$EPUB_SHA256" "$ECHO_CLI_SHA256" "$ECHO_RESOURCES_SHA256" \
-    "$ECHO_RENDERER_MANIFEST_SHA256" "$expected_source_id" "$VOICE_PLAN_ID")
+    "$ECHO_RENDERER_MANIFEST_SHA256" "$expected_source_id" "$expected_run_voice_identity")
   expected_receipt="$RUN_ROOT/research/echo-render-inputs-$expected_run_id.env"
   if [[ "$RUN_ID" != "$expected_run_id" \
     || "$WORK" != "$RUN_ROOT/audio-work-$expected_run_id" \

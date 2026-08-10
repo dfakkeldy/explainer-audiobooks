@@ -148,6 +148,198 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         )
         return epub, m4b, sidecar, receipt
 
+    def write_block_fixture(
+        self,
+        *,
+        unfamiliar_assignments: bool = False,
+        run_voice_identity: str | None = None,
+    ) -> dict[str, object]:
+        """Create one source-bound schema-2 cast and Echo schema-4 receipt chain."""
+        narration = self.root / "narration"
+        narration.mkdir(exist_ok=True)
+        epub = self.root / "storm-lighthouse.epub"
+        m4b = self.root / "storm-lighthouse.m4b"
+        sidecar = self.root / "storm-lighthouse.alignment.json"
+        epub.write_bytes(b"block epub source")
+        m4b.write_bytes(b"block audiobook")
+        sidecar.write_text(
+            '[{"blockId":"s1-b1","timestamp":0}]\n', encoding="utf-8"
+        )
+        source_sha256 = sha256(epub)
+        speakers = [
+            {
+                "speakerID": "narrator",
+                "role": "Narrator",
+                "voiceID": "am_michael",
+                "experimental": False,
+            },
+            {
+                "speakerID": "mara",
+                "role": "Mara",
+                "voiceID": "bf_emma",
+                "experimental": False,
+            },
+            {
+                "speakerID": "ivo",
+                "role": "Ivo",
+                "voiceID": "bm_george",
+                "experimental": True,
+            },
+        ]
+        assignments: list[dict[str, object]] = [
+            {"speakerID": "mara", "blocks": ["s2-b3"]}
+        ]
+        if unfamiliar_assignments:
+            assignments = [
+                {
+                    "speakerID": "mara",
+                    "range": {"start": "future-begin", "end": "future-end"},
+                }
+            ]
+        authored_payload = {
+            "schemaVersion": 1,
+            "source": {"epubSHA256": source_sha256},
+            "defaultSpeakerID": "narrator",
+            "speakers": [
+                {"id": row["speakerID"], "voiceID": row["voiceID"]}
+                for row in speakers
+            ],
+            "assignments": assignments,
+        }
+        authored = narration / "echo-voice-plan.json"
+        authored.write_text(
+            json.dumps(authored_payload, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        resolved_sha256 = "b" * 64
+        resolved = {
+            "blockCount": 2,
+            "defaultVoice": "am_michael",
+            "sourceEPUBSHA256": source_sha256,
+            "voicePlanID": f"plan-{resolved_sha256[:12]}",
+            "voicePlanSHA256": resolved_sha256,
+        }
+        canonical = narration / f"echo-voice-plan-plan-{resolved_sha256}.json"
+        canonical.write_bytes(authored.read_bytes())
+        resolution = narration / (
+            f"echo-voice-plan-resolution-plan-{resolved_sha256}.json"
+        )
+        resolution.write_text(
+            json.dumps(resolved, sort_keys=True, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        renderer_root = self.root / "installed-renderer"
+        renderer_build_root = renderer_root / "renderer"
+        renderer_build_root.mkdir(parents=True, exist_ok=True)
+        renderer = {
+            "rendererSchemaVersion": 1,
+            "rendererRoot": str(renderer_root),
+            "rendererBuildRoot": str(renderer_build_root),
+            "installerSourceSHA": "1" * 40,
+            "echoSourceSHA": "2" * 40,
+            "rendererManifestSHA256": "3" * 64,
+            "echoCLI_SHA256": "4" * 64,
+            "echoResourcesSHA256": "5" * 64,
+            "echoRenderVersion": 22,
+            "modelPolicyRevision": "fixture-policy-v1",
+            "modelExpectedByteCount": 123456,
+            "modelBytesAttested": False,
+        }
+        run_voice_identity = run_voice_identity or f"plan-{resolved_sha256}"
+        run_id = (
+            f"{source_sha256[:12]}-{renderer['echoCLI_SHA256'][:12]}-"
+            f"{renderer['echoResourcesSHA256'][:12]}-"
+            f"{renderer['rendererManifestSHA256'][:12]}-"
+            f"{renderer['echoSourceSHA']}-{run_voice_identity}"
+        )
+        attempt_id = "7" * 64
+        input_receipt = narration / f"echo-render-inputs-{run_id}.env"
+        input_receipt.write_text(
+            "\n".join(
+                (
+                    "voice=am_michael",
+                    "chapter_voices=",
+                    f"voice_plan_sha256={resolved_sha256}",
+                    f"voice_plan_id={resolved['voicePlanID']}",
+                    "voice_plan_mode=block",
+                    "voice_plan_block_count=2",
+                    f"voice_plan_canonical_path={canonical}",
+                    f"voice_plan_canonical_sha256={sha256(canonical)}",
+                    f"voice_plan_resolution_path={resolution}",
+                    f"voice_plan_resolution_sha256={sha256(resolution)}",
+                )
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        success = narration / f"echo-render-success-{run_id}-{attempt_id}.json"
+        success.write_text(
+            json.dumps(
+                {
+                    "schemaVersion": 4,
+                    **renderer,
+                    "attemptID": attempt_id,
+                    "runID": run_id,
+                    "attemptReceiptSHA256": "8" * 64,
+                    "inputReceiptFileName": input_receipt.name,
+                    "inputReceiptSHA256": sha256(input_receipt),
+                    "sourceEPUBFileName": epub.name,
+                    "sourceEPUBSHA256": source_sha256,
+                    "artifactRelativePath": f"echo-renders/{run_id}/{attempt_id}",
+                    "resumeStateFileName": f"echo-resume-state-{run_id}.json",
+                    "resumeStateSHA256": "a" * 64,
+                    "audiobookFileName": m4b.name,
+                    "audiobookSHA256": sha256(m4b),
+                    "sidecarFileName": sidecar.name,
+                    "sidecarSHA256": sha256(sidecar),
+                    "auditFileName": "storm-lighthouse.pronunciation-audit.json",
+                    "auditSHA256": "c" * 64,
+                    "voicePlanMode": "block",
+                    "voicePlanID": resolved["voicePlanID"],
+                    "voicePlanSHA256": resolved_sha256,
+                    "voicePlanBlockCount": 2,
+                    "voicePlanCanonicalFileName": canonical.name,
+                    "voicePlanCanonicalSHA256": sha256(canonical),
+                    "voicePlanResolutionFileName": resolution.name,
+                    "voicePlanResolutionSHA256": sha256(resolution),
+                },
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        cast = {
+            "schemaVersion": 2,
+            "slug": "storm-lighthouse",
+            "narrationMode": "block",
+            "sourceEPUBSHA256": source_sha256,
+            "defaultSpeakerID": "narrator",
+            "speakers": speakers,
+            "authoredVoicePlan": {
+                "fileName": authored.name,
+                "sha256": sha256(authored),
+            },
+            "resolvedVoicePlan": None,
+            "verifiedArtifacts": None,
+        }
+        cast_path = narration / "voice-cast.json"
+        cast_path.write_text(
+            json.dumps(cast, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        return {
+            "cast": cast,
+            "cast_path": cast_path,
+            "authored": authored,
+            "canonical": canonical,
+            "resolution": resolution,
+            "resolved": resolved,
+            "epub": epub,
+            "m4b": m4b,
+            "sidecar": sidecar,
+            "success": success,
+            "input_receipt": input_receipt,
+        }
+
     def test_validate_cast_cli_tokens_are_consumable_by_the_narration_wrapper(self) -> None:
         cast_path = self.root / "voice-cast.json"
         cast_path.write_text(json.dumps(self.valid_cast()), encoding="utf-8")
@@ -193,6 +385,767 @@ class FictionVoicePreferencesTests(unittest.TestCase):
             "ECHO_RUN_LANE must be audiobook or fiction-audiobook", wrapper.stderr
         )
         self.assertNotIn("usage:", wrapper.stderr)
+
+    def test_default_preferences_path_is_only_the_application_support_store(self) -> None:
+        self.assertEqual(
+            Path.home()
+            / "Library/Application Support/Explainer Audiobooks/fiction-voice-preferences.json",
+            module.DEFAULT_PATH,
+        )
+        self.assertNotEqual(
+            ROOT / "fiction-voice-preferences.json", module.DEFAULT_PATH
+        )
+        self.assertEqual((module.DEFAULT_PATH,), module.load_preferences.__defaults__)
+
+    def test_block_cast_keeps_unfamiliar_assignments_for_echo_to_resolve(self) -> None:
+        fixture = self.write_block_fixture(unfamiliar_assignments=True)
+        cast = fixture["cast"]
+        authored = fixture["authored"]
+        assert isinstance(cast, dict)
+        assert isinstance(authored, Path)
+        before = authored.read_bytes()
+
+        validated = module.validate_block_cast(
+            cast, authored, module.load_preferences(self.preferences_path)
+        )
+
+        self.assertEqual("block", validated["narrationMode"])
+        self.assertEqual(before, authored.read_bytes())
+        authored_payload = json.loads(authored.read_text(encoding="utf-8"))
+        self.assertEqual(
+            {"start": "future-begin", "end": "future-end"},
+            authored_payload["assignments"][0]["range"],
+        )
+
+    def test_block_cast_requires_the_exact_local_envelope_and_matching_plan(self) -> None:
+        fixture = self.write_block_fixture()
+        cast = fixture["cast"]
+        authored = fixture["authored"]
+        assert isinstance(cast, dict)
+        assert isinstance(authored, Path)
+
+        cases: list[tuple[str, dict[str, object], str]] = []
+        extra = copy.deepcopy(cast)
+        extra["extra"] = True
+        cases.append(("extra key", extra, "exact"))
+        wrong_schema = copy.deepcopy(cast)
+        wrong_schema["schemaVersion"] = True
+        cases.append(("boolean schema", wrong_schema, "schemaVersion"))
+        wrong_source = copy.deepcopy(cast)
+        wrong_source["sourceEPUBSHA256"] = "f" * 64
+        cases.append(("source", wrong_source, "source EPUB"))
+        unsafe_filename = copy.deepcopy(cast)
+        unsafe_filename["authoredVoicePlan"]["fileName"] = "../voice-plan.json"
+        cases.append(("unsafe file name", unsafe_filename, "filename"))
+        duplicate_id = copy.deepcopy(cast)
+        duplicate_id["speakers"][2]["speakerID"] = "mara"
+        cases.append(("duplicate speaker", duplicate_id, "speakerID"))
+        duplicate_role = copy.deepcopy(cast)
+        duplicate_role["speakers"][2]["role"] = "Mara"
+        cases.append(("duplicate role", duplicate_role, "role"))
+        too_few = copy.deepcopy(cast)
+        too_few["speakers"][2]["voiceID"] = "bf_emma"
+        cases.append(("too few voices", too_few, "three to five"))
+        too_many_experiments = copy.deepcopy(cast)
+        for row in too_many_experiments["speakers"]:
+            row["experimental"] = True
+        cases.append(("too many experiments", too_many_experiments, "experimental"))
+
+        for name, invalid, pattern in cases:
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, pattern):
+                module.validate_block_cast(
+                    invalid, authored, module.load_preferences(self.preferences_path)
+                )
+
+        blacklisted = copy.deepcopy(cast)
+        blacklisted["speakers"][2]["voiceID"] = "af_heart"
+        plan = json.loads(authored.read_text(encoding="utf-8"))
+        plan["speakers"][2]["voiceID"] = "af_heart"
+        authored.write_text(
+            json.dumps(plan, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        )
+        blacklisted["authoredVoicePlan"]["sha256"] = sha256(authored)
+        with self.assertRaisesRegex(ValueError, "blacklisted"):
+            module.validate_block_cast(
+                blacklisted, authored, module.load_preferences(self.preferences_path)
+            )
+
+        authored.write_bytes(authored.read_bytes() + b" ")
+        with self.assertRaisesRegex(ValueError, "authored voice-plan hash"):
+            module.validate_block_cast(
+                cast, authored, module.load_preferences(self.preferences_path)
+            )
+
+    def test_block_cast_rejects_a_plan_with_different_default_or_speakers(self) -> None:
+        fixture = self.write_block_fixture()
+        cast = fixture["cast"]
+        authored = fixture["authored"]
+        assert isinstance(cast, dict)
+        assert isinstance(authored, Path)
+        plan = json.loads(authored.read_text(encoding="utf-8"))
+        plan["defaultSpeakerID"] = "mara"
+        authored.write_text(
+            json.dumps(plan, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        )
+        changed = copy.deepcopy(cast)
+        changed["authoredVoicePlan"]["sha256"] = sha256(authored)
+        with self.assertRaisesRegex(ValueError, "default speaker"):
+            module.validate_block_cast(
+                changed, authored, module.load_preferences(self.preferences_path)
+            )
+
+        plan["defaultSpeakerID"] = "narrator"
+        plan["speakers"][1]["voiceID"] = "bf_isabella"
+        authored.write_text(
+            json.dumps(plan, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        )
+        changed["authoredVoicePlan"]["sha256"] = sha256(authored)
+        with self.assertRaisesRegex(ValueError, "speakers"):
+            module.validate_block_cast(
+                changed, authored, module.load_preferences(self.preferences_path)
+            )
+
+    def test_block_cast_rejects_an_experimental_voice_already_in_history(self) -> None:
+        fixture = self.write_block_fixture()
+        cast = fixture["cast"]
+        authored = fixture["authored"]
+        assert isinstance(cast, dict)
+        assert isinstance(authored, Path)
+        preferences = module.initial_preferences()
+        preferences["uses"].append(
+            {
+                "slug": "older-story",
+                "recordedAt": "2026-08-08T12:00:00+00:00",
+                "sourceEPUBSHA256": "a" * 64,
+                "audiobookSHA256": "b" * 64,
+                "sidecarSHA256": "c" * 64,
+                "voicePlanSHA256": "d" * 64,
+                "successReceiptSHA256": "e" * 64,
+                "chapters": [{"chapter": 1, "voice": "bm_george"}],
+            }
+        )
+
+        with self.assertRaisesRegex(ValueError, "experimental voice was already used"):
+            module.validate_block_cast(cast, authored, preferences)
+
+    def test_block_validate_cast_cli_emits_json_or_nul_delimited_argv(self) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        authored = fixture["authored"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(authored, Path)
+        arguments = [
+            sys.executable,
+            str(MODULE_PATH),
+            "validate-cast",
+            "--cast",
+            str(cast_path),
+            "--voice-plan",
+            str(authored),
+            "--preferences",
+            str(self.preferences_path),
+        ]
+        json_result = subprocess.run(
+            arguments, cwd=ROOT, capture_output=True, text=True, check=False
+        )
+        self.assertEqual(0, json_result.returncode, json_result.stderr)
+        expected = ["--voice-plan", str(authored.resolve())]
+        self.assertEqual(expected, json.loads(json_result.stdout))
+
+        argv0_result = subprocess.run(
+            [*arguments, "--format", "argv0"],
+            cwd=ROOT,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, argv0_result.returncode, argv0_result.stderr.decode())
+        self.assertEqual(
+            b"--voice-plan\0" + str(authored.resolve()).encode() + b"\0",
+            argv0_result.stdout,
+        )
+
+        missing_plan = subprocess.run(
+            [
+                sys.executable,
+                str(MODULE_PATH),
+                "validate-cast",
+                "--cast",
+                str(cast_path),
+                "--preferences",
+                str(self.preferences_path),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(64, missing_plan.returncode)
+        self.assertIn("requires --voice-plan", missing_plan.stderr)
+
+    def test_block_record_use_seals_the_echo_resolution_and_is_idempotent(self) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success = fixture["success"]
+        resolved = fixture["resolved"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success, Path)
+        assert isinstance(resolved, dict)
+
+        saved = module.record_use(
+            cast_path,
+            epub,
+            m4b,
+            sidecar,
+            success,
+            "2026-08-09T12:00:00+00:00",
+            self.preferences_path,
+        )
+
+        sealed = json.loads(cast_path.read_text(encoding="utf-8"))
+        self.assertEqual(resolved, sealed["resolvedVoicePlan"])
+        self.assertEqual(
+            {
+                "sourceEPUBSHA256": sha256(epub),
+                "audiobookSHA256": sha256(m4b),
+                "sidecarSHA256": sha256(sidecar),
+                "voicePlanSHA256": resolved["voicePlanSHA256"],
+            },
+            sealed["verifiedArtifacts"],
+        )
+        self.assertEqual(
+            {
+                "slug": "storm-lighthouse",
+                "recordedAt": "2026-08-09T12:00:00+00:00",
+                "sourceEPUBSHA256": sha256(epub),
+                "audiobookSHA256": sha256(m4b),
+                "sidecarSHA256": sha256(sidecar),
+                "voicePlanSHA256": resolved["voicePlanSHA256"],
+                "successReceiptSHA256": sha256(success),
+                "narrationMode": "block",
+                "speakers": [
+                    {"speakerID": "narrator", "voice": "am_michael"},
+                    {"speakerID": "mara", "voice": "bf_emma"},
+                    {"speakerID": "ivo", "voice": "bm_george"},
+                ],
+            },
+            saved["uses"][0],
+        )
+        self.assertEqual(
+            resolved,
+            module.validate_completed_cast(sealed, cast_path=cast_path),
+        )
+
+        retried = module.record_use(
+            cast_path,
+            epub,
+            m4b,
+            sidecar,
+            success,
+            "2026-08-09T12:01:00+00:00",
+            self.preferences_path,
+        )
+        self.assertEqual(1, len(retried["uses"]))
+
+    def test_block_record_use_accepts_the_full_resolved_plan_run_component(self) -> None:
+        """Block runs use the full resolved-plan SHA, not the display ID."""
+        resolved_sha256 = "b" * 64
+        fixture = self.write_block_fixture(
+            run_voice_identity=f"plan-{resolved_sha256}"
+        )
+        cast_path = fixture["cast_path"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success, Path)
+
+        saved = module.record_use(
+            cast_path,
+            epub,
+            m4b,
+            sidecar,
+            success,
+            "2026-08-09T12:00:00+00:00",
+            self.preferences_path,
+        )
+
+        self.assertEqual("block", saved["uses"][0]["narrationMode"])
+
+    def test_block_record_use_rejects_plan_and_receipt_agreement_drift(self) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        authored = fixture["authored"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        input_receipt = fixture["input_receipt"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(authored, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        assert isinstance(input_receipt, Path)
+
+        authored.write_bytes(authored.read_bytes() + b" ")
+        with self.assertRaisesRegex(ValueError, "authored voice-plan hash"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        input_receipt = fixture["input_receipt"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        assert isinstance(input_receipt, Path)
+        input_receipt.write_text(
+            input_receipt.read_text(encoding="utf-8").replace(
+                "voice_plan_block_count=2", "voice_plan_block_count=3"
+            ),
+            encoding="utf-8",
+        )
+        success = json.loads(success_path.read_text(encoding="utf-8"))
+        success["inputReceiptSHA256"] = sha256(input_receipt)
+        success_path.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        with self.assertRaisesRegex(ValueError, "block count"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+    def test_block_record_use_rejects_a_canonical_plan_that_differs_from_authored(self) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        canonical = fixture["canonical"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        input_receipt = fixture["input_receipt"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(canonical, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        assert isinstance(input_receipt, Path)
+
+        authored_payload = json.loads(
+            fixture["authored"].read_text(encoding="utf-8")
+        )
+        canonical_payload = copy.deepcopy(authored_payload)
+        canonical_payload["speakers"][1]["voiceID"] = "bf_isabella"
+        canonical_payload["assignments"] = [
+            {"speakerID": "ivo", "ranges": ["future-s9-b1:future-s9-b2"]}
+        ]
+        self.assertEqual(authored_payload["source"], canonical_payload["source"])
+        self.assertEqual(
+            authored_payload["defaultSpeakerID"],
+            canonical_payload["defaultSpeakerID"],
+        )
+        canonical.write_text(
+            json.dumps(canonical_payload, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        old_canonical_sha256 = sha256(fixture["authored"])
+        input_receipt.write_text(
+            input_receipt.read_text(encoding="utf-8").replace(
+                "voice_plan_canonical_sha256=" + old_canonical_sha256,
+                "voice_plan_canonical_sha256=" + sha256(canonical),
+            ),
+            encoding="utf-8",
+        )
+        success = json.loads(success_path.read_text(encoding="utf-8"))
+        success["voicePlanCanonicalSHA256"] = sha256(canonical)
+        success["inputReceiptSHA256"] = sha256(input_receipt)
+        success_path.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+
+        with self.assertRaisesRegex(ValueError, "canonical voice plan.*authored"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+        sealed = json.loads(cast_path.read_text(encoding="utf-8"))
+        self.assertIsNone(sealed["resolvedVoicePlan"])
+        self.assertIsNone(sealed["verifiedArtifacts"])
+        self.assertFalse(self.preferences_path.exists())
+
+    def test_block_record_use_rejects_a_float_schema4_success_receipt(self) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+
+        success = json.loads(success_path.read_text(encoding="utf-8"))
+        success["schemaVersion"] = 4.0
+        success_path.write_text(
+            json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+        )
+
+        with self.assertRaisesRegex(ValueError, "schemaVersion.*integer 4"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+    def test_block_cast_and_record_use_reject_nonfinite_authored_or_canonical_json(
+        self,
+    ) -> None:
+        for value in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(location="authored", value=value):
+                preferences_path = self.root / f"preferences-authored-{value}.json"
+                fixture = self.write_block_fixture()
+                cast = fixture["cast"]
+                authored = fixture["authored"]
+                assert isinstance(cast, dict)
+                assert isinstance(authored, Path)
+                authored.write_text(
+                    authored.read_text(encoding="utf-8").replace('"s2-b3"', value),
+                    encoding="utf-8",
+                )
+                cast["authoredVoicePlan"]["sha256"] = sha256(authored)
+                with self.assertRaisesRegex(ValueError, "valid UTF-8 JSON|non-finite"):
+                    module.validate_block_cast(
+                        cast, authored, module.load_preferences(preferences_path)
+                    )
+
+            with self.subTest(location="canonical", value=value):
+                preferences_path = self.root / f"preferences-canonical-{value}.json"
+                fixture = self.write_block_fixture()
+                cast_path = fixture["cast_path"]
+                canonical = fixture["canonical"]
+                epub = fixture["epub"]
+                m4b = fixture["m4b"]
+                sidecar = fixture["sidecar"]
+                success_path = fixture["success"]
+                input_receipt = fixture["input_receipt"]
+                assert isinstance(cast_path, Path)
+                assert isinstance(canonical, Path)
+                assert isinstance(epub, Path)
+                assert isinstance(m4b, Path)
+                assert isinstance(sidecar, Path)
+                assert isinstance(success_path, Path)
+                assert isinstance(input_receipt, Path)
+                old_canonical_sha256 = sha256(canonical)
+                canonical.write_text(
+                    canonical.read_text(encoding="utf-8").replace(
+                        '"s2-b3"', value
+                    ),
+                    encoding="utf-8",
+                )
+                input_receipt.write_text(
+                    input_receipt.read_text(encoding="utf-8").replace(
+                        "voice_plan_canonical_sha256=" + old_canonical_sha256,
+                        "voice_plan_canonical_sha256=" + sha256(canonical),
+                    ),
+                    encoding="utf-8",
+                )
+                success = json.loads(success_path.read_text(encoding="utf-8"))
+                success["voicePlanCanonicalSHA256"] = sha256(canonical)
+                success["inputReceiptSHA256"] = sha256(input_receipt)
+                success_path.write_text(
+                    json.dumps(success, sort_keys=True) + "\n", encoding="utf-8"
+                )
+                with self.assertRaisesRegex(ValueError, "valid UTF-8 JSON|non-finite"):
+                    module.record_use(
+                        cast_path,
+                        epub,
+                        m4b,
+                        sidecar,
+                        success_path,
+                        "2026-08-09T12:00:00+00:00",
+                        preferences_path,
+                    )
+
+    def test_block_record_use_rejects_a_success_receipt_mutated_after_validation(
+        self,
+    ) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        original_success = success_path.read_bytes()
+        real_validate = module.validate_block_echo_success_receipt
+        changed = False
+
+        def validate_then_mutate(*args: object, **kwargs: object) -> dict[str, object]:
+            nonlocal changed
+            resolved = real_validate(*args, **kwargs)
+            success_path.write_bytes(original_success + b" ")
+            changed = True
+            return resolved
+
+        with mock.patch.object(
+            module,
+            "validate_block_echo_success_receipt",
+            side_effect=validate_then_mutate,
+        ), self.assertRaisesRegex(ValueError, "success receipt.*changed|changed.*success receipt"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+        self.assertTrue(changed)
+        sealed = json.loads(cast_path.read_text(encoding="utf-8"))
+        self.assertIsNone(sealed["resolvedVoicePlan"])
+        self.assertIsNone(sealed["verifiedArtifacts"])
+        self.assertFalse(self.preferences_path.exists())
+
+    def test_block_record_use_rejects_a_governed_plan_mutated_after_validation(
+        self,
+    ) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        canonical = fixture["canonical"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(canonical, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        original_canonical = canonical.read_bytes()
+        real_validate = module.validate_block_echo_success_receipt
+        changed = False
+
+        def validate_then_mutate(*args: object, **kwargs: object) -> dict[str, object]:
+            nonlocal changed
+            resolved = real_validate(*args, **kwargs)
+            canonical.write_bytes(original_canonical + b" ")
+            changed = True
+            return resolved
+
+        with mock.patch.object(
+            module,
+            "validate_block_echo_success_receipt",
+            side_effect=validate_then_mutate,
+        ), self.assertRaisesRegex(ValueError, "canonical.*changed|changed.*canonical"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+        self.assertTrue(changed)
+        sealed = json.loads(cast_path.read_text(encoding="utf-8"))
+        self.assertIsNone(sealed["resolvedVoicePlan"])
+        self.assertIsNone(sealed["verifiedArtifacts"])
+        self.assertFalse(self.preferences_path.exists())
+
+    def test_block_record_use_rejects_historical_experimental_voice_reuse_without_persisting(
+        self,
+    ) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        preferences = module.initial_preferences()
+        preferences["uses"].append(
+            {
+                "slug": "earlier-story",
+                "recordedAt": "2026-08-08T12:00:00+00:00",
+                "sourceEPUBSHA256": "a" * 64,
+                "audiobookSHA256": "c" * 64,
+                "sidecarSHA256": "d" * 64,
+                "voicePlanSHA256": "e" * 64,
+                "successReceiptSHA256": "f" * 64,
+                "narrationMode": "block",
+                "speakers": [{"speakerID": "old-ivo", "voice": "bm_george"}],
+            }
+        )
+        self.preferences_path.parent.mkdir()
+        self.preferences_path.write_text(
+            json.dumps(preferences, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        original_cast = cast_path.read_bytes()
+        original_preferences = self.preferences_path.read_bytes()
+
+        with self.assertRaisesRegex(
+            ValueError, "experimental voice was already used: bm_george"
+        ):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+        self.assertEqual(original_cast, cast_path.read_bytes())
+        self.assertEqual(original_preferences, self.preferences_path.read_bytes())
+
+    def test_block_record_use_rejects_a_governed_snapshot_mutated_during_final_policy_check_without_persisting(
+        self,
+    ) -> None:
+        fixture = self.write_block_fixture()
+        cast_path = fixture["cast_path"]
+        canonical = fixture["canonical"]
+        epub = fixture["epub"]
+        m4b = fixture["m4b"]
+        sidecar = fixture["sidecar"]
+        success_path = fixture["success"]
+        assert isinstance(cast_path, Path)
+        assert isinstance(canonical, Path)
+        assert isinstance(epub, Path)
+        assert isinstance(m4b, Path)
+        assert isinstance(sidecar, Path)
+        assert isinstance(success_path, Path)
+        self.preferences_path.parent.mkdir()
+        self.preferences_path.write_text(
+            json.dumps(module.initial_preferences(), sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        original_cast = cast_path.read_bytes()
+        original_preferences = self.preferences_path.read_bytes()
+        original_canonical = canonical.read_bytes()
+        real_validate = module._validate_block_preferences
+        changed = False
+
+        def validate_then_mutate(
+            checked_cast: dict[str, object],
+            checked_preferences: dict[str, object],
+            *,
+            check_used_voices: bool = True,
+        ) -> None:
+            nonlocal changed
+            real_validate(
+                checked_cast,
+                checked_preferences,
+                check_used_voices=check_used_voices,
+            )
+            if check_used_voices:
+                canonical.write_bytes(original_canonical + b" ")
+                changed = True
+
+        with mock.patch.object(
+            module,
+            "_validate_block_preferences",
+            side_effect=validate_then_mutate,
+        ), self.assertRaisesRegex(ValueError, "canonical.*changed|changed.*canonical"):
+            module.record_use(
+                cast_path,
+                epub,
+                m4b,
+                sidecar,
+                success_path,
+                "2026-08-09T12:00:00+00:00",
+                self.preferences_path,
+            )
+
+        self.assertTrue(changed)
+        self.assertEqual(original_cast, cast_path.read_bytes())
+        self.assertEqual(original_preferences, self.preferences_path.read_bytes())
+
+    def test_used_voices_accepts_one_history_shape_and_rejects_ambiguous_uses(self) -> None:
+        preferences = module.initial_preferences()
+        preferences["uses"].append(
+            {
+                "slug": "storm-lighthouse",
+                "recordedAt": "2026-08-09T12:00:00+00:00",
+                "sourceEPUBSHA256": "a" * 64,
+                "audiobookSHA256": "b" * 64,
+                "sidecarSHA256": "c" * 64,
+                "voicePlanSHA256": "d" * 64,
+                "successReceiptSHA256": "e" * 64,
+                "narrationMode": "block",
+                "speakers": [
+                    {"speakerID": "narrator", "voice": "am_michael"},
+                    {"speakerID": "mara", "voice": "bf_emma"},
+                    {"speakerID": "ivo", "voice": "bm_george"},
+                ],
+            }
+        )
+        self.assertEqual(
+            {"am_michael", "bf_emma", "bm_george"}, module._used_voices(preferences)
+        )
+
+        both = copy.deepcopy(preferences)
+        both["uses"][0]["chapters"] = [{"chapter": 1, "voice": "af_bella"}]
+        neither = copy.deepcopy(preferences)
+        del neither["uses"][0]["speakers"]
+        for name, invalid in (("both", both), ("neither", neither)):
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "both|neither"):
+                module._used_voices(invalid)
 
     def test_missing_store_supplies_the_standing_heart_blacklist(self) -> None:
         preferences = module.load_preferences(self.preferences_path)

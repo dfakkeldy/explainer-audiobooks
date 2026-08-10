@@ -126,6 +126,60 @@ class StageEchoDeliveryTests(unittest.TestCase):
             manifest["rootArtifacts"],
         )
 
+    def test_internal_narration_evidence_stays_below_production_root(self) -> None:
+        internal_evidence = {
+            "narration/echo-voice-plan.json": b"authored plan",
+            "narration/echo-voice-plan-plan-" + "b" * 64 + ".json": b"canonical plan",
+            "narration/echo-voice-plan-resolution-plan-" + "b" * 64 + ".json": b"resolution receipt",
+            "narration/echo-render-inputs-fixture.env": b"input receipt",
+            "narration/echo-render-success-fixture.json": b"success receipt",
+            "narration/audio-work-fixture/.anchors-ch1.json": b"capture",
+            "narration/listening/fixture/attempt/pronunciation-reel.m4a": b"reel",
+            "checks/fixture.pronunciation-audit.json": b"audit",
+        }
+        for relative, payload in internal_evidence.items():
+            destination = self.production / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(payload)
+
+        module.stage_delivery(self.request(), apply=True)
+
+        root_entries = list(self.destination.iterdir())
+        self.assertEqual(
+            {
+                "fixture.m4b",
+                "fixture.epub",
+                "fixture.alignment.json",
+                "cover.png",
+                "_production",
+            },
+            {path.name for path in root_entries},
+        )
+        self.assertEqual(1, sum(path.suffix == ".m4b" for path in root_entries))
+        self.assertEqual(1, sum(path.suffix == ".epub" for path in root_entries))
+        self.assertEqual(
+            1,
+            sum(path.name.endswith(".alignment.json") for path in root_entries),
+        )
+        self.assertEqual(1, sum(path.name == "cover.png" for path in root_entries))
+        self.assertEqual(1, sum(path.name == "_production" for path in root_entries))
+        self.assertTrue((self.destination / "_production").is_dir())
+
+        staged_evidence = {
+            path.relative_to(self.destination / "_production").as_posix(): path.read_bytes()
+            for path in (self.destination / "_production").rglob("*")
+            if path.is_file()
+            and path.relative_to(self.destination / "_production").as_posix()
+            in internal_evidence
+        }
+        self.assertEqual(internal_evidence, staged_evidence)
+        self.assertFalse(
+            any(
+                path.name in {Path(relative).name for relative in internal_evidence}
+                for path in root_entries
+            )
+        )
+
     def test_empty_destination_created_in_rename_window_is_not_replaced(self) -> None:
         real_rename_stage = module._rename_stage
         intruder_identity: tuple[int, int] | None = None

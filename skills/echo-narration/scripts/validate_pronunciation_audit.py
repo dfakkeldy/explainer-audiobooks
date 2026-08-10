@@ -3,12 +3,16 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import math
+import os
 import re
+import stat
 import subprocess
 import sys
+import tempfile
 from collections import Counter
 from pathlib import Path
 
@@ -72,6 +76,23 @@ REQUIRED_FIELDS = {
     "audiobookFileName",
     "audiobookSHA256",
 }
+SCHEMA_7_REQUIRED_FIELDS = {
+    "schemaVersion",
+    "renderVersion",
+    "voice",
+    "chapterVoices",
+    "voicePlanSHA256",
+    "blockVoices",
+    "coverage",
+    "legacyChapterIndexes",
+    "audiobookFileName",
+    "audiobookSHA256",
+    "watchCounts",
+    "decisions",
+    "diagnostics",
+}
+SCHEMA_7_REEL_FIELDS = {"listeningReelFileName", "listeningReelSHA256"}
+BLOCK_ID_PATTERN = re.compile(r"s[0-9]+-b[0-9]+")
 DECISION_REQUIRED_FIELDS = {
     "blockID",
     "wordStart",
@@ -149,6 +170,14 @@ def require(condition: bool, message: str) -> None:
         raise AuditValidationError(message)
 
 
+def reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    payload: dict[str, object] = {}
+    for key, value in pairs:
+        require(key not in payload, f"duplicate JSON key: {key}")
+        payload[key] = value
+    return payload
+
+
 def require_nonempty_string(value: object, field: str) -> str:
     require(
         isinstance(value, str) and bool(value.strip()),
@@ -176,6 +205,105 @@ def require_sha256(value: object, field: str) -> str:
 def file_sha256(path: Path) -> str:
     with path.open("rb") as input_file:
         return hashlib.file_digest(input_file, "sha256").hexdigest()
+
+
+class StableMediaSnapshot:
+    """A private copy whose bytes, hash, size, and duration stay bound together."""
+
+    def __init__(self, path: Path, sha256: str, byte_count: int) -> None:
+        self.path = path
+        self.sha256 = sha256
+        self.byte_count = byte_count
+
+
+def require_canonical_explicit_path(path: Path, label: str) -> None:
+    require(path.is_absolute(), f"--{label} must be an absolute path")
+    try:
+        resolved = path.resolve(strict=True)
+    except OSError as error:
+        raise AuditValidationError(
+            f"explicit {label} is missing, a symlink, or not a file"
+        ) from error
+    require(
+        resolved == path,
+        f"explicit {label} must have canonical symlink-free ancestry",
+    )
+    ancestor = path.parent
+    while ancestor != ancestor.parent:
+        require(
+            not ancestor.is_symlink(),
+            f"explicit {label} must have canonical symlink-free ancestry",
+        )
+        ancestor = ancestor.parent
+
+
+def open_regular_descriptor(path: Path, label: str) -> int:
+    flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    try:
+        descriptor = os.open(path, flags)
+    except OSError as error:
+        raise AuditValidationError(
+            f"explicit {label} is missing, a symlink, or not a file"
+        ) from error
+    if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+        os.close(descriptor)
+        raise AuditValidationError(
+            f"explicit {label} is missing, a symlink, or not a file"
+        )
+    return descriptor
+
+
+def stable_explicit_media_snapshot(path: Path, label: str) -> StableMediaSnapshot:
+    """Copy one no-follow descriptor so ffprobe sees the exact hashed bytes.
+
+    `ffprobe` consumes a pathname and cannot attest the descriptor it opens.  A
+    private `mkstemp` copy is therefore the stable byte boundary: hashing and
+    byte counting happen while copying the original descriptor, and duration is
+    read only from that completed private copy.
+    """
+
+    require_canonical_explicit_path(path, label)
+    descriptor = open_regular_descriptor(path, label)
+    temporary_descriptor = -1
+    temporary_path: Path | None = None
+    try:
+        temporary_descriptor, temporary_name = tempfile.mkstemp(
+            prefix="echo-pronunciation-audit-",
+            suffix=path.suffix or ".media",
+        )
+        temporary_path = Path(temporary_name)
+        os.fchmod(temporary_descriptor, 0o600)
+        digest = hashlib.sha256()
+        byte_count = 0
+        with os.fdopen(descriptor, "rb", closefd=True) as source:
+            descriptor = -1
+            with os.fdopen(temporary_descriptor, "wb", closefd=True) as destination:
+                temporary_descriptor = -1
+                while chunk := source.read(1_048_576):
+                    digest.update(chunk)
+                    byte_count += len(chunk)
+                    destination.write(chunk)
+                destination.flush()
+                os.fsync(destination.fileno())
+        require_canonical_explicit_path(path, label)
+        return StableMediaSnapshot(temporary_path, digest.hexdigest(), byte_count)
+    except Exception:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+        raise
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+        if temporary_descriptor >= 0:
+            os.close(temporary_descriptor)
+
+
+def require_explicit_media(path: Path | None, label: str) -> Path:
+    require(path is not None, f"schema 7 requires --{label}")
+    require_canonical_explicit_path(path, label)
+    return path
 
 
 def media_duration(path: Path) -> float:
@@ -293,25 +421,125 @@ def validate_decision(decision: object, index: int) -> dict[str, object]:
     return decision
 
 
-def validate(audit_path: Path) -> None:
-    payload = json.loads(audit_path.read_text(encoding="utf-8"))
+def validate(
+    audit_path: Path,
+    *,
+    audiobook: Path | None = None,
+    reel: Path | None = None,
+    voice_plan_sha256: str | None = None,
+    block_count: int | None = None,
+) -> None:
+    try:
+        raw_manifest = audit_path.read_text(encoding="utf-8")
+        payload = json.loads(raw_manifest)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise AuditValidationError("manifest is not valid UTF-8 JSON") from error
     require(isinstance(payload, dict), "manifest root must be an object")
-    missing = sorted(REQUIRED_FIELDS - payload.keys())
-    require(not missing, f"manifest missing fields: {missing}")
-    schema_version = payload["schemaVersion"]
+    schema_version = payload.get("schemaVersion")
+    if schema_version == 7:
+        try:
+            payload = json.loads(
+                raw_manifest,
+                object_pairs_hook=reject_duplicate_keys,
+            )
+        except json.JSONDecodeError as error:
+            raise AuditValidationError("manifest is not valid UTF-8 JSON") from error
+        require(isinstance(payload, dict), "manifest root must be an object")
+        schema_version = payload.get("schemaVersion")
     require(
-        type(schema_version) is int and 2 <= schema_version <= 6,
-        "schemaVersion must be between 2 and 6",
+        type(schema_version) is int and 2 <= schema_version <= 7,
+        "schemaVersion must be between 2 and 7",
     )
+    schema_7 = schema_version == 7
+    if schema_7:
+        exact_fields = SCHEMA_7_REQUIRED_FIELDS | (
+            set(payload) & SCHEMA_7_REEL_FIELDS
+        )
+        require(
+            set(payload) == exact_fields,
+            "schema 7 manifest has unexpected top-level keys",
+        )
+        missing = sorted(SCHEMA_7_REQUIRED_FIELDS - payload.keys())
+        require(not missing, f"schema 7 manifest missing fields: {missing}")
+        require(
+            ("listeningReelFileName" in payload)
+            == ("listeningReelSHA256" in payload),
+            "listeningReelFileName and listeningReelSHA256 must appear together",
+        )
+        audiobook_path = require_explicit_media(audiobook, "audiobook")
+        require(
+            voice_plan_sha256 is not None,
+            "schema 7 requires --voice-plan-sha256",
+        )
+        require(
+            block_count is not None,
+            "schema 7 requires --block-count",
+        )
+        supplied_plan_sha = require_sha256(
+            voice_plan_sha256, "--voice-plan-sha256"
+        )
+        require(
+            type(block_count) is int and block_count > 0,
+            "--block-count must be a positive integer",
+        )
+    else:
+        missing = sorted(REQUIRED_FIELDS - payload.keys())
+        require(not missing, f"manifest missing fields: {missing}")
+        require(
+            voice_plan_sha256 is None and block_count is None,
+            "--voice-plan-sha256 and --block-count require schema 7",
+        )
+        require(
+            audiobook is None and reel is None,
+            "explicit media paths require schema 7",
+        )
+        audiobook_path = None
+        supplied_plan_sha = None
+
     render_version = require_nonnegative_int(payload["renderVersion"], "renderVersion")
     require(render_version >= 12, "renderVersion must be at least 12")
     voice = require_nonempty_string(payload["voice"], "voice")
+    chapter_voices: dict[str, str] = {}
+    block_voices: dict[str, str] = {}
     if schema_version == 2:
         require(
             voice in {"am_michael", "am_puck"},
             "schema 2 voice must be am_michael or am_puck",
         )
-        chapter_voices: dict[str, str] = {}
+    elif schema_7:
+        require(payload["chapterVoices"] == {}, "schema 7 chapterVoices must be empty")
+        require(
+            payload["voicePlanSHA256"] == supplied_plan_sha,
+            "schema 7 voicePlanSHA256 differs from --voice-plan-sha256",
+        )
+        raw_block_voices = payload["blockVoices"]
+        require(isinstance(raw_block_voices, dict), "schema 7 blockVoices must be an object")
+        require(
+            len(raw_block_voices) == block_count,
+            "schema 7 blockVoices count differs from --block-count",
+        )
+        for block_id, block_voice in raw_block_voices.items():
+            require(
+                isinstance(block_id, str)
+                and BLOCK_ID_PATTERN.fullmatch(block_id) is not None,
+                "schema 7 blockVoices keys must be canonical block IDs",
+            )
+            require(
+                isinstance(block_voice, str) and block_voice in ALLOWED_VOICES,
+                f"blockVoices.{block_id} is not a known Echo voice",
+            )
+            block_voices[block_id] = block_voice
+        distinct_voices = set(block_voices.values())
+        if len(distinct_voices) == 1:
+            require(
+                voice == next(iter(distinct_voices)),
+                "schema 7 uniform voice disagrees with blockVoices",
+            )
+        else:
+            require(
+                voice == "mixed",
+                "schema 7 multiple block voices require voice mixed",
+            )
     else:
         require(
             "chapterVoices" in payload,
@@ -322,7 +550,6 @@ def validate(audit_path: Path) -> None:
             isinstance(raw_chapter_voices, dict) and bool(raw_chapter_voices),
             f"schema {schema_version} chapterVoices must be a nonempty object",
         )
-        chapter_voices = {}
         for chapter_index, chapter_voice in raw_chapter_voices.items():
             require(
                 isinstance(chapter_index, str)
@@ -369,23 +596,50 @@ def validate(audit_path: Path) -> None:
         payload["audiobookFileName"] == f"{stem}.m4b",
         "audiobook filename is not relative or does not match the audit stem",
     )
-    audiobook_path = audit_path.parent / f"{stem}.m4b"
-    require(
-        audiobook_path.is_file() and not audiobook_path.is_symlink(),
-        "listed audiobook is missing, a symlink, or not a file",
-    )
+    if audiobook_path is None:
+        audiobook_path = audit_path.parent / f"{stem}.m4b"
+        require(
+            audiobook_path.is_file() and not audiobook_path.is_symlink(),
+            "listed audiobook is missing, a symlink, or not a file",
+        )
+        audiobook_binding = "exact sibling audiobook bytes"
+    else:
+        require(
+            audiobook_path.name == payload["audiobookFileName"],
+            "explicit audiobook filename does not match the audit manifest",
+        )
+        audiobook_binding = "exact explicit audiobook bytes"
     audiobook_sha256 = require_sha256(payload["audiobookSHA256"], "audiobookSHA256")
-    require(
-        file_sha256(audiobook_path) == audiobook_sha256,
-        "audiobookSHA256 does not match exact sibling audiobook bytes",
-    )
-    audiobook_duration = media_duration(audiobook_path)
+    if schema_7:
+        audiobook_snapshot = stable_explicit_media_snapshot(
+            audiobook_path, "audiobook"
+        )
+        try:
+            require(
+                audiobook_snapshot.sha256 == audiobook_sha256,
+                f"audiobookSHA256 does not match {audiobook_binding}",
+            )
+            audiobook_duration = media_duration(audiobook_snapshot.path)
+        finally:
+            audiobook_snapshot.path.unlink(missing_ok=True)
+    else:
+        require(
+            file_sha256(audiobook_path) == audiobook_sha256,
+            f"audiobookSHA256 does not match {audiobook_binding}",
+        )
+        audiobook_duration = media_duration(audiobook_path)
 
     decisions = [
         validate_decision(decision, index)
         for index, decision in enumerate(payload["decisions"])
     ]
-    if schema_version >= 3:
+    if schema_7:
+        for index, decision in enumerate(decisions):
+            require(
+                decision["blockID"] in block_voices,
+                f"decisions[{index}].blockID is absent from blockVoices",
+            )
+    elif schema_version >= 3:
         for index, decision in enumerate(decisions):
             chapter_index = decision.get("chapterIndex")
             if chapter_index is not None:
@@ -424,7 +678,19 @@ def validate(audit_path: Path) -> None:
         reel_name is None or reel_name == expected_reel_name,
         "listening reel filename is not relative or does not match the audit stem",
     )
-    reel_path = audit_path.parent / expected_reel_name
+    if schema_7:
+        require(
+            (reel is None) == (reel_name is None),
+            "schema 7 --reel must appear exactly when the manifest lists a listening reel",
+        )
+        reel_path = require_explicit_media(reel, "reel") if reel_name is not None else None
+        if reel_path is not None:
+            require(
+                reel_path.name == reel_name,
+                "explicit reel filename does not match the audit manifest",
+            )
+    else:
+        reel_path = audit_path.parent / expected_reel_name
     timed_decisions = [
         decision
         for decision in decisions
@@ -446,20 +712,35 @@ def validate(audit_path: Path) -> None:
                         f"decisions[{index}].{field} exceeds audiobook duration",
                     )
     if reel_name is None:
-        require(
-            not reel_path.exists() and not reel_path.is_symlink(),
-            "unlisted listening reel is present",
-        )
+        if not schema_7:
+            require(
+                not reel_path.exists() and not reel_path.is_symlink(),
+                "unlisted listening reel is present",
+            )
     else:
-        require(
-            reel_path.is_file() and not reel_path.is_symlink(),
-            "listed listening reel is missing, a symlink, or not a file",
-        )
+        require(reel_path is not None, "listed listening reel is missing")
+        if not schema_7:
+            require(
+                reel_path.is_file() and not reel_path.is_symlink(),
+                "listed listening reel is missing, a symlink, or not a file",
+            )
         expected_reel_sha256 = require_sha256(reel_sha256, "listeningReelSHA256")
-        require(
-            file_sha256(reel_path) == expected_reel_sha256,
-            "listeningReelSHA256 does not match exact sibling reel bytes",
-        )
+        if schema_7:
+            reel_snapshot = stable_explicit_media_snapshot(reel_path, "reel")
+            try:
+                require(
+                    reel_snapshot.sha256 == expected_reel_sha256,
+                    "listeningReelSHA256 does not match exact explicit reel bytes",
+                )
+                media_duration(reel_snapshot.path)
+            finally:
+                reel_snapshot.path.unlink(missing_ok=True)
+        else:
+            require(
+                file_sha256(reel_path) == expected_reel_sha256,
+                "listeningReelSHA256 does not match exact sibling reel bytes",
+            )
+            media_duration(reel_path)
         require(
             any(
                 decision.get("chapterRelativeAudioRange") is not None
@@ -469,15 +750,33 @@ def validate(audit_path: Path) -> None:
             ),
             "listed listening reel requires an eligible timed pronunciation decision",
         )
-        media_duration(reel_path)
 
 
 def main(arguments: list[str]) -> int:
-    if len(arguments) != 1:
-        print("usage: validate_pronunciation_audit.py AUDIT_JSON", file=sys.stderr)
-        return 64
+    parser = argparse.ArgumentParser(
+        usage=(
+            "validate_pronunciation_audit.py AUDIT_JSON "
+            "[--audiobook ABSOLUTE_PATH [--reel ABSOLUTE_PATH] "
+            "--voice-plan-sha256 SHA256 --block-count N]"
+        )
+    )
+    parser.add_argument("audit_json", type=Path)
+    parser.add_argument("--audiobook", type=Path)
+    parser.add_argument("--reel", type=Path)
+    parser.add_argument("--voice-plan-sha256")
+    parser.add_argument("--block-count", type=int)
     try:
-        validate(Path(arguments[0]))
+        options = parser.parse_args(arguments)
+    except SystemExit as error:
+        return int(error.code)
+    try:
+        validate(
+            options.audit_json,
+            audiobook=options.audiobook,
+            reel=options.reel,
+            voice_plan_sha256=options.voice_plan_sha256,
+            block_count=options.block_count,
+        )
     except (AuditValidationError, json.JSONDecodeError, OSError) as error:
         print(f"pronunciation_audit: {error}", file=sys.stderr)
         return 1
