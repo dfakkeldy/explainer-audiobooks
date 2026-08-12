@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 2,
+  "packageKind": "fiction-audiobook",
+  "slug": "reversible-containment",
+  "editionId": "20260812T103225Z",
+  "publicationStatus": "public-first-listen",
+  "humanReadingStatus": "pending",
+  "humanListeningStatus": "pending",
+  "classification": "public-safe",
+  "permissionToPublish": true,
+  "permissionGrantedAt": "2026-08-12T10:32:25Z",
+  "author": "Dan Fakkeldy",
+  "contributor": "OpenAI Codex (GPT-5)",
+  "aiGenerated": true,
+  "contentLicense": "CC-BY-4.0",
+  "disclosure": "This original AI-generated fiction edition is published under CC BY 4.0 as a public first-listen. Automated package and audio checks passed; human reading and listening reviews remain pending.",
+  "publicGate": {
+    "originalFiction": true,
+    "noPrivateSource": true,
+    "noLivingPersonTarget": true,
+    "noLivingAuthorImitation": true,
+    "coverRightsVerified": true
+  },
+  "coverRights": {
+    "basis": "generated",
+    "status": "verified",
+    "coverSHA256": "5c894a6b5f99ebf8732911703aeb0c3b56fc7dcb362a5ecc02b412fcdf35427d"
+  },
+  "artifacts": {
+    "manuscript": {
+      "file": "reversible-containment.md",
+      "sha256": "4a3ee7ca88cf3be97af6841328298bd29fdb1243571dbfd3dea2b2cdfa8d45d0"
+    },
+    "epub": {
+      "file": "reversible-containment.epub",
+      "sha256": "b41dd46caa8dc45e26d0d45655c56d1faca5d69de0f6d4da95a5e2d6bfcded7a"
+    },
+    "alignment": {
+      "file": "reversible-containment.alignment.json",
+      "sha256": "d4ff2815eb45c3c6aac4831c4d8b472b3d9dc227e89220ff6395912cc4f24ffb"
+    },
+    "portraitCover": {
+      "file": "cover.png",
+      "sha256": "5c894a6b5f99ebf8732911703aeb0c3b56fc7dcb362a5ecc02b412fcdf35427d"
+    }
+  },
+  "release": {
+    "tag": "fiction-reversible-containment-20260812T103225Z",
+    "assetFile": "reversible-containment.m4b",
+    "assetSHA256": "3cfc46f087e16570541f4728aa6c554a098cb523f9e724c731da46062b7a2529"
+  },
+  "privateEvidence": {
+    "fictionReceiptSHA256": "449410696aaf0a2a30ee8afe54fa9863bfe3021e95d0b687e71669c53024f232",
+    "voiceCastSHA256": "f226f80f29842577f5813c9410612c042ef96ef5be57ed52645f7a510195c66c",
+    "voicePlanSHA256": "4d71eb0b27f12c8a1d1220271d6ea78aefb3ba89434bf3e7d7dba3fa23981ad2",
+    "echoSuccessReceiptSHA256": "f23d9ecef902533734f443588b89b2cc3659d220e128f16c00625a4c76716ca3"
+  }
+}
