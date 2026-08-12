@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 2,
+  "packageKind": "fiction-audiobook",
+  "slug": "six-months-behind",
+  "editionId": "20260811T153527Z",
+  "publicationStatus": "public-first-listen",
+  "humanReadingStatus": "pending",
+  "humanListeningStatus": "pending",
+  "classification": "public-safe",
+  "permissionToPublish": true,
+  "permissionGrantedAt": "2026-08-11T15:35:27Z",
+  "author": "Dan Fakkeldy",
+  "contributor": "OpenAI Codex (GPT-5)",
+  "aiGenerated": true,
+  "contentLicense": "CC-BY-4.0",
+  "disclosure": "This original AI-generated fiction edition is published under CC BY 4.0 as a public first-listen. Automated package and audio checks passed; human reading and listening reviews remain pending.",
+  "publicGate": {
+    "originalFiction": true,
+    "noPrivateSource": true,
+    "noLivingPersonTarget": true,
+    "noLivingAuthorImitation": true,
+    "coverRightsVerified": true
+  },
+  "coverRights": {
+    "basis": "generated",
+    "status": "verified",
+    "coverSHA256": "4c72c9432d77a1f0f2d6af326d1dd5ec22d25425236592e5bb0fb401b15fbad4"
+  },
+  "artifacts": {
+    "manuscript": {
+      "file": "six-months-behind.md",
+      "sha256": "1a6c1fb3f037ee45dfeac6e0e8c6c6550db712334fed9a72dbb6a3e2b3748c97"
+    },
+    "epub": {
+      "file": "six-months-behind.epub",
+      "sha256": "00b675ad3a6125382c297e951c8751e4e1a70c94115c27207c7cf148671d2c7b"
+    },
+    "alignment": {
+      "file": "six-months-behind.alignment.json",
+      "sha256": "6b1e4dfd3e228644e1851446dce2ba53ca27683262dad9ed9579b254e2500285"
+    },
+    "portraitCover": {
+      "file": "cover.png",
+      "sha256": "4c72c9432d77a1f0f2d6af326d1dd5ec22d25425236592e5bb0fb401b15fbad4"
+    }
+  },
+  "release": {
+    "tag": "fiction-six-months-behind-20260811T153527Z",
+    "assetFile": "six-months-behind.m4b",
+    "assetSHA256": "bd0784da86bbd1d54f18d5be712bb831cb4bb23cb73a49c0c1cad3648534cd3c"
+  },
+  "privateEvidence": {
+    "fictionReceiptSHA256": "a9e0105274ef40a772e6e6fb17192529b059a7a9112d7bd7b02812ba285e7269",
+    "voiceCastSHA256": "cc2d0c02e8b377fe245a1de2cfa2113dd297a445619d16fcc0d77de6374ef150",
+    "voicePlanSHA256": "6d0a46b7be7cbfc0844e54a93f3d485ae54b243076356fa9b7046af6833d0c0f",
+    "echoSuccessReceiptSHA256": "2a2227c8b6c139fba80415eaf92bcf09e35a92b1a9f5a23a166d15f342fbf2f8"
+  }
+}
