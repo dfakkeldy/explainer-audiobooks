@@ -121,10 +121,12 @@ There are two distinct lanes:
   the square art changes, the M4B is re-narrated rather than patched. The EPUB,
   M4B, covers, alignment, and receipts are verified before governed
   public/iCloud/site sync.
+`Rodents in the Walls` was excluded only from the earlier five-book migration;
+that is not a universal future rule.
 
 Private delivery permission never implies permission to publish. Legacy
-single-cover receipts and `replace_m4b_cover.py` exist for compatibility with
-old artifacts; neither is part of a new or revised render.
+single-cover receipts and `replace_m4b_cover.py` exist for legacy artifacts only;
+neither is part of a new or revised render.
 
 ## Model-aware and vendor-neutral
 
