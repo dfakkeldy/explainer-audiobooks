@@ -138,12 +138,14 @@ sources, opinions, first-person experience, jokes, or a replacement voice.
 ## Produce and deliver
 
 Design exactly three coordinated cover pairs with
-`references/cover-art.md`. Render each with `render_cover_pair(...)`:
-`cover.png` at 1600×2560 for the EPUB portrait and `m4b-cover.png` at
-2400×2400 for the M4B square. Review full-size art and thumbnails, auto-select
-the best pair on subject specificity, thumbnail legibility, title hierarchy,
-portrait/square coherence, absence of defects, and distinctiveness, then report
-the choice rather than asking.
+`references/cover-art.md`. At least two of the three complete pairs must be intentionally high-key, and one of those high-key pairs must be a Designed flat graphic. The third candidate is tonally unrestricted and may be dark when its subject and central metaphor earn that treatment. Render each with
+`render_cover_pair(...)`: `cover.png` at 1600×2560 for the EPUB portrait and
+`m4b-cover.png` at 2400×2400 for the M4B square.
+
+Review full-size art and thumbnails and auto-select the best pair on subject specificity,
+thumbnail legibility, title hierarchy, portrait/square coherence, absence of defects,
+and distinctiveness. High-key treatment breaks a close tie; a clearly stronger darker
+pair may win when the reported choice explains why. Report the choice rather than asking.
 
 Run `skill/scripts/build_book.py` with the chapters, chosen covers, title,
 author `Dan Fakkeldy`, and model in `--contributor`. Resolve the absolute

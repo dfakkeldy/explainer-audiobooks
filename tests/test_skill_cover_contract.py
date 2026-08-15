@@ -163,7 +163,6 @@ class SkillCoverContractTests(unittest.TestCase):
         for marker in (
             "Designed flat graphic",
             "route follows the direction",
-            "flat graphic or type-led direction",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, text)
@@ -175,9 +174,36 @@ class SkillCoverContractTests(unittest.TestCase):
                 "approved vector fallback",
                 "Do not use SVG or programmatic vector artwork",
                 "Do not substitute bespoke SVG",
+                "flat graphic or type-led direction",
             ):
                 with self.subTest(file=key, stale=stale):
                     self.assertNotIn(stale, text)
+
+    def test_candidate_slate_biases_high_key_and_requires_flat_graphic(self) -> None:
+        for key in ("cover", "skill"):
+            text = self.flattened(key)
+            for marker in (
+                "At least two of the three complete pairs must be intentionally high-key",
+                "one of those high-key pairs must be a Designed flat graphic",
+                "The third candidate is tonally unrestricted",
+            ):
+                with self.subTest(file=key, marker=marker):
+                    self.assertIn(marker, text)
+
+    def test_high_key_is_a_reviewed_visual_contract_not_a_label(self) -> None:
+        text = self.flattened("cover")
+        for marker in (
+            "High-key means that the overall impression is luminous and open",
+            "does not mean white-only, pastel, washed out, low-contrast",
+            "`high-key` or `tonally unrestricted`",
+            "both its portrait and square renders",
+            "revised or regenerated",
+            "[TONAL INTENT: HIGH-KEY / TONALLY UNRESTRICTED]",
+            "High-key treatment is the tie-breaker",
+            "darker direction earned the choice",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
 
     def test_raster_prompt_bans_ai_render_tells(self) -> None:
         text = self.flattened("cover")

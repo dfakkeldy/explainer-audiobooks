@@ -261,6 +261,20 @@ def main() -> int:
     ):
         contains(path, *paired_contract)
 
+    cover_slate_contract = (
+        "At least two of the three complete pairs must be intentionally high-key",
+        "one of those high-key pairs must be a Designed flat graphic",
+        "The third candidate is tonally unrestricted",
+    )
+    for path in ("skill/SKILL.md", "skill/references/cover-art.md"):
+        contains(path, *cover_slate_contract)
+    contains(
+        "skill/references/cover-art.md",
+        "[TONAL INTENT: HIGH-KEY / TONALLY UNRESTRICTED]",
+        "High-key treatment is the tie-breaker",
+        "darker direction earned the choice",
+    )
+
     # Receipt and sync commands are isolated in the rare public-publishing lane.
     complete_paired = (
         "render_cover_pair(", "portrait_spec=", "square_spec=",

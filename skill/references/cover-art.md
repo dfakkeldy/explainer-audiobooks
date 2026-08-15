@@ -102,9 +102,7 @@ afterward. Give each a one-line art-direction name and a short rationale before
 rendering.
 
 Choose the three most appropriate directions from this menu. Do not use a
-weak/placeholder direction just to fill the count. At least one of the three
-candidates must be a Designed flat graphic or type-led direction (Typographic
-graphic system counts), so a designed, non-generated look is always offered.
+weak/placeholder direction just to fill the count. At least two of the three complete pairs must be intentionally high-key, and one of those high-key pairs must be a Designed flat graphic. A Typographic graphic system remains available but does not satisfy the flat-graphic slot. The third candidate is tonally unrestricted: it may be dark, high-key, or intermediate according to the subject and central metaphor. Do not manufacture a dark candidate merely to fill a slot.
 
 | Direction | Put the style into words | Best fit |
 |---|---|---|
@@ -134,6 +132,20 @@ graphic system counts), so a designed, non-generated look is always offered.
   emotional history, or a tailored illustration that leaves the title room to
   breathe.
 
+### Tonal Calibration
+
+High-key means that the overall impression is luminous and open, built mainly
+from middle and high values. It may use saturated colour, firm typography,
+strong silhouettes, and dark accents. It does not mean white-only, pastel,
+washed out, low-contrast, or visually timid.
+
+Declare each candidate's tonal intent as `high-key` or `tonally unrestricted`
+before making art. A pair counts as high-key only when both its portrait and
+square renders retain that luminous value structure at full size and thumbnail
+size. If a planned high-key direction resolves into a predominantly dark render,
+it is revised or regenerated before selection rather than relabeled after the
+fact.
+
 ## Candidate Brief Before Making Art
 
 Write one complete art-and-type brief per candidate before image generation:
@@ -142,12 +154,13 @@ Write one complete art-and-type brief per candidate before image generation:
 2. Central metaphor.
 3. Composition, crop, and intended title field.
 4. Material language and two-to-four-colour palette.
-5. Anti-brief.
-6. Title archetype and font roles.
-7. Planned line breaks and hierarchy.
-8. Title anchor, alignment, and approximate occupied area.
-9. Intended relationship between title and art.
-10. Subtitle, author, and AUDIOBOOK placement.
+5. Tonal intent: `high-key` or `tonally unrestricted`.
+6. Anti-brief.
+7. Title archetype and font roles.
+8. Planned line breaks and hierarchy.
+9. Title anchor, alignment, and approximate occupied area.
+10. Intended relationship between title and art.
+11. Subtitle, author, and AUDIOBOOK placement.
 
 The differentiation rule from Non-Negotiable Default above applies to every
 brief: differ in metaphor, composition, palette, material language, and title
@@ -195,6 +208,14 @@ asking for “a nice cover” or “something professional.”
 Create original portrait editorial artwork for a premium nonfiction audiobook
 cover about [SUBJECT]. The book's audience is [AUDIENCE], and its promise is
 [AUDIENCE PROMISE]. The single visual thesis is [ONE SENTENCE VISUAL THESIS].
+
+The declared tonal intent is [TONAL INTENT: HIGH-KEY / TONALLY UNRESTRICTED].
+For a high-key direction, make the overall value structure luminous and open,
+using broad middle and high values with saturated colour, clear contrast, and
+dark accents rather than a dominant dark field. High-key does not mean pale,
+pastel, washed out, or low-contrast. For a tonally unrestricted direction,
+follow the brief's intended value structure; a dark field is welcome when the
+subject and central metaphor earn it.
 
 Show one unforgettable central metaphor: [SPECIFIC OBJECT, SCENE, OR VISUAL
 PARADOX]. Make that subject large, beautifully art-directed, and immediately
@@ -246,9 +267,12 @@ the complete `render_cover_pair(...)` call above for candidates 1 through 3.
 Review every full-size portrait and square render, generated 160-pixel
 thumbnail, art-and-type brief, font/palette note, and warning. Score the complete
 pairs on subject specificity, thumbnail legibility, title hierarchy,
-portrait/square coherence, absence of defects, and distinctiveness. Select and
-report the strongest. A later request to mix directions becomes a new
-specification and render.
+portrait/square coherence, absence of defects, and distinctiveness. Confirm that
+both declared high-key pairs remain high-key in their portrait and square renders
+and thumbnails. High-key treatment is the tie-breaker between similarly strong
+pairs. A clearly stronger dark or intermediate pair may still win; when it does,
+report why the darker direction earned the choice. A later request to mix
+directions becomes a new specification and render.
 
 ### Publisher brand mark
 
@@ -288,6 +312,8 @@ Reject and replace any candidate that:
 - has more than one competing visual idea, or no idea beyond the literal subject;
 - hides the title behind visual noise or leaves it with no intentional field;
 - looks good only at full size but collapses at a 160px thumbnail;
+- was declared high-key but resolves into a predominantly dark portrait or
+  square render;
 - repeats the same composition, palette, or central metaphor as another
   candidate;
 - uses an unearned premium cliché (gold foil effect, arbitrary smoke, faux
