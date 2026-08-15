@@ -106,8 +106,8 @@ Every new title uses exactly three coordinated cover pairs: `cover.png` at
 1600×2560 for the EPUB portrait and `m4b-cover.png` at 2400×2400 for the M4B
 square. The builder
 ([`skill/scripts/build_book.py`](../skill/scripts/build_book.py)) creates EPUB 3
-and combined Markdown from the reviewed chapters. The governed Echo wrapper
-narrates the selected square art into an immutable chaptered M4B and produces
+and combined Markdown from the reviewed chapters. The governed Echo wrapper embeds
+the selected square art while narrating an immutable chaptered M4B and produces
 alignment data for read-along playback.
 
 There are two distinct lanes:
@@ -119,8 +119,8 @@ There are two distinct lanes:
 - **Public promotion:** the user explicitly authorizes a named edition. The
   public runbook records a valid pair selection and publishing permission. If
   the square art changes, the M4B is re-narrated rather than patched. The EPUB,
-  M4B, covers, alignment, and receipts are verified before governed public,
-  iCloud, or site sync.
+  M4B, covers, alignment, and receipts are verified before governed
+  public/iCloud/site sync.
 
 Private delivery permission never implies permission to publish. Legacy
 single-cover receipts and `replace_m4b_cover.py` exist for compatibility with
