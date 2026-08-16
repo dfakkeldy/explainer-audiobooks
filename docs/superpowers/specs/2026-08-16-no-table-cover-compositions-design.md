@@ -1,7 +1,7 @@
 # No-Table Cover Compositions Design
 
 Date: 2026-08-16
-Status: Approved design, pending written-spec review
+Status: Approved
 Branch: `codex/cover-surface-exception`
 
 ## Problem
