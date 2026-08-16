@@ -275,6 +275,20 @@ def main() -> int:
         "darker direction earned the choice",
     )
 
+    surface_free_contract = (
+        "Environmental documentary detail",
+        "Surface exception: none",
+        "[SURFACE EXCEPTION: NONE / EXACT SUBJECT-DRIVEN REASON]",
+        "No table, no desk, no workbench, no counter",
+        "cannot be justified after rendering",
+        "discard and regenerate",
+    )
+    cover_art = "skill/references/cover-art.md"
+    contains(cover_art, *surface_free_contract)
+    cover_text = read(cover_art)
+    for stale in ("Documentary still life", "WIDE STILL LIFE"):
+        require(stale not in cover_text, f"{cover_art} still teaches {stale!r}")
+
     # Receipt and sync commands are isolated in the rare public-publishing lane.
     complete_paired = (
         "render_cover_pair(", "portrait_spec=", "square_spec=",

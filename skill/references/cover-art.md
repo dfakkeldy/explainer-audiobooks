@@ -109,8 +109,8 @@ weak/placeholder direction just to fill the count. At least two of the three com
 | **Editorial hero object** | One oversized, surprising, precisely chosen object or scene; cinematic crop; crisp silhouette; restrained palette; the object carries the thesis before the title is read. | Science, technology, history, craft, biography, practical learning |
 | **Typographic graphic system** | Bold geometric field, repeated mark, diagrammatic rhythm, or designed pattern with generous negative space; title is treated as a major visual mass, not a caption. | Business, ideas, philosophy, systems, productivity, design |
 | **Tactile collage / illustration** | Layered paper, ink, printmaking, cut-paper, field-note, or hand-drawn language; one coherent material world; lively but not childish. | Nature, culture, creativity, memoir, learning journeys |
-| **Documentary still life** | A real or generated physical scene, tool, specimen, artifact, or close crop lit like an editorial film photograph — visible grain, imperfect natural light, real-world staging; evocative rather than stock; never a glossy smooth 3D render. | History, practical skills, food, place, science, craft |
-| **Institutional artifact** | An archival card, blueprint, label, map fragment, lab plate, schematic, or dossier transformed into a beautiful object; precise hierarchy, disciplined spacing, singular accent. | Technical explainers, research, process, architecture, operations |
+| **Environmental documentary detail** | A real or generated subject encountered in context — held, carried, mounted, installed, suspended, worn, operated, or otherwise in use; visible grain, imperfect natural light, physical specificity, and editorial-film restraint without generic horizontal-surface staging. | History, practical skills, food, place, science, craft |
+| **Institutional artifact** | An archival card, blueprint, label, map fragment, lab plate, schematic, or dossier treated as a full-frame graphic object, held, mounted, installed, or integrated into its environment; precise hierarchy, disciplined spacing, singular accent; never laid out as props on furniture. | Technical explainers, research, process, architecture, operations |
 | **Graphic spectacle** | High-impact colour field or dark void with one impossible visual event, distorted scale, or visual paradox; confident, sparse, emotionally immediate. | Futurism, psychology, high-concept ideas, ambitious popular nonfiction |
 | **Designed flat graphic** | Bold flat-ink illustration: one confident geometric or character mark, two-to-four flat colours, strong silhouette, mid-century poster sensibility; lively but not childish; built as compositor-native vector or flat raster art. | Technology, ideas, playful explainers, learning journeys, series identity |
 
@@ -155,12 +155,23 @@ Write one complete art-and-type brief per candidate before image generation:
 3. Composition, crop, and intended title field.
 4. Material language and two-to-four-colour palette.
 5. Tonal intent: `high-key` or `tonally unrestricted`.
-6. Anti-brief.
-7. Title archetype and font roles.
-8. Planned line breaks and hierarchy.
-9. Title anchor, alignment, and approximate occupied area.
-10. Intended relationship between title and art.
-11. Subtitle, author, and AUDIOBOOK placement.
+6. Surface exception: `none`, or one sentence naming why the book's subject or
+   indispensable central visual thesis requires this exact table-like surface.
+7. Anti-brief.
+8. Title archetype and font roles.
+9. Planned line breaks and hierarchy.
+10. Title anchor, alignment, and approximate occupied area.
+11. Intended relationship between title and art.
+12. Subtitle, author, and AUDIOBOOK placement.
+
+`Surface exception: none` is the default. A table, desk, workbench, counter,
+tabletop, desktop, flat lay, or overhead arrangement may appear only when the
+pre-generation brief names the exact surface and explains why the book's subject
+or indispensable central visual thesis requires it. Convenience, realism,
+available negative space, “people work at desks,” and arranging several props do
+not qualify. The exception must name the permitted surface and its semantic role;
+it does not authorize unrelated desk props or documents arranged for atmosphere.
+An accidental surface cannot be justified after rendering.
 
 The differentiation rule from Non-Negotiable Default above applies to every
 brief: differ in metaphor, composition, palette, material language, and title
@@ -217,10 +228,18 @@ pastel, washed out, or low-contrast. For a tonally unrestricted direction,
 follow the brief's intended value structure; a dark field is welcome when the
 subject and central metaphor earn it.
 
+The declared surface exception is [SURFACE EXCEPTION: NONE / EXACT SUBJECT-DRIVEN REASON]. When it is NONE, build a surface-free composition: show
+the subject held, carried, mounted, installed, suspended, worn, operated, in use,
+or treated as a full-frame graphic object in its real environment. No table, no desk, no workbench, no counter, no tabletop, no desktop, no flat lay, no overhead
+arrangement, and no books, documents, or papers spread across a surface. When an
+exception is declared, show only the exact permitted surface and make its named
+semantic role visibly indispensable to the central metaphor; do not add unrelated
+desk props or arrange documents for atmosphere.
+
 Show one unforgettable central metaphor: [SPECIFIC OBJECT, SCENE, OR VISUAL
 PARADOX]. Make that subject large, beautifully art-directed, and immediately
-legible at a small thumbnail. Use [COMPOSITION: CLOSE CROP / WIDE STILL LIFE /
-SINGLE FIGURE / DIAGONAL ACTION], with a strong silhouette and one clear focal
+legible at a small thumbnail. Use [COMPOSITION: CLOSE CROP / ENVIRONMENTAL DETAIL / HAND-HELD SUBJECT /
+FULL-FRAME ARTIFACT / SINGLE FIGURE / DIAGONAL ACTION], with a strong silhouette and one clear focal
 point. Compose around [INTENDED TITLE FIELD AND RELATIONSHIP TO ART]; that field
 may be top, bottom, side, central, interrupted, or an integrated band. The image
 should feel like finished editorial cover artwork, not an illustration for a
@@ -259,6 +278,12 @@ stronger art direction. Ask for a clean image with no lettering even when the
 model claims to handle typography; encode all text and layout afterward in each
 candidate specification.
 
+If a render introduces an undeclared table-like surface or flat-lay arrangement,
+discard and regenerate the complete candidate pair. Do not relabel the render or
+invent a surface exception after seeing it. For a declared exception, verify that
+the named surface visibly carries the subject or central metaphor rather than
+merely holding props.
+
 ## Render, Compare, and Select
 
 Assign `SLUG` from the approved run metadata. Keep generated artwork text-free.
@@ -269,7 +294,9 @@ thumbnail, art-and-type brief, font/palette note, and warning. Score the complet
 pairs on subject specificity, thumbnail legibility, title hierarchy,
 portrait/square coherence, absence of defects, and distinctiveness. Confirm that
 both declared high-key pairs remain high-key in their portrait and square renders
-and thumbnails. High-key treatment is the tie-breaker between similarly strong
+and thumbnails. Confirm that every candidate with `Surface exception: none` remains free of
+table-like staging in both variants and thumbnails, and review any declared
+exception against its exact pre-generation reason. High-key treatment is the tie-breaker between similarly strong
 pairs. A clearly stronger dark or intermediate pair may still win; when it does,
 report why the darker direction earned the choice. A later request to mix
 directions becomes a new specification and render.
@@ -314,6 +341,9 @@ Reject and replace any candidate that:
 - looks good only at full size but collapses at a 160px thumbnail;
 - was declared high-key but resolves into a predominantly dark portrait or
   square render;
+- uses an undeclared table, desk, workbench, counter, tabletop, desktop, flat
+  lay, overhead prop arrangement, or books, documents, or papers spread across
+  a surface;
 - repeats the same composition, palette, or central metaphor as another
   candidate;
 - uses an unearned premium cliché (gold foil effect, arbitrary smoke, faux

@@ -205,6 +205,38 @@ class SkillCoverContractTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, text)
 
+    def test_surface_free_directions_replace_tabletop_defaults(self) -> None:
+        text = self.flattened("cover")
+        for marker in (
+            "Environmental documentary detail",
+            "held, carried, mounted, installed, suspended, worn, operated",
+            "full-frame graphic object, held, mounted, installed, or integrated",
+            "never laid out as props on furniture",
+            "[COMPOSITION: CLOSE CROP / ENVIRONMENTAL DETAIL / HAND-HELD SUBJECT / "
+            "FULL-FRAME ARTIFACT / SINGLE FIGURE / DIAGONAL ACTION]",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+        for stale in ("Documentary still life", "WIDE STILL LIFE"):
+            with self.subTest(stale=stale):
+                self.assertNotIn(stale, text)
+
+    def test_surface_exception_is_declared_before_art_and_narrowly_reviewed(self) -> None:
+        text = self.flattened("cover")
+        for marker in (
+            "Surface exception: none",
+            "book's subject or indispensable central visual thesis",
+            "Convenience, realism, available negative space",
+            "[SURFACE EXCEPTION: NONE / EXACT SUBJECT-DRIVEN REASON]",
+            "No table, no desk, no workbench, no counter, no tabletop, no desktop, "
+            "no flat lay, no overhead arrangement",
+            "books, documents, or papers spread across a surface",
+            "cannot be justified after rendering",
+            "discard and regenerate",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+
     def test_raster_prompt_bans_ai_render_tells(self) -> None:
         text = self.flattened("cover")
         for marker in (
