@@ -24,6 +24,13 @@ class SkillCoverContractTests(unittest.TestCase):
             )
             cursor = position + len(marker)
 
+    def section(self, heading: str) -> str:
+        text = FILES["cover"].read_text(encoding="utf-8")
+        start = text.index(f"## {heading}")
+        end = text.find("\n## ", start + 1)
+        section = text[start:] if end == -1 else text[start:end]
+        return " ".join(section.split())
+
     def test_private_skill_renders_pairs_without_public_publishing_tools(self) -> None:
         text = FILES["skill"].read_text(encoding="utf-8")
         for marker in (
@@ -204,6 +211,100 @@ class SkillCoverContractTests(unittest.TestCase):
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, text)
+
+    def test_surface_free_directions_replace_tabletop_defaults(self) -> None:
+        text = self.flattened("cover")
+        for marker in (
+            "Environmental documentary detail",
+            "held, carried, mounted, installed, suspended, worn, operated",
+            "full-frame graphic object, held, mounted, installed, or integrated",
+            "never laid out as props on furniture",
+            "[COMPOSITION: CLOSE CROP / ENVIRONMENTAL DETAIL / HAND-HELD SUBJECT / "
+            "FULL-FRAME ARTIFACT / SINGLE FIGURE / DIAGONAL ACTION]",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+        for stale in ("Documentary still life", "WIDE STILL LIFE"):
+            with self.subTest(stale=stale):
+                self.assertNotIn(stale, text)
+
+    def test_candidate_brief_requires_numbered_exact_surface_exception(self) -> None:
+        brief = self.section("Candidate Brief Before Making Art")
+        self.assertIn(
+            "6. Surface exception: `none`, or one sentence naming the exact "
+            "table-like surface required by the book's subject or indispensable "
+            "central visual thesis.",
+            brief,
+        )
+        self.assertIn(
+            "A declaration may authorize only that exact necessary table-like "
+            "surface.",
+            brief,
+        )
+        self.assertIn(
+            "Flat lays and overhead prop arrangements are forbidden regardless "
+            "of any declaration.",
+            brief,
+        )
+
+    def test_generated_art_prompt_unconditionally_forbids_flat_lays(self) -> None:
+        prompt = self.section("Copy-ready image-generation prompt")
+        self.assertIn(
+            "When an exception is declared, show only the exact permitted "
+            "table-like surface and make its named semantic role visibly "
+            "indispensable to the central metaphor.",
+            prompt,
+        )
+        self.assertIn(
+            "Flat lays and overhead prop arrangements are forbidden regardless "
+            "of any declaration.",
+            prompt,
+        )
+        self.assertIn(
+            "Do not add unrelated props or arrange documents for atmosphere.",
+            prompt,
+        )
+
+    def test_post_render_rule_regenerates_complete_pair_for_any_flat_lay(self) -> None:
+        art = self.section("Making the Art")
+        self.assertIn(
+            "If a render introduces an undeclared table-like surface, or any "
+            "flat lay or overhead prop arrangement, discard and regenerate the "
+            "complete candidate pair.",
+            art,
+        )
+        self.assertIn(
+            "For a declared exception, verify only the exact named table-like "
+            "surface carries the subject or central metaphor rather than merely "
+            "holding props.",
+            art,
+        )
+
+    def test_pair_review_checks_both_variants_thumbnails_and_exact_reason(self) -> None:
+        review = self.section("Render, Compare, and Select")
+        self.assertIn(
+            "Confirm that every candidate is free of flat lays and overhead prop "
+            "arrangements in both variants and thumbnails.",
+            review,
+        )
+        self.assertIn(
+            "Review any declared table-like surface in both variants and "
+            "thumbnails against its exact pre-generation reason.",
+            review,
+        )
+
+    def test_acceptance_bar_rejects_flat_lays_even_when_declared(self) -> None:
+        acceptance = self.section("Award-Worthy Acceptance Bar")
+        self.assertIn(
+            "- uses a flat lay or overhead prop arrangement, whether declared "
+            "or not;",
+            acceptance,
+        )
+        self.assertIn(
+            "- uses a table, desk, workbench, counter, tabletop, or desktop "
+            "without an exact pre-generation surface exception;",
+            acceptance,
+        )
 
     def test_raster_prompt_bans_ai_render_tells(self) -> None:
         text = self.flattened("cover")

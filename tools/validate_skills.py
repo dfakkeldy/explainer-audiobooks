@@ -185,6 +185,21 @@ def contains(path: str, *needles: str) -> None:
         require(needle in text, f"{path} missing {needle!r}")
 
 
+def markdown_section(path: str, heading: str) -> str:
+    text = read(path)
+    marker = f"## {heading}\n"
+    start = text.find(marker)
+    require(start != -1, f"{path} missing section {heading!r}")
+    end = text.find("\n## ", start + len(marker))
+    return text[start:] if end == -1 else text[start:end]
+
+
+def section_contains(path: str, heading: str, *needles: str) -> None:
+    text = markdown_section(path, heading)
+    for needle in needles:
+        require(needle in text, f"{path} section {heading!r} missing {needle!r}")
+
+
 def validate_skill(path: str, name: str) -> None:
     text = read(f"{path}/SKILL.md")
     meta = frontmatter(text)
@@ -274,6 +289,38 @@ def main() -> int:
         "High-key treatment is the tie-breaker",
         "darker direction earned the choice",
     )
+
+    cover_art = "skill/references/cover-art.md"
+    section_contains(
+        cover_art,
+        "Candidate Brief Before Making Art",
+        "6. Surface exception: `none`, or one sentence naming the exact table-like",
+        "A declaration may authorize only that\nexact necessary table-like surface.",
+        "Flat lays and overhead prop arrangements are\nforbidden regardless of any declaration.",
+    )
+    section_contains(
+        cover_art,
+        "Copy-ready image-generation prompt",
+        "[SURFACE EXCEPTION: NONE / EXACT SUBJECT-DRIVEN\nREASON]",
+        "When an exception is declared, show only the exact\npermitted table-like surface",
+        "Flat lays and overhead prop arrangements\nare forbidden regardless of any declaration.",
+        "If a render introduces an undeclared table-like surface, or any flat lay or\noverhead prop arrangement, discard and regenerate the complete candidate pair.",
+    )
+    section_contains(
+        cover_art,
+        "Render, Compare, and Select",
+        "every candidate is free of flat lays and overhead prop arrangements in both\nvariants and thumbnails.",
+        "Review any declared table-like surface in both variants\nand thumbnails against its exact pre-generation reason.",
+    )
+    section_contains(
+        cover_art,
+        "Award-Worthy Acceptance Bar",
+        "- uses a flat lay or overhead prop arrangement, whether declared or not;",
+        "- uses a table, desk, workbench, counter, tabletop, or desktop without an exact\n  pre-generation surface exception;",
+    )
+    cover_text = read(cover_art)
+    for stale in ("Documentary still life", "WIDE STILL LIFE", "specimen arrangement"):
+        require(stale not in cover_text, f"{cover_art} still teaches {stale!r}")
 
     # Receipt and sync commands are isolated in the rare public-publishing lane.
     complete_paired = (
