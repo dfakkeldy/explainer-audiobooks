@@ -23,9 +23,9 @@ or schemas.
   `/Users/dfakkeldy/Developer/explainer-audiobooks/.worktrees/cover-surface-exception`
   on branch `codex/cover-surface-exception`.
 - Use `/usr/local/bin/python3` for every Python command.
-- Generic tables, desks, workbenches, counters, tabletops, desktops, flat lays,
-  overhead prop arrangements, and books/documents/papers spread across a
-  surface are forbidden.
+- Generic tables, desks, workbenches, counters, tabletops, desktops, and
+  books/documents/papers spread across a surface are forbidden. Flat lays and
+  overhead prop arrangements are forbidden regardless of any declaration.
 - A table-like surface is allowed only when the pre-generation candidate brief
   declares that the book's subject or indispensable central visual thesis
   requires that exact surface.
@@ -183,8 +183,8 @@ Replace the current eleven-item list with:
 3. Composition, crop, and intended title field.
 4. Material language and two-to-four-colour palette.
 5. Tonal intent: `high-key` or `tonally unrestricted`.
-6. Surface exception: `none`, or one sentence naming why the book's subject or
-   indispensable central visual thesis requires this exact table-like surface.
+6. Surface exception: `none`, or one sentence naming the exact table-like
+   surface required by the book's subject or indispensable central visual thesis.
 7. Anti-brief.
 8. Title archetype and font roles.
 9. Planned line breaks and hierarchy.
@@ -196,14 +196,15 @@ Replace the current eleven-item list with:
 Immediately after the list, add:
 
 ```markdown
-`Surface exception: none` is the default. A table, desk, workbench, counter,
-tabletop, desktop, flat lay, or overhead arrangement may appear only when the
-pre-generation brief names the exact surface and explains why the book's subject
-or indispensable central visual thesis requires it. Convenience, realism,
-available negative space, “people work at desks,” and arranging several props do
-not qualify. The exception must name the permitted surface and its semantic role;
-it does not authorize unrelated desk props or documents arranged for atmosphere.
-An accidental surface cannot be justified after rendering.
+`Surface exception: none` is the default. A declaration may authorize only that
+exact necessary table-like surface. Flat lays and overhead prop arrangements are
+forbidden regardless of any declaration. The pre-generation brief must name the
+exact surface and explain why the book's subject or indispensable central visual
+thesis requires it. Convenience, realism, available negative space, “people work
+at desks,” and arranging several props do not qualify. The exception must name
+the permitted surface and its semantic role; it does not authorize unrelated desk
+props or documents arranged for atmosphere. An accidental surface cannot be
+justified after rendering.
 ```
 
 - [ ] **Step 6: Replace the generated-art composition menu**
@@ -234,11 +235,12 @@ The declared surface exception is [SURFACE EXCEPTION: NONE / EXACT
 SUBJECT-DRIVEN REASON]. When it is NONE, build a surface-free composition: show
 the subject held, carried, mounted, installed, suspended, worn, operated, in use,
 or treated as a full-frame graphic object in its real environment. No table, no
-desk, no workbench, no counter, no tabletop, no desktop, no flat lay, no overhead
-arrangement, and no books, documents, or papers spread across a surface. When an
-exception is declared, show only the exact permitted surface and make its named
-semantic role visibly indispensable to the central metaphor; do not add unrelated
-desk props or arrange documents for atmosphere.
+desk, no workbench, no counter, no tabletop, no desktop, and no books, documents,
+or papers spread across a surface. When an exception is declared, show only the
+exact permitted table-like surface and make its named semantic role visibly
+indispensable to the central metaphor. Flat lays and overhead prop arrangements
+are forbidden regardless of any declaration. Do not add unrelated props or
+arrange documents for atmosphere.
 ```
 
 - [ ] **Step 8: Add discard/regenerate behavior after the prompt**
@@ -247,11 +249,11 @@ After the paragraph ending `encode all text and layout afterward in each
 candidate specification.`, add:
 
 ```markdown
-If a render introduces an undeclared table-like surface or flat-lay arrangement,
-discard and regenerate the complete candidate pair. Do not relabel the render or
-invent a surface exception after seeing it. For a declared exception, verify that
-the named surface visibly carries the subject or central metaphor rather than
-merely holding props.
+If a render introduces an undeclared table-like surface, or any flat lay or
+overhead prop arrangement, discard and regenerate the complete candidate pair.
+Do not relabel the render or invent a surface exception after seeing it. For a
+declared exception, verify only the exact named table-like surface carries the
+subject or central metaphor rather than merely holding props.
 ```
 
 - [ ] **Step 9: Add the surface check to pair review and the acceptance bar**
@@ -260,16 +262,20 @@ In `Render, Compare, and Select`, after the high-key confirmation sentence, add:
 
 ```markdown
 Confirm that every candidate with `Surface exception: none` remains free of
-table-like staging in both variants and thumbnails, and review any declared
-exception against its exact pre-generation reason.
+table-like staging in both variants and thumbnails. Confirm that every candidate
+is free of flat lays and overhead prop arrangements in both variants and
+thumbnails. Review any declared table-like surface in both variants and
+thumbnails against its exact pre-generation reason.
 ```
 
 In the Award-Worthy Acceptance Bar, after the high-key rejection bullet, add:
 
 ```markdown
-- uses an undeclared table, desk, workbench, counter, tabletop, desktop, flat
-  lay, overhead prop arrangement, or books, documents, or papers spread across
-  a surface;
+- uses a flat lay or overhead prop arrangement, whether declared or not;
+- uses a table, desk, workbench, counter, tabletop, or desktop without an exact
+  pre-generation surface exception;
+- uses a declared table-like surface merely to hold unrelated props or books,
+  documents, or papers spread across a surface;
 ```
 
 - [ ] **Step 10: Pin the contract in the repository validator**
@@ -278,18 +284,36 @@ After the existing detailed `cover_slate_contract` checks in
 `tools/validate_skills.py`, add:
 
 ```python
-    surface_free_contract = (
-        "Environmental documentary detail",
-        "Surface exception: none",
-        "[SURFACE EXCEPTION: NONE / EXACT SUBJECT-DRIVEN REASON]",
-        "No table, no desk, no workbench, no counter",
-        "cannot be justified after rendering",
-        "discard and regenerate",
-    )
     cover_art = "skill/references/cover-art.md"
-    contains(cover_art, *surface_free_contract)
+    section_contains(
+        cover_art,
+        "Candidate Brief Before Making Art",
+        "6. Surface exception: `none`",
+        "A declaration may authorize only",
+        "Flat lays and overhead prop arrangements are",
+    )
+    section_contains(
+        cover_art,
+        "Copy-ready image-generation prompt",
+        "[SURFACE EXCEPTION: NONE / EXACT SUBJECT-DRIVEN REASON]",
+        "exact permitted table-like surface",
+        "Flat lays and overhead prop arrangements",
+        "discard and regenerate the complete candidate pair",
+    )
+    section_contains(
+        cover_art,
+        "Render, Compare, and Select",
+        "flat lays and overhead prop arrangements in both variants and thumbnails",
+        "exact pre-generation reason",
+    )
+    section_contains(
+        cover_art,
+        "Award-Worthy Acceptance Bar",
+        "whether declared or not",
+        "exact pre-generation surface exception",
+    )
     cover_text = read(cover_art)
-    for stale in ("Documentary still life", "WIDE STILL LIFE"):
+    for stale in ("Documentary still life", "WIDE STILL LIFE", "specimen arrangement"):
         require(stale not in cover_text, f"{cover_art} still teaches {stale!r}")
 ```
 
@@ -301,7 +325,7 @@ After the existing detailed `cover_slate_contract` checks in
 git diff --check
 ```
 
-Expected: 16 cover-contract tests pass; validator prints
+Expected: all cover-contract tests pass; validator prints
 `validate_skills: clean`; `git diff --check` emits no output.
 
 - [ ] **Step 12: Commit the contract change**
