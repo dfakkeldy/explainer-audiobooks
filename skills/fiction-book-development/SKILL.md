@@ -1,7 +1,6 @@
 ---
 name: fiction-book-development
-description: >-
-  Use when planning, drafting, revising, or continuing a novel, novella, or short-story collection. Builds a coherent fiction manuscript with one lead writer, an approved story bible, deliberate prose style, scene-level causality, continuity ledgers, and separate structural-to-line revision passes. Stops at an approved Markdown manuscript unless production is explicitly requested.
+description: "Plan, draft, revise, or continue fiction through a finished Markdown manuscript. Use fiction-audiobook for narrated delivery."
 ---
 
 # Fiction Book Development

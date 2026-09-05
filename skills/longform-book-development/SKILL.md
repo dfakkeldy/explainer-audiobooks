@@ -1,13 +1,6 @@
 ---
 name: longform-book-development
-description: >-
-  Use when a nonfiction book or learning-audiobook idea needs multi-turn,
-  multi-session development before production — rough ideas, back-and-forth
-  concept shaping, outline shaping, source and picture gathering — or when
-  resuming an in-progress book project ("let's keep working on my book").
-  Nonfiction only; route novels, novellas, and short stories to
-  fiction-book-development. Hands the finished concept to
-  audiobook for production.
+description: "Develop or resume a nonfiction book concept, outline, and research before audiobook production."
 ---
 
 # Longform Book Development

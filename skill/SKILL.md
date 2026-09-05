@@ -1,11 +1,6 @@
 ---
 name: audiobook
-description: >-
-  Use when the user says "make me a book about X", "I want to learn X",
-  "turn this repo into an audiobook", or "a book I can listen to while
-  driving". Research, write, revise, package, narrate, and deliver one grounded
-  nonfiction audiobook, whether the subject is a technical system, a practical
-  skill, a place, or an idea.
+description: "Create and deliver a researched nonfiction audiobook from a topic, source material, or repository."
 ---
 
 # Audiobook
