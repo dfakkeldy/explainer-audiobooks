@@ -65,8 +65,9 @@ outside Git.
 - For broad skill or tooling changes, run:
   `python3 -m unittest discover -s tests -v` and
   `python3 tools/validate_skills.py`.
-- When the installed-skill or symlink contract changes, also run:
-  `python3 tools/validate_custom_learning_skill_install.py`.
+- When installed-skill or symlink paths change, verify the links resolve to the
+  intended canonical skill files. Use the current repository validators; do not
+  assume a historical installation-check script still exists.
 - Run `git diff --check` before committing.
 - For book artifacts, also follow the selected skill's quality checks. Tool
   tests do not prove narration quality, human listening acceptance, delivery,
