@@ -20,6 +20,7 @@ The executable contracts live with the skills themselves:
 - [Longform nonfiction development](../skills/longform-book-development/SKILL.md)
 - [Fiction manuscript development](../skills/fiction-book-development/SKILL.md)
 - [Fiction audiobook production](../skills/fiction-audiobook/SKILL.md)
+- [Classic literature adaptation](../skills/classic-literature-adaptation/SKILL.md)
 
 ## Current development packets
 

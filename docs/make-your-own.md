@@ -1,9 +1,9 @@
 # Make your own
 
-The repository has four book-making entry points. The direct
+The repository has five book-making entry points. The direct
 [`audiobook`](../skill/) skill researches, writes, revises, packages, narrates,
-and delivers one grounded nonfiction audiobook. Three companion skills handle
-longform nonfiction development and fiction.
+and delivers one grounded nonfiction audiobook. Four companion skills handle
+longform nonfiction development, fiction, and classic literature adaptation.
 
 ## Install
 
@@ -16,13 +16,14 @@ mkdir -p ~/.claude/skills
 ln -s "$(pwd)/skill" ~/.claude/skills/audiobook
 ```
 
-You can link the development and fiction skills the same way when you want
-their triggers:
+You can link the development, fiction, and classic-adaptation skills the same
+way when you want their triggers:
 
 ```bash
 ln -s "$(pwd)/skills/longform-book-development" ~/.claude/skills/longform-book-development
 ln -s "$(pwd)/skills/fiction-book-development" ~/.claude/skills/fiction-book-development
 ln -s "$(pwd)/skills/fiction-audiobook" ~/.claude/skills/fiction-audiobook
+ln -s "$(pwd)/skills/classic-literature-adaptation" ~/.claude/skills/classic-literature-adaptation
 ```
 
 The current repository workflow runs its scripts with
@@ -49,6 +50,12 @@ artifact checks are documented in
   accepted Markdown manuscript.
 - **[`fiction-audiobook`](../skills/fiction-audiobook/)** — turn a fiction
   premise or approved manuscript into a complete Echo listening package.
+- **[`classic-literature-adaptation`](../skills/classic-literature-adaptation/)**
+  — produce faithful modern English editions of classic literature (play,
+  prose, optional audio). Independent adversarial AI review is required before
+  accepting a translation or adaptation; prefer Cursor CLI with an explicitly
+  available Grok model, and a different model family when Grok drafted. See
+  [`adversarial-review.md`](../skills/classic-literature-adaptation/references/adversarial-review.md).
 
 ## Ask for a nonfiction book
 
