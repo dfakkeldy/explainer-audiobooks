@@ -9,6 +9,12 @@ Make the work understandable without silently changing what happens, what is sai
 or what remains uncertain. Aim for semantic fidelity and literary force; do not
 promise an exact equivalent for every word or certainty about an author's intent.
 
+Prioritize understanding over brevity. Default to clear, adult everyday English
+that gives a reader unfamiliar with the classic enough room to follow each thought.
+Use more words when the original compresses several meanings; matching its brevity
+or line length is not a fidelity goal. Preserve literary force without making the
+reader decode archaic vocabulary, dense syntax, or unexplained euphemisms.
+
 ## Establish the edition
 
 Infer the requested scope from the conversation: complete work or excerpt, modern
@@ -50,6 +56,24 @@ speeches. Where a pun cannot survive, preserve the scene's action and explain th
 loss in a note. Read passages aloud for rhythm and character voice. Do not flatten
 verse into a plot report or add fashionable slang that changes status or tone.
 
+Unpack compressed sentences into a readable sequence of thoughts. Make referents
+and connections explicit where the source supports them, so the reader can follow
+what is said, how the argument develops, and what a joke or insult means. Preserve
+effective imagery; explain an opaque image in a separate note when replacing it
+would narrow its meaning. Expansion should clarify the passage, not repeat it,
+pad its length, or turn the speaker's words into a running commentary.
+
+Distinguish explanatory additions from explicit source statements. Record material
+expansions in the working ledger and disclose an explanatory translation approach
+in the edition's method note. Keep disputed implications and possible motives in
+separate notes rather than inserting them as facts or invented speech. A simpler
+sentence must not silently settle an ambiguity or claim access to private thoughts.
+
+Keep obscenity, sexual acts, threats, and prejudices as explicit as the source.
+Use understandable language without euphemistic censorship or added shock value.
+When an insult has no close modern equivalent, preserve its function and explain
+the cultural meaning separately rather than substituting a misleading modern label.
+
 Keep cultural realities and prejudices legible, including uncomfortable ones.
 Explain institutions, money, religious references, and customs in separate reading
 notes when a small in-text clarification would distort the speech. Distinguish
@@ -82,6 +106,11 @@ numbers or conditions. Check the ledger, chapter order, names, and unresolved
 interpretations. Review literary quality separately so polishing does not silently
 change meaning. Record the actual review performed and outstanding limitations.
 Do not claim a scholar or human listener has reviewed material when they have not.
+
+Also review for comprehension by a reader unfamiliar with the work: can they follow
+each thought, identify its referents, and understand the stakes without decoding
+the original idiom? Expand passages that remain needlessly compressed, then check
+those expansions against the source for added claims or lost uncertainty.
 
 Credit the original author and identify the modern adapter/translator separately.
 Include the source edition and a concise explanation of the adaptation method.
