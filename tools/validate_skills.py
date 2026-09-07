@@ -241,6 +241,15 @@ def main() -> int:
     validate_skill("skills/longform-book-development", "longform-book-development")
     validate_skill("skills/fiction-book-development", "fiction-book-development")
     validate_skill("skills/fiction-audiobook", "fiction-audiobook")
+    validate_skill("skills/classic-literature-adaptation", "classic-literature-adaptation")
+    parse_agent_metadata(
+        read("skills/classic-literature-adaptation/agents/openai.yaml"),
+        "classic-literature-adaptation",
+    )
+    require(
+        (ROOT / "skills/classic-literature-adaptation/references/original-languages.md").is_file(),
+        "missing original-language adaptation guidance",
+    )
 
     fiction_support = (
         "skills/fiction-audiobook/SKILL.md",

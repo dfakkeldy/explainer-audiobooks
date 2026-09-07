@@ -1,0 +1,4 @@
+interface:
+  display_name: "Classic Literature Adaptation"
+  short_description: "Faithful classics in clear, beautiful modern English"
+  default_prompt: "Use $classic-literature-adaptation to render this classic in clear modern English while preserving its meaning and explaining difficult context."
