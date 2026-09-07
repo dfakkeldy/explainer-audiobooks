@@ -19,6 +19,8 @@ outside Git.
 - Use `skills/fiction-book-development/` for fiction development through an
   accepted Markdown manuscript: planning, drafting, continuation, and
   revision-only requests stay there.
+- Use `skills/classic-literature-adaptation/` for classic literature
+  modernization, translation, or adaptation (play, prose, optional audio).
 - Once selected, the relevant skill owns the detailed production workflow. This
   root guide does not activate a production workflow by itself.
 

@@ -159,6 +159,9 @@ skill produces faithful, readable modern English editions of classic works. It
 distinguishes modernization from original-language translation, tracks source
 coverage and interpretive choices, and supports play, prose, and requested audio
 editions. Its original-language reference includes guidance for Homer.
+Acceptance uses independent adversarial AI review (Cursor CLI with an explicitly
+available Grok model preferred; a different family when Grok drafted; see
+[`adversarial-review.md`](skills/classic-literature-adaptation/references/adversarial-review.md)).
 
 ## License
 
