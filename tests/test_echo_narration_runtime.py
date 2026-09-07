@@ -384,7 +384,7 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
                 "OEBPS/content.opf",
                 """<?xml version="1.0"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0">
-  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><meta name="cover" content="cover-image"/></metadata>
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:creator>Fixture Author</dc:creator><meta name="cover" content="cover-image"/></metadata>
   <manifest><item id="cover-image" href="cover.png" media-type="image/png" properties="cover-image"/></manifest>
 </package>""",
             )
@@ -2044,7 +2044,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
                 "--title",
                 "Fixture Book",
                 "--author",
-                "Dan Fakkeldy",
+                "Fixture Author",
                 "--cover",
                 str(self.run_root / "dist" / "candidate-1" / "m4b-cover.png"),
                 "--work-dir",

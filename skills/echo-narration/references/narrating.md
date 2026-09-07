@@ -125,6 +125,13 @@ a fiction run must resume with `ECHO_RUN_LANE=fiction-audiobook`. Fiction uses
 the source-bound block procedure below; do not invoke a bare wrapper or
 `--chapter-voice` mapping for a fiction character cast.
 
+## Source attribution
+
+The wrapper reads `dc:creator` from the frozen EPUB package document and uses
+that value for M4B author metadata. Multiple creators retain their order. A
+missing creator stops narration; correct the EPUB and start a new source-bound
+run rather than assigning the operator as the author.
+
 ## Voice and invocation
 
 Invoke the wrapper only through its public entry point. Do not bypass the

@@ -154,6 +154,12 @@ uses public-first publication for original public-safe fiction with a
 private-delivery fallback whenever privacy, rights, or verification blocks the
 public gate.
 
+The **[`classic-literature-adaptation`](skills/classic-literature-adaptation/)**
+skill produces faithful, readable modern English editions of classic works. It
+distinguishes modernization from original-language translation, tracks source
+coverage and interpretive choices, and supports play, prose, and requested audio
+editions. Its original-language reference includes guidance for Homer.
+
 ## License
 
 This repo is dual-licensed, split by folder:

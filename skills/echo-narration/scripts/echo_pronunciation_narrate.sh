@@ -724,6 +724,8 @@ STAGE_SIDECAR="$STAGE/$SLUG.alignment.json"
 STAGE_AUDIT="$STAGE/$SLUG.pronunciation-audit.json"
 STAGE_REEL="$STAGE/$SLUG.pronunciation-reel.m4b"
 
+SOURCE_AUTHOR=$(/usr/local/bin/python3 "$SCRIPT_DIR/echo_epub_metadata.py" "$EPUB")
+
 narrate_command=(
   /usr/bin/env "ECHO_RESOURCE_DIR=$ECHO_RESOURCE_DIR"
   "$CLI" narrate
@@ -736,7 +738,7 @@ if [[ ${VOICE_PLAN_MODE:-chapter} != block ]]; then
 fi
 narrate_command+=(
   --title "$TITLE"
-  --author "Dan Fakkeldy"
+  --author "$SOURCE_AUTHOR"
   --cover "$M4B_COVER"
   --work-dir "$WORK"
   --db "$DB"
