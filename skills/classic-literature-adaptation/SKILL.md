@@ -100,6 +100,13 @@ bridges and omissions. Do not treat a matching word count as fidelity evidence.
 
 ## Review and deliver
 
+Use independent adversarial AI review before accepting a translation or adaptation,
+following [Adversarial review](references/adversarial-review.md). Prefer Cursor CLI
+with an explicitly selected available Grok model. Review both source fidelity and
+reader comprehension in fresh sessions; a model's approval is not scholarly proof.
+Resolve findings against the source, recheck material revisions, and report actual
+coverage and any unavailable review separately from manuscript completion.
+
 Review the entire adaptation against the source in manageable batches, with a
 second focused pass on difficult meanings, speaker attribution, and consequential
 numbers or conditions. Check the ledger, chapter order, names, and unresolved
