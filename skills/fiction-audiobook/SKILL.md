@@ -10,6 +10,11 @@ Read `references/express-fiction-craft.md` and
 `skill/references/cover-art.md`; read
 `skills/echo-narration/references/narrating.md` before narration and
 `references/public-fiction-gate.md` before delivery.
+Read `../echo-narration/references/epub-pronunciation.md` before packaging.
+Review every occurrence of content, record, and read in context; include dialogue
+and narration. Carry the pronunciation plan from manuscript development, embed
+IPA through the verified Echo contract before freezing the EPUB, and verify with
+the assigned voices. Pending renderer support is not completed integration.
 
 1. Listening packages use this; `fiction-book-development` for manuscript-only
    work.
