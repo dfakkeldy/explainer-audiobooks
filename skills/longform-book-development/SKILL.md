@@ -44,6 +44,15 @@ and fiction-specific revision.
   **AI-writing patterns to avoid** and disliked phrase families before
   preparing the production handoff.
 
+## Pronunciation planning
+
+Follow `../echo-narration/references/epub-pronunciation.md` for the pronunciation
+part of an audiobook handoff. Keep a source/research pronunciation plan for names,
+technical terms, and known context-dependent readings, including content, record,
+and read in any drafted passages. Hand off the plan and open questions; production
+reviews the final manuscript's occurrences and embeds verified IPA before freezing
+the EPUB. Do not invent occurrence locations for prose that has not been drafted.
+
 ## Resuming an in-progress project
 
 When the user returns to an existing book ("let's keep working on my book",

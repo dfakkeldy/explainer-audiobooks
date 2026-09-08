@@ -140,6 +140,16 @@ renderer blocks to the guide role; it is part of the narrated text, not an audio
 addition that would break text/audio synchronization. This preference governs new
 audio adaptations, not permission to revise an already accepted manuscript or render.
 
+## Pronunciation for listening editions
+
+Follow `../echo-narration/references/epub-pronunciation.md` when preparing audio.
+Review every occurrence of content, record, and read, including Michael's guide
+passages, as well as names and archaic uses whose intended meaning affects sound.
+Maintain the source-linked pronunciation plan; put IPA into the EPUB through the
+verified Echo contract before freezing it. Keep disputed readings visible in the
+plan and review choices against the source. For manuscript-only work, hand off
+known decisions without starting packaging or narration.
+
 ## Review and deliver
 
 Use independent adversarial AI review before accepting a translation or adaptation,

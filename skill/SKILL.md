@@ -132,6 +132,11 @@ sources, opinions, first-person experience, jokes, or a replacement voice.
 
 ## Produce and deliver
 
+Follow `../skills/echo-narration/references/epub-pronunciation.md` before packaging:
+review every content, record, and read occurrence in context and embed verified
+IPA through Echo's supported contract before freezing the EPUB. Keep pending
+renderer support and actual listening acceptance explicit.
+
 Design exactly three coordinated cover pairs with
 `references/cover-art.md`. At least two of the three complete pairs must be intentionally high-key, and one of those high-key pairs must be a Designed flat graphic. The third candidate is tonally unrestricted and may be dark when its subject and central metaphor earn that treatment. Render each with
 `render_cover_pair(...)`: `cover.png` at 1600×2560 for the EPUB portrait and
