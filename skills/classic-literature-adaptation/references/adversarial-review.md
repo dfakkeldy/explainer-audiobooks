@@ -81,6 +81,15 @@ review. Include necessary textual variants without presenting a preferred verdic
    clarifications that retain voice, repetitions, and uncertainty. Flag commentary
    inserted as speech. Use the same source to check that easier wording stays faithful.
 
+For audiobook editions, include the spoken guide passages and their source links
+in both passes. In the comprehension pass, assess a first listen without a visible
+page: speaker and addressee orientation, dense reasoning, implied stakes, and
+whether useful explanation arrives at a natural pause near the passage. Flag
+unnecessary interruption and repetition as well as under-explanation. In the
+fidelity pass, check that guide interpretations are supported, uncertainty is
+spoken clearly, commentary cannot be mistaken for character speech, and no guide
+passage reveals later events prematurely.
+
 Both passes may use Grok; separate sessions are focused checks, not two independent
 model families. For a consequential unresolved dispute, seek a second available
 model family or qualified human review and disclose which actually occurred.

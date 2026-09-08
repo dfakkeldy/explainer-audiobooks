@@ -98,6 +98,48 @@ judgment or claim privileged access to the author's mind.
 Reuse verified meaning across alternate editions, then inspect format-specific
 bridges and omissions. Do not treat a matching word count as fidelity evidence.
 
+## Help the listener follow while driving
+
+For audiobook editions, default to a little more explanation than the written
+adaptation alone. Assume a first-time listener who cannot look at footnotes or
+rewind every dense exchange. Shakespeare in particular can compress an argument,
+an insult, and a change in the relationship into a few words. Give those thoughts
+room to land while preserving the complete scene and its momentum. Follow an
+explicit request for an unannotated performance instead when given.
+
+Use Michael (`am_michael`) as the explanatory guide, subject to renderer support
+and any later voice preference. Keep guide passages in separate, explicitly
+identified manuscript paragraphs and renderer blocks, distinct from character
+speech. Introduce the guide's function briefly in the opening method note. Make
+transitions understandable by ear as well as by voice: use a short cue such as
+“Notice what she is asking here” when needed. If Michael also narrates the story
+or voices a character, the wording must still identify the commentary clearly.
+
+At scene openings, briefly establish who is present, who is speaking to whom, and
+the immediate situation when that would otherwise be hard to follow. After a
+dense exchange or at a natural pause, let the guide unpack the useful missing
+connection: what an image means here, how a joke or insult works, what is being
+asked or risked, or how the response shifts the balance between the speakers.
+Prefer one to three conversational sentences; use more when a difficult passage
+needs it. Scale explanation to difficulty rather than adding a note after every
+speech. A brief reminder of a name, relationship, or earlier promise can help a
+listener rejoin the scene. Keep necessary explanation beside the relevant passage,
+not solely in endnotes, and avoid spoilers beyond the listener's current position.
+
+Let Michael read between the lines, grounded in the passage and context. Separate
+literal meaning from inference with natural wording such as “The implication is”
+or “One way to hear that is.” Present a consequential alternative when a reading
+is disputed. Do not turn a possible motive into a fact, invent inner thoughts,
+or attribute the guide's explanation to Shakespeare or a character. Explain the
+specific exchange rather than delivering a general lecture or paraphrasing it twice.
+
+Track guide additions separately in the source-to-output ledger, with the source
+units and evidence they explain. Include them in the fidelity and comprehension
+reviews. Finalize spoken guidance before freezing the EPUB and mapping the actual
+renderer blocks to the guide role; it is part of the narrated text, not an audio-only
+addition that would break text/audio synchronization. This preference governs new
+audio adaptations, not permission to revise an already accepted manuscript or render.
+
 ## Review and deliver
 
 Use independent adversarial AI review before accepting a translation or adaptation,
