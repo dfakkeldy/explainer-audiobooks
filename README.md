@@ -158,9 +158,13 @@ The **[`classic-literature-adaptation`](skills/classic-literature-adaptation/)**
 skill produces faithful, readable modern English editions of classic works. It
 distinguishes modernization from original-language translation, tracks source
 coverage and interpretive choices, and supports play, prose, and requested audio
-editions. Its original-language reference includes guidance for Homer.
-Acceptance uses independent adversarial AI review (Cursor CLI with an explicitly
-available Grok model preferred; a different family when Grok drafted; see
+editions. Audiobook editions default to brief spoken guidance in Michael’s voice
+(`am_michael`) so a first-time listener can follow while driving; the guide is
+distinct from character speech. This preference governs new audio adaptations and
+does not revise already accepted manuscripts or renders. Its original-language
+reference includes guidance for Homer. Acceptance uses independent adversarial AI
+review (Cursor CLI with an explicitly available Grok model preferred; a different
+family when Grok drafted; see
 [`adversarial-review.md`](skills/classic-literature-adaptation/references/adversarial-review.md)).
 
 ## License
