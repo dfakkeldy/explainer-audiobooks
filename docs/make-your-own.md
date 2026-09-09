@@ -52,9 +52,14 @@ artifact checks are documented in
   premise or approved manuscript into a complete Echo listening package.
 - **[`classic-literature-adaptation`](../skills/classic-literature-adaptation/)**
   — produce faithful modern English editions of classic literature (play,
-  prose, optional audio). Independent adversarial AI review is required before
-  accepting a translation or adaptation; prefer Cursor CLI with an explicitly
-  available Grok model, and a different model family when Grok drafted. See
+  prose, optional audio). Audiobook editions default to brief Michael
+  (`am_michael`) spoken guidance, distinct from character speech, so a
+  first-time listener can follow while driving; this preference does not
+  revise already accepted manuscripts. Independent adversarial AI review is
+  required before accepting a translation or adaptation, and for audiobook
+  editions it covers the spoken guide passages; prefer Cursor CLI with an
+  explicitly available Grok model, and a different model family when Grok
+  drafted. See
   [`adversarial-review.md`](../skills/classic-literature-adaptation/references/adversarial-review.md).
 
 ## Ask for a nonfiction book

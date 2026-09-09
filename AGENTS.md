@@ -20,7 +20,8 @@ outside Git.
   accepted Markdown manuscript: planning, drafting, continuation, and
   revision-only requests stay there.
 - Use `skills/classic-literature-adaptation/` for classic literature
-  modernization, translation, or adaptation (play, prose, optional audio).
+  modernization, translation, or adaptation (play, prose, optional audio;
+  classic audio adaptations use Michael spoken guidance by default).
 - Once selected, the relevant skill owns the detailed production workflow. This
   root guide does not activate a production workflow by itself.
 
