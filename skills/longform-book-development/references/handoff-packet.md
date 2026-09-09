@@ -127,6 +127,9 @@ The narration must remain complete with eyes closed.
 - Echo fallback: `am_puck`
 - Listener-named pronunciation risks:
 - Author-anticipated pronunciation risks and spoken variants:
+- Pronunciation plan path, known IPA decisions with evidence, and open questions:
+- Final-manuscript review of every content, record, and read occurrence: production responsibility; record any decisions already grounded in drafted passages.
+- Echo EPUB pronunciation contract/support status: verified or pending, with evidence location when available.
 
 ## Delivery
 
@@ -155,7 +158,8 @@ A packet is production-ready when it includes:
 - a rights-aware picture plan, including a zero-figure decision when relevant;
 - the preserve-on-revision notes for any existing edition;
 - the five separate craft passes and blind beginner review;
-- narration risks, author, contributor, and delivery boundary.
+- narration risks and pronunciation-plan path with known decisions, evidence,
+  open questions, and Echo support status; author, contributor, and delivery boundary.
 
 If any item is missing, label the packet a development draft and name the
 remaining decision. Do not invent an approval or silently weaken the brief.

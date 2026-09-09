@@ -202,6 +202,16 @@ payoffs or deliberate ambiguity, and reconcile the bible to final canon.
 combined Markdown manuscript agree; unresolved creative choices are explicitly
 listed rather than silently guessed.
 
+### Pronunciation handoff
+
+Keep known name pronunciations and context-dependent readings in a separate
+`research/pronunciation-plan.md`, following
+`../echo-narration/references/epub-pronunciation.md`. Capture content, record, and
+read decisions in their actual sentences, including dialogue and narrative tense.
+Include the plan and open questions in the production handoff; production owns
+the complete final occurrence review, EPUB annotations, and audio verification.
+Do not put IPA into visible prose or alter accepted chapter bytes for this plan.
+
 ### 10. Hand authorized fiction to production
 
 When the user explicitly authorizes private production, preserve the accepted

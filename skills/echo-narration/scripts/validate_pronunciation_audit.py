@@ -116,6 +116,8 @@ DECISION_STRING_FIELDS = (
     "rationale",
 )
 DECISION_SOURCES = {
+    "epubInline",
+    "epubLexicon",
     "occurrenceOverride",
     "bookOverride",
     "globalOverride",

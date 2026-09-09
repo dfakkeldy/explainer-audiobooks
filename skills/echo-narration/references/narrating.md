@@ -8,6 +8,15 @@ the wrapper's installed-package provenance, resource leases, and locked
 postchecks. The narration entry point is
 `skills/echo-narration/scripts/echo_pronunciation_narrate.sh`.
 
+## Authored pronunciation inputs
+
+Before freezing a new listening edition, follow
+[EPUB pronunciation](epub-pronunciation.md) for contextual IPA decisions,
+including every content, record, and read occurrence. Use the installed Echo
+contract to embed and verify annotations; a written pronunciation plan alone
+is not evidence that narration applied them. If support is unavailable, retain
+the plan and report the dependency without weakening this renderer contract.
+
 ## Installed renderer store and approvals
 
 The local, content-addressed store is:

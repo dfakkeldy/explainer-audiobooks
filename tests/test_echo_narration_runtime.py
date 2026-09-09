@@ -5492,6 +5492,24 @@ class PronunciationAuditValidatorTests(unittest.TestCase):
         result = self.run_validator()
         self.assertEqual(0, result.returncode, result.stderr)
 
+    def test_accepts_epub_pronunciation_sources(self) -> None:
+        self.payload = self.schema_7_payload()
+        reel = self.tmp / "fixture.pronunciation-reel.m4b"
+        reel.write_bytes(b"fixture reel")
+        self.payload["listeningReelFileName"] = reel.name
+        self.payload["listeningReelSHA256"] = hashlib.sha256(reel.read_bytes()).hexdigest()
+        for source in ("epubInline", "epubLexicon"):
+            with self.subTest(source=source):
+                decision = self.valid_decision()
+                decision["blockID"] = "fixture-s2-b3"
+                decision["source"] = source
+                decision["ruleID"] = "epub.inline.ipa-v1" if source == "epubInline" else "epub.lexicon.ipa-v1"
+                decision["rationale"] = "Explicit EPUB pronunciation instruction."
+                self.payload["decisions"] = [decision]
+                self.payload["watchCounts"]["filesystem"] = 1
+                result = self.run_validator(*self.schema_7_arguments(reel=reel))
+                self.assertEqual(0, result.returncode, result.stderr)
+
     def test_rejects_null_manifest_scalars_and_null_decision(self) -> None:
         cases = {
             "renderVersion=null": ("renderVersion", None),
