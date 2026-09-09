@@ -8,6 +8,9 @@ the wrapper's installed-package provenance, resource leases, and locked
 postchecks. The narration entry point is
 `skills/echo-narration/scripts/echo_pronunciation_narrate.sh`.
 
+Follow [Required audiobook delivery](complete-delivery.md) through the final
+iCloud package. A successful render alone does not complete an audiobook request.
+
 ## Authored pronunciation inputs
 
 Before freezing a new listening edition, follow

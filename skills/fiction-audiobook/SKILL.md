@@ -6,6 +6,11 @@ description: >-
 
 # Fiction Audiobook
 
+Follow `../echo-narration/references/complete-delivery.md`: M4B, matching alignment
+sidecar, EPUB, both covers, and private iCloud delivery are required. A partial
+package is not a completed audiobook. Retain the selected square cover under
+`_production/covers/` while preserving the existing title-root allowlist.
+
 Read `references/express-fiction-craft.md` and
 `skill/references/cover-art.md`; read
 `skills/echo-narration/references/narrating.md` before narration and

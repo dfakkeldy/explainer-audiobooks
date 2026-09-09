@@ -5,7 +5,7 @@ description: "Create and deliver a researched nonfiction audiobook from a topic,
 
 # Audiobook
 
-Make the useful book, then make it easy to hear and easy to revise.
+Complete every artifact and iCloud delivery in `../skills/echo-narration/references/complete-delivery.md`.
 
 ## Interpreter
 
@@ -155,13 +155,12 @@ and accepted-artifact verification contract. Freeze, inventory, validate the
 semantic cast, and pass its argv0 vector to that reference; never derive the
 pipeline root from the subject repository.
 
-For this Dan-specific personal workflow, the original request is standing
-private iCloud authorization. Record that authorization in
-`$BOOK_ROOT/source/brief.md`, set `BOOK_ROOT` to the expanded
-`~/Library/Mobile Documents/com~apple~CloudDocs/Books/<Book Title>/`, and
-deliver the finished private folder there. Never inherit that authorization
-for any other user or context: keep an absolute local `BOOK_ROOT` unless that
-user explicitly opts in to iCloud delivery.
+The request authorizes Dan's private iCloud delivery. Record it in
+`$BOOK_ROOT/source/brief.md` and set `BOOK_ROOT` to the expanded
+`~/Library/Mobile Documents/com~apple~CloudDocs/Books/<Book Title>/`.
+Verify the complete delivered package before claiming completion; follow the
+required-delivery reference for blockers and evidence. This personal authorization
+does not transfer to other users.
 
 ## What a book is
 
@@ -169,6 +168,8 @@ user explicitly opts in to iCloud delivery.
 Books/<Book Title>/
   <Book Title>.epub
   <Book Title>.m4b
+  <Book Title>.alignment.json
+  m4b-cover.png
   cover.png
   source/
     brief.md          intake answers and every default applied
