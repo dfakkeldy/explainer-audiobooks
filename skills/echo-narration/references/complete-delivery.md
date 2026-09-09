@@ -15,7 +15,10 @@ resources, or an unfinished renderer step cannot silently reduce it.
 - The matching Echo alignment sidecar JSON, bound to the delivered EPUB/audio
   and verified with the installed renderer's `verify-sidecar` workflow.
 - The final EPUB with its portrait cover embedded and authored pronunciation
-  instructions included through the verified Echo contract.
+  instructions included through Echo PR #600’s verified contract. Follow
+  [EPUB pronunciation](epub-pronunciation.md) for whole-manuscript coverage,
+  inline decisions, linked lexicons, and plan-to-render reconciliation. This is
+  required production work, not an optional polish pass.
 - Both selected cover files: portrait `cover.png` and square `m4b-cover.png`.
   Embed the square cover in the M4B and retain both image files in delivery.
 - The complete package in

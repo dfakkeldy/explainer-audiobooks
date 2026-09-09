@@ -9,12 +9,27 @@ and actual listening verification separately.
 
 ## Choose the pronunciation in context
 
-Before packaging a new audiobook, review every occurrence of **content**,
-**record**, and **read**, including headings, quotations, captions, and spoken
-guide passages. Check other ambiguous words encountered in the manuscript too,
-plus names, place names, abbreviations, and technical or archaic vocabulary.
-Search is an inventory aid, not a pronunciation decision: inspect the sentence
-and enough surrounding prose to determine sense, grammatical role, and tense.
+Use Echo PR #600's EPUB instructions proactively across the whole listening
+edition, before the first full render. Review every narrated block, including
+headings, quotations, dialogue, captions, and Michael's guide passages. Keep a
+chapter/section coverage record so a short watch list or sampled scan cannot
+stand in for complete manuscript review. Unsupported annotation surfaces still
+need a recorded pronunciation decision and a supported handling path.
+
+Inventory all context-dependent pronunciations, names and places, unfamiliar or
+foreign terms, technical vocabulary, abbreviations and initialisms, numbers and
+symbols with ambiguous spoken forms, and archaic or poetic syllable/stress choices.
+Include casing, possessives, and inflected forms actually present. Resolve each
+candidate from its sentence and surrounding context, then embed every supported,
+resolved decision. Do not wait for the listener to discover a mispronunciation,
+cap the number of corrections, or leave known decisions only in research notes.
+
+Every occurrence of **content**, **record**, and **read** is mandatory, but these
+are the starting cases. Also look for words such as lead, wind, bow, wound, tear,
+minute, live, present, object, and produce wherever their reading depends on
+meaning or grammatical role. This list is illustrative, not exhaustive. For
+classics, inspect syllable choices such as learned or blessed in their actual
+passages. Search inventories candidates; the author resolves the intended reading.
 
 | Word | Distinctions to preserve |
 |---|---|
@@ -24,7 +39,7 @@ and enough surrounding prose to determine sense, grammatical role, and tense.
 
 These are meaning reminders, not phoneme strings to feed the renderer. Do not
 apply a book-wide pronunciation to a spelling with multiple senses. Use an
-occurrence-specific annotation for each resolved instance of these three words,
+occurrence-specific annotation for each resolved context-dependent reading,
 even when automatic pronunciation currently happens to agree. Include relevant
 inflected forms in the review; derive their actual pronunciation rather than
 copying the base word's IPA. Unresolved context stays an explicit open decision.
@@ -45,6 +60,14 @@ pronunciation; do not present it as dictionary evidence. Resolve uncertainty wit
 context and evidence before making a candidate authoritative. Keep standard IPA
 and any renderer-specific representation distinct. Preserve approved name choices
 across books while reassessing ambiguous words in their new sentences.
+
+Use inline IPA for occurrence-specific choices and supported phrases; use linked
+PLS lexicons for consistent recurring terms across every document that uses them.
+Reuse verified decisions across the book, checking each match and each exception.
+For ordinary unambiguous words with no pronunciation concern, retain normal
+handling; filling every sentence with guessed IPA adds errors and interferes with
+normalization. Extensive use means complete coverage of meaningful pronunciation
+choices, with supported, evidence-backed annotations wherever they are needed.
 
 ## Embed using the verified Echo contract
 
@@ -179,9 +202,20 @@ conflicting annotations and rejected symbols; successful import alone is not
 proof of application. Respect explicit user pronunciation corrections and surface
 conflicts with the authored plan. Do not silently strip unsupported phonemes.
 
+Reconcile the full pronunciation plan with the final EPUB and render audit:
+record reviewed blocks, planned occurrences, embedded inline/lexicon matches,
+user-correction overrides, applied decisions, and unresolved or unsupported cases.
+Check every planned occurrence, not just the number of annotations or the presence
+of one successful `epubInline` decision. A user correction can legitimately win;
+record that outcome and verify it. Explain every mismatch and resolve required
+pronunciation gaps before calling the listening package complete. If none are
+needed in a reviewed section, record that result rather than adding dummy markup.
+
 Render targeted samples with the actual assigned voice and surrounding sentence.
-Include each distinct sense of content, record, and read present in the book,
-recurring unusual names, and any corrected or uncertain passage. For Michael's
+Include every distinct authored pronunciation in its sentence and assigned voice,
+including the senses of content, record, and read present in the book. Repeated
+identical decisions can share a listening sample, but verify application at every
+occurrence. Recheck changed context and any corrected or uncertain passage. For Michael's
 passages use `am_michael`; a different speaker's successful sample does not verify
 Michael's rendering. Check both sound and text/audio alignment. Use the existing
 governed narration and pronunciation-review workflow for these samples and final
