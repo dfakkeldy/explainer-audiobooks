@@ -179,12 +179,16 @@ not establish eligibility for an adaptation.
 
 When audio is requested, use the available fiction-audiobook and Echo narration
 workflow for packaging and verified rendering, retaining these fidelity constraints.
+Follow `../echo-narration/references/complete-delivery.md`: every audiobook
+requires the M4B, matching alignment sidecar, EPUB, portrait and square covers,
+and private iCloud delivery. Do not stop at an adapted manuscript or local EPUB.
 Do not apply original-story invention or length targets to an existing classic.
 For a cast, freeze the EPUB first, export the actual renderer block inventory, and
 map roles to those blocks. Preserve explicit speaker identities even when voices
 are doubled. Check current voice preferences and supported limits; do not assume
 one unique voice per character. Keep original-author metadata through the audio
-export. Use original, coordinated portrait and square cover art if requested.
+export. Create original, coordinated portrait and square cover art for every
+audiobook edition; preserve accepted art on redos unless changes are authorized.
 
 A requested renderer revision is an independent tooling requirement: inspect the
 current install/verification contract and use its supported build workflow. Do not
