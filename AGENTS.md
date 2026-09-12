@@ -81,8 +81,11 @@ outside Git.
 
 - Preserve unrelated edits and untracked files; do not adopt them as part of
   the task.
-- Publish successful requested implementation work as a ready pull request when
-  the repository supports that workflow. Diagnosis, read-only review, design,
-  and planning do not trigger publication.
+- Requested repository changes finish with a ready PR and auto-merge on green
+  required CI, using the supported merge method and respecting branch protections.
+  If native auto-merge is unavailable, merge the verified PR head normally after
+  reported checks pass. If CI is absent or blocked, leave the ready PR and report
+  that limitation once. Do not ask for another merge approval for ordinary work.
+- Diagnosis, read-only review, design, and planning do not trigger publication.
 - Treat local verification, hosted CI, merge, deployment, delivery, and human
   acceptance as distinct states and report them accurately.
