@@ -1,91 +1,44 @@
-# Explainer Audiobooks Agent Guide
+# Explainer Audiobooks
 
-This repository contains public audiobook-production methods and tooling plus
-public-safe books. Work here may also produce private packages that remain
-outside Git.
+Public audiobook-production methods, tooling, and public-safe books. Some work
+here produces private packages that stay outside Git.
 
-## Task Routing
+## Skills
 
-- For repository, tooling, test, or instruction maintenance, work directly in
-  the repository. Do not invoke a book-production skill unless the task calls
-  for book development or production.
-- Use `skill/` for long technical explainers.
-- Use `skills/custom-learning-audiobook/` for ready-to-produce,
-  listener-specific learning books.
-- Use `skills/longform-book-development/` for collaborative nonfiction book
+For repository, tooling, test, or instruction work, just work in the repo. Use
+a production skill only when the task is book development or production:
+
+- `skill/`: researched nonfiction explainer audiobooks.
+- `skills/longform-book-development/`: collaborative nonfiction book
   development.
-- Use `skills/fiction-audiobook/` for complete fictional listening packages,
-  including autonomous premise-to-Echo production and package redos.
-- Use `skills/fiction-book-development/` for fiction development through an
-  accepted Markdown manuscript: planning, drafting, continuation, and
-  revision-only requests stay there.
-- Use `skills/classic-literature-adaptation/` for classic literature
-  modernization, translation, or adaptation (play, prose, optional audio;
-  classic audio adaptations use Michael spoken guidance by default).
-- Once selected, the relevant skill owns the detailed production workflow. This
-  root guide does not activate a production workflow by itself.
+- `skills/fiction-book-development/`: fiction through an accepted Markdown
+  manuscript.
+- `skills/fiction-audiobook/`: complete fiction listening packages and redos.
+- `skills/classic-literature-adaptation/`: modernizing, translating, or
+  adapting classic literature.
 
-## Context and Current State
+Once selected, the skill owns the production workflow. `skill/` is the
+canonical source for the installed explainer skill.
 
-- Consult `/Users/dfakkeldy/Developer/knowledge-base` only when the task depends
-  on portfolio context, project history, prior decisions, or current business
-  state. Self-contained repository, tooling, test, instruction, or artifact
-  work does not trigger knowledge-base reading.
-- When the knowledge base is relevant, read its `AGENTS.md`, its bundle index,
-  and only the smallest relevant project, topic, or status pages.
-- Verify current facts in the relevant live repository or service. Before
-  editing, inspect the branch, upstream, and working tree, and preserve
-  unrelated work.
+## Boundaries
 
-## Privacy, Licensing, and Artifact Boundaries
+- Keep private notes, raw research, private books, client material, narration
+  scratch, and non-public-domain sources out of the repo.
+- Finished public-safe books go under `books/<slug>/`. Public-safe doesn't mean
+  cleared to publish elsewhere.
+- Accepted manuscript text and cover art are frozen unless Dan says otherwise.
+- Don't bulk-clean generated or private artifacts; skill build directories may
+  hold durable state.
+- Only the `fiction-audiobook` skill's own public-fiction gate may push books
+  to GitHub on its own.
 
-- Keep private source notes, raw research, private books, private client or
-  prospect material, local narration scratch, and non-public-domain source
-  material out of the public repository.
-- Public-safe finished books may live under `books/<slug>/` following existing
-  conventions. Follow the repository's code and book-content license files.
-- `skill/` is the canonical shared source for the installed explainer skill.
-- Do not bulk-clean generated or private artifacts. Inspect the exact target
-  first; durable project state may live in skill-defined build directories.
-- Treat accepted manuscript text and cover art as frozen unless the user
-  authorizes changes.
-- The selected production skill governs delivery. Keep manuscript acceptance,
-  package generation, narration, synchronization, pronunciation and human
-  listening, iCloud delivery, repository publication, and website publication
-  as separate states.
-- Public-safe content is eligible for publication, but public safety alone is
-  not authorization to publish or copy it elsewhere.
-- The `fiction-audiobook` express trigger supplies standing workflow
-  publication authorization for original public-safe fiction, but only its
-  fail-closed public-fiction gate may permit GitHub mutation.
-- Copy a package to iCloud Books only when the requested outcome or selected
-  production workflow calls for that delivery step.
+## Checks
 
-## Verification
+```bash
+python3 -m unittest tests.<module> -v          # narrowest first
+python3 -m unittest discover -s tests -v       # broad changes
+python3 tools/validate_skills.py
+git diff --check
+```
 
-- Start with the narrowest relevant test, for example:
-  `python3 -m unittest tests.<relevant_module> -v`.
-- For broad skill or tooling changes, run:
-  `python3 -m unittest discover -s tests -v` and
-  `python3 tools/validate_skills.py`.
-- When installed-skill or symlink paths change, verify the links resolve to the
-  intended canonical skill files. Use the current repository validators; do not
-  assume a historical installation-check script still exists.
-- Run `git diff --check` before committing.
-- For book artifacts, also follow the selected skill's quality checks. Tool
-  tests do not prove narration quality, human listening acceptance, delivery,
-  or publication.
-- Instruction-only edits do not require a book build or render.
-
-## Repository Workflow
-
-- Preserve unrelated edits and untracked files; do not adopt them as part of
-  the task.
-- Requested repository changes finish with a ready PR and auto-merge on green
-  required CI, using the supported merge method and respecting branch protections.
-  If native auto-merge is unavailable, merge the verified PR head normally after
-  reported checks pass. If CI is absent or blocked, leave the ready PR and report
-  that limitation once. Do not ask for another merge approval for ordinary work.
-- Diagnosis, read-only review, design, and planning do not trigger publication.
-- Treat local verification, hosted CI, merge, deployment, delivery, and human
-  acceptance as distinct states and report them accurately.
+Tests don't prove narration quality or delivery.
