@@ -41,19 +41,21 @@ movement, diction, image system, interiority, dialogue texture, humour, and
 taboo habits. Never imitate a living author; translate references into those
 controls.
 
-Revise in three combined passes:
+Revise however the story needs. Before closing the manuscript, make sure these
+three concerns have had real attention:
 
 1. Story: promise, causality, escalation, pacing, reversals, crisis, climax,
    aftermath.
 2. Character/continuity: motive, relationship change, POV knowledge, timeline,
    world logic, planted promises, payoffs.
-3. Ear/prose: distinct dialogue, distance, rhythm, imagery, repeated
-   AI-shaped phrasing, and read-aloud flow.
+3. Ear: distinct dialogue, clear speakers, and read-aloud flow.
 
-Record repairs in `full-manuscript-review.md`; record mechanical/style results
-in `full-prose-qc.md`. Then read front to back without editing, repair accepted
-whole-book findings, reconcile every promise/payoff or deliberate ambiguity,
-perform the read-aloud check, and write `continuity/final.md` from final bytes.
+Record repairs in `full-manuscript-review.md`. Record the read-aloud and
+mechanical checks (markup that would narrate badly, unclear speakers, stray
+notes) in `full-prose-qc.md`; it is not an AI-tell review. Then read front to
+back without editing, repair accepted whole-book findings, reconcile every
+promise/payoff or deliberate ambiguity, and write `continuity/final.md` from
+final bytes.
 
 ## Source segmentation before EPUB freeze
 
@@ -186,15 +188,17 @@ path plus SHA-256:
 
 Set exactly these gates to `pass`: `manuscriptClosed`,
 `storyBibleReconciled`, `continuityReconciled`, `revisionPassesCompleted`, and
-`proseQCPassed`.
+`proseQCPassed`. The `proseQC` names are kept for schema v1; they refer to the
+read-aloud and mechanical-check record above.
 
 Repair and rerun the affected pass when story, continuity, or prose fails. If
 the final manuscript still cannot pass, preserve the run root and stop before
 covers, narration, delivery, or publication.
 
 For a story redo, retain unaffected prose only after causal review. Repair the
-requested change and every downstream dependency; rerun affected portions of
-all three passes, the final front-to-back read, promise/payoff reconciliation,
-and read-aloud check. Rewrite final continuity and regenerate the schema-v1
-receipt against current chapter and evidence hashes before rebuilding EPUB or
-narration. Prior receipt, revision, QC, and package acceptance is stale.
+requested change and every downstream dependency; recheck the affected story,
+continuity, and ear concerns, the final front-to-back read, promise/payoff
+reconciliation, and read-aloud check. Rewrite final continuity and regenerate
+the schema-v1 receipt against current chapter and evidence hashes before
+rebuilding EPUB or narration. Prior receipt, revision, QC, and package
+acceptance is stale.

@@ -67,6 +67,7 @@ class LeanBuildTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertNotIn("--learning-receipt", result.stdout)
+        self.assertNotIn("--prose-receipt", result.stdout)
         self.assertNotIn("--legacy-without-learning-receipt", result.stdout)
         self.assertNotIn("--learning-pilot", result.stdout)
         self.assertIn("--fiction-receipt", result.stdout)

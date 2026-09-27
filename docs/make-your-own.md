@@ -96,10 +96,9 @@ starts without another approval pause.
    listener should remember, support drift and re-entry, use practical
    situation-choice-consequence examples, and add spoken `Key points`
    checkpoints at natural learning boundaries.
-5. **Revise** — run separate claim-traceability, tightening,
-   de-listification, sentence-rhythm, and rendered ear passes. A blind beginner
-   then reports the mental model formed and the exact point where it breaks.
-   Prose QC and a bounded humanizer pass follow; the frontier author owns every
+5. **Revise** — however the book needs. Before packaging, check every factual
+   claim against the research and read the manuscript as a newcomer would hear
+   it; a blind reader in listening order helps. The frontier author owns every
    substantive repair.
 6. **Produce** — render exactly three coordinated portrait/square cover pairs,
    select the strongest complete pair, build the EPUB and combined Markdown,
