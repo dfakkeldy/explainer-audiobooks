@@ -97,8 +97,6 @@ repetition, fragmentation, dialect, and rhythm.
 
 Track recurring images and charged objects: each recurrence should repeat,
 intensify, invert, or complete meaning—not merely decorate another paragraph.
-Do not run multiple global humanizers; they can flatten character voice and
-create synonym cycling.
 
 ## Pass 8: Read-aloud and final canon
 

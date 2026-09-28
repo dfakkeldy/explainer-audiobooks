@@ -38,19 +38,41 @@ class AudiobookSkillContractTests(unittest.TestCase):
             self.assertIn(needle, self.text)
         self.assertIn("state the plan in one line", self.text)
 
-    def test_craft_passes_that_survive_are_named(self) -> None:
+    def test_finish_line_is_the_fixed_contract(self) -> None:
+        normalized = " ".join(self.text.split())
         for needle in (
-            "claim-traceability",
-            "tightening",
-            "de-listification",
-            "sentence-rhythm",
-            "ear-pass",
-            "blind beginner review",
-            "--fail-on-style",
-            "humanizer",
-            "story ledger",
+            "../skills/echo-narration/references/complete-delivery.md",
+            "epub-pronunciation.md",
+            "`<Book Title>.epub` with the portrait cover embedded",
+            "pronunciation annotations",
+            "complete Echo narration with the square cover embedded",
+            "`<Book Title>.alignment.json`",
+            "`verify-sidecar`",
+            "`cover.png` (portrait) and `m4b-cover.png` (square)",
+            "com~apple~CloudDocs/Books",
         ):
-            self.assertIn(needle, self.text)
+            with self.subTest(needle=needle):
+                self.assertIn(needle, normalized)
+
+    def test_writing_is_left_to_the_author(self) -> None:
+        normalized = " ".join(self.text.split())
+        self.assertIn("Write the best book you can.", normalized)
+        self.assertIn(
+            "No humanizer pass, AI-tell sweep, or prose-style gate is required.",
+            normalized,
+        )
+        self.assertIn("story ledger", normalized)
+        self.assertIn("may only assert what the research supports", normalized)
+        for retired in (
+            "--fail-on-style",
+            "prose_qc",
+            "humanizer-pass.md",
+            "declaudification.md",
+            "claim-traceability",
+            "de-listification",
+        ):
+            with self.subTest(retired=retired):
+                self.assertNotIn(retired, self.text)
 
     def test_defaults_are_recorded(self) -> None:
         for needle in ("am_michael", "am_puck", "Dan Fakkeldy", "road-book"):

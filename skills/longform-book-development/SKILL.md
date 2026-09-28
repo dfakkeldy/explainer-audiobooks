@@ -21,28 +21,18 @@ Do not use it for novels, novellas, or short-story collections; route fiction to
 `fiction-book-development`, which owns story bibles, canonical prose, continuity,
 and fiction-specific revision.
 
-## Required Reference
+## References
 
 - Read `references/handoff-packet.md` before preparing the final handoff.
 - Read `../../skill/references/road-book-mode.md` before shaping an audiobook.
   Default to road-book mode for driving and delivering mail unless the listener
   explicitly wants focused study.
-- Read `../../skill/references/learning-design.md` before shaping the curriculum
-  or declaring a handoff production-ready.
-- Read `../../skill/references/frontier-manuscript-pipeline.md` before defining
-  research, outline, voice-calibration, section-drafting, or revision handoffs.
-- Read `../../skill/references/curriculum-patterns.md` before proposing book
-  structures or recording the selected progression.
-- Read `../../skill/references/humanizer-pass.md` when shaping voice notes or
-  preparing the production handoff. The final prose pass is bounded: it removes
-  AI tics without inventing personality, anecdotes, sources, or claims.
-- Read `../../skill/references/voice-design.md` and capture the drafting-time
-  control-panel settings and the 3-5 project-specific sample sentences for the
-  handoff packet — a handoff carrying only prohibitions reproduces the
-  original flattened-prose problem downstream.
-- Read `../../skill/references/declaudification.md` and capture the listener's
-  **AI-writing patterns to avoid** and disliked phrase families before
-  preparing the production handoff.
+- Optional craft notes, useful while shaping the book:
+  `../../skill/references/learning-design.md`,
+  `../../skill/references/curriculum-patterns.md`,
+  `../../skill/references/frontier-manuscript-pipeline.md`, and
+  `../../skill/references/voice-design.md`. A few project-specific sample
+  sentences carry a voice better than any list of prohibitions.
 
 ## Pronunciation planning
 
@@ -152,9 +142,9 @@ user means before creating a new one.
 7. **Prepare the synthesis handoff.** When the development direction is settled,
    write `handoff/handoff-packet.md` using `references/handoff-packet.md`. Include the
    final brief, outline, throughlines, source plan, figure plan, asset paths, and
-   unresolved choices. Include the desired humanizing level, voice sample or
-   style notes, AI-writing patterns to avoid, and the instruction to preserve
-   facts, citations, technical names, and intentional teaching repetition. The
+   unresolved choices. Include the voice sample or style notes, anything the
+   listener has said they dislike, and the instruction to preserve facts,
+   citations, technical names, and intentional teaching repetition. The
    packet must name listener-requested and author-anticipated pronunciation
    risks, including every spoken variant that needs special attention. For a
    nonfiction audiobook, add the Semantic Voice Plan using one mutually exclusive
@@ -164,11 +154,7 @@ user means before creating a new one.
    candidate Echo voices, listener preferences/exclusions, and the frozen EPUB
    mapping boundary, but no guessed Echo block IDs. Include the
    editorial ledger path `<BOOK_ROOT>/source/narration-role-ledger.md`.
-   Define the later production loop explicitly: draft section by section with
-   the full outline, grounded evidence, voice exemplar, previous-section text or
-   running summary, section job, and must-not-repeat list. Require
-   separate single-job claim-traceability, tightening, de-listification,
-   sentence-rhythm, and rendered ear-pass lanes.
+   Leave the drafting and revision method to the production author.
    Preserve these decisions so the handoff is complete enough that a fresh agent can run
    `audiobook` without re-litigating the concept.
 
@@ -221,8 +207,6 @@ settled enough to hand to production:
   throughline advance, payoff, landing beat, and must-not-repeat constraints,
 - complete core-concept explanation paths,
 - problem-before-name, real-world application, analogy, and retrieval plans,
-- section-by-section forward-context contract and a final
-  plan of separate single-job passes including ear-pass,
 - source/research plan,
 - figure/image plan with provenance,
 - semantic voice roles, candidate Echo voices, earned paragraph jobs, listener
@@ -231,9 +215,5 @@ settled enough to hand to production:
   block IDs,
 - handoff packet ready for `audiobook`.
 
-The handoff also records whether the bounded `humanizer` pass is required,
-optional, or explicitly skipped, plus any voice constraints the production
-author must preserve.
-For audiobook production, the de-Claudification gate is required even when a
-general humanizer pass is optional: drafting prevention, whole-manuscript family
-density review, and accepted/rejected decisions.
+The handoff also records any voice constraints the production author must
+preserve.

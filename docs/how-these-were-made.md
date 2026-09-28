@@ -79,26 +79,17 @@ Important ideas still receive depth: what the thing is, why it exists, how it
 works, a real case, and the boundary where the simple story stops working.
 Deliberate retrieval is useful; repeated definition-shaped padding is not.
 
-### 5. Revise one problem at a time
+### 5. Revise freely
 
-The canonical manuscript receives five distinct craft passes, in order:
+How the manuscript is revised is the author's call. Earlier editions ran a fixed
+sequence of craft passes, an AI-tell style gate, and a humanizer pass; current
+models write well enough that those became overhead, and they were retired.
 
-1. claim traceability;
-2. tightening;
-3. de-listification;
-4. sentence rhythm; and
-5. an ear pass against rendered audio.
-
-A blind beginner then reads in listening order without the outline or expected
-outcomes and reports the mental model they formed and the exact point where it
-failed. The frontier author resolves accepted findings.
-
-The standard-library tool
-[`skill/scripts/prose_qc.py`](../skill/scripts/prose_qc.py) flags repeated
-phrases, similar paragraphs, formulaic openings and closings, and other style
-families for human judgment. A bounded humanizer pass may repair formulaic or
-over-polished prose, but it cannot invent facts, anecdotes, opinions, jokes, or
-a replacement voice. Prose QC runs again afterward.
+Two things still hold before packaging. Every factual claim is checked against
+the research, because a driving listener cannot check it. And the manuscript is
+read as a newcomer hearing it once; a fresh reader working in listening order,
+without the outline, is a good way to find where a listener would get lost. The
+frontier author resolves accepted findings.
 
 ## Assembly and delivery
 

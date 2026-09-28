@@ -9,6 +9,9 @@ Explicit manuscript-only or planning-only requests retain their narrower scope.
 A later explicit instruction can change the outcome; inconvenience, missing
 resources, or an unfinished renderer step cannot silently reduce it.
 
+This package is the fixed part of every book skill. How the book is written,
+structured, and revised is the author's call; what gets delivered is not.
+
 ## Required artifacts
 
 - A fully rendered M4B audiobook covering the requested manuscript.

@@ -364,21 +364,12 @@ def main() -> int:
         "never `af_heart`",
         "Dan Fakkeldy",
         "--contributor",
-        "AI-writing patterns to avoid",
-        "`humanizer`",
-        "must not invent anecdotes",
-    )
-    contains(
-        "skills/longform-book-development/SKILL.md",
-        "humanizer-pass.md",
-        "desired humanizing level",
-        "bounded `humanizer` pass",
-    )
-    contains(
-        "skill/references/humanizer-pass.md",
-        "bounded voice pass",
-        "Do not invent anecdotes",
-        "targeted edits with a short reason",
+        "complete-delivery.md",
+        "epub-pronunciation.md",
+        ".alignment.json",
+        "verify-sidecar",
+        "m4b-cover.png",
+        "com~apple~CloudDocs/Books",
     )
     contains(
         "skill/references/cover-art.md",

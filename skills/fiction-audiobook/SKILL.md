@@ -6,9 +6,11 @@ description: >-
 
 # Fiction Audiobook
 
-Follow `../echo-narration/references/complete-delivery.md`: M4B, matching alignment
-sidecar, EPUB, both covers, and private iCloud delivery are required. A partial
-package is not a completed audiobook. Retain the selected square cover under
+The story, its shape, and its prose are the lead writer's call. The package is
+not: follow `../echo-narration/references/complete-delivery.md`. The M4B,
+matching alignment sidecar, EPUB with embedded pronunciation, both covers, and
+private iCloud delivery are required. A partial package is not a completed
+audiobook. Retain the selected square cover under
 `_production/covers/` while preserving the existing title-root allowlist.
 
 Read `references/express-fiction-craft.md` and
@@ -33,7 +35,7 @@ the assigned voices. Pending renderer support is not completed integration.
    runtime; record why in
    `.build/fiction-audiobooks/<slug>/brief.md`.
 4. Follow craft reference: compact bible/causal outline, sequential lead writer,
-   rolling continuity, three passes/final checks, unchanged private receipt.
+   rolling continuity, revision and final checks, unchanged private receipt.
 5. Generate three paired covers in `$RUN_ROOT/dist/candidate-{1,2,3}`, select
    one, and set `export PAIR="$RUN_ROOT/dist/candidate-N"`. The portrait cover
    must be embedded before the final EPUB is frozen.

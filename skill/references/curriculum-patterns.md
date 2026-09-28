@@ -1,7 +1,7 @@
 # Curriculum Patterns
 
-Choose and explain a learning shape before writing the canonical outline. The
-pattern is a reasoned curriculum decision, not a decorative label.
+Shapes that have worked for learning books. Pick one when it helps, blend
+them, or invent another; the pattern is a reasoned choice, not a label.
 
 ## Question-led narrative
 

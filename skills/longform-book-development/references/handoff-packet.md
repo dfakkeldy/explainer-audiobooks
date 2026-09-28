@@ -9,9 +9,11 @@ Use this shape when handing a developed nonfiction project to `$audiobook`.
 
 ## Production Request
 
-Use `$audiobook` to turn this settled plan into a complete audiobook. Build the
-EPUB and combined Markdown, render Echo audio when available, preserve the
-editable source with the book, and report blockers honestly.
+Use `$audiobook` to turn this settled plan into the complete delivered package:
+the EPUB with its portrait cover and verified Echo pronunciation annotations,
+the Echo-narrated M4B with its square cover, the verified alignment sidecar,
+both cover files, and the editable source, all in iCloud Books. Report any
+blocker honestly.
 
 ## Status
 
@@ -63,11 +65,8 @@ case, and distinct teaching beats. For each section, record:
 - Voice control panel:
 - Positive voice sample: 3-5 project-specific sample sentences from
   project-owned text.
-- Disliked phrase families:
-- AI-writing patterns to avoid:
-- Desired humanizing level:
+- Anything the listener has said they dislike:
 - Facts, citations, technical names, and examples that must not change:
-- De-Claudification gate: required
 
 ## Semantic Voice Plan
 
@@ -109,17 +108,10 @@ The narration must remain complete with eyes closed.
 
 ## Production Method
 
-- One frontier author writes every section in order.
-- Every section call receives the outline, fact pack, previous section text or
-  faithful summary, current job, and must-not-repeat list.
-- Cheaper workers extract, verify, assemble, render, and report with citations;
-  they do not write or replace chapters.
-- Run claim-traceability, tightening, de-listification, sentence-rhythm, and
-  rendered ear-pass as separate jobs.
-- Run the blind beginner review on the manuscript in listening order, without
-  the outline or author rationale.
-- Run `prose_qc.py --fail-on-style`, the bounded `humanizer` pass, and the final
-  `prose_qc.py --fail-on-style`.
+- One frontier author writes every canonical chapter; cheaper workers extract,
+  verify, assemble, render, and report with citations, but do not write or
+  replace chapters.
+- Drafting and revision method is the production author's call.
 
 ## Narration
 
@@ -148,7 +140,7 @@ A packet is production-ready when it includes:
   throughlines;
 - chapter purposes and section-level argument jobs;
 - source locators, story material, and the exact names production must preserve;
-- a voice direction with positive examples and disliked patterns;
+- a voice direction with positive examples and any listener dislikes;
 - a Semantic Voice Plan in its declared route: a normal cast requires earned
   secondary-role jobs, candidate Echo voices, listener preferences/exclusions,
   the `<BOOK_ROOT>/source/narration-role-ledger.md`, and the frozen EPUB
@@ -157,7 +149,6 @@ A packet is production-ready when it includes:
   assignments;
 - a rights-aware picture plan, including a zero-figure decision when relevant;
 - the preserve-on-revision notes for any existing edition;
-- the five separate craft passes and blind beginner review;
 - narration risks and pronunciation-plan path with known decisions, evidence,
   open questions, and Echo support status; author, contributor, and delivery boundary.
 

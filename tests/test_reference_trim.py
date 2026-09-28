@@ -8,8 +8,7 @@ REFS = REPO / "skill" / "references"
 
 SURVIVING = (
     "narration-style.md", "voice-design.md", "cover-art.md",
-    "curriculum-patterns.md", "declaudification.md", "humanizer-pass.md",
-    "frontier-manuscript-pipeline.md", "road-book-mode.md", "learning-design.md",
+    "curriculum-patterns.md", "frontier-manuscript-pipeline.md", "road-book-mode.md", "learning-design.md",
 )
 
 RETIRED_VOCABULARY = (
@@ -30,6 +29,26 @@ class ReferenceTrimTests(unittest.TestCase):
     def test_retired_reference_and_templates_are_gone(self) -> None:
         self.assertFalse((REFS / "unattended-production.md").exists())
         self.assertFalse((REPO / "skill" / "templates" / "learning-design").exists())
+
+    def test_prose_policing_is_retired(self) -> None:
+        for retired in (
+            REFS / "humanizer-pass.md",
+            REFS / "declaudification.md",
+            REPO / "skill" / "scripts" / "prose_qc.py",
+            REPO / "skill" / "scripts" / "prose_metrics.py",
+        ):
+            with self.subTest(retired=retired.name):
+                self.assertFalse(retired.exists())
+        for path in sorted(REPO.glob("skill*/**/*.md")):
+            text = path.read_text(encoding="utf-8")
+            for banned in (
+                "humanizer-pass.md",
+                "declaudification.md",
+                "prose_qc.py",
+                "--fail-on-style",
+            ):
+                with self.subTest(path=str(path.relative_to(REPO)), banned=banned):
+                    self.assertNotIn(banned, text)
 
     def test_surviving_references_drop_retired_vocabulary(self) -> None:
         for name in SURVIVING:

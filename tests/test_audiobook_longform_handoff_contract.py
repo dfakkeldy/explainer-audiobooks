@@ -76,8 +76,6 @@ class AudiobookLongformHandoffContractTests(unittest.TestCase):
             "story",
             "voice",
             "figure",
-            "craft passes",
-            "blind beginner",
             "narration risks",
             "author",
             "contributor",
@@ -91,6 +89,24 @@ class AudiobookLongformHandoffContractTests(unittest.TestCase):
             with self.subTest(requirement=requirement):
                 self.assertIn(requirement, audiobook.lower())
                 self.assertIn(requirement, packet.lower())
+
+    def test_packet_carries_voice_samples_and_the_full_package(self) -> None:
+        packet = " ".join(PACKET.read_text(encoding="utf-8").split())
+        longform = LONGFORM.read_text(encoding="utf-8")
+        self.assertIn("Positive voice sample", packet)
+        self.assertIn("Anything the listener has said they dislike", packet)
+        for artifact in (
+            "verified Echo pronunciation annotations",
+            "square cover",
+            "verified alignment sidecar",
+            "iCloud Books",
+        ):
+            with self.subTest(artifact=artifact):
+                self.assertIn(artifact, packet)
+        for retired in ("humaniz", "De-Claudification", "prose_qc", "AI-writing patterns"):
+            with self.subTest(retired=retired):
+                self.assertNotIn(retired, packet)
+                self.assertNotIn(retired, longform)
 
 
 if __name__ == "__main__":

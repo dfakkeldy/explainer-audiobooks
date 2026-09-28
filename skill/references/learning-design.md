@@ -1,7 +1,8 @@
 # Learning Design
 
-Use this reference to turn grounded research into a book a beginner can follow
-in one forward-moving listen. Keep the working records in plain Markdown.
+Notes on turning grounded research into a book a beginner can follow in one
+forward-moving listen. Use as much of this as helps; none of these records is
+required, and any you keep belong in plain Markdown.
 
 ## Argument-level outline
 
@@ -26,7 +27,7 @@ semantic role when earned, and what it must not repeat. A title such as
 
 ## Chapter teaching plan
 
-Each chapter plan states:
+A chapter teaching plan that has worked covers:
 
 - **Durable outcome:** what the listener can explain or do afterwards.
 - **Prerequisites:** what the chapter assumes has already become stable.
@@ -100,9 +101,9 @@ chapters. The frontier author accepts, rejects, or repairs each finding. After a
 substantive voice or structure edit, repeat the review from the affected point
 through every downstream chapter.
 
-## Red flags
+## Warning signs
 
-Return to the outline or chapter plan when:
+The outline or chapter plan probably needs another look when:
 
 - the route is a terminology inventory;
 - research, outlining, drafting, and revision collapse into one call;

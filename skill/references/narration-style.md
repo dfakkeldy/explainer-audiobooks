@@ -1,18 +1,20 @@
 # Narration style bible
 
-Contents: Voice & rules (verbatim block for the frontier lead author) · Why
+Contents: Voice & rules (context block for the frontier lead author) · Why
 these rules matter · Length and runtime math · The fact-pack discipline · The
-story ledger · QC checklist · EPUB validity.
+story ledger · Before packaging · EPUB validity.
 
 This is the craft layer of the audiobook skill. The whole product is
-*heard*, never read on a page, so every rule below exists to serve the ear. Give
-the "Voice & rules" block to the frontier lead author verbatim. Cheap workers may
-review against it, but they must not replace its prose with a different voice.
+*heard*, never read on a page, so everything below serves the ear. It records
+what has worked for this listener, not a checklist: give the "Voice & rules"
+block to the frontier lead author as context, and let the author depart from it
+when the book is better for it. Cheap workers may review against it, but they
+must not replace its prose with a different voice.
 Read `road-book-mode.md` first. Unless the brief explicitly selects
 `focused-study`, assume the listener is driving and delivering mail, with eyes
 unavailable and attention shared with safe work.
 
-## Voice & rules (give this block to the frontier lead author verbatim)
+## Voice & rules (give this block to the frontier lead author)
 
 THIS WILL BE NARRATED ALOUD as an audiobook. Write 100% for the EAR.
 
@@ -118,11 +120,6 @@ EMPHASIS — say it once, plainly, then move on:
   own importance.
 - Most paragraphs should make no claim about how important they are. If every point
   is "the most important thing" or "the heart of it all," none of them lands.
-- Dead phrases — never use these or anything in their family: "tattoo this", "burn
-  this into", "sear/etch/carve this", "the one rule, if you remember nothing else
-  from this chapter", "the single most important", "the whole point / the whole
-  show / the whole game / the entire job", "the most X in the whole craft", "it
-  changes everything". They are verbal tics that ring false read aloud.
 
 FIGURES (only if your prompt lists figures for this chapter):
 - Insert each listed figure exactly once, as its own paragraph, at the beat where
@@ -151,38 +148,21 @@ technical-writing reference, analyze them into `voice-source-profile.md`. Carry
 forward high-level craft—question or ordinary-situation openings,
 evidence-to-example movement, plain-language mechanisms, restrained humor,
 precise uncertainty, varied rhythm, and practical landings. Do not copy source
-passages or request a pastiche. Once the human accepts the project-authored first
-section, use `voice-exemplar.md` as the concrete style input for every later
-section call.
+passages or request a pastiche. Once the first section is written, it makes a better
+style input for later sections than any description of the voice.
 
-SECTION INPUT: draft section by section. Every call receives the full
-argument-level outline, grounded claim IDs, the approved voice exemplar, the
-previous section text, this section's job, and what it must not repeat. A
-summary hands the author facts and strips cadence — always pass the actual
-previous section text. A prose prompt without those artifacts is incomplete.
+SECTION INPUT: when drafting section by section, give each call the outline,
+the relevant research, and the actual previous section text. A summary hands
+the author facts and strips cadence.
 
-DE-CLAUDIFICATION — the listener's named AI-writing patterns to avoid are hard
-bans during drafting, not just a QC finding. State the fact directly instead
-of managing the listener's reaction. Do not synonym-cycle through hold,
-carry, keep, sit with, notice, pause, resist, or let-that-land instructions; do
-not use repeated `let me`, `not X but Y`, announced transitions, or honesty
-announcements such as `honestly` and `the honest answer` as a voice. Put
-epistemic precision and uncertainty in the claim itself. `declaudification.md`
-runs the full density review at QC time, once before the humanizer and again
-after.
-
-BUDGETS — caps you write toward, not gates that fail a build:
-- At most three genuinely new core terms per chapter.
+LOAD — rough budgets that have worked, not gates:
+- About three genuinely new core terms per chapter at most.
 - Six to ten durable book outcomes across the whole book.
 - At most three temporary values and three symbolic steps in any spoken
   calculation.
-- At least one real, sourced story anchor per chapter — see
-  `research/story-ledger.md` — or a recorded exemption.
-- Arithmetic language stays inside the brief's declared tier.
-- No coordinated list of four or more items. Name the one that carries the
+- A real, sourced story in most chapters — see the story ledger.
+- Long spoken lists lose a driving listener. Name the item that carries the
   point; the rest belongs in the reference appendix, not the narration.
-- Vary sentence and paragraph length deliberately. Uniform rhythm is the most
-  reliable signature of assembled prose — more reliable than any phrase.
 
 MODAL CONVERSION: statutory and API sources arrive in *may* and *must*.
 Convert them into people doing things: "The holder may collect rent" becomes
@@ -311,17 +291,14 @@ Sources are documented and institutional only: published decisions, papers,
 post-mortems, news reports, real repository history, and named public figures
 acting in public roles. Never private individuals.
 
-Every chapter plan names a ledger entry it uses, or records an exemption with
-a reason. An exemption is a recorded decision, not a silent gap.
+Most chapters are better for one real story; a chapter that has none should
+be that way on purpose.
 
-## QC checklist (run after generation, before assembling)
+## Before packaging
 
-This craft checklist complements the chapter teaching plans and blind beginner
-review in `learning-design.md`. It does not replace either.
-
-Tool-backed checks and cheap editorial review catch the things that ruin a
-narration without letting a lower-cost model take over the author's voice. Run
-them over the chapter files:
+These checks catch what actually breaks a narration. Run them over the chapter
+files; a cheap worker may run them, but the frontier author makes any
+non-mechanical fix.
 
 - **Real word counts:** `wc -w chapters/ch*.md`. Investigate a chapter that
   misses its outline estimate; do not automatically top it up. The question is
@@ -338,33 +315,15 @@ them over the chapter files:
     single-line spoken command ("git commit", "swift build"). Scrub only
     multi-line blocks, raw operators, and multi-token identifiers — and confirm
     no two code lines sit back to back without explanation between.
-- **Cliché / over-emphasis sweep** — the voice tics this skill is prone to:
-  - dead phrases: `grep -rniE 'tattoo|burn (this\|it) into|sear (this\|it)|etch (this\|it)|carve (this\|it)|the one rule, if you|if you remember nothing else' chapters/ch*.md` — should return nothing; rewrite any hit. (Bare `sear`/`etch` are deliberately avoided — they match "search" and "sketch".)
-  - emphasis-inflation density: `grep -ronE 'the (single )?most important|the heart of|the whole point|the real (magic|secret|power)|matters more than anything' chapters/ch*.md | cut -d: -f1 | sort | uniq -c | sort -rn` — a chapter with many hits is overselling; send it back to flatten the register.
-  - tradeoff drone: `grep -roniE 'trade[- ]?off|the cost of|every (choice|decision)|comes at a (cost|price)|nothing is free' chapters/ch*.md | cut -d: -f1 | sort | uniq -c | sort -rn` — more than two or three in one chapter usually means the tradeoff throughline has become a tic; thin it to the moments that are real.
-  - honesty-announcement density: the governed `prose_qc.py` family catches
-    `honestly`, `the honest answer`, `to be honest`, `in all honesty`, and close
-    variants such as `let's be honest`, `truth be told`, `frankly`, and
-    `candidly`. Replace announcements with the exact evidence, uncertainty, or
-    boundary.
-- **Repetition and depth review:** run
-  `/usr/local/bin/python3 skill/scripts/prose_qc.py --chapters-dir chapters --out research/prose-qc.md`.
-  Inspect its repeated-phrase, similar-paragraph, and opening/closing candidates
-  against the outline and chapter plan: retain a repeat only when it retrieves,
-  deepens, applies, compares, or corrects a concept. Give a cheap reviewer the
-  report and research, then require a citation-first finding for every genuine
-  issue: location, evidence, listener cost, and repair type. It reports; the
-  frontier author writes substantive fixes.
-- **Explanation-stack check:** for each core chapter-plan concept, verify the book gives
-  the listener the promised definition, reason, mechanism, concrete case, and
-  useful boundary/counterexample where applicable. Flag a shallow claim with its
-  exact location rather than asking a cheaper model to expand it generically,
-  and rerun blind beginner review after any accepted repair.
+- **Explanation check:** for each core concept, make sure the listener gets
+  what it is, why it exists, how it works, and a concrete case. Flag a shallow
+  claim with its exact location rather than asking a cheaper model to expand it
+  generically.
 - **Key-points checkpoint review:** verify each planned checkpoint is at a
   meaningful learning boundary, contains two to four speakable recall or action
   points, and introduces no new material. Flag repeated boilerplate and any
-  checkpoint that reads like an on-page list. Judge the rendered version in the
-  ear-pass; silent readability does not prove the cue works while driving.
+  checkpoint that reads like an on-page list. Judge the rendered version by
+  listening; silent readability does not prove the cue works while driving.
 - **Vocabulary check (codebase-grounded books):** for each chapter, confirm the real
   file/tool/command names from its fact pack actually appear *by name* in the prose
   (not paraphrased into "the settings file"). If the listener couldn't search for

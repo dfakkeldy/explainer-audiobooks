@@ -1,13 +1,9 @@
 # Voice Design (nonfiction)
 
-This is the **drafting-time** voice instruction. Set it during intake, freeze it
-before the first section, and give it to the lead author with the fact pack.
-
-`declaudification.md` is not this file's replacement or its rival. It is a
-**QC-time density review** — read it when checking a finished draft, not when
-writing one. A writer holding forty prohibitions writes defensively, and
-defensive writing is flat. Prohibitions describe a large space to avoid; this
-file names the single point to aim at.
+An optional tool for finding the book's voice before drafting. Aim at one
+specific voice rather than steering away from a list of things to avoid: a
+writer holding forty prohibitions writes defensively, and defensive writing is
+flat.
 
 ## Control panel
 
@@ -33,7 +29,10 @@ Also record:
   These are the concrete target; the table above only bounds it. This is the
   single highest-value field in the file — a panel without samples is a
   description of a voice, not a voice.
-- Phrase families this listener dislikes (theirs, not a generic list).
+- Anything this listener has said grates when narrated. So far: telling the
+  listener how to feel about an idea ("let that land", "hold on to this"),
+  announcing honesty or importance instead of showing it, and announced
+  transitions. That is taste, not a checklist.
 - Permitted variation by chapter job — an orientation chapter and a failure
   analysis should not sound identical.
 
@@ -42,7 +41,7 @@ properties they actually want — compressed syntax, patient mechanism-first
 explanation, restrained humour, precise uncertainty — and build an original
 combination.
 
-## Five habits that carry more than any prohibition
+## Habits that have helped
 
 **Put people and things in the subject slot.** Concepts belong in the predicate.
 "The document matters because a bid and a paid sale differ" is a concept
@@ -63,19 +62,7 @@ may collect rent" becomes "The rent cheques start coming to you." Where a modal
 must survive, name who is bound by it.
 
 **Vary the rhythm deliberately.** A one-sentence paragraph after a long one is
-the cheapest emphasis in prose and costs no adjectives. Uniform paragraph length
-is the most reliable signature of assembled text — more reliable than any
-phrase. The same device inverted is also a signature: clipped sentences arriving
-in formation — `Not once. Not ever.` — are stage directions for a dramatic pause
-the page cannot perform. Spend at most one fragment per emphasis, and fold the
-rest back into the sentence that earns them.
-
-**Let the claim carry its own intensity.** `Genuinely surprising`, `precisely
-wrong`, and `quietly radical` are sincerity adverbs doing work the evidence
-should do. Write the expectation the result broke, the number it missed by, the
-thing it changed — then the bare adjective is stronger than the boosted one.
-When a draft leans on the same intensity adverb in every chapter, that word has
-become the book's tic, whatever the word is.
+the cheapest emphasis in prose and costs no adjectives.
 
 ## What a story is, and is not
 

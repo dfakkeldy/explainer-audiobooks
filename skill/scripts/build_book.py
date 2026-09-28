@@ -45,7 +45,6 @@ from pathlib import Path
 
 from cover_receipts import load_selection, sha256_file, verify_package
 from fiction_production_qc import verify_fiction_receipt
-from prose_qc import verify_style_receipt
 
 IMG_RE = re.compile(r'^!\[(?P<alt>[^\]]*)\]\((?P<src>[^)\s]+)(?:\s+"(?P<cap>[^"]*)")?\)$')
 
@@ -94,12 +93,10 @@ def parse_chapter(path):
 
 
 def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover=None,
-          contributor="", cover_selection=None, m4b_cover=None, prose_receipt=None,
+          contributor="", cover_selection=None, m4b_cover=None,
           fiction_receipt=None, non_narrated_appendix=None):
     if fiction_receipt is not None:
         verify_fiction_receipt(Path(chapters_dir), Path(fiction_receipt))
-    if prose_receipt is not None:
-        verify_style_receipt(Path(chapters_dir), Path(prose_receipt))
     selection_path = Path(cover_selection) if cover_selection else None
     if selection_path is not None:
         if not cover or not os.path.exists(cover):
@@ -423,8 +420,6 @@ def main():
                     help="Selection receipt that must match --cover and the built EPUB")
     ap.add_argument("--m4b-cover", default=None,
                     help="Square cover required by paired selection receipts")
-    ap.add_argument("--prose-receipt", default=None,
-                    help="Passed prose receipt that must match the canonical chapters")
     ap.add_argument(
         "--non-narrated-appendix",
         default=None,
@@ -437,7 +432,7 @@ def main():
     )
     a = ap.parse_args()
     build(a.chapters_dir, a.out_dir, a.title, a.author, a.subtitle, a.slug, a.lang, a.cover,
-          a.contributor, a.cover_selection, a.m4b_cover, a.prose_receipt,
+          a.contributor, a.cover_selection, a.m4b_cover,
           a.fiction_receipt, a.non_narrated_appendix)
 
 

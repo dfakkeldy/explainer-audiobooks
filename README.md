@@ -108,10 +108,10 @@ changes, verification, and governed public/iCloud/site sync.
    section in sequence, carrying a compact continuity note. Road-book sections
    support drift and re-entry, use practical situation-choice-consequence cases,
    and include spoken `Key points` checkpoints at natural learning boundaries.
-5. **Revise deliberately** — run claim traceability, tightening,
-   de-listification, sentence-rhythm, and rendered ear passes, followed by a
-   blind beginner review, prose QC, and a bounded humanizer pass. The frontier
-   author owns every substantive repair.
+5. **Revise freely** — the author revises however the book needs. Before
+   packaging, every factual claim is checked against the research and the
+   manuscript is read as a newcomer would hear it. The frontier author owns
+   every substantive repair.
 6. **Produce and deliver** — render exactly three coordinated portrait/square
    cover pairs, build EPUB and Markdown, narrate a chaptered M4B, verify the
    package, and keep private delivery separate from explicitly authorized public

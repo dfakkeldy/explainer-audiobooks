@@ -80,8 +80,9 @@ request.
 9. **Fiction keeps its own proof.** Before an authorized private EPUB build,
    create `research/fiction-production-receipt.json` and bind the final chapter
    hashes, production authorization, story bible, final continuity state,
-   manuscript review, and prose QC. Build with `--fiction-receipt`; do not use
-   the legacy bypass. Do not pretend fiction passed a learning-design gate.
+   manuscript review, and read-aloud check. Build with `--fiction-receipt`; do
+   not use the legacy bypass.
+   Do not pretend fiction passed a learning-design gate.
 
 ## Workflow
 
@@ -223,7 +224,8 @@ chapter bytes and create `research/fiction-production-receipt.json` with:
   explicit statement that the receipt does not certify human acceptance;
 - SHA-256 bindings for every canonical `ch*.md` file;
 - path-and-hash bindings for the unattended authorization, story bible, final
-  continuity record, full-manuscript revision review, and final prose-QC record;
+  continuity record, full-manuscript revision review, and final read-aloud and
+  mechanical-check record (`proseQC`);
 - passing manuscript-closure, bible, continuity, revision, and prose gates.
 
 The audiobook production lane then builds with
