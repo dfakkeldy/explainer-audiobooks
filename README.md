@@ -53,6 +53,8 @@ Two different audiences:
 | [Reversible Containment](books/reversible-containment/) | Two former research partners have seventy-two hours to stop an AI infrastructure crisis from hardening into machine-governed blocs | 30 chapters · ~9.9 h | OpenAI Codex (GPT-5) |
 | [Gold Panning in Nova Scotia](books/gold-panning-nova-scotia/) | Find, assess, and responsibly pan promising Nova Scotia gold country | 10 chapters · ~2.0 h | GLM-5.2 |
 | [Beyond the Tax-Sale Packet](books/beyond-the-tax-sale-packet/) | Research Nova Scotia municipal tax sales without turning screening evidence into certainty | 13 chapters · ~4.2 h | Codex (GPT-5) |
+| [The Merchant of Venice — The Play](books/merchant-of-venice-play/) | Complete modern English play adaptation with original reading notes | 20 chapters · ~2.3 h | William Shakespeare; adaptation with OpenAI Codex for Dan Fakkeldy |
+| [The Merchant of Venice — The Novel](books/merchant-of-venice-novel/) | Complete modern English prose adaptation of the play with original reading notes | 20 chapters · ~2.1 h | William Shakespeare; adaptation with OpenAI Codex for Dan Fakkeldy |
 
 Each folder holds the **`.epub`**, a combined **`.md`** readable on GitHub, and
 the cover. Narrated public packages include a chaptered **`.m4b`**; packages
