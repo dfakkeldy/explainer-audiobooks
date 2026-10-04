@@ -153,6 +153,7 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         *,
         unfamiliar_assignments: bool = False,
         run_voice_identity: str | None = None,
+        extra_voices: tuple[str, ...] = (),
     ) -> dict[str, object]:
         """Create one source-bound schema-2 cast and Echo schema-4 receipt chain."""
         narration = self.root / "narration"
@@ -189,6 +190,16 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         assignments: list[dict[str, object]] = [
             {"speakerID": "mara", "blocks": ["s2-b3"]}
         ]
+        for index, voice in enumerate(extra_voices, start=1):
+            speaker_id = f"extra-{index}"
+            speakers.append(
+                {"speakerID": speaker_id, "role": f"Extra {index}",
+                 "voiceID": voice, "experimental": False}
+            )
+            assignments.append(
+                {"speakerID": speaker_id, "blocks": [f"s{index + 2}-b1"]}
+            )
+        block_count = 2 + len(extra_voices)
         if unfamiliar_assignments:
             assignments = [
                 {
@@ -213,7 +224,7 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         )
         resolved_sha256 = "b" * 64
         resolved = {
-            "blockCount": 2,
+            "blockCount": block_count,
             "defaultVoice": "am_michael",
             "sourceEPUBSHA256": source_sha256,
             "voicePlanID": f"plan-{resolved_sha256[:12]}",
@@ -262,7 +273,7 @@ class FictionVoicePreferencesTests(unittest.TestCase):
                     f"voice_plan_sha256={resolved_sha256}",
                     f"voice_plan_id={resolved['voicePlanID']}",
                     "voice_plan_mode=block",
-                    "voice_plan_block_count=2",
+                    f"voice_plan_block_count={block_count}",
                     f"voice_plan_canonical_path={canonical}",
                     f"voice_plan_canonical_sha256={sha256(canonical)}",
                     f"voice_plan_resolution_path={resolution}",
@@ -297,7 +308,7 @@ class FictionVoicePreferencesTests(unittest.TestCase):
                     "voicePlanMode": "block",
                     "voicePlanID": resolved["voicePlanID"],
                     "voicePlanSHA256": resolved_sha256,
-                    "voicePlanBlockCount": 2,
+                    "voicePlanBlockCount": block_count,
                     "voicePlanCanonicalFileName": canonical.name,
                     "voicePlanCanonicalSHA256": sha256(canonical),
                     "voicePlanResolutionFileName": resolution.name,
@@ -417,6 +428,87 @@ class FictionVoicePreferencesTests(unittest.TestCase):
             authored_payload["assignments"][0]["range"],
         )
 
+    def test_block_cast_accepts_six_distinct_supported_voices(self) -> None:
+        fixture = self.write_block_fixture(
+            extra_voices=("af_bella", "am_puck", "bf_alice")
+        )
+        before = fixture["authored"].read_bytes()
+        cast_before = copy.deepcopy(fixture["cast"])
+        validated = module.validate_block_cast(
+            fixture["cast"], fixture["authored"], module.initial_preferences()
+        )
+        self.assertEqual(cast_before, validated)
+        self.assertEqual(before, fixture["authored"].read_bytes())
+        self.assertEqual(6, len({row["voiceID"] for row in validated["speakers"]}))
+
+    def test_block_cast_accepts_all_eligible_known_voice_ids(self) -> None:
+        preferences = module.initial_preferences()
+        existing = {"am_michael", "bf_emma", "bm_george"}
+        eligible = set(module.VOICE_IDS) - set(preferences["blacklist"])
+        fixture = self.write_block_fixture(extra_voices=tuple(sorted(eligible - existing)))
+        before = fixture["authored"].read_bytes()
+        validated = module.validate_block_cast(
+            fixture["cast"], fixture["authored"], preferences
+        )
+        self.assertEqual(eligible, {row["voiceID"] for row in validated["speakers"]})
+        self.assertEqual(before, fixture["authored"].read_bytes())
+
+    def test_large_block_cast_still_rejects_unknown_and_blacklisted_voices(self) -> None:
+        for voice, pattern in (("future_unknown", "known"), ("af_heart", "blacklisted")):
+            with self.subTest(voice=voice):
+                fixture = self.write_block_fixture(extra_voices=("af_bella", "am_puck", voice))
+                before = fixture["authored"].read_bytes()
+                with self.assertRaisesRegex(ValueError, pattern):
+                    module.validate_block_cast(
+                        fixture["cast"], fixture["authored"], module.initial_preferences()
+                    )
+                self.assertEqual(before, fixture["authored"].read_bytes())
+
+    def test_large_block_cast_preserves_the_experimental_speaker_limit(self) -> None:
+        fixture = self.write_block_fixture(extra_voices=("af_bella", "am_puck", "bf_alice"))
+        fixture["cast"]["speakers"][3]["experimental"] = True
+        fixture["cast"]["speakers"][4]["experimental"] = True
+        with self.assertRaisesRegex(ValueError, "experimental"):
+            module.validate_block_cast(
+                fixture["cast"], fixture["authored"], module.initial_preferences()
+            )
+
+    def test_large_block_record_use_is_verified_and_idempotent(self) -> None:
+        fixture = self.write_block_fixture(extra_voices=("af_bella", "am_puck", "bf_alice"))
+        for timestamp in ("2026-10-04T00:00:00+00:00", "2026-10-04T00:01:00+00:00"):
+            saved = module.record_use(
+                fixture["cast_path"], fixture["epub"], fixture["m4b"],
+                fixture["sidecar"], fixture["success"], timestamp, self.preferences_path
+            )
+        sealed = json.loads(fixture["cast_path"].read_text())
+        self.assertEqual(fixture["resolved"], sealed["resolvedVoicePlan"])
+        self.assertEqual(sha256(fixture["m4b"]), sealed["verifiedArtifacts"]["audiobookSHA256"])
+        self.assertEqual(1, len(saved["uses"]))
+        self.assertEqual(
+            [{"speakerID": row["speakerID"], "voice": row["voiceID"]}
+             for row in fixture["cast"]["speakers"]], saved["uses"][0]["speakers"]
+        )
+        self.assertEqual(
+            fixture["resolved"],
+            module.validate_completed_cast(sealed, cast_path=fixture["cast_path"])
+        )
+
+    def test_large_block_artifact_tampering_does_not_mutate_cast_or_preferences(self) -> None:
+        fixture = self.write_block_fixture(extra_voices=("af_bella", "am_puck", "bf_alice"))
+        self.preferences_path.parent.mkdir(parents=True)
+        self.preferences_path.write_text(json.dumps(module.initial_preferences()))
+        cast_before = fixture["cast_path"].read_bytes()
+        preferences_before = self.preferences_path.read_bytes()
+        fixture["m4b"].write_bytes(b"changed audio")
+        with self.assertRaisesRegex(ValueError, "M4B"):
+            module.record_use(
+                fixture["cast_path"], fixture["epub"], fixture["m4b"],
+                fixture["sidecar"], fixture["success"], "2026-10-04T00:00:00+00:00",
+                self.preferences_path
+            )
+        self.assertEqual(cast_before, fixture["cast_path"].read_bytes())
+        self.assertEqual(preferences_before, self.preferences_path.read_bytes())
+
     def test_block_cast_requires_the_exact_local_envelope_and_matching_plan(self) -> None:
         fixture = self.write_block_fixture()
         cast = fixture["cast"]
@@ -445,7 +537,7 @@ class FictionVoicePreferencesTests(unittest.TestCase):
         cases.append(("duplicate role", duplicate_role, "role"))
         too_few = copy.deepcopy(cast)
         too_few["speakers"][2]["voiceID"] = "bf_emma"
-        cases.append(("too few voices", too_few, "three to five"))
+        cases.append(("too few voices", too_few, "at least three"))
         too_many_experiments = copy.deepcopy(cast)
         for row in too_many_experiments["speakers"]:
             row["experimental"] = True

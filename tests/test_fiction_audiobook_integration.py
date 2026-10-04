@@ -65,6 +65,58 @@ def tree_file_bytes(directory: Path) -> dict[str, bytes]:
 
 
 class FictionAudiobookIntegrationTests(unittest.TestCase):
+    def test_six_speaker_block_cli_argv0_reaches_the_governed_resolver(self) -> None:
+        harness = echo_narration_runtime.EchoPronunciationPreflightTests("runTest")
+        harness.setUp()
+        self.addCleanup(harness.doCleanups)
+        harness.use_run_lane("fiction-audiobooks")
+        epub = harness.run_root / "dist" / "fixture.epub"
+        narration = harness.run_root / "_production" / "narration"
+        narration.mkdir(parents=True)
+        authored = narration / "echo-voice-plan.json"
+        voices = ("am_michael", "bf_emma", "bm_george", "af_bella", "am_puck", "bf_alice")
+        speakers = [
+            {"speakerID": f"speaker-{i}", "role": f"Role {i}", "voiceID": voice,
+             "experimental": False}
+            for i, voice in enumerate(voices)
+        ]
+        write_json(authored, {
+            "schemaVersion": 1, "source": {"epubSHA256": sha256(epub)},
+            "defaultSpeakerID": "speaker-0",
+            "speakers": [{"id": r["speakerID"], "voiceID": r["voiceID"]} for r in speakers],
+            "assignments": [{"speakerID": "speaker-1", "blocks": ["s2-b3"]}],
+        })
+        cast = narration / "voice-cast.json"
+        write_json(cast, {
+            "schemaVersion": 2, "slug": "fixture", "narrationMode": "block",
+            "sourceEPUBSHA256": sha256(epub), "defaultSpeakerID": "speaker-0",
+            "speakers": speakers,
+            "authoredVoicePlan": {"fileName": authored.name, "sha256": sha256(authored)},
+            "resolvedVoicePlan": None, "verifiedArtifacts": None,
+        })
+        preferences = harness.run_root / "preferences.json"
+        write_json(preferences, fiction_voice_preferences.initial_preferences())
+        validated = subprocess.run([
+            sys.executable, str(ROOT / "skills/fiction-audiobook/scripts/fiction_voice_preferences.py"),
+            "validate-cast", "--cast", str(cast), "--voice-plan", str(authored),
+            "--preferences", str(preferences), "--format", "argv0",
+        ], capture_output=True, check=False)
+        self.assertEqual(0, validated.returncode, validated.stderr.decode())
+        self.assertEqual(b"--voice-plan\0" + str(authored).encode() + b"\0", validated.stdout)
+        arguments = [p.decode() for p in validated.stdout.split(b"\0") if p]
+        result = harness.run_narrate(
+            *arguments, environment=dict(
+                harness.environment(), ECHO_RUN_LANE="fiction-audiobook", FAKE_NARRATE_EXIT="2"
+            )
+        )
+        self.assertEqual(2, result.returncode, result.stderr)
+        receipt = next((harness.run_root / "research").glob("echo-render-inputs-*.env"))
+        fields = harness.receipt_fields(receipt)
+        self.assertEqual("block", fields["voice_plan_mode"])
+        canonical = json.loads(Path(fields["voice_plan_canonical_path"]).read_text())
+        self.assertEqual(6, len(canonical["speakers"]))
+        self.assertEqual(list(voices), [r["voiceID"] for r in canonical["speakers"]])
+
     def test_routed_pre_render_authoring_examples_pass_validate_cast(self) -> None:
         """The routed craft reference must be usable without inventing a schema."""
         craft = (

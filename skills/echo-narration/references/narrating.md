@@ -302,8 +302,11 @@ preferences for a semantic role cast.
 
 Set `VOICE_CAST="$RUN_ROOT/_production/narration/voice-cast.json"` and
 `VOICE_PLAN="$RUN_ROOT/_production/narration/echo-voice-plan.json"`. From the
-installed inventory, write the schema-2 cast with three-to-five stable,
-nonblacklisted voices and the exact sibling schema-1 Echo plan. The lead writer
+installed inventory, write the schema-2 cast with at least three stable, supported,
+nonblacklisted voices and the exact sibling schema-1 Echo plan. Three to five is
+the usual ensemble recommendation; larger user-requested casts remain bounded by
+eligible supported resources. Legacy schema-1 chapter casts retain their
+three-to-five limit. The lead writer
 assigns every block intentionally. Local validation checks the cast and
 preferences; it does not infer dialogue or decide which blocks exist:
 

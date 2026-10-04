@@ -56,7 +56,9 @@ the assigned voices. Pending renderer support is not completed integration.
       `VOICE_CAST="$RUN_ROOT/_production/narration/voice-cast.json"`, and
       `VOICE_PLAN="$RUN_ROOT/_production/narration/echo-voice-plan.json"`.
       Write schema-2 `voice-cast.json` and the exact sibling authored Echo plan
-      from the inventory with three-to-five stable, nonblacklisted voices. The
+      from the inventory with at least three stable, supported, nonblacklisted
+      voices. Three to five is the usual ensemble recommendation; a larger
+      user-requested character cast is supported within eligible resources. The
       lead writer assigns every intended speaker. A locally blacklisted voice is
       recast before Echo resolution; unavailable resources fail closed.
    5. Validate the cast and local preferences, then require installed Echo

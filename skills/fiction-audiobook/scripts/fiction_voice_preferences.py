@@ -1000,8 +1000,8 @@ def _validate_block_cast_contract(
             experimental_rows.append(data)
     if default_speaker not in speaker_ids:
         raise ValueError("block cast default speaker must match a speakerID")
-    if not 3 <= len(voices) <= 5:
-        raise ValueError("block cast requires three to five distinct voices")
+    if len(voices) < 3:
+        raise ValueError("block cast requires at least three distinct supported voices")
     if len(experimental_rows) > 2:
         raise ValueError("block cast allows at most two experimental speakers")
     _authored_block_plan(cast, voice_plan_path, content=authored_plan_content)
