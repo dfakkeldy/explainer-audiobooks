@@ -2771,6 +2771,34 @@ class FictionBlockPublicPackageVerifierTests(unittest.TestCase):
         with fixture.probes():
             self.verify()
 
+    def test_accepts_a_completed_six_speaker_cast_without_widening_public_eligibility(self) -> None:
+        fixture = self.fixture
+        cast = json.loads(fixture.voice_cast.read_text())
+        plan = json.loads(self.authored_plan.read_text())
+        for index, voice in enumerate(("af_bella", "am_puck", "bf_alice"), start=1):
+            cast["speakers"].append({"speakerID": f"extra-{index}", "role": f"Extra {index}",
+                                     "voiceID": voice, "experimental": False})
+            plan["speakers"].append({"id": f"extra-{index}", "voiceID": voice})
+        self.authored_plan.write_text(json.dumps(plan, sort_keys=True, indent=2) + "\n")
+        old_canonical_sha = fixture.digest(self.canonical_plan)
+        self.canonical_plan.write_bytes(self.authored_plan.read_bytes())
+        canonical_sha = fixture.digest(self.canonical_plan)
+        fixture.echo_input_receipt.write_text(
+            fixture.echo_input_receipt.read_text().replace(old_canonical_sha, canonical_sha)
+        )
+        success = json.loads(fixture.echo_success_receipt.read_text())
+        success["voicePlanCanonicalSHA256"] = canonical_sha
+        success["inputReceiptSHA256"] = fixture.digest(fixture.echo_input_receipt)
+        fixture.echo_success_receipt.write_text(json.dumps(success, sort_keys=True) + "\n")
+        cast["authoredVoicePlan"]["sha256"] = fixture.digest(self.authored_plan)
+        fixture.voice_cast.write_text(json.dumps(cast, sort_keys=True) + "\n")
+        self.rebind_private_evidence()
+        with fixture.probes():
+            self.verify()
+        fixture.receipt["publicGate"]["originalFiction"] = False
+        fixture.write_publication_receipt()
+        self.assert_rejected("original fiction|originalFiction")
+
     def test_accepts_one_relocated_block_evidence_sibling_set(self) -> None:
         fixture = self.fixture
         relocated = fixture.private_dir.parent / "relocated-block-evidence"

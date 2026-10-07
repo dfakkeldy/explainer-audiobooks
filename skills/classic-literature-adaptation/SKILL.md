@@ -184,9 +184,24 @@ requires the M4B, matching alignment sidecar, EPUB, portrait and square covers,
 and private iCloud delivery. Do not stop at an adapted manuscript or local EPUB.
 Do not apply original-story invention or length targets to an existing classic.
 For a cast, freeze the EPUB first, export the actual renderer block inventory, and
-map roles to those blocks. Preserve explicit speaker identities even when voices
-are doubled. Check current voice preferences and supported limits; do not assume
-one unique voice per character. Keep original-author metadata through the audio
+map roles to those blocks. Dan's classic-audiobook preference is one distinct,
+stable voice for every speaking character, including minor characters; no doubling
+between characters by default. If Dan explicitly permits voice reuse because
+resources are limited, document the exact shared character groups and rationale,
+prioritize distinct major roles, and keep each assignment stable. Preserve separate
+character identities and clear audible attribution; permission to share a male
+voice does not permit gender mismatches or unapproved female-voice reuse.
+Match gender as established by the source. For unspecified
+or ambiguous gender, record an explicit casting choice instead of guessing from a
+name, disguise or costume. Keep performer and performed-role identities clear.
+Check blacklists, supported resources and auditions before committing the cast.
+Schema-2 block casts support larger casts within eligible resources, while the
+legacy schema-1 chapter cast keeps its three-to-five limit. Preserve every
+character identity if resources are insufficient; apply only documented user
+exceptions and report any remaining gap instead of
+merging roles, changing a character's gender or bypassing validation. Only a later
+explicit user instruction may change that casting brief. Keep original-author
+metadata through the audio
 export. Create original, coordinated portrait and square cover art for every
 audiobook edition; preserve accepted art on redos unless changes are authorized.
 
