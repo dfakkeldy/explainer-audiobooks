@@ -44,6 +44,8 @@ review is still underway.**
 - Runtime: 1:56:40 (7000.619 seconds)
 - Narrator: Echo/Kokoro `am_michael`
 - Figures: none
+- Read-along sidecar: `the-case-against-me.alignment.json`, 320 anchors
+  across 9 chapters, 173 with verified word timings
 - Cover: Candidate 1, **Ninety-Seven Percent**,
   selected `delegated-editorial-choice`; vector art, because no
   image-generation tool was available and Dan approved the SVG fallback
@@ -59,6 +61,7 @@ review is still underway.**
 - Echo render version: 15
 - EPUB SHA-256: `5f5343a34c54fe0f0a5f153bba339f9ea7973466e478d9164dac5ec768dc29e6`
 - M4B SHA-256: `e7420e2aa9fc234293ad4ecc15d0b012ea91342d4fc93a9b44b21ebefd4e53b7`
+- Alignment SHA-256: `6842c2a010b1fd11be1bf13bd04b67bbc3cb293cbed7fdf17c0e3d0473469ad2`
 - Governed run ID: `5f5343a34c54-18b18a253110-7dc8c5f635f5-847e0bc69123-113cf324171c93e8675556aa1d0bc19013b6e80f-am_michael`
 - Governed attempt ID: `9da37e4e9ae078f02cf8a352bf85272205dc358f5eab7811a111bd7df71e3bae`
 - Current-attempt receipt: `echo-render-current-attempt.json`
