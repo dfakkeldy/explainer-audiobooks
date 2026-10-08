@@ -9,13 +9,13 @@ This plan is for a later re-render with Echo's post-#600 EPUB pronunciation cont
 - Decisions below were drafted by Claude Code with model `claude-opus-5-5`.
 - Every inventory hit from a whole-file search of the heteronym and mandatory-word list is one occurrence decision (356). Quotes are copied from that search window.
 - Verification on every decision: IPA drafted from dictionary knowledge; not listening-verified.
-- No EPUB annotations were embedded. Open name questions and the lack of listening checks mean this plan must not be baked into a candidate EPUB yet.
+- No EPUB annotations were embedded. The one open name (Dehaene) was resolved on 2026-10-08 under the author's delegation. Nothing here is listening-verified, so targeted listening checks are still required after embedding.
 
 ## IPA conventions
 
 Standard IPA, no slash or bracket delimiters, no syllable dots, no syllabic-consonant marks, no tone marks. Primary and secondary stress marks are used. Accent is en-US General American, rhotic ɹ. Present or base `read` is ɹiːd. Past and past participle `read` is ɹɛd. Noun `content` is ˈkɑntɛnt. Satisfied `content` is kənˈtɛnt. Noun `record` is ˈɹɛkɚd. Verb `record` is ɹəˈkɔɹd. `content`, `record`, and `read` stay occurrence-specific and are not lexicon entries.
 
-Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract rejects syllabic-consonant diacritics; confirm ɝ against the pinned alphabet before embedding. The other book's plan spells the same vowel as ɜɹ.
+The r-colored vowel in `learned` is spelled ɜɹ (lɜɹnd, erudite ˈlɜɹnɪd). Checked against the pinned Echo contract `epub-pronunciation-authoring.md` at 0198f39b: `ɜ` and `ɹ` are directly supported, while `ɝ` is accepted only by being rewritten to `ɜɹ`. This plan's earlier ɝ spellings (lɝnd, ˈlɝnɪd) were changed to ɜɹ on 2026-10-08 so all three re-render plans match.
 
 ## Occurrence decisions
 
@@ -55,9 +55,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Those durable learned settings are called parameters.`
 - Occurrence: 1 of 1 (`learned` on line 35)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies settings. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies settings. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -69,9 +69,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `A single learned number does far less than that.`
 - Occurrence: 1 of 1 (`learned` on line 37)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies number. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies number. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -111,9 +111,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Parameters are the learned settings`
 - Occurrence: 1 of 1 (`learned` on line 47)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies settings. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies settings. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -195,9 +195,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `temporary activation, and learned parameters remain different mechanisms`
 - Occurrence: 1 of 1 (`learned` on line 63)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -209,9 +209,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `distributed across its learned parameters`
 - Occurrence: 1 of 1 (`learned` on line 67)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -237,9 +237,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `the computation that adapted learned structure`
 - Occurrence: 1 of 1 (`learned` on line 75)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies structure. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies structure. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -251,9 +251,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `And a learned number can shape a moment`
 - Occurrence: 1 of 1 (`learned` on line 83)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies number. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies number. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -265,9 +265,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `performs several learned transformations`
 - Occurrence: 1 of 1 (`learned` on line 91)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies transformations. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies transformations. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -279,9 +279,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `many temporary values, and many learned transformations`
 - Occurrence: 1 of 1 (`learned` on line 97)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies transformations. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies transformations. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -293,9 +293,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `The terrain is the learned structure.`
 - Occurrence: 1 of 1 (`learned` on line 99)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies structure. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies structure. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -377,9 +377,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `The specialists are learned mathematical transformations`
 - Occurrence: 1 of 1 (`learned` on line 117)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies mathematical transformations; specialists here is the analogy's word for transformations acquired in training, not a claim about scholarship. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies mathematical transformations; specialists here is the analogy's word for transformations acquired in training, not a claim about scholarship. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -433,9 +433,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Learned parameters transform it through layers.`
 - Occurrence: 1 of 1 (`Learned` on line 125)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: capitalized at the start of the sentence; modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: capitalized at the start of the sentence; modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -475,9 +475,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `A vast number of learned settings participated`
 - Occurrence: 1 of 1 (`learned` on line 143)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies settings. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies settings. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -517,9 +517,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `The result is a workable learned landscape`
 - Occurrence: 1 of 1 (`learned` on line 153)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies landscape. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies landscape. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -545,9 +545,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `repeatedly pass through learned attention and transformation machinery`
 - Occurrence: 1 of 1 (`learned` on line 159)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies attention and transformation machinery. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies attention and transformation machinery. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -573,9 +573,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `if the learned settings remain unchanged`
 - Occurrence: 1 of 1 (`learned` on line 163)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies settings. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies settings. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -601,9 +601,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `update learned components more continuously`
 - Occurrence: 1 of 1 (`learned` on line 165)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies components. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies components. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -615,9 +615,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `“It learned me” is emotionally clear`
 - Occurrence: 1 of 1 (`learned` on line 167)
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: simple past in a quoted phrase, with subject It. Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: simple past in a quoted phrase, with subject It. Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -643,9 +643,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `not a sufficient picture of the whole learned system`
 - Occurrence: 1 of 1 (`learned` on line 171)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies system. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies system. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -685,9 +685,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Whatever meaning the model learned would have to live`
 - Occurrence: 1 of 1 (`learned` on line 175)
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: simple past in a relative clause with subject the model. Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: simple past in a relative clause with subject the model. Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -713,9 +713,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `says a model has learned something new`
 - Occurrence: 1 of 1 (`learned` on line 177)
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: present perfect participle after has. Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: present perfect participle after has. Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -727,9 +727,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `the learned parameters may be untouched`
 - Occurrence: 1 of 1 (`learned` on line 179)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -825,9 +825,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `the output of one learned transformation becomes input`
 - Occurrence: 1 of 1 (`learned` on line 197)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies transformation. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies transformation. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -839,9 +839,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `If researchers change one learned number`
 - Occurrence: 1 of 1 (`learned` on line 199)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies number. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies number. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -853,9 +853,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Its learned components are reused.`
 - Occurrence: 1 of 1 (`learned` on line 201)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies components. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies components. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -867,9 +867,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `draw on several kinds of learned structure at once`
 - Occurrence: 1 of 1 (`learned` on line 205)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies structure. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies structure. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -895,9 +895,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Patterns learned while processing one kind of text`
 - Occurrence: 1 of 2 (`learned` on line 207)
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: past participle after Patterns (patterns that were learned). Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: past participle after Patterns (patterns that were learned). Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -909,9 +909,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `combine with patterns learned elsewhere`
 - Occurrence: 2 of 2 (`learned` on line 207)
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: past participle after patterns (patterns that were learned). Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: past participle after patterns (patterns that were learned). Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1007,9 +1007,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `might be a socially learned performance`
 - Occurrence: 1 of 1 (`learned` on line 227)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies performance, with socially before it. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies performance, with socially before it. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1035,9 +1035,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `a pattern of values learned in a way that makes it useful`
 - Occurrence: 1 of 1 (`learned` on line 243)
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: past participle after values (values that were learned). Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: past participle after values (values that were learned). Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1063,9 +1063,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `what the learned system has found useful`
 - Occurrence: 1 of 1 (`learned` on line 251)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies system. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies system. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1077,9 +1077,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `representational space is learned jointly with the machinery`
 - Occurrence: 1 of 1 (`learned` on line 257)
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: passive past participle after is. Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: passive past participle after is. Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1161,9 +1161,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Parameters are the durable settings learned together.`
 - Occurrence: 1 of 1 (`learned` on line 271)
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: past participle after settings (settings that were learned). Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: past participle after settings (settings that were learned). Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1189,9 +1189,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `A feature's existence depends on learned parameters.`
 - Occurrence: 1 of 1 (`learned` on line 273)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1231,9 +1231,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `learned social regularities`
 - Occurrence: 1 of 1 (`learned` on line 277)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies social regularities. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies social regularities. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1259,9 +1259,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `emerge from many learned relationships activated together`
 - Occurrence: 1 of 1 (`learned` on line 283)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies relationships. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies relationships. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1301,9 +1301,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `But learned neural features need not be as clean`
 - Occurrence: 1 of 1 (`learned` on line 301)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies neural features. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies neural features. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1315,9 +1315,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `only a limited subset of its learned entries should be active`
 - Occurrence: 1 of 1 (`learned` on line 309)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies entries. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies entries. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1399,9 +1399,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `A learned model's features were not necessarily assembled`
 - Occurrence: 1 of 1 (`learned` on line 321)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies model (a trained model). Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies model (a trained model). Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1427,9 +1427,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `a durable network of learned settings`
 - Occurrence: 1 of 1 (`learned` on line 327)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies settings. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies settings. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1483,9 +1483,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `It carries learned relationships from training`
 - Occurrence: 1 of 1 (`learned` on line 345)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies relationships. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies relationships. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1497,9 +1497,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Learned comparisons determine which positions should influence this one`
 - Occurrence: 1 of 1 (`Learned` on line 351)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies comparisons. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies comparisons. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1525,9 +1525,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `The same learned machinery produces different patterns`
 - Occurrence: 1 of 1 (`learned` on line 357)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies machinery. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies machinery. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1567,9 +1567,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `It applies learned transformations to what attention`
 - Occurrence: 1 of 1 (`learned` on line 361)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies transformations. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies transformations. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1609,9 +1609,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `They perform learned mathematical operations`
 - Occurrence: 1 of 1 (`learned` on line 371)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies mathematical operations. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies mathematical operations. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1679,9 +1679,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `When context retrieval, learned association, or intermediate inference goes wrong`
 - Occurrence: 1 of 1 (`learned` on line 393)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies association. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies association. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -1735,9 +1735,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Tokens that would break grammar, topic, tone, or learned expectations`
 - Occurrence: 1 of 1 (`learned` on line 403)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies expectations. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies expectations. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -2043,9 +2043,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `The learned parameters typically remain fixed during inference`
 - Occurrence: 1 of 1 (`learned` on line 473)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -2155,9 +2155,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `in learned parameters, or in an external memory layer`
 - Occurrence: 1 of 1 (`learned` on line 489)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -2351,9 +2351,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `perhaps the learned parameters have changed`
 - Occurrence: 1 of 1 (`learned` on line 529)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -2589,9 +2589,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `the model's own learned output system`
 - Occurrence: 1 of 2 (`learned` on line 645)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies output system. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies output system. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -2603,9 +2603,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `The vocabulary was learned for text generation`
 - Occurrence: 2 of 2 (`learned` on line 645)
 - Intended sense/tense: Past participle of the verb learn, in a passive (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: passive after was, contrasted with designed. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: this is a passive verb form, not a description of scholarship.
+- Evidence: Context: passive after was, contrasted with designed. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: this is a passive verb form, not a description of scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -2799,9 +2799,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Its learned network implemented a function`
 - Occurrence: 1 of 1 (`learned` on line 739)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies network. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies network. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -2855,9 +2855,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `a mixture of learned patterns`
 - Occurrence: 1 of 1 (`learned` on line 759)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies patterns. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies patterns. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -3317,9 +3317,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `The model follows learned and prompted procedures`
 - Occurrence: 1 of 1 (`learned` on line 971)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies procedures, paired with prompted. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies procedures, paired with prompted. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -3471,9 +3471,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `and learned personal significance`
 - Occurrence: 1 of 1 (`learned` on line 1007)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies personal significance, in a list with emotion, hunger, fatigue, pain. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies personal significance, in a list with emotion, hunger, fatigue, pain. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -3541,9 +3541,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `might be a learned performance`
 - Occurrence: 1 of 1 (`learned` on line 1041)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies performance, contrasted with a clean measurement. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies performance, contrasted with a clean measurement. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -3611,9 +3611,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `A learned persona can organize behavior`
 - Occurrence: 1 of 2 (`learned` on line 1055)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies persona. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies persona. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -3639,9 +3639,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `other learned tendencies`
 - Occurrence: 2 of 2 (`learned` on line 1055)
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies tendencies. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies tendencies. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -3863,9 +3863,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `a model that learned the desired behavior generally`
 - Occurrence: 275 (inventory heading 275); match 1 of 1 for `learned` on line 1107
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: simple past in a relative clause with subject that (a model), with the object the desired behavior. Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: simple past in a relative clause with subject that (a model), with the object the desired behavior. Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -3891,9 +3891,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `without erasing every learned norm`
 - Occurrence: 277 (inventory heading 277); match 1 of 1 for `learned` on line 1117
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies norm. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies norm. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -4059,9 +4059,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `arrive with broad learned capability`
 - Occurrence: 289 (inventory heading 289); match 1 of 1 for `learned` on line 1179
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies capability. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies capability. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -4087,9 +4087,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `belong to learned parameters reused across many separate calls`
 - Occurrence: 291 (inventory heading 291); match 1 of 1 for `learned` on line 1181
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -4115,9 +4115,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `learned parameters cross because the same trained model is loaded`
 - Occurrence: 293 (inventory heading 293); match 1 of 1 for `learned` on line 1189
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -4745,9 +4745,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `a persistent appraisal, a learned objective`
 - Occurrence: 338 (inventory heading 338); match 1 of 1 for `learned` on line 1469
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies objective. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: modifies objective. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -4871,9 +4871,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `Learned parameters shaped a temporary computation over context`
 - Occurrence: 347 (inventory heading 347); match 1 of 1 for `Learned` on line 1519
 - Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: capitalized at the start of the sentence; modifies parameters. Dictionary: the participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
+- Evidence: Context: capitalized at the start of the sentence; modifies parameters. Dictionary: the participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite, scholarly) does not fit: the book uses learned for what a model acquired in training, not for scholarship.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -4927,9 +4927,9 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 - Quote: `We can name what the model learned`
 - Occurrence: 351 (inventory heading 351); match 1 of 1 for `learned` on line 1539
 - Intended sense/tense: Verb: past tense or past participle of learn.
-- IPA: lɝnd
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: simple past in a clause with subject the model. Dictionary: past tense and past participle learned is lɝnd. The two-syllable adjective ˈlɝnɪd (erudite) does not fit: here the word is a verb form.
+- Evidence: Context: simple past in a clause with subject the model. Dictionary: past tense and past participle learned is lɜɹnd. The two-syllable adjective ˈlɜɹnɪd (erudite) does not fit: here the word is a verb form.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -5006,7 +5006,7 @@ Some decisions use the r-colored vowel ɝ (for example lɝnd). The Echo contract
 
 ## Book-wide lexicon (single pronunciation in this book)
 
-Counts are whole-word matches in the markdown. Scope is book-wide lexicon. Verification is not listening-verified. Do not embed an OPEN entry.
+Counts are whole-word matches in the markdown. Scope is book-wide lexicon. Verification is not listening-verified. No entry is open.
 
 | Grapheme | Count | IPA | Basis | Status |
 |---|---|---|---|---|
@@ -5015,7 +5015,7 @@ Counts are whole-word matches in the markdown. Scope is book-wide lexicon. Verif
 | `Jacobian` | 6 | dʒəˈkoʊbiən | Dictionary: the mathematical adjective, stress on the second syllable. | drafted; not listening-verified |
 | `Severance` | 16 | ˈsɛvəɹəns | Dictionary: the ordinary English word, used here as the show title. | drafted; not listening-verified |
 | `Claude` | 4 | klɔd | Author choice: the model name, same as the English given name. | drafted; not listening-verified |
-| `Dehaene` | 2 | candidate dəˈɛn | Stanislas Dehaene. English renderings vary. Do not embed until confirmed. | OPEN; not listening-verified |
+| `Dehaene` | 2 | dəˈɑn | Stanislas Dehaene, French. French is [dəɑ̃]; the nasal `ɑ̃` needs a combining tilde, which Echo's contract rejects, so the English approximation 'duh-AHN' is used. Same in the other two plans. The `DehaeneandNaccache…` URL in Sources is not a whole-word match. | resolved 2026-10-08; not listening-verified |
 
 No `J-space's` or `Claude's` form is in the manuscript.
 

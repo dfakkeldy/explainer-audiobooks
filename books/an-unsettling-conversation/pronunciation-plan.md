@@ -9,17 +9,20 @@ This plan is for a later re-render with Echo's post-#600 EPUB pronunciation cont
 - Decisions below were drafted by Claude Code with model `claude-opus-5-5`.
 - Every inventory hit from a whole-file search is one occurrence decision (482). Quotes were checked against that search window.
 - Verification on every decision: IPA drafted from dictionary knowledge; not listening-verified.
-- No EPUB annotations were embedded. Open decisions below must be settled before a candidate EPUB is annotated.
+- No EPUB annotations were embedded. The three open occurrence decisions and the two open lexicon names were resolved on 2026-10-08 under the author's delegation (see Resolved decisions); nothing is open.
 
 ## IPA conventions
 
-Standard IPA, no slash or bracket delimiters, no syllable dots, no syllabic-consonant marks, no tone marks. Stress marks are used. Accent is en-US General American, rhotic ɹ. This file spells the r-colored vowel in `learned` as ɜɹ (lɜɹnd), not ɝ. Present or base `read` is ɹiːd. Past and past participle `read` is ɹɛd. Noun `content` is ˈkɑntɛnt. Satisfied `content` is kənˈtɛnt. Noun `record` is ˈɹɛkɚd. Verb `record` is ɹəˈkɔɹd. Those three words are occurrence-specific, not lexicon entries.
+Standard IPA, no slash or bracket delimiters, no syllable dots, no syllabic-consonant marks, no tone marks. Stress marks are used. Accent is en-US General American, rhotic ɹ. This file spells the r-colored vowel in `learned` as ɜɹ (lɜɹnd), not ɝ. Checked against the pinned Echo contract `epub-pronunciation-authoring.md` at 0198f39b: `ɜ` and `ɹ` are directly supported, and `ɝ` is accepted only by being rewritten to `ɜɹ`, so all three re-render plans now use lɜɹnd. Present or base `read` is ɹiːd. Past and past participle `read` is ɹɛd. Noun `content` is ˈkɑntɛnt. Satisfied `content` is kənˈtɛnt. Noun `record` is ˈɹɛkɚd. Verb `record` is ɹəˈkɔɹd. Those three words are occurrence-specific, not lexicon entries.
 
-## Open decisions
+## Resolved decisions (formerly open)
 
-- Inventory #71, `read`, line 155, "both players read the same score". Leading candidate ɹiːd (present). Past ɹɛd is still grammatical.
-- Inventory #418, `learned`, line 1673, "recruits learned philosophical language". Leading candidate lɜɹnd. The two-syllable erudite reading ˈlɜɹnɪd is also plausible.
-- Inventory #438, `learned`, line 1823, "can reflect learned philosophical discourse". Same open choice.
+Resolved 2026-10-08; the author delegated these calls.
+
+- Inventory #71, `read`, line 155, "both players read the same score": ɹiːd (present). The whole paragraph is a timeless analogy in the present tense ("can be reproduced", "does not appear", "corresponds"), so the players read the score whenever they perform, not on a past occasion.
+- Inventory #418, `learned`, line 1673, "recruits learned philosophical language": lɜɹnd (one syllable, acquired in training). The sentence goes on to "an Assistant role trained to answer such questions", and the next paragraph begins "Training data contain human discussions of … qualia, selfhood", so the language is learned from training data, not erudite.
+- Inventory #438, `learned`, line 1823, "can reflect learned philosophical discourse": lɜɹnd. It sits in a list of model-side sources ("calibrated assistant behavior, internal uncertainty"), parallel with the trained participle "calibrated", and the next paragraph says "A system trained to sound cautious".
+- Lexicon `Dehaene`: dəˈɑn, and `Chalmers`: ˈtʃɑmɚz. Same pronunciations as the other two plans (see the lexicon table).
 
 ## Occurrence decisions
 
@@ -1010,10 +1013,10 @@ Standard IPA, no slash or bracket delimiters, no syllable dots, no syllabic-cons
 - Line: 155
 - Quote: `does not appear in the other merely because both players read the same score`
 - Occurrence: 1 of 1 (`read` on line 155)
-- Intended sense/tense: OPEN. Leading candidate: present tense of read, generic statement (sounds like reed).
+- Intended sense/tense: Present tense of read in a generic, timeless statement (sounds like reed).
 - IPA: ɹiːd
 - Language/accent: en-US General American
-- Evidence: Context: plural subject both players, so there is no -s ending to mark present tense. The main clause does not appear is present tense and the analogy is a general statement, which favors present ɹiːd. Dictionary: present read is ɹiːd; past read is ɹɛd. The past reading ɹɛd (the players read the score earlier) is grammatical and cannot be ruled out from the quote alone. OPEN: leading candidate ɹiːd.
+- Evidence: Context: plural subject both players, so there is no -s ending to mark present tense. The main clause does not appear is present tense and the analogy is a general statement, which favors present ɹiːd. Dictionary: present read is ɹiːd; past read is ɹɛd. The past reading ɹɛd (the players read the score earlier) does not fit: the whole analogy is in the timeless present ("can be reproduced and performed", "does not appear", "corresponds"), and the players read the score as they perform. Resolved 2026-10-08.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -5868,10 +5871,10 @@ Standard IPA, no slash or bracket delimiters, no syllable dots, no syllabic-cons
 - Line: 1673
 - Quote: `recruits learned philosophical language`
 - Occurrence: 1 of 1 (`learned` on line 1673)
-- Intended sense/tense: OPEN. Leading candidate: participial adjective meaning acquired through training (one syllable).
-- IPA: lɜɹnd (leading candidate; OPEN)
+- Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies philosophical language; the same sentence says the prompt calls up an Assistant role trained to answer, which supports acquired in training. Dictionary: the participle learned is lɜɹnd; the adjective learned meaning erudite or scholarly is ˈlɜɹnɪd. The quote cannot decide: learned philosophical language or discourse is also a normal phrase for scholarly philosophical writing. lɜɹnd leads because the book treats model wording as acquired in training, but this needs a listening or author check.
+- Evidence: Context: modifies philosophical language; the same sentence says the prompt calls up an Assistant role trained to answer, which supports acquired in training. Dictionary: the participle learned is lɜɹnd; the adjective learned meaning erudite or scholarly is ˈlɜɹnɪd. The erudite reading ˈlɜɹnɪd does not fit: The next paragraph opens "Training data contain human discussions of uncertainty, qualia, selfhood", naming where that language is learned. Resolved 2026-10-08.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -6148,10 +6151,10 @@ Standard IPA, no slash or bracket delimiters, no syllable dots, no syllabic-cons
 - Line: 1823
 - Quote: `can reflect learned philosophical discourse`
 - Occurrence: 1 of 1 (`learned` on line 1823)
-- Intended sense/tense: OPEN. Leading candidate: participial adjective meaning acquired through training (one syllable).
-- IPA: lɜɹnd (leading candidate; OPEN)
+- Intended sense/tense: Participial adjective meaning acquired through training (one syllable).
+- IPA: lɜɹnd
 - Language/accent: en-US General American
-- Evidence: Context: modifies philosophical discourse, in a list with calibrated assistant behavior and internal uncertainty as possible sources of the model's wording. Dictionary: the participle learned is lɜɹnd; the adjective learned meaning erudite or scholarly is ˈlɜɹnɪd. The quote cannot decide: learned philosophical language or discourse is also a normal phrase for scholarly philosophical writing. lɜɹnd leads because the book treats model wording as acquired in training, but this needs a listening or author check.
+- Evidence: Context: modifies philosophical discourse, in a list with calibrated assistant behavior and internal uncertainty as possible sources of the model's wording. Dictionary: the participle learned is lɜɹnd; the adjective learned meaning erudite or scholarly is ˈlɜɹnɪd. The erudite reading ˈlɜɹnɪd does not fit: The list it sits in names model-side sources ("calibrated assistant behavior, internal uncertainty"), parallel with the trained participle calibrated, and the next paragraph says "A system trained to sound cautious". Resolved 2026-10-08.
 - Scope: this occurrence only
 - Verification: IPA drafted from dictionary knowledge; not listening-verified
 
@@ -6774,7 +6777,7 @@ Standard IPA, no slash or bracket delimiters, no syllable dots, no syllabic-cons
 
 ## Book-wide lexicon (single pronunciation in this book)
 
-Counts are whole-word matches in the markdown. Scope is book-wide lexicon. Not listening-verified. Do not embed an OPEN entry. `content`, `record`, and `read` are not listed here.
+Counts are whole-word matches in the markdown. Scope is book-wide lexicon. Not listening-verified. No entry is open. `content`, `record`, and `read` are not listed here.
 
 | Grapheme | Count | IPA | Basis | Status |
 |---|---|---|---|---|
@@ -6783,9 +6786,9 @@ Counts are whole-word matches in the markdown. Scope is book-wide lexicon. Not l
 | `Seth` | 4 | sɛθ | Author choice: Anil Seth's surname. | drafted; not listening-verified |
 | `Block` | 4 | blɑk | Author choice: Ned Block, where the grapheme is the name. Recheck before embedding, because the same grapheme is an ordinary English word. | drafted; not listening-verified |
 | `Baars` | 3 | bɑɹz | Author choice: Bernard Baars. | drafted; not listening-verified |
-| `Dehaene` | 3 | candidate dəˈɛn | Stanislas Dehaene. English renderings vary. | OPEN; not listening-verified |
+| `Dehaene` | 3 | dəˈɑn | Stanislas Dehaene, French. French is [dəɑ̃]; the nasal `ɑ̃` needs a combining tilde, which Echo's contract rejects, so the English approximation 'duh-AHN' is used. Same in the other two plans. | resolved 2026-10-08; not listening-verified |
 | `Butlin` | 2 | ˈbʌtlɪn | Author choice: Patrick Butlin, surname like the English place name. Confirm if this book's Butlin is that researcher. | drafted; not listening-verified |
-| `Chalmers` | 1 | candidate ˈtʃælmɚz | David Chalmers. ˈtʃɑmɚz is also heard. | OPEN; not listening-verified |
+| `Chalmers` | 1 | ˈtʃɑmɚz | David Chalmers. Silent l, 'CHAH-merz' (Wikipedia's article on him gives /ˈtʃɑːmərz/). Same sound as ˈtʃɑməɹz in the Case Against Me plan; this file writes unstressed r-colored schwa as ɚ, which Echo supports directly. | resolved 2026-10-08; not listening-verified |
 | `Dennett` | 1 | ˈdɛnɪt | Author choice: Daniel Dennett. | drafted; not listening-verified |
 
 ## Coverage note

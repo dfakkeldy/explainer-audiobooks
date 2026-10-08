@@ -9,12 +9,13 @@ This plan follows `skills/echo-narration/references/epub-pronunciation.md`. It r
 - **Quotes:** each quote is an exact substring of that item's inventory context window, and the window comes from the manuscript. Some quotes stop mid-sentence because the window does.
 - **Language/accent for every decision:** en-US General American.
 - **Not done in this step:** no EPUB annotations were embedded. No PLS lexicon was written and no manifest was changed. Nothing was narrated and echo-cli was not run. The frozen `the-case-against-me.epub`, `the-case-against-me.md`, and `the-case-against-me.m4b` were not modified. The existing M4B was rendered without these decisions, so this plan says nothing about how that audio sounds.
-- **Verification:** no decision here is listening-verified. Real-word IPA is drafted from dictionary knowledge in General American and was not checked against a dictionary lookup in this step. Name pronunciations are author choices, and several are marked open below.
+- **Verification:** no decision here is listening-verified. Real-word IPA is drafted from dictionary knowledge in General American and was not checked against a dictionary lookup in this step. Name pronunciations are author choices. Every open item was resolved on 2026-10-08 (see the resolved-decisions note under IPA conventions); none remains open.
 
 ## IPA conventions
 
 - Standard IPA. No slash or bracket delimiters, syllable dots, syllabic-consonant diacritics, or tone marks. Primary stress `ˈ` and secondary stress `ˌ` only.
-- American rhotic `ɹ`. R-coloured vowels are written as vowel plus `ɹ` (`ɜɹ`, `əɹ`, `ɔɹ`, `ɑɹ`) rather than `ɝ`/`ɚ`. This matches the contract's `ˈpɔɹʃə` example. Confirm the choice against the pinned contract alphabet before embedding.
+- American rhotic `ɹ`. R-coloured vowels are written as vowel plus `ɹ` (`ɜɹ`, `əɹ`, `ɔɹ`, `ɑɹ`) rather than `ɝ`/`ɚ`. Checked against the pinned Echo contract `epub-pronunciation-authoring.md` at 0198f39b: `ɜ`, `ə`, `ɹ` (and `ɚ`) are directly supported symbols, and `ɝ` is accepted only by being rewritten to `ɜɹ`. So `ɜɹ` is the form Echo actually feeds Kokoro, and all three re-render plans (this book, J-Space, An Unsettling Conversation) now spell `learned` as lɜɹnd.
+- Resolved 2026-10-08 (author delegated the open calls): #98 `live` is laɪv; lexicon names Chalmers ˈtʃɑməɹz, Dehaene dəˈɑn, Goldstein ˈɡoʊldstaɪn, Ariel ˌɑɹiˈɛl, Sebo ˈsiːboʊ. Dehaene and Chalmers use the same pronunciation in the J-Space and An Unsettling Conversation plans.
 - Long `iː` and `uː` follow the reference's `ɹiːd` example. The LOT vowel is `ɑ` (General American).
 - Inflected forms get their own IPA (for example `ɹiːdz`, `ɹɪˈkɔɹdɪd`, `ˈkɑntɛnts`). None is copied from the base word.
 
@@ -1515,12 +1516,12 @@ This plan follows `skills/echo-narration/references/epub-pronunciation.md`. It r
 - Line: 623
 - Quote: "No more than a couple of dozen concepts live at once."
 - Occurrence: inventory #98
-- Intended sense: **OPEN.** The sentence follows a verbless fragment ('Never more than a tenth of the internal activity.'). It is probably another fragment in which `live` is an adjective meaning 'active at the same time' (laɪv). Read as a full sentence, `live` is the main verb meaning 'reside' (lɪv). The author decides.
-- IPA: OPEN. Leading candidate laɪv (adjective, 'active'); alternative lɪv (verb). Not approved for embedding.
+- Intended sense: postpositive adjective: 'active, in operation at the same moment' (rhymes with 'five'). The sentence is a verbless fragment parallel to the one before it ('Never more than a tenth of the internal activity.'), summarizing Chapter 6's finding at line 407 that the number of concepts 'meaningfully active in that region at any moment is small — on the order of a couple of dozen'. The verb reading lɪv ('reside, exist') does not fit: the point is how many concepts are active at once, not where they dwell.
+- IPA: laɪv
 - Language/accent: en-US General American
-- Evidence: dictionary senses for both candidates: live, adjective, 'active, in operation' (laɪv); live, verb, 'to dwell or exist' (lɪv). The open question is grammatical role, which context alone does not settle.
+- Evidence: dictionary senses for both candidates: live, adjective, 'active, in operation' (laɪv); live, verb, 'to dwell or exist' (lɪv). Resolved from the line 407 source finding ('meaningfully active … at any moment') and the parallel fragment structure.
 - Scope: this occurrence only
-- Verification: IPA drafted from dictionary knowledge; not listening-verified. Decision open; do not embed until the author resolves it.
+- Verification: IPA drafted from dictionary knowledge; not listening-verified. Resolved 2026-10-08 under the author's delegation; cleared for embedding.
 
 ### 99. `read`, line 623
 
@@ -1722,7 +1723,7 @@ This plan follows `skills/echo-narration/references/epub-pronunciation.md`. It r
 
 ## Book-wide lexicon (names and abbreviations)
 
-These names and abbreviations have one pronunciation throughout the book. They are candidates for a PLS lexicon linked from each XHTML document that uses them. Counts are whole-word, case-sensitive `rg` matches in the manuscript. Matching is case-sensitive and whole-word, so each possessive form found is its own grapheme with its own IPA. Evidence for names is author choice, not dictionary evidence. Every entry has scope book-wide lexicon and verification **not listening-verified**. Entries marked **OPEN** have a candidate only and must not be embedded until the author confirms them.
+These names and abbreviations have one pronunciation throughout the book. They are candidates for a PLS lexicon linked from each XHTML document that uses them. Counts are whole-word, case-sensitive `rg` matches in the manuscript. Matching is case-sensitive and whole-word, so each possessive form found is its own grapheme with its own IPA. Evidence for names is author choice, not dictionary evidence. Every entry has scope book-wide lexicon and verification **not listening-verified**. The five entries that were open (Chalmers, Dehaene, Goldstein, Ariel, Sebo) were resolved on 2026-10-08 under the author's delegation; no entry is open.
 
 | Grapheme | Count | IPA | Basis | Scope | Status |
 |---|---|---|---|---|---|
@@ -1732,17 +1733,17 @@ These names and abbreviations have one pronunciation throughout the book. They a
 | `Opus` | 4 | ˈoʊpəs | Author choice; model-family name, same as the English word opus | book-wide lexicon | drafted; not listening-verified |
 | `Seth` | 4 | sɛθ | Author choice; Anil Seth's surname | book-wide lexicon | drafted; not listening-verified |
 | `Seth's` | 1 | sɛθs | Possessive of the entry above | book-wide lexicon | drafted; not listening-verified |
-| `Chalmers` | 4 | candidate ˈtʃælməɹz | David Chalmers. Usage varies between ˈtʃælməɹz and ˈtʃɑməɹz, and his own preference is unconfirmed here | book-wide lexicon | OPEN; not listening-verified |
-| `Dehaene` | 2 | candidate dəˈɛn | Stanislas Dehaene, French. English speakers vary (dəˈɛn, dəˈheɪn), and his own preference is unconfirmed here | book-wide lexicon | OPEN; not listening-verified |
+| `Chalmers` | 4 | ˈtʃɑməɹz | David Chalmers. Silent l, 'CHAH-merz': Wikipedia's article on him gives /ˈtʃɑːmərz/, and Wiktionary gives /ˈtʃɑːməz/ for the Scottish surname (the l only marked the long vowel). General American form, no length mark. Same sound as ˈtʃɑmɚz in the An Unsettling Conversation plan, which writes unstressed r-coloured schwa as `ɚ` (also directly supported) | book-wide lexicon | resolved 2026-10-08; not listening-verified |
+| `Dehaene` | 2 | dəˈɑn | Stanislas Dehaene, French. French is [dəɑ̃]; the nasal vowel `ɑ̃` uses a combining tilde, which Echo's contract rejects, so the English approximation 'duh-AHN' is used. Same pronunciation in the J-Space and An Unsettling Conversation plans | book-wide lexicon | resolved 2026-10-08; not listening-verified |
 | `Baars` | 2 | bɑɹz | Author choice; Bernard Baars, surname said like 'bars' | book-wide lexicon | drafted; not listening-verified |
 | `Tononi` | 1 | toʊˈnoʊni | Author choice; Giulio Tononi, Italian stress on the second syllable | book-wide lexicon | drafted; not listening-verified |
 | `Dennett` | 2 | ˈdɛnɪt | Author choice; Daniel Dennett | book-wide lexicon | drafted; not listening-verified |
 | `Block` | 1 | blɑk | Author choice; Ned Block. The only `Block` in the manuscript is the name (line 79). Recheck if the text changes, because the grapheme would also match the ordinary word `Block` | book-wide lexicon | drafted; not listening-verified |
 | `Block's` | 1 | blɑks | Possessive of the entry above (line 103) | book-wide lexicon | drafted; not listening-verified |
 | `Gazzaniga` | 3 | ˌɡæzəˈniːɡə | Author choice; Michael Gazzaniga | book-wide lexicon | drafted; not listening-verified |
-| `Goldstein` | 1 | candidate ˈɡoʊldstaɪn | Ariel Goldstein. The anglicized American reading is given; the researcher's own preference is unconfirmed here | book-wide lexicon | OPEN; not listening-verified |
-| `Ariel` | 1 | candidate ˌɑɹiˈɛl | Ariel Goldstein. The Hebrew-style ˌɑɹiˈɛl and the English ˈɛɹiəl are both plausible; unconfirmed | book-wide lexicon | OPEN; not listening-verified |
-| `Sebo` | 2 | candidate ˈsiːboʊ | Jeff Sebo. This is the commonly heard 'SEE-boh', but his own preference is unconfirmed here | book-wide lexicon | OPEN; not listening-verified |
+| `Goldstein` | 1 | ˈɡoʊldstaɪn | Ariel Goldstein (Hebrew University). Standard anglicized American reading, appropriate for an English narration | book-wide lexicon | resolved 2026-10-08; not listening-verified |
+| `Ariel` | 1 | ˌɑɹiˈɛl | Ariel Goldstein is an Israeli researcher; the Hebrew given name is 'ah-ree-EL' with final stress. The English ˈɛɹiəl is the Shakespearean/Disney name and does not fit | book-wide lexicon | resolved 2026-10-08; not listening-verified |
+| `Sebo` | 2 | ˈsiːboʊ | Jeff Sebo introduces himself as 'Jeff SEE-bo' (Sentientism podcast, ep. 229) | book-wide lexicon | resolved 2026-10-08; not listening-verified |
 | `Birch` | 2 | bɜɹtʃ | Author choice; Jonathan Birch, same as the tree name | book-wide lexicon | drafted; not listening-verified |
 | `IIT` | 4 | ˌaɪˌaɪˈtiː | Author choice; Integrated Information Theory, spoken as the letters I-I-T | book-wide lexicon | drafted; not listening-verified |
 | `J-space` | 2 | ˈdʒeɪˌspeɪs | Author choice; letter J plus 'space'. Check that the contract's whole-word matching handles the hyphenated grapheme | book-wide lexicon | drafted; not listening-verified |
@@ -1763,7 +1764,7 @@ The inventory is a whole-file search of the manuscript, and this plan treats it 
 - Chapter 8 - Who Is Paying for the Question (heading at line 519): 17 decisions, inventory #79 to #95
 - Chapter 9 - What Survived (heading at line 597): 16 decisions, inventory #96 to #111
 
-All 111 inventory items have a decision. 110 are resolved and 1 is open (#98, `live`). The lexicon adds 20 graphemes, 5 of them open (Chalmers, Dehaene, Goldstein, Ariel, Sebo). None of the chapter headings contains an inventory item.
+All 111 inventory items have a decision, and all 111 are resolved (#98 `live` was settled on 2026-10-08 as laɪv). The lexicon adds 20 graphemes; the 5 that were open (Chalmers, Dehaene, Goldstein, Ariel, Sebo) were resolved on the same date. None of the chapter headings contains an inventory item.
 
 Ordinary unambiguous words were deliberately left unannotated. The reference says to keep normal handling for them, because guessed IPA on every sentence adds errors and interferes with normalization.
 
