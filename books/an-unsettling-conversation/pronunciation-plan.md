@@ -9,7 +9,7 @@ This plan is for a later re-render with Echo's post-#600 EPUB pronunciation cont
 - Decisions below were drafted by Claude Code with model `claude-opus-5-5`.
 - Every inventory hit from a whole-file search is one occurrence decision (482). Quotes were checked against that search window.
 - Verification on every decision: IPA drafted from dictionary knowledge; not listening-verified.
-- No EPUB annotations were embedded. The three open occurrence decisions and the two open lexicon names were resolved on 2026-10-08 under the author's delegation (see Resolved decisions); nothing is open.
+- Embedded 2026-10-08 into the separate candidate `an-unsettling-conversation.pronunciation-candidate.epub` (see Embedding record at the end); the frozen EPUB is unchanged. The three open occurrence decisions and the two open lexicon names were resolved on 2026-10-08 under the author's delegation (see Resolved decisions); nothing is open.
 
 ## IPA conventions
 
@@ -6810,4 +6810,24 @@ The whole markdown was searched. Ordinary unambiguous words were left unannotate
 - Return to the Conversation
 - Sources and Evidence Boundaries
 
-No EPUB annotations were embedded in this step.
+The decisions were embedded on 2026-10-08 into the separate candidate `an-unsettling-conversation.pronunciation-candidate.epub`.
+
+## Embedding record (2026-10-08)
+
+- **Candidate:** `books/an-unsettling-conversation/an-unsettling-conversation.pronunciation-candidate.epub`, SHA-256 `3754eb72c7489df08d02781c75dc5352dfa446f844742e79f3e9c477fb9241c5`. It is a candidate, not a frozen package: hash it again if anything changes before the render.
+- **Draft it was built from:** the builder output already in the repo, `an-unsettling-conversation.epub` (SHA-256 `d5a4eb839ce126f8a746b9795dc1adb2d51c1101474486b5a0d9a9fb0a26f192`), copied and annotated as a separate file. `build_book.py` was not re-run, because the chapter sources it takes are not in the repo. The frozen EPUB, Markdown, and M4B were not modified.
+- **Method:** namespace-aware XML editing (lxml) of the packaged XHTML. Each decision was bound from its manuscript line to the matching EPUB paragraph, then to its quoted context, then to the word occurrence. Repeated words on one line were bound by the plan's occurrence index or inventory order. A missing or ambiguous match stops the build; there were none. No spelling-wide string replacement was used.
+- **Markup:** each annotated document's root gets `xmlns:ssml="http://www.w3.org/2001/10/synthesis"` and `ssml:alphabet="ipa"`. The existing `lang="en"` was kept and no `xml:lang` was added, so the two can't disagree. Each document with a lexicon match gets `<link rel="pronunciation" type="application/pls+xml" hreflang="en-US" href="names.pls"/>` in its head. `names.pls` sits beside the OPF and is declared in the manifest as `application/pls+xml`, not in the spine.
+- **Inline annotations:** 482 `ssml:ph` spans: 482 plan decisions, with no other spans.
+- **Lexicon:** `names.pls` holds 12 lexemes and 12 graphemes. It is linked from 11 documents (chap00.xhtml, chap01.xhtml, chap02.xhtml, chap03.xhtml, chap06.xhtml, chap07.xhtml, chap08.xhtml, chap09.xhtml, chap11.xhtml, chap12.xhtml, appendix.xhtml). Grapheme matches outside inline spans: 68 in narrated chapters and 18 in the Sources appendix.
+- **Lexicon variants added at embedding:** Echo's lexicon matching is case-sensitive, and the apostrophe counts as part of the word, so these forms in the EPUB would not match the plan's table entries. Each one uses the approved base pronunciation:
+  - `Claude's` klɔdz (from `Claude`)
+  - `Anthropic's` ænˈθɹɑpɪks (from `Anthropic`)
+  - `Seth's` sɛθs (from `Seth`)
+- **Span adjustments at embedding:**
+  - #430: span `subject's`, IPA ˈsʌbdʒɪkts (plan entry ˈsʌbdʒɪkt). Reason: the manuscript form is the possessive `subject's`. Echo treats the apostrophe as part of the word, so `subject` alone cannot be annotated; the span covers `subject's` with the possessive IPA the plan's own evidence gives.
+  - #473: span `indirect-object`, IPA ˌɪndəˈɹɛkt ˈɑbdʒɛkt (plan entry ˈɑbdʒɛkt). Reason: `object` sits inside `indirect-object`; annotated as the whole compound.
+- **Normalization bypass:** Echo skips its text normalizer for any block holding an inline or lexicon instruction. The ported normalizer rules (abbreviations, ordinals, currency, times, dates, context years, percentages, thousands separators, Roman numerals, spaced dashes) found nothing in the narrated annotated blocks that they would have rewritten.
+- **Sources appendix:** the appendix carries plan decisions and lexicon matches, and those were embedded too. Its blocks were left out of the normalization check because the appendix is `linear="no"` and is not narrated: the July render's alignment sidecar has no appendix blocks. If a future render narrates the appendix, its URLs and IDs will skip normalization in the annotated blocks.
+- **Checks run on the candidate:** the extracted display text of every spine document is identical to the frozen EPUB. Only the OPF and the annotated XHTML files changed, and `names.pls` is the only file added. `mimetype` is still first and stored, the OPF metadata and spine are unchanged, and the ZIP CRCs pass. A port of Echo's import rules (`Shared/EPUBPronunciation.swift`) passes: the IPA symbol set and the 300-character limit, the alphabet inherited from the root, whole-word boundaries, no reserved `[]()/`, no nesting, no instructions on head, code, or captions, links in the head and declared in the manifest, and the PLS shape (one phoneme per lexeme, no conflicting graphemes, English `xml:lang`). Every plan decision binds to exactly one candidate span with the planned IPA, or the adjusted IPA listed above.
+- **Not done yet:** Echo hasn't imported the candidate, so the real Echo inventory hasn't been exported, and the installed renderer's `epub.*.ipa-v1` support hasn't been confirmed. Both need the Mac. epubcheck was not run. Nothing was rendered, so there are no `epubInline`/`epubLexicon` audit decisions to reconcile yet, and the voice plan, alignment, and receipts still refer to the frozen EPUB's hash. After the render, check the audit against every planned occurrence and listen to targeted samples with the assigned voice.
