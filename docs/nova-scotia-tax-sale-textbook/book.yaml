@@ -1,0 +1,95 @@
+# book.yaml: everything about the book that isn't its text.
+# The text is in src/chapters/*.md and the glossary in src/glossary.yaml.
+# Rebuild with: .venv/bin/python build/build.py
+
+title: Beyond the Tax-Sale Packet
+subtitle: How Nova Scotia Municipal Auctions Really Work
+kicker: Textbook edition
+author: Dan Fakkeldy
+blurb: >-
+  How a Nova Scotia property reaches a municipal tax sale, what each record in a sale packet can and
+  cannot establish, and when a question belongs to a lawyer, surveyor, planner, insurer or other
+  professional.
+date: Facts as of July 22, 2026.
+running_head: Beyond the Tax-Sale Packet    # right side of the running head (left side: the chapter)
+lang: en-CA
+figure_numbers: true                        # "Figure 6.2" before every caption, numbered within its chapter
+
+# The frozen cover art of the 2026 edition (The Packet Lifts), shown whole and uncropped.
+cover_image: src/assets/cover.png
+cover_mode: poster
+cover_ground: "#102638"                     # the cover art's own background colour
+cover_ink: "#F4E9D2"
+cover_accent: "#59C3C3"
+cover_alt: >-
+  Cover of Beyond the Tax-Sale Packet: How Nova Scotia Municipal Auctions Really Work, by Dan Fakkeldy.
+  A paper sale packet curls up from a dark blue coastal map with a parcel outlined in red.
+cover_credit: Cover art The Packet Lifts, from the 2026 edition.
+
+# Print copies of the kept screenshots and illustrations (2560 px PNGs of 3-5 MB each): resized to
+# 1800 px (about 257 dpi at the 7 in column) and stored as high-quality JPEG in out/img/. The files in
+# src/assets/figures/kept/ stay byte-for-byte as kept from the 2026 edition.
+images:
+  max_px: 1800
+  format: jpeg
+  quality: 88
+
+page:
+  size: letter
+
+layout:
+  body: rail
+
+theme:                    # "Harbour ledger" (design/design-brief.md); each colour reads in greyscale
+  ink: "#1d1c1a"
+  ink2: "#4a4843"
+  rule: "#cfcac0"
+  accent: "#1f5560"       # harbour teal
+  accent_tint: "#e6eef0"
+  accent_mid: "#9db8bf"
+  caution: "#a33b28"      # buoy red
+  caution_tint: "#f6e8e3"
+
+fonts:
+  serif: Source Serif 4
+  sans: Atkinson Hyperlegible Next
+  serif_bold: 600
+
+footer:
+  reminders: true
+
+toc_depth: 2
+
+labels:
+  footer: Words on this page
+  source: Where this comes from
+  case: Worked case
+
+checks:
+  not_acronyms: [DDV, SIL, ArcGIS, GeoNOVA, OpenAI, GPT-5, GPT, ME, DP]   # names and document codes, not abbreviations
+  not_acronym_patterns: ["[A-Z]{2,5}-\\d{3}"]                             # evidence-note identifiers such as LAND-003
+
+editions:
+  public:
+    file: beyond-the-tax-sale-packet-textbook.pdf
+    epub_file: beyond-the-tax-sale-packet-textbook.epub
+    cover_line: Textbook edition
+    contents: ["@cover", 00-about.md, "@toc", 00b-cases.md,
+               01-how-a-property-reaches-a-tax-sale.md, 02-reading-the-notice.md,
+               03-certificate-redemption-and-deed.md, 04-building-the-parcel-file.md,
+               05-using-the-map-as-a-research-tool.md, 06-access-and-intended-use.md,
+               07-physical-and-environmental-records.md, 08-title-and-possession.md,
+               09-results-costs-and-the-maximum-bid.md, 10-auction-day-tenders-and-payment.md,
+               11-the-certificate-holder-months.md, 12-after-the-deed.md,
+               13-putting-the-method-together.md,
+               97-answers.md, 98-worksheet.md, 98b-statutes-and-sources.md, 98c-figures.md,
+               "@glossary", 99-sources.md]
+    forbid:               # must not appear anywhere in this edition (regexes); see design/design-brief.md
+      # any eight-digit identifier other than the five the original prints
+      - "\\b(?!50292390\\b|50308311\\b|00542589\\b|15234636\\b|00616672\\b)\\d{8}\\b"
+      - "(?i)brigend"                       # a mine-record name the original never prints
+      - "(?i)11064 highway"                 # a civic address visible only inside a kept screenshot
+      - "(?i)assessed owner:\\s*[A-Z]"      # an owner name after a field label
+      - "(?i)author'?s own project"         # the edition does not describe NS Marks The Spot's ownership
+      - "(?i)soapstone mine road"           # Q10: kept only in the original alt text, never in prose or captions
+      - "(?i)dfakkeldy"                     # the map's source repository; the original never prints it
