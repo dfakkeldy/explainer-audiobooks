@@ -1,0 +1,603 @@
+# Glossary draft: Beyond the Tax-Sale Packet (textbook edition)
+#
+# Format: the engine's glossary format (cs/textbook-pdf/references/authoring.md).
+#   kind: acronym  spelled out in the footer of every page it appears on
+#         term     defined in full where first used on a page, reminded later
+#   short: printed every time;  more: printed the first time ("short: more" if lower case,
+#          "short. More" if capitalised)
+#   match: regexes (case-sensitive unless (?i)); default is the key as a whole word
+#
+# This is a DRAFT (planning phase 1). It becomes src/glossary.yaml in the build phase, after
+# the sample glossary is deleted. Every definition restates the original manuscript
+# (books/beyond-the-tax-sale-packet/beyond-the-tax-sale-packet.md); the comment above each entry
+# gives the line(s) it rests on (md:N). Entries marked "NOT DEFINED IN ORIGINAL" use a minimal
+# definition built only from the original's own statements and are listed in
+# review/open-questions.md (Q14) for Dan's approval.
+#
+# Abbreviations in the original: PID(s), AAN, CBRM, NS, HST, PVSC, PDF, NSPRD, FAQ, DDV.
+# Abbreviations in the original's figures' source strings: MGA, HRMC (they will also appear in
+# the textbook's source notes). Considered and NOT included because the original never uses them:
+# HRM, AMO, NSTDB (visible only inside a screenshot image), GST, CRA, OGL, QGIS, AEP.
+# DDV is part of a company name ("DDV Gold", md:629) that the original never expands: add it to
+# book.yaml checks.not_acronyms rather than inventing an expansion.
+
+# ---------------------------------------------------------------- abbreviations
+
+# md:135-137
+- key: PID
+  kind: acronym
+  match: ['\bPIDs?\b']
+  short: Parcel Identification Number
+  more: identifies a mapped land parcel in Nova Scotia's land-information systems and routes research toward parcel mapping and registry records. It does not certify a boundary, access, use, condition or freedom from competing interests.
+
+# md:131-133
+- key: AAN
+  kind: acronym
+  match: ['\bAANs?\b']
+  short: Assessment Account Number
+  more: identifies the assessment account used for property assessment and municipal taxation. It is not the land itself and proves no boundary, access, ownership quality or permitted use.
+
+# md:655 ("Cape Breton Regional Municipality, or CBRM")
+- key: CBRM
+  kind: acronym
+  short: Cape Breton Regional Municipality
+  more: one of the municipalities whose dated tax-sale instructions and results the book uses as examples; its event rules are not province-wide rules.
+
+# md:211, md:391, md:553 ("NS Marks The Spot", "NS Aerial")
+- key: NS
+  kind: acronym
+  match: ['\bNS(?= (?:Marks|Aerial)\b)']
+  short: Nova Scotia
+  more: as in NS Marks The Spot, the public map used in Chapter 5, and NS Aerial, the Province's aerial imagery service.
+
+# md:1141; expansion NOT GIVEN IN ORIGINAL (standard name of the tax) - see Q14
+- key: HST
+  kind: acronym
+  short: Harmonized Sales Tax
+  more: its treatment of a real-property sale depends on the seller, prior use, property, transaction and purchaser's registration status, so it needs case-specific advice. CBRM's July 2026 event instructions say it applies to vacant land and commercially assessed property; that is an event rule, not a provincial one.
+
+# md:1433 ("Property Valuation Services Corporation")
+- key: PVSC
+  kind: acronym
+  short: Property Valuation Services Corporation
+  more: makes property assessments publicly searchable by civic address or Assessment Account Number. Its values are dated mass-appraisal and taxation records, not current sale prices or condition evidence.
+
+# md:391 ("Nova Scotia Property Records Database, or NSPRD")
+- key: NSPRD
+  kind: acronym
+  short: Nova Scotia Property Records Database
+  more: the provincial service that returns graphical parcel boundaries. Its public views carry a required Province attribution and are screening exhibits, not surveys.
+
+# md:213, md:1209 ("a saved PDF"); expansion NOT GIVEN IN ORIGINAL - see Q14
+- key: PDF
+  kind: acronym
+  short: Portable Document Format
+  more: the file type of municipal sale packets and result sheets; a saved copy records what was published at one time, not the live status of a sale.
+
+# md:1219 ("Its FAQ says..."); expansion NOT GIVEN IN ORIGINAL - see Q14
+- key: FAQ
+  kind: acronym
+  short: frequently asked questions
+  more: a municipality's published question-and-answer page, such as Inverness County's December 2025 tax-sale FAQ.
+
+# Original figures 03, 39, 40 source strings ("MGA ss. ..."); md:65 etc. name the Act in full
+- key: MGA
+  kind: acronym
+  short: Municipal Government Act
+  more: Nova Scotia's municipal statute; its tax-sale provisions govern sales outside Halifax.
+
+# Original figures 39, 40 source strings ("HRMC ss. ..."); md:97 names the Charter in full
+- key: HRMC
+  kind: acronym
+  short: Halifax Regional Municipality Charter
+  more: the statute that gives Halifax its parallel tax-sale framework, in place of the Municipal Government Act's tax-sale division.
+
+# ---------------------------------------------------------------- the process (Chapters 1-3)
+
+# md:61
+- key: tax lien
+  kind: term
+  match: ['\b[Tt]ax liens?\b']
+  short: the municipality's legal claim against a property for unpaid tax
+  more: under Nova Scotia's municipal statutes it ranks ahead of other claims, liens and encumbrances and does not have to be registered to hold that priority.
+
+# md:73
+- key: notice of intent
+  kind: term
+  match: ['\b[Nn]otices? of intent\b']
+  short: a formal warning that the municipality intends to sell the property if the amounts are not paid
+  more: it goes to the owner and people with mortgages, liens or charges, and allows 60 days to pay before the sale.
+
+# md:103
+- key: tax sale
+  kind: term
+  match: ['\b[Tt]ax sales?\b']
+  short: the statutory collection process through which a municipality offers a property after the required steps
+  more: it is not an ordinary listing with a low asking price.
+
+# md:57-75, md:255, md:1247, md:1341 (the treasurer's acts in the original)
+- key: treasurer
+  kind: term
+  match: ['\b[Tt]reasurers?\b']
+  short: the municipal official who runs the tax-sale process
+  more: who calls the properties, may call tenders with council's consent, prepares and registers the certificate of sale, and administers redemption.
+
+# md:125
+- key: lien number
+  kind: term
+  match: ['\b[Ll]ien numbers?\b']
+  short: the municipality's label for an item in one sale
+  more: local to that event; it is not a permanent identity for the land.
+
+# md:127
+- key: assessed owner
+  kind: term
+  match: ['\b[Aa]ssessed[- ]owner\b']
+  short: the name on the tax account
+  more: it does not prove who occupies the property, who has a beneficial interest, or the quality of title. This book never prints one.
+
+# md:153-155; matcher excludes other senses of "assessment" used in the book
+- key: assessment
+  kind: term
+  match: ['(?<![Ee]nvironmental )(?<![Ee]xterior )(?<![Pp]rofessional )(?<![Ss]ite )(?<![Pp]re-purchase )\b[Aa]ssessments?\b']
+  short: the valuation and classification record used to support property taxation
+  more: precise within its taxation job; it is not an inspection, an appraisal for a current sale, a survey, or a safe bid.
+
+# md:1437
+- key: taxable assessed value
+  kind: term
+  match: ['\b[Tt]axable assessed values?\b']
+  short: the assessed value used for tax, which may differ from the assessed value
+  more: including through the Capped Assessment Program. Both are dated taxation records, not current market value.
+
+# md:1437
+- key: Capped Assessment Program
+  kind: term
+  short: a program that can make a property's taxable assessed value differ from its assessed value
+  more: transfer-related eligibility can also change.
+
+# md:189-191
+- key: recovery amount
+  kind: term
+  match: ['\b[Rr]ecovery amounts?\b']
+  short: the amount a municipality publishes for a sale, built around the taxes, interest and sale expenses it seeks to recover
+  more: it is not an appraisal. Another municipality may call it a "minimum bid"; its current notice controls the term.
+
+# md:199-203, md:259
+- key: redemption
+  kind: term
+  match: ['\b[Rr]edemption\b', '\b[Rr]edeem(?:s|ed|able)?\b']
+  short: the statutory route by which an owner or other qualifying interest holder recovers the property after a sale
+  more: normally within six months after the sale, by paying the amount the statute defines. The right does not apply when the taxes were already more than six years in arrears at the time of sale.
+
+# md:199-203
+- key: redemption marker
+  kind: term
+  match: ['\b[Rr]edemption markers?\b']
+  short: a notice field showing which post-sale legal path applies
+  more: redeemable (the six-month branch) or non-redeemable (the branch without that right). It says nothing about possession, condition, access, insurability or title.
+
+# md:321
+- key: immediate deed
+  kind: term
+  match: ['\b[Ii]mmediate[- ]deeds?\b']
+  short: the deed route for the older-arrears category, without the normal six-month redemption period
+  more: '"immediate" describes timing within the redemption system, not readiness, possession or permission.'
+
+# md:255
+- key: certificate of sale
+  kind: term
+  match: ['\b[Cc]ertificates? of sale\b']
+  short: the document the treasurer prepares and registers after full payment for a redeemable property
+  more: it records the purchaser's statutory position; it is not the tax deed.
+
+# md:255, md:261
+- key: certificate holder
+  kind: term
+  match: ['\b[Cc]ertificate[- ]holders?\b']
+  short: the purchaser of a redeemable property during the redemption period
+  more: with more responsibility than a prospective bidder and less finality than a deeded owner.
+
+# md:309; matcher avoids the verb ("may discharge") and "discharged from all encumbrances"
+- key: discharge
+  kind: term
+  match: ['(?<!may )\b[Dd]ischarge\b']
+  short: the document that ends a certificate after full redemption
+  more: the purchaser is repaid under the statute and loses rights in the land.
+
+# md:315-319, md:953
+- key: tax deed
+  kind: term
+  match: ['\b[Tt]ax deeds?\b']
+  short: the municipal deed a purchaser may request after redemption ends or for the older-arrears category
+  more: under the statutes it vests fee-simple title free of encumbrances, subject to the treatment of continuing easements and rights-of-way. It does not certify a boundary, create access, approve development, remove an occupant or supply insurance.
+
+# md:953
+- key: fee simple
+  kind: term
+  match: ['\b[Ff]ee[- ]simple\b']
+  short: the broad form of private ownership ordinarily meant by "owning land"
+  more: it describes the legal interest, not the building's condition or who is inside.
+
+# md:955
+- key: encumbrance
+  kind: term
+  match: ['\b[Ee]ncumbrances?\b']
+  short: a claim, interest, charge or burden that can affect title to land
+
+# NOT DEFINED IN ORIGINAL; built from md:957-959 and md:715 - see Q14
+- key: easement
+  kind: term
+  match: ['\b[Ee]asements?\b']
+  short: a registered relationship by which one piece of land benefits from a right over another
+  more: such as a right-of-way. Under the tax-deed rule, a benefit passes with the land sold and a burden on it continues as the statute specifies.
+
+# ---------------------------------------------------------------- records and research (Chapters 2, 4)
+
+# md:159, md:375-377
+- key: Property Online
+  kind: term
+  short: Nova Scotia's subscription land-record system
+  more: with ownership, parcel-mapping and registry information, searchable by PID, AAN, owner or civic address. This book reproduces none of its screens or documents.
+
+# md:377-379
+- key: parcel register
+  kind: term
+  match: ['\b[Pp]arcel registers?\b']
+  short: the parcel-specific registry record used in a lawyer's title review
+  more: a dated snapshot that can identify documents or registered interests needing interpretation; it does not itself say how they operate.
+
+# md:385
+- key: legal description
+  kind: term
+  match: ['\b[Ll]egal descriptions?\b']
+  short: the conveyancing record's statement of what land an instrument describes
+  more: it may refer to bearings, distances, adjoining lands, plans, lots, roads or shorelines.
+
+# md:395
+- key: title search
+  kind: term
+  match: ['\b[Tt]itle searche?s?\b']
+  short: an examination of the ownership and interest chain
+  more: not a casual lookup of the latest name. The municipality's pre-sale title work identifies people entitled to notice; it is not a purchaser's title opinion.
+
+# md:149-151, md:521
+- key: civic point
+  kind: term
+  match: ['\b[Cc]ivic points?\b']
+  short: the mapped point for a civic address returned by the provincial civic-address service
+  more: finding the parcel polygon that contains it locates a parcel to investigate; it proves nothing about ownership, occupancy, access or permission to enter.
+
+# md:539-541
+- key: Plus Code
+  kind: term
+  match: ['\bPlus Codes?\b']
+  short: a code that encodes a location so it can be shared without a street address
+  more: it identifies a point, not a legal interest, entrance or permission to visit.
+
+# md:389, md:549, md:557 ("graphical parcel service", "graphical boundary information")
+- key: graphical boundary
+  kind: term
+  match: ['\b[Gg]raphical (?:parcel )?(?:boundar(?:y|ies)|outlines?|polygons?|parcels?)\b']
+  short: the parcel shape returned by a public parcel-map service
+  more: a screening exhibit for orientation and questions; it does not locate a legal boundary on the ground.
+
+# md:571; avoid "layer" in other senses in prose (see style guide)
+- key: layer
+  kind: term
+  match: ['\b[Ll]ayers?\b']
+  short: one category of mapped information, from one service
+  more: with its own date, coverage, geometry and purpose. Turn on one at a time and name the source before reading the result.
+
+# md:585
+- key: mapped intersection
+  kind: term
+  match: ['\b[Mm]apped intersections?\b']
+  short: a query result in which a service's geometry crosses or overlaps the parcel polygon
+  more: stronger than "looks close", narrower than proof that the real feature crosses the legal parcel.
+
+# md:593
+- key: annual-exceedance probability
+  kind: term
+  match: ['\b[Aa]nnual-exceedance probabilit(?:y|ies)\b']
+  short: the chance in any year of the event mapped by a particular flood study
+  more: such as one percent or five percent; it is not a flood probability for every point in a parcel.
+
+# md:427-437
+- key: four destinations
+  kind: term
+  match: ['\b[Ff]our destinations\b']
+  short: the four places an unknown can go
+  more: verified (matched to a dated source); professionally verifiable (a named professional can answer it); priceable uncertainty (a documented amount or range can enter the budget); no-go (an essential fact cannot be confirmed in time).
+
+# md:433-435
+- key: priceable uncertainty
+  kind: term
+  match: ['\b[Pp]riceable(?: uncertaint(?:y|ies))?\b']
+  short: an uncertainty narrowed enough to carry a documented amount or bounded range
+  more: priceable does not mean trivial.
+
+# md:437-439
+- key: no-go
+  kind: term
+  match: ['\b[Nn]o-go\b']
+  short: an essential fact that cannot be confirmed before the sale
+  more: '"do not proceed under these conditions". It describes the fit between evidence, deadline and use, not a prediction that the land is bad.'
+
+# ---------------------------------------------------------------- access, use, environment (Chapters 6-7)
+
+# md:715
+- key: right-of-way
+  kind: term
+  match: ['\b[Rr]ights?-of-way\b']
+  short: a right of passage over land
+  more: its source, the lands it benefits and burdens, its route, users, purposes, width and terms all matter.
+
+# md:765
+- key: road frontage
+  kind: term
+  match: ['\b(?:road )?frontage\b']
+  short: a parcel's relationship to a road as defined and required by the applicable rules
+  more: a line touching a road symbol on a map is not a frontage determination.
+
+# md:769
+- key: zoning
+  kind: term
+  match: ['\b[Zz]oning\b(?![- ]confirmation)']
+  short: the system that assigns land-use categories and rules to places
+  more: a permitted use in a zone removes one prohibition; it is not a buildable lot or an approved project.
+
+# md:1429-1431
+- key: zoning-confirmation letter
+  kind: term
+  match: ['\b[Zz]oning[- ]confirmation(?: letters?| response)?\b']
+  short: a municipal letter confirming a parcel's zoning and the applicable provisions identified by planning staff
+  more: as CBRM offers; it is not a permit or a promise that a design will be approved.
+
+# md:1429-1431
+- key: municipal-clearance letter
+  kind: term
+  match: ['\b[Mm]unicipal[- ]clearance(?: letters?)?\b']
+  short: a municipal letter reporting specified outstanding building-code, by-law or fire-code violations in municipal records
+  more: it does not replace an inspection or reveal what was never recorded.
+
+# md:773
+- key: Plan Inverness
+  kind: term
+  short: Inverness County's municipality-wide planning controls
+  more: in effect since September 11, 2025, with planning and permitting services administered by the Eastern District Planning Commission.
+
+# md:823
+- key: contaminated site
+  kind: term
+  match: ['\b[Cc]ontaminated[- ]sites?\b']
+  short: land or water affected by a contaminant in a way that engages environmental assessment, management or remediation questions
+  more: records may flag one; a roadside view cannot diagnose one.
+
+# md:825-827
+- key: Environmental Registry
+  kind: term
+  short: Nova Scotia's registry of environmental records
+  more: a returned item can identify an activity, date or document worth reviewing; an empty search does not show that a site is clean.
+
+# md:837-839
+- key: well log
+  kind: term
+  match: ['\b[Ww]ell[- ]logs?\b']
+  short: the recorded account of a well's construction and drilling details
+  more: depth, materials, casing and reported yield. The map point may be estimated; a log is not proof of a current, working or potable well.
+
+# md:853
+- key: on-site sewage record
+  kind: term
+  match: ['\b[Oo]n-site sewage (?:records?|files?)\b']
+  short: a provincial file about a property's on-site sewage system
+  more: kept for a limited time, so one is unlikely to exist for a property more than seven years old; a missing record proves nothing either way.
+
+# md:889
+- key: hazard map
+  kind: term
+  match: ['\b[Hh]azard maps?\b']
+  short: a screening map of a defined hazard or scenario, using stated data and methods
+  more: it does not mean damage will occur at every coloured place, or that an uncoloured place is safe.
+
+# md:893
+- key: Coastal Hazard Map
+  kind: term
+  short: Nova Scotia's map of current, 2050 and 2100 coastal scenarios
+  more: searchable by community, address or PID. The 2100 worst case combines the highest high tide, a one-in-one-hundred-year storm surge and projected sea-level rise.
+
+# md:903-905
+- key: Abandoned Mine Openings
+  kind: term
+  match: ['\b[Aa]bandoned[- ][Mm]ine[- ][Oo]penings?\b']
+  short: the provincial inventory of known abandoned mine openings
+  more: by its own description incomplete; it excludes surface expressions of subsidence, and in the 2024 version positions on private land may be inaccurate by roughly fifty metres.
+
+# md:609-619
+- key: mineral occurrence
+  kind: term
+  match: ['\b[Mm]ineral[- ]occurrences?\b']
+  short: a recorded occurrence of a mineral at a mapped location
+  more: it does not establish a reserve, mineral rights, economic potential, contamination or danger.
+
+# md:609, md:619; NOT DEFINED IN ORIGINAL (only its map geometry is discussed) - see Q14
+- key: mineral tenure
+  kind: term
+  match: ['\b[Mm]ineral[- ]tenure\b']
+  short: a provincial map layer of recorded mineral rights
+  more: its geometry does not tell a surface owner what can happen without the governing records and law.
+
+# md:627
+- key: vesting order
+  kind: term
+  match: ['\b[Vv]esting orders?\b']
+  short: an order a mineral lessee may seek when it cannot acquire land or an interest needed for a mine or a connected purpose
+  more: once filed, the vested land or interest is deemed expropriated.
+
+# ---------------------------------------------------------------- title, possession, homes (Chapter 8)
+
+# md:995
+- key: vacant possession
+  kind: term
+  match: ['\b[Vv]acant possession\b']
+  short: the state in which a buyer can lawfully take possession without another person remaining entitled to occupy
+  more: it cannot be inferred from a deed, an "immediate deed" label or a paid balance.
+
+# md:1017
+- key: Personal Property Registry
+  kind: term
+  short: Nova Scotia's registry for security interests in personal property
+  more: including mobile and manufactured homes. It is not the land registry.
+
+# md:1019
+- key: land-lease community
+  kind: term
+  match: ['\b[Ll]and-lease communit(?:y|ies)\b']
+  short: a community where manufactured homes sit on land owned by someone else
+  more: the Residential Tenancies framework applies, including rules about the space and the sale of a home that stays there.
+
+# ---------------------------------------------------------------- money and the sale (Chapters 9-10)
+
+# md:1101
+- key: all-in cost
+  kind: term
+  match: ['\b[Aa]ll-in (?:costs?|exposure)\b']
+  short: the total exposure required to reach a defined use
+  more: the bid, applicable taxes, professional work, carrying, condition, possession and a reserve for unresolved uncertainty.
+
+# md:1129-1131
+- key: uncertainty reserve
+  kind: term
+  match: ['\b[Uu]ncertainty reserves?\b']
+  short: an amount held back for real but unquoted risks
+  more: it covers bounded variation; it does not bridge a missing legal right or manufacture permission.
+
+# md:1153
+- key: supported value boundary
+  kind: term
+  match: ['\b[Ss]upported value boundar(?:y|ies)\b']
+  short: the highest all-in amount the bidder can defend for the stated use under explicit title, condition and market assumptions
+  more: established from property-specific valuation evidence; not the assessment, recovery amount or a historical bid.
+
+# md:1151
+- key: maximum bid
+  kind: term
+  match: ['\b[Mm]aximum bids?\b']
+  short: the written highest amount the bidder is authorized to offer
+  more: after the intended use, supported value boundary, known costs, reserves, taxes and no-go conditions. A stopping rule, not a prediction.
+
+# md:1137, md:1385
+- key: deed transfer tax
+  kind: term
+  match: ['\b[Dd]eed[- ]transfer tax\b']
+  short: a tax on a transfer of property
+  more: a deed given through a tax sale is exempt from municipal deed transfer tax; the separate provincial non-resident deed transfer tax can still apply to qualifying buyers.
+
+# md:1385
+- key: Affidavit of Value
+  kind: term
+  short: registration information the Province requires when real property is transferred
+  more: even when no municipal deed transfer tax is payable.
+
+# md:1173
+- key: open-outcry auction
+  kind: term
+  match: ['\b[Oo]pen-outcry auctions?\b']
+  short: a live public process in which participants respond to bids called in the room
+  more: until no higher acceptable bid is offered.
+
+# md:1179
+- key: public tender
+  kind: term
+  match: ['\b(?:public|sealed) tenders?\b']
+  short: a process in which bidders submit offers by a stated deadline and the municipality opens and evaluates them
+  more: under the event's terms, with no live adjustment.
+
+# md:1227
+- key: deposit
+  kind: term
+  match: ['\b[Dd]eposits?\b']
+  short: the immediate amount paid toward the purchase before a remaining balance is completed
+  more: under the statute, the whole price or the taxes, interest and expenses for which the land was sold. Use the municipality's current terms; it is not a universal flat fee.
+
+# ---------------------------------------------------------------- after the sale (Chapters 11-12)
+
+# md:1305
+- key: insurable interest
+  kind: term
+  match: ['\b[Ii]nsurable interests?\b']
+  short: a legally recognized stake that can support seeking insurance against a loss
+  more: the Act deems a certificate holder to have one; it does not make an insurer accept the risk.
+
+# md:1317
+- key: necessary repairs
+  kind: term
+  match: ['\b[Nn]ecessary repairs?\b']
+  short: protective repairs to buildings made with the treasurer's written approval
+  more: which the redemption amount may include. Not improvements, preferred materials, or work approved only after the invoice.
+
+# md:1383
+- key: deed registration
+  kind: term
+  match: ['\b[Dd]eed registration\b']
+  short: the entry of the deed into Nova Scotia's land-record system
+  more: its date starts the six-year Marketable Titles Act period.
+
+# md:1391, md:1477
+- key: Marketable Titles Act
+  kind: term
+  short: the Nova Scotia statute under which a tax deed generally may be set aside only during the six years after its registration
+  more: subject to a land-exclusion rule, a current-owner fraud or breach-of-trust exception, and a preserved damages claim for wrongful tax sale.
+
+# md:1423
+- key: post-deed due diligence
+  kind: term
+  match: ['\b[Pp]ost-deed due diligence\b']
+  short: reopening the use, condition, cost and permission files after ownership changes
+  more: when better evidence becomes lawfully available.
+
+# md:1461
+- key: tax-sale surplus account
+  kind: term
+  match: ['\b(?:tax-sale )?surplus accounts?\b']
+  short: the municipality's statutory account for sale proceeds left after the required municipal applications
+  more: a proceeds record, not a burden on the land. A person claiming an interest may apply to the Supreme Court after redemption ends and within 20 years of the sale.
+
+# ---------------------------------------------------------------- statutes, bodies and tools named in the text
+
+# md:65, md:97
+- key: Municipal Government Act
+  kind: term
+  short: Nova Scotia's municipal statute
+  more: its tax-sale division governs sales outside Halifax.
+
+# md:97
+- key: Halifax Regional Municipality Charter
+  kind: term
+  short: Halifax's own statute
+  more: with a tax-sale framework parallel to the Municipal Government Act's.
+
+# md:627 states the rules as "Nova Scotia law"; the Act is named in sources.md S50 and will be
+# named in the chapter 5 source note, so the footer needs it. Running text keeps the original's wording.
+- key: Mineral Resources Act
+  kind: term
+  short: the Nova Scotia statute under which the Crown owns the minerals
+  more: and which provides surface-access applications and mine-related vesting orders.
+
+# md:773
+- key: Eastern District Planning Commission
+  kind: term
+  short: the body that administers planning and permitting services for Inverness County
+
+# md:211-213, md:471
+- key: NS Marks The Spot
+  kind: term
+  short: the public map used to demonstrate the research method
+  more: it organizes dated notices and results, parcels and public context layers, and links to official sources. It is a research index, not the authority on any sale.
+
+# md:391, md:553
+- key: NS Aerial
+  kind: term
+  short: the Province's aerial imagery service
+  more: dated imagery for orientation; not a current inspection. Public views must carry the Province's attribution.
