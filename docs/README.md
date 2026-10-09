@@ -29,6 +29,12 @@ The executable contracts live with the skills themselves:
   the governed-final *Beyond the Tax-Sale Packet*. Its README states current
   publication status; files explicitly marked historical preserve earlier
   production gates.
+- [Nova Scotia tax-sale textbook](nova-scotia-tax-sale-textbook/) is a draft
+  print and e-reader textbook edition (PDF and EPUB) of *Beyond the Tax-Sale
+  Packet*, with its build scripts, figures, and fact-preservation review. It is
+  awaiting review and is not governed-final; the published edition in
+  [`books/beyond-the-tax-sale-packet/`](../books/beyond-the-tax-sale-packet/)
+  is unchanged.
 
 Public book packages belong under [`books/`](../books/). A public-safe draft is
 not necessarily publication-ready; each package or development README states
