@@ -6,7 +6,7 @@ Work*. It was rewritten for the page and designed with Claude Opus 5.5 from the 
 audio-first edition. The published text-and-audio edition in `books/beyond-the-tax-sale-packet/` and
 its development packet in `docs/nova-scotia-tax-sale-book/` are unchanged.
 
-- `beyond-the-tax-sale-packet-textbook.pdf`: US Letter, 332 pages, 22.8 MB.
+- `beyond-the-tax-sale-packet-textbook.pdf`: US Letter, 324 pages, 22.8 MB.
 - `beyond-the-tax-sale-packet-textbook.epub`: EPUB 3, 8.9 MB.
 
 Facts are as of July 22, 2026, the same as the 2026 edition; nothing was refreshed. The material is
@@ -27,7 +27,7 @@ educational only and is not legal or other professional advice (see About this b
   the 2026 edition.
 - Every page of the PDF spells out the abbreviations on it, and defines new terms, in its footer.
 
-`review/DIFF-SUMMARY.md` summarizes what changed. `review/changes/` has the per-chapter notes,
+`review/dehedge/` records the plain-language de-hedging pass (October 9, 2026). `review/DIFF-SUMMARY.md` summarizes what changed. `review/changes/` has the per-chapter notes,
 `review/claims/` the claim ledgers, and `review/flagged-claims.md` the open questions about the
 original's facts (kept as printed). `review/open-questions.md` lists the form and scope decisions
 taken by default. `review/assembly-log.md` records the build phase.
@@ -74,7 +74,7 @@ Font License) is kept so the book rebuilds without a network.
 
 `build/check_all.sh` prints **ALL CHECKS PASSED**:
 
-- Footers: every abbreviation on all 332 pages spelled out in that page's footer.
+- Footers: every abbreviation on all 324 pages spelled out in that page's footer.
 - Integrity: every one of 66,168 words placed once, in order (figures compared as their own sequence,
   since they may float to the next page).
 - Source: all 3,187 source blocks present.
@@ -94,7 +94,7 @@ unsourced apparatus wording) are all fixed. `review/flagged-claims.md` holds 54 
 
 ## Known limits and decisions
 
-- The book is longer than planned (332 pages against an estimate of 170–200), because the text and
+- The book is longer than planned (324 pages against an estimate of 170–200), because the text and
   apparatus came to about 66,000 words against an estimate of 40,000–46,000.
 - The kept screenshots print from 1800 px JPEG copies (about 257 dpi at the 7 in column) made at
   build time. The source PNGs are unchanged; full-size PNGs pushed the PDF over 100 MB.

@@ -49,11 +49,11 @@ The map cannot smell heating oil in soil, test water, locate a buried pipe, or t
 system still works. [Figure 7.1](#fig-07-case-a-screening) shows the kind of screening layers such a
 map can add, and what each kind of result means.
 
-![**Case A: screening starts harder questions.** A screening map is not an environmental opinion. The fictional Parcel A (a composite, not a real property; not a survey) with wet-ground, coastal, geology and mine-opening screening layers: searched layers keep their coverage, date and category limits visible, a mapped point or overlap starts another records question, and no mapped overlap is not a clean bill of health. Case A, plate 5: the screening layers used for the Breakwater Lane discussion; it is not a map of Breakwater Lane. Verify sources; not a recommendation. Redrawn from figure-17 of the 2026 edition.](../assets/figures/fig-07-case-a-screening.svg){#fig-07-case-a-screening alt="Aerial-style map of Parcel A with wet-ground, coastal, geology and mine-opening screening layers and an unresolved-evidence legend. A geology ring is drawn as a searched layer, a wet-ground ring and a coastal band as screening clues, and a mine-opening ring as unresolved evidence. Searched layers: coverage, date and category limits stay visible. Screening clue: a mapped point or overlap starts another records question. No result: no mapped overlap is not a clean bill of health."}
+![**Case A: screening starts harder questions.** A screening map is not an environmental opinion. The fictional Parcel A (a composite, not a real property) with wet-ground, coastal, geology and mine-opening screening layers: searched layers keep their coverage, date and category limits visible, a mapped point or overlap starts another records question, and no mapped overlap is not a clean bill of health. Case A, plate 5: the screening layers used for the Breakwater Lane discussion; it is not a map of Breakwater Lane. Redrawn from figure-17 of the 2026 edition.](../assets/figures/fig-07-case-a-screening.svg){#fig-07-case-a-screening alt="Aerial-style map of Parcel A with wet-ground, coastal, geology and mine-opening screening layers and an unresolved-evidence legend. A geology ring is drawn as a searched layer, a wet-ground ring and a coastal band as screening clues, and a mine-opening ring as unresolved evidence. Searched layers: coverage, date and category limits stay visible. Screening clue: a mapped point or overlap starts another records question. No result: no mapped overlap is not a clean bill of health."}
 
 ### Keep the observation literal
 
-The exterior clues are still useful. The former workshop raises questions about:
+The exterior clues are useful. The former workshop raises questions about:
 
 - fuel;
 - solvents;
@@ -61,7 +61,7 @@ The exterior clues are still useful. The former workshop raises questions about:
 - fill;
 - prior spills.
 
-A pipe or concrete pad visible from a public place may sharpen one of those questions. The date and
+A pipe or concrete pad visible from a public place sharpens one of those questions. The date and
 source of the image matter.
 
 The observation should remain literal: a feature is visible, or a historical record describes a
@@ -78,8 +78,7 @@ Nova Scotia's Environmental Registry and contaminated-sites information can add 
 returned approval, report, spill-related file, or site record may identify an activity, date,
 location, responsible process, or document worth reviewing.
 
-Each returned item has to be matched carefully to the parcel and question. Several things can all
-matter:
+Each returned item has to be matched to the parcel and question, allowing for:
 
 - similar civic descriptions;
 - estimated positions;
@@ -128,7 +127,7 @@ warranted.
 [Figure 7.2](#fig-07-case-b-screening) shows the same discipline on a second fictional plate: a
 mapped former use and a nearby registry point each lead to a question, not a finding.
 
-![**Case B: a historical clue is not a finding.** A mapped historical clue is a lead for professional review, not a contamination finding. On the fictional Parcel B (a composite, not a real property; not a survey), a former-use symbol and a nearby registry point each send an arrow to a records question and an environmental-professional question. Case B, plate 5. Verify sources; not a recommendation. Redrawn from figure-22 of the 2026 edition.](../assets/figures/fig-07-case-b-screening.svg){#fig-07-case-b-screening alt="Parcel B map with a former-use symbol, nearby registry point and arrows to records and environmental-professional questions. Searched layers: coverage, date and category limits stay visible. Screening clue: a mapped point or overlap starts another records question. No result: no mapped overlap is not a clean bill of health."}
+![**Case B: a historical clue is not a finding.** A mapped historical clue is a lead for professional review, not a contamination finding. On the fictional Parcel B (a composite, not a real property), a former-use symbol and a nearby registry point each send an arrow to a records question and an environmental-professional question. Case B, plate 5. Redrawn from figure-22 of the 2026 edition.](../assets/figures/fig-07-case-b-screening.svg){#fig-07-case-b-screening alt="Parcel B map with a former-use symbol, nearby registry point and arrows to records and environmental-professional questions. Searched layers: coverage, date and category limits stay visible. Screening clue: a mapped point or overlap starts another records question. No result: no mapped overlap is not a clean bill of health."}
 
 ### Wells and well logs
 
@@ -137,14 +136,13 @@ can include location, geology, construction, depth, and yield information. With 
 drilling history gathered into one system, it can reveal patterns and individual records that would
 otherwise be hard to find.
 
-A **well log** is the recorded account of a well's construction and drilling details. It may
-describe how deep the driller went, the materials encountered, the casing, and a reported yield.
-Those fields can help an appropriate professional understand regional conditions or investigate
-whether a record may relate to the property.
+A **well log** is the recorded account of a well's construction and drilling details. It
+describes how deep the driller went, the materials encountered, the casing, and a reported yield.
+Those fields help a professional understand regional conditions or investigate whether a record
+relates to the property.
 
 The map point is not the well. Its position may be based on the location information available when
 the record was collected, and the Province warns that the database may be incomplete or inaccurate.
-A point near the building cannot be promoted into a surveyed feature.
 
 A log also records a drilling event. It is not a guarantee of:
 
@@ -186,7 +184,7 @@ Nova Scotia's environmental record service warns that a record is unlikely for a
 seven years old. Its process information describes on-site sewage files as records with a limited
 retention period.
 
-The negative result could coexist with many realities:
+The negative result is consistent with many realities:
 
 - An older system may have been installed under records no longer retained.
 - A system may have been changed, abandoned, shared, or never documented in the searched source.
@@ -230,7 +228,7 @@ classifies them, as [Figure 7.3](#fig-07-three-records-one-yard) shows:
 occupied-looking building changes the question set. Chapter 8 returns to that occupied-building
 case.
 
-![**Case B begins with occupancy clues.** An occupied-looking building changes the question set before possession is discussed. The fictional Parcel B (a composite, not a real property; not a survey) sits in a serviced community with a building footprint and nearby streets; orientation does not prove access, title, condition or services. Case B, plate 1. Verify sources; not a recommendation. Redrawn from figure-18 of the 2026 edition.](../assets/figures/fig-07-case-b-orientation.svg){#fig-07-case-b-orientation alt="Map locating fictional Parcel B in a serviced community with a building footprint and nearby streets. Place: locate fictional Case B among roads, communities and water. Limit: orientation does not prove access, title, condition or services."}
+![**Case B begins with occupancy clues.** An occupied-looking building changes the question set before possession is discussed. The fictional Parcel B (a composite, not a real property) sits in a serviced community with a building footprint and nearby streets; orientation does not prove access, title, condition or services. Case B, plate 1. Redrawn from figure-18 of the 2026 edition.](../assets/figures/fig-07-case-b-orientation.svg){#fig-07-case-b-orientation alt="Map locating fictional Parcel B in a serviced community with a building footprint and nearby streets. Place: locate fictional Case B among roads, communities and water. Limit: orientation does not prove access, title, condition or services."}
 
 ### No entry
 
@@ -244,19 +242,18 @@ belongs in the decision as uncertainty. It does not disappear because the auctio
 [Figure 7.5](#fig-07-case-b-access) shows what exterior observation from public places can and
 cannot add.
 
-![**Case B: observe without trespass.** Exterior observation can narrow questions without entry, confrontation or trespass. On the fictional Parcel B (a composite, not a real property; not a survey), a visible track is a screening clue, registry and legal review must answer the right-of-way question, and contours and drainage change site questions, not legal rights. Case B, plate 3. Verify sources; not a recommendation. Redrawn from figure-20 of the 2026 edition.](../assets/figures/fig-07-case-b-access.svg){#fig-07-case-b-access alt="Street-and-terrain map of Parcel B showing a driveway, drainage path and public observation points outside the parcel boundary. A dotted visible track runs from the street to the building and is marked with a question. Visible approach: a road or track on a map is a screening clue. Legal access: registry and legal review must answer the right-of-way question. Terrain: contours and drainage change site questions, not legal rights."}
+![**Case B: observe without trespass.** Exterior observation can narrow questions without entry, confrontation or trespass. On the fictional Parcel B (a composite, not a real property), a visible track is a screening clue, registry and legal review must answer the right-of-way question, and contours and drainage change site questions, not legal rights. Case B, plate 3. Redrawn from figure-20 of the 2026 edition.](../assets/figures/fig-07-case-b-access.svg){#fig-07-case-b-access alt="Street-and-terrain map of Parcel B showing a driveway, drainage path and public observation points outside the parcel boundary. A dotted visible track runs from the street to the building and is marked with a question. Visible approach: a road or track on a map is a screening clue. Legal access: registry and legal review must answer the right-of-way question. Terrain: contours and drainage change site questions, not legal rights."}
 
 ### What the records accomplished
 
-The records have still improved the file. They have separated:
+The records have improved the file. They have separated:
 
 - a former-use clue from a contamination conclusion;
 - a drilling record from a current water system;
 - a missing sewage file from a compliance finding.
 
 Each source now produces a specific next question. That is what pre-bid environmental research can
-responsibly accomplish. It can illuminate part of the yard. It cannot make the unseen ground
-testify.
+accomplish. It can illuminate part of the yard. It cannot make the unseen ground testify.
 
 ::: source
 Nova Scotia Environment and Climate Change, Environmental Registry, Contaminated Sites,
@@ -285,14 +282,14 @@ A **hazard map** is a screening map that depicts a defined hazard or scenario us
 methods. The definition is intentionally tied to the source. A hazard map does not mean that damage
 will occur at every coloured place or that an uncoloured place is safe from every related hazard.
 
-A parcel inspector can make that boundary easier to retain by reporting three things separately:
+A parcel inspector makes that boundary easier to retain by reporting three things separately:
 
 - study coverage;
 - scenario;
 - returned intersection.
 
-It still cannot turn "outside this study extent" into "no risk," or a no-pixel result into a finding
-about the whole property. Those states route the next question; they do not close it.
+It cannot turn "outside this study extent" into "no risk," or a no-pixel result into a finding
+about the whole property.
 
 ### The Coastal Hazard Map
 
@@ -322,7 +319,7 @@ does and does not report.
 Composite case — not a real property.
 
 Suppose the 2100 scenario shades part of Breakwater Lane's graphical parcel. The file should not
-say, "The property will flood." It can say:
+say, "The property will flood." It says:
 
 ::: {.filenote case="Breakwater Lane · coastal scenario"}
 **Observation:** The checked Coastal Hazard Map shows scenario coverage overlapping part of the
@@ -336,10 +333,9 @@ site evidence, intended building location, access route, and advice from the app
 and technical professionals.
 :::
 
-Now move the coloured area just outside the parcel line. The proximity can still justify questions
+Now move the coloured area just outside the parcel line. The proximity still justifies questions
 about the road, drainage, neighbouring ground, emergency route, and uncertainty in the screening
-geometry. It cannot be silently changed into either "affected" or "safe." The parcel line remains
-graphical, and the scenario has not become a site survey because the colour stopped nearby.
+geometry. It cannot be silently changed into either "affected" or "safe."
 :::
 
 ### Abandoned mine openings
@@ -372,8 +368,7 @@ It does not prove:
 
 - that an opening lies at the symbol;
 - that workings stop at a parcel line;
-- that the property is unsafe;
-- that every relevant feature has been recorded.
+- that the property is unsafe.
 :::
 
 An empty query is more delicate. "No abandoned mine opening shown" means the checked source returned
@@ -397,7 +392,7 @@ before making a claim about what it did not show.
 [Figure 7.8](#fig-07-negative-search-beam) turns the beam into four coverage questions to ask of any
 empty result.
 
-![**A negative search has a beam.** No result means only that this search, in this source, found no matching record. Four questions test the beam: time, place, record type and match rule. Verify sources; not a recommendation. Redrawn from figure-23 of the 2026 edition, with the beam its alt text describes drawn in.](../assets/figures/fig-07-negative-search-beam.svg){#fig-07-negative-search-beam alt="A flashlight beam covers part of a dark field labelled by time, location and record type; hazards outside the beam remain unknown. Time: was the relevant period included? Place: was the parcel inside the source's mapped coverage? Record type: would this source contain the event or condition? Match rule: could spelling, geometry or identifiers hide a record?"}
+![**A negative search has a beam.** No result means only that this search, in this source, found no matching record. Four questions test the beam: time, place, record type and match rule. Redrawn from figure-23 of the 2026 edition, with the beam its alt text describes drawn in.](../assets/figures/fig-07-negative-search-beam.svg){#fig-07-negative-search-beam alt="A flashlight beam covers part of a dark field labelled by time, location and record type; hazards outside the beam remain unknown. Time: was the relevant period included? Place: was the parcel inside the source's mapped coverage? Record type: would this source contain the event or condition? Match rule: could spelling, geometry or identifiers hide a record?"}
 
 ### Positive, negative and error
 
@@ -419,7 +414,7 @@ The three states produce different notes:
 | Negative: query completed with no returned feature. | Preserve source, date, settings, completeness limits, and the exact narrow concern the result did not confirm. |
 | Error: no reliable result obtained. | Preserve the failure and retry or use the authoritative source directly. Draw no negative conclusion. |
 
-![**Three result states.** Each state produces a different note. A failed service, loading timeout, hidden layer or incorrect selection is an error, not "nothing found". New figure drawn from the chapter text.](../assets/figures/fig-07-result-states.svg){#fig-07-result-states alt="Three result states. Positive: a feature was returned; keep its source, date, geometry, attributes, coverage limits, positional quality and the next question. Negative: the query finished and returned nothing; keep the source, date, settings and completeness limits, and name the exact narrow concern it did not confirm. Error: no reliable result; record the failure, retry or go to the authoritative source directly, and draw no negative conclusion. A failed service, loading timeout, hidden layer or incorrect selection is not nothing found."}
+![**Three result states.** Each state produces a different note. New figure drawn from the chapter text.](../assets/figures/fig-07-result-states.svg){#fig-07-result-states alt="Three result states. Positive: a feature was returned; keep its source, date, geometry, attributes, coverage limits, positional quality and the next question. Negative: the query finished and returned nothing; keep the source, date, settings and completeness limits, and name the exact narrow concern it did not confirm. Error: no reliable result; record the failure, retry or go to the authoritative source directly, and draw no negative conclusion. A failed service, loading timeout, hidden layer or incorrect selection is not nothing found."}
 
 ::: {.recall}
 The memorable picture of the fictional Breakwater Lane is blue coastal shading near an old workshop.
@@ -437,7 +432,7 @@ The questions that rebuild the file are smaller and safer:
 ::: {.case name="Breakwater Lane"}
 Composite case — not a real property.
 
-The file can now hold a coherent environmental summary:
+The file now holds a coherent environmental summary:
 
 ::: {.filenote case="Breakwater Lane · environmental summary"}
 **Observation:** A former workshop use raises a prior-activity question. No parcel-specific
@@ -451,8 +446,7 @@ result is recorded separately with the inventory's completeness and positional l
 planning, insurance, or legal advice.
 :::
 
-That paragraph does not tell the fictional bidder whether to buy. It tells the research team what
-the evidence can presently carry.
+That paragraph tells the research team what the evidence can presently carry.
 :::
 
 The uncertainty may govern the bid decision in any of three situations:
@@ -472,9 +466,8 @@ claim:
 The mistake is asking any one beam to illuminate the entire parcel.
 
 Breakwater Lane remains unseen in important ways. That is not a failure of careful research.
-Careful research has made the unseen parts specific enough to route, investigate, price where
-appropriate, or refuse. The map becomes safer as soon as its silence is no longer mistaken for
-reassurance.
+Careful research has made the unseen parts specific enough to route, investigate, price, or
+refuse. The map becomes safer as soon as its silence is no longer mistaken for reassurance.
 
 ::: source
 Nova Scotia, Coastal Hazard Map User Guide (source no. 22, refreshed July 20, 2026): search by
@@ -491,8 +484,8 @@ keeps the 2026 edition's wording, "roughly 50 metres".
 ::: {.summary}
 - Keep exterior observations literal: a feature is visible, or a historical record describes a use.
   "Contamination" is not an exterior observation.
-- A returned Environmental Registry or contaminated-sites record must be matched carefully to the
-  parcel and question. An empty search establishes only that no responsive record was found within
+- A returned Environmental Registry or contaminated-sites record must be matched to the parcel
+  and question. An empty search establishes only that no responsive record was found within
   the chosen source, terms, date and search method.
 - A well-log map point is not the well. Its position may be estimated, the database may be
   incomplete or inaccurate, and a log records a drilling event, not current equipment, yield,

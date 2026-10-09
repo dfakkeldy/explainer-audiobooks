@@ -86,7 +86,7 @@ Source notes also give evidence-note identifiers, such as LAW-007 or MAP-001. Th
 
 46. Province of Nova Scotia, [NSPRD ArcGIS map service](https://nsgiwa2.novascotia.ca/arcgis/rest/services/PLAN/PLAN_NSPRD_WM84/MapServer), which displays property boundaries and limited attribution.
 47. Province of Nova Scotia, NS Orthophotomap Database service at `https://nsgiwa.novascotia.ca/arcgis/rest/services/BASE/BASE_NSODB_10k_WM84/MapServer`.
-48. NS Marks The Spot, the checked production build of the public map used in Chapter 5: its source receipt and live public map.
+48. NS Marks The Spot, the checked production build of the public map used in Chapter 5: source commit `d3114b5c` at [`https://github.com/dfakkeldy/ns-marks-the-spot/tree/d3114b5c/web`](https://github.com/dfakkeldy/ns-marks-the-spot/tree/d3114b5cfc907d85f8b2c1f015d5476719b53586/web), its production source receipt at [`https://kinnokilabs.com/apps/nsmarksthespot/map/source.json`](https://kinnokilabs.com/apps/nsmarksthespot/map/source.json) and the live public map at [`https://kinnokilabs.com/apps/nsmarksthespot/map/`](https://kinnokilabs.com/apps/nsmarksthespot/map/), checked 2026-07-20.
 
 ### Mineral rights and the Touquoy example
 

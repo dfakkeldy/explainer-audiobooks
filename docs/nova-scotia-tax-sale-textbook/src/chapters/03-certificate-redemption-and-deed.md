@@ -62,7 +62,7 @@ holder therefore occupies a middle state: more responsibility than a prospective
 finality than a deeded owner. [Figure 3.1](#fig-03-redeemable-route) shows the whole redeemable
 route.
 
-![**The ordinary redeemable route.** After full payment the treasurer registers a certificate; for six months after the sale, qualifying interests may redeem; the route then ends either in repayment and discharge or, if no redemption occurs, in the deed stage. The certificate holder is a legal stage with powers, duties and limits, not ordinary ownership yet. Source: MGA ss. 150–156 • six months runs from sale • law checked 2026-07-19. Educational overview • verify current law and sale terms. Redrawn from figure-07 of the 2026 edition.](../assets/figures/fig-03-redeemable-route.svg){#fig-03-redeemable-route alt="Timeline from auction to certificate, insurance and record keeping, possible redemption, and tax deed if no redemption occurs. Full payment: the treasurer issues and registers the certificate. Certificate holder: protect land, insure insurable buildings, keep records. Six months after the sale: qualifying interests may redeem through the treasurer. If redeemed, the purchaser is repaid under the statutory formula and certificate-holder rights end, in repayment and discharge. If not redeemed, after the applicable wait the purchaser may request and pay for the municipal deed."}
+![**The ordinary redeemable route.** After full payment the treasurer registers a certificate; for six months after the sale, qualifying interests may redeem; the route then ends either in repayment and discharge or, if no redemption occurs, in the deed stage. The certificate holder is a legal stage with powers, duties and limits, not ordinary ownership yet. Source: MGA ss. 150–156 • six months runs from sale • law checked 2026-07-19. Redrawn from figure-07 of the 2026 edition.](../assets/figures/fig-03-redeemable-route.svg){#fig-03-redeemable-route alt="Timeline from auction to certificate, insurance and record keeping, possible redemption, and tax deed if no redemption occurs. Full payment: the treasurer issues and registers the certificate. Certificate holder: protect land, insure insurable buildings, keep records. Six months after the sale: qualifying interests may redeem through the treasurer. If redeemed, the purchaser is repaid under the statutory formula and certificate-holder rights end, in repayment and discharge. If not redeemed, after the applicable wait the purchaser may request and pay for the municipal deed."}
 
 ### Powers and duties
 
@@ -70,7 +70,7 @@ The statutes give that middle state practical content. Each power or duty arrive
 
 | The statutes say the certificate holder… | The boundary |
 |---|---|
-| may protect the land | Protection can support work needed to keep an insurable building from deteriorating. It does not create a general licence to renovate for a preferred future use. |
+| may protect the land | Protection covers work needed to keep an insurable building from deteriorating. It does not create a general licence to renovate for a preferred future use. |
 | may use the land without diminishing its value | Non-diminishing use does not erase planning law, tenancy, occupancy, safety, or the continuing redemption right. |
 | may collect rent | Rent collection does not answer who occupies the premises or how lawful communication and accounting must occur in a real case. |
 | must avoid injuring the property, and must not cut trees | — |
@@ -102,16 +102,13 @@ The same facts do not support gutting the interior, removing healthy trees for a
 use, or treating the premises as vacant without evidence.
 :::
 
-Protection is connected to preserving the property through a conditional period. Improvement for
-the holder's preferred project is a different job.
-
 ### An accounting habit from the first day
 
 The certificate holder also needs an accounting habit from the first day. New tax bills, insurance
-premiums, necessary protective work, rent, and other income can matter if redemption occurs. During
-the certificate-holder months, that ledger becomes the working record (Chapter 11 returns to it). At
-this stage the mechanism is enough: money and authorization cannot be reconstructed reliably after
-several months from bank statements and memory.
+premiums, necessary protective work, rent, and other income matter if redemption occurs. During
+the certificate-holder months, that ledger becomes the working record (Chapter 11 returns to it).
+Money and authorization cannot be reconstructed reliably after several months from bank statements
+and memory.
 
 ::: {.rail label="Why it matters"}
 People outside the auction room remain part of this clock.
@@ -123,12 +120,9 @@ People outside the auction room remain part of this clock.
   a deed.
 - A contractor may see a leaking roof without knowing who can authorize which work.
 
-The treasurer remains the owner of the municipal process, while lawyers, insurers, and other
-professionals own questions within their authority.
-
 ### Four stage questions
 
-The certificate holder should therefore be able to answer four stage questions before taking action.
+The certificate holder therefore needs answers to four stage questions before taking action.
 
 ::: {.recall}
 1. What document do I hold?
@@ -143,11 +137,11 @@ The certificate holder should therefore be able to answer four stage questions b
    the statutory accounting calls for it.
 :::
 
-The four questions are a stage check, not a do-it-yourself legal test. They prevent the holder from
-using the broad word "owner" to skip over the document and limits that govern the current moment.
+The four questions prevent the holder from using the broad word "owner" to skip over the document
+and limits that govern the current moment.
 
 ::: {.rail label="A way to picture it"}
-Staged responsibility can be pictured as a relay baton, if the comparison is kept narrow. The bid,
+Staged responsibility can be pictured as a relay baton. The bid,
 payment, certificate, possible discharge and possible deed are documented handoffs, and each stage
 carries a different permitted job. The limit: the same purchaser may hold every stage, and legal
 rights are not literally passed between runners. The image helps only with sequence: the holder must
@@ -191,9 +185,9 @@ statutes define the categories used in the calculation. They include:
 - interest at 10 percent a year;
 - specified costs and offsets connected to the certificate period.
 
-The categories can include later taxes and interest, registration of the certificate of discharge,
+The costs and offsets include later taxes and interest, registration of the certificate of discharge,
 fire-insurance premiums, and necessary repairs that receive the required approval. Rent or other
-income from the property can affect the accounting in the other direction. The exact facts, dates,
+income from the property counts in the other direction. The exact facts, dates,
 authorization, and local administration matter in a real redemption.
 
 ::: {.rail label="The idea"}
@@ -204,8 +198,8 @@ The durable idea is an evidence ledger rather than a formula recited from memory
 - Every repair needs a reason and the required approval.
 - Every offset needs a record.
 
-The ledger should be capable of answering a treasurer or lawyer without relying on the certificate
-holder's recollection of a chaotic month.
+The ledger should answer a treasurer or lawyer without relying on the certificate holder's
+recollection of a chaotic month.
 
 Harbour Road's leaking roof shows why. An invoice proves that a contractor was paid. It does not by
 itself prove that the work was necessary, that the amount belongs in the statutory redemption
@@ -227,13 +221,11 @@ the certificate. The certificate that created the middle state no longer support
 of Harbour Road.
 
 That loss of rights is easy to understate when the certificate holder has spent months protecting a
-building and imagining a future use. The purchaser may receive the repayment required by the
-statute. The purchaser does not receive a choice between the repayment and the land. Redemption is
-one of the outcomes attached to the position purchased at sale.
+building and imagining a future use. The purchaser receives the repayment required by the
+statute. The purchaser does not receive a choice between the repayment and the land.
 
 The owner and interest holders were therefore present in the legal story even when they were absent
-from Port Hood. The six-month door remained open to qualifying people
-throughout the certificate period. Its closing through redemption changes the certificate holder's
+from Port Hood. The six-month door's closing through redemption changes the certificate holder's
 job from protecting a conditional interest to proving the accounting and releasing that interest.
 
 ### The deed branch
@@ -248,8 +240,6 @@ They require legal interpretation against the actual parcel and records. They sh
 shortened into "clean title" during an auction conversation.
 
 Fee simple describes a form of ownership. It does not report the physical condition of the land.
-Freedom from encumbrances under the tax-deed provision does not erase the stated treatment of
-easements and rights-of-way.
 
 The deed also does not:
 
@@ -265,11 +255,11 @@ normal six-month redemption period is absent for the older-arrears category. "Im
 promise that every practical and legal question can be resolved on sale day.
 [Figure 3.2](#fig-03-nonredeemable-route) sets the short route beside the questions that remain.
 
-![**No redemption period does not mean no uncertainty.** For the older-arrears category there is no six-month redemption right, and the purchaser may request and pay for the municipal deed. The deed route changes; questions of possession, access, title and intended use remain. "Immediate deed" is municipal shorthand for timing. Sources: MGA ss. 152(1), 155–156 • educational route summary • law checked 2026-07-19. Educational overview • verify current law and sale terms. Redrawn from figure-08 of the 2026 edition.](../assets/figures/fig-03-nonredeemable-route.svg){#fig-03-nonredeemable-route alt="Short route from auction to deed beside four unresolved branches labelled possession, access, title and intended use. Older arrears: taxes were already in arrears for more than six years at sale. Statutory exception: no six-month redemption right under the ordinary route. Deed stage: the purchaser may request and pay for the municipal deed. Immediate deed is municipal shorthand that describes timing, not readiness. The questions that remain: who is lawfully on site, what legal rights reach it, what property-specific title issues remain, and whether planning and site facts support the intended use. The deed is not instant possession, access proof, a title opinion or development approval."}
+![**No redemption period does not mean no uncertainty.** For the older-arrears category there is no six-month redemption right, and the purchaser may request and pay for the municipal deed. The deed route changes; questions of possession, access, title and intended use remain. "Immediate deed" is municipal shorthand for timing. Sources: MGA ss. 152(1), 155–156 • educational route summary • law checked 2026-07-19. Redrawn from figure-08 of the 2026 edition.](../assets/figures/fig-03-nonredeemable-route.svg){#fig-03-nonredeemable-route alt="Short route from auction to deed beside four unresolved branches labelled possession, access, title and intended use. Older arrears: taxes were already in arrears for more than six years at sale. Statutory exception: no six-month redemption right under the ordinary route. Deed stage: the purchaser may request and pay for the municipal deed. Immediate deed is municipal shorthand that describes timing, not readiness. The questions that remain: who is lawfully on site, what legal rights reach it, what property-specific title issues remain, and whether planning and site facts support the intended use. The deed is not instant possession, access proof, a title opinion or development approval."}
 
 ### The document sequence
 
-The document sequence helps keep the distinction stable.
+The document sequence keeps the distinction stable.
 
 | Stage | What it is or does |
 |---|---|
@@ -300,7 +290,7 @@ Lane leaves through a registered deed; the second purchaser's ownership work has
 [Figure 3.3](#fig-03-two-parcels-two-endings) follows both parcels.
 :::
 
-![**Two parcels, two endings.** Two fictional parcels called at the same auction: redeemable Harbour Road ends in a discharge, and Quarry Lane, in the older-arrears category, ends in a registered deed that still leaves questions open. Composite cases, not real properties. New figure drawn from the chapter text.](../assets/figures/fig-03-two-parcels-two-endings.svg){#fig-03-two-parcels-two-endings alt="Two fictional parcels sold at the same auction. Harbour Road is redeemable: after full payment its purchaser holds a certificate, the property is redeemed in month four, the purchaser is repaid through the process and the certificate is discharged. Quarry Lane is in the older-arrears category: its purchaser requests and registers a deed, which still does not answer questions about the driveway or occupancy."}
+![**Two parcels, two endings.** Two fictional parcels called at the same auction: redeemable Harbour Road ends in a discharge, and Quarry Lane, in the older-arrears category, ends in a registered deed that still leaves questions open. New figure drawn from the chapter text.](../assets/figures/fig-03-two-parcels-two-endings.svg){#fig-03-two-parcels-two-endings alt="Two fictional parcels sold at the same auction. Harbour Road is redeemable: after full payment its purchaser holds a certificate, the property is redeemed in month four, the purchaser is repaid through the process and the certificate is discharged. Quarry Lane is in the older-arrears category: its purchaser requests and registers a deed, which still does not answer questions about the driveway or occupancy."}
 
 A reader who can narrate those two endings has turned the redemption marker from Chapter 2 into a
 working mechanism:
@@ -308,16 +298,13 @@ working mechanism:
 - "Redeemable" points toward a certificate period that may end in discharge or deed.
 - "Non-redeemable" points toward the deed route without that normal six-month door.
 
-Neither marker describes possession, condition, access, insurability, or suitability.
-
 ::: {.rail label="A way to picture it"}
 The relay-baton image has a second limit. The documents identify the stage, but they do not make the
 course safe. A certificate holder can mishandle the property. A deeded owner can discover an access
 problem. A discharged purchaser can face a disputed accounting.
 :::
 
-Sequence prevents one category of mistake; it does not remove the need for evidence and professional
-judgment. Neither ending permits the researcher to skip the parcel biography that comes next.
+Neither ending permits the researcher to skip the parcel biography that comes next.
 
 ::: source
 Municipal Government Act, consolidated to April 9, 2026 (law checked July 19, 2026; source

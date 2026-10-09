@@ -47,10 +47,10 @@ Three new fictional files arrive. None represents a live tax-sale property:
 - One is vacant land whose records fit together better than the others (Meadow Line).
 
 Every file begins the same way: dated notice, exact parcel, bounded context, unresolved questions
-and the authority that can answer next. Their endings should be different
+and the authority that can answer next. Their endings differ
 ([Figure 13.1](#fig-13-three-endings)).
 
-![**Three files, three endings.** Three fictional files run through the same method and reach different endings: two stops and one decision point that belongs to the bidder. Composite cases — not real properties; no file is ranked or recommended. New figure drawn from the chapter text.](../assets/figures/fig-13-three-endings.svg){#fig-13-three-endings alt="Three fictional files, three endings. Alder Crossing stops because one account lists two PIDs and what interest the municipality intends to sell is unresolved. Union Workshop stays unresolved because its possession, former-use, condition, insurance and tax questions cannot be responsibly investigated before the event, and the bidder owns the decision to stop. Meadow Line's records agree and its remaining questions have credible routes, so it reaches a decision point, which belongs to the bidder."}
+![**Three files, three endings.** Three fictional files run through the same method and reach different endings: two stops and one decision point that belongs to the bidder. Composite cases — not real properties. New figure drawn from the chapter text.](../assets/figures/fig-13-three-endings.svg){#fig-13-three-endings alt="Three fictional files, three endings. Alder Crossing stops because one account lists two PIDs and what interest the municipality intends to sell is unresolved. Union Workshop stays unresolved because its possession, former-use, condition, insurance and tax questions cannot be responsibly investigated before the event, and the bidder owns the decision to stop. Meadow Line's records agree and its remaining questions have credible routes, so it reaches a decision point, which belongs to the bidder."}
 
 ::: {.rail label="In practice"}
 Before classifying any file, name four things in one sentence: the verified fact, the unresolved
@@ -123,14 +123,12 @@ Union Workshop now has two linked unknowns that cannot be collapsed:
   review.
 
 Planning, fire and building officials can report the municipal records their systems cover. An
-insurer can respond to the actual use, occupancy and condition evidence. None of those sources can
-answer all the others' questions.
+insurer can respond to the actual use, occupancy and condition evidence.
 
 Tax treatment also needs its own route. If the event terms state that HST applies to vacant land or
 commercially assessed property, that is an important instruction for that event. The actual federal
 treatment still depends on the seller, property, use and transaction. The public assessment
-classification is therefore a prompt for transaction-specific tax advice, not a complete tax
-opinion.
+classification is therefore a prompt for transaction-specific tax advice.
 
 ::: {.case name="Union Workshop · two days before the sale"}
 Composite case — not a real property.
@@ -173,9 +171,9 @@ The third file is Meadow Line.
 The Case C plates illustrate the Meadow Line discussion
 ([Figure 13.2](#fig-13-case-c-orientation) to [Figure 13.6](#fig-13-case-c-screening)).
 
-![**Case C is coherent, not recommended.** Fictional Parcel C, used here for the Meadow Line discussion, sits near a public road and community services; its label marks an evidence file, not a bid score. Orientation does not prove access, title, condition or services. The original plate's band read "Case C is the strongest file, not a recommendation to buy". Composite — not a real property; not a survey. Verify sources; not a recommendation. Redrawn from figure-33 of the 2026 edition.](../assets/figures/fig-13-case-c-orientation.svg){#fig-13-case-c-orientation alt="Regional map locates fictional Parcel C near a public road and community services with a green evidence-file label and no bid score. The map, marked not to scale, also shows water to the east and a north arrow. Place: locate fictional Case C among roads, communities and water. Limit: orientation does not prove access, title, condition or services."}
+![**Case C is coherent, not recommended.** Fictional Parcel C, used here for the Meadow Line discussion, sits near a public road and community services; its label marks an evidence file, not a bid score. The original plate's band read "Case C is the strongest file, not a recommendation to buy". Composite — not a real property; not a survey. Redrawn from figure-33 of the 2026 edition.](../assets/figures/fig-13-case-c-orientation.svg){#fig-13-case-c-orientation alt="Regional map locates fictional Parcel C near a public road and community services with a green evidence-file label and no bid score. The map, marked not to scale, also shows water to the east and a north arrow. Place: locate fictional Case C among roads, communities and water. Limit: orientation does not prove access, title, condition or services."}
 
-![**Case C: consistent records reduce one unknown.** Fictional lien, AAN and PID cards match and point to one research target. Consistent records reduce one uncertainty without eliminating the rest; the graphical outline is not a survey or title opinion. Composite — not a real property; not a survey. Verify sources; not a recommendation. Redrawn from figure-34 of the 2026 edition.](../assets/figures/fig-13-case-c-identity.svg){#fig-13-case-c-identity alt="Parcel C outline beside matching fictional lien, AAN and PID cards and a not-a-survey note. Lien / AAN / PID: fictional Case C identifiers point to one research target. Boundary: the graphical outline is not a survey or title opinion."}
+![**Case C: consistent records reduce one unknown.** Fictional lien, AAN and PID cards match and point to one research target. The graphical outline is not a survey or title opinion. Composite — not a real property; not a survey. Redrawn from figure-34 of the 2026 edition.](../assets/figures/fig-13-case-c-identity.svg){#fig-13-case-c-identity alt="Parcel C outline beside matching fictional lien, AAN and PID cards and a not-a-survey note. Lien / AAN / PID: fictional Case C identifiers point to one research target. Boundary: the graphical outline is not a survey or title opinion."}
 
 Meadow Line is the most research-ready of the three evidence files. That comparison describes only
 the state of the research. It is not a property ranking.
@@ -189,7 +187,7 @@ Each favourable record keeps its limit:
 | Zoning response | It identifies current zoning and applicable provisions. | It is not a permit, service confirmation or promise that the intended project will be approved. |
 | Empty environmental, well, sewage, coastal or mine searches | A bounded result for the layers searched. | They retain the coverage and currency limits of their sources. |
 
-![**Case C: strong clues focus the legal question.** Fictional Parcel C touches a mapped public road; a lawyer confirms whether that frontage gives legal access. Strong map evidence can support a focused legal question; it cannot answer it. Composite — not a real property; not a survey. Verify sources; not a recommendation. Redrawn from figure-35 of the 2026 edition.](../assets/figures/fig-13-case-c-access.svg){#fig-13-case-c-access alt="Parcel C touches a mapped public road and gentle contours, with a lawyer-confirmation icon at the frontage. A visible track is marked with a question mark. Visible approach: a road or track on a map is a screening clue. Legal access: registry and legal review must answer the right-of-way question. Terrain: contours and drainage change site questions, not legal rights."}
+![**Case C: strong clues focus the legal question.** Fictional Parcel C touches a mapped public road; a lawyer confirms whether that frontage gives legal access. Composite — not a real property; not a survey. Redrawn from figure-35 of the 2026 edition.](../assets/figures/fig-13-case-c-access.svg){#fig-13-case-c-access alt="Parcel C touches a mapped public road and gentle contours, with a lawyer-confirmation icon at the frontage. A visible track is marked with a question mark. Visible approach: a road or track on a map is a screening clue. Legal access: registry and legal review must answer the right-of-way question. Terrain: contours and drainage change site questions, not legal rights."}
 
 Meadow Line becomes coherent because the remaining questions are named and have credible
 verification routes:
@@ -202,7 +200,7 @@ verification routes:
 The file does not need every possible fact. It needs every decision-critical uncertainty either
 resolved or assigned a defensible treatment.
 
-![**Case C: name every confirmation.** A coherent file names the confirmations still required before intended use is credible: the current zone and intended use in writing, the frontage, and separate evidence for well, septic, water and sewer. The three written questions for municipal planning staff come from the chapter text. Composite — not a real property; not a survey. Verify sources; not a recommendation. Redrawn from figure-36 of the 2026 edition.](../assets/figures/fig-13-case-c-planning.svg){#fig-13-case-c-planning alt="Parcel C planning map shows zone, frontage, well and septic assumptions and three written questions for municipal planning staff. The parcel lies between Zone A and an unconfirmed zone marked with a question mark. The written questions ask about exact frontage, lot status, and the intended use and its approval. Zone: confirm the current rule and intended use in writing. Frontage: mapped contact is not a survey measurement. Services: well, septic, water and sewer require separate evidence."}
+![**Case C: name every confirmation.** A coherent file names the confirmations still required before intended use is credible: the current zone and intended use in writing, the frontage, and separate evidence for well, septic, water and sewer. The three written questions for municipal planning staff come from the chapter text. Composite — not a real property; not a survey. Redrawn from figure-36 of the 2026 edition.](../assets/figures/fig-13-case-c-planning.svg){#fig-13-case-c-planning alt="Parcel C planning map shows zone, frontage, well and septic assumptions and three written questions for municipal planning staff. The parcel lies between Zone A and an unconfirmed zone marked with a question mark. The written questions ask about exact frontage, lot status, and the intended use and its approval. Zone: confirm the current rule and intended use in writing. Frontage: mapped contact is not a survey measurement. Services: well, septic, water and sewer require separate evidence."}
 
 ### Value, cost and payment
 
@@ -223,12 +221,11 @@ all-in cost file. The bidder:
 The supported value boundary defined in Chapter 9 and those costs produce a written maximum
 ([Chapter 9](#sec-09-build-backward)). Auction energy cannot raise it.
 
-![**Case C: no mapped overlap is bounded.** The searched layers return no highlighted overlap with fictional Parcel C. No mapped overlap found is not a clean bill of health: each layer keeps its coverage, date and category limits, and site professionals test what the public record cannot. Composite — not a real property; not a survey. Verify sources; not a recommendation. Redrawn from figure-37 of the 2026 edition.](../assets/figures/fig-13-case-c-screening.svg){#fig-13-case-c-screening alt="Physical-screening map for Parcel C shows searched layers, no highlighted overlap, coverage limits and an inspection handoff. The searched layers listed are environmental, well, sewage, coastal and mine; mapped points sit outside the parcel. Searched layers: coverage, date and category limits stay visible. Screening clue: a mapped point or overlap starts another records question. No result: no mapped overlap is not a clean bill of health."}
+![**Case C: no mapped overlap is bounded.** The searched layers return no highlighted overlap with fictional Parcel C. No mapped overlap found is not a clean bill of health: each layer keeps its coverage, date and category limits. Composite — not a real property; not a survey. Redrawn from figure-37 of the 2026 edition.](../assets/figures/fig-13-case-c-screening.svg){#fig-13-case-c-screening alt="Physical-screening map for Parcel C shows searched layers, no highlighted overlap, coverage limits and an inspection handoff. The searched layers listed are environmental, well, sewage, coastal and mine; mapped points sit outside the parcel. Searched layers: coverage, date and category limits stay visible. Screening clue: a mapped point or overlap starts another records question. No result: no mapped overlap is not a clean bill of health."}
 
 Payment readiness remains a separate gate. A parcel can fit the evidence and budget while the bidder
 lacks the authority, accepted funds or balance path required by the current event terms. That file
-is not ready. Affordability in a spreadsheet does not change the municipality's process after the
-bid (see [Chapter 10](#sec-10-finish-line)).
+is not ready (see [Chapter 10](#sec-10-finish-line)).
 
 ::: {.case name="Meadow Line · the decision point"}
 Composite case — not a real property.
@@ -303,7 +300,7 @@ context return, visible unknown, next authority and decision consequence. Each e
 - Each unknown names the question that a particular professional or public authority is being asked
   to answer.
 
-![**End with a file that knows its limits.** A responsible file separates known facts, unresolved questions and authorized handoffs, and keeps the decision in a separate box: the bidder owns the choice and its consequences. The ruled rows make the sheet usable as a worksheet; a blank copy is in Appendix B. Verify sources; not a recommendation. Redrawn from figure-38 of the 2026 edition.](../assets/figures/fig-13-known-unresolved-professional.svg){#fig-13-known-unresolved-professional alt="Final summary sheet with columns for known facts, unresolved questions and professional handoffs, plus a separate box stating that the bidder owns the decision. Known: dated, cited facts and bounded observations. Unresolved: questions the current evidence cannot answer. Professional: the person or authority qualified to answer next. Decision: the bidder owns the choice and its consequences."}
+![**End with a file that knows its limits.** A responsible file separates known facts, unresolved questions and authorized handoffs, and keeps the decision in a separate box: the bidder owns the choice and its consequences. The ruled rows make the sheet usable as a worksheet; a blank copy is in Appendix B. Redrawn from figure-38 of the 2026 edition.](../assets/figures/fig-13-known-unresolved-professional.svg){#fig-13-known-unresolved-professional alt="Final summary sheet with columns for known facts, unresolved questions and professional handoffs, plus a separate box stating that the bidder owns the decision. Known: dated, cited facts and bounded observations. Unresolved: questions the current evidence cannot answer. Professional: the person or authority qualified to answer next. Decision: the bidder owns the choice and its consequences."}
 
 ### The public-private boundary
 
@@ -380,7 +377,7 @@ bidders still wait, and people beyond the room still have interests that cannot 
 auction rows. The difference is that the row no longer pretends to be the property.
 
 It is a notice connected to a parcel, a parcel placed in bounded context, unknowns kept visible and
-questions handed to the people authorized to answer them. That record is enough to support a careful
+questions handed to the people authorized to answer them. That record is enough to support a
 decision. It is also enough to explain, publicly and without a sales pitch, how Nova Scotia municipal
 tax-sale research can be useful.
 
@@ -410,8 +407,7 @@ remains live, withdrawn, postponed or changed (MAP-003; Inverness County, no. 10
   questions cannot be responsibly investigated before the event, and the researcher does not invent
   reserves large enough to make the unknowns disappear.
 - Meadow Line reaches a decision point because its records agree and its remaining questions are
-  named and have credible verification routes; "most research-ready" describes the research, not a
-  property ranking.
+  named and have credible verification routes.
 - A graphical boundary, a road relationship, a zoning response and empty screening searches each keep
   their limits, even in the most research-ready file.
 - Payment readiness is a separate gate, and a written maximum built from the supported value boundary

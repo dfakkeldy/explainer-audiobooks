@@ -62,7 +62,7 @@ municipality), and does not choose the friendlier number because it makes the ar
 The parcel shape is not a boundary survey. The aerial photograph is not a current inspection. The
 line saying that no dwelling is listed does not prove that the ground is empty, safe, buildable,
 serviced, or available for immediate possession. Each item can still be valuable; none quietly
-answers the other questions a bidder might carry into the room. See [What each part can and cannot
+answers the other questions a bidder carries into the room. See [What each part can and cannot
 establish](#sec-01-packet).
 
 ### Chapter 2 · Reading the Notice {#ans-02}
@@ -109,7 +109,7 @@ marker](#sec-02-redemption-marker).
 
 One date records when the packet was retrieved; the other records the last event-status check.
 Without dates, a file that mixes the original packet, a later municipal update, a map snapshot and
-auction-day notes can become misleading even when every source is authentic, because the reader no
+auction-day notes becomes misleading even when every source is authentic, because the reader no
 longer knows which rows existed at which point in the process. The card also needs a source beside
 every amount and marker: "Recovery amount" without a page and date is a number detached from its
 authority, and "Redeemable" without the current notice is a label detached from its branch. See
@@ -144,8 +144,8 @@ and cost of the work. The redemption right and any occupancy or tenancy obligati
 needs insurer communication, professional advice where required, photographs obtained lawfully,
 invoices, proof of payment, and the municipality's approval where the statutory accounting calls for
 it. The same facts do not support gutting the interior, removing healthy trees for a view, changing
-the use, or treating the premises as vacant without evidence. The four questions are a stage check,
-not a do-it-yourself legal test. See [Four stage questions](#sec-03-certificate).
+the use, or treating the premises as vacant without evidence.
+See [Four stage questions](#sec-03-certificate).
 
 #### 3.4 {#ans-03-4}
 
@@ -213,7 +213,7 @@ The no-go entry governs, even though the aerial image is attractive. Evidence is
 three comfortable facts outnumber one unresolved essential fact; the importance of the unknown
 depends on the project it can defeat. The no-go label is not a prediction that the land is bad. It
 describes the fit between the available evidence, the deadline, the researcher's tolerance and the
-proposed use, and the correct label can be "do not proceed under these conditions." Birch Point Road
+proposed use, and the correct label is "do not proceed under these conditions." Birch Point Road
 is a composite case, not a real property. See [One essential no-go
 governs](#sec-04-four-destinations) and [Figure 4.5](#fig-04-four-destinations).
 
@@ -233,7 +233,7 @@ result](#sec-05-record-family) and [Figure 5.2](#fig-05-current-vs-historical).
 #### 5.2 {#ans-05-2}
 
 Containment is a precise interface operation: this returned civic point falls inside this returned
-parcel polygon. Its legal meaning remains narrow. It does not prove who owns or occupies the parcel,
+parcel polygon. It does not prove who owns or occupies the parcel,
 whether the point is the mailing address for every interest, whether a building sits at the point,
 whether the public can enter, or whether there is legal access from the road. Containment finds the
 parcel to investigate; it does not finish the investigation. See [Starting from a civic
@@ -243,7 +243,7 @@ address](#sec-05-record-family).
 
 The building count reports Nova Scotia Topographic Database point or polygon features intersecting
 the mapped parcel. It does not establish how many structures currently exist, whether any are
-occupied, their condition or use, or whether they have permits; a returned zero would not prove an
+occupied, their condition or use, or whether they have permits; a returned zero does not prove an
 empty parcel either. The 2026 assessed and taxable values of $35,000 are a dated PVSC assessment.
 The amount is not today's sale price, a current appraisal, a repair estimate or a bid ceiling. The
 demonstration parcel is not presented as a current tax-sale listing. See [Parcel
@@ -256,9 +256,7 @@ dataset; a visible route may be private, unmapped, misaligned or legally irrelev
 geometry itself is not a survey. Visible transportation nearby does not fill the gap either:
 nearness answers a spatial orientation question, while legal access answers whether a recognized
 right permits the required passage. The result routes the file toward title, plan, survey and
-municipal road questions; the note names land records and a lawyer for access. PID `50308311` is a
-current-notice PID used to test the interface, not a recommendation or property evaluation. See
-[Reading the road result](#sec-05-one-question).
+municipal road questions; the note names land records and a lawyer for access. See [Reading the road result](#sec-05-one-question).
 
 #### 5.5 {#ans-05-5}
 
@@ -288,8 +286,7 @@ manufacture a result the municipality has not published. See [Historical mode](#
 
 Getting near the land is a physical observation. Having a right to reach it is a legal conclusion
 that must be supported. Having a route capable of serving the project is a further physical and
-regulatory question. A visible track answers only the first; a tax-sale listing does not authorize
-entry to look further. See [The access note](#sec-06-route) and
+regulatory question. A visible track answers only the first. See [The access note](#sec-06-route) and
 [Figure 6.2](#fig-06-case-a-access).
 
 #### 6.2 {#ans-06-2}
@@ -308,7 +305,7 @@ rules. A right to pass over a neighbour's land may solve one legal access proble
 separate frontage or development-standard problem. The registered passage may permit vehicles to
 reach the land, while the development rules may still require the lot itself, or a proposed
 alteration to it, to satisfy a particular road relationship. The planning authority must answer the
-rule question for the proposed project; the map cannot answer it from apparent contact. See [Road
+rule question for the proposed project. See [Road
 frontage](#sec-06-use).
 
 #### 6.4 {#ans-06-4}
@@ -325,7 +322,7 @@ buildable lot, that a compliant building envelope exists, that the route can ser
 that water and sewage approvals will be available. Encouraging facts do not merge into a permit. If
 the file still holds an essential dependency the bidder cannot resolve before the auction (an
 ambiguous access instrument, say, or a planning authority that cannot confirm the lot and route can
-support the use without later technical work), either can be enough to stop. That stop is a
+support the use without later technical work), either is enough to stop. That stop is a
 conclusion about this bidder's evidence, deadline, and intended use, not a prediction that the
 parcel is worthless. See [A rational no](#sec-06-use) and
 [Figure 6.5](#fig-06-independent-gates).
@@ -335,8 +332,8 @@ parcel is worthless. See [A rational no](#sec-06-use) and
 #### 7.1 {#ans-07-1}
 
 The observation should remain literal: a feature is visible, or a historical record describes a
-use. For the fictional Breakwater Lane, the file can say that a small building and a possible former
-tank area are visible from public imagery, and record the date and source of the image. Those
+use. For the fictional Breakwater Lane, the file says that a small building and a possible former
+tank area are visible from public imagery, and records the date and source of the image. Those
 observations do not establish a spill, contaminant, tank location, or present condition.
 "Contamination" is not an exterior observation. See [Keep the observation
 literal](#sec-07-three-records).
@@ -367,7 +364,7 @@ unverified. See [Wells and well logs](#sec-07-three-records).
 
 Nova Scotia's environmental record service warns that a record is unlikely for a property more than
 seven years old, and its process information describes on-site sewage files as records with a
-limited retention period. The negative result could coexist with many realities: an older system
+limited retention period. The negative result is consistent with many realities: an older system
 installed under records no longer retained; a system changed, abandoned, shared, or never documented
 in the searched source; a changed address or parcel relationship; a file elsewhere. So it does not
 establish that no system exists, that an existing system was approved, or that any system is
@@ -438,7 +435,7 @@ or the absence of a tenant's name in the sale advertisement. Nothing in the exte
 identifies the occupants. No locks are changed, no utilities are interrupted, no belongings are
 moved, and no demand for rent or departure is improvised at the door: those choices could affect
 people's rights and safety, destroy evidence about the occupancy arrangement, or make a difficult
-legal problem worse. Counsel may need to determine who is present, what documents or agreements
+legal problem worse. The questions for counsel are who is present, what documents or agreements
 exist, whether residential-tenancy law applies, what notices or proceedings are legally required,
 and how access can be obtained. See [The house does not empty on paper](#sec-08-possession).
 
@@ -472,9 +469,8 @@ total and the published rows remains unresolved. A researcher who silently calls
 
 It establishes that competition often moved well beyond the municipal recovery number in that dated
 sample. It does not establish that the higher bids were correct, that the lower bids were bargains,
-or that a future Inverness auction will behave the same way. The result sheet has no column for
-legal access, remediation, possession, insurance, repair, financing, later redemption, or regret.
-See [What the 31 rows show](#sec-09-result-sheet) and
+or that a future Inverness auction will behave the same way. See
+[What the 31 rows show](#sec-09-result-sheet) and
 [Figure 9.2](#fig-09-inverness-ratio-distribution).
 
 #### 9.3 {#ans-09-3}
@@ -529,8 +525,8 @@ decision the research supported. See [The maximum bid](#sec-09-build-backward) a
 An open-outcry auction is a live public process in which participants respond to the bids called
 in the room until no higher acceptable bid is offered. A public tender is a defined process in which
 bidders submit offers by the stated deadline and the municipality opens and evaluates them under the
-event's terms; the competing offers are not adjusted through live calls. In the room, the bidder may
-chase a visible rival. At a desk, the bidder may raise a sealed offer to avoid losing by an imagined
+event's terms; the competing offers are not adjusted through live calls. In the room, the temptation is
+to chase a visible rival. At a desk, the temptation is to raise a sealed offer to avoid losing by an imagined
 small difference. Neither temptation adds title, access, condition, possession, tax or use evidence,
 so the fictional Cedar Street maximum enters either format unchanged. Procedure changes how an offer
 is delivered; it does not enlarge what the file supports. See [Two formats, one
@@ -546,8 +542,7 @@ or employee of the selling municipality, specified village commission members or
 spouses, and a company in which one of those people owns or beneficially owns a majority of the
 outstanding shares from buying at that municipality's tax sale, directly or through an agent. That
 rule is narrower than a complete eligibility review: it does not answer the federal, tax,
-corporate-authority or representation questions from Chapter 9, and successful event registration
-does not certify that every purchase rule has been satisfied. See [Who may not
+corporate-authority or representation questions from Chapter 9. See [Who may not
 buy](#sec-10-two-formats).
 
 #### 10.3 {#ans-10-3}
@@ -570,7 +565,7 @@ Under the Municipal Government Act, the treasurer may bid the taxes, interest an
 purchase the land for the municipality. "May" matters: no sufficient private bid does not force the
 municipality to acquire every parcel. If the municipality does not purchase, it may advertise the
 property again and later sell it at auction for the best obtainable price or by highest tender,
-subject to any acceptable minimum directed by council. The process remains municipal and advertised.
+subject to any acceptable minimum directed by council.
 "Unsold" does not mean available at the recovery amount, over the counter or on conditions selected
 by the observer. CBRM's result legend, as checked in July 2026, states that an unsold property may be
 purchased only at a future tax sale; another municipality's next step must be checked in its own
@@ -594,7 +589,7 @@ The Municipal Government Act gives a certificate holder the owner-like powers ne
 land. The holder may collect rents due or becoming due and may use the land without diminishing its
 value. The same section forbids cutting trees, injuring the premises, or knowingly allowing another
 person to do so, and it requires the purchaser to insure buildings if they are insurable. At the
-fictional Cedar Street, a leaking opening may need protection from the next rain: work aimed at
+fictional Cedar Street, a leaking opening needs protection from the next rain: work aimed at
 arresting an immediate loss is protective. Removing mature trees for a future view is outside the
 lane, and a full redesign for Maya's proposed rehabilitation can wait: work aimed at changing the
 property for a future use is development. That distinction does not authorize either action by

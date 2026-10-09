@@ -64,7 +64,7 @@ Fifty describes what was advertised. Thirty-five describes the sales reported to
 Thirty-one describes the rows available for calculation in the public result sheet. A researcher
 who silently calls the 31-row sheet "all sales" has changed the source rather than clarified it.
 
-![**Do not collapse three official counts.** Advertised, sold and published-result counts answer different questions. Inverness County's May 2025 sale: 50 advertised properties, 35 reported sold in council minutes, 15 removed before sale, 31 published result rows, and a four-row gap between the minutes and the result sheet left unresolved. Verify sources; not a recommendation. Redrawn from figure-27 of the 2026 edition.](../assets/figures/fig-09-fifty-thirtyfive-thirtyone.svg){#fig-09-fifty-thirtyfive-thirtyone alt="Bars drawn to scale for Inverness County's May 2025 sale: 50 advertised properties split into 35 reported sold in council minutes and 15 removed before sale after collection or legal advice. The 35 reported sales split into 31 published result rows and a hatched four-row gap, marked with a question mark as a sold-row gap left unresolved. Advertised, sold and published-result counts answer different questions."}
+![**Do not collapse three official counts.** Advertised, sold and published-result counts answer different questions. Inverness County's May 2025 sale: 50 advertised properties, 35 reported sold in council minutes, 15 removed before sale, 31 published result rows, and a four-row gap between the minutes and the result sheet left unresolved. Redrawn from figure-27 of the 2026 edition.](../assets/figures/fig-09-fifty-thirtyfive-thirtyone.svg){#fig-09-fifty-thirtyfive-thirtyone alt="Bars drawn to scale for Inverness County's May 2025 sale: 50 advertised properties split into 35 reported sold in council minutes and 15 removed before sale after collection or legal advice. The 35 reported sales split into 31 published result rows and a hatched four-row gap, marked with a question mark as a sold-row gap left unresolved. Advertised, sold and published-result counts answer different questions."}
 
 ### What the 31 rows show
 
@@ -73,20 +73,18 @@ amount. Twenty-four were at least twice the recovery amount, 15 were at least fi
 were at least ten times. The range ran from approximately the recovery amount to more than 21
 times it.
 
-![**Thirty-one published rows, bounded.** In the 31 published rows, competition often carried bids above the recovery amount. Inverness County's May 2025 rows, grouped by winning bid as a multiple of the advertised recovery amount; the four bands are worked out from the counts the text states (24 at least twice, 15 at least five times, 7 at least ten times), and the blocks do not represent exact row positions. The rows are not all 35 reported sales, and the recovery amount is not value. Verify sources; not a recommendation. Redrawn from figure-26 of the 2026 edition.](../assets/figures/fig-09-inverness-ratio-distribution.svg){#fig-09-inverness-ratio-distribution alt="The 31 published bid rows from Inverness County's May 2025 sale, grouped by bid as a multiple of the recovery amount: 7 under twice, 9 from twice to under five times, 8 from five to under ten times, and 7 at ten times or more. Median 4.53 times; range 1.00 to 21.62 times. The rows are not all 35 reported sales."}
+![**Thirty-one published rows, bounded.** In the 31 published rows, competition often carried bids above the recovery amount. Inverness County's May 2025 rows, grouped by winning bid as a multiple of the advertised recovery amount; the four bands are worked out from the counts the text states (24 at least twice, 15 at least five times, 7 at least ten times), and the blocks do not represent exact row positions. Redrawn from figure-26 of the 2026 edition.](../assets/figures/fig-09-inverness-ratio-distribution.svg){#fig-09-inverness-ratio-distribution alt="The 31 published bid rows from Inverness County's May 2025 sale, grouped by bid as a multiple of the recovery amount: 7 under twice, 9 from twice to under five times, 8 from five to under ten times, and 7 at ten times or more. Median 4.53 times; range 1.00 to 21.62 times. The rows are not all 35 reported sales."}
 
 Those observations establish that competition often moved well beyond the municipal recovery
 number in that dated sample. They do not establish that the higher bids were correct, that the
-lower bids were bargains, or that a future Inverness auction will behave the same way. The result
-sheet has no column for legal access, remediation, possession, insurance, repair, financing, later
-redemption, or regret.
+lower bids were bargains, or that a future Inverness auction will behave the same way.
 
 ### Two measures of surplus
 
 The council minutes add another number: $608,693.21 in reported tax-sale surplus. Subtracting the
 recovery amounts in the 31 public rows from their bids produces a different total. That arithmetic
-covers a different row set and is not the municipality's accounting definition of surplus. The two
-measures should remain separate rather than be forced into agreement.
+covers a different row set and is not the municipality's accounting definition of surplus. Keep the
+two measures separate rather than forcing them into agreement.
 
 ### CBRM and Richmond
 
@@ -121,12 +119,12 @@ A minimum bid in one event and listed charges in another may have similar econom
 being perfectly interchangeable fields. Descriptive samples can challenge folklore while remaining
 unsuitable for prediction.
 
-![**Definitions travel with the numbers.** Cross-municipal numbers are useful only when procedure, sample and denominator travel with them. Three dated result sets: Inverness County's May 2025 public result sheet, CBRM's official March 2026 result sheet and Richmond County's June 2026 published table, each with its row count, ratio denominator and limit. A recovery amount is not a value. Verify sources; not a recommendation. Redrawn from figure-28 of the 2026 edition.](../assets/figures/fig-09-municipal-result-comparison.svg){#fig-09-municipal-result-comparison alt="Three panels compare dated municipal result sets. Inverness 2025: 31 published rows of 35 reported sold; denominator, the advertised recovery amount; median bid to recovery 4.53 times; range from approximately the recovery amount to more than 21 times; a four-row gap left unresolved. CBRM March 2026: 24 recorded sales with both a minimum and a winning bid; denominator, the minimum bid; median 3.17 times; range from exactly the minimum to more than 42 times; 8 at the minimum and 9 at five times or more. Richmond June 2026: 3 sold rows at about 1.33, 6.59 and 6.28 times the listed taxes, interest and charges, far too few to support a municipal price rule."}
+![**Definitions travel with the numbers.** Cross-municipal numbers are useful only when procedure, sample and denominator travel with them. Three dated result sets: Inverness County's May 2025 public result sheet, CBRM's official March 2026 result sheet and Richmond County's June 2026 published table, each with its row count, ratio denominator and limit. Redrawn from figure-28 of the 2026 edition.](../assets/figures/fig-09-municipal-result-comparison.svg){#fig-09-municipal-result-comparison alt="Three panels compare dated municipal result sets. Inverness 2025: 31 published rows of 35 reported sold; denominator, the advertised recovery amount; median bid to recovery 4.53 times; range from approximately the recovery amount to more than 21 times; a four-row gap left unresolved. CBRM March 2026: 24 recorded sales with both a minimum and a winning bid; denominator, the minimum bid; median 3.17 times; range from exactly the minimum to more than 42 times; 8 at the minimum and 9 at five times or more. Richmond June 2026: 3 sold rows at about 1.33, 6.59 and 6.28 times the listed taxes, interest and charges, far too few to support a municipal price rule."}
 
 ### Historical outcomes and assessment
 
-The historical layer in NS Marks The Spot has the same narrow use. It can route the researcher to a
-dated official outcome and preserve the municipality, event, PID, result label, amount, and source
+The historical layer in NS Marks The Spot has the same narrow use. It routes the researcher to a dated
+official outcome and preserves the municipality, event, PID, result label, amount, and source
 link. A selected historical parcel is a record of that event.
 
 | A historical bid is | It is not |
@@ -135,12 +133,10 @@ link. A selected historical parcel is a record of that event.
 | | A comparable sale |
 | | A suggested maximum for the next parcel |
 
-The map shortens the route to the source; it does not make the source answer a valuation question.
-
-Assessment has a separate job. The assessed value supports the property-tax system. It may help
-identify the account, classification, and scale of the municipal record. It does not certify
+Assessment has a separate job. The assessed value supports the property-tax system. It helps identify
+the account, classification, and scale of the municipal record. It does not certify
 condition, access, title quality, development feasibility, auction value, or a safe bid. Comparing a
-winning bid with assessment can describe two published numbers. Calling the gap "equity" would
+winning bid with assessment describes two published numbers. Calling the gap "equity" would
 require conclusions those numbers do not contain.
 
 ::: {.case name="Cedar Street"}
@@ -176,15 +172,14 @@ should be researched and estimated rather than treated as a mysterious mass. Its
 prevent the visible bid from impersonating the whole exposure.
 :::
 
-![**The bid is only the first layer.** The winning bid is one layer in the acquisition's uncertainty budget. The bid is the visible layer; tax, legal and registry work, survey, insurance, carrying, repair and remediation, possession and an uncertainty reserve can sit below the waterline. Layers are drawn the same size: the submerged proportion is not fixed, and known costs should be researched and estimated rather than treated as a mysterious mass. Verify sources; not a recommendation. Redrawn from figure-29 of the 2026 edition.](../assets/figures/fig-09-all-in-cost-stack.svg){#fig-09-all-in-cost-stack alt="Layered stack begins with bid price and adds taxes, legal work, insurance, survey, carrying costs, repairs, remediation, possession and reserve. The bid, the amount called or tendered, sits above a waterline. Below it: tax, applicable tax and deed-transfer questions; legal and registry, advice, searches and registration; survey, boundary and access work when needed; insurance, coverage attempts and conditions; carrying, new taxes, security and time; repair and remediation, unknown until appropriately investigated; possession, a separate lawful process if occupied; uncertainty reserve, a buffer, not hidden optimism. Not to scale."}
+![**The bid is only the first layer.** The winning bid is one layer in the acquisition's uncertainty budget. The bid is the visible layer; tax, legal and registry work, survey, insurance, carrying, repair and remediation, possession and an uncertainty reserve can sit below the waterline. Layers are drawn the same size: the submerged proportion is not fixed. Redrawn from figure-29 of the 2026 edition.](../assets/figures/fig-09-all-in-cost-stack.svg){#fig-09-all-in-cost-stack alt="Layered stack begins with bid price and adds taxes, legal work, insurance, survey, carrying costs, repairs, remediation, possession and reserve. The bid, the amount called or tendered, sits above a waterline. Below it: tax, applicable tax and deed-transfer questions; legal and registry, advice, searches and registration; survey, boundary and access work when needed; insurance, coverage attempts and conditions; carrying, new taxes, security and time; repair and remediation, unknown until appropriately investigated; possession, a separate lawful process if occupied; uncertainty reserve, a buffer, not hidden optimism. Not to scale."}
 
 ::: {.case name="Cedar Street"}
 Composite case — not a real property.
 
-An old result can now do one honest job in the fictional Cedar Street file. It can show that other
+An old result can now do one honest job in the fictional Cedar Street file. It shows that other
 bidders sometimes paid several multiples of municipal recovery amounts in particular past events.
-It cannot say which multiple Cedar Street deserves. Competition measures how the room behaved. It
-does not complete the parcel biography.
+It cannot say which multiple Cedar Street deserves.
 :::
 
 ::: {.recall}
@@ -221,14 +216,14 @@ assessment is dated mass-appraisal and taxation context (LAND-003).
 ::: {.case name="Cedar Street"}
 Composite case — not a real property.
 
-The fictional Cedar Street's intended use is a modest rehabilitation project. That statement does
-not make the project feasible. It gives the cost file a destination. The researcher can now ask
+The fictional Cedar Street's intended use is a modest rehabilitation project. The statement gives
+the cost file a destination. The researcher can now ask
 which expenditures are required before the building can lawfully and safely reach that use.
 :::
 
 ### Three cost groups
 
-**Acquisition and legal work.** The first group can include the bid, registration charges, title
+**Acquisition and legal work.** The first group includes the bid, registration charges, title
 and deed review, searches, advice about continuing interests, and any work needed to understand
 possession. A survey or boundary opinion belongs here when the intended project depends on a fact
 that existing records do not establish. Chapter 8's occupied-building question is now a cost and
@@ -237,7 +232,7 @@ timing dependency without becoming an invitation to guess at an eviction budget.
 **Carrying the property through time.** The second group carries the property through time. Insurance
 may be available only on particular terms, or may remain unresolved until an insurer understands
 the building and legal stage. Taxes continue. Security, heat, utilities, weather protection,
-financing, travel, and professional coordination can accrue while title, redemption, possession,
+financing, travel, and professional coordination accrue while title, redemption, possession,
 design, or approvals remain unfinished. The calendar has a price even when no repair crew is
 working.
 
@@ -253,20 +248,18 @@ belongs only where evidence supports it.
 
 ### Evidence states within the groups
 
-The three cost groups can each contain different evidence states:
+Each of the three cost groups holds items in different evidence states:
 
 - Some items can be quoted before the auction.
 - Some can be bounded by a defensible range or allowance.
-- Other items, regardless of which cost group they occupy, cannot be priced responsibly with the
-  available access, time or evidence.
+- Other items cannot be priced responsibly with the available access, time or evidence.
 
 An unpriceable essential item needs a stop condition, not a larger miscellaneous line.
 
 ### The uncertainty reserve
 
 An **uncertainty reserve** is an amount held back for unresolved risks that are real enough to
-affect the decision but cannot yet be quoted exactly. It is not a payment to make ignorance
-disappear. The reserve works only when the bidder can:
+affect the decision but cannot yet be quoted exactly. The reserve works only when the bidder can:
 
 - describe the uncertainty;
 - explain why some range is tolerable;
@@ -297,8 +290,7 @@ non-bid costs, and a $20,000 uncertainty reserve:
 
 The point to keep is the structure, not the total: bid, known costs, reserve.
 
-The actual numbers for Cedar Street would require property-specific evidence. Changing the intended
-use changes the file. So does a lawyer's title finding, an insurer's refusal, a survey result, an
+Changing the intended use changes the file. So does a lawyer's title finding, an insurer's refusal, a survey result, an
 environmental opinion, or a lawful inspection. A cost stack should change when evidence changes. It
 should not change because another bidder raises a card.
 
@@ -318,7 +310,7 @@ higher of purchase price or assessed value, subject to the governing definitions
 One exemption route concerns qualifying individuals who move to Nova Scotia within six months and
 provide the required proof. A bidder should establish status and treatment with current provincial
 guidance and professional advice before the auction. The assessment can matter to this tax
-calculation even though it still does not establish market value.
+calculation.
 
 **HST.** HST is a different branch. CBRM's current event instructions say HST applies to vacant land
 and commercially assessed property. That is an important rule for a CBRM bidder to clarify and
@@ -330,8 +322,7 @@ obtain case-specific tax advice rather than choose whichever reading produces th
 **Eligibility.** Eligibility comes before price. The federal prohibition on certain direct or
 indirect purchases of residential property by non-Canadians is currently scheduled through
 January 1, 2027. The Act and regulations contain definitions and exceptions, and current guidance
-discusses geography, vacant land, and genuine development. Those categories require exact current
-review. An auction's willingness to accept a bid does not certify that the bidder or transaction is
+discusses geography, vacant land, and genuine development. An auction's willingness to accept a bid does not certify that the bidder or transaction is
 lawful.
 
 The four branches can now be stated without calculation:
@@ -347,7 +338,7 @@ An unanswered branch does not automatically mean no bid. It means the file is no
 effect is confirmed, bounded, or treated as a stop condition. A tax large enough to change the
 project cannot be left for the three-business-day payment window.
 
-![**Four branches before the ceiling.** Each tax and eligibility question carries its own dated fact, as of July 2026. The municipal tax-sale-deed exemption does not eliminate the other three; CBRM's HST instruction is an event rule, not a universal one; the federal prohibition is currently scheduled through January 1, 2027. An unanswered branch does not automatically mean no bid, but the file is not ready until the effect is confirmed, bounded, or treated as a stop condition. New figure drawn from the chapter text.](../assets/figures/fig-09-tax-eligibility-branches.svg){#fig-09-tax-eligibility-branches alt="Four tax and eligibility questions to answer before bidding: whether the municipal deed-transfer-tax exemption for tax-sale deeds applies; whether the provincial non-resident deed transfer tax applies, at a 10 percent rate based on the non-resident interest and the higher of purchase price or assessed value for qualifying transfers after March 2025, subject to definitions and exemptions; what the HST treatment of this transaction is, since CBRM's event rule is not a universal one; and whether the buyer is eligible under current federal, provincial, and municipal law, including the federal non-Canadian purchase prohibition, currently scheduled through January 1, 2027. Any unanswered branch means the file is not ready until its effect is confirmed, bounded, or treated as a stop condition."}
+![**Four branches before the ceiling.** Each tax and eligibility question carries its own dated fact, as of July 2026. The municipal tax-sale-deed exemption does not eliminate the other three; CBRM's HST instruction is an event rule, not a universal one; the federal prohibition is currently scheduled through January 1, 2027. New figure drawn from the chapter text.](../assets/figures/fig-09-tax-eligibility-branches.svg){#fig-09-tax-eligibility-branches alt="Four tax and eligibility questions to answer before bidding: whether the municipal deed-transfer-tax exemption for tax-sale deeds applies; whether the provincial non-resident deed transfer tax applies, at a 10 percent rate based on the non-resident interest and the higher of purchase price or assessed value for qualifying transfers after March 2025, subject to definitions and exemptions; what the HST treatment of this transaction is, since CBRM's event rule is not a universal one; and whether the buyer is eligible under current federal, provincial, and municipal law, including the federal non-Canadian purchase prohibition, currently scheduled through January 1, 2027. Any unanswered branch means the file is not ready until its effect is confirmed, bounded, or treated as a stop condition."}
 
 ### The maximum bid
 
@@ -374,7 +365,7 @@ The number is built backward ([Figure 9.6](#fig-09-build-backward)):
 
 If nothing remains, the research has produced a no-bid result.
 
-![**Exposure and the maximum, kept apart.** Panel a adds up the fictional file's all-in exposure; panel b, which has no amounts and is not to scale, shows the maximum bid built backward from a supported value boundary. The maximum stands only if every essential legal, eligibility, payment and no-go condition is satisfied and the amount is fundable; if nothing remains, the result is no bid. A worked example on a composite file, not a real property or a recommended amount. New figure drawn from the chapter text.](../assets/figures/fig-09-build-backward.svg){#fig-09-build-backward alt="Two panels. First, the book's worked example of all-in exposure: a $30,000 bid plus $40,000 of known non-bid costs plus a $20,000 uncertainty reserve equals $90,000. Second, how a maximum bid is built backward: start from the supported value boundary, subtract known non-bid costs and the reserve, and what remains can become the maximum bid if every condition is met; if nothing remains, the result is no bid."}
+![**Exposure and the maximum, kept apart.** Panel a adds up the fictional file's all-in exposure; panel b, which has no amounts and is not to scale, shows the maximum bid built backward from a supported value boundary. The maximum stands only if every essential legal, eligibility, payment and no-go condition is satisfied and the amount is fundable; if nothing remains, the result is no bid. New figure drawn from the chapter text.](../assets/figures/fig-09-build-backward.svg){#fig-09-build-backward alt="Two panels. First, the book's worked example of all-in exposure: a $30,000 bid plus $40,000 of known non-bid costs plus a $20,000 uncertainty reserve equals $90,000. Second, how a maximum bid is built backward: start from the supported value boundary, subtract known non-bid costs and the reserve, and what remains can become the maximum bid if every condition is met; if nothing remains, the result is no bid."}
 
 ### Funding the ceiling
 

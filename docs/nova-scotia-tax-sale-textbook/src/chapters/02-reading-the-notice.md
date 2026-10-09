@@ -38,7 +38,7 @@ The Inverness packet gives each property a compact row before it gives the reade
 sheet. The row looks like a summary of one thing. It is actually a bundle of references to several
 record systems.
 
-Harbour Road, the fictional composite parcel from Chapter 1, shows how. Its row might contain:
+Harbour Road, the fictional composite parcel from Chapter 1, shows how. Its row contains:
 
 - a lien number;
 - an assessed-owner field;
@@ -53,7 +53,7 @@ take in the row in a second and feel that the property has been described.
 The row has done a different job: it has supplied the handles needed to begin research.
 [Figure 2.1](#fig-02-packet-anatomy) labels those handles on a fictional sheet.
 
-![**A parcel sheet is a set of claims to verify.** Each field on a parcel sheet is an identifier or a claim to check, not a promise about the parcel. Fictional composite based on public packet structure; no owner data or Property Online reproduction; identifiers are masked. Educational overview • verify current law and sale terms. Redrawn from figure-04 of the 2026 edition.](../assets/figures/fig-02-packet-anatomy.svg){#fig-02-packet-anatomy alt="Annotated fictional tax-sale packet page pointing to lien number, AAN, PID, recovery amount, assessment, redemption marker, map and legal-description areas. Identity asks which record we are following; money asks what amount is advertised for recovery; legal route asks whether a six-month redemption period is shown; limits asks what the sheet does not establish."}
+![**A parcel sheet is a set of claims to verify.** Each field on a parcel sheet is an identifier or a claim to check, not a promise about the parcel. Fictional composite based on public packet structure; no owner data or Property Online reproduction; identifiers are masked. Redrawn from figure-04 of the 2026 edition.](../assets/figures/fig-02-packet-anatomy.svg){#fig-02-packet-anatomy alt="Annotated fictional tax-sale packet page pointing to lien number, AAN, PID, recovery amount, assessment, redemption marker, map and legal-description areas. Identity asks which record we are following; money asks what amount is advertised for recovery; legal route asks whether a six-month redemption period is shown; limits asks what the sheet does not establish."}
 
 ### The lien number and the assessed-owner field {#sec-02-lien-owner}
 
@@ -65,7 +65,7 @@ The lien number is local to the event. Lien 6 in an August packet is not a perma
 the land, and a lien number from Inverness tells you nothing about how Halifax or Pictou labels its
 own material.
 
-The **assessed-owner** field belongs to the tax account. Municipal notices may publish a name
+The **assessed-owner** field belongs to the tax account. Municipal notices publish a name
 because the collection process has notice requirements and the account must be identifiable.
 
 ::: {.rail label="Careful"}
@@ -73,7 +73,7 @@ For this book's method, that name is neither a character sketch nor an invitatio
 private story.
 :::
 
-The name can help a qualified researcher reconcile the municipal account with authorized land
+A qualified researcher uses the name to reconcile the municipal account with authorized land
 records. It does not prove:
 
 - who occupies the property today;
@@ -86,9 +86,9 @@ the lesson concerns the jobs performed by records.
 
 ### Two catalogue keys: AAN and PID {#sec-02-aan-pid}
 
-The first technical identifier is the **Assessment Account Number**, usually shortened to
+The first technical identifier is the **Assessment Account Number**, shortened to
 **AAN**. It identifies the assessment account used in the property assessment and municipal
-taxation system. An account can carry assessed value, classification and other taxation
+taxation system. An account carries assessed value, classification and other taxation
 information. The AAN is the right handle when the question concerns the assessment record.
 
 An AAN is not the land itself. It does not establish the legal boundary, prove road access, settle
@@ -97,19 +97,17 @@ can stay internally consistent while following the wrong object.
 
 The second identifier is the **Parcel Identification Number**, or **PID**. It identifies a mapped
 land parcel in Nova Scotia's land-information systems. The PID is the stronger starting handle when
-the question is "Which parcel do these records appear to concern?" It can route a researcher toward
+the question is "Which parcel do these records appear to concern?" It routes a researcher toward
 parcel mapping and registry information.
 
-The word *parcel* deserves restraint. A parcel is a unit in the land-record system. A shape drawn
+A parcel is a unit in the land-record system. A shape drawn
 for that PID is useful for orientation and record lookup. The shape is not automatically a survey
 opinion about the location of every boundary on the ground. The PID also does not certify access,
 permitted use, physical condition, or freedom from competing interests.
 
 ::: {.rail label="A way to picture it"}
-AAN and PID can be remembered as two catalogue keys. One leads toward the assessment account; the
-other leads toward the mapped parcel and related land records. The comparison ends there. Land
-records do more than describe an object sitting on a shelf, and legal interests cannot be reduced
-to a library entry. The value of the analogy is simply that choosing the wrong key opens the wrong
+Think of AAN and PID as two catalogue keys. One leads toward the assessment account; the
+other leads toward the mapped parcel and related land records. The value of the analogy is that choosing the wrong key opens the wrong
 catalogue.
 :::
 
@@ -126,7 +124,7 @@ It is not proof that every building, driveway, fence, utility line or apparent y
 reader's mental picture belongs to that parcel. Each of those questions needs its own source.
 :::
 
-![**Identifiers help records meet.** Seven records form a chain from the tax-sale lien to the legal description. The chain helps records meet; it does not prove exact boundary, legal access, site condition, market value or buildability. Sources: LAND-001 through LAND-004 • identifiers are not surveys, inspections, appraisals or approvals. Educational overview • verify current law and sale terms. Redrawn from figure-05 of the 2026 edition.](../assets/figures/fig-02-identifier-ladder.svg){#fig-02-identifier-ladder alt="Seven labelled record cards form a ladder from tax-sale lien to legal description: lien (auction list), AAN (tax account), PID (mapped parcel), location (place clue), assessment (assessment record), map (graphical clue) and legal description (registry wording). Below them, five conclusions the chain does not prove are struck through: exact boundary, legal access, site condition, market value and buildability. A band reads: each field narrows a question; authority comes from the source qualified to answer it."}
+![**Identifiers help records meet.** Seven records form a chain from the tax-sale lien to the legal description. The chain helps records meet; it does not prove exact boundary, legal access, site condition, market value or buildability. Sources: LAND-001 through LAND-004. Redrawn from figure-05 of the 2026 edition.](../assets/figures/fig-02-identifier-ladder.svg){#fig-02-identifier-ladder alt="Seven labelled record cards form a ladder from tax-sale lien to legal description: lien (auction list), AAN (tax account), PID (mapped parcel), location (place clue), assessment (assessment record), map (graphical clue) and legal description (registry wording). Below them, five conclusions the chain does not prove are struck through: exact boundary, legal access, site condition, market value and buildability. A band reads: each field narrows a question; authority comes from the source qualified to answer it."}
 
 ::: source
 Evidence notes LAND-001 (the AAN identifies the assessment account and the PID the mapped land
@@ -156,8 +154,8 @@ The address helps find the area; the PID keeps the parcel question anchored.
 
 The land and building fields come from assessment. That gives the third core term: an
 **assessment** is the valuation and classification record used to support property taxation.
-Separate land and building amounts can tell a researcher how the assessment system has
-represented the account. A zero or blank building entry can be important enough to investigate.
+Separate land and building amounts show a researcher how the assessment system has
+represented the account. A zero or blank building entry is worth investigating.
 
 It still cannot carry the conclusion "vacant land." A structure may be omitted, changed, removed,
 damaged, newly built, or associated differently in the records. The date and purpose of the
@@ -169,12 +167,9 @@ assessment matter. The field does not replace:
 - registry research;
 - planning confirmation.
 
-It also does not establish an auction value or a safe bid.
-
 The assessed amount can feel more authoritative than an aerial image because it arrives as a
 precise number. Precision is not the same as scope. The number is precise within an assessment
-system whose job is taxation. Condition, access, title quality, market demand, repair cost and the
-uncertainty of a tax-sale process live outside that job.
+system whose job is taxation.
 
 **Property Online** connects several of these handles. Nova Scotia's subscription system contains
 ownership, parcel mapping and registry information and supports searches using PID, owner, AAN and
@@ -186,7 +181,7 @@ registry file.
 This book keeps Property Online behind a firm boundary. Subscription screens, plans, registry
 documents, names and extracted private research do not become public illustrations merely because
 the author has lawful account access. The public lesson can still explain which identifier would be
-used, which kind of record may answer the question, and when a lawyer or surveyor should interpret
+used, which kind of record answers the question, and when a lawyer or surveyor should interpret
 the result.
 :::
 
@@ -214,7 +209,7 @@ AAN, PID, page and retrieval date available in each source. Do not merge the row
 not discard the awkward version. The municipality owns the live sale process and can answer which
 information controls.
 
-![**Preserve disagreement between sources.** Six sources are kept separately and compared question by question; each mismatch gets a file status rather than a silent correction. A discrepancy is a research finding, not permission to choose the convenient version. Sources: Inverness August 2026 packet; May 2025 packet, result sheet and council minutes. Educational overview • verify current law and sale terms. Redrawn from figure-06 of the 2026 edition.](../assets/figures/fig-02-reconcile-the-packet.svg){#fig-02-reconcile-the-packet alt="Six source boxes feed a comparison table; mismatched amount, missing detail page and differing result counts are highlighted in amber. The sources are the summary list, detail sheet, live webpage, registry, result sheet and council record, each kept separately. Lien 6 detail: listed in one source, detail missing in the other; status unresolved. Recovery amount: summary amount and a differing detail amount; status ask the municipality. May 2025 outcome: 35 reported sold against 31 result rows; status keep both counts."}
+![**Preserve disagreement between sources.** Six sources are kept separately and compared question by question; each mismatch gets a file status rather than a silent correction. A discrepancy is a research finding, not permission to choose the convenient version. Sources: Inverness August 2026 packet; May 2025 packet, result sheet and council minutes. Redrawn from figure-06 of the 2026 edition.](../assets/figures/fig-02-reconcile-the-packet.svg){#fig-02-reconcile-the-packet alt="Six source boxes feed a comparison table; mismatched amount, missing detail page and differing result counts are highlighted in amber. The sources are the summary list, detail sheet, live webpage, registry, result sheet and council record, each kept separately. Lien 6 detail: listed in one source, detail missing in the other; status unresolved. Recovery amount: summary amount and a differing detail amount; status ask the municipality. May 2025 outcome: 35 reported sold against 31 result rows; status keep both counts."}
 
 ::: {.case name="Harbour Road"}
 Composite case — not a real property.
@@ -259,7 +254,7 @@ are discussed in Chapter 9. Figure 2.4's source line is the original figure's.
 
 ## The fields that pull hardest {#sec-02-fields-pull}
 
-Two fields tend to take over a tax-sale notice even when they occupy very little space. One is the
+Two fields take over a tax-sale notice even when they occupy very little space. One is the
 advertised amount. The other is the redemption marker.
 
 ### The recovery amount {#sec-02-recovery}
@@ -283,8 +278,7 @@ absorb:
 
 That is why this book calls it the **recovery amount** when the municipal packet does. The label
 identifies the collection purpose. A different municipality may use "minimum bid" or another
-event-specific term, so its current notice still controls. Neither label converts the number into
-an appraisal.
+event-specific term, so its current notice still controls.
 
 ::: {.case name="Harbour Road"}
 Composite case — not a real property.
@@ -304,7 +298,7 @@ appraisal or a safe maximum bid.
 
 The real Inverness packet demonstrates why even the administrative number must remain attached to
 its source. Two recovery amounts differ between the summary schedule and the corresponding detailed
-pages. A careful file preserves both amounts and asks the municipality which one governs.
+pages. The file preserves both amounts and asks the municipality which one governs.
 
 ::: {.rail label="Careful"}
 Choosing the lower amount would be wishful arithmetic. Choosing the higher one simply because it
@@ -338,9 +332,7 @@ useful reading is smaller:
 - that row points toward a branch without that redemption right.
 
 The August summary makes the difference visible across the event: 27 entries are marked redeemable
-and 18 are marked non-redeemable. Those counts describe the published packet on its date. They do
-not promise that all 45 entries will reach the room or remain in the same category without a
-municipal update.
+and 18 are marked non-redeemable. Those counts describe the published packet on its date.
 
 ::: source
 Municipal Government Act, s. 152(1) and s. 155; Halifax Regional Municipality Charter, s. 167(1)
@@ -366,7 +358,7 @@ create a claim on the auction.
 
 This is where the living map first enters the book's method. The checked NS Marks The Spot build
 organizes current notices for the July 2026 Cape Breton Regional Municipality event and the August
-2026 Inverness event. It can filter by municipality, event and redemption category, and it can open
+2026 Inverness event. It filters by municipality, event and redemption category, and it opens
 a direct official source link.
 
 ::: {.rail label="Why it matters"}
@@ -394,7 +386,7 @@ The steps are:
 The earlier packet remains valuable evidence of what was published earlier. It does not become
 false merely because the live process changed.
 
-The same discipline applies to a redemption filter. A filter can help separate rows that the
+The same discipline applies to a redemption filter. A filter separates rows that the
 checked data labels redeemable or non-redeemable. It cannot reclassify a parcel or interpret the
 statute for a live decision. The source row, the current notice and qualified legal advice remain
 the route when the classification matters.
@@ -434,7 +426,7 @@ The four-question test also exposes a common versioning error. A researcher may 
 auction-day notes without dates. Every source can be authentic while the combined file becomes
 misleading. The reader no longer knows which rows existed at which point in the process.
 
-Harbour Road's file can avoid that problem with **source-state labels**:
+Harbour Road's file avoids that problem with **source-state labels**:
 
 - "Packet retrieved July 20" describes one snapshot.
 - "Municipal page checked August 10" describes a later state.
@@ -443,7 +435,7 @@ Harbour Road's file can avoid that problem with **source-state labels**:
 
 The dates preserve change instead of forcing one document to erase another.
 
-![**A dated research file.** Harbour Road's file card records two dates and keeps a source beside every amount and marker; source-state labels keep each snapshot separate. Harbour Road is a composite — not a real property. The third label is conditional: it belongs in the file only if the confirmation actually occurred. Not to scale. New figure drawn from the chapter text.](../assets/figures/fig-02-source-state-labels.svg){#fig-02-source-state-labels alt="A fictional research file for Harbour Road labelled with dated source states: packet retrieved July 20, describing one snapshot; municipal page checked August 10, describing a later state; and, drawn dashed, treasurer confirmed withdrawn August 11, which would describe an event-day fact only if that confirmation actually occurred. The file card records two dates, when the packet was retrieved and when event status was last checked, and a source page and date beside every amount and marker."}
+![**A dated research file.** Harbour Road's file card records two dates and keeps a source beside every amount and marker; source-state labels keep each snapshot separate. The third label is conditional: it belongs in the file only if the confirmation actually occurred. Not to scale. New figure drawn from the chapter text.](../assets/figures/fig-02-source-state-labels.svg){#fig-02-source-state-labels alt="A fictional research file for Harbour Road labelled with dated source states: packet retrieved July 20, describing one snapshot; municipal page checked August 10, describing a later state; and, drawn dashed, treasurer confirmed withdrawn August 11, which would describe an event-day fact only if that confirmation actually occurred. The file card records two dates, when the packet was retrieved and when event status was last checked, and a source page and date beside every amount and marker."}
 
 Withdrawal itself should remain narrow evidence. It can mean the amount was paid or the row was
 otherwise removed or deferred under the process. Without an authoritative explanation, it does not
@@ -451,7 +443,7 @@ prove that the property was defective, that the owner prevailed in a dispute, or
 municipality made an error. The public record may support only the status word and date.
 
 The map's historical-result mode belongs on the other side of the same boundary. A verified result
-can document that a parcel was recorded with a particular outcome at an earlier event. It cannot
+documents that a parcel was recorded with a particular outcome at an earlier event. It cannot
 tell the researcher whether a current lien remains active. Current notices and historical outcomes
 are different record families, even when the same PID appears in both.
 
@@ -489,11 +481,9 @@ notice catalogues (source no. 48, checked July 20, 2026).
 - The lien number is local to the event. The assessed-owner field belongs to the tax account and
   does not prove who occupies the property, who has a beneficial interest or what anyone intends
   to do about the arrears.
-- The AAN identifies the assessment account and does not establish the legal boundary, road
-  access, ownership quality or an approved use. The PID identifies a mapped land parcel and is the
-  stronger starting handle for "Which parcel?"; its shape is not automatically a survey opinion,
-  and it does not certify access, permitted use, physical condition, or freedom from competing
-  interests.
+- The AAN identifies the assessment account. The PID identifies a mapped land parcel and is the
+  stronger starting handle for "Which parcel?" Neither by itself proves boundaries, legal access,
+  ownership quality or a permitted use, and a parcel shape is not automatically a survey opinion.
 - An address helps find the area; the PID keeps the parcel question anchored. They are related but
   not interchangeable.
 - An assessment is the valuation and classification record used to support property taxation; it

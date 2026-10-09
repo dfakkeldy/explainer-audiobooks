@@ -207,8 +207,14 @@ def main():
         if heading != last:
             src += ["", f"### {heading}", ""]
             last = heading
-        if no == 48:     # the map's source repository is not printed (see book.yaml forbid list)
-            text = "NS Marks The Spot, the checked production build of the public map used in Chapter 5: its source receipt and live public map."
+        if no == 48:     # printed URLs, so the paper copy carries the map's source credit
+            text = ("NS Marks The Spot, the checked production build of the public map used in Chapter 5: source "
+                    "commit `d3114b5c` at [`https://github.com/dfakkeldy/ns-marks-the-spot/tree/d3114b5c/web`]"
+                    "(https://github.com/dfakkeldy/ns-marks-the-spot/tree/d3114b5cfc907d85f8b2c1f015d5476719b53586/web), "
+                    "its production source receipt at [`https://kinnokilabs.com/apps/nsmarksthespot/map/source.json`]"
+                    "(https://kinnokilabs.com/apps/nsmarksthespot/map/source.json) and the live public map at "
+                    "[`https://kinnokilabs.com/apps/nsmarksthespot/map/`](https://kinnokilabs.com/apps/nsmarksthespot/map/), "
+                    "checked 2026-07-20.")
         src.append(f"{no}. {text}")
     src += ["", "### Credits", "",
             "- Cover art: *The Packet Lifts*, the cover of the 2026 edition, used unchanged.",

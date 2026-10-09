@@ -74,17 +74,16 @@ The review of the deed covers the land description, grantee, signatures, municip
 sale record and any direction given by the purchaser.
 :::
 
-The deed has the statutory title effect explained in Chapter 8. This chapter does not need to
-inflate that effect or teach it again. Its new problem is what the owner does with the document and
-which systems begin to depend on it.
+The deed has the statutory title effect explained in Chapter 8. The new problem is what the owner
+does with the document and which systems begin to depend on it.
 
 ### Registration, the Affidavit of Value and fees
 
 **Deed registration** is the entry of the deed into Nova Scotia's land-record system. It gives the
 file a recorded instrument and a registration date that can be searched and related to the correct
-parcel. Registration should be handled through the current Land Registry requirements and
-property-specific legal advice. The purchaser should not assume that the municipality has completed
-every downstream filing.
+parcel. The purchaser handles registration through the current Land Registry requirements and
+property-specific legal advice, and does not assume that the municipality has completed every
+downstream filing.
 
 As of July 2026, the provincial deed-transfer service says an Affidavit of Value is required when
 real property is transferred, even when no municipal deed transfer tax is payable. The Municipal
@@ -106,8 +105,6 @@ recorded or filed. Those amounts can change. The durable entry in the ownership 
 - the registration particulars;
 - the lawyer's confirmation.
 
-A price copied from an old edition of this book is not that entry.
-
 ### Registration starts another clock
 
 Under the Marketable Titles Act, a tax deed generally may be set aside only during the six years
@@ -122,7 +119,7 @@ The start date is the deed-registration date. It is not auction day, the end of 
 delivery or the day somebody first enters the building. The earlier six-month redemption period and
 this six-year period measure different legal questions ([Figure 12.1](#fig-12-three-clocks)).
 
-![**Three clocks, two starting points.** The six-month redemption period and the 20-year limit on applying for surplus proceeds are both counted from the sale date; the six-year Marketable Titles Act period runs from the deed-registration date. The figure shows when each clock starts, not how any claim will turn out; property-specific timing and exceptions need legal advice. Not to scale. New figure drawn from the chapter text.](../assets/figures/fig-12-three-clocks.svg){#fig-12-three-clocks alt="Three different legal clocks. The six-month redemption period and the twenty-year limit on applying for surplus proceeds are both counted from the sale date. If taxes were unpaid for more than six years when the sale occurred, there is no six-month redemption period and the purchaser may request the deed after the sale. A person claiming an interest may apply to the Supreme Court for surplus after the redemption period and before twenty years have passed from the sale. The six-year period in which a tax deed can generally be set aside runs from the deed's registration date, not auction day, the end of redemption, deed delivery or first entry. After it, the deed has strong binding and conclusive effect, subject to a land-exclusion rule, a fraud or breach-of-trust exception, and a preserved claim for damages."}
+![**Three clocks, two starting points.** The six-month redemption period and the 20-year limit on applying for surplus proceeds are both counted from the sale date; the six-year Marketable Titles Act period runs from the deed-registration date. The figure shows when each clock starts, not how any claim will turn out. Not to scale. New figure drawn from the chapter text.](../assets/figures/fig-12-three-clocks.svg){#fig-12-three-clocks alt="Three different legal clocks. The six-month redemption period and the twenty-year limit on applying for surplus proceeds are both counted from the sale date. If taxes were unpaid for more than six years when the sale occurred, there is no six-month redemption period and the purchaser may request the deed after the sale. A person claiming an interest may apply to the Supreme Court for surplus after the redemption period and before twenty years have passed from the sale. The six-year period in which a tax deed can generally be set aside runs from the deed's registration date, not auction day, the end of redemption, deed delivery or first entry. After it, the deed has strong binding and conclusive effect, subject to a land-exclusion rule, a fraud or breach-of-trust exception, and a preserved claim for damages."}
 
 ::: careful
 Six years is not a title-review waiting strategy. The purchaser needs the deed, parcel register,
@@ -145,9 +142,8 @@ another parcel may have passage rights.
 :::
 
 The inverse access question also remains available. A visible driveway or mapped road beside a newly
-deeded parcel still does not establish legal frontage, a public-road connection or a registered
-right to pass. The deed changes the ownership stage. It does not convert the imagery into a survey
-or repair a missing access instrument.
+deeded parcel does not establish legal frontage, a public-road connection or a registered right to
+pass. The deed does not convert the imagery into a survey or repair a missing access instrument.
 
 The title file therefore has a modest, exact centre: the registered deed for the correct PID and the
 lawyer's interpretation of the current record. Around that centre sit:
@@ -157,9 +153,6 @@ lawyer's interpretation of the current record. Around that centre sit:
 - boundaries;
 - registration requirements;
 - unresolved property-specific qualifications.
-
-The centre is stronger than a map selection. It is still narrower than a claim that every ownership
-question has closed.
 
 ### Insurance changes stage
 
@@ -175,22 +168,22 @@ Possession does not arrive through registration. Foundry Street was visibly occu
 last examined it.
 
 ::: careful
-The current CBRM example remains bounded: as of July 2026, CBRM says it does not remove residents or
-provide access. Foundry Street's actual municipality requires its own current-source check. The
-recorded deed does not identify the legal status of the people inside. The owner continues through
-counsel and the lawful process supported by the real facts. No lock, utility, rent demand or
-belongings decision is improvised from the registration receipt.
+As of July 2026, CBRM says it does not remove residents or provide access. Foundry Street's actual
+municipality requires its own current-source check. The recorded deed does not identify the
+legal status of the people inside. The owner continues through counsel and the lawful process
+supported by the real facts. No lock, utility, rent demand or belongings decision is improvised from
+the registration receipt.
 :::
 
 When lawful possession or authorized access is eventually established, the first entry is planned as
 an unknown-condition event. Insurance terms, occupant rights, contractor authority, building safety
 and environmental concerns are checked before anyone treats the premises as an ordinary renovation
-site. A tax deed may be a powerful title document without making an unstable stair, exposed wiring,
-fuel leak or stored chemical safe to approach.
+site. A tax deed is a powerful title document, but it does not make an unstable stair, exposed
+wiring, fuel leak or stored chemical safe to approach.
 
 ### Three records that should never be collapsed
 
-The owner now holds three records that should never be collapsed:
+The owner now holds three records:
 
 | Record | What it does |
 |---|---|
@@ -198,7 +191,7 @@ The owner now holds three records that should never be collapsed:
 | Title opinion | Explains the actual deed and land record |
 | Possession file | Establishes who is present and which lawful route governs access and control |
 
-![**A deed moves the questions.** The tax deed sends the file to six workstreams. A tax deed changes the file's legal stage; it does not finish the property work. Verify sources; not a recommendation. Redrawn from figure-32 of the 2026 edition.](../assets/figures/fig-12-deed-is-a-beginning.svg){#fig-12-deed-is-a-beginning alt="Tax deed at the centre sends six arrows to lawyer, possession, planning, survey, condition and insurance workstreams. Title review: lawyer. Possession: lawful process. Planning: written municipal answers. Survey: boundary and access. Condition: inspection and environmental review. Insurance: actual underwriting."}
+![**A deed moves the questions.** The tax deed sends the file to six workstreams. Redrawn from figure-32 of the 2026 edition.](../assets/figures/fig-12-deed-is-a-beginning.svg){#fig-12-deed-is-a-beginning alt="Tax deed at the centre sends six arrows to lawyer, possession, planning, survey, condition and insurance workstreams. Title review: lawyer. Possession: lawful process. Planning: written municipal answers. Survey: boundary and access. Condition: inspection and environmental review. Insurance: actual underwriting."}
 
 Foundry Street can move into physical due diligence only when those files support the move
 ([Figure 12.2](#fig-12-deed-is-a-beginning)). Registration has changed the document, started a clock
@@ -230,9 +223,7 @@ better evidence, but only after lawful possession or authorized entry makes that
 obtainable.
 
 **Post-deed due diligence** is the deliberate reopening of the intended-use, condition, cost and
-permission files after ownership has changed and better evidence becomes lawfully available. It
-does not presume that every question can now be answered. It recognizes that the evidence set has
-changed.
+permission files after ownership has changed and better evidence becomes lawfully available.
 
 ::: {.case name="Foundry Street · the pre-bid plan"}
 Composite case — not a real property.
@@ -249,8 +240,8 @@ fail once those systems return real costs or restrictions.
 
 ### Municipal letters
 
-Municipal letters can sharpen part of the picture. Cape Breton Regional Municipality, for example,
-currently (as of July 2026) distinguishes two products:
+Municipal letters sharpen part of the picture. As of July 2026, Cape Breton Regional
+Municipality, for example, distinguishes two products:
 
 - A **zoning-confirmation letter** confirms the zoning and applicable provisions identified by
   municipal planning staff.
@@ -265,14 +256,13 @@ difficult answer to the appropriate municipal staff or professional.
 
 ### Public assessment information
 
-Public assessment information supplies another bounded source. Property Valuation Services
+Public assessment information supplies another source. Property Valuation Services
 Corporation (PVSC) allows the public to find assessments by civic address or Assessment Account
 Number and offers broader searches, including by assessment range. Its open assessment-history data
-can show assessed and taxable assessed values over several years.
+shows assessed and taxable assessed values over several years.
 
 A selected parcel sheet may carry that dated PVSC account and assessment beside other public
-evidence. The convenience does not widen the number's meaning: it is still neither a present market
-price nor evidence of current building or site condition.
+evidence.
 
 Those values need labels:
 
@@ -302,7 +292,7 @@ Lawful physical access can now replace several pre-bid unknowns with qualified o
   restoration would require.
 - An insurer can underwrite the actual occupancy and condition rather than the map impression.
 
-Each answer remains narrower than the whole project. The file gains strength when each source is
+Each answer is narrower than the whole project. The file gains strength when each source is
 allowed to answer its own question:
 
 | This answer | Does not supply |
@@ -323,12 +313,11 @@ property-specific regulatory route that results.
 The same restraint applies to wells, on-site sewage, coastlines, flood context, mine workings and the
 other source layers introduced earlier. Their map symbols are retrieval handles. After the deed, the
 owner returns to the current official record, obtains inspection or professional interpretation
-where needed, and records what is still unknown. Absence from a discovery layer remains only absence
-from that source.
+where needed, and records what is still unknown.
 
 Foundry Street's right-of-way and access questions also receive a second pass. The lawyer interprets
-the registered instruments. A surveyor can relate the legal description and visible occupation to
-the ground. The owner can then plan work around the actual rights and boundaries rather than around a
+the registered instruments. A surveyor relates the legal description and visible occupation to
+the ground. The owner then plans work around the actual rights and boundaries rather than around a
 line seen on an orientation map.
 
 ### When the evidence changes the plan
@@ -359,7 +348,7 @@ The second due-diligence wave ends with an updated decision record. It states:
 - the required professional or municipal handoffs;
 - the next authorized expenditure.
 
-That record will be more useful than a victory photograph, because it shows what the deed has made
+That record is more useful than a victory photograph, because it shows what the deed has made
 possible and what it has not solved.
 
 ::: source
@@ -388,7 +377,7 @@ A **tax-sale surplus account** is the municipality's statutory account for sale 
 after the required municipal applications. It is a proceeds record, not a statement about which
 interests continue to burden the land ([Figure 12.3](#fig-12-surplus-proceeds-route)).
 
-![**Surplus follows a statutory route.** Sale proceeds first satisfy statutory municipal amounts, then enter a surplus account; if the property is redeemed the balance reduces the redemption amount, and after redemption expires a prior interest holder may apply to the court. The route is not a prediction of any claimant's result. Sources: MGA ss. 146–147; HRMC ss. 161–162 • educational route summary. Educational overview • verify current law and sale terms. Redrawn from figure-40 of the 2026 edition.](../assets/figures/fig-12-surplus-proceeds-route.svg){#fig-12-surplus-proceeds-route alt="Sale proceeds first satisfy statutory municipal amounts, then enter a surplus account; after redemption expiry a prior interest holder may apply to Supreme Court before the twenty-year endpoint. Purchase money, the amount received at the tax sale, goes first to statutory applications: taxes, interest, sale expenses and specified municipal amounts. The balance is held in the tax-sale surplus account. If the property is redeemed, the balance reduces the redemption amount under the statutory formula. No automatic payout, no purchaser windfall; the court route and deadlines matter."}
+![**Surplus follows a statutory route.** Sale proceeds first satisfy statutory municipal amounts, then enter a surplus account; if the property is redeemed the balance reduces the redemption amount, and after redemption expires a prior interest holder may apply to the court. Sources: MGA ss. 146–147; HRMC ss. 161–162. Redrawn from figure-40 of the 2026 edition.](../assets/figures/fig-12-surplus-proceeds-route.svg){#fig-12-surplus-proceeds-route alt="Sale proceeds first satisfy statutory municipal amounts, then enter a surplus account; after redemption expiry a prior interest holder may apply to Supreme Court before the twenty-year endpoint. Purchase money, the amount received at the tax sale, goes first to statutory applications: taxes, interest, sale expenses and specified municipal amounts. The balance is held in the tax-sale surplus account. If the property is redeemed, the balance reduces the redemption amount under the statutory formula. No automatic payout, no purchaser windfall; the court route and deadlines matter."}
 
 ::: {.case name="Elena"}
 Composite case — Elena is a fictional former co-owner, not a real person.
@@ -431,18 +420,15 @@ following registration. Its wording also preserves specific qualifications:
   protection.
 - The section preserves a cause of action for damages arising from a wrongful tax sale.
 
-Those are legal branches, not screening shortcuts. A map user cannot determine fraud, breach of
-trust, damages or the application of an exception by selecting a parcel. Nor should a purchaser
-infer that the passage of time cures every problem or makes early title advice unnecessary.
+Those are legal branches, not screening shortcuts.
 
 If a tax sale is set aside, the Municipal Government Act says the tax lien is not discharged. The
 result is therefore not a simple rewind in which all prior positions vanish and the municipality's
-claim disappears. Counsel must explain the effect of the actual order, the surviving tax lien and any
-related remedy.
+claim disappears.
 
 ### Three files for one sale
 
-The ownership, surplus and challenge files should remain distinct even when they refer to the same
+The ownership, surplus and challenge files stay distinct even when they refer to the same
 sale:
 
 | File | What governs it |
@@ -461,7 +447,7 @@ Composite cases — not real properties or people.
 Foundry Street closes the chapter with a registered deed, an active title and possession file, and a
 revised property plan based on evidence that was not available at auction. Elena's separate file
 preserves the surplus route without turning it into a claim against the building itself. A
-contested-sale file, if one appears, goes to counsel rather than into the map's verdict column.
+contested-sale file, if one appears, goes to counsel.
 :::
 
 ### Why the deed is a beginning

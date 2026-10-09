@@ -92,4 +92,3 @@ editions:
       - "(?i)assessed owner:\\s*[A-Z]"      # an owner name after a field label
       - "(?i)author'?s own project"         # the edition does not describe NS Marks The Spot's ownership
       - "(?i)soapstone mine road"           # Q10: kept only in the original alt text, never in prose or captions
-      - "(?i)dfakkeldy"                     # the map's source repository; the original never prints it

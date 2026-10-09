@@ -47,7 +47,7 @@ are written. None of those entries will be improved by a faster heartbeat.
 
 ### The open-outcry auction
 
-Inverness County's August 2026 terms, checked for this edition, place the sale in St. Peter's
+Inverness County's August 2026 terms place the sale in St. Peter's
 Parish Hall in Port Hood. The municipality describes a public auction. A bidder appears in person,
 follows the event's registration rules and competes while the treasurer calls the property.
 
@@ -57,11 +57,9 @@ called in the room until no higher acceptable bid is offered.
 The format exposes pressure. A bidder can hear the next increment, see another card rise and feel
 the silence that follows. The leading price changes in public. The parcel evidence does not.
 
-CBRM supplies a more detailed dated example of the mechanics. Its July 2026 instructions require
+CBRM supplies a more detailed example of the mechanics. Its July 2026 instructions require
 government-issued photo identification for registration and issue numbered bidding cards. Those are
-CBRM's event instructions, not unwritten rules for every Nova Scotia sale. Inverness, CBRM and any
-other municipality can publish different operational details within the governing law. The current
-municipal notice and terms must travel with the bidder.
+CBRM's event instructions, not unwritten rules for every Nova Scotia sale.
 
 ### The public tender
 
@@ -73,27 +71,26 @@ A **public tender** is a defined process in which bidders submit offers by the s
 the municipality opens and evaluates them under the event's terms. The competing offers are not
 adjusted through live calls across a room.
 
-Pictou County's April 2026 sale provides a dated sealed-tender example. A bidder could not watch the
+Pictou County's April 2026 sale provides a sealed-tender example. A bidder could not watch the
 competing amount rise and add one more increment. The amount had to be chosen before the tender left
 the bidder's control, under that event's stated submission rules.
 
 Annapolis County's 2026 records show why the format label needs an event date. Its public site
 preserves results from a March tax sale and later results from a June sale by tender. That sequence
 is evidence that a municipality may use more than one statutory route over time. It does not make
-the closed June tender a current invitation, and it does not establish the rules for the next
-Annapolis event.
+the closed June tender a current invitation.
 
 ### Opposite temptations, one maximum
 
 Open bidding and tendering create opposite temptations:
 
-- In the room, the bidder may chase a visible rival.
-- At a desk, the bidder may raise a sealed offer to avoid losing by an imagined small difference.
+- In the room, the temptation is to chase a visible rival.
+- At a desk, the temptation is to raise a sealed offer to avoid losing by an imagined small difference.
 
 Neither temptation adds title, access, condition, possession, tax or use evidence. The Cedar Street
 maximum therefore enters either format unchanged ([Figure 10.1](#fig-10-auction-versus-tender)).
 
-![**Two formats, one written limit.** Open bidding reveals competitors; a tender hides them, but both reward a prewritten limit. The format changes how an offer is delivered, not what the evidence file supports. Verify sources; not a recommendation. Redrawn from figure-30 of the 2026 edition.](../assets/figures/fig-10-auction-versus-tender.svg){#fig-10-auction-versus-tender alt="Parallel timelines compare registration and live bidding with sealed submission and opening, both ending at the same written walk-away rule. Open auction: register, hear live calls, and the card rises only below the limit. Sealed tender: choose once, submit by the deadline, no live adjustment. Both lead to the same evidence file: eligibility, authority, event terms and the walk-away rule do not change."}
+![**Two formats, one written limit.** Open bidding reveals competitors; a tender hides them, but both reward a prewritten limit. Redrawn from figure-30 of the 2026 edition.](../assets/figures/fig-10-auction-versus-tender.svg){#fig-10-auction-versus-tender alt="Parallel timelines compare registration and live bidding with sealed submission and opening, both ending at the same written walk-away rule. Open auction: register, hear live calls, and the card rises only below the limit. Sealed tender: choose once, submit by the deadline, no live adjustment. Both lead to the same evidence file: eligibility, authority, event terms and the walk-away rule do not change."}
 
 ::: {.case name="Cedar Street · Maya's rehearsal"}
 Composite case — not a real property; Maya is a fictional bidder.
@@ -121,8 +118,7 @@ through an agent. The prohibited group includes:
 The statute attaches a penalty and possible loss of office or employment.
 
 That conflict rule is narrower than a complete eligibility review. It does not answer the federal,
-tax, corporate-authority or representation questions from [Chapter 9](#sec-09-build-backward). Nor does successful event
-registration certify that every purchase rule has been satisfied. It identifies one statutory group
+tax, corporate-authority or representation questions from [Chapter 9](#sec-09-build-backward). It identifies one statutory group
 that cannot solve the problem by bidding through somebody else.
 
 ### Three questions on the pre-event sheet
@@ -138,12 +134,11 @@ does not fill the other two.
 
 The researcher who assembled Cedar Street's evidence file does not answer those questions for her.
 The file supplies sources, dates, boundaries and unresolved professional questions. Maya and the
-appropriate advisers establish her authority. The municipality administers its event. That division
-keeps careful research from turning into an unauthorized purchase decision.
+appropriate advisers establish her authority. The municipality administers its event.
 
 ### One durable rule
 
-The two formats now collapse into one durable rule. A bidding card and a tender envelope may feel
+The two formats now collapse into one durable rule. A bidding card and a tender envelope feel
 entirely different, but each carries the same evidence-bound maximum, the same conflict prohibition
 and the same requirement for lawful authority. Procedure changes how an offer is delivered. It does
 not enlarge what the file supports.
@@ -172,8 +167,7 @@ arrives.
 
 The live municipal status controls. A saved PDF, an NS Marks screenshot and a research worksheet
 preserve what was known at their recorded times. They do not keep a parcel in the sale. If Cedar
-Street is withdrawn, Maya's authority to bid ends with that announcement. Research about the parcel
-cannot convert a withdrawn lot into a private offer.
+Street is withdrawn, Maya's authority to bid ends with that announcement.
 
 ### When the property is called
 
@@ -219,7 +213,7 @@ lawyer's trust cheque. Its FAQ says the successful bidder must immediately pay t
 and expenses for which the property was sold, plus the stated $200 deed-registration amount. Any
 remaining purchase price is due within three business days.
 
-![**Payment readiness extends beyond the hammer.** The hammer finds a leading bid. Prepared payment completes the sale step. The upper path is the expected sequence; the lower row shows the statutory branches when it breaks. The Inverness registration amount is that event's term, not a provincial rule. Sources: MGA ss. 143, 148–149; HRMC ss. 158–159, 163–164 • verify current event terms. Educational overview • verify current law and sale terms. Redrawn from figure-39 of the 2026 edition.](../assets/figures/fig-10-payment-readiness-clock.svg){#fig-10-payment-readiness-clock alt="Horizontal readiness path from authorized registration to accepted funds, immediate recovery and registration payment, then the three-business-day balance, with branches for no sufficient bidder, immediate re-offer, re-advertisement and resale costs. Authorized: identity, authority and conflict check. Funds ready: event-accepted forms in hand. Immediate: price or recovery deposit; Inverness registration amount. Three business days: any remaining purchase balance. When the expected path breaks: with no sufficient bid, the municipality may buy for the recovery amount or advertise again for auction or tender; with no immediate payment, the treasurer puts the land up for sale again immediately; if the balance is missed, the land is re-advertised and resold and resale expenses come out of the deposit."}
+![**Payment readiness extends beyond the hammer.** The hammer finds a leading bid. Prepared payment completes the sale step. The upper path is the expected sequence; the lower row shows the statutory branches when it breaks. The Inverness registration amount is that event's term, not a provincial rule. Sources: MGA ss. 143, 148–149; HRMC ss. 158–159, 163–164. Redrawn from figure-39 of the 2026 edition.](../assets/figures/fig-10-payment-readiness-clock.svg){#fig-10-payment-readiness-clock alt="Horizontal readiness path from authorized registration to accepted funds, immediate recovery and registration payment, then the three-business-day balance, with branches for no sufficient bidder, immediate re-offer, re-advertisement and resale costs. Authorized: identity, authority and conflict check. Funds ready: event-accepted forms in hand. Immediate: price or recovery deposit; Inverness registration amount. Three business days: any remaining purchase balance. When the expected path breaks: with no sufficient bid, the municipality may buy for the recovery amount or advertise again for auction or tender; with no immediate payment, the treasurer puts the land up for sale again immediately; if the balance is missed, the land is re-advertised and resold and resale expenses come out of the deposit."}
 
 ### The deposit
 
@@ -264,15 +258,15 @@ affordable.
 
 ### Tenders move the clock
 
-Tendering moves the moment but preserves the test. Pictou's dated April 2026 notice required the
+Tendering moves the moment but preserves the test. Pictou's April 2026 notice required the
 successful tenderer to pay the bid price in full within three days after notification. There was no
 live hammer followed by an immediate auction deposit under those tender terms. The bidder still
 needed the accepted payment route before submitting. Format changed the clock's starting event; it
 did not create ordinary financing conditions after acceptance.
 
 ::: {.rail label="A way to picture it"}
-The finish-line analogy helps as long as it remains limited. The hammer or accepted tender
-identifies the leading offer. Payment performance lies beyond that marker.
+Picture the hammer or accepted tender as a finish line: it identifies the leading offer. Payment
+performance lies beyond that marker.
 
 The limit: real legal completion also includes the later certificate, possible redemption and deed
 stages, so this is not a complete race from bid to ownership. It only prevents the leading price
@@ -285,7 +279,7 @@ from being mistaken for a finished sale.
 Composite case — not a real property; Maya is a fictional bidder.
 
 Suppose Maya is the high bidder on a different fictional parcel within her maximum, but the bank
-draft she expected cannot be issued that day. The evidence file may be sound and the price may be
+draft she expected cannot be issued that day. The evidence file is sound and the price is
 authorized. Her payment performance is not. Raising the maximum would solve nothing. Asking the sale
 to wait would attempt to change the process after the bid.
 :::
@@ -336,7 +330,7 @@ municipality to bid and buy through an official or agent for a municipal purpose
 "May" matters. No sufficient private bid does not force the municipality to acquire every parcel.
 If the municipality does not purchase, it may advertise the property again and later sell it at
 auction for the best obtainable price or by highest tender, subject to any acceptable minimum
-directed by council. The process remains municipal and advertised.
+directed by council.
 
 An observer cannot fill that pause with a private proposal. "Unsold" does not mean available at the
 recovery amount, available over the counter or available on conditions selected by the observer.
@@ -383,13 +377,12 @@ accepted three business days after notification to pay the tender price. Failure
 toward advertisement and sale, with the statutory treatment of resale expenses and any deposit.
 
 A municipal tender notice may also describe how acceptance, rejection or movement to another bid is
-administered. The current Act, council authority and exact event terms must be read together rather
-than blended from different municipalities.
+administered.
 
 ### State changes, not opportunities
 
 These outcomes can sound like opportunities to someone who studied the parcel and missed the first
-call. They are better understood as state changes:
+call. They are state changes:
 
 - Before the event, the parcel is advertised.
 - During the event, it may be withdrawn, receive no sufficient bid or produce a leading offer.
@@ -397,7 +390,7 @@ call. They are better understood as state changes:
 
 Each change points to a specific municipal action and a fresh source check.
 
-![**What can happen to a listed property at a sale.** Each state change points to a specific municipal action and a fresh source check; none is a private opportunity, and none raises the written maximum. The CBRM legend is that municipality's dated wording; another municipality's next step must be checked in its own current record. Solid boxes are the expected path; dashed boxes are branches off it. New figure drawn from the chapter text.](../assets/figures/fig-10-sale-state-changes.svg){#fig-10-sale-state-changes alt="What can happen to a listed property at a sale. Before it is called, it may be withdrawn: paid, removed or otherwise changed, so check the current source. If it is called and there is no sufficient bid, the treasurer may buy it for the municipality, or the municipality may advertise it again and later sell it at auction or by highest tender, subject to any acceptable minimum directed by council; unsold does not mean privately available, and CBRM's legend says an unsold property may be purchased only at a future tax sale. If a leading bidder cannot pay immediately, the land is put up for sale again at once and the next person does not automatically inherit the winning amount. If the immediate amount is paid but the balance is not paid within three business days, the land is re-advertised and sold again, resale expenses are deducted from the deposit and the rest of the deposit is refunded after the resale. If paid in full, for a redeemable property, the treasurer gives a certificate of sale, the next legal stage. For a tender, the accepted bidder has three business days after notification to pay, and failure sends the land back toward advertisement and sale. A schedule change sends the bidder back to the current municipal notice."}
+![**What can happen to a listed property at a sale.** Solid boxes are the expected path; dashed boxes are branches off it. New figure drawn from the chapter text.](../assets/figures/fig-10-sale-state-changes.svg){#fig-10-sale-state-changes alt="What can happen to a listed property at a sale. Before it is called, it may be withdrawn: paid, removed or otherwise changed, so check the current source. If it is called and there is no sufficient bid, the treasurer may buy it for the municipality, or the municipality may advertise it again and later sell it at auction or by highest tender, subject to any acceptable minimum directed by council; unsold does not mean privately available, and CBRM's legend says an unsold property may be purchased only at a future tax sale. If a leading bidder cannot pay immediately, the land is put up for sale again at once and the next person does not automatically inherit the winning amount. If the immediate amount is paid but the balance is not paid within three business days, the land is re-advertised and sold again, resale expenses are deducted from the deposit and the rest of the deposit is refunded after the resale. If paid in full, for a redeemable property, the treasurer gives a certificate of sale, the next legal stage. For a tender, the accepted bidder has three business days after notification to pay, and failure sends the land back toward advertisement and sale. A schedule change sends the bidder back to the current municipal notice."}
 
 ### Schedule changes
 
@@ -439,7 +432,7 @@ If the sale does not reach that point, the outcome still has a disciplined descr
 - later re-advertisement;
 - verified event change.
 
-None authorizes a guess. None raises the written maximum. Every branch returns the reader to the same
+Every branch returns the reader to the same
 reliable place: the current municipal source and the limits of the evidence file.
 
 ::: source

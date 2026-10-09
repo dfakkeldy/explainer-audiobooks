@@ -41,7 +41,7 @@ to continue into the sliver. The auction recovery amount is modest. The aerial i
 a beginning, a middle, and an apparent destination.
 :::
 
-![**Case A starts with location.** Case A begins with location, not a conclusion about access. The fictional Parcel A (a composite, not a real property; not a survey) sits among communities, public roads and water; orientation does not prove access, title, condition or services. Verify sources; not a recommendation. Redrawn from figure-13 of the 2026 edition.](../assets/figures/fig-06-case-a-orientation.svg){#fig-06-case-a-orientation alt="Wide map locating fictional Parcel A among communities, public roads and water, with north arrow; the map is marked not to scale. Parcel A is a long, narrow sliver just behind two roadside lots on a public road. Place: locate fictional Case A among roads, communities and water. Limit: orientation does not prove access, title, condition or services."}
+![**Case A starts with location.** Case A begins with location, not a conclusion about access. The fictional Parcel A (a composite, not a real property; not a survey) sits among communities, public roads and water. Redrawn from figure-13 of the 2026 edition.](../assets/figures/fig-06-case-a-orientation.svg){#fig-06-case-a-orientation alt="Wide map locating fictional Parcel A among communities, public roads and water, with north arrow; the map is marked not to scale. Parcel A is a long, narrow sliver just behind two roadside lots on a public road. Place: locate fictional Case A among roads, communities and water. Limit: orientation does not prove access, title, condition or services."}
 
 That image can carry a researcher farther than the evidence does.
 
@@ -116,7 +116,7 @@ universal key. Its scope and obligations come from law and the particular record
 appearance of a path.
 :::
 
-![**Case A: a visible route is not a right.** A visible track can be a clue without being a legal right of access. On the fictional Parcel A (a composite, not a real property; not a survey), the track is a screening clue, registry and legal review must answer the right-of-way question, and terrain changes site questions, not legal rights. Verify sources; not a recommendation. Redrawn from figure-15 of the 2026 edition.](../assets/figures/fig-06-case-a-access.svg){#fig-06-case-a-access alt="Terrain map showing Parcel A, a nearby public road, a dashed visible track, steep contours and a question mark where legal access would need proof. The track leaves the public road and crosses a roadside lot toward the parcel. Visible approach: a road or track on a map is a screening clue. Legal access: registry and legal review must answer the right-of-way question. Terrain: contours and drainage change site questions, not legal rights."}
+![**Case A: a visible route is not a right.** A visible track can be a clue without being a legal right of access. On the fictional Parcel A (a composite, not a real property; not a survey), registry and legal review must answer the right-of-way question, and terrain changes site questions, not legal rights. Redrawn from figure-15 of the 2026 edition.](../assets/figures/fig-06-case-a-access.svg){#fig-06-case-a-access alt="Terrain map showing Parcel A, a nearby public road, a dashed visible track, steep contours and a question mark where legal access would need proof. The track leaves the public road and crosses a roadside lot toward the parcel. Visible approach: a road or track on a map is a screening clue. Legal access: registry and legal review must answer the right-of-way question. Terrain: contours and drainage change site questions, not legal rights."}
 
 ### What the notice, the map and the deed do not supply
 
@@ -125,10 +125,9 @@ and routes the researcher toward the exact parcel. The public map supplies orien
 picture.
 
 A tax deed may later change the purchaser's registered interest according to the governing process,
-but it does not invent a missing route across a neighbour's land. The deed branch from Chapter 3
-therefore cannot cure this problem by anticipation.
+but it does not invent a missing route across a neighbour's land.
 
-![**Case A: identify the research target.** The graphical outline identifies the target; it does not settle the legal boundary. The fictional Case A identifiers (a composite, not a real property; the digits are masked) point to one research target, and the graphical outline is not a survey or title opinion. Verify sources; not a recommendation. Redrawn from figure-14 of the 2026 edition.](../assets/figures/fig-06-case-a-identity.svg){#fig-06-case-a-identity alt="Parcel A highlighted with three fictional record identifiers and a prominent not-a-survey warning. A card lists a lien number, AAN and PID, with their digits masked, pointing to the parcel. Lien, AAN and PID: fictional Case A identifiers point to one research target. Boundary: the graphical outline is not a survey or title opinion."}
+![**Case A: identify the research target.** The graphical outline identifies the target; it does not settle the legal boundary. The fictional Case A identifiers (a composite, not a real property; the digits are masked) point to one research target. Redrawn from figure-14 of the 2026 edition.](../assets/figures/fig-06-case-a-identity.svg){#fig-06-case-a-identity alt="Parcel A highlighted with three fictional record identifiers and a prominent not-a-survey warning. A card lists a lien number, AAN and PID, with their digits masked, pointing to the parcel. Lien, AAN and PID: fictional Case A identifiers point to one research target. Boundary: the graphical outline is not a survey or title opinion."}
 
 ### Changing the facts
 
@@ -149,8 +148,7 @@ rather than ranked by which picture looks most convincing.
 **The track is in daily use.** Now change one fact. The track is maintained, snowplowed, and used by
 the owner of the front lot. Familiar use still does not establish that Maple Ridge has the right it
 needs. Long use can raise legal questions, but a bidder should not invent the answer from local
-habit. The people using a route may have permission, rights tied to different land, or a dispute
-that the aerial image cannot show.
+habit. The people using a route may have permission, rights tied to different land, or a dispute.
 
 **The polygon touches the road.** Change another fact. The parcel polygon appears to touch the
 public road at one corner. Parcel maps orient research; they are not boundary surveys. A sliver of
@@ -159,7 +157,7 @@ the description, survey and road evidence appropriate to the decision.
 
 ### The access note
 
-The access note for Maple Ridge can now remain short:
+The access note for Maple Ridge is short:
 
 ::: {.filenote case="Maple Ridge"}
 **Observation:** Current parcel and aerial services show a driveway-like route from the public road
@@ -227,7 +225,7 @@ to the ground. The fictional bidder wants a small year-round house.
 The parcel has crossed one threshold. It has not crossed the others.
 :::
 
-![**Case A: planning and servicing separate.** Planning controls and servicing are separate tests from parcel identity. On the fictional Parcel A (a composite, not a real property; not a survey), the planner confirms the current zone and rule, mapped contact is not a survey measurement, and well, septic, water and sewer require separate evidence. Verify sources; not a recommendation. Redrawn from figure-16 of the 2026 edition.](../assets/figures/fig-06-case-a-planning.svg){#fig-06-case-a-planning alt="Map of fictional Parcel A with zoning colour, frontage dimension, well and septic question icons, and a planner-confirmation callout. Zone A is hatched to the west and a second zone, marked with a question mark, lies to the east. Zone: confirm the current rule and intended use in writing. Frontage: mapped contact is not a survey measurement. Services: well, septic, water and sewer require separate evidence."}
+![**Case A: planning and servicing separate.** Planning controls and servicing are separate tests from parcel identity. On the fictional Parcel A (a composite, not a real property; not a survey), the planner confirms the current zone and rule, mapped contact is not a survey measurement, and well, septic, water and sewer require separate evidence. Redrawn from figure-16 of the 2026 edition.](../assets/figures/fig-06-case-a-planning.svg){#fig-06-case-a-planning alt="Map of fictional Parcel A with zoning colour, frontage dimension, well and septic question icons, and a planner-confirmation callout. Zone A is hatched to the west and a second zone, marked with a question mark, lies to the east. Zone: confirm the current rule and intended use in writing. Frontage: mapped contact is not a survey measurement. Services: well, septic, water and sewer require separate evidence."}
 
 ### Start with the intended use
 
@@ -257,8 +255,7 @@ Maple Ridge's long rear shape makes the distinction concrete:
 - The public road's status may matter.
 - The width and physical capacity of the route may matter to emergency access or construction.
 
-The planning authority must answer the rule question for the proposed project; the map cannot answer
-it from apparent contact.
+The planning authority must answer the rule question for the proposed project.
 
 ### Zoning
 
@@ -322,7 +319,7 @@ with a limited job. It removes one possible prohibition.
 
 Now suppose there is no municipal sewer or water service at the site. A rural project may depend on
 on-site systems and the land needed to support them. Their feasibility cannot be inferred from
-parcel area or an empty-looking field. It may depend on lawful site investigation, design, records,
+parcel area or an empty-looking field. It depends on lawful site investigation, design, records,
 approvals, and qualified advice.
 
 The next inquiry is what existing environmental and infrastructure records can reveal before lawful
@@ -331,8 +328,7 @@ question, not in a guess about the soil.
 
 Setbacks produce a similar problem. A narrow parcel may have enough mapped area in total and too
 little usable geometry once road, side-yard, water, access, or other requirements are applied.
-Public parcel geometry can help frame the question. It cannot certify the legal boundary or prove a
-compliant building envelope. A preliminary sketch based on uncertain lines remains preliminary.
+Public parcel geometry frames the question. It cannot prove a compliant building envelope.
 
 ### Encouraging facts do not merge
 
@@ -365,7 +361,7 @@ Maple Ridge's file now has two columns.
 
 The second column contains an essential dependency the bidder cannot resolve before the auction.
 Perhaps the access instrument is ambiguous. Perhaps the planning authority cannot confirm that the
-lot and route can support the stated use without later technical work. Either can be enough to stop.
+lot and route can support the stated use without later technical work. Either is enough to stop.
 :::
 
 The stop is not a prediction that the parcel is worthless. It is a conclusion about this bidder's
@@ -392,8 +388,6 @@ gates, set out in [Figure 6.5](#fig-06-independent-gates):
 | A visible approach | Legal access |
 | Legal access | Road frontage |
 | A zone label | Development approval |
-
-None of those records grants permission to enter and inspect the land.
 
 ![**Five separate gates.** Each gate asks its own question of its own authority. The fictional Maple Ridge (a composite case, not a real property), after the access research improves, has a visible track, a passage right that still needs final legal and survey confirmation, unanswered frontage and lot-status questions, and a zone in which a dwelling may be permitted, while the building envelope, physical access, services and approvals remain unresolved: the bidder's rational no. New figure drawn from the chapter text.](../assets/figures/fig-06-independent-gates.svg){#fig-06-independent-gates alt="Five separate gates for the fictional Maple Ridge parcel: a visible approach, legal access, road frontage, zoning, and development approval with services. The track is visible; a registered passage right appears to benefit the parcel but needs legal and survey confirmation; frontage and lot status are unanswered; a dwelling may be a permitted use; the building envelope, physical access, services and approvals are unresolved, so the bidder decides not to bid. No record grants permission to enter."}
 
@@ -422,30 +416,25 @@ no-warranty sentence of this section in its own words. GeoNOVA mapping products 
 - A right-of-way is a right of passage over land. Its source, the benefiting and burdened lands,
   and its description, route, users, purposes, width, maintenance terms and conditions may matter.
 - The notice, the public map and a later tax deed do not supply a missing route across a
-  neighbour's land. An old plan, local use or apparent contact on a screen raises questions; it does
-  not answer them.
+  neighbour's land. An old plan, local use or apparent contact on a screen only raises questions.
 - Road frontage is the parcel's relationship to a road as defined and required by the applicable
   rules. Zoning assigns land-use categories and rules; a zone label opens the planning inquiry.
 - In Inverness County, Plan Inverness took effect on September 11, 2025, and the Eastern District
-  Planning Commission administers planning and permitting services. Neither fact pre-approves a
-  parcel.
-- A permitted use is not an approved project. Encouraging facts do not merge into a permit; they
-  keep their separate sources, dates, limits and dependencies.
-- When an essential dependency cannot be resolved before the auction, a rational no is a
-  conclusion about this bidder's evidence, deadline and use, not a prediction that the parcel is
+  Planning Commission administers planning and permitting services.
+- A permitted use is not an approved project, and encouraging facts do not add up to a permit.
+- When an essential dependency cannot be resolved before the auction, a rational no concerns this bidder's evidence, deadline and use. It does not say the parcel is
   worthless.
 :::
 
 ::: {.check}
-1. Name the three separate questions the chapter distinguishes at the road edge, and say what kind
-   of question each one is. [Answer](#ans-06-1)
-2. The authorized record search for the fictional Maple Ridge finds an old plan showing the pale
-   track. Why is that still a question rather than an answer, and what must be reconciled?
+1. Name the three questions at the road edge and what kind of question each is. [Answer](#ans-06-1)
+2. An authorized record search finds an old plan showing Maple Ridge's pale track. Why is that still
+   a question, and what must be reconciled?
    [Answer](#ans-06-2)
 3. Why can a registered passage right solve Maple Ridge's legal access problem and still leave a
    frontage problem? [Answer](#ans-06-3)
 4. Write the four things a useful planning question names, and explain why the bidder's call
    discloses the access gap. [Answer](#ans-06-4)
-5. The planner confirms that a dwelling is a permitted use in the zone. List what that answer does
-   not establish, and explain why the bidder may still decide not to bid. [Answer](#ans-06-5)
+5. The planner confirms a dwelling is a permitted use. What does that not establish, and why might
+   the bidder still not bid? [Answer](#ans-06-5)
 :::

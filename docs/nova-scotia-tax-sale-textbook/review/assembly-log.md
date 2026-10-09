@@ -20,3 +20,9 @@ prompt file is not found and the agent receives only the "resume" note. The asse
 - Decision recorded: the prompt overrides open question Q13; nothing states who owns NS Marks The Spot, and source no. 48 is printed without links (forbid: dfakkeldy, author's own project).
 - FINAL: 332 pages; PDF 22.8 MB; EPUB 8.9 MB; figures 78 (16 kept, 38 redrawn, 24 new); EPUBCheck v5.4.0 0/0/0; ALL CHECKS PASSED.
 - Next phase (audit) prompt: /workspace/taxbook/promptB4.md.
+
+## 2026-10-09 de-hedging pass
+
+- Per Dan, source no. 48 now prints the map's GitHub source-commit link, receipt and live-map URLs
+  (supersedes the "printed without links" decision above); `dfakkeldy` removed from the forbid list.
+- Plain-language de-hedging pass and chapter-end tightening: see `review/dehedge/README.md`.

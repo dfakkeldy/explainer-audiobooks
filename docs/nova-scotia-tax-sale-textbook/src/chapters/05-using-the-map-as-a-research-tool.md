@@ -45,7 +45,7 @@ A current notice, an old result, a graphical boundary and a coloured overlay can
 one coherent property story. They were created by different authorities, for different purposes, at
 different times. The map works best when it slows that combination down.
 
-![**The map and its layers.** The production map, with its current and historical modes and the public layers available. Insets 1 and 2 magnify the mode switch and part of the layer list, where each layer shows its source date, scale and coverage. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-41); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-map-layer-overview-inset.png){#fig-05-map-layer-overview alt="Production map with current and historical modes, current defaults and the available public layers visible. Magnified insets show the Current notices and Historical records switch, with current notices described as advertised notices that still require municipal verification, and the Modern map, NS Aerial and NS Property Boundaries layer entries with their source dates, scales and coverage."}
+![**The map and its layers.** The production map, with its current and historical modes and the public layers available. Insets 1 and 2 magnify the mode switch and part of the layer list, where each layer shows its source date, scale and coverage. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-41); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-map-layer-overview-inset.png){#fig-05-map-layer-overview alt="Production map with current and historical modes, current defaults and the available public layers visible. Magnified insets show the Current notices and Historical records switch, with current notices described as advertised notices that still require municipal verification, and the Modern map, NS Aerial and NS Property Boundaries layer entries with their source dates, scales and coverage."}
 
 ### Current notice or historical result
 
@@ -53,8 +53,7 @@ Begin before the parcel is visible: choose the **record family**. The map keeps 
 
 - **Current notices.** In the production build checked on July 22, 2026, the current-sale catalogue
   showed the Inverness August 11 event with 40 advertised records, 5 marked withdrawn, and 40
-  active PIDs. That is a dated catalogue snapshot. It is not a claim that the event, or every entry,
-  remains live when you read this.
+  active PIDs. That is a dated catalogue snapshot.
 - **Historical records.** The historical catalogue is kept off by default. It contains dated results
   from completed events. It can also hold a recent event whose outcome remains explicitly unknown
   while official results are pending.
@@ -82,7 +81,7 @@ language, parcel list and the notice's published redemption category. The direct
 most important control on that screen. It returns the researcher to the municipality that owns the
 event record.
 
-![**The current Inverness view.** The current-notice browser for the Inverness August 11 event, with its snapshot counts, redemption filters and the link to the direct official source. Inset 1 magnifies the tax-sale notice entry; inset 2, the redemption-category filter and the event card with its direct-source link. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-43); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-current-parcel-browser-inset.png){#fig-05-current-parcel-browser alt="Inverness August 11 view showing 40 advertised records, 5 withdrawn records, 40 active PIDs, redemption filters and the direct official source. Magnified insets show the Tax-sale notices entry for Inverness County, August 11, 2026, with a snapshot retrieved July 22, 2026, and the redemption-category filter with an Open direct official source link."}
+![**The current Inverness view.** The current-notice browser for the Inverness August 11 event, with its snapshot counts, redemption filters and the link to the direct official source. Inset 1 magnifies the tax-sale notice entry; inset 2, the redemption-category filter and the event card with its direct-source link. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-43); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-current-parcel-browser-inset.png){#fig-05-current-parcel-browser alt="Inverness August 11 view showing 40 advertised records, 5 withdrawn records, 40 active PIDs, redemption filters and the direct official source. Magnified insets show the Tax-sale notices entry for Inverness County, August 11, 2026, with a snapshot retrieved July 22, 2026, and the redemption-category filter with an Open direct official source link."}
 
 The app is a research index. The municipality's current notice or direct confirmation controls
 whether:
@@ -107,19 +106,17 @@ the tie in its own favour.
 ### The production receipt
 
 The same rule governs the production receipt. The book's inspectable production record preserves
-the exact map build, capture date and interface checks used for its figures. The durable point is
-simpler: the receipt establishes which dated interface state produced the captured evidence. It does
-not guarantee that the site, municipal pages or provincial services will remain unchanged or
-available later.
+the exact map build, capture date and interface checks used for its figures. The receipt establishes
+which dated interface state produced the captured evidence.
 
-![**The Province-data notice.** Before Province layers load, the map shows a notice with the Province attribution, the statement that property boundaries are approximate and not a legal survey, and a link to the licence. Insets 1 and 2 magnify the notice. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-42); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-province-data-licence-inset.png){#fig-05-province-data-licence alt="Province-data notice in landscape and mobile layer-source metadata identify approximate boundaries, dated services and the licence boundary. Magnified insets show the notice headed Use Nova Scotia map data, the Province attribution, the statement that property boundaries are approximate and are not a legal survey, a link to read the Province licence, and the choice to accept and view map layers or continue without Province layers."}
+![**The Province-data notice.** Before Province layers load, the map shows a notice with the Province attribution, the statement that property boundaries are approximate and not a legal survey, and a link to the licence. Insets 1 and 2 magnify the notice. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-42); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-province-data-licence-inset.png){#fig-05-province-data-licence alt="Province-data notice in landscape and mobile layer-source metadata identify approximate boundaries, dated services and the licence boundary. Magnified insets show the notice headed Use Nova Scotia map data, the Province attribution, the statement that property boundaries are approximate and are not a legal survey, a link to read the Province licence, and the choice to accept and view map layers or continue without Province layers."}
 
 Provenance makes change detectable. It does not make change stop.
 
 ### Parcel identity
 
 After current status comes parcel identity. If the notice supplies an exact PID, search that PID.
-The result should select the parcel returned for that identifier and open its bounded evidence
+The result selects the parcel returned for that identifier and opens its bounded evidence
 sheet. The sheet can report:
 
 - the selected PID;
@@ -136,7 +133,7 @@ is useful for orientation and for comparison with other records. It is not a sur
 acreage guarantee, or proof that the polygon represents every interest involved in the sale. The
 word "mapped" should travel with the number.
 
-**Mapped buildings.** The sheet may now also report a mapped-building count and a dated PVSC
+**Mapped buildings.** The sheet also reports a mapped-building count and a dated PVSC
 assessment account. In the checked demonstration for PID `50292390`, the building query returned two
 Nova Scotia Topographic Database point or polygon features intersecting the mapped parcel. That count
 does not establish:
@@ -146,10 +143,10 @@ does not establish:
 - their condition or use;
 - whether they have permits.
 
-A returned zero would mean that the checked query found no mapped feature. It would not prove an
-empty parcel.
+A returned zero means that the checked query found no mapped feature. It does not prove an empty
+parcel.
 
-![**Mapped buildings and a dated assessment.** The parcel inspector for demonstration PID `50292390`, which is not presented as a current tax-sale listing. Inset 1 magnifies the mapped-area and mapped-building rows with their limits; inset 2, the PVSC assessment account with its valuation and physical-state dates. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-52); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-buildings-assessment-inset.png){#fig-05-buildings-assessment alt="Parcel inspector showing two mapped building features, PVSC AAN 00616672, 2026 assessed and taxable values of $35,000, and the attached limitations. Magnified insets show the PID 50292390 sheet with its mapped area and a mapped-building count of 2, the note that an empty result does not prove no building exists and that the count does not establish current structures, occupancy, condition, use or permits, and the PVSC assessment account with the statement that the assessment is not today's sale price or an appraisal."}
+![**Mapped buildings and a dated assessment.** The parcel inspector for demonstration PID `50292390`. Inset 1 magnifies the mapped-area and mapped-building rows with their limits; inset 2, the PVSC assessment account with its valuation and physical-state dates. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-52); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-buildings-assessment-inset.png){#fig-05-buildings-assessment alt="Parcel inspector showing two mapped building features, PVSC AAN 00616672, 2026 assessed and taxable values of $35,000, and the attached limitations. Magnified insets show the PID 50292390 sheet with its mapped area and a mapped-building count of 2, the note that an empty result does not prove no building exists and that the count does not establish current structures, occupancy, condition, use or permits, and the PVSC assessment account with the statement that the assessment is not today's sale price or an appraisal."}
 
 **Assessment.** The same demonstration matched PVSC Assessment Account Number `00616672` and
 displayed 2026 assessed and taxable values of $35,000. The sheet states the valuation and
@@ -166,10 +163,10 @@ provincial civic-address service. It uses the returned authoritative **civic poi
 parcel polygon that contains that point. It does not choose the nearest parcel to a guessed
 coordinate or fabricate an address between known points.
 
-![**An exact civic-address result.** The civic-address result and the selected parcel shown together, with the map's authoritative-result language. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-44).](../assets/figures/kept/fig-05-civic-address-search.png){#fig-05-civic-address-search alt="Exact civic-address result and selected parcel shown together, with authoritative-result language visible."}
+![**An exact civic-address result.** The civic-address result and the selected parcel shown together, with the map's authoritative-result language. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-44).](../assets/figures/kept/fig-05-civic-address-search.png){#fig-05-civic-address-search alt="Exact civic-address result and selected parcel shown together, with authoritative-result language visible."}
 
 **Containment** is a precise interface operation: this returned civic point falls inside this
-returned parcel polygon. Its legal meaning remains narrow. The operation does not prove:
+returned parcel polygon. The operation does not prove:
 
 - who owns or occupies the parcel;
 - whether the point is the mailing address for every interest;
@@ -182,12 +179,12 @@ roof. The parcel polygon may touch a road symbol. The app can report both facts 
 have no authority to infer occupancy or right-of-way. Containment finds the parcel to investigate. It
 does not finish the investigation.
 
-![**The parcel evidence sheet.** A selected parcel with its authoritative civic result, Plus Code, mapped context and the sheet's stated evidence limits. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-45).](../assets/figures/kept/fig-05-current-parcel-evidence.png){#fig-05-current-parcel-evidence alt="Selected parcel with authoritative civic result, Plus Code, mapped context and explicit evidence limits."}
+![**The parcel evidence sheet.** A selected parcel with its authoritative civic result, Plus Code, mapped context and the sheet's stated evidence limits. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-45).](../assets/figures/kept/fig-05-current-parcel-evidence.png){#fig-05-current-parcel-evidence alt="Selected parcel with authoritative civic result, Plus Code, mapped context and explicit evidence limits."}
 
 ### Plus Codes
 
-The sheet may also provide a **Plus Code**. A Plus Code encodes a location so it can be shared or
-recovered without relying on a conventional street address. It can help a research team discuss the
+The sheet also provides a **Plus Code**. A Plus Code encodes a location so it can be shared or
+recovered without relying on a conventional street address. It lets a research team discuss the
 same mapped point, especially in rural areas where address language is awkward or absent.
 
 A Plus Code identifies a location, not a legal interest. It does not turn the point into a parcel
@@ -214,7 +211,7 @@ the parcel feel physically known. The line appears exact. The imagery supplies t
 vegetation, water and roads. Yet both are dated services, and the parcel line remains graphical
 boundary information rather than a survey.
 
-![**Aerial imagery with parcel linework.** A selected civic parcel on NS Aerial with graphical property-boundary linework and the source attribution. The line is graphical boundary information, not a survey. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-46).](../assets/figures/kept/fig-05-aerial-and-property-boundaries.png){#fig-05-aerial-and-property-boundaries alt="Selected civic parcel on NS Aerial with graphical property-boundary linework and source attribution."}
+![**Aerial imagery with parcel linework.** A selected civic parcel on NS Aerial with graphical property-boundary linework and the source attribution. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-46).](../assets/figures/kept/fig-05-aerial-and-property-boundaries.png){#fig-05-aerial-and-property-boundaries alt="Selected civic parcel on NS Aerial with graphical property-boundary linework and source attribution."}
 
 The correct reading is source-specific:
 
@@ -243,8 +240,8 @@ record, parcel geometry, civic point and visible site are four different achieve
 :::
 
 This stage of the map workflow has one deliberate landing point. The parcel is established strongly
-enough to ask context questions and weakly enough that its unknowns remain visible. No layer has yet
-been permitted to supply a conclusion. The screen is ready to become a question machine.
+enough to ask context questions and weakly enough that its unknowns remain visible. The screen is
+ready to become a question machine.
 
 ::: source
 NS Marks The Spot, source commit `d3114b5c` and production source receipt, checked July 20, 2026
@@ -270,7 +267,7 @@ GIS-002). GeoNOVA mapping products (no. 19): maps orient; they do not certify a 
 A **layer** isolates one category of mapped information. Roads, water features, bedrock geology,
 mineral occurrences, mineral tenure and abandoned mine openings come from different services with
 different dates, coverage, geometry and institutional purposes. Turning several layers on at once
-may create a rich picture. It also makes it hard to remember which source produced which mark.
+creates a rich picture. It also makes it hard to remember which source produced which mark.
 
 The safer rhythm begins with one question, which names the source family before the result appears:
 
@@ -289,7 +286,7 @@ Transportation context is visible nearby. The current service query reports no m
 intersection with the selected parcel geometry. The water query returns River Denys features
 intersecting that geometry.
 
-![**Road and water context.** The parcel sheet for the Southside River Denys demonstration (PID `50308311`, a current-notice PID used to test the interface, not a recommendation or property evaluation). The inset magnifies the road and water rows. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-47); the inset is a magnified crop of the same image.](../assets/figures/kept/fig-05-roads-water-context-inset.png){#fig-05-roads-water-context alt="Southside River Denys parcel sheet showing current notice facts, River Denys intersections and no mapped road/trail intersection. The magnified inset shows the roads at or beside the parcel listed as adjacent within 20 m, the note that adjacency and civic addressing are useful map context, not proof of legal access or road frontage, and River Denys water features listed as intersecting the parcel."}
+![**Road and water context.** The parcel sheet for the Southside River Denys demonstration (PID `50308311`). The inset magnifies the road and water rows. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-47); the inset is a magnified crop of the same image.](../assets/figures/kept/fig-05-roads-water-context-inset.png){#fig-05-roads-water-context alt="Southside River Denys parcel sheet showing current notice facts, River Denys intersections and no mapped road/trail intersection. The magnified inset shows the roads at or beside the parcel listed as adjacent within 20 m, the note that adjacency and civic addressing are useful map context, not proof of legal access or road frontage, and River Denys water features listed as intersecting the parcel."}
 
 That returned relationship is a **mapped intersection**: according to the query, the current service
 geometry for a named feature crosses or overlaps the current parcel polygon. The result is stronger
@@ -312,8 +309,7 @@ will make that separation fail under pressure. Here, the map note keeps the two 
 
 ### Reading the water result
 
-The River Denys intersections need equal restraint. The water result says that the checked
-water-service geometry intersects the checked parcel geometry. By itself it does not:
+The water result says that the checked water-service geometry intersects the checked parcel geometry. By itself it does not:
 
 - identify a wetland;
 - establish flood risk;
@@ -325,21 +321,20 @@ The source and limitation determine the next question.
 
 ### Flood evidence
 
-Flood hazard evidence needs the same coverage discipline. The inspector can separate published
-river-study layers from current, 2050 and 2100 coastal scenarios.
+The inspector separates published river-study layers from current, 2050 and 2100 coastal scenarios.
 
 - A 1-percent or 5-percent **annual-exceedance probability** describes the event mapped by a
   particular study, not a universal flood probability for every point in the PID.
 - The coastal years are sea-level scenarios, not extra probabilities.
 
-![**Flood evidence and its coverage.** The flood panel for PID `50292390` reports the parcel outside the four river-study extents and no intersecting pixels in the current, 2050 or 2100 coastal scenarios. Neither result proves no flood hazard. Inset 1 magnifies the river and coastal results; inset 2, the panel's note on probabilities and scenarios. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-53); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-flood-hazard-evidence-inset.png){#fig-05-flood-hazard-evidence alt="Flood evidence panel reports outside the four river-study extents and no current, 2050 or 2100 coastal pixel intersection, with the no-hazard caveat visible. Magnified insets show that river flood probability is not assessed outside the published study extents, that each coastal result is not proof of no coastal hazard, and that a 1% or 5% annual-exceedance probability describes the mapped flood event while the 2050 and 2100 values are sea-level scenarios, not additional probabilities."}
+![**Flood evidence and its coverage.** The flood panel for PID `50292390` reports the parcel outside the four river-study extents and no intersecting pixels in the current, 2050 or 2100 coastal scenarios. Inset 1 magnifies the river and coastal results; inset 2, the panel's note on probabilities and scenarios. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-53); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-flood-hazard-evidence-inset.png){#fig-05-flood-hazard-evidence alt="Flood evidence panel reports outside the four river-study extents and no current, 2050 or 2100 coastal pixel intersection, with the no-hazard caveat visible. Magnified insets show that river flood probability is not assessed outside the published study extents, that each coastal result is not proof of no coastal hazard, and that a 1% or 5% annual-exceedance probability describes the mapped flood event while the 2050 and 2100 values are sea-level scenarios, not additional probabilities."}
 
 For PID `50292390`, the checked screen reported that the parcel lay outside the geographic extents of
 the four published river-study layers. It also returned no intersecting pixels in the three coastal
 scenarios. Neither result proves no flood hazard:
 
 - Outside study coverage means the river question was not assessed.
-- An empty raster intersection remains an approximate screen, not a survey, elevation certificate,
+- An empty raster intersection is an approximate screen, not a survey, elevation certificate,
   insurance finding or site-specific analysis.
 
 ### A note in six parts
@@ -377,7 +372,7 @@ The geology and resource screen follows the same rhythm. The checked map can dis
 geology, mineral occurrences, mineral tenure and abandoned mine openings. Those layers are useful
 because rural land can have a history or subsurface context that is not visible in an aerial image.
 
-![**Geology and resource layers.** A selected parcel with the geology and resource controls active and their map symbols visible. A visible symbol opens a records question; it does not establish a reserve, ownership of mineral rights, contamination or danger. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-48).](../assets/figures/kept/fig-05-geology-resources.png){#fig-05-geology-resources alt="Selected parcel with geology and resource controls active and map symbols visible."}
+![**Geology and resource layers.** A selected parcel with the geology and resource controls active and their map symbols visible. A visible symbol opens a records question; it does not establish a reserve, ownership of mineral rights, contamination or danger. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-48).](../assets/figures/kept/fig-05-geology-resources.png){#fig-05-geology-resources alt="Selected parcel with geology and resource controls active and map symbols visible."}
 
 The useful question is never "Is this mineral land?" Begin with the particular service:
 
@@ -419,7 +414,7 @@ not the lesson.
 :::
 
 On a property file, the same observation would not automatically belong in the benefits column. Gold
-nearby may be recreationally interesting while raising separate questions about mineral tenure,
+nearby can be recreationally interesting and still raise separate questions about mineral tenure,
 surface access and future land use. The layer establishes a recorded occurrence at its mapped
 location. It does not establish who may explore, whether mining is economically possible, or what
 could happen on a particular surface parcel.
@@ -508,7 +503,7 @@ dated historical catalogue. The interface can filter by municipality, year and r
 labels historical records and links the selected record to the official notice and, when one exists,
 the official result source.
 
-![**The historical catalogue.** Historical mode with its record and matched-PID counts, its municipality, year and outcome filters, and its outcome-unknown language. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-49).](../assets/figures/kept/fig-05-historical-outcomes-overview.png){#fig-05-historical-outcomes-overview alt="Historical mode showing 154 records, 161 exact matched PIDs, municipality, year and outcome filters, and explicit outcome-unknown language."}
+![**The historical catalogue.** Historical mode with its record and matched-PID counts, its municipality, year and outcome filters, and its outcome-unknown language. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-49).](../assets/figures/kept/fig-05-historical-outcomes-overview.png){#fig-05-historical-outcomes-overview alt="Historical mode showing 154 records, 161 exact matched PIDs, municipality, year and outcome filters, and explicit outcome-unknown language."}
 
 ### A completed result: Halifax, March 8, 2022
 
@@ -517,7 +512,7 @@ recorded opening amount and winning amount, with derived difference or ratio fie
 answer a bounded historical question: what did the checked official records report for that PID at
 that event?
 
-![**A historical result sheet.** The Halifax result for PID `00542589` from the March 8, 2022 event, with its official notice and result links, difference and ratio fields, and historical disclaimer. The amounts describe that recorded event only. Inset 1 magnifies the record's status and date; inset 2, the amount, ratio and source rows with the disclaimer. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-50); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-historical-outcome-sheet-inset.png){#fig-05-historical-outcome-sheet alt="Halifax March 8, 2022 result sheet with official notice/result links, difference/ratio fields and historical disclaimer. Magnified insets show the record marked Sold, March 8, 2022, as a historical record; its opening bid, winning bid, difference and ratio rows; links to the official notice and official result; and the statement that it is a dated outcome only, not a current offering, and does not prove present ownership, title, redemption, legal access or parcel status."}
+![**A historical result sheet.** The Halifax result for PID `00542589` from the March 8, 2022 event, with its official notice and result links, difference and ratio fields, and historical disclaimer. Inset 1 magnifies the record's status and date; inset 2, the amount, ratio and source rows with the disclaimer. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-50); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-historical-outcome-sheet-inset.png){#fig-05-historical-outcome-sheet alt="Halifax March 8, 2022 result sheet with official notice/result links, difference/ratio fields and historical disclaimer. Magnified insets show the record marked Sold, March 8, 2022, as a historical record; its opening bid, winning bid, difference and ratio rows; links to the official notice and official result; and the statement that it is a dated outcome only, not a current offering, and does not prove present ownership, title, redemption, legal access or parcel status."}
 
 They do not answer what the parcel is worth now. The result:
 
@@ -541,13 +536,12 @@ The record therefore claims no sale outcome, no purchaser, and no inference abou
 or parcel status. Moving a dated notice into historical mode after its event date does not
 manufacture a result that the municipality has not published.
 
-![**Outcome pending.** A CBRM record for PID `15234636` from the July 21, 2026 event, marked outcome pending: it carries the minimum bid and notice fields, the winning bid reads "Awaiting official results", and it claims no result. Inset 1 magnifies the record's status and date; inset 2, its rows, the pending-results note and its limitation. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-54); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-cbrm-outcome-unknown-inset.png){#fig-05-cbrm-outcome-unknown alt="CBRM July 21, 2026 record marked Outcome pending, with minimum bid, Awaiting official results, official links and dated-notice-only limitation. Magnified insets show the Outcome pending status dated July 21, 2026, the minimum bid, a winning bid of Awaiting official results, the note that CBRM says results will be posted after payment is confirmed, links to the official notice and official results, and the statement that this is a dated notice record only and claims no result."}
+![**Outcome pending.** A CBRM record for PID `15234636` from the July 21, 2026 event, marked outcome pending: it carries the minimum bid and notice fields, the winning bid reads "Awaiting official results". Inset 1 magnifies the record's status and date; inset 2, its rows, the pending-results note and its limitation. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-54); the insets are magnified crops of the same image.](../assets/figures/kept/fig-05-cbrm-outcome-unknown-inset.png){#fig-05-cbrm-outcome-unknown alt="CBRM July 21, 2026 record marked Outcome pending, with minimum bid, Awaiting official results, official links and dated-notice-only limitation. Magnified insets show the Outcome pending status dated July 21, 2026, the minimum bid, a winning bid of Awaiting official results, the note that CBRM says results will be posted after payment is confirmed, links to the official notice and official results, and the statement that this is a dated notice record only and claims no result."}
 
 ### What historical context can teach
 
-Historical context can still teach. A catalogue of results can show that advertised properties may
-be removed, that opening and winning amounts can differ, and that outcomes vary. The lesson is about
-process and evidence, not a shortcut from past ratios to present decisions.
+A catalogue of results shows that advertised properties are sometimes removed, that opening and
+winning amounts differ, and that outcomes vary. The lesson is about process and evidence.
 
 ::: {.rail label="In practice"}
 A current parcel and a historical result may both have been on the screen during one session.
@@ -583,8 +577,6 @@ The full map method fits into five durable words: **notice, parcel, context, unk
 
 ### More useful, more unknowns
 
-The method does not end with a score.
-
 ::: {.case name="Birch Point Road"}
 Composite case — not a real property.
 
@@ -600,12 +592,12 @@ Consider a combined fictional research state for Birch Point Road:
 The screen has become more useful while the number of explicit unknowns has increased.
 :::
 
-![**Everything on one sheet.** A parcel sheet with civic results, Plus Codes, road and water observations and geology and resource layers together. Together they raise more explicit questions; they do not answer them. Production build of NS Marks The Spot, captured July 22, 2026. A dated interface state, not a recommendation. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-51).](../assets/figures/kept/fig-05-combined-parcel-research.png){#fig-05-combined-parcel-research alt="Soapstone Mine Road parcel sheet, civic results, Plus Codes, road/water observations and geology/resource layers together."}
+![**Everything on one sheet.** A parcel sheet with civic results, Plus Codes, road and water observations and geology and resource layers together. Production build of NS Marks The Spot, captured July 22, 2026. Contains information obtained under license from the Province of Nova Scotia which is provided without warranty or liability for errors or omissions. Screenshot from the 2026 edition (figure-51).](../assets/figures/kept/fig-05-combined-parcel-research.png){#fig-05-combined-parcel-research alt="Soapstone Mine Road parcel sheet, civic results, Plus Codes, road/water observations and geology/resource layers together."}
 
 That increase is success. An investigative tool earns trust by showing where knowledge ends, not by
 making uncertainty disappear behind a polished parcel sheet.
 
-The final file entry might read:
+The final file entry reads:
 
 ::: {.filenote case="Birch Point Road"}
 Current notice confirmed at the direct municipality; exact PID established. Public services returned
@@ -658,19 +650,18 @@ MAP-003, MAP-005 to MAP-007). Screenshots: production build captured July 22, 20
 :::
 
 ::: {.check}
-1. In the production build checked on July 22, 2026, the current catalogue showed the Inverness
-   August 11 event with 40 advertised records, 5 withdrawn and 40 active PIDs. What does that
-   snapshot establish, and what controls whether a parcel is still listed today?
+1. On July 22, 2026, the map's catalogue showed Inverness's August 11 event with 40 advertised
+   records, 5 withdrawn and 40 active PIDs. What does that establish, and what controls whether a
+   parcel is listed today?
    [Answer](#ans-05-1)
-2. A civic-address search returns an authoritative civic point, and the map opens the parcel polygon
-   that contains it. Name three things that containment does not prove. [Answer](#ans-05-2)
+2. A civic-address search returns an authoritative civic point, and the map opens the parcel that
+   contains it. Name three things containment does not prove. [Answer](#ans-05-2)
 3. The inspector for PID `50292390` reports two mapped buildings and 2026 assessed and taxable
    values of $35,000. What does each figure fail to establish? [Answer](#ans-05-3)
-4. For PID `50308311`, the road query reports no mapped road or trail intersection. Does that mean
-   the parcel has no access? Where does the result route the file? [Answer](#ans-05-4)
-5. A note on the road-and-water screen drops its limitation. Another drops its unknown and handoff.
-   What goes wrong in each case? [Answer](#ans-05-5)
-6. A historical Halifax sheet shows the opening and winning amounts for PID `00542589` at the March
-   8, 2022 event. Why can't those amounts serve as a present value or a bidding ratio, and what does
+4. For PID `50308311`, the road query reports no mapped road or trail intersection. Does that mean no access? Where does the result route the file? [Answer](#ans-05-4)
+5. One road-and-water note drops its limitation; another drops its unknown and handoff. What goes
+   wrong in each? [Answer](#ans-05-5)
+6. A Halifax sheet shows opening and winning amounts for PID `00542589` at the March 8, 2022
+   event. Why aren't they a present value or a bidding ratio, and what does
    the CBRM record for PID `15234636` show about pending results? [Answer](#ans-05-6)
 :::

@@ -39,7 +39,7 @@ municipal treasurer has a list. Registered bidders wait for a parcel to be calle
 outside the room are owners, lenders, heirs, neighbours and perhaps occupants, whose lives do not
 fit neatly into the row about to be called.
 
-![**Auction morning is collection work.** A tax sale begins as municipal collection work, not a treasure hunt. The room is a composite, not a depiction of a real venue or event instructions. Illustration from the 2026 edition (figure-01), shown without its slide title band.](../assets/figures/kept/fig-01-auction-morning.png){#fig-01-auction-morning alt="Editorial illustration of a quiet Cape Breton community hall on an auction morning, with folders and bidder cards visible through the entrance."}
+![**Auction morning is collection work.** A tax sale begins as municipal collection work, not a treasure hunt. The room is a composite. Illustration from the 2026 edition (figure-01), shown without its slide title band.](../assets/figures/kept/fig-01-auction-morning.png){#fig-01-auction-morning alt="Editorial illustration of a quiet Cape Breton community hall on an auction morning, with folders and bidder cards visible through the entrance."}
 
 The auction is the visible part of a tax sale. It is also the last scene in a much longer story.
 
@@ -47,8 +47,8 @@ The auction is the visible part of a tax sale. It is also the last scene in a mu
 
 A reader who first meets a Nova Scotia tax sale through an advertisement is tempted to begin with
 the shortest line: location, parcel number, amount owing. The Municipality of the County of
-Inverness gives much more than that. Its August 2026 packet is a substantial document. A typical
-detailed entry combines:
+Inverness gives much more than that. Its August 2026 packet is a substantial document. Its detailed
+entries combine:
 
 - municipal account and parcel facts;
 - an aerial image with a property overlay;
@@ -66,16 +66,15 @@ does each part of this packet actually establish?"
 ::: {.case name="Harbour Road"}
 Composite case — not a real property.
 
-Harbour Road is a fictional composite parcel. It is not one of the live properties, and it has no
-owner attached to it. Its municipal page gives it an account number and a parcel identifier. The
-page places a shape over an aerial photograph, reports assessment information and includes words
+Harbour Road is a fictional composite parcel. It has no owner attached to it. Its municipal page
+gives it an account number and a parcel identifier. The page places a shape over an aerial photograph, reports assessment information and includes words
 from the land registry. It may say whether a dwelling is listed.
 
 Each of those facts can be valuable. None of them quietly answers all the other questions a bidder
-might carry into the room.
+carries into the room.
 
 For Harbour Road, the municipal packet can establish that the municipality published a particular
-set of information for a dated sale. It can help locate the apparent parcel, identify the account
+set of information for a dated sale. It can locate the apparent parcel, identify the account
 being offered, and begin registry and planning research. It can show what the municipality knew
 well enough to put in its own information product. It cannot make a purchase decision for a bidder.
 :::
@@ -90,12 +89,10 @@ Each item in a packet does one job. The table sets each item beside what it does
 | Assessment information | A condition report, or an appraisal prepared for this sale |
 | A line saying that no dwelling is listed | Proof that the ground is empty, safe, buildable, serviced, or available for immediate possession |
 
-Even a thick packet remains a collection of sources with different jobs.
-
 ::: careful
 This distinction is easy to lose because maps feel conclusive. A coloured line around a piece of
-land has the visual authority of an answer. It may be an excellent orientation tool, and it may
-help you find the right record and ask a better question. But the line does not know whether an
+land has the visual authority of an answer. It can be an excellent orientation tool that helps you
+find the right record and ask a better question. But the line does not know whether an
 old right-of-way remains effective, whether a driveway crosses another parcel, whether a structure
 has changed since the image was captured, or whether somebody lawfully occupies the property.
 :::
@@ -114,8 +111,8 @@ without either record becoming worthless.
 - Two recovery amounts differ between the summary and their detailed pages.
 
 These differences do not prove that a parcel is defective, and they do not tell you which number
-controls on sale day. They produce a question for the municipality. Careful research often looks
-like this: you preserve the conflict, name the two sources, and ask the authority that owns the
+controls on sale day. They produce a question for the municipality. Careful research looks like
+this: you preserve the conflict, name the two sources, and ask the authority that owns the
 process. You do not choose the friendlier number because it makes the arithmetic work.
 
 ::: {.rail label="The idea"}
@@ -229,8 +226,7 @@ days to pay before the sale.
 That further document is the second key term. The **notice of intent** is a formal warning that the
 municipality intends to sell the property if the amounts are not paid.
 
-At this point the bidder has still not entered the story; the owner and interest holders have. The
-title search, the possible survey and the notices explain why the treasurer's file is organized
+The title search, the possible survey and the notices explain why the treasurer's file is organized
 around legal identity and process rather than curb appeal.
 
 ### Advertisement
@@ -246,7 +242,7 @@ and a second clock, the purchaser's and the redemption clock, starts after it.
 
 ![**From unpaid taxes to sale day.** The steps outside Halifax under the Municipal Government Act, in order, with the period the chapter gives for each. Not to scale; Halifax has a parallel framework under its own Charter. New figure drawn from the chapter text; law as checked July 19, 2026.](../assets/figures/fig-01-pre-sale-timeline.svg){#fig-01-pre-sale-timeline alt="Timeline, not to scale, from unpaid taxes to sale day. A tax lien attaches first. Sale proceedings may start no earlier than June 30 of the year after the unpaid tax year, and property must be put up for sale once taxes are unpaid for the three preceding fiscal years, subject to exceptions and a possible council deferral; Inverness and Chester describe accounts as eligible after two years. Then come a preliminary notice with at least 14 days to pay, a title search and possible survey, a notice of intent with 60 days to pay before the sale, at least 30 consecutive days of public notice, and the auction or tender."}
 
-![**Auction day connects two clocks.** Arrears, notices and advertisement come before auction day; the certificate, possible redemption and the deed stage come after it. Auction day is a hinge, not a finish line, and event terms control payment and registration details. The dashed branch is the older-arrears route, which has no six-month redemption (Chapter 2). Sources: MGA ss. 134, 137–142, 150, 152, 155–156 • law checked 2026-07-19. Educational overview • verify current law and sale terms. Redrawn from figure-03 of the 2026 edition.](../assets/figures/fig-01-two-clocks.svg){#fig-01-two-clocks alt="Two horizontal timelines meet at auction day: arrears, notices and advertisement before it; certificate, possible redemption and deed after it. A dashed branch from auction day to the deed stage marks the older-arrears route, which has no six-month redemption."}
+![**Auction day connects two clocks.** Arrears, notices and advertisement come before auction day; the certificate, possible redemption and the deed stage come after it. Auction day is a hinge, not a finish line, and event terms control payment and registration details. The dashed branch is the older-arrears route, which has no six-month redemption (Chapter 2). Sources: MGA ss. 134, 137–142, 150, 152, 155–156 • law checked 2026-07-19. Redrawn from figure-03 of the 2026 edition.](../assets/figures/fig-01-two-clocks.svg){#fig-01-two-clocks alt="Two horizontal timelines meet at auction day: arrears, notices and advertisement before it; certificate, possible redemption and deed after it. A dashed branch from auction day to the deed stage marks the older-arrears route, which has no six-month redemption."}
 
 ::: source
 Municipal Government Act, consolidated to April 9, 2026 (law checked July 19, 2026; source
@@ -288,7 +284,7 @@ The common legal frame does not create one province-wide event calendar or one s
 instructions. It tells you why a sale can occur. The current municipal notice tells you whether
 this sale is occurring, in what form, and under which local instructions.
 
-![**One statute, different event methods.** Municipal procedure varies even though the provincial legal framework is shared. Dated procedural examples (evidence note OPS-005, refreshed July 20, 2026); refresh the event notice. Verify sources; not a recommendation. Redrawn from figure-02 of the 2026 edition on a simplified outline of the municipal units. Boundaries: Province of Nova Scotia, Municipality Boundaries open dataset (downloaded October 9, 2026), Nova Scotia Open Government Licence.](../assets/figures/fig-01-municipal-methods-map.svg){#fig-01-municipal-methods-map alt="Map of Nova Scotia highlighting Inverness, Cape Breton Regional Municipality, Richmond, Pictou, Annapolis, Kings and Chester, with symbols for auction, tender, both, or check the current notice. Inverness, Cape Breton Regional Municipality and Richmond: auction. Pictou: tender. Annapolis: auction and tender. Kings: auction record. Chester: check the current notice. Dated examples only."}
+![**One statute, different event methods.** Municipal procedure varies even though the provincial legal framework is shared. Dated procedural examples (evidence note OPS-005, refreshed July 20, 2026). Redrawn from figure-02 of the 2026 edition on a simplified outline of the municipal units. Boundaries: Province of Nova Scotia, Municipality Boundaries open dataset (downloaded October 9, 2026), Nova Scotia Open Government Licence.](../assets/figures/fig-01-municipal-methods-map.svg){#fig-01-municipal-methods-map alt="Map of Nova Scotia highlighting Inverness, Cape Breton Regional Municipality, Richmond, Pictou, Annapolis, Kings and Chester, with symbols for auction, tender, both, or check the current notice. Inverness, Cape Breton Regional Municipality and Richmond: auction. Pictou: tender. Annapolis: auction and tender. Kings: auction record. Chester: check the current notice. Dated examples only."}
 
 ::: source
 Municipal Government Act, s. 141, and Halifax Regional Municipality Charter, s. 156: public
@@ -320,7 +316,7 @@ list possible sale-expense categories:
 - closing;
 - redemption administration.
 
-Those categories help show what a process can involve. They are not a price list for Inverness,
+Those categories show what a process can involve. They are not a price list for Inverness,
 Pictou or any other municipality.
 
 ![**Whose rules answer which question.** Provincial law explains why a sale can occur: the Municipal Government Act outside Halifax and the Halifax Regional Municipality Charter in Halifax. Municipal practice explains how one municipality operates inside that frame. The current event notice says whether a sale is happening, in what form and under which local instructions. New figure drawn from the chapter text.](../assets/figures/fig-01-whose-rules.svg){#fig-01-whose-rules alt="Three tiers of authority. Provincial law explains why a tax sale can occur: the Municipal Government Act outside Halifax and the Halifax Regional Municipality Charter in Halifax. Municipal practice explains how one municipality works within that law, for example Inverness and Chester describing accounts as eligible after two years, and Halifax listing possible sale-expense categories, which are not a price list. The current event notice says whether a particular sale is happening, in what form and under which local instructions, and for a live event the current notice of the municipality running it controls."}
@@ -353,9 +349,7 @@ record work, and notices involving people who may never appear in the auction ro
 
 Back in the fictionalized Port Hood room, the treasurer's list is no longer a menu of parcels that
 happened to become available. Each row is the far end of a municipal file and a legal clock. When
-the first parcel is called, the municipality is there to collect under that process. It is not
-there to tell a bidder what Harbour Road is worth, whether it suits a plan, or what uncertainty
-remains after the hammer falls.
+the first parcel is called, the municipality is there to collect under that process.
 
 ::: source
 Municipal Government Act, ss. 133–142 (evidence notes LAW-001 to LAW-005), as for the sections

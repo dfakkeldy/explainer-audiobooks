@@ -47,9 +47,6 @@ nobody redeems. She also does not receive vacant possession from the municipalit
 purchase money was paid.
 :::
 
-The certificate creates a real middle stage with real responsibilities, conditional rights and an
-ending that may return the property to someone else.
-
 ### The certificate holder's operating lane
 
 Nova Scotia's Municipal Government Act gives a certificate holder the owner-like powers needed to
@@ -61,14 +58,13 @@ protect the land. The same section sets out powers, limits and one duty:
   do so.
 - It also requires the purchaser to insure buildings if they are insurable.
 
-Those sentences define a narrow operating lane. A leaking opening may need protection from the next
+Those sentences define a narrow operating lane. A leaking opening needs protection from the next
 rain. A full redesign for Maya's proposed rehabilitation can wait. Removing mature trees for a future
 view is outside the lane, and so is damage disguised as cleanup. The certificate period carries the
 property through uncertainty; it is not an early construction season.
 
 ::: {.rail label="The idea"}
-The difference can be tested with purpose and scale. Work aimed at arresting an immediate loss is
-protective. Work aimed at changing the property for a future use is development.
+Purpose and scale test the difference. Work aimed at arresting an immediate loss is protective. Work aimed at changing the property for a future use is development.
 :::
 
 That distinction does not authorize either action by itself. Entry, occupancy, tenancy, safety,
@@ -88,9 +84,7 @@ answer before any physical step.
 :::
 
 Human safety runs beside legal authority. A damaged roof, unstable porch, exposed wiring, mould,
-fuel, animals or an unknown occupant can turn a seemingly minor check into an emergency. The
-certificate does not make Maya a building inspector, electrician, environmental professional or
-peace officer. An urgent threat is routed to the appropriate emergency or municipal authority.
+fuel, animals or an unknown occupant can turn a seemingly minor check into an emergency. An urgent threat is routed to the appropriate emergency or municipal authority.
 Non-urgent condition work is scoped by qualified people using lawful access.
 
 ### The first operating file
@@ -111,17 +105,16 @@ Every item carries a date and source. The file must be able to explain what Maya
 she relied on, what she did and what money moved. [Figure 11.1](#fig-11-certificate-holder-calendar)
 sets out the recurring work month by month.
 
-![**The certificate-holder months are active.** The certificate-holder months are an operations period, not dead time. Month 6 is drawn as unresolved: redemption may close the file; otherwise deed work begins. Verify sources; not a recommendation. Redrawn from figure-31 of the 2026 edition; the month 1 wording is the original's (the treasurer registers the certificate; see Chapter 3).](../assets/figures/fig-11-certificate-holder-calendar.svg){#fig-11-certificate-holder-calendar alt="Six-month calendar of the certificate-holder months. Month 1: register certificate; organize evidence and insurance attempts. Month 2: track new taxes, notices and protective-work records. Month 3: maintain lawful protection; preserve every receipt. Month 4: refresh status and keep the redemption route open. Month 5: prepare questions without assuming the outcome. Month 6, marked as unresolved: redemption may close the file; otherwise deed work begins. Small tags mark record-keeping and insurance tasks, a new-tax marker, protective-work limits and a possible redemption event. The certificate-holder months are an operations period, not dead time."}
+![**The certificate-holder months are active.** The certificate-holder months are an operations period, not dead time. Month 6 is drawn as unresolved: redemption may close the file; otherwise deed work begins. Redrawn from figure-31 of the 2026 edition; the month 1 wording is the original's (the treasurer registers the certificate; see Chapter 3).](../assets/figures/fig-11-certificate-holder-calendar.svg){#fig-11-certificate-holder-calendar alt="Six-month calendar of the certificate-holder months. Month 1: register certificate; organize evidence and insurance attempts. Month 2: track new taxes, notices and protective-work records. Month 3: maintain lawful protection; preserve every receipt. Month 4: refresh status and keep the redemption route open. Month 5: prepare questions without assuming the outcome. Month 6, marked as unresolved: redemption may close the file; otherwise deed work begins. Small tags mark record-keeping and insurance tasks, a new-tax marker, protective-work limits and a possible redemption event. The certificate-holder months are an operations period, not dead time."}
 
 ### New tax bills
 
-The new tax bills matter immediately. The redemption formula can include taxes levied after the sale
-and related interest. That statutory possibility is not a reason to ignore the bills and expect
+The new tax bills matter immediately. The redemption formula includes taxes levied after the sale
+and related interest. That statutory category is not a reason to ignore the bills and expect
 another person to absorb them later.
 
 Maya confirms with the municipality where notices will go, how the account is tracked during the
-certificate period and what must be paid when due. A missed notice can create a practical problem
-even when the statute later recognizes a category of tax.
+certificate period and what must be paid when due.
 
 ### Insurance: interest, vacancy and the inquiry
 
@@ -133,8 +126,7 @@ company to accept Cedar Street, define the coverage, or make the premium afforda
 Vacancy changes the underwriting conversation. Current Canadian insurer materials (checked July 2026)
 describe vacant buildings as presenting risks that ordinary home coverage may not continue to handle,
 and explain that special vacancy or non-standard property underwriting may be required. Those
-materials illustrate market practice. They do not prove that Maya, this legal interest or this
-building will qualify for any advertised product.
+materials illustrate market practice.
 
 ::: {.case name="Cedar Street · the insurance inquiry"}
 Composite case — not a real property; Maya is a fictional bidder.
@@ -182,8 +174,8 @@ that could admit water during the next storm. This is the moment when "protect t
 dangerously broad.
 
 Maya does not order a replacement roof and hope to add the bill to redemption. She sends the
-treasurer a defined scope, supporting assessment and cost, asks for the required written approval,
-and checks the other legal, safety, insurance and possession conditions before work begins.
+treasurer a defined scope, supporting assessment and cost, and asks for the required written approval
+before work begins.
 :::
 
 The statute treats reimbursement for repairs narrowly. The redemption amount may include amounts the
@@ -205,7 +197,7 @@ paid ([Figure 11.2](#fig-11-approved-repair-chain)). Remove any one of those lin
 reimbursement claim becomes a different question. Good intentions cannot reconstruct missing
 authority after redemption begins.
 
-![**The chain behind a reimbursable repair.** In the fictional Cedar Street file, an approved repair connects an observed risk to a professional scope, a written municipal approval, a lawful performance route and an amount actually paid; remove any one link and the reimbursement claim becomes a different question. Composite case — not a real property. New figure drawn from the chapter text.](../assets/figures/fig-11-approved-repair-chain.svg){#fig-11-approved-repair-chain alt="The chain behind a reimbursable repair in the fictional Cedar Street file: a qualified assessment identifies the risk, Maya sends a defined scope and cost, the treasurer approves it in writing, the contractor does only that work through lawful and safe access, and Maya keeps the invoice, proof of payment and completion record. Without any link, the claim becomes a different question; good intentions cannot reconstruct missing authority after redemption begins. If the contractor finds a larger defect, the work does not silently expand: the new condition returns through the same authority, professional and insurance channels."}
+![**The chain behind a reimbursable repair.** In the fictional Cedar Street file, an approved repair connects an observed risk to a professional scope, a written municipal approval, a lawful performance route and an amount actually paid; remove any one link and the reimbursement claim becomes a different question. New figure drawn from the chapter text.](../assets/figures/fig-11-approved-repair-chain.svg){#fig-11-approved-repair-chain alt="The chain behind a reimbursable repair in the fictional Cedar Street file: a qualified assessment identifies the risk, Maya sends a defined scope and cost, the treasurer approves it in writing, the contractor does only that work through lawful and safe access, and Maya keeps the invoice, proof of payment and completion record. Without any link, the claim becomes a different question; good intentions cannot reconstruct missing authority after redemption begins. If the contractor finds a larger defect, the work does not silently expand: the new condition returns through the same authority, professional and insurance channels."}
 
 ### Rent and other income
 
@@ -218,7 +210,7 @@ existence of a payment does not answer:
 - what lawful possession steps are available.
 
 Maya routes those questions through counsel and the applicable records. Any income actually received
-is logged by date and amount because it can reduce what is repaid on redemption.
+is logged by date and amount because it reduces what is repaid on redemption.
 
 ### Active restraint
 
@@ -245,8 +237,7 @@ buildings, s. 151 (LAW-008); deemed insurable interest, s. 151(c) (INS-001); tax
 sale and necessary repairs made with the treasurer's written approval in the redemption amount,
 s. 152(2)–(4) (LAW-010). Halifax Regional Municipality Charter (no. 2): ss. 165–167. Intact
 Insurance, Vacant Home Insurance and Non-Standard Property pages (no. 31; refreshed July 20, 2026),
-used only to illustrate that vacancy can require specialized underwriting; they do not promise
-coverage for a tax-sale certificate holder or a particular property (INS-001). No promise of vacant
+used to illustrate that vacancy can require specialized underwriting (INS-001). No promise of vacant
 possession: CBRM, Tax Sales (no. 7) and Nova Scotia Residential Tenancies resources (no. 33)
 (OCC-001).
 :::
@@ -304,10 +295,8 @@ here is narrower: it is one component of the redemption formula for the actual p
 and redemption.
 :::
 
-The statute does not promise that redemption will occur, that the property will remain free of
-loss, that every expense will qualify, or that the purchaser will avoid taxes, financing costs,
-professional fees, uninsured damage and time. The 10 percent line is not a substitute for Chapter 9's
-all-in analysis.
+The 10 percent line is not a substitute for Chapter 9's all-in analysis of taxes, financing costs,
+professional fees, uninsured damage and time.
 
 ### The treasurer's calculation and Maya's records
 
@@ -338,23 +327,22 @@ fire-insurance premiums and on repairs made with the treasurer's written approva
 operating file makes that request ordinary. Reconstructing months of receipts, emails and income
 after the request arrives makes it needlessly difficult.
 
-Maya's statement is factual. It does not round a declined insurance quote into a premium, convert an
-unpaid estimate into a repair, or include a broader future roof project. It lists amounts actually
+Maya's statement is factual. It lists amounts actually
 spent in the supported categories and attaches the relevant evidence. Any disputed payment or
 category belongs with the treasurer's official process and fact-specific legal advice, not a
 certificate holder's improvised collection method.
 
 ### Redemption amount and purchaser repayment
 
-The total redemption amount and the amount repaid to the purchaser should not be described as though
-they are necessarily the same line-by-line list. The statute's redemption calculation includes
-municipal tax and recording categories. Its purchaser-repayment section identifies the purchase sum,
+The total redemption amount and the amount repaid to the purchaser are not necessarily the same
+line-by-line list. The statute's redemption calculation includes municipal tax and recording
+categories. Its purchaser-repayment section identifies the purchase sum,
 interest, fire-insurance premiums and approved repairs, less rent or other property income.
 
 The treasurer administers the whole transaction. Maya reconciles the payment she receives to the
 official statement instead of inventing a private payoff figure.
 
-![**Two ledgers for one redemption.** The redemption amount and the purchaser's repayment are not necessarily the same line-by-line list; the treasurer determines the amount required through the statutory process, and the ledgers show categories, not amounts for any property. Verify current law and sale terms. New figure drawn from the chapter text.](../assets/figures/fig-11-redemption-ledger.svg){#fig-11-redemption-ledger alt="Two ledgers for a redemption. The redemption amount, set by the treasurer, includes the purchase sum, 10 percent yearly interest from sale to redemption, certain unpaid older taxes, taxes levied after the sale with interest, the discharge recording fee, qualifying fire-insurance premiums and approved necessary repairs, minus any surplus balance and any rent or income the purchaser earned. The purchaser's repayment covers the purchase sum, interest, premiums and approved repairs, minus rent or income. The purchaser's right to the land ends when the full amount is paid to the treasurer."}
+![**Two ledgers for one redemption.** The redemption amount and the purchaser's repayment are not necessarily the same line-by-line list; the ledgers show categories, not amounts. New figure drawn from the chapter text.](../assets/figures/fig-11-redemption-ledger.svg){#fig-11-redemption-ledger alt="Two ledgers for a redemption. The redemption amount, set by the treasurer, includes the purchase sum, 10 percent yearly interest from sale to redemption, certain unpaid older taxes, taxes levied after the sale with interest, the discharge recording fee, qualifying fire-insurance premiums and approved necessary repairs, minus any surplus balance and any rent or income the purchaser earned. The purchaser's repayment covers the purchase sum, interest, premiums and approved repairs, minus rent or income. The purchaser's right to the land ends when the full amount is paid to the treasurer."}
 
 ### Halifax: a bounded example of sale expenses
 
@@ -363,21 +351,19 @@ operates under the parallel Halifax Regional Municipality Charter. The July 2026
 Administrative Order 18 schedule names local categories for notice, title searches, survey, deed
 work, registration, closing and redemption administration.
 
-That schedule teaches two bounded lessons:
+That schedule teaches two lessons:
 
 1. "Sale expenses" can represent several real administrative and professional steps rather than one
    mysterious fee.
 2. The governing municipality's current authority must supply the actual categories and amounts.
 
-Halifax's categories are not a Nova Scotia tariff, do not describe an Inverness redemption, and can
-change after this edition is drafted.
+Halifax's categories are not a Nova Scotia tariff and do not describe an Inverness redemption.
 
 ::: {.case name="Cedar Street · the local calculation"}
 Composite case — not a real property; Maya is a fictional bidder.
 
 Cedar Street's municipality may use different council-approved fees, forms and internal procedures.
-Maya asks for the official calculation and current local authority. She does not copy a Halifax
-category or amount into her worksheet. The comparison improves the question; it does not answer
+Maya asks for the official calculation and current local authority. The comparison improves the question; it does not answer
 another municipality's account.
 :::
 
@@ -390,8 +376,7 @@ land.
 
 The operating file records that municipal confirmation and stops any planned protective action that
 no longer has a supporting interest. The documentary record also changes. Maya obtains and preserves
-the municipality's official close-out record rather than treating a phone call or partial payment as
-proof that the certificate stage has ended.
+the municipality's official close-out record.
 
 Insurance, contractors and anyone else relying on Maya's former certificate authority need prompt,
 accurate notice through the appropriate channels:
@@ -416,15 +401,12 @@ Maya's final ledger preserves:
 - the official redemption calculation and the purchaser repayment;
 - the municipal close-out record.
 
-It also preserves the human boundary: no private confrontation and no portrayal of redemption as
-defeat.
-
 ::: {.case name="Cedar Street · the outcome"}
 Composite case — not a real property; Maya is a fictional bidder.
 
 The outcome is financially finite and legally meaningful. Maya receives the repayment the statute and
 evidence support. The person redeeming keeps the land through the statutory process. Cedar Street
-never reaches Maya's rehabilitation plan, yet her certificate-holder work can still be complete. She
+never reaches Maya's rehabilitation plan, yet her certificate-holder work is complete. She
 protected what she was authorized to protect, documented what the formula could recognize and
 stopped when the registered stage ended.
 :::
@@ -440,7 +422,7 @@ another person with a qualifying interest within six months after sale, s. 152(1
 LAW-009); the redemption price, with the purchase sum, 10 percent annual interest from sale to
 redemption, specified older and newer taxes, the registry fee, qualifying fire-insurance premiums and
 treasurer-approved necessary repairs, adjusted for surplus and purchaser income, s. 152(2)–(4)
-(LAW-010; the purchaser should not assume an unapproved repair will be reimbursed); the requested
+(LAW-010); the requested
 statement of insurance and repair amounts, repayment under the statutory formula, and the end of the
 purchaser's rights when the full redemption amount is paid to the treasurer, ss. 153–154 (LAW-011).
 Halifax Regional Municipality Charter (no. 2): ss. 167–169; Halifax operates under ss. 147–172
@@ -485,9 +467,9 @@ snapshot, refreshed July 20, 2026) (OPS-007; Chapter 1 lists the Halifax categor
 2. Cedar Street appears vacant from the road. What does Maya record, what does she not do, and whom
    does she ask before any physical step? [Answer](#ans-11-2)
 3. The first underwriter declines to insure Cedar Street. What does the refusal prove and not prove,
-   and what should Maya do with it? [Answer](#ans-11-3)
-4. A contractor working on an approved temporary weatherproofing scope finds a larger defect. What
-   happens next, and why does the reimbursement claim depend on every link of the repair chain?
+   and what does Maya do with it? [Answer](#ans-11-3)
+4. A contractor on an approved temporary weatherproofing scope finds a larger defect. What happens
+   next, and why does reimbursement depend on every link of the repair chain?
    [Answer](#ans-11-4)
 5. List the categories and offsets of the redemption amount. At what moment does the purchaser cease
    to have a right to the land, and what does not end it? [Answer](#ans-11-5)
