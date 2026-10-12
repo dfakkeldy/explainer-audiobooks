@@ -184,11 +184,33 @@ requires the M4B, matching alignment sidecar, EPUB, portrait and square covers,
 and private iCloud delivery. Do not stop at an adapted manuscript or local EPUB.
 Do not apply original-story invention or length targets to an existing classic.
 For a cast, freeze the EPUB first, export the actual renderer block inventory, and
-map roles to those blocks. Preserve explicit speaker identities even when voices
-are doubled. Check current voice preferences and supported limits; do not assume
-one unique voice per character. Keep original-author metadata through the audio
-export. Create original, coordinated portrait and square cover art for every
-audiobook edition; preserve accepted art on redos unless changes are authorized.
+map explicit speaker identities to those blocks. Dan's classic-audiobook casting
+preference is one distinct, stable voice per character, including minor speaking
+characters, with no voice doubling between characters by default. If Dan
+explicitly permits voice reuse because resources are limited, document the exact
+shared character groups and rationale, prioritize distinct major roles, and keep
+each assignment stable. Preserve separate character identities and clear audible
+attribution; permission to share a male voice does not permit gender mismatches
+or unapproved female-voice reuse. Match each voice's gender
+to the character's gender as established by the source. Record source-ambiguous
+or unspecified gender as an open casting choice rather than inventing certainty;
+do not infer gender from a name, disguise, or costume alone. Keep the chosen
+character voice consistent throughout the edition and preserve guide paragraphs
+as explicitly identified speaker roles.
+
+Check current voice preferences, blacklists, installed resources, and supported
+cast limits before rendering. The fiction workflow's three-to-five-voice default
+does not replace this requested full cast. Its current cast validator enforces
+that range: if the complete distinct, gender-matched cast cannot pass the governed
+workflow or lacks enough supported voices, retain the casting brief including
+explicit user exceptions and
+report the tooling or resource dependency before narration. Do not silently merge
+characters, substitute a mismatched voice, bypass validation, or claim a reduced
+cast fulfils the request. A later explicit user choice may change the casting brief.
+
+Keep original-author metadata through the audio export. Create original,
+coordinated portrait and square cover art for every audiobook edition; preserve
+accepted art on redos unless changes are authorized.
 
 A requested renderer revision is an independent tooling requirement: inspect the
 current install/verification contract and use its supported build workflow. Do not
