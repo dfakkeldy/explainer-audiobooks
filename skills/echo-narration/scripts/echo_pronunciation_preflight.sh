@@ -620,6 +620,14 @@ echo_pronunciation_preflight() {
     printf 'selected cover pair does not match its receipt or EPUB\n' >&2
     return 65
   fi
+  # Every narrated EPUB carries authored IPA. A resumed run keeps the EPUB its
+  # receipts already bind, so only a fresh run is gated.
+  if (( ! ${RESUME:-0} )) \
+    && ! /usr/local/bin/python3 "$script_dir/epub_pronunciation.py" check --epub "$EPUB" >&2; then
+    printf 'EPUB pronunciation check failed; embed IPA with epub_pronunciation.py apply and refreeze: %s\n' \
+      "$EPUB" >&2
+    return 65
+  fi
 
   EPUB_SHA256=$(/usr/bin/shasum -a 256 "$EPUB" | awk '{print $1}')
   COVER_SELECTION_SHA256=

@@ -43,6 +43,24 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def embed_fixture_pronunciation(epub: Path) -> None:
+    """Embed IPA the way production does, so the narration gate accepts the EPUB."""
+    tool = ROOT / "skills" / "echo-narration" / "scripts" / "epub_pronunciation.py"
+    with tempfile.TemporaryDirectory() as scratch:
+        decisions = Path(scratch) / "decisions.json"
+        decisions.write_text(
+            json.dumps({"lang": "en-US", "lexicon": [{"graphemes": ["Mara"], "ipa": "ˈmɑɹə"}]}),
+            encoding="utf-8",
+        )
+        annotated = Path(scratch) / epub.name
+        subprocess.run(
+            [sys.executable, str(tool), "apply", "--epub", str(epub),
+             "--decisions", str(decisions), "--out", str(annotated)],
+            check=True, capture_output=True, text=True,
+        )
+        shutil.copyfile(annotated, epub)
+
+
 def write_json(path: Path, payload: object) -> None:
     path.write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
@@ -964,6 +982,7 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             m4b_cover=square_cover,
         )
         epub = run_root / "dist" / "fixture.epub"
+        embed_fixture_pronunciation(epub)
         source_sha256 = sha256(epub)
         self.assertIn(
             "The beacon waited for the storm.\n\n"
@@ -1433,6 +1452,7 @@ class FictionAudiobookIntegrationTests(unittest.TestCase):
             contributor="GPT-5.6",
         )
         epub = run_root / "dist" / "fixture.epub"
+        embed_fixture_pronunciation(epub)
         markdown = run_root / "dist" / "fixture.md"
         source_sha256 = sha256(epub)
         self.assertEqual(3, len(list(chapters.glob("ch*.md"))))

@@ -112,7 +112,11 @@ Stage outside `books/`. `$PUBLIC_STAGE` must contain exactly `README.md`,
 `publication.json`, `<slug>.md`, `<slug>.epub`,
 `<slug>.alignment.json`, and `cover.png`. Keep the M4B and all private evidence
 outside Git. `README.md` must include the exact disclosure from
-`publication.json` and contain no private paths. Then run:
+`publication.json` and contain no private paths. The EPUB is the narrated one,
+so it carries the IPA layer from `epub_pronunciation.py`: `ssml:ph` spans, the
+SSML root attributes, and a `names.pls` lexicon with its links. The verifier
+accepts exactly that layer and nothing else beyond the builder's output. Then
+run:
 
 ```bash
 /usr/local/bin/python3 skill/scripts/verify_public_first_listen.py "$PUBLIC_STAGE" \

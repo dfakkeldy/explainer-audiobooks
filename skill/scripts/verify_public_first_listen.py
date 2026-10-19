@@ -1501,6 +1501,15 @@ _CONTAINER_NAMESPACE = "urn:oasis:names:tc:opendocument:xmlns:container"
 _CONTAINER = f"{{{_CONTAINER_NAMESPACE}}}"
 _NCX_NAMESPACE = "http://www.daisy.org/z3986/2005/ncx/"
 _NCX = f"{{{_NCX_NAMESPACE}}}"
+# The pronunciation layer epub_pronunciation.py adds; nothing else may differ
+# from the builder.
+_SSML_NAMESPACE = "http://www.w3.org/2001/10/synthesis"
+_SSML = f"{{{_SSML_NAMESPACE}}}"
+_PLS_NAMESPACE = "http://www.w3.org/2005/01/pronunciation-lexicon"
+_PLS = f"{{{_PLS_NAMESPACE}}}"
+_XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
+_ENGLISH_LANGUAGE_TAG = re.compile(r"en(?:-[A-Za-z0-9]{1,8})*")
+_PRONUNCIATION_LEXICON = ("OEBPS/names.pls", "application/pls+xml", None)
 _EPUB_MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
 _EPUB_MAX_MEMBERS = 64
 _EPUB_MAX_CENTRAL_DIRECTORY_BYTES = 4 * 1024 * 1024
@@ -1592,6 +1601,10 @@ def _validate_epub_xml_lexical_identity(
             ("", _XHTML_NAMESPACE),
             ("epub", "http://www.idpf.org/2007/ops"),
         ]
+        if namespaces == expected_namespaces + [("ssml", _SSML_NAMESPACE)]:
+            expected_namespaces = namespaces
+    elif name == _PRONUNCIATION_LEXICON[0]:
+        expected_namespaces = [("", _PLS_NAMESPACE)]
     elif name == "OEBPS/content.opf":
         expected_namespaces = [("", _OPF_NAMESPACE), ("dc", _DC_NAMESPACE)]
     elif name == "META-INF/container.xml":
@@ -1615,7 +1628,7 @@ def _epub_member_limit(name: str) -> int:
         return _EPUB_MAX_COVER_BYTES
     if name.endswith(".xhtml"):
         return _EPUB_MAX_XHTML_BYTES
-    if name.endswith((".xml", ".opf", ".ncx")):
+    if name.endswith((".xml", ".opf", ".ncx", ".pls")):
         return _EPUB_MAX_XML_BYTES
     return _EPUB_MAX_XHTML_BYTES
 
@@ -2176,6 +2189,113 @@ def _require_builder_inline_paragraph(
     )
 
 
+def _valid_pronunciation_ipa(value: str | None) -> bool:
+    """Echo's IPA rules, as epub_pronunciation.py enforces them."""
+    return (
+        isinstance(value, str)
+        and 0 < len(value.strip())
+        and len(value) <= 300
+        and re.search(r"[/\[\].A-Z]", value) is None
+        and re.search(r"[^\sˈˌ]", value) is not None
+    )
+
+
+def _without_pronunciation_layer(document: ET.Element, label: str) -> ET.Element:
+    """Remove the exact IPA layer so the builder checks compare builder output.
+
+    Allowed: ssml:alphabet="ipa" and an English xml:lang on the root, one
+    pronunciation link to names.pls in the head, and text-only ssml:ph spans.
+    Unwrapping the spans leaves the visible text exactly as the builder wrote it.
+    """
+    alphabet = document.attrib.pop(f"{_SSML}alphabet", None)
+    language = document.attrib.pop(_XML_LANG, None)
+    _require(
+        alphabet in (None, "ipa")
+        and (language is None or _ENGLISH_LANGUAGE_TAG.fullmatch(language) is not None),
+        f"{label} pronunciation root attributes are invalid",
+    )
+    head = document.find(f"{_XHTML}head")
+    links = [
+        child
+        for child in (list(head) if head is not None else [])
+        if child.tag == f"{_XHTML}link" and child.get("rel") == "pronunciation"
+    ]
+    _require(len(links) <= 1, f"{label} has more than one pronunciation link")
+    for link in links:
+        _require(
+            set(link.attrib) == {"rel", "type", "hreflang", "href"}
+            and link.get("type") == "application/pls+xml"
+            and link.get("href") == "names.pls"
+            and _ENGLISH_LANGUAGE_TAG.fullmatch(link.get("hreflang", "")) is not None
+            and _whitespace(link.text)
+            and not list(link),
+            f"{label} pronunciation link is invalid",
+        )
+        assert head is not None
+        head.remove(link)
+    for parent in list(document.iter()):
+        for child in list(parent):
+            if child.tag != f"{_XHTML}span" or f"{_SSML}ph" not in child.attrib:
+                continue
+            text = child.text or ""
+            _require(
+                set(child.attrib) == {f"{_SSML}ph"}
+                and _valid_pronunciation_ipa(child.attrib[f"{_SSML}ph"])
+                and not list(child)
+                and text.strip() == text
+                and bool(text)
+                and not set(text) & set("[]()/"),
+                f"{label} pronunciation span is invalid",
+            )
+            siblings = list(parent)
+            index = siblings.index(child)
+            joined = text + (child.tail or "")
+            if index == 0:
+                parent.text = (parent.text or "") + joined
+            else:
+                previous = siblings[index - 1]
+                previous.tail = (previous.tail or "") + joined
+            parent.remove(child)
+    return document
+
+
+def _validate_pronunciation_lexicon(lexicon: ET.Element) -> None:
+    _require(
+        lexicon.tag == f"{_PLS}lexicon"
+        and set(lexicon.attrib) == {"version", "alphabet", _XML_LANG}
+        and lexicon.get("version") == "1.0"
+        and lexicon.get("alphabet") == "ipa"
+        and _ENGLISH_LANGUAGE_TAG.fullmatch(lexicon.get(_XML_LANG, "")) is not None
+        and _whitespace(lexicon.text),
+        "EPUB pronunciation lexicon has an invalid root",
+    )
+    for lexeme in lexicon:
+        children = list(lexeme)
+        _require(
+            lexeme.tag == f"{_PLS}lexeme"
+            and not lexeme.attrib
+            and _whitespace(lexeme.text)
+            and _whitespace(lexeme.tail)
+            and len(children) >= 2
+            and [child.tag for child in children]
+            == [f"{_PLS}grapheme"] * (len(children) - 1) + [f"{_PLS}phoneme"],
+            "EPUB pronunciation lexicon has an invalid lexeme",
+        )
+        for child in children:
+            value = child.text or ""
+            _require(
+                not child.attrib
+                and not list(child)
+                and _whitespace(child.tail)
+                and 0 < len(value.strip()) <= 200,
+                "EPUB pronunciation lexicon entry is invalid",
+            )
+        _require(
+            _valid_pronunciation_ipa(children[-1].text),
+            "EPUB pronunciation lexicon phoneme is invalid",
+        )
+
+
 def _validate_chapter_xhtml(
     document: ET.Element,
     title: str,
@@ -2563,6 +2683,8 @@ def _epub_story(
                 "application/xhtml+xml",
                 None,
             )
+        if "pronunciation-lexicon" in items:
+            expected_items["pronunciation-lexicon"] = _PRONUNCIATION_LEXICON
         _require(
             items == expected_items,
             "public fiction EPUB manifest differs from the unchanged builder roles",
@@ -2577,6 +2699,15 @@ def _epub_story(
             set(entries) == expected_entries,
             "public fiction EPUB contains an extra or missing package file",
         )
+        if "pronunciation-lexicon" in items:
+            _validate_pronunciation_lexicon(
+                _epub_xml(
+                    archive,
+                    entries,
+                    _PRONUNCIATION_LEXICON[0],
+                    "EPUB pronunciation lexicon",
+                )
+            )
         _require(
             _read_epub_member(
                 archive,
@@ -2706,8 +2837,11 @@ def _epub_story(
             )
 
         _validate_titlepage_xhtml(
-            _epub_xml(
-                archive, entries, "OEBPS/titlepage.xhtml", "EPUB titlepage"
+            _without_pronunciation_layer(
+                _epub_xml(
+                    archive, entries, "OEBPS/titlepage.xhtml", "EPUB titlepage"
+                ),
+                "EPUB titlepage",
             ),
             title,
             subtitle,
@@ -2721,7 +2855,10 @@ def _epub_story(
         )
         if has_cover:
             _validate_cover_xhtml(
-                _epub_xml(archive, entries, "OEBPS/cover.xhtml", "EPUB cover"),
+                _without_pronunciation_layer(
+                    _epub_xml(archive, entries, "OEBPS/cover.xhtml", "EPUB cover"),
+                    "EPUB cover",
+                ),
                 title,
                 language,
                 cover_name,
@@ -2729,7 +2866,10 @@ def _epub_story(
         for index, (chapter_title, paragraphs) in enumerate(canonical):
             path = f"OEBPS/chap{index:02d}.xhtml"
             _validate_chapter_xhtml(
-                _epub_xml(archive, entries, path, f"EPUB chapter {index + 1}"),
+                _without_pronunciation_layer(
+                    _epub_xml(archive, entries, path, f"EPUB chapter {index + 1}"),
+                    f"EPUB chapter {index + 1}",
+                ),
                 chapter_title,
                 paragraphs,
                 language,

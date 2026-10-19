@@ -1820,6 +1820,43 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(70, result.returncode)
         self.assertIn("requires the inherited renderer lease", result.stderr)
 
+    def write_narrated_fixture_epub(self, paragraph: str) -> None:
+        """Give the fixture EPUB one narrated chapter, keeping its cover bytes."""
+        epub = self.run_root / "dist" / "fixture.epub"
+        with zipfile.ZipFile(epub) as original:
+            entries = {name: original.read(name) for name in original.namelist()}
+        opf = entries["OEBPS/content.opf"].decode("utf-8").replace(
+            "</manifest>",
+            '<item id="c1" href="chap01.xhtml" media-type="application/xhtml+xml"/>'
+            '</manifest><spine><itemref idref="c1"/></spine>',
+        )
+        entries["OEBPS/content.opf"] = opf.encode("utf-8")
+        entries["OEBPS/chap01.xhtml"] = (
+            '<?xml version="1.0" encoding="utf-8"?>\n'
+            '<html xmlns="http://www.w3.org/1999/xhtml" '
+            'xmlns:ssml="http://www.w3.org/2001/10/synthesis" ssml:alphabet="ipa">'
+            f"<head><title>One</title></head><body>{paragraph}</body></html>\n"
+        ).encode("utf-8")
+        with zipfile.ZipFile(epub, "w") as archive:
+            for name, data in entries.items():
+                archive.writestr(name, data)
+
+    def test_preflight_refuses_a_narrated_epub_without_ipa(self) -> None:
+        self.write_narrated_fixture_epub("<p>Keep a record of what you read.</p>")
+        result = self.run_preflight()
+        self.assertEqual(65, result.returncode, result.stderr)
+        self.assertIn("no IPA pronunciations are embedded", result.stderr)
+        self.assertIn("'record' has no IPA reading", result.stderr)
+        self.assertIn("EPUB pronunciation check failed", result.stderr)
+
+    def test_preflight_accepts_a_narrated_epub_with_ipa(self) -> None:
+        self.write_narrated_fixture_epub(
+            '<p>Keep a <span ssml:ph="ˈɹɛkɚd">record</span> of what you '
+            '<span ssml:ph="ɹid">read</span>.</p>'
+        )
+        result = self.run_preflight()
+        self.assertEqual(0, result.returncode, result.stderr)
+
     def test_preflight_requires_the_exact_reviewed_echo_source(self) -> None:
         environment = self.environment()
         environment["APPROVED_ECHO_PRONUNCIATION_SHA"] = "a" * 40
