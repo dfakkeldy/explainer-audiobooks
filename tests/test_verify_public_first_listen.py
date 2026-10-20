@@ -2,6 +2,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 import shutil
 import stat
 import struct
@@ -1268,6 +1269,79 @@ class FictionPublicPackageVerifierTests(unittest.TestCase):
                 self.rewrite_epub_member(member, changed)
                 self.rebind_changed_public_epub()
                 self.assert_rejected("tail|manifest.*content|spine.*content")
+
+    PRONUNCIATION_LINK = (
+        '<link rel="pronunciation" type="application/pls+xml" '
+        'hreflang="en-US" href="names.pls"/>'
+    )
+    PRONUNCIATION_LEXICON = (
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        '<lexicon xmlns="http://www.w3.org/2005/01/pronunciation-lexicon" '
+        'version="1.0" alphabet="ipa" xml:lang="en-US">\n'
+        "  <lexeme>\n    <grapheme>Mara</grapheme>\n"
+        "    <phoneme>ˈmɑɹə</phoneme>\n  </lexeme>\n</lexicon>\n"
+    )
+    PRONUNCIATION_ITEM = (
+        '<item id="pronunciation-lexicon" href="names.pls" '
+        'media-type="application/pls+xml"/>'
+    )
+
+    def add_pronunciation_layer(
+        self,
+        *,
+        span_attributes: str = 'ssml:ph="ðə"',
+        span_text: str | None = None,
+        link: str = PRONUNCIATION_LINK,
+        lexicon: str = PRONUNCIATION_LEXICON,
+        item: str = PRONUNCIATION_ITEM,
+    ) -> None:
+        """Add the layer epub_pronunciation.py writes, optionally altered."""
+        original = self.read_epub_member("OEBPS/chap00.xhtml")
+        chapter = original.replace(
+            ' lang="en">',
+            ' lang="en" xmlns:ssml="http://www.w3.org/2001/10/synthesis" '
+            'ssml:alphabet="ipa" xml:lang="en-US">',
+            1,
+        ).replace("<head>", "<head>" + link, 1)
+        chapter, count = re.subn(
+            r"<p>(\w+)",
+            lambda match: f"<p><span {span_attributes}>"
+            f"{span_text or match.group(1)}</span>",
+            chapter,
+            count=1,
+        )
+        self.assertEqual(1, count)
+        self.rewrite_epub_member("OEBPS/chap00.xhtml", chapter)
+        opf = self.read_epub_member("OEBPS/content.opf")
+        self.rewrite_epub_member(
+            "OEBPS/content.opf", opf.replace("</manifest>", item + "</manifest>", 1)
+        )
+        self.add_epub_members({"OEBPS/names.pls": lexicon.encode("utf-8")})
+        self.rebind_changed_public_epub()
+
+    def test_accepts_the_epub_pronunciation_layer(self) -> None:
+        self.add_pronunciation_layer()
+        with self.probes():
+            self.verify()
+
+    def test_rejects_an_altered_pronunciation_layer(self) -> None:
+        cases = (
+            ("span attribute", {"span_attributes": 'ssml:ph="ðə" class="x"'}, "span is invalid"),
+            ("span IPA", {"span_attributes": 'ssml:ph="/ðə/"'}, "span is invalid"),
+            ("span hides other text", {"span_text": "Hidden"}, "differs from canonical"),
+            ("link target", {"link": self.PRONUNCIATION_LINK.replace("names.pls", "x.pls")},
+             "pronunciation link is invalid"),
+            ("manifest identity", {"item": self.PRONUNCIATION_ITEM.replace(
+                'id="pronunciation-lexicon"', 'id="names"')}, "manifest differs"),
+            ("lexicon phoneme", {"lexicon": self.PRONUNCIATION_LEXICON.replace(
+                "ˈmɑɹə", "MAR-uh")}, "phoneme is invalid"),
+        )
+        baseline = self.epub.read_bytes()
+        for name, changes, pattern in cases:
+            with self.subTest(name=name):
+                self.epub.write_bytes(baseline)
+                self.add_pronunciation_layer(**changes)
+                self.assert_rejected(pattern)
 
     def test_rejects_unknown_attributes_on_epub_structural_roles(self) -> None:
         cases = (

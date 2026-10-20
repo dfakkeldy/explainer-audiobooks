@@ -126,8 +126,13 @@ is a good way to find where a listener would get lost.
 
 Follow `../skills/echo-narration/references/epub-pronunciation.md` before packaging:
 review every content, record, and read occurrence in context and embed verified
-IPA through Echo's supported contract before freezing the EPUB. Keep pending
-renderer support and actual listening acceptance explicit.
+IPA through Echo's supported contract before freezing the EPUB. Every EPUB gets
+IPA. Run `../skills/echo-narration/scripts/epub_pronunciation.py`: `scan` the
+built EPUB for candidates, author the decisions file, `apply` it to a new EPUB,
+and freeze that one. The narration preflight runs its `check` and refuses an
+EPUB without IPA, with any content, record, or read left unannotated, or with
+markup Echo can't use. Keep pending renderer support and actual listening
+acceptance explicit.
 
 Design exactly three coordinated cover pairs with
 `references/cover-art.md`. At least two of the three complete pairs must be intentionally high-key, and one of those high-key pairs must be a Designed flat graphic. The third candidate is tonally unrestricted and may be dark when its subject and central metaphor earn that treatment. Render each with

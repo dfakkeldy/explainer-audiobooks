@@ -21,7 +21,9 @@ structured, and revised is the author's call; what gets delivered is not.
   instructions included through Echo PR #600’s verified contract. Follow
   [EPUB pronunciation](epub-pronunciation.md) for whole-manuscript coverage,
   inline decisions, linked lexicons, and plan-to-render reconciliation. This is
-  required production work, not an optional polish pass.
+  required production work, not an optional polish pass. Embed it with
+  `scripts/epub_pronunciation.py`; the narration preflight refuses an EPUB
+  without it.
 - Both selected cover files: portrait `cover.png` and square `m4b-cover.png`.
   Embed the square cover in the M4B and retain both image files in delivery.
 - The complete package in

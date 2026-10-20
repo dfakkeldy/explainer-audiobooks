@@ -170,13 +170,38 @@ handling. A user correction overlapping an annotated phrase suppresses the whole
 phrase instruction; inspect the other words rather than assuming they retain it.
 
 `build_book.py` has no pronunciation-plan option. Build the draft EPUB first,
-then apply annotations with namespace-aware XML handling to a separate candidate
-before its final freeze. Add the lexicon, manifest item, and document links there.
-Preserve EPUB mimetype/ZIP rules, metadata, navigation, covers, and visible text;
-compare extracted display text before and after. Match planned occurrences using
-source context and fail on missing or ambiguous matches, rather than applying
-string replacements to every spelling. Do not claim the builder embeds IPA by
-itself or write Misaki Markdown links into the reader's text.
+then embed with `../scripts/epub_pronunciation.py`, which every book skill shares:
+
+1. `scan --epub draft.epub --out candidates.json` lists every candidate in the
+   narrated text, with its context: content, record and read, other heteronyms,
+   numerals, file names and initialisms. It's the coverage record to work from.
+2. Author a decisions file. Each occurrence gives its word, its IPA and a quoted
+   context that appears once in the book. Readings give file names and numerals
+   that sit in annotated blocks. Lexicon entries cover recurring names. The
+   script's docstring shows the format.
+3. `apply --epub draft.epub --decisions decisions.json --out book.epub` writes a
+   new EPUB. It declares the namespace, links the lexicon from every narrated
+   document, adds the manifest item, keeps the mimetype entry first and stored,
+   and confirms the visible text is unchanged. It fails on missing or ambiguous
+   contexts, and writes nothing unless its own `check` passes.
+4. Freeze `book.epub`.
+
+`check --epub book.epub` is the narration gate, and the governed preflight runs
+it before every fresh render. It refuses an EPUB with narrated text but no IPA,
+with any content, record or read left without an inline reading (captions and
+alt text included, where Echo can't take one), or with markup Echo can't use.
+It also refuses three problems found in production:
+
+- A lexicon grapheme that touches a dotted or hyphenated token. A lexeme for
+  `md` matched inside `open-loops.md`, and synthesis stopped mid-render.
+- A numeral, file name or symbol left without a reading in an annotated block,
+  where Echo skips text expansion.
+- Annotated text containing a slash. One span on `tiles/mail.json` made Echo
+  import none of the book's blocks. Leave such a block unannotated instead.
+
+Non-linear spine documents (such as a non-narrated appendix) and the nav
+document aren't narrated, so the gate skips them. Do not claim the builder
+embeds IPA by itself or write Misaki Markdown links into the reader's text.
 
 If the installed renderer lacks support, preserve the pronunciation plan and
 report that specific installation dependency. Continue independent manuscript

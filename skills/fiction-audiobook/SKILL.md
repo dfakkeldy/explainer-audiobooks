@@ -21,7 +21,10 @@ Read `../echo-narration/references/epub-pronunciation.md` before packaging.
 Review every occurrence of content, record, and read in context; include dialogue
 and narration. Carry the pronunciation plan from manuscript development, embed
 IPA through the verified Echo contract before freezing the EPUB, and verify with
-the assigned voices. Pending renderer support is not completed integration.
+the assigned voices. Embed with `../echo-narration/scripts/epub_pronunciation.py`
+(`scan`, then `apply` the decisions to a new EPUB). The narration preflight runs
+its `check` and refuses an EPUB without IPA. Pending renderer support is not
+completed integration.
 
 1. Listening packages use this; `fiction-book-development` for manuscript-only
    work.
