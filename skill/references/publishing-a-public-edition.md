@@ -60,7 +60,10 @@ the user explicitly authorizes publication of this named edition.
 
 If the selected square cover changed, the EPUB and M4B must both be rebuilt.
 Do not reuse an M4B rendered with different square art, and never patch the new
-cover into an old narration.
+cover into an old narration. A rebuilt EPUB needs IPA from
+`skills/echo-narration/scripts/epub_pronunciation.py` before that fresh render;
+follow `skills/echo-narration/references/epub-pronunciation.md` and freeze the
+annotated EPUB.
 
 Set `EXPLAINER_ROOT`, `RUN_ROOT`, `DIST`, `SLUG`, `TITLE`, `VOICE`, `COVER`,
 `M4B_COVER`, and the approved Echo source identity exactly as documented in

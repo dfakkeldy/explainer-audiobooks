@@ -15,10 +15,19 @@ iCloud package. A successful render alone does not complete an audiobook request
 
 Before freezing a new listening edition, follow
 [EPUB pronunciation](epub-pronunciation.md) for contextual IPA decisions,
-including every content, record, and read occurrence. Use the installed Echo
-contract to embed and verify annotations; a written pronunciation plan alone
-is not evidence that narration applied them. If support is unavailable, retain
-the plan and report the dependency without weakening this renderer contract.
+including every content, record, and read occurrence. Embed with
+`scripts/epub_pronunciation.py` (`scan`, then `apply` the decisions to a new
+EPUB) and freeze that EPUB. A written pronunciation plan alone is not evidence
+that narration applied them.
+
+The governed preflight runs `check` before hashing the EPUB for a fresh render
+and refuses an EPUB with no IPA, any unannotated content, record, or read, or
+markup Echo can't use. Resumed runs are not gated; they keep the EPUB their
+receipts already bind. Frozen EPUBs from before this gate that have no IPA must
+go through `apply` and a refreeze before their next fresh render.
+
+If the installed renderer lacks support, preserve the pronunciation plan and
+report that specific installation dependency.
 
 ## Installed renderer store and approvals
 
