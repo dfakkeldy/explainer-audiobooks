@@ -35,6 +35,7 @@ Example:
 import argparse
 import glob
 import html
+import sys
 import os
 import re
 import shutil
@@ -42,6 +43,9 @@ import tempfile
 import uuid
 import zipfile
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "skills/echo-narration/scripts"))
+from epub_pronunciation import apply_dictionary
 
 from cover_receipts import load_selection, sha256_file, verify_package
 from fiction_production_qc import verify_fiction_receipt
@@ -378,6 +382,8 @@ def build(chapters_dir, out_dir, title, author, subtitle, slug, lang="en", cover
             for name, p in figures.items():
                 with open(p, "rb") as imf:
                     z.writestr("OEBPS/images/" + name, imf.read())
+
+        apply_dictionary(Path(epub_write_path))
 
         if selection_path is not None:
             verify_package(

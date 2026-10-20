@@ -72,6 +72,63 @@ class EPUBPronunciationTests(unittest.TestCase):
         path.write_text(json.dumps(decisions, ensure_ascii=False), encoding='utf-8')
         return self.run_tool('apply', '--epub', epub, '--decisions', path, '--out', self.dir / out), self.dir / out
 
+    def test_shared_defaults_allow_occurrence_override_and_keep_token_edges(self):
+        epub = self.book(['<p>GitHub Githubish email misread.</p>'])
+        result, first = self.apply(epub, {}, 'first.epub')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result, second = self.apply(first, {'occurrences': [
+            {'word': 'misread', 'ipa': 'mɪsˈɹiːd', 'context': 'email misread'}
+        ]}, 'second.epub')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        with zipfile.ZipFile(second) as archive:
+            source = archive.read('OEBPS/chap00.xhtml').decode()
+        self.assertIn('<span ssml:ph="mɪsˈɹiːd">misread</span>', source)
+        self.assertIn('>GitHub</span> Githubish', source)
+        self.assertEqual(source.count('>GitHub</span>'), 1)
+        self.assertEqual(visible(first, 'OEBPS/chap00.xhtml'), visible(second, 'OEBPS/chap00.xhtml'))
+
+    def test_book_reading_overrides_shared_default(self):
+        epub = self.book(['<p>GitHub email.</p>'])
+        result, out = self.apply(epub, {'readings': [
+            {'text': 'GitHub', 'ipa': 'ɡɪt hʌb'}]})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        with zipfile.ZipFile(out) as archive:
+            self.assertIn('<span ssml:ph="ɡɪt hʌb">GitHub</span>',
+                          archive.read('OEBPS/chap00.xhtml').decode())
+
+    def test_book_lexicon_overrides_shared_default(self):
+        epub = self.book(['<p>GitHub email.</p>'])
+        result, out = self.apply(epub, {'lexicon': [
+            {'graphemes': ['GitHub'], 'ipa': 'ɡɪt hʌb'}]})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        with zipfile.ZipFile(out) as archive:
+            source = archive.read('OEBPS/chap00.xhtml').decode()
+            self.assertNotIn('>GitHub</span>', source)
+            self.assertIn('ɡɪt hʌb', archive.read('OEBPS/names.pls').decode())
+
+    def test_exact_ipa_serialization_preserves_surrounding_text(self):
+        body = '<p>“Before,” Portia said: GitHub, then assignee.</p>'
+        epub = self.book([body])
+        result, out = self.apply(epub, {
+            'occurrences': [
+                {'word': 'GitHub', 'ipa': 'ˈɡɪtˌhʌb', 'context': 'said: GitHub, then'},
+                {'word': 'assignee', 'ipa': 'əˌsaɪˈniː', 'context': 'then assignee'}],
+            'lexicon': [{'graphemes': ['Portia'], 'ipa': 'ˈpɔɹʃə'}]})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        with zipfile.ZipFile(out) as archive:
+            source = archive.read('OEBPS/chap00.xhtml').decode()
+            paragraph = re.search(r'<p>.*?</p>', source).group()
+            self.assertEqual(paragraph,
+                '<p>“Before,” Portia said: <span ssml:ph="ˈɡɪtˌhʌb">GitHub</span>, '
+                'then <span ssml:ph="əˌsaɪˈniː">assignee</span>.</p>')
+            self.assertEqual(archive.read('OEBPS/names.pls').decode(),
+                '<?xml version="1.0" encoding="utf-8"?>\n'
+                '<lexicon xmlns="http://www.w3.org/2005/01/pronunciation-lexicon" '
+                'version="1.0" alphabet="ipa" xml:lang="en-US">\n'
+                '  <lexeme>\n    <grapheme>Portia</grapheme>\n'
+                '    <phoneme>ˈpɔɹʃə</phoneme>\n  </lexeme>\n</lexicon>\n')
+        self.assertEqual(visible(epub, 'OEBPS/chap00.xhtml'), visible(out, 'OEBPS/chap00.xhtml'))
+
     def test_check_refuses_narrated_text_without_ipa(self):
         epub = self.book(['<p>Plain words only, nothing ambiguous.</p>'])
         result = self.run_tool('check', '--epub', epub)

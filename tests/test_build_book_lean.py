@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from contextlib import redirect_stdout
 from pathlib import Path
 
@@ -36,6 +37,23 @@ class LeanBuildTests(unittest.TestCase):
             self.assertTrue((out / "fixture-book.epub").is_file())
             self.assertTrue((out / "fixture-book.md").is_file())
 
+    def test_new_book_automatically_embeds_shared_pronunciations(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            chapters = self._chapters(root)
+            prose = "Email the assignee about ADHD, GitHub and what was misread."
+            (chapters / "ch01.md").write_text("# One\n\n" + prose + "\n")
+            with redirect_stdout(io.StringIO()):
+                build_book.build(chapters, root / "dist", "Fixture", "Dan", "", "sample")
+            with zipfile.ZipFile(root / "dist/sample.epub") as archive:
+                source = archive.read("OEBPS/chap00.xhtml").decode()
+            for word, ipa in {"Email": "ˈiːmeɪl", "assignee": "əˌsaɪˈniː",
+                              "ADHD": "ˌeɪ ˌdiː ˌeɪtʃ ˈdiː", "GitHub": "ˈɡɪtˌhʌb",
+                              "misread": "mɪsˈɹɛd"}.items():
+                self.assertIn(f'<span ssml:ph="{ipa}" data-pronunciation="shared">{word}</span>', source)
+            self.assertIn('ssml:alphabet="ipa"', source)
+            self.assertIn(prose, (root / "dist/sample.md").read_text())
+
     def test_cli_builds_without_any_receipt_flag(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -44,7 +62,7 @@ class LeanBuildTests(unittest.TestCase):
 
             result = subprocess.run(
                 [
-                    "/usr/local/bin/python3",
+                    sys.executable,
                     str(REPO / "skill" / "scripts" / "build_book.py"),
                     "--chapters-dir", str(chapters),
                     "--out-dir", str(out),
@@ -61,7 +79,7 @@ class LeanBuildTests(unittest.TestCase):
 
     def test_retired_gate_flags_are_gone(self) -> None:
         result = subprocess.run(
-            ["/usr/local/bin/python3", str(REPO / "skill" / "scripts" / "build_book.py"), "--help"],
+            [sys.executable, str(REPO / "skill" / "scripts" / "build_book.py"), "--help"],
             capture_output=True,
             text=True,
         )

@@ -124,7 +124,7 @@ is a good way to find where a listener would get lost.
 
 ## Produce and deliver
 
-Follow `../skills/echo-narration/references/epub-pronunciation.md` before packaging:
+Follow `../skills/echo-narration/references/epub-pronunciation.md` before packaging; the standard builder automatically embeds `../skills/echo-narration/references/pronunciation-dictionary.json`, with per-book overrides:
 review every content, record, and read occurrence in context and embed verified
 IPA through Echo's supported contract before freezing the EPUB. Every EPUB gets
 IPA. Run `../skills/echo-narration/scripts/epub_pronunciation.py`: `scan` the
