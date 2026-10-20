@@ -262,3 +262,39 @@ handoff. During concept work, a risk list is sufficient; complete the occurrence
 review against the actual final manuscript during production. Keep annotations
 outside accepted Markdown chapter bytes. A pronunciation plan does not authorize
 EPUB creation, narration, or delivery in a manuscript-only task.
+
+### Permanent shared dictionary
+
+`pronunciation-dictionary.json` is the version-controlled source for common
+pronunciations. The standard `skill/scripts/build_book.py` builder embeds its
+`entries` automatically in narrated spine documents; no per-book config is
+needed. `epub_pronunciation.py apply` also merges these defaults. Whole-token,
+case-sensitive matches preserve visible prose and skip unsupported surfaces.
+Add spelling/case variants explicitly. Shared spans carry
+`data-pronunciation="shared"`, so applying later per-book occurrences, readings
+or lexicons can replace them. Existing authored spans and lexicons take priority.
+
+The dictionary seeds email, assignee, ADHD, GitHub and past-tense misread, plus
+existing public book lexicons. For present-tense misread use an occurrence
+reading `mɪsˈɹiːd`. `contextual_readings` retain the existing authored inline IPA
+(including heteronyms); `audit_readings` retain observed renderer output, which
+may contain Kokoro shorthand or wrong selections. Neither is applied globally.
+These migrated readings are not listening-verified. Normal narration checks
+still apply: embedding defaults can make a block bypass Echo text expansion,
+so its numbers/file names may need authored token readings before narration.
+
+Investigation of reports grok-bots #252/#257: the public checkout contains no
+Nothing Slips source EPUB, pronunciation audit, or narration input to reproduce
+the reported extra vowel. The pre-change builder only escapes prose and adds
+HTML; the pronunciation tool inserts the supplied IPA verbatim in `ssml:ph` or
+PLS `phoneme` fields. Neither has a GitHub-specific prefix or vowel insertion
+rule. The contract above notes that annotations bypass Echo text normalization;
+that can change which renderer path handles a word, but does not establish the
+cause of this report. The new GitHub default is `ˈɡɪtˌhʌb`, beginning with a
+consonant, with no leading vowel. A renderer G2P/tokenization or synthesis issue
+remains possible; the affected input and renderer audit are needed to locate it.
+No extra-vowel fix is claimed and no audio was regenerated.
+
+For the general IPA-tagged-word investigation and exact engine-boundary trace,
+see [ipa-vowel-investigation.md](ipa-vowel-investigation.md). No vowel-insertion
+cause or audio repair has been established.

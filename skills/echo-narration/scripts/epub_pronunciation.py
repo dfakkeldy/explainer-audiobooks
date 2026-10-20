@@ -507,11 +507,42 @@ def _locate(epub: Epub, d: dict) -> tuple[str, int, int, int] | str:
     return name, si, seg.starts[off], seg.starts[off_end + 1]
 
 
-def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls") -> tuple[list[dict], list[str]]:
+def load_dictionary() -> dict:
+    path = Path(__file__).resolve().parents[1] / "references/pronunciation-dictionary.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for entry in data["entries"]:
+            if not entry["text"] or BAD_SPAN_TEXT & set(entry["text"]) or check_ipa(entry["ipa"]):
+                raise ValueError(f"invalid entry: {entry!r}")
+        return data
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        raise InputError(f"cannot load shared pronunciation dictionary: {error}") from error
+
+
+def apply_dictionary(epub_path: Path) -> None:
+    """Build-time defaults; the final narration gate still checks contextual IPA."""
+    out = epub_path.with_name(epub_path.name + ".pronunciation")
+    epub = Epub(epub_path)
+    try:
+        apply(epub, {}, out, validate=False)
+    finally:
+        epub.zip.close()
+    out.replace(epub_path)
+
+
+def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls", *, validate: bool = True) -> tuple[list[dict], list[str]]:
+    # Rebuild shared spans so later per-book decisions can replace defaults.
+    for name, doc in list(epub.docs.items()):
+        source = re.sub(r'<span ssml:ph="[^"]*" data-pronunciation="shared">([^<]*)</span>',
+                        r'\1', doc.source)
+        if source != doc.source:
+            epub.docs[name] = Doc(name, source)
     lang = decisions.get("lang", "en-US")
     edits: dict[str, dict[int, list[tuple[int, int, str]]]] = {}
     problems: list[str] = []
     report: list[dict] = []
+    shared_spans: set[tuple[str, int, int, int]] = set()
+    dictionary = load_dictionary()
     for d in decisions.get("occurrences", []):
         found = _locate(epub, d)
         if isinstance(found, str):
@@ -524,7 +555,9 @@ def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls
     for name, doc in epub.docs.items():
         doc_edits = edits.get(name, {})
         for block in doc.blocks.values():
-            if not block.has_span and not any(si in doc_edits for si in block.segments):
+            shared_match = any(word_rx(entry["text"]).search(doc.segments[si].text)
+                               for si in block.segments for entry in dictionary["entries"])
+            if not block.has_span and not any(si in doc_edits for si in block.segments) and not shared_match:
                 continue
             for r in decisions.get("readings", []):
                 rx = word_rx(r["text"])
@@ -538,6 +571,29 @@ def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls
                                        "context": "", "kind": "reading"})
         if doc_edits:
             edits[name] = doc_edits
+    # Authored occurrences, token readings, inline spans and book lexicons win.
+    overridden = {g for lex in decisions.get("lexicon", []) for g in lex["graphemes"]}
+    overridden.update(g for _, entries in epub.lexicons for g, _ in entries)
+    for name, doc in epub.docs.items():
+        for si, seg in enumerate(doc.segments):
+            if not seg.is_text or not seg.in_body or seg.annotated or seg.unsupported:
+                continue
+            spans = edits.setdefault(name, {}).setdefault(si, [])
+            for entry in dictionary["entries"]:
+                if entry["text"] in overridden:
+                    continue
+                for match in word_rx(entry["text"]).finditer(seg.text):
+                    a, b = seg.starts[match.start()], seg.starts[match.end()]
+                    if any(a < end and b > start for start, end, _ in spans):
+                        continue
+                    spans.append((a, b, entry["ipa"]))
+                    shared_spans.add((name, si, a, b))
+                    report.append({"doc": posixpath.basename(name), "word": match.group(),
+                                   "ipa": entry["ipa"], "kind": "dictionary", "context": ""})
+            if not spans:
+                edits[name].pop(si, None)
+        if not edits.get(name):
+            edits.pop(name, None)
     if problems:
         raise InputError("cannot place every decision:\n  " + "\n  ".join(problems))
 
@@ -553,7 +609,8 @@ def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls
             raw, pos = seg.raw, 0
             for a, b, ipa in spans:
                 parts.append(raw[pos:a])
-                parts.append(f'<span ssml:ph="{html.escape(ipa, quote=True)}">{raw[a:b]}</span>')
+                marker = ' data-pronunciation="shared"' if (name, si, a, b) in shared_spans else ''
+                parts.append(f'<span ssml:ph="{html.escape(ipa, quote=True)}"{marker}>{raw[a:b]}</span>')
                 pos = b
             parts.append(raw[pos:])
         source = "".join(parts)
@@ -566,7 +623,7 @@ def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls
             source, count = re.subn(r"<head\b[^>]*>", lambda m: m.group(0) + link, source, count=1)
             if not count:
                 raise InputError(f"{name}: no <head> to link the lexicon from")
-        if source != doc.source:
+        if source != epub.zip.read(name).decode("utf-8"):
             if Doc(name, source).visible_text() != doc.visible_text():
                 raise InputError(f"{name}: embedding changed the visible text")
             changed[name] = source
@@ -592,7 +649,7 @@ def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls
                 z.writestr(info, epub.zip.read(info.filename))
         if pls_path:
             z.writestr(pls_path, build_pls(decisions["lexicon"], lang))
-    errors, warnings = check(Epub(tmp))
+    errors, warnings = check(Epub(tmp)) if validate else ([], [])
     if errors:
         tmp.unlink()
         raise CheckFailed(errors, warnings)
