@@ -30,8 +30,28 @@
       "ipa": "əˌsaɪˈniː"
     },
     {
+      "text": "Audy",
+      "ipa": "ˈɔdi"
+    },
+    {
+      "text": "Audy's",
+      "ipa": "ˈɔdiz"
+    },
+    {
       "text": "Baars",
       "ipa": "bɑɹz"
+    },
+    {
+      "text": "Barkley",
+      "ipa": "ˈbɑɹkli"
+    },
+    {
+      "text": "Barkley's",
+      "ipa": "ˈbɑɹkliz"
+    },
+    {
+      "text": "Baumeister",
+      "ipa": "ˈbaʊˌmaɪstɚ"
     },
     {
       "text": "Birch",
@@ -62,6 +82,14 @@
       "ipa": "klɔdz"
     },
     {
+      "text": "Codex",
+      "ipa": "ˈkoʊdɛks"
+    },
+    {
+      "text": "Codex's",
+      "ipa": "ˈkoʊdɛksɪz"
+    },
+    {
       "text": "Dehaene",
       "ipa": "dəˈɑn"
     },
@@ -78,8 +106,28 @@
       "ipa": "ˈiːmeɪl"
     },
     {
+      "text": "Equifax",
+      "ipa": "ˈɛkwɪfæks"
+    },
+    {
+      "text": "Equifax's",
+      "ipa": "ˈɛkwɪfæksɪz"
+    },
+    {
       "text": "GITHUB",
       "ipa": "ˈɡɪtˌhʌb"
+    },
+    {
+      "text": "GITN'",
+      "ipa": "ˈɡɪtɪn"
+    },
+    {
+      "text": "GITN’",
+      "ipa": "ˈɡɪtɪn"
+    },
+    {
+      "text": "GTD",
+      "ipa": "ˌdʒi ti ˈdi"
     },
     {
       "text": "Gazzaniga",
@@ -90,12 +138,36 @@
       "ipa": "ˈɡɪtˌhʌb"
     },
     {
+      "text": "GitHub's",
+      "ipa": "ˈɡɪtˌhʌbz"
+    },
+    {
       "text": "Github",
       "ipa": "ˈɡɪtˌhʌb"
     },
     {
+      "text": "Gitn'",
+      "ipa": "ˈɡɪtɪn"
+    },
+    {
+      "text": "Gitn’",
+      "ipa": "ˈɡɪtɪn"
+    },
+    {
       "text": "Goldstein",
       "ipa": "ˈɡoʊldstaɪn"
+    },
+    {
+      "text": "Gollwitzer",
+      "ipa": "ˈɡɑlˌwɪtsɚ"
+    },
+    {
+      "text": "Grok",
+      "ipa": "ɡɹɑk"
+    },
+    {
+      "text": "Grok's",
+      "ipa": "ɡɹɑks"
     },
     {
       "text": "IIT",
@@ -114,12 +186,32 @@
       "ipa": "ˈdʒeɪˌspeɪs"
     },
     {
+      "text": "JSON",
+      "ipa": "ˈdʒeɪsən"
+    },
+    {
       "text": "Jacobian",
       "ipa": "dʒəˈkoʊbiən"
     },
     {
+      "text": "Lewin",
+      "ipa": "ləˈvin"
+    },
+    {
       "text": "MISREAD",
       "ipa": "mɪsˈɹɛd"
+    },
+    {
+      "text": "MacroMark",
+      "ipa": "ˈmækɹoʊˌmɑɹk"
+    },
+    {
+      "text": "MacroMark's",
+      "ipa": "ˈmækɹoʊˌmɑɹks"
+    },
+    {
+      "text": "Masicampo",
+      "ipa": "ˌmæsɪˈkæmpoʊ"
     },
     {
       "text": "Misread",
@@ -128,6 +220,10 @@
     {
       "text": "Opus",
       "ipa": "ˈoʊpəs"
+    },
+    {
+      "text": "SQLite",
+      "ipa": "ˌɛs kju ˈɛl aɪt"
     },
     {
       "text": "Sebo",
@@ -146,8 +242,20 @@
       "ipa": "ˈsɛvəɹəns"
     },
     {
+      "text": "Tailscale",
+      "ipa": "ˈteɪlskeɪl"
+    },
+    {
       "text": "Tononi",
       "ipa": "toʊˈnoʊni"
+    },
+    {
+      "text": "YAML",
+      "ipa": "ˈjæməl"
+    },
+    {
+      "text": "Zeigarnik",
+      "ipa": "zaɪˈɡɑɹnɪk"
     },
     {
       "text": "assignee",
@@ -158,8 +266,28 @@
       "ipa": "ˈiːmeɪl"
     },
     {
+      "text": "jobscout",
+      "ipa": "ˈdʒɑbskaʊt"
+    },
+    {
       "text": "misread",
       "ipa": "mɪsˈɹɛd"
+    },
+    {
+      "text": "nightshift",
+      "ipa": "ˈnaɪtʃɪft"
+    },
+    {
+      "text": "nightshift's",
+      "ipa": "ˈnaɪtʃɪfts"
+    },
+    {
+      "text": "webhook",
+      "ipa": "ˈwɛbhʊk"
+    },
+    {
+      "text": "webhooks",
+      "ipa": "ˈwɛbhʊks"
     }
   ],
   "contextual_readings": [
@@ -665,6 +793,7 @@
     "books/jspace-inside-the-machine/pronunciation-plan.md",
     "books/the-case-against-me/pronunciation-plan.md",
     "Matching pronunciation-candidate.epub inline spans and PLS lexicons",
-    "books/the-competitive-bid-room/the-competitive-bid-room.pronunciation-audit.json"
+    "books/the-competitive-bid-room/the-competitive-bid-room.pronunciation-audit.json",
+    "Nothing Slips / Gitn' Things Done private-book lexicon (Oct 19-20 render audit, reconciled per block); Gitn' added 2026-10-21"
   ]
 }
