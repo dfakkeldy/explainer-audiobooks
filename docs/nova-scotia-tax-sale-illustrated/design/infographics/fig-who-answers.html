@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-003/LAW-004 (notice, treasurer), OPS-003 (live list), LAND-001, LAND-002, LAND-004,
+     LAND-005, LAND-006, LAND-007 (exterior only before sale), INS-001, OCC-001, TAX-001, TAX-003 (property-specific tax advice). -->
+<style>
+  .legend { display: flex; gap: 16px; font-size: 11px; color: var(--ink2); margin: 0 0 6px; align-items: center; }
+  .legend .k { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { display: inline-block; width: 22px; height: 12px; border-radius: 999px; }
+  .rows { display: flex; flex-direction: column; }
+  .r { display: grid; grid-template-columns: 330px 1fr; align-items: center; min-height: 47px; border-top: 1px solid var(--hair); }
+  .r:last-child { border-bottom: 1px solid var(--hair); }
+  .q { display: flex; align-items: center; gap: 6px; padding-right: 8px; }
+  .q span { font-size: 13px; font-weight: 700; line-height: 1.25; color: var(--ink); }
+  .q .lead { flex: 1; min-width: 14px; border-bottom: 1.5px dotted #b8b2a6; height: 1px; margin-top: 3px; }
+  .q svg { flex: none; }
+  .a { display: flex; flex-wrap: wrap; gap: 5px; }
+  .c { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--ink);
+       padding: 4px 10px 4px 6px; border-radius: 999px; line-height: 1.2; white-space: nowrap; }
+  .c small { font-size: 11px; font-weight: 400; color: var(--ink2); }
+  .c.rec { background: var(--blue-tint); box-shadow: inset 0 0 0 1px #c9d9ef; }
+  .c.pro { background: var(--aqua-tint); box-shadow: inset 0 0 0 1px #bfe3d6; }
+  .c svg { flex: none; }
+  .rec svg * { stroke: var(--blue); } .pro svg * { stroke: var(--aqua); }
+</style></head>
+<body><div id="fig">
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <g id="i-town" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5l9-5.5 9 5.5"/><path d="M5.5 10v8M10 10v8M14 10v8M18.5 10v8M3 20.5h18"/></g>
+      <g id="i-doc" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 11.5h7M9 15h7"/></g>
+      <g id="i-map" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.5l7.5-3.5 9.5 4-2 11.5-12.5 1z"/><path d="M11 4l-1.5 16.5" stroke-dasharray="2 2.2"/></g>
+      <g id="i-book" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5a2.5 2.5 0 0 1 2.5-2.5H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 20.5A2.5 2.5 0 0 1 7.5 18H19v3H7.5"/><path d="M9 7h6"/></g>
+      <g id="i-survey" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6v4H9z"/><path d="M12 7.5v3M12 10.5l-6 10M12 10.5v10M12 10.5l6 10"/></g>
+      <g id="i-law" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v16M7.5 20.5h9M5 7h14"/><path d="M5 7l-2.8 6.5h5.6zM19 7l-2.8 6.5h5.6z"/></g>
+      <g id="i-plan" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 11h9v9M13 11V4"/><path d="M15.5 14.5h2.5M15.5 17h2.5"/></g>
+      <g id="i-inspect" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l5.5 5.5"/><path d="M7 11.5l3-2.5 3 2.5V13H7z"/></g>
+      <g id="i-umbrella" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 18 0z"/><path d="M12 12v6.5a2 2 0 0 1-4 0"/></g>
+      <g id="i-calc" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18h.01M12 18h.01" stroke-width="2.2"/></g>
+      <g id="i-home" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><circle cx="12" cy="12.5" r="1.8"/><path d="M9 18a3 3 0 0 1 6 0"/></g>
+      <g id="i-arrow"><path d="M1 1l5 4-5 4" fill="none" stroke="#9a9488" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </defs>
+  </svg>
+
+  <div class="legend">
+    <span class="k"><i style="background:var(--blue-tint);box-shadow:inset 0 0 0 1px #c9d9ef"></i>Public record or authority</span>
+    <span class="k"><i style="background:var(--aqua-tint);box-shadow:inset 0 0 0 1px #bfe3d6"></i>Professional you engage</span>
+  </div>
+
+  <div class="rows" id="rows"></div>
+
+  <div class="src">Municipal Government Act ss. 137–142 (notice and treasurer); CBRM tax-sale guidance on maps, access and occupancy; Nova Scotia Residential Tenancies resources. Checked July 2026.</div>
+</div>
+<script>
+  // [question, [[kind, icon, label, note?], ...]]  kind: rec = public record or authority, pro = professional
+  const R = [
+    ['Is it still for sale, and on what terms?', [['rec','doc','Current municipal notice'],['rec','town','Treasurer']]],
+    ['Which parcel is it?', [['rec','map','PID and parcel map'],['rec','book','Land registry']]],
+    ['Where is the boundary on the ground?', [['pro','survey','Surveyor']]],
+    ['What interest do I get, and what burdens stay?', [['pro','law','Lawyer','title']]],
+    ['Can I reach it legally?', [['rec','book','Registry plans'],['pro','law','Lawyer']]],
+    ['What may I build there?', [['rec','plan','Municipal planner','or planning commission']]],
+    ['What condition is it in?', [['pro','inspect','Inspector','after lawful access']]],
+    ['Can I insure it?', [['pro','umbrella','Insurer']]],
+    ['What are the tax consequences?', [['pro','calc','Accountant']]],
+    ['Who lives there, and what are their rights?', [['pro','law','Lawyer'],['rec','home','Residential Tenancies']]],
+  ];
+  const rows = document.getElementById('rows');
+  for (const [q, as] of R) {
+    const chips = as.map(([k, ic, l, n]) =>
+      `<span class="c ${k}"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-${ic}"/></svg>${l}${n ? ` <small>${n}</small>` : ''}</span>`).join('');
+    rows.insertAdjacentHTML('beforeend',
+      `<div class="r"><div class="q"><span>${q}</span><i class="lead"></i><svg width="8" height="10" viewBox="0 0 8 10"><use href="#i-arrow"/></svg></div><div class="a">${chips}</div></div>`);
+  }
+</script>
+</body></html>

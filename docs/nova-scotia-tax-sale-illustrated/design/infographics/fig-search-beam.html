@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md ENV-001 (Nova Scotia Environmental Registry can include contaminated-site notices
+     and closure records; an online search covers what it searched). The search shown is an illustrative example:
+     no real PID or date range is shown. -->
+<style>
+  .beam { display: block; border-radius: var(--r); }
+  .beam .dim { font-size: 12px; fill: #b4c2d1; }
+  .beam .dimb { font-size: 12px; font-weight: 700; fill: #d7e0ea; }
+  .beam .card { font-size: 12px; fill: var(--ink); }
+  .beam .cardk { font-size: 11px; font-weight: 700; letter-spacing: .06em; fill: var(--ink2); }
+  .rule { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 8px 12px; background: var(--panel); border-radius: var(--r); }
+  .rule b { font-family: "Fig Serif", serif; font-weight: 600; font-size: 16px; color: var(--ink); }
+</style></head>
+<body><div id="fig">
+  <svg class="beam" id="beam" width="668" height="360" viewBox="0 0 668 360" aria-label="A flashlight beam lights one parcel on a dark map">
+    <defs>
+      <radialGradient id="glow" cx="132" cy="266" r="372" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#fffdf5"/><stop offset=".75" stop-color="#fbf1d2"/><stop offset="1" stop-color="#f3e2b3"/>
+      </radialGradient>
+      <clipPath id="cone"><path id="conePath"/></clipPath>
+    </defs>
+    <rect width="668" height="360" fill="#14273a"/>
+    <g id="darkmap" fill="none" stroke="#2c4560" stroke-width="1.3"></g>
+    <g clip-path="url(#cone)">
+      <rect width="668" height="360" fill="url(#glow)"/>
+      <g id="litmap" fill="none" stroke="#d3c49c" stroke-width="1.3"></g>
+      <path id="target" fill="var(--blue-tint)" stroke="var(--blue)" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+    <g id="labels"></g>
+  </svg>
+
+  <div class="rule"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="var(--ink2)" stroke-width="1.8"/><path d="M7.5 12h9" stroke="var(--ink2)" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <b>No match = no match in this search.</b></div>
+
+  <div class="src">Nova Scotia Environmental Registry (Environment and Climate Change): contaminated-site notices and closure records, refreshed July 20, 2026. The search shown is an example.</div>
+</div>
+<script>
+  // Jittered cadastral grid (deterministic). Columns and rows in px.
+  const xs = [0, 112, 226, 334, 452, 566, 668], ys = [0, 92, 182, 272, 360];
+  const J = [[0,0,0,0,0],[0,-8,6,-5,0],[0,7,-6,9,0],[0,-5,8,-7,0],[0,9,-4,6,0],[0,-6,7,-8,0],[0,0,0,0,0]];
+  const JX = [[0,0,0,0,0],[0,9,-7,6,-4],[0,-6,10,-8,5],[0,7,-5,9,-6],[0,-8,6,-5,7],[0,6,-9,7,-5],[0,0,0,0,0]];
+  const P = (i, j) => [xs[i] + (JX[i][j] || 0), ys[j] + (J[i][j] || 0)];
+  const cells = [];
+  for (let i = 0; i < 6; i++) for (let j = 0; j < 4; j++) cells.push([P(i,j), P(i+1,j), P(i+1,j+1), P(i,j+1)]);
+  const d = c => 'M' + c.map(p => p.join(' ')).join(' L') + ' Z';
+  const ns = 'http://www.w3.org/2000/svg';
+  const add = (g, tag, attrs) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); g.appendChild(e); return e; };
+  const dark = document.getElementById('darkmap'), lit = document.getElementById('litmap');
+  for (const c of cells) { add(dark, 'path', {d: d(c)}); add(lit, 'path', {d: d(c)}); }
+  // a road through the map
+  const road = 'M0 236 C 120 226, 220 250, 334 232 S 560 196, 668 214';
+  add(dark, 'path', {d: road, stroke: '#2c4560', 'stroke-width': 6});
+  add(lit, 'path', {d: road, stroke: '#ddcfab', 'stroke-width': 6});
+
+  // Target parcel: column 3, row 1.
+  document.getElementById('target').setAttribute('d', d([P(3,1), P(4,1), P(4,2), P(3,2)]));
+
+  // Beam: apex at the torch lens, centre angle -24 deg, half-angle 14 deg, reach 470.
+  const ax = 132, ay = 266, R = 372, a0 = -28 * Math.PI/180, h = 13.5 * Math.PI/180;
+  const e1 = [ax + R*Math.cos(a0-h), ay + R*Math.sin(a0-h)], e2 = [ax + R*Math.cos(a0+h), ay + R*Math.sin(a0+h)];
+  document.getElementById('conePath').setAttribute('d', `M${ax} ${ay} L${e1[0]} ${e1[1]} A${R} ${R} 0 0 1 ${e2[0]} ${e2[1]} Z`);
+
+  const L = document.getElementById('labels');
+  // torch (rotated along the beam)
+  const t = add(L, 'g', {transform: `translate(${ax} ${ay}) rotate(-28)`});
+  add(t, 'path', {d: 'M-74 -9 h52 l14 -6 v30 l-14 -6 h-52 a4 4 0 0 1 -4 -4 v-10 a4 4 0 0 1 4 -4z', fill: '#c9d3de', stroke: '#e9eef3', 'stroke-width': 1});
+  add(t, 'rect', {x: -60, y: -6, width: 10, height: 12, rx: 2, fill: '#8d9aa8'});
+  add(t, 'rect', {x: -8, y: -15, width: 4, height: 30, rx: 1, fill: '#fff6d8'});
+
+  // the search card, tied to the torch
+  const cg = add(L, 'g', {transform: 'translate(16 300)'});
+  add(cg, 'rect', {width: 262, height: 46, rx: 5, fill: '#fbf1d2'});
+  const tx = (g, x, y, cls, s) => { const e = add(g, 'text', {x, y, class: cls}); e.textContent = s; return e; };
+  tx(cg, 10, 17, 'cardk', 'EXAMPLE SEARCH');
+  tx(cg, 10, 35, 'card', 'One register · one PID · one date range');
+
+  // result inside the beam, on the target parcel
+  const rg = add(L, 'g', {transform: 'translate(352 118)'});
+  add(rg, 'rect', {width: 92, height: 22, rx: 11, fill: '#fff', stroke: 'var(--blue)', 'stroke-width': 1.2});
+  tx(rg, 46, 15.5, 'card', 'no match').setAttribute('text-anchor', 'middle');
+  tx(L, 398, 170, 'card', 'this PID').setAttribute('text-anchor', 'middle');
+  L.lastChild.setAttribute('style', 'font-weight:700');
+
+  // what the beam leaves in the dark
+  tx(L, 22, 40, 'dimb', 'other registers');
+  tx(L, 22, 58, 'dim', 'record types this search skipped');
+  tx(L, 22, 150, 'dimb', 'older dates');
+  tx(L, 22, 168, 'dim', 'before the date range');
+  tx(L, 588, 64, 'dimb', 'neighbouring').setAttribute('text-anchor', 'middle');
+  tx(L, 588, 82, 'dimb', 'parcels').setAttribute('text-anchor', 'middle');
+  tx(L, 470, 316, 'dimb', 'things never recorded');
+  tx(L, 470, 334, 'dim', 'unreported releases, today\'s soil');
+</script>
+</body></html>

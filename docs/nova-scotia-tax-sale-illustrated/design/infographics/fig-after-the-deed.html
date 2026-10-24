@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-012 (MGA ss. 155-156; HRMC ss. 170-171), LAW-014 (MGA ss. 146-147),
+     LAW-017 (MGA s. 133(4); HRMC s. 147(4)), LAW-018 (Marketable Titles Act s. 6(2)-(6), consolidation 2015-09-01,
+     refreshed 2026-07-20). The 20-year surplus horizon is drawn from the sale date, as chapter 12 states;
+     LAW-014 says "before twenty years pass" without naming the start. -->
+<style>
+  .tl { display: block; width: 668px; }
+  .tl .ln { font-size: 13px; font-weight: 700; }
+  .tl .ls { font-size: 11px; fill: var(--ink2); }
+  .tl .ax { font-size: 11px; fill: var(--ink2); }
+  .tl .in { font-size: 12px; }
+  .tl .inb { font-size: 12px; font-weight: 700; }
+  .tl .an { font-size: 11px; font-weight: 700; }
+  .tl .an2 { font-size: 11px; fill: var(--ink2); }
+  .assume { font-size: 11px; color: var(--ink2); margin: 2px 0 0 128px; }
+  .cards { display: grid; grid-template-columns: 236px 1fr; gap: 10px; margin-top: 12px; }
+  .c { background: var(--panel); border-radius: 0 var(--r) var(--r) 0; padding: 8px 11px 10px; }
+  .c.deed { border-left: 4px solid var(--navy); }
+  .c.six { border-left: 4px solid var(--orange); }
+  .c .k { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink2); }
+  .c h4 { font-size: 13px; font-weight: 700; line-height: 1.25; margin-top: 3px; }
+  .c p { font-size: 12px; line-height: 1.35; margin-top: 4px; }
+  .c ol { list-style: none; margin-top: 5px; display: grid; gap: 4px; }
+  .c li { font-size: 12px; line-height: 1.32; display: flex; gap: 7px; }
+  .c li .n { flex: none; width: 17px; height: 17px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--orange);
+             font-size: 11px; font-weight: 700; text-align: center; line-height: 14px; }
+  .c .req { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--rule); }
+  .c .lien { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--rule); font-size: 12px; }
+</style></head>
+<body><div id="fig">
+  <svg class="tl" id="tl" viewBox="0 0 668 236" aria-label="Timeline in years after the sale"></svg>
+  <div class="assume">Drawn with the deed registered one year after the sale; the first year is enlarged. The six years run from registration, so the window moves with that date.</div>
+
+  <div class="cards">
+    <div class="c deed">
+      <div class="k">The registered deed</div>
+      <h4>Vests fee-simple title, free of encumbrances</h4>
+      <p>Easements and rights-of-way continue, as the statute specifies. The deed is also statutory evidence that the sale steps were followed.</p>
+      <p class="req"><b>Requested</b> after the six months, or right after the sale when taxes were more than six years in arrears. The purchaser pays council's fee.</p>
+    </div>
+    <div class="c six">
+      <div class="k">After the six years</div>
+      <h4>The deed is generally binding and conclusive, with <span style="white-space:nowrap">three carve-outs</span></h4>
+      <ol>
+        <li><span class="n">1</span><span>Land caught by the section's exclusion rule, where its assessment, interest and arrears conditions are met</span></li>
+        <li><span class="n">2</span><span>A current owner who took part in fraud or breach of trust</span></li>
+        <li><span class="n">3</span><span>A claim for damages for a wrongful tax sale stays open</span></li>
+      </ol>
+      <div class="lien"><b>If a court sets a sale aside,</b> the municipal tax lien stays in place.</div>
+    </div>
+  </div>
+
+  <div class="src">Marketable Titles Act s. 6 (consolidation of Sept 1, 2015); Municipal Government Act ss. 133(4), 146–147, 155–156 (Halifax: Charter ss. 147, 161–162, 170–171), consolidated to April 9, 2026. Checked July 20, 2026.</div>
+</div>
+<script>
+  // Timeline geometry: years after the sale. First year enlarged (140 px), years 1-20 at ~20 px each.
+  // Durations: redemption 0.5 y (LAW-009); contestability 6 y from registration (LAW-018);
+  // surplus claims from end of redemption to 20 y (LAW-014). Registration placed at 1 y (drawing assumption).
+  const X0 = 128, X1 = 268, XE = 650, R = 1, END = 20;
+  const x = t => t <= 1 ? X0 + (X1 - X0) * t : X1 + (XE - X1) * (t - 1) / (END - 1);
+  const NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('tl');
+  const el = (n, a, txt) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (txt) e.textContent = txt; svg.appendChild(e); return e; };
+  const defs = el('defs', {});
+  defs.innerHTML = `<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="var(--aqua-tint)"/><rect width="3" height="7" fill="#c8e9de"/></pattern>
+    <linearGradient id="fade" x1="0" x2="1"><stop offset="0" stop-color="var(--aqua-tint)"/><stop offset=".75" stop-color="var(--aqua-tint)"/><stop offset="1" stop-color="var(--aqua-tint)" stop-opacity="0"/></linearGradient>`;
+
+  // axis
+  const AY = 24;
+  el('line', {x1: X0, y1: AY, x2: XE + 8, y2: AY, stroke: 'var(--rule)', 'stroke-width': 1.5});
+  for (let t = 0; t <= END; t++) el('line', {x1: x(t), y1: AY - 3, x2: x(t), y2: AY + 3, stroke: 'var(--rule)', 'stroke-width': 1.5});
+  el('line', {x1: x(.5), y1: AY - 3, x2: x(.5), y2: AY + 3, stroke: 'var(--rule)', 'stroke-width': 1.5});
+  [[0, 'sale'], [.5, '6 months'], [1, '1'], [5, '5'], [10, '10'], [15, '15'], [20, '20 years']].forEach(([t, s]) =>
+    el('text', {x: x(t), y: AY - 8, class: 'ax', 'text-anchor': t === 20 ? 'end' : 'middle'}, s));
+  el('text', {x: 0, y: AY + 4, class: 'ls'}, 'years after the sale');
+  // first-year bracket
+  el('path', {d: `M${X0} ${AY + 7} v4 H${X1} v-4`, fill: 'none', stroke: 'var(--rule)'});
+  el('text', {x: (X0 + X1) / 2, y: AY + 24, class: 'an2', 'text-anchor': 'middle'}, 'first year, enlarged');
+
+  // lane labels
+  const lane = (y, a, b) => { el('text', {x: 0, y: y, class: 'ln'}, a); el('text', {x: 0, y: y + 15, class: 'ls'}, b); };
+
+  // lane 1: title
+  const T = 62, H = 28;
+  lane(T + 12, 'Title', "the deed's clock");
+  el('rect', {x: x(0), y: T, width: x(.5) - x(0), height: H, fill: 'url(#hatch)'});
+  el('text', {x: (x(0) + x(.5)) / 2, y: T + 18, class: 'an', 'text-anchor': 'middle'}, 'redemption');
+  el('rect', {x: x(.5), y: T, width: x(1) - x(.5), height: H, fill: 'var(--panel)'});
+  el('text', {x: (x(.5) + x(1)) / 2, y: T + 18, class: 'an', 'text-anchor': 'middle'}, 'request');
+  el('rect', {x: x(R), y: T, width: x(R + 6) - x(R), height: H, fill: 'var(--orange-tint)'});
+  el('rect', {x: x(R), y: T, width: 4, height: H, fill: 'var(--orange)'});
+  el('text', {x: (x(R) + x(R + 6)) / 2 + 2, y: T + 19, class: 'inb', 'text-anchor': 'middle'}, '6 years');
+  el('rect', {x: x(R + 6), y: T, width: XE - x(R + 6), height: H, fill: 'var(--aqua-tint)'});
+  el('rect', {x: x(R + 6), y: T, width: 4, height: H, fill: 'var(--aqua)'});
+  el('path', {d: `M${XE} ${T} l12 ${H / 2} l-12 ${H / 2} z`, fill: 'var(--aqua-tint)'});
+  el('text', {x: x(R + 6) + 12, y: T + 19, class: 'in'}, 'generally binding and conclusive');
+  // registration diamond + labels
+  el('path', {d: `M${x(R)} ${T - 7} l7 7 l-7 7 l-7 -7 z`, fill: 'var(--navy)'});
+  el('text', {x: x(R) + 10, y: T - 4, class: 'an'}, 'deed registered');
+  el('text', {x: x(R) + 4, y: T + H + 14, class: 'an2'}, 'from registration: the window for');
+  el('text', {x: x(R) + 4, y: T + H + 28, class: 'an2'}, 'a challenge to set the deed aside');
+
+  // lane 2: second due diligence
+  const D = 136;
+  lane(D + 12, 'Due diligence', 'second wave, after access');
+  el('rect', {x: x(R), y: D, width: x(15) - x(R), height: H, fill: 'url(#fade)'});
+  el('rect', {x: x(R), y: D, width: 4, height: H, fill: 'var(--aqua)'});
+  el('text', {x: x(R) + 12, y: D + 19, class: 'in'}, 'survey · inspection · insurance · possession · permits');
+
+  // lane 3: surplus
+  const S = 186;
+  lane(S + 12, 'Surplus account', 'claims on the proceeds');
+  el('rect', {x: x(.5), y: S, width: XE - x(.5), height: H, fill: 'var(--blue-tint)'});
+  el('rect', {x: x(.5), y: S, width: 4, height: H, fill: 'var(--blue)'});
+  el('rect', {x: XE - 3, y: S - 4, width: 3, height: H + 8, fill: 'var(--blue)'});
+  el('text', {x: x(.5) + 12, y: S + 19, class: 'in'}, 'A person with a prior interest may apply to the Nova Scotia Supreme Court for a share');
+  el('text', {x: x(.5) + 4, y: S - 6, class: 'an'}, 'claims open after redemption ends; up to 20 years from the sale');
+  el('text', {x: XE - 4, y: S + H + 14, class: 'an2', 'text-anchor': 'end'}, '20 years after the sale');
+</script>
+</body></html>

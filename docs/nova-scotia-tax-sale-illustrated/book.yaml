@@ -1,0 +1,85 @@
+# book.yaml: everything about the book that isn't its text.
+# Text: src/chapters/*.md. Glossary: src/glossary.yaml. Figures: src/assets/figures/
+# (infographics drawn in design/infographics/, placed by design/place_figures.py).
+# Rebuild with: .venv/bin/python build/build.py && build/check_all.sh
+
+title: Beyond the Tax-Sale Packet
+subtitle: How Nova Scotia municipal tax sales work, from unpaid taxes to the deed
+kicker: Nova Scotia public guide
+blurb: >-
+  A plain guide to the whole process: the notices, the redemption months, the auction or tender,
+  and the deed. Learn to read a sale notice, build a dated research file, and take each open
+  question to the person who can answer it.
+date: Facts as of July 2026; sale dates as of October 2026.
+running_head: Beyond the Tax-Sale Packet
+lang: en-CA
+author: Dan Fakkeldy
+publisher: KinNoKi Labs
+rights: Text © 2026 Dan Fakkeldy. See the repository's content licence.
+cover_image: src/assets/cover.jpg
+cover_alt: A municipal notice lifting away from a dark map of a Cape Breton shoreline, with one parcel outlined in red.
+cover_credit: Cover art "The Packet Lifts". Fonts Source Serif 4 and Atkinson Hyperlegible Next, used under the SIL Open Font License.
+
+page:
+  size: letter
+
+layout:
+  body: rail
+
+theme:                    # navy and parcel-red from the cover
+  accent: "#1d4f7a"
+  accent_tint: "#eaf0f6"
+  accent_mid: "#9db5cf"
+  caution: "#b4451f"
+  caution_tint: "#fbece4"
+  ink2: "#44505e"
+
+fonts:
+  serif: Source Serif 4
+  sans: Atkinson Hyperlegible Next
+  serif_bold: 600
+
+footer:
+  reminders: true
+
+toc_depth: 1
+
+labels:
+  footer: Words on this page
+  source: Where this comes from
+  action: Suggested action
+
+checks:
+  not_acronyms: [CAD, ME, DP, DDV, EPUBCheck, GeoNOVA, OpenAI, SIL]
+
+epub:
+  cover: render
+  embed_fonts: true
+  ncx: true
+
+editions:
+  public:
+    file: beyond-the-tax-sale-packet-illustrated.pdf
+    cover_line: Illustrated edition, 2026
+    contents:
+      - "@cover"
+      - 00-about.md
+      - "@toc"
+      - 01-last-scene-first.md
+      - 02-reading-the-notice.md
+      - 03-six-month-door.md
+      - 04-parcel-biography.md
+      - 05-map-question-machine.md
+      - 06-access-and-use.md
+      - 07-on-in-under.md
+      - 08-title-burdens-people.md
+      - 09-number-before-the-room.md
+      - 10-when-the-card-goes-up.md
+      - 11-certificate-holder-months.md
+      - 12-deed-is-a-beginning.md
+      - 13-file-that-knows-its-limits.md
+      - "@glossary"
+      - 99-credits.md
+    forbid:
+      - "(?i)\\bINTERNAL\\b"
+      - "<!--"

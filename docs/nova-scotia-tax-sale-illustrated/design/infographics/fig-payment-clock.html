@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-006 (MGA s. 148; HRMC s. 163), LAW-015 (MGA ss. 143, 148-149;
+     HRMC ss. 158-159, 163-164), LAW-007 (MGA s. 150), OPS-001 (CBRM July 21, 2026 instructions),
+     OPS-004 (Inverness August 11, 2026 terms). Refreshed 2026-07-20. -->
+<style>
+  /* five stations on one clock: called | hammer | at once | business days 1-3 | certificate */
+  .cols { display: grid; grid-template-columns: 120px 120px 140px 170px 118px; }
+  .axis { height: 22px; }
+  .axis .lab { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink2);
+               border-bottom: 1px solid var(--rule); margin: 0 6px; padding-bottom: 3px; text-align: center; }
+  .axis .day0 { grid-column: 1 / 4; }
+  .track { display: block; width: 668px; height: 46px; }
+  .st { text-align: center; padding: 0 7px; display: flex; flex-direction: column; align-items: center; }
+  .st h4 { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .st p { font-size: 11px; line-height: 1.32; color: var(--ink2); margin-top: 3px; }
+  .st .chip { display: inline-block; margin-top: auto; position: relative; top: 6px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+              background: var(--aqua-tint); white-space: nowrap; }
+  .st .chip.b { background: var(--blue-tint); }
+
+  .fails { margin-top: 20px; align-items: start; }
+  .fail { position: relative; margin: 0 5px; background: var(--orange-tint); border-top: 3px solid var(--orange);
+          border-radius: 0 0 5px 5px; padding: 7px 9px 8px; }
+  .fail::before { content: ""; position: absolute; top: -11px; width: 0; height: 0; border-left: 7px solid transparent;
+          border-right: 7px solid transparent; border-bottom: 8px solid var(--orange); }
+  .fail.f1 { grid-column: 1 / 3; } .fail.f1::before { left: 48px; }
+  .fail.f2::before { left: calc(50% - 7px); }
+  .fail.f3 { grid-column: 4 / 6; } .fail.f3::before { left: 129px; }
+  .fail .k { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .fail p { font-size: 12px; line-height: 1.32; margin-top: 3px; }
+
+  .ex { margin-top: 14px; background: var(--panel); border-radius: var(--r); padding: 6px 0 4px; }
+  .ex .kicker { padding: 0 10px 4px; }
+  .exrow { border-top: 1px solid var(--hair); padding: 5px 0; }
+  .exrow > div { font-size: 12px; line-height: 1.32; padding: 0 8px; }
+  .exrow .who { grid-column: 1 / 3; }
+  .exrow .who b { display: block; }
+  .exrow .pay { border-left: 3px solid var(--aqua); }
+  .exrow .bal { grid-column: 4 / 6; }
+
+  .forms { margin-top: 12px; }
+  .forms .k { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink2); margin-bottom: 5px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .pill { font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--paper); border: 1px solid var(--rule); white-space: nowrap; }
+  .forms .note { font-size: 11px; color: var(--ink2); margin-top: 5px; width: 100%; }
+</style></head>
+<body><div id="fig">
+
+  <!-- time axis -->
+  <div class="cols axis">
+    <div class="lab day0">Sale day</div>
+    <div class="lab">Business days 1 – 3</div>
+    <div class="lab">Next</div>
+  </div>
+
+  <!-- the clock: x centres 60, 180, 310 | ticks 408, 465, 522 | 609 -->
+  <svg class="track" viewBox="0 0 668 46" aria-hidden="true">
+    <line x1="60" y1="23" x2="180" y2="23" stroke="var(--blue)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="180" y1="23" x2="609" y2="23" stroke="var(--aqua)" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="60" cy="23" r="9" fill="var(--paper)" stroke="var(--blue)" stroke-width="4"/>
+    <!-- hammer -->
+    <circle cx="180" cy="23" r="15" fill="var(--navy)"/>
+    <g transform="translate(180 23) rotate(-35)" fill="#fff">
+      <rect x="-8" y="-6" width="16" height="7" rx="1.5"/>
+      <rect x="-1.5" y="0" width="3" height="11" rx="1"/>
+    </g>
+    <circle cx="310" cy="23" r="9" fill="var(--aqua)"/>
+    <g fill="var(--aqua)">
+      <rect x="406" y="15" width="4" height="16" rx="1"/>
+      <rect x="463" y="15" width="4" height="16" rx="1"/>
+    </g>
+    <circle cx="522" cy="23" r="9" fill="var(--aqua)"/>
+    <text x="408" y="10" font-size="11" font-weight="700" text-anchor="middle" style="fill:var(--ink2)">1</text>
+    <text x="465" y="10" font-size="11" font-weight="700" text-anchor="middle" style="fill:var(--ink2)">2</text>
+    <text x="522" y="10" font-size="11" font-weight="700" text-anchor="middle" style="fill:var(--ink2)">3</text>
+    <!-- certificate -->
+    <rect x="596" y="9" width="26" height="28" rx="3" fill="var(--paper)" stroke="var(--aqua)" stroke-width="3"/>
+    <line x1="602" y1="18" x2="616" y2="18" stroke="var(--aqua)" stroke-width="2"/>
+    <line x1="602" y1="23" x2="616" y2="23" stroke="var(--aqua)" stroke-width="2"/>
+    <line x1="602" y1="28" x2="611" y2="28" stroke="var(--aqua)" stroke-width="2"/>
+  </svg>
+
+  <!-- stations -->
+  <div class="cols">
+    <div class="st"><h4>Property called</h4><p>The treasurer calls it and bids are taken.</p></div>
+    <div class="st"><h4>Hammer</h4><p>The highest bid wins the call.</p><span class="chip b">day 0</span></div>
+    <div class="st"><h4>Pay at once</h4><p>The full price, or at least the recovery amount, plus any event fee.</p><span class="chip">immediately</span></div>
+    <div class="st"><h4>Pay the balance</h4><p>Whatever remains of the price, in an accepted form.</p><span class="chip">by business day 3</span></div>
+    <div class="st"><h4>Certificate of sale</h4><p>Issued when the price is paid in full, and registered.</p></div>
+  </div>
+
+  <!-- failure branches -->
+  <div class="cols fails">
+    <div class="fail f1"><div class="k">No sufficient bid</div>
+      <p>The treasurer may bid the taxes, interest and expenses and buy for the municipality, or advertise again and resell by auction or tender.</p></div>
+    <div class="fail f2"><div class="k">Not paid at once</div>
+      <p>The land is offered again, at once.</p></div>
+    <div class="fail f3"><div class="k">Balance missed</div>
+      <p>The land is re-advertised and resold. Resale expenses come out of the deposit.</p></div>
+  </div>
+
+  <!-- dated event examples, aligned to the clock columns -->
+  <div class="ex">
+    <div class="kicker">Two dated sales on this clock</div>
+    <div class="cols exrow">
+      <div class="who"><b>CBRM, July 21, 2026</b>Register in person with photo ID; bid with a numbered card.</div>
+      <div class="pay">The minimum plus its administrative fee</div>
+      <div class="pay bal">The balance within 3 business days</div>
+    </div>
+    <div class="cols exrow">
+      <div class="who"><b>Inverness County, August 11, 2026</b>In-person public auction in Port Hood.</div>
+      <div class="pay">Taxes, interest and expenses + the $200 registration amount</div>
+      <div class="pay bal">The rest of the price within 3 business days</div>
+    </div>
+  </div>
+
+  <!-- payment forms -->
+  <div class="forms">
+    <div class="k">Payment forms named in the Act</div>
+    <div class="pills">
+      <span class="pill">Cash</span><span class="pill">Certified cheque</span><span class="pill">Money order</span><span class="pill">Bank draft</span>
+      <span class="pill">Irrevocable letter of credit</span><span class="pill">Lawyer's trust cheque</span>
+      <div class="note">Council may authorize another method. Each sale's current terms list the forms it takes.</div>
+    </div>
+  </div>
+
+  <div class="src">Municipal Government Act ss. 143, 148–150 (Halifax: Charter ss. 158–159, 163–165), consolidated to April 9, 2026. CBRM and Inverness County sale terms, checked July 20, 2026.</div>
+</div></body></html>

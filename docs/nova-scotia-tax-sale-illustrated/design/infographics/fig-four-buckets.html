@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md MAP-001 (the research record is a screening record routed to professionals).
+     Bucket tests follow chapter 4 ("Four places an unknown can go"); example items come from the chapter 4, 9 and 13
+     fictional composites (Alder Crossing, Union Workshop, Meadow Line). Colours and icons match fig-evidence-labels:
+     verified = blue, professional = aqua, priceable = yellow, stop = orange. Reserve C and the written maximum
+     follow fig-written-maximum. -->
+<style>
+  .feed { display: flex; align-items: center; gap: 10px; background: var(--panel); border-radius: var(--r); padding: 7px 12px; }
+  .feed .kicker { color: var(--ink); }
+  .feed .small { font-size: 12px; }
+  .chute { display: block; width: 668px; height: 26px; }
+  .bins { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-items: stretch; }
+  .bin { display: flex; flex-direction: column; }
+  .tag { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; line-height: 1.15; padding: 6px 8px 5px;
+         text-transform: none; letter-spacing: 0;
+         border-radius: 6px 6px 0 0; min-height: 44px; }
+  .tag svg { flex: none; }
+  .tray { flex: 1; display: flex; flex-direction: column; gap: 5px; padding: 7px 8px 8px; border: 2.5px solid; border-top: 0;
+          border-radius: 0 0 9px 9px; }
+  .test { font-size: 11px; line-height: 1.3; color: var(--ink2); min-height: 43px; }
+  .slip { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 7px; font-size: 12px; line-height: 1.28;
+          box-shadow: 0 1px 0 rgba(20,39,58,.06); }
+  .act { margin-top: auto; padding-top: 6px; font-size: 12px; font-weight: 700; line-height: 1.25; display: flex; gap: 5px; }
+  .act .ar { flex: none; }
+  .b1 .tag { background: var(--blue); color: #fff; }   .b1 .tray { border-color: var(--blue); background: var(--blue-tint); }
+  .b2 .tag { background: var(--aqua); color: #fff; }   .b2 .tray { border-color: var(--aqua); background: var(--aqua-tint); }
+  .b3 .tag { background: var(--yellow); color: var(--ink); } .b3 .tray { border-color: var(--yellow); background: var(--yellow-tint); }
+  .b4 .tag { background: var(--orange); color: #fff; } .b4 .tray { border-color: var(--orange); background: var(--orange-tint); }
+  .ic { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .out { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .out svg { display: block; }
+  .dec { display: grid; grid-template-columns: 3fr 1fr; gap: 10px; }
+  .go { background: var(--navy); color: #fff; border-radius: var(--r); padding: 9px 13px 10px; }
+  .go .k { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #dfe6ee; }
+  .go h4 { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .go p { font-size: 12px; color: #dfe6ee; margin-top: 3px; line-height: 1.35; }
+  .go .f { font-family: "Fig Display", "Fig Serif", serif; font-weight: 600; font-size: 15px; color: #fff; }
+  .stop { border: 2.5px solid var(--orange); border-radius: var(--r); padding: 8px 10px; background: var(--paper); }
+  .stop h4 { font-size: 14px; font-weight: 700; }
+  .stop p { font-size: 11px; color: var(--ink2); line-height: 1.32; margin-top: 3px; }
+</style></head>
+<body><div id="fig">
+  <div class="feed"><span class="kicker">Every item in the file</span><span class="small">each already carries a source, a date and an evidence label</span></div>
+  <svg class="chute" viewBox="0 0 668 26" aria-hidden="true">
+    <g stroke="var(--ink2)" stroke-width="1.5" fill="none"><path d="M83 2v16M250 2v16M418 2v16M585 2v16"/></g>
+    <g fill="var(--ink2)"><path d="M78 16l5 8 5-8z"/><path d="M245 16l5 8 5-8z"/><path d="M413 16l5 8 5-8z"/><path d="M580 16l5 8 5-8z"/></g>
+  </svg>
+
+  <div class="bins">
+    <div class="bin b1">
+      <div class="tag"><svg width="17" height="17" viewBox="0 0 24 24"><g class="ic" stroke="#fff"><circle cx="12" cy="12" r="9"/><path d="M7.5 12.5l3 3 6-6.5"/></g></svg>Verified</div>
+      <div class="tray">
+        <div class="test">A source states it, and the file holds the source, the date and the record.</div>
+        <div class="slip">Recovery amount: summary and detail sheet agree</div>
+        <div class="slip">Environmental search: no match in this database, on this date</div>
+        <div class="act"><span class="ar">→</span>Use it as a fact</div>
+      </div>
+    </div>
+    <div class="bin b2">
+      <div class="tag"><svg width="17" height="17" viewBox="0 0 24 24"><g class="ic" stroke="#fff"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5c0-4 3.1-7 7-7s7 3 7 7"/></g></svg>Professionally verifiable</div>
+      <div class="tray">
+        <div class="test">A named professional can answer it in time.</div>
+        <div class="slip">Register and legal description: the lawyer</div>
+        <div class="slip">Boundary and road relationship: the surveyor</div>
+        <div class="act"><span class="ar">→</span>Ask; sort the answer</div>
+      </div>
+    </div>
+    <div class="bin b3">
+      <div class="tag"><svg width="17" height="17" viewBox="0 0 24 24"><g class="ic" stroke="var(--ink)"><path d="M4 12h16"/><path d="M4 8v8M20 8v8"/><path d="M12 5v14"/></g></svg>Unresolved but priceable</div>
+      <div class="tray">
+        <div class="test">Still open, with a documented amount or a bounded range.</div>
+        <div class="slip">Vacant-building cover at a quoted, higher premium</div>
+        <div class="slip">Foundation repair with a professional's cost range</div>
+        <div class="act"><span class="ar">→</span>Put the amount in reserve C</div>
+      </div>
+    </div>
+    <div class="bin b4">
+      <div class="tag"><svg width="17" height="17" viewBox="0 0 24 24"><g class="ic" stroke="#fff"><path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z"/><path d="M8 12h8"/></g></svg>Disqualifying</div>
+      <div class="tray">
+        <div class="test">Essential, and unanswerable before the sale.</div>
+        <div class="slip">One account, two PIDs, still unreconciled</div>
+        <div class="slip">Occupancy and former use, with two days left</div>
+        <div class="act"><span class="ar">→</span>Stop</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- connectors: bins 1-3 converge on the decision, bin 4 drops to its own stop -->
+  <svg class="chute" viewBox="0 0 668 26" aria-hidden="true">
+    <g stroke="var(--navy)" stroke-width="2" fill="none"><path d="M83 0v8h335M250 0v8M418 0v8M250 8v10"/></g>
+    <path d="M244 16l6 8 6-8z" fill="var(--navy)"/>
+    <path d="M585 0v18" stroke="var(--orange)" stroke-width="2.5"/>
+    <path d="M578 16l7 9 7-9z" fill="var(--orange)"/>
+  </svg>
+  <div class="dec">
+    <div class="go"><div class="k">Then decide, in writing</div>
+      <h4>Go or no-go, with the written maximum</h4>
+      <p>Maximum: the lower of <span class="f">A − B − C</span> and <span class="f">D</span>. Signed and dated before the sale.</p></div>
+    <div class="stop"><h4>One item here<br>ends the bid</h4><p>Record why, and which facts would reopen the file.</p></div>
+  </div>
+
+  <div class="src">Bucket tests as set out in chapter 4; examples from the book's fictional composite files. A, B, C and D are the lines of the written-maximum worksheet in chapter 9.</div>
+</div></body></html>

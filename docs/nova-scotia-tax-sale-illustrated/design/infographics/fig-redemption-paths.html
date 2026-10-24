@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-007 (certificate of sale after full payment, registered), LAW-009 (six-month
+     redemption; no six-month right where taxes were more than six years in arrears at the sale), LAW-011 (repayment under
+     the statutory formula; purchaser's rights end), LAW-012 (deed requested after the applicable wait). -->
+<style>
+  svg { display: block; }
+  .h { font-size: 13px; font-weight: 700; }
+  .s { font-size: 11.5px; fill: var(--ink2); }
+  .w { fill: #fff; }
+  .tag { font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+</style></head>
+<body><div id="fig">
+<svg width="668" height="528" viewBox="0 0 668 528" aria-label="Decision tree after a tax sale: six-month redemption path and older-arrears deed path">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--ink2)"/></marker>
+  </defs>
+  <g fill="none" stroke="var(--ink2)" stroke-width="1.5">
+    <path d="M334 34 V48" marker-end="url(#ah)"/>
+    <path d="M334 92 V106" marker-end="url(#ah)"/>
+    <path d="M334 158 V172 H306 V202" marker-end="url(#ah)"/>
+    <path d="M334 172 H557 V202" marker-end="url(#ah)"/>
+    <path d="M306 386 V402" marker-end="url(#ah)"/>
+    <path d="M306 448 V472" marker-end="url(#ah)"/>
+    <path d="M557 250 V266" marker-end="url(#ah)"/>
+    <path d="M557 312 V472" marker-end="url(#ah)"/>
+    <path d="M196 318 H182" marker-end="url(#ah)"/>
+  </g>
+
+  <!-- sale and certificate -->
+  <rect x="204" y="0" width="260" height="34" rx="6" fill="var(--navy)"/>
+  <text x="334" y="22" text-anchor="middle" class="h w">Sale, price paid in full</text>
+  <rect x="204" y="50" width="260" height="42" rx="6" fill="var(--aqua-tint)"/>
+  <rect x="204" y="50" width="4" height="42" fill="var(--aqua)"/>
+  <text x="334" y="67" text-anchor="middle" class="h">Certificate of sale</text>
+  <text x="334" y="83" text-anchor="middle" class="s">given to the purchaser and registered</text>
+
+  <!-- question -->
+  <rect x="150" y="108" width="368" height="50" rx="6" fill="var(--paper)" stroke="var(--navy)" stroke-width="1.6"/>
+  <text x="334" y="129" text-anchor="middle" class="h">Were the taxes more than six years in arrears</text>
+  <text x="334" y="146" text-anchor="middle" class="h">at the time of sale?</text>
+  <rect x="232" y="162" width="58" height="20" rx="10" fill="var(--panel)"/><text x="261" y="176" text-anchor="middle" class="tag">NO</text>
+  <rect x="452" y="162" width="58" height="20" rx="10" fill="var(--panel)"/><text x="481" y="176" text-anchor="middle" class="tag">YES</text>
+  <text x="196" y="198" class="s" style="font-style:italic">most files</text>
+
+  <!-- six-month window (30 px = 1 month) -->
+  <rect x="196" y="204" width="220" height="180" rx="6" fill="var(--aqua-tint)"/>
+  <g stroke="var(--aqua)" stroke-width="1.5">
+    <line x1="406" y1="234" x2="416" y2="234"/><line x1="406" y1="264" x2="416" y2="264"/><line x1="406" y1="294" x2="416" y2="294"/>
+    <line x1="406" y1="324" x2="416" y2="324"/><line x1="406" y1="354" x2="416" y2="354"/>
+  </g>
+  <g class="s" style="font-size:11px">
+    <text x="401" y="223" text-anchor="end">month 1</text><text x="401" y="253" text-anchor="end">2</text><text x="401" y="283" text-anchor="end">3</text>
+    <text x="401" y="313" text-anchor="end">4</text><text x="401" y="343" text-anchor="end">5</text><text x="401" y="373" text-anchor="end">6</text>
+  </g>
+  <text x="212" y="268" class="num" style="font-size:30px">6 months</text>
+  <text x="212" y="290" class="h">Redemption window</text>
+  <text x="212" y="308" class="s">The owner or another interest</text>
+  <text x="212" y="323" class="s">holder may redeem.</text>
+
+  <!-- redeemed exit -->
+  <rect x="0" y="262" width="180" height="112" rx="6" fill="var(--panel)"/>
+  <rect x="0" y="262" width="4" height="112" fill="var(--navy)"/>
+  <text x="14" y="282" class="h">Redeemed</text>
+  <text x="14" y="301" class="s">Redemption amount paid</text>
+  <text x="14" y="316" class="s">to the treasurer.</text>
+  <text x="14" y="338" class="s">Purchaser repaid under</text>
+  <text x="14" y="353" class="s">the statutory formula;</text>
+  <text x="14" y="368" class="s">purchaser's rights end.</text>
+
+  <!-- not redeemed -->
+  <rect x="196" y="404" width="220" height="44" rx="6" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="208" y="422" class="h">Not redeemed after six months</text>
+  <text x="208" y="439" class="s">The purchaser may request the deed.</text>
+
+  <!-- older arrears -->
+  <rect x="446" y="204" width="222" height="46" rx="6" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="458" y="223" class="h">No six-month redemption right</text>
+  <text x="458" y="240" class="s">the file can go straight to the deed</text>
+  <rect x="446" y="268" width="222" height="44" rx="6" fill="var(--paper)" stroke="var(--rule)"/>
+  <text x="458" y="286" class="h">Deed request</text>
+  <text x="458" y="303" class="s">The purchaser may request the deed.</text>
+
+  <!-- deed registered -->
+  <rect x="196" y="474" width="472" height="40" rx="6" fill="var(--aqua-tint)"/>
+  <rect x="196" y="474" width="4" height="40" fill="var(--aqua)"/>
+  <text x="212" y="499" class="h">Tax deed registered</text>
+  <text x="352" y="499" class="s">once the purchaser has requested it and paid the fee</text>
+</svg>
+<div class="src">Municipal Government Act ss. 150–155 (Halifax: Charter ss. 165–170). Consolidations checked July 2026.</div>
+</div></body></html>

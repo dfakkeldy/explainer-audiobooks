@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md MAP-001 (screening record), LAND-004, LAND-005, LAND-007.
+     Example entries follow chapter 4's fictional composite, Birch Point Road (PID-to-notice match verified;
+     access routed to lawyer and surveyor; site condition answerable only after lawful entry = no-go for the project). -->
+<style>
+  .sheet { display: grid; grid-template-columns: 252px 1fr; }
+  .top { grid-column: 2; display: flex; justify-content: space-between; align-items: baseline;
+         background: var(--panel); border-radius: var(--r) var(--r) 0 0; padding: 8px 12px 6px; border-bottom: 1px solid var(--rule); }
+  .top .kicker { color: var(--ink); }
+  .lab { padding: 10px 14px 10px 0; display: flex; flex-direction: column; gap: 5px; justify-content: center; border-top: 1px solid var(--hair); }
+  .lab:nth-child(2) { border-top: 0; }
+  .badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700;
+           color: var(--ink); padding: 4px 11px 4px 6px; border-radius: 999px; white-space: nowrap; }
+  .badge svg { flex: none; }
+  .meaning { font-size: 12px; line-height: 1.3; color: var(--ink2); padding-left: 2px; }
+  .ent { background: var(--panel); padding: 10px 12px 10px 14px; display: flex; flex-direction: column; justify-content: center; gap: 3px;
+         border-top: 1px solid var(--rule); position: relative; }
+  .ent::before { content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 4px; border-radius: 2px; }
+  .ent p { font-size: 13px; line-height: 1.3; color: var(--ink); }
+  .ent .meta { font-size: 11px; color: var(--muted); }
+  .ent.last { border-radius: 0 0 var(--r) var(--r); }
+  .k-ver .badge { background: var(--blue-tint); box-shadow: inset 0 0 0 1.5px var(--blue); }   .e-ver::before { background: var(--blue); }
+  .k-clue .badge { background: var(--yellow-tint); box-shadow: inset 0 0 0 1.5px var(--yellow); } .e-clue::before { background: var(--yellow); }
+  .k-vis .badge { background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--ink2); }      .e-vis::before { background: var(--ink2); }
+  .k-pro .badge { background: var(--aqua-tint); box-shadow: inset 0 0 0 1.5px var(--aqua); }   .e-pro::before { background: var(--aqua); }
+  .k-stop .badge { background: var(--orange-tint); box-shadow: inset 0 0 0 1.5px var(--orange); } .e-stop::before { background: var(--orange); }
+  .ic { fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+</style></head>
+<body><div id="fig">
+  <div class="sheet">
+    <div class="top"><span class="kicker">Research file · Birch Point Road</span><span class="small">fictional composite</span></div>
+
+    <div class="lab k-ver"><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24"><g class="ic" stroke="var(--blue)"><circle cx="12" cy="12" r="9"/><path d="M7.5 12.5l3 3 6-6.5"/></g></svg>Verified record</span>
+      <span class="meaning">An official source states it, on a stated date.</span></div>
+    <div class="ent e-ver"><p>The municipal packet ties this PID to the dated auction entry.</p><span class="meta">Source: municipal packet, captured · checked July 19, 2026</span></div>
+
+    <div class="lab k-clue"><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24"><g class="ic" stroke="#b07e00"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><path d="M10 8.3a2.1 2.1 0 1 1 2.8 2c-.5.2-.8.6-.8 1.1v.4"/><circle cx="12" cy="14.6" r=".5"/></g></svg>Screening clue</span>
+      <span class="meaning">A map or layer points to a question.</span></div>
+    <div class="ent e-clue"><p>The provincial parcel service returns mapped geometry for the PID.</p><span class="meta">Source: NSPRD parcel service · viewed July 19, 2026</span></div>
+
+    <div class="lab k-vis"><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24"><g class="ic" stroke="var(--ink2)"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></g></svg>Visual interpretation</span>
+      <span class="meaning">What an image appears to show, on its date.</span></div>
+    <div class="ent e-vis"><p>The aerial image shows features in and near that geometry.</p><span class="meta">Source: provincial aerial service · imagery date recorded</span></div>
+
+    <div class="lab k-pro"><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24"><g class="ic" stroke="var(--aqua)"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5c0-4 3.1-7 7-7s7 3 7 7"/></g></svg>Professional verification needed</span>
+      <span class="meaning">A qualified person confirms it.</span></div>
+    <div class="ent e-pro"><p>Legal description and instrument references to interpret.</p><span class="meta">Next: lawyer (interests, access) and surveyor (location)</span></div>
+
+    <div class="lab k-stop"><span class="badge"><svg width="16" height="16" viewBox="0 0 24 24"><g class="ic" stroke="var(--orange)"><path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z"/><path d="M8 12h8"/></g></svg>No-go until resolved</span>
+      <span class="meaning">Stops the bid until it is answered.</span></div>
+    <div class="ent e-stop last"><p>Site condition is answerable only after lawful entry.</p><span class="meta">Status: the project depends on it, so it holds the bid</span></div>
+  </div>
+
+  <div class="src">Labels used for every entry in this book's research files. Example entries follow Birch Point Road, chapter 4's fictional composite.</div>
+</div></body></html>
