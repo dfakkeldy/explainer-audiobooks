@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAND-001 (AAN vs PID), LAND-002 (Property Online / registry), LAND-003 (PVSC assessment
+     as a taxation record), DATA-005 (Inverness entries: fact table, aerial with parcel overlay, legal description).
+     Harbour Road is a fictional composite (design/figures.yaml): no real owner, parcel or account. -->
+<style>
+  #stage { position: relative; height: 478px; }
+  .sheet { position: absolute; left: 184px; top: 0; width: 304px; border: 1px solid var(--rule); border-radius: var(--r);
+           background: var(--paper); overflow: hidden; }
+  .sh-head { height: 34px; background: var(--panel); border-bottom: 1px solid var(--rule); display: flex; align-items: center;
+             justify-content: space-between; padding: 0 10px; }
+  .sh-head .kicker { color: var(--ink); }
+  .facts { width: 100%; border-collapse: collapse; }
+  .facts td { height: 30px; padding: 0 10px; border-bottom: 1px solid var(--hair); font-size: 12px; white-space: nowrap; }
+  .facts td:first-child { width: 128px; color: var(--ink2); font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .facts td:last-child { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--rule); vertical-align: 0; }
+  .yes { display: inline-block; background: var(--blue-tint); border-radius: 999px; padding: 1px 8px; }
+  .aerial { margin: 8px 10px 0; height: 128px; border-radius: 4px; overflow: hidden; }
+  .legal { margin: 8px 10px 10px; padding: 7px 9px; background: var(--panel); border-radius: 4px; height: 76px; }
+  .legal p { font-family: "Fig Serif", serif; font-size: 11px; line-height: 1.35; color: var(--ink); }
+  .legal .bar { display: block; height: 6px; margin-top: 6px; }
+  .co { position: absolute; width: 170px; transform: translateY(-50%); }
+  .co.l { left: 0; } .co.r { left: 504px; }
+  .co .sys { display: inline-block; font-size: 11px; font-weight: 700; background: var(--blue-tint); border-radius: 999px;
+             padding: 2px 8px; color: var(--ink); }
+  .co .q { font-size: 12px; line-height: 1.3; margin-top: 3px; color: var(--ink); }
+  .key { position: absolute; left: 0; top: 300px; width: 166px; font-size: 11px; color: var(--ink2); line-height: 1.4; }
+  .key .sys { display: inline-block; font-size: 11px; font-weight: 700; background: var(--blue-tint); border-radius: 999px; padding: 2px 8px; color: var(--ink); margin-bottom: 4px; }
+  svg.lines { position: absolute; left: 0; top: 0; pointer-events: none; }
+</style></head>
+<body><div id="fig">
+<div id="stage">
+  <div class="sheet">
+    <div class="sh-head"><span class="kicker">Detail sheet</span><span class="tag" style="background:var(--paper)">Fictional</span></div>
+    <table class="facts">
+      <tr><td>Lien no.</td><td>12</td></tr>
+      <tr><td>AAN</td><td>0123 4567</td></tr>
+      <tr><td>PID</td><td>•••• •421</td></tr>
+      <tr><td>Location</td><td>Harbour Road</td></tr>
+      <tr><td>Assessment</td><td><span class="small">land</span> <span class="bar" style="width:28px"></span>&nbsp; <span class="small">building</span> <span class="bar" style="width:34px"></span></td></tr>
+      <tr><td>Recovery amount</td><td>$4,000.00</td></tr>
+      <tr><td>Redeemable</td><td><span class="yes">YES</span></td></tr>
+    </table>
+    <div class="aerial">
+      <svg width="282" height="128" viewBox="0 0 282 128" aria-label="Drawn aerial view with parcel outline">
+        <rect width="282" height="128" fill="#ece7dc"/>
+        <path d="M0 0 H282 V30 C 230 38, 170 26, 120 34 C 70 42, 30 30, 0 36 Z" fill="var(--blue-tint)"/>
+        <path d="M0 36 C 30 30, 70 42, 120 34 C 170 26, 230 38, 282 30" fill="none" stroke="#d9d2c3" stroke-width="2"/>
+        <rect x="18" y="56" width="70" height="40" fill="#e3ddcf"/><rect x="200" y="54" width="64" height="48" fill="#e3ddcf"/>
+        <path d="M0 108 C 80 100, 180 112, 282 104" fill="none" stroke="#fff" stroke-width="11"/>
+        <path d="M0 108 C 80 100, 180 112, 282 104" fill="none" stroke="var(--rule)" stroke-width="1"/>
+        <text x="236" y="122" font-size="11" fill="var(--ink2)" text-anchor="middle">Harbour Road</text>
+        <path d="M104 46 L176 40 L184 101 L110 105 Z" fill="rgba(42,111,196,.10)" stroke="var(--blue)" stroke-width="2.4" stroke-linejoin="round"/>
+        <rect x="132" y="62" width="22" height="16" fill="#cfc7b6"/>
+        <text x="10" y="20" font-size="11" fill="var(--ink2)">aerial, parcel overlay</text>
+      </svg>
+    </div>
+    <div class="legal">
+      <p>ALL that certain lot of land situate on the north side of Harbour Road, bounded and described as follows…</p>
+      <span class="bar" style="width:92%"></span><span class="bar" style="width:70%"></span>
+    </div>
+  </div>
+
+  <!-- callouts: record system (tag) and the question the field answers -->
+  <div class="co l" style="top:49px"><span class="sys">This sale's list</span><div class="q">Which entry at this event?</div></div>
+  <div class="co r" style="top:79px"><span class="sys">Assessment roll, PVSC</span><div class="q">Which assessment account?</div></div>
+  <div class="co l" style="top:109px"><span class="sys">Land registry parcel map</span><div class="q">Which mapped parcel?</div></div>
+  <div class="co r" style="top:139px"><span class="sys">Notice description</span><div class="q">Roughly where on the ground?</div></div>
+  <div class="co l" style="top:169px"><span class="sys">Assessment roll, PVSC</span><div class="q">What value is taxed?</div></div>
+  <div class="co r" style="top:199px"><span class="sys">Municipal tax account</span><div class="q">What is being collected: taxes, interest, expenses?</div></div>
+  <div class="co l" style="top:229px"><span class="sys">Treasurer, under the Act</span><div class="q">Which path after the sale?</div></div>
+  <div class="co r" style="top:430px"><span class="sys">Land registry</span><div class="q">Which registry words does a lawyer read?</div></div>
+
+  <div class="key"><span class="sys">Record system</span><br>Each callout names the record a field comes from, then the question that field answers.</div>
+
+  <svg class="lines" width="672" height="478" viewBox="0 0 672 478">
+    <g stroke="var(--ink2)" stroke-width="1" fill="var(--ink2)">
+      <line x1="170" y1="49" x2="184" y2="49"/><circle cx="184" cy="49" r="3"/>
+      <line x1="170" y1="109" x2="184" y2="109"/><circle cx="184" cy="109" r="3"/>
+      <line x1="170" y1="169" x2="184" y2="169"/><circle cx="184" cy="169" r="3"/>
+      <line x1="170" y1="229" x2="184" y2="229"/><circle cx="184" cy="229" r="3"/>
+      <line x1="488" y1="79" x2="500" y2="79"/><circle cx="488" cy="79" r="3"/>
+      <line x1="488" y1="139" x2="500" y2="139"/><circle cx="488" cy="139" r="3"/>
+      <line x1="488" y1="199" x2="500" y2="199"/><circle cx="488" cy="199" r="3"/>
+      <line x1="488" y1="430" x2="500" y2="430"/><circle cx="488" cy="430" r="3"/>
+    </g>
+  </svg>
+</div>
+<div class="src">Fictional composite modelled on the layout of the Inverness County packet for August 11, 2026. No real owner, account or parcel.</div>
+</div></body></html>

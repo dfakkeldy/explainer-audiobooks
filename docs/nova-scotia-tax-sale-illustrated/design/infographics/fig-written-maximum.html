@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md DATA-001 (the advertised minimum is a debt figure, not value),
+     LAW-006 (pay the price or at least the recovery amount immediately; the balance within three business days). -->
+<style>
+  .sheet { border: 1.5px solid var(--ink); border-radius: var(--r); background: var(--paper); overflow: hidden; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; background: var(--panel);
+          padding: 8px 14px; border-bottom: 1px solid var(--rule); }
+  .head .kicker { color: var(--ink); font-size: 12px; }
+  .body { padding: 10px 14px 12px; }
+  .fill { display: flex; align-items: flex-end; gap: 6px; font-size: 12px; }
+  .fill .ln { flex: 1; border-bottom: 1px solid var(--ink2); height: 15px; }
+  .meta { display: grid; grid-template-columns: 1.4fr 1fr 0.7fr; gap: 16px; }
+  .goal { margin-top: 10px; }
+  .item { display: grid; grid-template-columns: 26px 1fr 128px; column-gap: 10px; align-items: start;
+          padding: 9px 0 8px; border-top: 1px solid var(--hair); }
+  .first { margin-top: 10px; }
+  .let { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--ink); font-weight: 700; font-size: 13px;
+         text-align: center; line-height: 19px; }
+  .item h4 { font-size: 13px; font-weight: 700; line-height: 1.25; }
+  .item p { font-size: 11px; color: var(--ink2); line-height: 1.3; margin-top: 1px; }
+  .item .fill { margin-top: 6px; font-size: 11px; color: var(--ink2); }
+  .amt { display: flex; align-items: flex-end; gap: 4px; font-size: 14px; font-weight: 700; height: 22px; }
+  .amt .opx { width: 12px; text-align: center; flex: none; }
+  .amt .ln { flex: 1; border-bottom: 1px solid var(--ink); height: 18px; }
+  .sub2 { display: grid; grid-template-columns: 1fr 128px; column-gap: 10px; margin-top: 5px; font-size: 11px; color: var(--ink2); align-items: end; }
+  .sub2 .amt { font-size: 12px; font-weight: 400; color: var(--ink); height: 18px; }
+  .sub2 .amt .ln { height: 14px; border-bottom-color: var(--ink2); }
+  .calc { background: var(--panel); border-radius: 4px; padding: 7px 0; border-top: none; margin-top: 2px; }
+  .calc .op { font-family: "Fig Display", "Fig Serif", serif; font-weight: 600; font-size: 17px; }
+  .result { display: grid; grid-template-columns: 1fr 150px; column-gap: 12px; align-items: center; margin-top: 10px;
+            background: var(--navy); color: #fff; border-radius: 5px; padding: 10px 12px; }
+  .result h3 { font-size: 15px; font-weight: 700; letter-spacing: .02em; }
+  .result p { font-size: 12px; color: #dfe6ee; margin-top: 2px; }
+  .result .amt { color: #fff; font-size: 17px; height: 26px; }
+  .result .amt .ln { border-bottom: 1.5px solid #fff; height: 22px; }
+  .sign { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; margin-top: 14px; }
+  .foot { margin-top: 8px; font-size: 11px; color: var(--ink2); }
+</style></head>
+<body><div id="fig">
+  <div class="sheet">
+    <div class="head"><span class="kicker">One sheet per lien</span><span class="small">complete and sign before the sale</span></div>
+    <div class="body">
+      <div class="meta">
+        <div class="fill">Municipality <span class="ln"></span></div>
+        <div class="fill">Sale date <span class="ln"></span></div>
+        <div class="fill">Lien no. <span class="ln"></span></div>
+      </div>
+      <div class="fill goal">My written goal for this property <span class="ln"></span></div>
+
+      <div class="item first">
+        <span class="let">A</span>
+        <div><h4>Value to me, for that goal</h4><p>From evidence for this use; the advertised amount is a debt figure</p>
+          <div class="fill">Evidence used <span class="ln"></span></div></div>
+        <div class="amt"><span class="opx"></span>$ <span class="ln"></span></div>
+      </div>
+      <div class="item">
+        <span class="let">B</span>
+        <div><h4>All-in costs other than the bid</h4><p>Possible taxes, legal, registry and survey, carrying costs, repairs, possession, development</p></div>
+        <div class="amt"><span class="opx">−</span>$ <span class="ln"></span></div>
+      </div>
+      <div class="item">
+        <span class="let">C</span>
+        <div><h4>Reserve for unresolved items</h4><p>One line per open question, each with an amount</p>
+          <div class="fill">Items <span class="ln"></span></div></div>
+        <div class="amt"><span class="opx">−</span>$ <span class="ln"></span></div>
+      </div>
+      <div class="item calc">
+        <span></span>
+        <div><span class="op">A − B − C</span> <span class="small">&nbsp;the most this land is worth bidding, to me</span></div>
+        <div class="amt"><span class="opx">=</span>$ <span class="ln"></span></div>
+      </div>
+      <div class="item">
+        <span class="let">D</span>
+        <div><h4>Payment I can make on the sale's clock</h4><p>In a form the sale's terms accept</p>
+          <div class="sub2"><span>Today: the price, or at least the recovery amount</span><div class="amt"><span class="opx"></span>$ <span class="ln"></span></div></div>
+          <div class="sub2"><span>Within 3 business days: the balance</span><div class="amt"><span class="opx">+</span>$ <span class="ln"></span></div></div>
+        </div>
+        <div class="amt" style="align-self:end"><span class="opx">=</span>$ <span class="ln"></span></div>
+      </div>
+
+      <div class="result">
+        <div><h3>WRITTEN MAXIMUM</h3><p>the lower of (A − B − C) and D</p></div>
+        <div class="amt"><span class="opx"></span>$ <span class="ln"></span></div>
+      </div>
+
+      <div class="sign">
+        <div class="fill">Signed <span class="ln"></span></div>
+        <div class="fill">Date <span class="ln"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="src">Payment clock: Municipal Government Act s. 148 (Halifax: Charter s. 163), as amended in 2025; each sale's current terms set the accepted forms of payment.</div>
+</div></body></html>

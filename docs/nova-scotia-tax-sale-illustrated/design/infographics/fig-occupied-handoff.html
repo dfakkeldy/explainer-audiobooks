@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAND-007 (exterior research only: the municipality does not own listed
+     properties and cannot authorize entry; observe from public land), OCC-001 (an occupied property may still be
+     sold; the municipality does not remove residents; get property/tenancy advice), LAW-008 (certificate holder's
+     protective powers do not override tenancy and possession law). The scene is generic and fictional. -->
+<style>
+  #scene { display: block; }
+  #scene .lbl { font-size: 11px; fill: var(--ink); }
+  #scene .lblb { font-size: 12px; font-weight: 700; }
+  #scene .road { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; fill: var(--ink2); }
+  .steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 12px; }
+  .step { position: relative; background: var(--panel); border-radius: 5px; padding: 9px 10px 10px; display: flex; flex-direction: column; gap: 5px; }
+  .step.s1 { border-top: 3px solid var(--aqua); }
+  .step.s2 { border-top: 3px solid var(--orange); background: var(--orange-tint); }
+  .step.s3 { border-top: 3px solid var(--navy); }
+  .step:not(:last-child)::after { content: ""; position: absolute; right: -13px; top: 40px; width: 0; height: 0;
+          border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 8px solid var(--ink2); }
+  .step .top { display: flex; align-items: center; gap: 8px; }
+  .n { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: #fff; font-weight: 700; font-size: 12px; text-align: center; line-height: 22px; }
+  .oct { flex: none; width: 24px; height: 24px; background: var(--orange); clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+         color: #fff; font-size: 12px; font-weight: 700; text-align: center; line-height: 24px; }
+  .step h4 { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .step p { font-size: 12px; line-height: 1.35; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--paper); }
+  .rec { font-size: 11px; color: var(--ink2); margin-top: auto; }
+  .notes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+  .note { font-size: 12px; line-height: 1.35; padding-left: 10px; border-left: 3px solid var(--blue); }
+  .note.after { border-left-color: var(--aqua); }
+  .note b { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink2); margin-bottom: 1px; }
+</style></head>
+<body><div id="fig">
+  <svg id="scene" width="668" height="206" viewBox="0 0 668 206" aria-label="A house seen from a public road, with an observer stopped at the property line">
+    <!-- yard and road -->
+    <rect x="0" y="112" width="668" height="36" fill="#f6f3ec"/>
+    <rect x="0" y="148" width="668" height="58" fill="#e7e3db"/>
+    <text x="650" y="194" class="road" text-anchor="end">Public road</text>
+    <!-- trees -->
+    <circle cx="560" cy="82" r="26" fill="#e3f4ee"/><circle cx="584" cy="96" r="20" fill="#e3f4ee"/><rect x="566" y="100" width="4" height="28" fill="#d6d1c7"/>
+    <!-- house -->
+    <path d="M360 132 V74 L420 34 L480 74 V132 Z" fill="#fff" stroke="#14273a" stroke-width="1.8" stroke-linejoin="round"/>
+    <rect x="452" y="34" width="12" height="22" fill="#fff" stroke="#14273a" stroke-width="1.6"/>
+    <path d="M458 28 q-6 -6 0 -12 q6 -6 0 -12" fill="none" stroke="#6b7280" stroke-width="1.6" stroke-linecap="round"/>
+    <rect x="410" y="100" width="20" height="32" fill="#fff" stroke="#14273a" stroke-width="1.6"/>
+    <rect x="374" y="88" width="22" height="18" fill="#fbf2d8" stroke="#14273a" stroke-width="1.4"/>
+    <rect x="444" y="88" width="22" height="18" fill="#fff" stroke="#14273a" stroke-width="1.4"/>
+    <!-- driveway and vehicle -->
+    <path d="M296 147 L314 126 H352 L340 147 Z" fill="#e7e3db"/>
+    <rect x="304" y="114" width="44" height="18" rx="6" fill="#fff" stroke="#14273a" stroke-width="1.6"/>
+    <circle cx="315" cy="133" r="4" fill="#14273a"/><circle cx="338" cy="133" r="4" fill="#14273a"/>
+    <!-- mailbox at the road -->
+    <rect x="262" y="124" width="3" height="23" fill="#14273a"/>
+    <rect x="252" y="114" width="24" height="12" rx="5" fill="#fff" stroke="#14273a" stroke-width="1.6"/>
+    <!-- property line along the front of the lot -->
+    <line x1="0" y1="147.5" x2="668" y2="147.5" stroke="#e0602f" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="650" y="140" class="lblb" text-anchor="end">Property line</text>
+    <!-- observer on the road, notebook in hand -->
+    <circle cx="96" cy="164" r="7" fill="#14273a"/>
+    <path d="M96 172 V190 M96 190 l-6 12 M96 190 l6 12 M96 177 l12 5" stroke="#14273a" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <rect x="106" y="177" width="10" height="12" fill="#fff" stroke="#14273a" stroke-width="1.4" transform="rotate(-12 111 183)"/>
+    <text x="82" y="170" class="lblb" text-anchor="end">You</text>
+    <text x="82" y="184" class="lbl" text-anchor="end">on the road</text>
+    <!-- stop sign at the line -->
+    <g transform="translate(164 112)">
+      <rect x="-1.5" y="16" width="3" height="20" fill="#44505e"/>
+      <polygon points="-7.5,-18 7.5,-18 18,-7.5 18,7.5 7.5,18 -7.5,18 -18,7.5 -18,-7.5" fill="#e0602f" stroke="#fff" stroke-width="1.5"/>
+      <text x="0" y="4" text-anchor="middle" style="font-size:11px;font-weight:700;fill:#fff">STOP</text>
+    </g>
+    <!-- what can be seen: direct labels -->
+    <text x="472" y="14" class="lbl">smoke</text>
+    <text x="366" y="84" class="lbl" text-anchor="end">lights</text>
+    <text x="326" y="102" class="lbl" text-anchor="middle">vehicle</text>
+    <text x="264" y="107" class="lbl" text-anchor="middle">mail</text>
+  </svg>
+
+  <div class="steps">
+    <div class="step s1">
+      <div class="top"><span class="n">1</span><h4>Observe from public land</h4></div>
+      <div class="chips"><span class="chip">vehicles</span><span class="chip">smoke</span><span class="chip">mail</span><span class="chip">lights</span></div>
+      <p class="rec">Write down the date, the time and where you stood.</p>
+    </div>
+    <div class="step s2">
+      <div class="top"><span class="oct">2</span><h4>Stop at the property line</h4></div>
+      <p>Stay on public land. Leave doors and mailbox untouched.</p>
+      <p class="rec">Any contact goes through your lawyer.</p>
+    </div>
+    <div class="step s3">
+      <div class="top"><span class="n">3</span><h4>Hand off the question</h4></div>
+      <p>A lawyer or tenancy advice: who is in possession, and what notice the law requires.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><b>Before the sale</b>The land is still the owner's. The municipality runs the sale; permission to enter is the owner's to give.</div>
+    <div class="note after"><b>After the sale</b>A certificate holder may protect the land (MGA s. 151). Possession of an occupied home follows tenancy and property law.</div>
+  </div>
+  <div class="src">CBRM tax-sale page and FAQ; Municipal Government Act s. 151; Nova Scotia Residential Tenancies resources; checked July 2026. Scene is illustrative.</div>
+</div></body></html>

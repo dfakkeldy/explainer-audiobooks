@@ -1,0 +1,407 @@
+# Figure plan for the textbook edition.
+# kind: infographic (new, drawn in design/infographics/<id>.html, rendered to src/assets/figures/<id>.png)
+#       photo | screenshot (existing raster from books/beyond-the-tax-sale-packet/images/, copied as-is)
+# caption doubles as alt text. Captions say what the figure shows, plainly.
+# facts: claim IDs in research/evidence-notes.md, or the data file used.
+
+- id: photo-auction-morning
+  chapter: 1
+  kind: photo
+  from: figure-01-auction-morning.png
+  caption: "Auction morning at a Cape Breton community hall: the public part of a long collection process. (Illustration.)"
+
+- id: fig-process-timeline
+  chapter: 1
+  kind: infographic
+  caption: "The whole process on one line. Everything left of the sale belongs to the municipality's collection file; everything right of it belongs to the purchaser's certificate and deed."
+  draw: >
+    Horizontal timeline, two clocks meeting at SALE DAY. Before: taxes unpaid (first lien, ranks ahead
+    of other claims, need not be registered) -> eligible after June 30 of the following year; must be put up
+    for sale after 3 fiscal years of arrears (subject to exceptions, council deferral) -> preliminary
+    notice, at least 14 days to pay -> title search, possible survey -> notice of intent, 60 days to pay ->
+    public notice at least 30 consecutive days -> SALE (auction, or tender with council consent).
+    After: immediate payment, balance within 3 business days -> certificate of sale (registered) ->
+    6-month redemption window (redeemable files) -> deed request -> deed registered -> 6-year window to set
+    aside runs from registration (Marketable Titles Act). Mark the older-than-six-years arrears branch
+    that skips the 6-month window.
+  facts: [LAW-001, LAW-002, LAW-003, LAW-004, LAW-005, LAW-006, LAW-007, LAW-009, LAW-012, LAW-018]
+
+- id: fig-who-gets-notice
+  chapter: 1
+  kind: infographic
+  caption: "Who is in the story before a bidder arrives: the owner and anyone with a registered interest receive notices; occupants, heirs and neighbours may be affected too."
+  draw: >
+    Concentric or left-to-right ring: centre the parcel. Ring 1 people served notice: assessed owner,
+    mortgage holders, lien and charge holders (found by the title search). Ring 2 people affected:
+    occupants or tenants, heirs, neighbours. Treasurer runs the process. Bidder enters last, at the edge,
+    after the 30-day public notice.
+  facts: [LAW-003, LAW-004, OCC-001]
+
+- id: fig-one-law-many-events
+  chapter: 1
+  kind: infographic
+  caption: "One provincial framework, many local events. The Municipal Government Act sets the rules for most municipalities; Halifax follows its own Charter. Each municipality's current notice sets the event."
+  draw: >
+    Left: two statute blocks (Municipal Government Act; Halifax Regional Municipality Charter). Right: dated
+    municipal examples with method icons: Inverness open auction (Aug 11 2026, Port Hood); Richmond open
+    auction (June 12 2026); Pictou sealed tender (April 2026); Annapolis March 2026 tax sale, then a June 2026 sale by tender;
+    Halifax sealed tender (Sept 15 2026); Victoria sealed tender (Sept 14 2026); Chester: no
+    2026 sale. Footer: examples dated; check the current notice.
+  facts: [LAW-005, OPS-005, OPS-007]
+
+- id: fig-packet-anatomy
+  chapter: 2
+  kind: infographic
+  caption: "Anatomy of a tax-sale entry (fictional Harbour Road). Each field comes from a different record system and answers a different question."
+  draw: >
+    Mock packet row and detail sheet for fictional Harbour Road (no real owner): lien number 12, AAN 0123 4567,
+    PID ending 421, location Harbour Road, land and building assessment, recovery amount $4,000, redeemable
+    YES, aerial with parcel overlay, legal description block. Callouts: lien no. = this event's label;
+    AAN = assessment account (PVSC); PID = mapped parcel (land registry); location = orientation;
+    assessment = taxation record; recovery amount = taxes + interest + expenses being collected;
+    redemption marker = which post-sale path; legal description = registry words a lawyer reads.
+  facts: [LAND-001, LAND-002, LAND-003, DATA-005]
+
+- id: fig-which-key
+  chapter: 2
+  kind: infographic
+  caption: "Three handles, three record systems. Pick the key that matches the question."
+  draw: >
+    Three rows: AAN -> assessment roll (Property Valuation Services Corporation) -> answers assessed value,
+    classification, tax account. PID -> parcel map and land registry (Property Online) -> answers which mapped
+    parcel, registered documents. Civic address -> civic addressing / emergency location -> answers where
+    on the ground to orient. A fourth row: lien number -> this sale's list only.
+  facts: [LAND-001, LAND-002, LAND-003]
+
+- id: fig-inverness-reconcile
+  chapter: 2
+  kind: infographic
+  caption: "The Inverness County packet for August 11, 2026: 45 liens on the summary, 27 redeemable and 18 non-redeemable. Lien 6 has no detail sheet, and liens 9 and 12 show different amounts on the summary and the detail page."
+  draw: >
+    Grid of 45 numbered tiles (lien 1..45), coloured redeemable vs non-redeemable from the data file.
+    Flag lien 6 (no detail sheet) and liens 9, 12 (amount differs). Side tally: 45 summary rows, 44 detail
+    sheets, 2 amount differences -> "Ask the treasurer which controls." Source line: packet published
+    July 16 2026, retrieved July 19 2026.
+  data: maps/data/inverness-tax-sale-2026-08-11.json
+  facts: [DATA-002]
+
+- id: fig-recovery-amounts
+  chapter: 2
+  kind: infographic
+  caption: "Recovery amounts on the summary schedule of the August 2026 Inverness packet ranged from $879.69 to $57,875.01; the median was $3,412.09 and the total $342,793.85. Each is the amount the municipality is collecting, set before anyone bids."
+  draw: >
+    Strip/dot plot of the 45 summary recovery amounts on a log dollar axis ($500 to $100,000), dots
+    coloured redeemable / non-redeemable, median marked, total stated. No addresses or owner names.
+  data: maps/data/inverness-tax-sale-2026-08-11.json
+  facts: [DATA-002]
+
+- id: fig-redemption-paths
+  chapter: 3
+  kind: infographic
+  caption: "Two paths after the hammer. Most files carry a six-month redemption right; files with taxes more than six years in arrears at the sale can go to deed without it."
+  draw: >
+    Decision tree from SALE: question "Taxes more than six years in arrears at the time of sale?" NO ->
+    certificate of sale -> six-month redemption window -> (a) redeemed: purchaser repaid under the
+    statutory formula, rights end; (b) not redeemed: purchaser may request the deed. YES -> no six-month
+    right -> deed request. Both deed branches -> deed registered.
+  facts: [LAW-007, LAW-009, LAW-011, LAW-012]
+
+- id: fig-redemption-price
+  chapter: 3
+  kind: infographic
+  caption: "What a redemption payment generally includes under the statute: the purchase money plus 10% a year, certain taxes, the registry fee, qualifying insurance premiums and approved repairs, adjusted for surplus and income from the property."
+  draw: >
+    Stacked block / receipt-style breakdown: purchase sum; + 10% annual interest from sale to redemption;
+    + specified taxes; + registry fee; + qualifying fire-insurance premiums; + repair costs the treasurer
+    approved; adjustments: surplus, income the purchaser received from the property. Note: unapproved
+    repairs are at the purchaser's risk.
+  facts: [LAW-010, LAW-011]
+
+- id: photo-evidence-desk
+  chapter: 4
+  kind: photo
+  from: figure-09-evidence-desk.png
+  caption: "A research file is a stack of dated sources, each labelled with what it answers. (Illustration.)"
+
+- id: fig-research-spine
+  chapter: 4
+  kind: infographic
+  caption: "The research route used throughout this book: notice, parcel, context, unknowns, handoff."
+  draw: >
+    Five large chevrons. NOTICE: confirm the event, lien, amount, redemption marker, date checked.
+    PARCEL: PID, mapped shape, legal description, assessment. CONTEXT: roads, water, aerial, planning,
+    hazards, history. UNKNOWNS: list each open question with its owner. HANDOFF: lawyer, surveyor, planner,
+    inspector, insurer, accountant; bidder decides.
+  facts: [MAP-001, LAND-001, LAND-004, LAND-005, LAND-006]
+
+- id: fig-who-answers
+  chapter: 4
+  kind: infographic
+  caption: "Who answers what. Match each question to the authority or professional that can settle it."
+  draw: >
+    Two-column matrix. Is the lien still for sale, and on what terms? -> the municipality's current notice /
+    treasurer. Which parcel? -> PID, parcel map, registry. Where is the boundary on the ground? -> surveyor.
+    What interest will I get; what burdens continue? -> lawyer (title). Can I reach it legally? -> registry
+    plans + lawyer. What may I build? -> municipal planner / planning commission. What condition is it in? ->
+    inspector (after lawful access). Can I insure it? -> insurer. Tax consequences? -> accountant.
+    Who lives there; what rights do they have? -> lawyer / tenancy advice.
+  facts: [LAND-004, LAND-005, LAND-006, INS-001, OCC-001, TAX-001]
+
+- id: fig-evidence-labels
+  chapter: 4
+  kind: infographic
+  caption: "Five labels that keep a research file honest. Every entry gets one."
+  draw: >
+    Five labelled badges with one-line meaning and an example: Verified record (an official source states
+    it, with date); Screening clue (a map or layer suggests something worth asking); Visual interpretation
+    (what an image appears to show); Professional verification needed (a qualified person must confirm);
+    No-go until resolved (a question that stops the bid).
+  facts: [MAP-001]
+
+- id: map-parcel-browser
+  chapter: 5
+  kind: screenshot
+  from: figure-43-current-parcel-browser.png
+  caption: "NS Marks The Spot: browsing the current tax-sale parcels for a dated municipal notice."
+
+- id: map-parcel-evidence
+  chapter: 5
+  kind: screenshot
+  from: figure-45-current-parcel-evidence.png
+  caption: "A parcel's evidence panel after a civic-address search: the assessment account, the mapped civic point and its Plus Code, and road and flood context."
+
+- id: map-aerial-boundaries
+  chapter: 5
+  kind: screenshot
+  from: figure-46-aerial-and-property-boundaries.png
+  caption: "Aerial imagery with provincial property boundaries: useful for orientation, then checked against the legal description and, when it matters, a survey."
+
+- id: map-roads-water
+  chapter: 5
+  kind: screenshot
+  from: figure-47-roads-water-context.png
+  caption: "Roads and water layers turn on one at a time. Each one raises a question for the registry, the planner or a surveyor."
+
+- id: map-flood
+  chapter: 5
+  kind: screenshot
+  from: figure-53-flood-hazard-evidence.png
+  caption: "Flood-study coverage shown where a study exists, with its source and date."
+
+- id: map-historical-sheet
+  chapter: 5
+  kind: screenshot
+  from: figure-50-historical-outcome-sheet.png
+  caption: "A historical result sheet: what an earlier event recorded for a parcel, kept separate from the current notice."
+
+- id: fig-layer-questions
+  chapter: 5
+  kind: infographic
+  caption: "One layer, one question. Each map layer is a prompt for a specific record or professional."
+  draw: >
+    Table-like graphic, one row per layer with icon: Parcel outline -> which parcel; confirm with legal
+    description, survey. Aerial photo -> what was visible on the image date; confirm on site from public
+    land, inspection after lawful access. Roads -> is there a public road; legal access from registry +
+    lawyer. Water -> watercourse or coast; setbacks from planner, Nova Scotia Environment. Flood study ->
+    mapped hazard where studied; planner, insurer. Geology / mines -> recorded mineral occurrences or
+    abandoned mine openings; provincial records, professional advice. Buildings + assessment -> mapped
+    footprint and dated assessment; inspection. Historical results -> past event record; current notice.
+  facts: [MAP-001, MAP-002, MAP-003, MAP-004, MAP-005, MAP-006, MAP-007, ENV-005]
+
+- id: fig-access-plan
+  chapter: 6
+  kind: infographic
+  caption: "Physical access and legal access can differ. One parcel fronts the road; another is reached by a registered right-of-way; a driveway in use may cross a neighbour's land with no registered right; a parcel behind the others may have no way in at all."
+  draw: >
+    Plan view (bird's-eye) of four parcels and a public road. Parcel A fronts the road (legal frontage).
+    Parcel B reached by a worn driveway across parcel C with no registered right-of-way (question mark).
+    Parcel D reached by a registered right-of-way strip (solid). Parcel E landlocked behind. Legend:
+    public road; registered right-of-way; driveway in use; parcel line. Labels plain.
+  facts: [LAND-005]
+
+- id: fig-can-it-do-the-job
+  chapter: 6
+  kind: infographic
+  caption: "Can the land do the job? Write the intended use first, then test it against each layer of municipal and provincial rules."
+  draw: >
+    Vertical funnel / ladder: 1 Write the goal (cabin, year-round home, woodlot, storage). 2 Zoning and
+    land-use by-law (current; Plan Inverness in force Sept 11 2025, EDPC). 3 Lot rules: frontage, lot
+    size, setbacks. 4 Servicing: well, on-site sewage approval. 5 Building, fire and by-law orders
+    (municipal clearance). 6 Permits. Result: buildable for this goal / not yet known / no.
+  facts: [LAND-006, LAND-008, ENV-002, ENV-003]
+
+- id: fig-search-beam
+  chapter: 7
+  kind: infographic
+  caption: "A records search lights up one record type, one place and one date range. Everything outside the beam is still unknown."
+  draw: >
+    Flashlight beam over a stylized map grid. Inside beam: "Searched: contaminated-sites register, this PID,
+    2000-2026 -> no match". Outside beam (darker): other record types, older dates, neighbouring parcels,
+    things never recorded. Caption-like label: "No match = no match in this search."
+  facts: [ENV-001]
+
+- id: fig-environment-records
+  chapter: 7
+  kind: infographic
+  caption: "Records worth checking for what may be on, in or under the land, and who keeps each one."
+  draw: >
+    Icon grid, six tiles: Contaminated sites (Nova Scotia Environment). Wells (well logs). On-site sewage
+    (approval records). Coast and flooding (flood studies, coastal protection rules). Abandoned mine
+    openings and mineral occurrences (provincial mine records). Buildings and fuel tanks (inspection,
+    municipal records). Each tile: what it can show; who to ask next.
+  facts: [ENV-001, ENV-002, ENV-003, ENV-004, ENV-005]
+
+- id: fig-three-questions
+  chapter: 8
+  kind: infographic
+  caption: "Three separate questions about the same land: what interest the deed gives, what burdens continue, and who is in possession."
+  draw: >
+    Three parallel lanes. TITLE: what interest the tax deed vests (fee simple, free of encumbrances as the
+    statute specifies) -> lawyer. BURDENS: easements and rights-of-way that continue; other statutory
+    questions -> lawyer, registry. POSSESSION: who lives on or uses the land; tenancy; mobile homes ->
+    lawyer, tenancy advice. Each lane its own colour.
+  facts: [LAW-012, OCC-001, MOB-001]
+
+- id: fig-occupied-handoff
+  chapter: 8
+  kind: infographic
+  caption: "If the property looks occupied: observe from public land, record what you saw, and take the question to a lawyer before any contact or action."
+  draw: >
+    Three-step flow with a stop sign: 1 Observe from a public road (vehicles, smoke, mail, lights) and
+    record date. 2 STOP: no entry, no notes on doors, no self-help. 3 Hand off: lawyer or tenancy advice
+    on possession and notice. Side: the municipality cannot authorize entry before the sale.
+  facts: [LAND-007, OCC-001, LAW-008]
+
+- id: fig-inverness-2025-funnel
+  chapter: 9
+  kind: infographic
+  caption: "Inverness County, May 2025: 50 properties advertised, 35 sold and 15 removed before the sale (council minutes). The public result sheet lists 31 bids; the four-row gap is unresolved."
+  draw: >
+    Funnel/waffle of 50 squares: 35 sold (filled), 15 removed (outline). Below: 31 published bid rows
+    totalling $691,383.05 against $124,004.87 in advertised recovery amounts; $608,693.21 surplus collected
+    (minutes). Mark "4 sold rows not on the public sheet".
+  facts: [DATA-003]
+
+- id: fig-ratio-buckets
+  chapter: 9
+  kind: infographic
+  caption: "How far winning bids landed above the recovery amount in the 31 published Inverness rows (May 2025). Median: 4.53 times."
+  draw: >
+    Bar chart, five buckets (counts): about 1x (5); more than 1x, under 2x (2); 2x to under 5x (9);
+    5x to under 10x (8); 10x or more (7). Total 31. Median 4.53, range 1.00 to 21.62. Note the buckets
+    are derived from the published counts: 24 at least 2x, 15 at least 5x, 7 at least 10x.
+  facts: [DATA-003]
+
+- id: fig-ns-results-strip
+  chapter: 9
+  kind: infographic
+  caption: "Winning bid divided by the advertised amount for 277 sales at 25 events, 2021 to 2026: every sold row with both figures in NS Marks The Spot's catalogue of official municipal results. Each dot is one sale. The advertised amount is a debt figure, and bids land across a wide range above it."
+  draw: >
+    One row per municipality (events grouped), dots on a log axis 1x to 100x, median tick per row, n per
+    row. Source: official municipal result documents compiled in NS Marks The Spot historicalTaxSales.json
+    at source commit (pinned). Exclude unknown/withdrawn/unsold. No addresses.
+  data: ns-marks-the-spot SharedData/historicalTaxSales.json (origin/main 43e40b0b8)
+  facts: [DATA-001]
+
+- id: fig-all-in-cost
+  chapter: 9
+  kind: infographic
+  caption: "The bid is the first layer of the cost. An all-in budget adds taxes, professional fees, carrying costs, repairs, possession and a reserve for what is still unknown."
+  draw: >
+    Tall stacked bar (illustrative proportions, no dollar figures): winning bid; possible HST; possible
+    provincial non-resident deed transfer tax; legal, registry and survey; carrying costs (new tax bills,
+    insurance during the certificate months); safety and security; repairs or remediation; possession
+    process; development work; uncertainty reserve. Note: tax-sale deeds are exempt from municipal deed
+    transfer tax (MGA s. 109(4)); the Affidavit of Value is still filed.
+  facts: [TAX-001, TAX-002, TAX-003]
+
+- id: fig-written-maximum
+  chapter: 9
+  kind: infographic
+  caption: "A written maximum, worked out before the sale: what the land is worth to you for your goal, minus every cost and a reserve for what is still unknown."
+  draw: >
+    Worksheet card with fill-in lines: A Value to me for my written goal (with the evidence used). B All-in
+    costs other than the bid. C Uncertainty reserve for unresolved items. D Payment I can make today and
+    within 3 business days. Written maximum = A - B - C, capped by D. Signed and dated before the sale.
+  facts: [DATA-001, LAW-006]
+
+- id: fig-auction-vs-tender
+  chapter: 10
+  kind: infographic
+  caption: "Auction and tender: two ways the same statute lets a municipality sell. The current notice says which one, and on what terms."
+  draw: >
+    Side-by-side. OPEN AUCTION: register in person with photo ID, numbered card, open bidding, highest bid
+    wins on the day, pay immediately (recovery amount at least) + balance within 3 business days
+    (CBRM, Inverness examples). SEALED TENDER: one written offer in an envelope, deadline, opened after
+    close (Kings livestream example), highest acceptable tender wins, council may set an acceptable
+    minimum, payment per terms. Shared footer: same statute (MGA s. 141), council consent for tender.
+  facts: [LAW-005, LAW-006, OPS-001, OPS-002, OPS-004]
+
+- id: fig-payment-clock
+  chapter: 10
+  kind: infographic
+  caption: "The payment clock at a Nova Scotia tax sale, and what happens when a step is missed."
+  draw: >
+    Timeline: HAMMER -> immediately: the price, or at least the recovery amount (plus any event fee, e.g.
+    Inverness $200 registration) -> within 3 business days: the balance -> certificate of sale. Failure
+    branches: no immediate payment -> property re-offered at once; balance missed -> re-advertised and
+    resold, resale expenses deducted from the deposit; no sufficient bid -> treasurer may bid for the
+    municipality, or re-advertise. Accepted forms list (cash, certified cheque, money order, bank draft,
+    irrevocable letter of credit, lawyer's trust cheque; check the event terms).
+  facts: [LAW-006, LAW-015, OPS-004]
+
+- id: fig-six-months
+  chapter: 11
+  kind: infographic
+  caption: "The six certificate-holder months: protect the property, insure what can be insured, keep receipts, and stay ready for either redemption or a deed request."
+  draw: >
+    Six-column calendar strip (Month 1..6) with recurring bands across all months: insure insurable
+    buildings; pay new tax bills; keep receipts for repairs the treasurer approved; protect without
+    diminishing value (no tree cutting, no damage); check redemption status with the treasurer. Month 1:
+    certificate registered; arrange insurance. Month 6 end: redeemed (repaid with 10% a year) or ready to
+    request the deed.
+  facts: [LAW-007, LAW-008, LAW-010, LAW-011, INS-001]
+
+- id: fig-after-the-deed
+  chapter: 12
+  kind: infographic
+  caption: "After the deed: registration starts a six-year window in which a tax deed can generally be challenged, and the second wave of due diligence begins."
+  draw: >
+    Multi-year timeline: deed request + fee -> deed registered (vests fee simple free of encumbrances, as
+    the statute specifies; easements and rights-of-way continue) -> years 1-6 contestability window
+    (Marketable Titles Act s. 6) -> after 6 years generally binding (exceptions: fraud, specific land rule;
+    damages claims preserved). Parallel lane: second due diligence: survey, inspection, insurance,
+    possession, permits. Parallel lane: surplus account claims (up to 20 years).
+  facts: [LAW-012, LAW-014, LAW-017, LAW-018]
+
+- id: fig-surplus-route
+  chapter: 12
+  kind: infographic
+  caption: "Where the money goes: sale proceeds pay the municipality's amounts first; any balance waits in the tax-sale surplus account for people with prior interests to claim through the Supreme Court."
+  draw: >
+    Flow: purchase money -> taxes, interest, expenses to the municipality -> balance -> tax-sale surplus
+    account. If redeemed: the balance reduces the redemption amount. After redemption expires: a person
+    with a prior interest applies to the Nova Scotia Supreme Court for a proportional payment, before
+    20 years pass. Purchaser does not receive the surplus.
+  facts: [LAW-010, LAW-014]
+
+- id: fig-four-buckets
+  chapter: 13
+  kind: infographic
+  caption: "Sort every item in the file into one of four buckets before deciding. A single item in the last bucket ends the bid."
+  draw: >
+    Four sorting bins: VERIFIED (official, dated source states it). PROFESSIONALLY VERIFIABLE (a named
+    professional can confirm before the sale). UNRESOLVED BUT PRICEABLE (open, but the reserve covers it).
+    DISQUALIFYING (stop). Arrow out: written go / no-go with the maximum.
+  facts: [MAP-001]
+
+- id: fig-research-file
+  chapter: 13
+  kind: infographic
+  caption: "Meadow Line's research file on one page: every line carries a source, a date and a label."
+  draw: >
+    Filled-in form for fictional composite Meadow Line: Event (municipality, date, lien, recovery amount,
+    redemption marker, checked date); Parcel (PID, AAN, legal description reference); Context (road,
+    water, planning, hazards); Unknowns with owner (access -> lawyer; boundary -> surveyor; condition ->
+    inspector); Decision (go/no-go, written maximum, signed date). Labels from the five-label set.
+  facts: [MAP-001]

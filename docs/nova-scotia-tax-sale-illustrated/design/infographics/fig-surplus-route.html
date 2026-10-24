@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-014 (MGA ss. 146-147; HRMC ss. 161-162: proceeds pay municipal amounts first,
+     balance to the tax-sale surplus account; prior-interest holder applies to the Supreme Court after redemption expires
+     and before twenty years pass), LAW-010 (MGA s. 152(2)-(4): surplus balance adjusts the redemption amount).
+     Scale marker: DATA-003, Inverness County May 27, 2025 sale, $608,693.21 surplus collected per Committee of the
+     Whole minutes of June 19, 2025 (research/inverness-county-dossier.md). -->
+<style>
+  .flow { display: block; width: 668px; }
+  .flow .t { font-size: 13px; font-weight: 700; }
+  .flow .s { font-size: 11px; fill: var(--ink2); }
+  .flow .w { font-size: 12px; font-weight: 700; fill: #fff; }
+  .outs { display: grid; grid-template-columns: 160px 1fr 1fr; gap: 10px; margin-top: 0; }
+  .o { border-radius: 0 0 var(--r) var(--r); padding: 8px 11px 10px; }
+  .o .k { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink2); }
+  .o h4 { font-size: 13px; font-weight: 700; line-height: 1.25; margin-top: 2px; }
+  .o p { font-size: 12px; line-height: 1.35; margin-top: 4px; }
+  .o.muni { background: var(--blue-tint); border-top: 3px solid var(--blue); }
+  .o.red { background: var(--panel); border-top: 3px solid var(--navy); }
+  .o.court { background: var(--panel); border-top: 3px solid var(--navy); }
+  .o .chip { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--paper); }
+  .low { display: grid; grid-template-columns: 1fr 236px; gap: 10px; margin-top: 12px; }
+  .stat { background: var(--panel); border-radius: var(--r); padding: 8px 11px 9px; display: flex; gap: 12px; align-items: center; }
+  .stat .num { font-size: 24px; line-height: 1; white-space: nowrap; }
+  .stat p { font-size: 11px; color: var(--ink2); line-height: 1.32; }
+  .buyer { border-left: 4px solid var(--aqua); background: var(--aqua-tint); border-radius: 0 var(--r) var(--r) 0; padding: 8px 11px; font-size: 12px; line-height: 1.35; }
+  .buyer b { display: block; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink2); margin-bottom: 2px; }
+</style></head>
+<body><div id="fig">
+  <svg class="flow" id="flow" viewBox="0 0 668 162" aria-label="Purchase money splits into municipal amounts and the surplus account"></svg>
+
+  <div class="outs">
+    <div class="o muni"><div class="k">Paid first</div><h4>To the municipality</h4><p>Taxes, interest and sale expenses</p></div>
+    <div class="o red"><div class="k">If the property is redeemed</div><h4>It lowers the redemption amount</h4><p>Whatever balance remains in the account is deducted from what the redeemer pays.</p></div>
+    <div class="o court"><div class="k">Once redemption ends</div><h4>Claimed through the Nova Scotia Supreme Court</h4><p>A person with a prior interest in the land applies; the court may order a proportional payment.</p><span class="chip">before 20 years pass</span></div>
+  </div>
+
+  <div class="low">
+    <div class="stat"><span class="num">$608,693.21</span><p>surplus collected from Inverness County's May 27, 2025 sale, as reported in the Committee of the Whole minutes of June 19, 2025</p></div>
+    <div class="buyer"><b>The purchaser</b>The price buys the certificate and, if no one redeems, the deed.</div>
+  </div>
+
+  <div class="src">Municipal Government Act ss. 146–147, 152 (Halifax: Charter ss. 161–162, 167), consolidated to April 9, 2026. Example amounts are illustrative.</div>
+</div>
+<script>
+  // Illustrative example only (not a real lien): a $15,000 winning bid on a $3,400 recovery amount.
+  const BID = 15000, OWED = 3400, SURPLUS = BID - OWED;
+  const L = 0, R = 668, W = R - L;              // purchase bar spans the full width
+  const pxPer = W / BID;
+  const NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('flow');
+  const el = (n, a, txt) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (txt) e.textContent = txt; svg.appendChild(e); return e; };
+  const $ = n => '$' + n.toLocaleString('en-CA');
+
+  // top: purchase money
+  const Y1 = 30, H = 24;
+  el('text', {x: L, y: 14, class: 't'}, 'Purchase money: the winning bid');
+  el('text', {x: R, y: 14, class: 's', 'text-anchor': 'end'}, 'example: ' + $(BID) + ' bid, ' + $(OWED) + ' owed');
+  el('rect', {x: L, y: Y1, width: W, height: H, rx: 3, fill: 'var(--ink2)'});
+  el('text', {x: L + 10, y: Y1 + 16.5, class: 'w'}, $(BID));
+
+  // split: municipal share (left, under the first column) and surplus (right)
+  const mW = OWED * pxPer;                       // municipal width at the top
+  const Y2 = 92;
+  const mX2 = 0, mW2 = 160;                      // municipal node sits over its card column
+  const sX2 = 170, sW2 = R - 170;                // surplus node spans the two outcome columns
+  // ribbons (bezier), drawn as tinted bands
+  const rib = (x1a, x1b, x2a, x2b, fill) => el('path', {d:
+    `M${x1a} ${Y1 + H} C${x1a} ${Y1 + H + 22}, ${x2a} ${Y2 - 22}, ${x2a} ${Y2} L${x2b} ${Y2} C${x2b} ${Y2 - 22}, ${x1b} ${Y1 + H + 22}, ${x1b} ${Y1 + H} Z`, fill});
+  rib(L, L + mW, mX2, mX2 + mW2, 'var(--blue-tint)');
+  rib(L + mW, R, sX2, sX2 + sW2, '#e4e7eb');
+  el('rect', {x: mX2, y: Y2, width: mW2, height: H, rx: 3, fill: 'var(--blue)'});
+  el('text', {x: mX2 + 10, y: Y2 + 16.5, class: 'w'}, $(OWED));
+  el('rect', {x: sX2, y: Y2, width: sW2, height: H, rx: 3, fill: 'var(--navy)'});
+  el('text', {x: sX2 + 10, y: Y2 + 16.5, class: 'w'}, $(SURPLUS) + '  ·  tax-sale surplus account');
+  el('text', {x: L + mW + 8, y: Y1 + H + 22, class: 's'}, 'the municipality is paid first; the balance is held in its tax-sale surplus account');
+
+  // branches from the surplus account to its two outcomes (cards below)
+  const colW = (R - 170 - 10) / 2;
+  const cA = 170 + colW / 2, cB = 170 + colW + 10 + colW / 2;
+  const by1 = Y2 + H, by2 = 162;
+  el('line', {x1: 25, y1: by1, x2: 25, y2: by2 - 6, stroke: 'var(--blue)', 'stroke-width': 2});
+  el('path', {d: `M19 ${by2 - 8} l6 8 l6 -8 z`, fill: 'var(--blue)'});
+  [cA, cB].forEach(cx => {
+    el('line', {x1: cx, y1: by1, x2: cx, y2: by2 - 6, stroke: 'var(--navy)', 'stroke-width': 2, 'stroke-dasharray': '4 3'});
+    el('path', {d: `M${cx - 6} ${by2 - 8} l6 8 l6 -8 z`, fill: 'var(--navy)'});
+  });
+  el('text', {x: (cA + cB) / 2, y: by1 + 27, class: 's', 'text-anchor': 'middle'}, 'one route or the other');
+</script>
+</body></html>

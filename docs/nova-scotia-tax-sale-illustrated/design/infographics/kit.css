@@ -1,0 +1,79 @@
+/* Infographic kit for Beyond the Tax-Sale Packet (textbook edition).
+   Each figure is drawn at print size: 672 CSS px wide (the full text width on a
+   letter page) and rendered at 3x by render.js. Keep every label >= 11px. */
+
+@font-face { font-family: "Fig Sans"; font-weight: 400; src: url("../../fonts/static/sans-400-latin.ttf"); }
+@font-face { font-family: "Fig Sans"; font-weight: 400; font-style: italic; src: url("../../fonts/static/sans-400i-latin.ttf"); }
+@font-face { font-family: "Fig Sans"; font-weight: 700; src: url("../../fonts/static/sans-700-latin.ttf"); }
+@font-face { font-family: "Fig Serif"; font-weight: 400; src: url("../../fonts/static/serif-400-latin.ttf"); }
+@font-face { font-family: "Fig Serif"; font-weight: 600; src: url("../../fonts/static/serif-600-latin.ttf"); }
+@font-face { font-family: "Fig Display"; font-weight: 600; src: url("../../fonts/static/display-600-latin.ttf"); }
+
+:root {
+  /* text and structure (navy ink from the cover) */
+  --ink: #14273a;
+  --ink2: #44505e;
+  --muted: #6b7280;
+  --rule: #d6d1c7;
+  --hair: #e7e3db;
+  --paper: #ffffff;
+  --panel: #f6f3ec;          /* cream, like the cover's paper */
+  --navy: #14273a;
+
+  /* categorical slots, validated together (dataviz validate_palette.js, light, all pairs) */
+  --blue: #2a6fc4;           /* municipality, the process, records */
+  --orange: #e0602f;         /* stop, flag, conflict (the cover's parcel line) */
+  --aqua: #159f78;           /* purchaser side, after the sale, confirmed */
+  --yellow: #e0a000;         /* open question, unknown; always with a label (2.2:1) */
+
+  --blue-tint: #e8eff9;
+  --orange-tint: #fcece4;
+  --aqua-tint: #e3f4ee;
+  --yellow-tint: #fbf2d8;
+
+  --r: 6px;                  /* corner radius for panels */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--paper); }
+body { font-family: "Fig Sans", sans-serif; color: var(--ink); font-size: 13px; line-height: 1.35;
+       -webkit-font-smoothing: antialiased; }
+
+/* The figure frame. render.js screenshots #fig. Height follows content; keep it <= 690px. */
+#fig { width: 672px; padding: 4px 2px 6px; background: var(--paper); }
+
+/* type */
+.kicker { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); }
+.title { font-family: "Fig Serif", serif; font-weight: 600; font-size: 20px; line-height: 1.2; color: var(--ink); }
+.lede { font-size: 13px; color: var(--ink2); }
+.small { font-size: 11px; color: var(--ink2); }
+.num { font-family: "Fig Display", "Fig Serif", serif; font-weight: 600; font-variant-numeric: lining-nums; }
+.src { font-size: 11px; color: var(--muted); margin-top: 10px; padding-top: 6px; border-top: 1px solid var(--hair); }
+b, strong { font-weight: 700; }
+
+/* panels and tags */
+.panel { background: var(--panel); border-radius: var(--r); padding: 10px 12px; }
+.card { background: var(--paper); border: 1px solid var(--rule); border-radius: var(--r); padding: 9px 11px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+       padding: 2px 7px; border-radius: 999px; color: var(--ink); background: var(--panel); }
+.tag.blue { background: var(--blue-tint); }   .tag.orange { background: var(--orange-tint); }
+.tag.aqua { background: var(--aqua-tint); }   .tag.yellow { background: var(--yellow-tint); }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+
+/* accent bars on cards: identity by a coloured edge, text stays in ink */
+.edge-blue { border-left: 4px solid var(--blue); }
+.edge-orange { border-left: 4px solid var(--orange); }
+.edge-aqua { border-left: 4px solid var(--aqua); }
+.edge-yellow { border-left: 4px solid var(--yellow); }
+.edge-navy { border-left: 4px solid var(--navy); }
+
+/* simple layout helpers */
+.row { display: flex; gap: 10px; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+.grow { flex: 1; }
+.center { text-align: center; }
+.mt4 { margin-top: 4px; } .mt8 { margin-top: 8px; } .mt12 { margin-top: 12px; } .mt16 { margin-top: 16px; }
+
+/* svg text inherits the kit fonts */
+svg text { font-family: "Fig Sans", sans-serif; fill: var(--ink); }
+svg .serif { font-family: "Fig Serif", serif; }

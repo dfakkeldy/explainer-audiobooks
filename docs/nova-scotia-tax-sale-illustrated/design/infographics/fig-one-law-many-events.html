@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-005 (auction default, tender with council consent), OPS-005 (Inverness, Richmond,
+     Pictou, Annapolis, Chester examples; research/municipality-comparison.md), OPS-004 (Inverness Aug 11, Port Hood),
+     DATA-004 (Richmond June 12), OPS-007 (Halifax under its Charter).
+     Victoria Sept 14 and Halifax Sept 15, 2026 tenders: design/figures.yaml; corroborated by the NS Marks The Spot
+     source receipts (web/README.md: Victoria notice dated Aug 13, 2026; Halifax tender HRM-TaxSale23). -->
+<style>
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
+  .legend { display: flex; gap: 18px; align-items: center; }
+  #chart { display: block; }
+  .legend svg { display: inline-block; vertical-align: middle; margin-right: 6px; }
+  .legend span { display: inline-flex; align-items: center; }
+  .name { font-size: 13px; font-weight: 700; }
+  .date { font-size: 12px; font-weight: 700; }
+  .mo { font-size: 11px; fill: var(--ink2); }
+  .st1 { font-family: "Fig Serif", serif; font-weight: 600; font-size: 15px; fill: #fff; }
+  .st2 { font-size: 11px; fill: #dfe6ee; }
+</style></head>
+<body><div id="fig">
+  <div class="top">
+    <div class="legend">
+      <span><svg width="22" height="22" viewBox="-11 -11 22 22"><use href="#m-auction"/></svg>Public auction</span>
+      <span><svg width="22" height="22" viewBox="-11 -11 22 22"><use href="#m-tender"/></svg>Sealed tender</span>
+      <span><svg width="22" height="22" viewBox="-11 -11 22 22"><use href="#m-sale"/></svg>Tax sale</span>
+      <span><svg width="26" height="16" viewBox="0 0 26 16"><rect x="0" y="1" width="26" height="14" rx="3" fill="var(--hair)"/></svg>Month only</span>
+    </div>
+    <span class="small">All dates 2026</span>
+  </div>
+  <svg id="chart" width="668" height="366" viewBox="0 0 668 366" aria-label="Statutes and dated municipal tax-sale events in 2026">
+    <defs>
+      <g id="m-auction"><circle r="11" fill="var(--navy)"/>
+        <g transform="rotate(-40)"><rect x="-6" y="-7" width="12" height="6" rx="1.5" fill="#fff"/><rect x="-1.2" y="-1.5" width="2.4" height="9" rx="1" fill="#fff"/></g></g>
+      <g id="m-tender"><circle r="11" fill="var(--navy)"/>
+        <rect x="-6.5" y="-4.5" width="13" height="9" rx="1" fill="none" stroke="#fff" stroke-width="1.6"/>
+        <path d="M-6.5 -4.5 L0 1 L6.5 -4.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></g>
+      <g id="m-sale"><circle r="10" fill="var(--paper)" stroke="var(--navy)" stroke-width="2.4"/><circle r="3.5" fill="var(--navy)"/></g>
+      <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--ink2)"/></marker>
+    </defs>
+  </svg>
+  <div class="src">Municipal Government Act s. 141; Halifax Regional Municipality Charter s. 156. Municipal notices and results checked July 2026; Victoria and Halifax: September 2026 tenders. Dated examples: check the current notice.</div>
+</div>
+<script>
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('chart');
+  const el = (tag, attrs, text, parent = svg) => { const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; parent.appendChild(e); return e; };
+
+  // time axis: Feb 1 to Oct 31, 2026
+  const T0 = 314, MW = 38.6, M0 = 2;            // x of Feb 1, px per month, first month
+  const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const tx = (m, d) => T0 + (m - M0 + (d - 0.5) / days[m - 1]) * MW;
+  const names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+  const TOP = 24, BOT = 362;
+  for (let m = 2; m <= 10; m++) {
+    const x0 = T0 + (m - M0) * MW;
+    el('text', {x: x0 + MW / 2, y: 14, 'text-anchor': 'middle', class: 'mo'}, names[m - 1]);
+    el('line', {x1: x0, x2: x0, y1: TOP - 4, y2: BOT, stroke: 'var(--hair)', 'stroke-width': 1});
+  }
+  el('line', {x1: T0 + 9 * MW, x2: T0 + 9 * MW, y1: TOP - 4, y2: BOT, stroke: 'var(--hair)', 'stroke-width': 1});
+
+  // rows: [name, events [[method, month, day|null, label]], group]
+  const RH = 42;
+  const rows = [
+    ['Annapolis County', [['sale', 3, null, 'Tax sale'], ['tender', 6, null, 'Sale by tender']], 'mga'],
+    ['Pictou County',    [['tender', 4, null, 'April']], 'mga'],
+    ['Richmond County',  [['auction', 6, 12, 'Jun 12']], 'mga'],
+    ['Inverness County', [['auction', 8, 11, 'Port Hood, Aug 11', 'left']], 'mga'],
+    ['Victoria County',  [['tender', 9, 14, 'Sep 14']], 'mga'],
+    ['Chester',          [], 'mga'],
+    ['Halifax',          [['tender', 9, 15, 'Sep 15']], 'hrm'],
+  ];
+  const GAP = 18;
+  const cy = i => TOP + 6 + RH / 2 + i * RH + (i >= 6 ? GAP + 6 : 0);
+
+  // statute blocks
+  const mgaTop = TOP + 6, mgaBot = cy(5) + RH / 2;
+  el('rect', {x: 0, y: mgaTop, width: 164, height: mgaBot - mgaTop, rx: 6, fill: 'var(--navy)'});
+  const mid = (mgaTop + mgaBot) / 2;
+  el('text', {x: 14, y: mid - 40, class: 'st1'}, 'Municipal');
+  el('text', {x: 14, y: mid - 20, class: 'st1'}, 'Government Act');
+  el('text', {x: 14, y: mid + 6, class: 'st2'}, 'Most municipalities.');
+  el('text', {x: 14, y: mid + 26, class: 'st2'}, 'Default: public auction.');
+  el('text', {x: 14, y: mid + 41, class: 'st2'}, 'Tender with council’s');
+  el('text', {x: 14, y: mid + 56, class: 'st2'}, 'consent (s. 141).');
+  const hTop = cy(6) - RH / 2 - 6, hBot = cy(6) + RH / 2 + 6;
+  el('rect', {x: 0, y: hTop, width: 164, height: hBot - hTop, rx: 6, fill: 'var(--navy)'});
+  el('text', {x: 14, y: hTop + 22, class: 'st1', style: 'font-size:14px'}, 'Halifax Regional');
+  el('text', {x: 14, y: hTop + 40, class: 'st1', style: 'font-size:14px'}, 'Municipality Charter');
+
+  rows.forEach(([name, evs], i) => {
+    const y = cy(i);
+    // row rule and connector to the statute block
+    el('line', {x1: 164, x2: 176, y1: y, y2: y, stroke: 'var(--rule)', 'stroke-width': 1.5});
+    if (i < 5) el('line', {x1: 176, x2: 662, y1: y + RH / 2, y2: y + RH / 2, stroke: 'var(--hair)', 'stroke-width': 1});
+    el('text', {x: 184, y: y + 4.5, class: 'name'}, name);
+    if (!evs.length) {
+      el('line', {x1: T0 + 6, x2: T0 + 9 * MW - 6, y1: y, y2: y, stroke: 'var(--ink2)', 'stroke-width': 1.2, 'stroke-dasharray': '3 4'});
+      const w = 130, cx0 = T0 + 4.5 * MW;
+      el('rect', {x: cx0 - w / 2, y: y - 11, width: w, height: 22, rx: 11, fill: 'var(--paper)'});
+      el('text', {x: cx0, y: y + 4.5, 'text-anchor': 'middle', class: 'date', fill: 'var(--ink2)'}, 'No sale in 2026');
+      return;
+    }
+    for (const [method, m, d, label, side] of evs) {
+      const x = d ? tx(m, d) : T0 + (m - M0 + 0.5) * MW;
+      if (!d) el('rect', {x: T0 + (m - M0) * MW + 2, y: y - 14, width: MW - 4, height: 28, rx: 4, fill: 'var(--hair)'});
+      el('use', {href: '#m-' + method, x: x, y: y});
+      if (side === 'left') el('text', {x: x - 16, y: y + 4.5, class: 'date', 'text-anchor': 'end'}, label);
+      else el('text', {x: x + 16, y: y + 4.5, class: 'date'}, label);
+    }
+  });
+</script>
+</body></html>

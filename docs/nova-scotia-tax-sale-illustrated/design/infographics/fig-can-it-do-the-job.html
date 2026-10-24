@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAND-006 (zoning is one input; frontage, lot creation, setbacks, servicing,
+     building/fire/by-law status, permits; CBRM zoning confirmation and municipal clearance letters, refreshed 2026-07-20),
+     LAND-008 (Plan Inverness MPS and LUB in force Sept 11, 2025; EDPC planning and permitting), ENV-002 (well logs),
+     ENV-003 (on-site sewage records retained seven years, refreshed 2026-07-20). -->
+<style>
+  .ladder { position: relative; }
+  .rail { position: absolute; left: 15px; top: 16px; bottom: 30px; width: 2px; background: var(--navy); }
+  .rung { position: relative; display: grid; grid-template-columns: 32px 214px 1fr; column-gap: 12px; align-items: center;
+          padding: 9px 0; border-top: 1px solid var(--hair); }
+  .rung:first-child { border-top: 0; }
+  .n { width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700; font-size: 14px;
+       display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
+  .goal .n { background: var(--paper); color: var(--navy); box-shadow: inset 0 0 0 2px var(--navy); }
+  .t b { display: block; font-size: 14px; line-height: 1.2; }
+  .t span { display: block; font-size: 12px; line-height: 1.3; color: var(--ink2); margin-top: 2px; }
+  .a { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .c { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--ink);
+       padding: 4px 10px; border-radius: 999px; line-height: 1.2; white-space: nowrap; }
+  .c small { font-size: 11px; font-weight: 400; color: var(--ink2); }
+  .c.rec { background: var(--blue-tint); box-shadow: inset 0 0 0 1px #c9d9ef; }
+  .c.pro { background: var(--aqua-tint); box-shadow: inset 0 0 0 1px #bfe3d6; }
+  .legend { display: flex; gap: 16px; font-size: 11px; color: var(--ink2); margin: 8px 0 0 44px; align-items: center; }
+  .legend .k { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { display: inline-block; width: 22px; height: 12px; border-radius: 999px; }
+  .note { font-size: 11px; color: var(--ink2); width: 100%; }
+  .note b { color: var(--ink); }
+  .g { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--rule); color: var(--ink); }
+  .g.on { background: var(--navy); color: #fff; box-shadow: none; }
+  .ah { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); }
+  .out { display: grid; grid-template-columns: 32px 1fr 1fr 1fr; column-gap: 12px; margin-top: 4px; align-items: stretch; }
+  .out .arrow { display: flex; justify-content: center; }
+  .res { border-radius: var(--r); padding: 8px 10px; font-size: 13px; font-weight: 700; line-height: 1.25; }
+  .res span { display: block; font-size: 11px; font-weight: 400; color: var(--ink2); margin-top: 2px; }
+  .res.ok { background: var(--aqua-tint); border-left: 4px solid var(--aqua); }
+  .res.open { background: var(--yellow-tint); border-left: 4px solid var(--yellow); }
+  .res.stop { background: var(--orange-tint); border-left: 4px solid var(--orange); }
+</style></head>
+<body><div id="fig">
+  <div class="ladder">
+    <div class="rail"></div>
+
+    <div class="rung goal"><div class="n">1</div>
+      <div class="t"><b>Write the goal</b><span>One use, in plain words</span></div>
+      <div class="a"><span class="g">cabin</span><span class="g on">year-round home</span><span class="g">woodlot</span><span class="g">storage</span></div></div>
+
+    <div class="rung"><div class="n">2</div>
+      <div class="t"><b>Zoning and land-use by-law</b><span>Is this use allowed in this zone today?</span></div>
+      <div class="a"><span class="c rec">Municipal planner <small>or planning commission</small></span><span class="c rec">Zoning confirmation letter <small>CBRM</small></span>
+        <span class="note"><b>Inverness:</b> Plan Inverness in force Sept 11, 2025;<br>planning and permits through Eastern District Planning Commission</span></div></div>
+
+    <div class="rung"><div class="n">3</div>
+      <div class="t"><b>Lot rules</b><span>Lawful lot, frontage, setbacks</span></div>
+      <div class="a"><span class="c rec">Municipal planner</span><span class="c rec">Land-use by-law</span><span class="c pro">Surveyor <small>building envelope</small></span></div></div>
+
+    <div class="rung"><div class="n">4</div>
+      <div class="t"><b>Servicing</b><span>A well; on-site sewage approval</span></div>
+      <div class="a"><span class="c rec">Provincial well logs</span><span class="c rec">Provincial sewage records <small>kept 7 years</small></span><span class="c pro">On-site assessment</span></div></div>
+
+    <div class="rung"><div class="n">5</div>
+      <div class="t"><b>Building, fire and by-law orders</b><span>Anything outstanding on the property</span></div>
+      <div class="a"><span class="c rec">Municipal clearance letter</span><span class="note">CBRM: outstanding building-code, by-law and fire-code orders</span></div></div>
+
+    <div class="rung"><div class="n">6</div>
+      <div class="t"><b>Permits</b><span>What this project needs approved</span></div>
+      <div class="a"><span class="c rec">Planning and permit office</span></div></div>
+  </div>
+
+  <div class="out">
+    <div class="arrow"><svg width="20" height="30" viewBox="0 0 20 30"><path d="M10 0v22M4 16l6 7 6-7" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="res ok">Buildable for this goal<span>every rung answered</span></div>
+    <div class="res open">Not yet known<span>name who answers each open rung</span></div>
+    <div class="res stop">No, for this goal<span>change the goal, or stop</span></div>
+  </div>
+
+  <div class="legend"><span class="k"><i style="background:var(--blue-tint);box-shadow:inset 0 0 0 1px #c9d9ef"></i>Public record or authority</span><span class="k"><i style="background:var(--aqua-tint);box-shadow:inset 0 0 0 1px #bfe3d6"></i>Professional you engage</span></div>
+
+  <div class="src">Inverness planning by-law notice and Eastern District Planning Commission, checked July 2026. CBRM zoning confirmation and municipal clearance letters, July 20, 2026. Nova Scotia well logs and Environmental Records Management System, July 2026.</div>
+</div></body></html>

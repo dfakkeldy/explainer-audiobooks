@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-003 (preliminary notice, title search, notice of intent), LAW-004 (30-day public
+     notice), OCC-001 (occupied property may still be sold). Heirs and neighbours: figures.yaml caption. -->
+<style>
+  svg { display: block; }
+  .pill { fill: var(--paper); }
+  .lbl { font-size: 12px; font-weight: 700; }
+  .arc { font-size: 11px; font-weight: 700; letter-spacing: .1em; }
+  .k { font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+  .h { font-size: 13px; font-weight: 700; }
+  .s { font-size: 11.5px; fill: var(--ink2); }
+  .n { font-size: 11px; font-weight: 700; fill: #fff; }
+</style></head>
+<body><div id="fig">
+<svg width="668" height="418" viewBox="0 0 668 418" aria-label="Rings of people around a parcel before a sale">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--ink2)"/></marker>
+    <path id="arc1" d="M 106.5 171.1 A 108 108 0 0 1 309.5 171.1"/>
+    <path id="arc2" d="M 39.4 129.4 A 186 186 0 0 1 376.6 129.4"/>
+  </defs>
+
+  <!-- rings, centre (208, 208) -->
+  <circle cx="208" cy="208" r="206" fill="var(--panel)" stroke="var(--ink2)" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <circle cx="208" cy="208" r="126" fill="var(--blue-tint)" stroke="var(--blue)" stroke-width="2"/>
+  <circle cx="208" cy="208" r="38" fill="var(--paper)" stroke="var(--blue)" stroke-width="1"/>
+  <!-- the parcel -->
+  <path d="M188 193 L223 187 L232 214 L214 231 L185 223 Z" fill="var(--paper)" stroke="var(--navy)" stroke-width="2.2" stroke-linejoin="round"/>
+  <text x="208" y="213" text-anchor="middle" class="lbl" style="font-size:11px">Parcel</text>
+
+  <text class="arc"><textPath href="#arc1" startOffset="50%" text-anchor="middle">SERVED NOTICE</textPath></text>
+  <text class="arc"><textPath href="#arc2" startOffset="50%" text-anchor="middle">MAY BE AFFECTED TOO</textPath></text>
+
+  <!-- ring 1: served notice -->
+  <rect class="pill" x="154" y="116" width="108" height="24" rx="12"/>
+  <text x="208" y="132.5" text-anchor="middle" class="lbl">Assessed owner</text>
+  <rect class="pill" x="116" y="246" width="78" height="38" rx="10"/>
+  <text x="155" y="262" text-anchor="middle" class="lbl">Mortgage</text>
+  <text x="155" y="277" text-anchor="middle" class="lbl">holders</text>
+  <rect class="pill" x="202" y="246" width="98" height="38" rx="10"/>
+  <text x="251" y="262" text-anchor="middle" class="lbl">Lien and</text>
+  <text x="251" y="277" text-anchor="middle" class="lbl">charge holders</text>
+
+  <!-- ring 2: affected -->
+  <text x="48" y="213" text-anchor="middle" class="lbl">Heirs</text>
+  <text x="375" y="213" text-anchor="middle" class="lbl">Neighbours</text>
+  <text x="208" y="378" text-anchor="middle" class="lbl">Occupants or tenants</text>
+
+  <!-- treasurer -->
+  <rect x="434" y="4" width="234" height="206" rx="6" fill="var(--blue-tint)"/>
+  <rect x="434" y="4" width="4" height="206" fill="var(--blue)"/>
+  <text x="450" y="24" class="k">THE TREASURER'S NOTICES</text>
+  <circle cx="459" cy="47" r="9" fill="var(--blue)"/><text x="459" y="51" text-anchor="middle" class="n">1</text>
+  <text x="476" y="51" class="h">Preliminary notice</text>
+  <text x="476" y="67" class="s">at least 14 days to pay</text>
+  <circle cx="459" cy="93" r="9" fill="var(--blue)"/><text x="459" y="97" text-anchor="middle" class="n">2</text>
+  <text x="476" y="97" class="h">Title search</text>
+  <text x="476" y="113" class="s">finds the owner and every</text>
+  <text x="476" y="128" class="s">mortgage, lien or charge holder</text>
+  <circle cx="459" cy="154" r="9" fill="var(--blue)"/><text x="459" y="158" text-anchor="middle" class="n">3</text>
+  <text x="476" y="158" class="h">Notice of intent</text>
+  <text x="476" y="174" class="s">served on each of them:</text>
+  <text x="476" y="189" class="s">60 days to pay before the sale</text>
+  <path d="M434 166 C 404 166, 372 176, 336 184" fill="none" stroke="var(--ink2)" stroke-width="1.4" marker-end="url(#ah)"/>
+
+  <!-- bidder -->
+  <rect x="434" y="270" width="234" height="120" rx="6" fill="var(--aqua-tint)"/>
+  <rect x="434" y="270" width="4" height="120" fill="var(--aqua)"/>
+  <text x="450" y="290" class="k">THE BIDDER ARRIVES LAST</text>
+  <circle cx="459" cy="313" r="9" fill="var(--aqua)"/><text x="459" y="317" text-anchor="middle" class="n">4</text>
+  <text x="476" y="317" class="h">Public notice</text>
+  <text x="476" y="333" class="s">at least 30 consecutive days,</text>
+  <text x="476" y="348" class="s">newspaper or municipal website</text>
+  <text x="476" y="374" class="h">Then the sale</text>
+  <path d="M434 318 C 420 318, 404 316, 392 312" fill="none" stroke="var(--ink2)" stroke-width="1.4" marker-end="url(#ah)"/>
+</svg>
+<div class="src">Municipal Government Act ss. 137–142 (Halifax: Charter ss. 151–157); CBRM tax-sale FAQ. Checked July 2026.</div>
+</div></body></html>

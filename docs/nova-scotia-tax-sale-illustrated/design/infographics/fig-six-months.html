@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-007 (MGA s. 150), LAW-008 (MGA s. 151), LAW-009 (s. 152(1)),
+     LAW-010 (s. 152(2)-(4)), LAW-011 (ss. 153-154), INS-001 (s. 151(c); insurer vacancy guidance).
+     Halifax parallels: HRMC ss. 165-169. Six months run from the sale (LAW-009). -->
+<style>
+  .cal { display: grid; grid-template-columns: 172px repeat(6, 1fr); position: relative; }
+  .mh { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink2);
+        text-align: center; padding: 4px 0 5px; }
+  .mh.alt, .bg.alt { background: var(--panel); }
+  .bg { grid-row: 2 / 9; border-left: 1px solid var(--hair); }
+  .bg.c1 { grid-column: 2; border-left: 2px solid var(--navy); } .bg.c2 { grid-column: 3; } .bg.c3 { grid-column: 4; }
+  .bg.c4 { grid-column: 5; } .bg.c5 { grid-column: 6; } .bg.c6 { grid-column: 7; }
+  .endline { grid-column: 7; grid-row: 2 / 9; justify-self: end; width: 2px; background: var(--navy); position: relative; z-index: 2; }
+  .lab { grid-column: 1; padding: 6px 10px 6px 0; align-self: center; }
+  .lab h4 { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .lab p { font-size: 11px; color: var(--ink2); line-height: 1.3; margin-top: 1px; }
+  .bar { grid-column: 2 / 8; align-self: center; margin: 6px 0; height: 34px; border-radius: 0 5px 5px 0; position: relative; z-index: 1;
+         background: var(--aqua-tint); border-left: 5px solid var(--aqua); display: flex; align-items: center; gap: 8px; padding: 0 10px;
+         font-size: 12px; }
+  .bar.blue { background: repeating-linear-gradient(135deg, var(--blue-tint) 0 7px, #d6e3f5 7px 11px); border-left-color: var(--blue); }
+  .bar .s { background: var(--paper); border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .bar .ar { color: var(--ink2); }
+  .ev { grid-column: 2 / 8; position: relative; z-index: 1; align-self: center; height: 24px; }
+  .ev .pin { position: absolute; top: 6px; left: -7px; width: 12px; height: 12px; border-radius: 50%; background: var(--navy); }
+  .ev .cert { position: absolute; top: 1px; left: 10px; display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; }
+  .ev .cert .doc { width: 15px; height: 19px; border: 2px solid var(--blue); border-radius: 2px; background: var(--paper); }
+  .axis { display: grid; grid-template-columns: 172px 1fr; margin-top: 3px; }
+  .axis .r { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink2); }
+  .axis .r b { color: var(--ink); }
+
+  .ends { display: grid; grid-template-columns: 172px 1fr 186px; gap: 0 10px; margin-top: 12px; align-items: stretch; }
+  .end { border-radius: var(--r); padding: 9px 11px 10px; position: relative; }
+  .end .k { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+  .end h4 { font-size: 14px; font-weight: 700; margin-top: 2px; line-height: 1.2; }
+  .end p { font-size: 11px; color: var(--ink2); line-height: 1.32; margin-top: 5px; }
+  .end.red { grid-column: 2; background: var(--blue-tint); border-top: 3px solid var(--blue); }
+  .end.deed { grid-column: 3; background: var(--aqua-tint); border-top: 3px solid var(--aqua); }
+  .end::before { content: ""; position: absolute; top: -12px; border-left: 7px solid transparent; border-right: 7px solid transparent; }
+  .end.red::before { left: 30px; border-bottom: 9px solid var(--blue); }
+  .end.deed::before { right: 6px; border-bottom: 9px solid var(--aqua); }
+  .eq { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 6px; font-size: 12px; }
+  .eq .t { background: var(--paper); border-radius: 4px; padding: 1px 6px; font-weight: 700; white-space: nowrap; }
+  .eq .op { font-weight: 700; color: var(--ink2); }
+  .ends .note { grid-column: 1; align-self: start; padding-top: 4px; line-height: 1.35; font-size: 11px; color: var(--ink2); padding-right: 10px; }
+</style></head>
+<body><div id="fig">
+  <div class="cal">
+    <!-- month headers -->
+    <div></div>
+    <div class="mh">Month 1</div><div class="mh alt">Month 2</div><div class="mh">Month 3</div>
+    <div class="mh alt">Month 4</div><div class="mh">Month 5</div><div class="mh alt">Month 6</div>
+    <!-- month grounds -->
+    <div class="bg c1"></div><div class="bg c2 alt"></div><div class="bg c3"></div><div class="bg c4 alt"></div><div class="bg c5"></div><div class="bg c6 alt"></div><div class="endline"></div>
+
+    <!-- start -->
+    <div class="lab" style="grid-row:2"><h4>Sale day</h4><p>Once the price is paid in full, the certificate of sale is issued and registered.</p></div>
+    <div class="ev" style="grid-row:2"><span class="pin"></span>
+      <span class="cert"><span class="doc"></span>certificate</span></div>
+
+    <div class="lab" style="grid-row:3"><h4>Insure insurable buildings</h4><p>You hold an insurable interest.</p></div>
+    <div class="bar" style="grid-row:3"><span class="s">arrange it first</span>Vacant buildings may need specialty cover.<span class="s" style="margin-left:auto">keep premium receipts</span></div>
+
+    <div class="lab" style="grid-row:4"><h4>Pay new tax bills</h4><p>Bills issued after the sale</p></div>
+    <div class="bar" style="grid-row:4">Pay each bill as it arrives; keep the receipt.</div>
+
+    <div class="lab" style="grid-row:5"><h4>Keep repair receipts</h4><p>Repairs the treasurer approved</p></div>
+    <div class="bar" style="grid-row:5"><span class="s">written approval</span><span class="ar">→</span><span class="s">work</span><span class="ar">→</span><span class="s">invoice</span><span class="ar">→</span><span class="s">proof of payment</span></div>
+
+    <div class="lab" style="grid-row:6"><h4>Protect the property</h4><p>Use it without diminishing value</p></div>
+    <div class="bar" style="grid-row:6">Trees stay standing and the premises unharmed.<span class="s" style="margin-left:auto">log any rent collected</span></div>
+
+    <div class="lab" style="grid-row:7"><h4>Track redemption</h4><p>with the treasurer</p></div>
+    <div class="bar blue" style="grid-row:7">An owner or other interest holder may redeem on any day in the six months.</div>
+    <div style="grid-row:8; grid-column:1 / 8; height: 2px;"></div>
+  </div>
+  <div class="axis"><div></div><div class="r"><b>Sale</b><b>6 months after the sale</b></div></div>
+
+  <!-- how it ends -->
+  <div class="ends">
+    <div class="note"><b style="color:var(--ink);font-size:13px">How the six months end</b><br>Redemption can close the file on any day; otherwise the deed comes next.</div>
+    <div class="end red">
+      <div class="k">Redeemed · any day</div>
+      <h4>You are repaid under the statutory formula</h4>
+      <div class="eq"><span class="t">what you paid</span><span class="op">+</span><span class="t">10% a year</span><span class="op">+</span><span class="t">premiums</span><span class="op">+</span><span class="t">approved repairs</span><span class="op">−</span><span class="t">rent and income</span></div>
+      <p>Your rights end when the full redemption amount reaches the treasurer.</p>
+    </div>
+    <div class="end deed">
+      <div class="k">Not redeemed</div>
+      <h4>Ready to request the tax deed</h4>
+      <p>Ask the municipality for the deed and pay council's fee.</p>
+    </div>
+  </div>
+
+  <div class="src">Municipal Government Act ss. 150–155 (Halifax: Charter ss. 165–170), consolidated to April 9, 2026; insurer vacancy guidance checked July 2026.</div>
+</div></body></html>

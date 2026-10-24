@@ -1,5 +1,16 @@
 # Beyond the Tax-Sale Packet — Textbook Edition (DRAFT)
 
+> **Superseded on 2026-10-23** by the illustrated edition in
+> [`../nova-scotia-tax-sale-illustrated/`](../nova-scotia-tax-sale-illustrated/) (finished files in
+> `books/beyond-the-tax-sale-packet/illustrated/`). Dan's October 23 request (grok-bots#668) was
+> for writing without the over-qualifying ("x doesn't mean y") and with many more infographics.
+> Measured the same way, about 22% of this draft's chapter sentences still carry a negative
+> construction after the October 9 de-hedging pass, which targeted "may/should" softeners.
+> The illustrated edition rewrites the 2026 text from scratch at about 2%, in about 130 pages
+> instead of 324, with new print infographics. This draft and its review records stay here for
+> reference; its flagged claims in `review/flagged-claims.md` overlap the new edition's
+> `design/rewrite-notes/`.
+
 **Status: draft awaiting Dan's review. Not governed-final.** This is a textbook edition, for print and
 e-readers, of Dan Fakkeldy's *Beyond the Tax-Sale Packet: How Nova Scotia Municipal Auctions Really
 Work*. It was rewritten for the page and designed with Claude Opus 5.5 from the 2026 governed-final

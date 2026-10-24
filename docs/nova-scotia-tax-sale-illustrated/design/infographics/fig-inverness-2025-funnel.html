@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md DATA-003; research/auction-result-analysis.md; research/inverness-county-dossier.md
+     ("May 2025 auction results"). 50 advertised (May 2025 packet); 35 sold, 15 removed, $608,693.21 surplus
+     (Committee of the Whole minutes, June 19, 2025); 31 bid rows totalling $691,383.05 against $124,004.87 advertised
+     recovery amounts (2025 result sheet). The four-row gap is unresolved; the surplus is a different measure. -->
+<style>
+  .top { display: flex; gap: 24px; align-items: flex-start; }
+  .brk { position: relative; border-top: 1.5px solid var(--ink2); padding-top: 5px; margin-bottom: 9px; font-size: 11px; color: var(--ink2); }
+  .brk::before, .brk::after { content: ""; position: absolute; top: -1px; width: 1.5px; height: 7px; background: var(--ink2); }
+  .brk::before { left: 0; } .brk::after { right: 0; }
+  .brk b { font-size: 13px; color: var(--ink); }
+  .sq { display: grid; gap: 5px; }
+  .sq i { display: block; width: 34px; height: 34px; border-radius: 4px; position: relative; }
+  .sq i.sold { background: var(--aqua); }
+  .sq i.gap { background: var(--yellow); }
+  .sq i.gap::after { content: "?"; position: absolute; inset: 0; text-align: center; line-height: 34px; font-size: 15px; font-weight: 700; color: var(--ink); }
+  .sq i.rem { background: var(--paper); border: 2px solid var(--blue); }
+  .key { flex: 1; display: flex; flex-direction: column; gap: 14px; padding-top: 50px; }
+  .key div { display: flex; gap: 9px; align-items: flex-start; font-size: 12px; line-height: 1.3; }
+  .key i { flex: none; width: 16px; height: 16px; border-radius: 3px; margin-top: 1px; }
+  .key .num { font-size: 20px; line-height: 1; margin-right: 2px; }
+  .key p { margin: 0; }
+  .key span.s { display: block; font-size: 11px; color: var(--ink2); }
+  .money { margin-top: 20px; display: grid; grid-template-columns: 196px 1fr; column-gap: 12px; row-gap: 7px; align-items: center; }
+  .money .k { grid-column: 1 / -1; }
+  .money .k.rule { border-top: 1px solid var(--hair); padding-top: 9px; margin-top: 4px; }
+  .money .name { font-size: 12px; line-height: 1.25; }
+  .money .name span { display: block; font-size: 11px; color: var(--ink2); }
+  .bar { display: flex; align-items: center; gap: 8px; }
+  .bar i { display: block; height: 22px; border-radius: 0 4px 4px 0; }
+  .bar .v { font-family: "Fig Display", "Fig Serif", serif; font-weight: 600; font-size: 17px; white-space: nowrap; }
+</style></head>
+<body><div id="fig">
+  <div class="top">
+    <div style="width:419px">
+      <div class="brk"><b>50 properties advertised</b> for the sale of May 27, 2025</div>
+      <div style="display:flex; gap:39px">
+        <div>
+          <div class="brk"><b>35 sold</b></div>
+          <div class="sq" id="a" style="grid-template-columns: repeat(7, 34px)"></div>
+        </div>
+        <div>
+          <div class="brk"><b>15 removed</b></div>
+          <div class="sq" id="c" style="grid-template-columns: repeat(3, 34px)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="key">
+      <p class="small" style="margin-bottom:-4px">Each square is one advertised property.</p>
+      <div><i style="background:var(--aqua)"></i><p><b>31</b> sold, with a bid row on the public result sheet</p></div>
+      <div><i style="background:var(--yellow)"></i><p><b>4</b> sold in the minutes, with no row on the sheet <span class="s">Unresolved: ask the municipality</span></p></div>
+      <div><i style="background:var(--paper); border:2px solid var(--blue)"></i><p><b>15</b> removed before the sale <span class="s">after collection or on legal advice</span></p></div>
+    </div>
+  </div>
+
+  <div class="money">
+    <div class="k kicker">The 31 published bid rows</div>
+    <div class="name">Advertised recovery amounts<span>what the municipality was owed</span></div>
+    <div class="bar"><i style="background:var(--blue)" data-v="124004.87"></i><span class="v">$124,004.87</span></div>
+    <div class="name">Winning bids</div>
+    <div class="bar"><i style="background:var(--aqua)" data-v="691383.05"></i><span class="v">$691,383.05</span></div>
+    <div class="k kicker rule">Council minutes, the whole sale</div>
+    <div class="name">Tax-sale surplus collected<span>a separate accounting measure</span></div>
+    <div class="bar"><i style="background:var(--navy)" data-v="608693.21"></i><span class="v">$608,693.21</span></div>
+  </div>
+
+  <div class="src">Inverness County: May 2025 property packet (50 advertised); 2025 tax-sale result sheet (31 bid rows); Committee of the Whole minutes, June 19, 2025 (35 sold, 15 removed, surplus).</div>
+</div>
+<script>
+  const fill = (id, list) => { const g = document.getElementById(id); for (const cls of list) { const e = document.createElement('i'); e.className = cls; g.appendChild(e); } };
+  // 35 sold as 7 x 5: 31 on the result sheet, then the 4 the sheet leaves out
+  fill('a', [...Array(31).fill('sold'), ...Array(4).fill('gap')]);
+  fill('c', Array(15).fill('rem'));
+  // money bars share one scale: $700,000 = 330 px
+  const PX = 330 / 700000;
+  document.querySelectorAll('.bar i').forEach(i => { i.style.width = (parseFloat(i.dataset.v) * PX) + 'px'; });
+</script>
+</body></html>
