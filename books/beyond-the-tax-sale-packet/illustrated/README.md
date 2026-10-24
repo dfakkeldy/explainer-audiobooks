@@ -28,8 +28,8 @@ questions are in [`docs/nova-scotia-tax-sale-illustrated/`](../../../docs/nova-s
 
 ## SHA-256
 
-- PDF `75ca6ecfa34fe2ca3071b574b8934d2c429276c5ca7b076d9a666412cc01aa8b`
-- EPUB `fe45dacb9d68eafe53bdf11fd63c0f23b8cf4dccca5f361cf5c364b3a41bc165`
+- PDF `b90438c12249f51710d33c677bfa0f4d1ecd0f3b5e880a7b4c54e745873e949e`
+- EPUB `ab81fe1052ab0029000046a4cb4fdf74d68e8c0985e225929737f86f77e9b29f`
 
 Educational information about a public process. For a decision about a property, read the
 municipality's current notice and ask a qualified professional.

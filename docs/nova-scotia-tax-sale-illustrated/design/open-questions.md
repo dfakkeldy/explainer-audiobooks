@@ -46,6 +46,9 @@ CanLII sites refused automated access on 2026-10-23, so the statute checks are s
     tax-sale owner). Keep the name or use "a landowner"?
 16. **CBRM's clearance letter** wording: "building-code orders, by-law orders and fire-code
     violations" (source) versus "violations" throughout (first edition). Re-check the page (Ch 12).
+17. **Cedar Street's occupancy.** The first edition closes Chapter 9 with "the occupants have not
+    left", while Chapter 11 says Cedar Street "appears vacant from the public road". The rewrite of
+    Chapter 9 says "the occupancy question is still open". Decide which the composite is.
 
 ## Editorial choices taken by default
 
