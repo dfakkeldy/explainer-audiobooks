@@ -1,0 +1,111 @@
+# Glossary: the words the page footers explain.
+# kind: acronym  spelled out in the footer of every page it appears on
+#       term     defined in full on the page where it first appears, reminded later
+
+- key: AAN
+  kind: acronym
+  short: Assessment Account Number
+  more: the number for a property's assessment and tax account.
+  match: ['\bAANs?\b']
+- key: PID
+  kind: acronym
+  short: Parcel Identification Number
+  more: the eight-digit number for a mapped land parcel in Nova Scotia's land records.
+  match: ['\bPIDs?\b']
+- key: CBRM
+  kind: acronym
+  short: Cape Breton Regional Municipality
+- key: PVSC
+  kind: acronym
+  short: Property Valuation Services Corporation
+  more: the body that assesses property in Nova Scotia for municipal taxation.
+- key: NSPRD
+  kind: acronym
+  short: Nova Scotia Property Records Database
+  more: the Province's mapped parcel boundaries.
+- key: NS
+  kind: acronym
+  short: Nova Scotia
+- key: HST
+  kind: acronym
+  short: Harmonized Sales Tax
+- key: GST
+  kind: acronym
+  short: Goods and Services Tax
+- key: FAQ
+  kind: acronym
+  short: frequently asked questions
+- key: PDF
+  kind: acronym
+  short: Portable Document Format
+  match: ['\bPDFs?\b']
+  more: a file that looks the same on every screen and printer.
+
+- key: tax lien
+  kind: term
+  short: the municipality's legal claim on a property for unpaid tax
+  more: it ranks ahead of other claims and needs no registration.
+  match: ['\b[Tt]ax liens?\b']
+- key: notice of intent
+  kind: term
+  short: the formal warning that a property will be sold
+  more: served on the owner and interest holders, with sixty days to pay before the sale.
+  match: ['\b[Nn]otices? of intent\b']
+- key: recovery amount
+  kind: term
+  short: the taxes, interest and sale expenses being collected
+  more: the amount a municipality advertises for a lien. Some call it the minimum or opening bid.
+  match: ['\b[Rr]ecovery amounts?\b']
+- key: tender
+  kind: term
+  short: a sale by sealed written offers
+  more: opened after a deadline, used instead of an auction with council's consent.
+  match: ['\b[Tt]enders?\b', '\b[Tt]endering\b']
+- key: certificate of sale
+  kind: term
+  short: the document a purchaser receives after paying in full
+  more: it is registered at the land registry and gives limited powers to protect the property until the deed.
+  match: ['\b[Cc]ertificates? of sale\b']
+- key: redemption period
+  kind: term
+  short: the six months after a sale when an owner or interest holder may pay and take the property back
+  more: lost when taxes were more than six years in arrears at the time of sale.
+  match: ['\b[Rr]edemption (?:period|window)s?\b']
+- key: tax deed
+  kind: term
+  short: the deed a municipality gives the purchaser after the redemption period
+  more: it vests title free of encumbrances, as the statute specifies; easements and rights-of-way continue.
+  match: ['\b[Tt]ax deeds?\b']
+- key: encumbrance
+  kind: term
+  short: a claim or charge registered against land
+  more: such as a mortgage, lien or judgment.
+  match: ['\b[Ee]ncumbrances?\b']
+- key: right-of-way
+  kind: term
+  short: a legal right to cross someone else's land
+  more: usually registered on title; a path in use may or may not have one.
+  match: ['\b[Rr]ights?-of-way\b']
+- key: easement
+  kind: term
+  short: a right to use part of someone else's land for a purpose
+  more: such as a driveway, a utility line or drainage.
+  match: ['\b[Ee]asements?\b']
+- key: fee simple
+  kind: term
+  short: full ownership of land
+  match: ['\b[Ff]ee[- ]simple\b']
+- key: legal description
+  kind: term
+  short: the registry's written description of a parcel
+  more: its boundaries and the rights that go with it, read by a lawyer or surveyor.
+  match: ['\b[Ll]egal descriptions?\b']
+- key: treasurer
+  kind: term
+  short: the municipal official who runs the tax sale
+  match: ['\b[Tt]reasurers?\b']
+- key: surplus
+  kind: term
+  short: money left from a sale after the municipality's amounts are paid
+  more: it is held in the tax-sale surplus account for people with prior interests to claim.
+  match: ['\b[Tt]ax-sale surplus\b', '\b[Ss]urplus (?:account|proceeds)\b']

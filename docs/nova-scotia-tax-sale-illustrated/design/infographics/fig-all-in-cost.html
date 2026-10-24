@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md TAX-001 (MGA s. 109(4) exemption; Affidavit of Value still filed),
+     TAX-002 (provincial non-resident deed transfer tax on qualifying residential transfers, since 2025-04-01), TAX-003 (HST is fact-specific),
+     LAW-008 / INS-001 (certificate holder insures insurable buildings), OCC-001 (possession is a separate legal process).
+     Proportions are illustrative only: no dollar figures. -->
+<style>
+  #stack { display: block; }
+  #stack .lab { font-size: 12px; font-weight: 700; }
+  #stack .sub { font-size: 11px; fill: var(--ink2); }
+  #stack .in { font-size: 11px; font-weight: 700; }
+  #stack .side { font-size: 13px; font-weight: 700; }
+  #stack .side2 { font-size: 11px; fill: var(--ink2); }
+  #stack .kick { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; fill: var(--ink2); }
+</style></head>
+<body><div id="fig">
+  <svg id="stack" width="668" height="600" viewBox="0 0 668 600" aria-label="Stacked column of the costs of buying at a tax sale, bid at the bottom"></svg>
+  <div class="src">Municipal Government Act s. 109(4); Nova Scotia non-resident deed transfer tax page; CRA GST/HST guidance and event terms (checked July 2026). Proportions are illustrative; every file differs.</div>
+</div>
+<script>
+  // bottom to top: [label, sub-label, height px (illustrative), fill, inside text]
+  const S = [
+    ['Winning bid', 'the number on the result sheet', 150, 'navy'],
+    ['HST', 'depends on the property and the sale: ask an accountant', 30, 'yellow', 'possible'],
+    ['Non-resident deed transfer tax', ['provincial, for qualifying non-resident buyers', 'of residential property, since April 1, 2025'], 30, 'yellow', 'possible'],
+    ['Legal, registry and survey', 'title opinion, registration, a survey where boundaries matter', 44, 'blue'],
+    ['Carrying costs', 'new tax bills; insurance through the certificate months', 38, 'aqua'],
+    ['Safety and security', 'securing buildings and the site', 26, 'aqua'],
+    ['Repairs or remediation', 'what inspection finds, once access is lawful', 58, 'aquatint'],
+    ['Possession process', 'if someone lives there: a lawful process, with a lawyer', 30, 'aquatint'],
+    ['Development work', 'what your goal needs: servicing, permits, building', 44, 'aquatint'],
+    ['Uncertainty reserve', 'for what is still unknown', 56, 'reserve'],
+  ];
+  const C = {navy: '#14273a', yellow: '#e0a000', blue: '#2a6fc4', aqua: '#159f78', aquatint: '#e3f4ee'};
+  const NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('stack');
+  const el = (tag, attrs, text) => { const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+
+  const CX = 236, CW = 104, TOP = 26;
+  const total = S.reduce((a, s) => a + s[2], 0);
+  const BASE = TOP + total;
+
+  el('text', {x: CX, y: 12, class: 'kick'}, 'Illustrative proportions');
+
+  // segments, drawn top-down from the baseline
+  let y = BASE;
+  const mids = [];
+  S.forEach(([lab, sub, h, fill, inside], i) => {
+    const y0 = y - h;
+    const top = i === S.length - 1;
+    if (fill === 'reserve') {
+      el('rect', {x: CX + 1, y: y0 + 1, width: CW - 2, height: h - 3, rx: 4, fill: '#fbf2d8', stroke: '#14273a', 'stroke-width': 1.5, 'stroke-dasharray': '5 4'});
+      el('text', {x: CX + CW / 2, y: y0 + h / 2 + 4, class: 'in', 'text-anchor': 'middle'}, 'unknowns');
+    } else {
+      el('rect', {x: CX, y: y0, width: CW, height: h - 2, fill: C[fill], stroke: fill === 'aquatint' ? '#159f78' : 'none', 'stroke-width': fill === 'aquatint' ? 1.2 : 0});
+      if (inside) el('text', {x: CX + CW / 2, y: y0 + h / 2 + 3, class: 'in', 'text-anchor': 'middle'}, inside);
+    }
+    mids.push(y0 + (h - 2) / 2);
+    y = y0;
+  });
+  // baseline
+  el('line', {x1: CX - 10, x2: CX + CW + 10, y1: BASE, y2: BASE, stroke: '#14273a', 'stroke-width': 1.5});
+
+  // right-hand labels: ideal at each segment's middle, nudged apart, with elbow leaders
+  const LX = 372;
+  const subs = S.map(r => Array.isArray(r[1]) ? r[1] : [r[1]]);
+  const hgt = subs.map(a => 17 + 13 * a.length);      // label block height
+  const ys = mids.map(m => m - 4);                     // baseline of each label's first line
+  // labels are listed bottom to top, so each must sit at least the height of the one above it higher up
+  for (let i = 1; i < ys.length; i++) if (ys[i - 1] - ys[i] < hgt[i]) ys[i] = ys[i - 1] - hgt[i];
+  if (ys[ys.length - 1] < TOP + 6) { ys[ys.length - 1] = TOP + 6; for (let i = ys.length - 2; i >= 0; i--) if (ys[i] - ys[i + 1] < hgt[i + 1]) ys[i] = ys[i + 1] + hgt[i + 1]; }
+  S.forEach(([lab], i) => {
+    const ty = ys[i];
+    el('path', {d: `M${CX + CW + 3},${mids[i]} H${CX + CW + 14} L${LX - 10},${ty - 4} H${LX - 4}`, fill: 'none', stroke: '#6b7280', 'stroke-width': 1});
+    el('text', {x: LX, y: ty, class: 'lab'}, lab);
+    subs[i].forEach((t, k) => el('text', {x: LX, y: ty + 13 + 13 * k, class: 'sub'}, t));
+  });
+
+  // left-hand braces: what the sheet shows vs what the land costs
+  const brace = (x, y0, y1) => el('path', {d: `M${x + 6},${y0} H${x} V${y1} H${x + 6}`, fill: 'none', stroke: '#44505e', 'stroke-width': 1.5});
+  brace(CX - 30, TOP, BASE);
+  brace(CX - 16, BASE - 148, BASE);
+  const bidMid = BASE - 75;
+  el('text', {x: CX - 40, y: bidMid - 2, class: 'side', 'text-anchor': 'end'}, 'The bid');
+  el('text', {x: CX - 40, y: bidMid + 13, class: 'side2', 'text-anchor': 'end'}, 'what the result');
+  el('text', {x: CX - 40, y: bidMid + 27, class: 'side2', 'text-anchor': 'end'}, 'sheet shows');
+  const allMid = TOP + (BASE - TOP - 150) / 2;
+  el('text', {x: CX - 40, y: allMid - 2, class: 'side', 'text-anchor': 'end'}, 'The all-in cost');
+  el('text', {x: CX - 40, y: allMid + 13, class: 'side2', 'text-anchor': 'end'}, 'what owning and using');
+  el('text', {x: CX - 40, y: allMid + 27, class: 'side2', 'text-anchor': 'end'}, 'the land costs');
+
+  // municipal deed transfer tax note, beside the tax layers
+  const ny = (mids[1] + mids[2]) / 2 - 27;
+  const g = el('g', {});
+  el('rect', {x: 0, y: ny - 2, width: 190, height: 58, rx: 6, fill: '#f6f3ec'});
+  ['Municipal deed transfer tax:', 'tax-sale deeds are exempt', '(MGA s. 109(4)). The Affidavit', 'of Value is still filed.'].forEach((t, i) =>
+    el('text', {x: 10, y: ny + 13 + i * 13, class: i ? 'side2' : 'in', style: i ? 'fill:#14273a' : ''}, t));
+
+  svg.setAttribute('height', BASE + 8); svg.setAttribute('viewBox', `0 0 668 ${BASE + 8}`);
+</script>
+</body></html>

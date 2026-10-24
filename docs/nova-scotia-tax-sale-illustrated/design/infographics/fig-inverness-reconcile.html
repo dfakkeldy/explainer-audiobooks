@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Data: maps/data/inverness-tax-sale-2026-08-11.json (summary schedule, published 2026-07-16, retrieved 2026-07-19).
+     Detail-sheet differences: research/inverness-county-dossier.md (DATA-002). -->
+<style>
+  .wrap { display: grid; grid-template-columns: 1fr 210px; gap: 16px; align-items: start; }
+  .grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; }
+  .t { position: relative; height: 40px; border-radius: 4px; font-size: 12px; font-weight: 700; color: #fff;
+       display: flex; align-items: center; justify-content: center; }
+  .t.r { background: var(--blue); }
+  .t.n { background: var(--ink2); }
+  .t.flag { outline: 3px solid var(--orange); outline-offset: 1px; }
+  .t.flag::after { content: "!"; position: absolute; top: -7px; right: -6px; width: 15px; height: 15px; border-radius: 50%;
+       background: var(--orange); color: #fff; font-size: 10px; line-height: 15px; text-align: center; }
+  .t.nosheet { background: repeating-linear-gradient(135deg, var(--blue) 0 5px, #4f8ad3 5px 9px); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11px; color: var(--ink2); margin: 0 0 8px; }
+  .tally { display: flex; flex-direction: column; gap: 8px; }
+  .stat { background: var(--panel); border-radius: var(--r); padding: 8px 10px; }
+  .stat .num { font-size: 24px; line-height: 1; color: var(--ink); }
+  .stat p { font-size: 11px; color: var(--ink2); margin-top: 3px; }
+  .diff { border-left: 4px solid var(--orange); background: var(--orange-tint); }
+  .diff table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
+  .diff td { padding: 1px 0; } .diff td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  .ask { background: var(--navy); color: #fff; border-radius: var(--r); padding: 8px 10px; font-size: 12px; font-weight: 700; }
+</style></head>
+<body><div id="fig">
+  <div class="legend">
+    <span><span class="swatch" style="background:var(--blue)"></span>Redeemable (27)</span>
+    <span><span class="swatch" style="background:var(--ink2)"></span>Non-redeemable (18)</span>
+    <span><span class="swatch" style="background:var(--paper);outline:2px solid var(--orange)"></span>Flagged for the treasurer</span>
+  </div>
+  <div class="wrap">
+    <div class="grid" id="grid" aria-label="45 liens"></div>
+    <div class="tally">
+      <div class="stat"><div class="num">45</div><p>liens on the summary schedule</p></div>
+      <div class="stat"><div class="num">44</div><p>detail sheets in the packet. Lien 6 has none.</p></div>
+      <div class="stat diff"><div class="num">2</div><p>amounts that differ between summary and detail sheet:</p>
+        <table>
+          <tr><td><b>Lien 9</b> summary</td><td>$9,348.38</td></tr><tr><td>detail sheet</td><td>$9,384.38</td></tr>
+          <tr><td><b>Lien 12</b> summary</td><td>$57,875.01</td></tr><tr><td>detail sheet</td><td>$57,578.01</td></tr>
+        </table></div>
+      <div class="ask">Keep both versions. Ask the treasurer which one controls.</div>
+    </div>
+  </div>
+  <div class="src">Inverness County tax sale property packet for August 11, 2026: summary schedule and detail sheets, published July 16, retrieved July 19, 2026. Lien numbers only; no owners or addresses.</div>
+</div>
+<script>
+  // [lien, redeemable]
+  const L = [[1,0],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1],[8,1],[9,1],[10,1],[11,1],[12,1],[13,1],[14,1],[15,1],[16,1],[17,1],[18,1],[19,0],[20,1],[21,1],[22,0],[23,0],[24,0],[25,0],[26,1],[27,0],[28,1],[29,0],[30,0],[31,0],[32,0],[33,1],[34,1],[35,0],[36,0],[37,1],[38,0],[39,0],[40,1],[41,1],[42,0],[43,0],[44,1],[45,0]];
+  const g = document.getElementById('grid');
+  for (const [n, r] of L) {
+    const d = document.createElement('div');
+    d.className = 't ' + (r ? 'r' : 'n') + ([6, 9, 12].includes(n) ? ' flag' : '') + (n === 6 ? ' nosheet' : '');
+    d.textContent = n;
+    g.appendChild(d);
+  }
+</script>
+</body></html>

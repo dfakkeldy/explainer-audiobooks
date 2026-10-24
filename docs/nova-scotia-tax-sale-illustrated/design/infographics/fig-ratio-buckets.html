@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Data: research/auction-result-analysis.md and research/inverness-county-dossier.md (DATA-003):
+     31 bid rows on Inverness County's public result sheet for the May 27, 2025 sale.
+     Published cumulative counts: 5 at about 1x, 24 at least 2x, 15 at least 5x, 7 at least 10x; median 4.53, range 1.00-21.62.
+     Buckets derived from them: about 1x 5; above 1x under 2x 31-24-5 = 2; 2x-under 5x 24-15 = 9; 5x-under 10x 15-7 = 8; 10x+ 7. -->
+<style>
+  #chart { display: block; }
+  #chart .lab { font-size: 13px; font-weight: 700; }
+  #chart .sub { font-size: 11px; fill: var(--ink2); }
+  #chart .count { font-family: "Fig Display", "Fig Serif", serif; font-weight: 600; font-size: 22px; }
+  #chart .br { font-size: 12px; }
+  #chart .br b { font-weight: 700; }
+  #chart .note { font-size: 11px; fill: var(--ink); }
+  #chart .head { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; fill: var(--ink2); }
+  .top { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+  .legend { font-size: 11px; color: var(--ink2); display: flex; gap: 16px; }
+  .legend .swatch { width: 14px; height: 10px; border-radius: 2px; }
+  .stats { display: flex; gap: 10px; margin-top: 4px; }
+  .stat { background: var(--panel); border-radius: var(--r); padding: 7px 10px; display: flex; align-items: baseline; gap: 8px; }
+  .stat .num { font-size: 22px; line-height: 1; }
+  .stat span:last-child { font-size: 11px; color: var(--ink2); }
+</style></head>
+<body><div id="fig">
+  <div class="top">
+    <span class="kicker">Winning bid ÷ recovery amount · Inverness County, May 27, 2025</span>
+    <span class="legend">
+      <span><span class="swatch" style="background:var(--aqua)"></span>One sale (31 published bid rows)</span>
+      <span><span class="swatch" style="background:var(--navy)"></span>The median sale, 16th of 31</span>
+    </span>
+  </div>
+  <svg id="chart" width="668" height="240" viewBox="0 0 668 240" aria-label="Five buckets of winning bid to recovery amount ratios"></svg>
+  <div class="src">Inverness County 2025 tax-sale result sheet (31 bid rows) and May 2025 property packet. The five buckets are derived from the published counts: 5 at about 1×, 24 at least 2×, 15 at least 5×, 7 at least 10×.</div>
+</div>
+<script>
+  // [bucket label, sub-label, count]
+  const B = [
+    ['About 1×', 'lowest 1.00×', 5],
+    ['Above 1×', 'under 2×', 2],
+    ['2× to under 5×', '', 9],
+    ['5× to under 10×', '', 8],
+    ['10× or more', 'highest 21.62×', 7],
+  ];
+  const NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('chart');
+  const el = (tag, attrs, text) => { const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+  const X0 = 150, U = 32, UG = 3, BH = 24, ROW = 44, TOP = 8;
+  const rowY = i => TOP + i * ROW;
+  let k = 0;   // running position in the sorted 31
+  B.forEach(([lab, sub, n], i) => {
+    const y = rowY(i), cy = y + BH / 2;
+    el('text', {x: 0, y: sub ? cy - 1 : cy + 5, class: 'lab'}, lab);
+    if (sub) el('text', {x: 0, y: cy + 13, class: 'sub'}, sub);
+    for (let j = 0; j < n; j++) {
+      k++;
+      const isMed = k === 16;
+      const last = j === n - 1, first = j === 0;
+      const x = X0 + j * (U + UG);
+      // square at the baseline end, 4px rounded data end
+      const r = 4;
+      const d = last
+        ? `M${x},${y} h${U - r} a${r},${r} 0 0 1 ${r},${r} v${BH - 2 * r} a${r},${r} 0 0 1 -${r},${r} h-${U - r} z`
+        : `M${x},${y} h${U} v${BH} h-${U} z`;
+      el('path', {d, fill: isMed ? '#14273a' : '#159f78'});
+      if (isMed) {
+        el('text', {x: x + U / 2, y: y + BH + 14, class: 'note', 'text-anchor': 'middle'}, 'median 4.53×');
+      }
+    }
+    el('text', {x: X0 + n * (U + UG) + 6, y: cy + 8, class: 'count'}, n);
+  });
+  el('line', {x1: X0 - 0.5, x2: X0 - 0.5, y1: TOP - 4, y2: rowY(4) + BH + 4, stroke: '#44505e', 'stroke-width': 1});
+
+  // brackets for the published cumulative counts (rows from 2x upward)
+  const brackets = [[2, 24, 'at least 2×'], [3, 15, 'at least 5×'], [4, 7, 'at least 10×']];
+  brackets.forEach(([from, n, t], i) => {
+    const x = 498 + i * 14;
+    const y0 = rowY(from) + 2, y1 = rowY(4) + BH - 2;
+    el('path', {d: `M${x - 5},${y0} h5 V${y1} h-5`, fill: 'none', stroke: '#44505e', 'stroke-width': 1.2});
+  });
+  // labels to the right of the brackets, one per bracket, aligned to the bracket's first row
+  brackets.forEach(([from, n, t], i) => {
+    const y = rowY(from) + BH / 2 + 5;
+    const tx = 548;
+    const e = el('text', {x: tx, y, class: 'br'});
+    const b = document.createElementNS(NS, 'tspan'); b.setAttribute('font-weight', '700'); b.textContent = n + ' '; e.appendChild(b);
+    const s = document.createElementNS(NS, 'tspan'); s.textContent = t; e.appendChild(s);
+    // leader from bracket top to label
+    el('line', {x1: 498 + i * 14, x2: tx - 6, y1: y - 4, y2: y - 4, stroke: '#d6d1c7', 'stroke-width': 1});
+  });
+  el('text', {x: 492, y: rowY(2) - 10, class: 'head'}, 'As published');
+  svg.setAttribute('height', rowY(4) + BH + 22);
+  svg.setAttribute('viewBox', `0 0 668 ${rowY(4) + BH + 22}`);
+</script>
+</body></html>

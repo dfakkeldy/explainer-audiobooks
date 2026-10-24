@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-005 (MGA s. 141; HRMC s. 156), LAW-006 (MGA s. 148),
+     LAW-015 (acceptable minimum on resale), OPS-001 (CBRM July 21, 2026), OPS-002 (Kings County policy
+     FIN-05-024 s. 4.3, 2025-02-04 agenda), OPS-004 (Inverness August 11, 2026), OPS-005 (Pictou 2026 tender).
+     Refreshed 2026-07-20. -->
+<style>
+  .cmp { display: grid; grid-template-columns: minmax(0,1fr) 92px minmax(0,1fr); column-gap: 0; }
+  .hd { padding: 9px 12px 8px; border-radius: var(--r) var(--r) 0 0; }
+  .hd .num { font-size: 21px; line-height: 1.1; }
+  .hd p { font-size: 11px; color: var(--ink2); margin-top: 2px; }
+  .auc { background: var(--blue-tint); }
+  .ten { background: var(--panel); }
+  .cell { padding: 9px 12px 10px; display: flex; gap: 10px; align-items: flex-start; border-top: 1px solid rgba(20,39,58,.10); }
+  .cell svg { flex: none; }
+  .cell h4 { font-size: 13px; font-weight: 700; line-height: 1.22; }
+  .cell p { font-size: 11px; line-height: 1.32; color: var(--ink2); margin-top: 2px; }
+  .last { border-radius: 0 0 var(--r) var(--r); }
+  .spine { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; }
+  .spine .n { width: 22px; height: 22px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 12px; font-weight: 700;
+              line-height: 22px; }
+  .spine .t { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-top: 4px; line-height: 1.2; }
+  .ex { display: inline-block; margin-top: 5px; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px;
+        background: var(--paper); white-space: nowrap; }
+  .bids { display: flex; align-items: flex-end; gap: 4px; margin-top: 6px; height: 34px; }
+  .bids span { display: inline-block; width: 24px; border-radius: 3px 3px 0 0; background: var(--blue); color: #fff; font-size: 11px;
+               font-weight: 700; text-align: center; padding-top: 1px; }
+  .env { display: flex; gap: 6px; margin-top: 6px; }
+  .foot { margin-top: 10px; background: var(--navy); color: #fff; border-radius: var(--r); padding: 9px 14px; display: grid;
+          grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+  .foot .num { font-size: 17px; white-space: nowrap; }
+  .foot p { font-size: 12px; line-height: 1.38; color: #dfe6ee; }
+  .foot b { color: #fff; }
+</style></head>
+<body><div id="fig">
+  <div class="cmp">
+    <!-- headers -->
+    <div class="hd auc"><div class="num">Open auction</div><p>The default under the Act</p></div>
+    <div></div>
+    <div class="hd ten"><div class="num">Sealed tender</div><p>With council's consent</p></div>
+
+    <!-- 1 get in -->
+    <div class="cell auc">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="2" y="7" width="30" height="20" rx="3" fill="var(--paper)" stroke="var(--blue)" stroke-width="2.5"/><circle cx="11" cy="15" r="3.5" fill="var(--blue)"/><path d="M5.5 23c1-4 10-4 11 0" fill="var(--blue)"/><line x1="19" y1="13" x2="28" y2="13" stroke="var(--blue)" stroke-width="2"/><line x1="19" y1="18" x2="26" y2="18" stroke="var(--blue)" stroke-width="2"/></svg>
+      <div><h4>Register in person</h4><p>Photo ID at the door; you get a numbered bidding card.</p><span class="ex">CBRM, July 21, 2026</span></div>
+    </div>
+    <div class="spine"><span class="n">1</span><span class="t">Get in</span></div>
+    <div class="cell ten">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="2" y="8" width="30" height="20" rx="2" fill="var(--paper)" stroke="var(--navy)" stroke-width="2.5"/><path d="M3 9l14 10 14-10" fill="none" stroke="var(--navy)" stroke-width="2.5"/></svg>
+      <div><h4>Deliver one sealed offer</h4><p>In writing, in an envelope, before the stated deadline.</p></div>
+    </div>
+
+    <!-- 2 offer -->
+    <div class="cell auc">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="9" y="3" width="17" height="15" rx="2" fill="var(--blue)"/><text x="17.5" y="14.5" font-size="11" font-weight="700" text-anchor="middle" style="fill:#fff">12</text><rect x="16" y="18" width="3.5" height="13" rx="1" fill="var(--blue)"/></svg>
+      <div><h4>Bid out loud, in the open</h4><p>Every card in the room sees every bid and can answer it.</p>
+        <div class="bids" aria-hidden="true"><span style="height:12px"></span><span style="height:17px"></span><span style="height:22px"></span><span style="height:27px"></span><span style="height:33px">12</span></div></div>
+    </div>
+    <div class="spine"><span class="n">2</span><span class="t">Make the offer</span></div>
+    <div class="cell ten">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="5" y="4" width="22" height="27" rx="2" fill="var(--paper)" stroke="var(--navy)" stroke-width="2.5"/><line x1="10" y1="12" x2="22" y2="12" stroke="var(--navy)" stroke-width="2"/><line x1="10" y1="17" x2="22" y2="17" stroke="var(--navy)" stroke-width="2"/><text x="16" y="28" font-size="11" font-weight="700" text-anchor="middle" style="fill:var(--ink)">$</text></svg>
+      <div><h4>Choose one amount, once</h4><p>Each bidder writes a single figure without seeing the others.</p>
+        <div class="env" aria-hidden="true">
+          <svg width="122" height="24" viewBox="0 0 122 24"><g fill="var(--paper)" stroke="var(--navy)" stroke-width="2"><rect x="1" y="3" width="34" height="20" rx="2"/><rect x="44" y="3" width="34" height="20" rx="2"/><rect x="87" y="3" width="34" height="20" rx="2"/></g><g fill="none" stroke="var(--navy)" stroke-width="2"><path d="M2 4l16 11 16-11"/><path d="M45 4l16 11 16-11"/><path d="M88 4l16 11 16-11"/></g></svg>
+        </div></div>
+    </div>
+
+    <!-- 3 winner -->
+    <div class="cell auc">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--navy)"/><g transform="translate(17 17) rotate(-35)" fill="#fff"><rect x="-8" y="-6" width="16" height="7" rx="1.5"/><rect x="-1.5" y="0" width="3" height="11" rx="1"/></g></svg>
+      <div><h4>Highest bid when the calling stops</h4><p>Decided in the room, on the day.</p></div>
+    </div>
+    <div class="spine"><span class="n">3</span><span class="t">Winner</span></div>
+    <div class="cell ten">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="2" y="5" width="30" height="20" rx="2" fill="var(--paper)" stroke="var(--navy)" stroke-width="2.5"/><path d="M13 10l9 5-9 5z" fill="var(--navy)"/><line x1="11" y1="30" x2="23" y2="30" stroke="var(--navy)" stroke-width="2.5"/></svg>
+      <div><h4>Highest acceptable tender</h4><p>Envelopes are opened after the deadline. Kings County livestreams its openings where it can.</p><span class="ex">Kings County agenda, Feb 4, 2025</span></div>
+    </div>
+
+    <!-- 4 pay -->
+    <div class="cell auc last">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="2" y="9" width="30" height="17" rx="3" fill="var(--paper)" stroke="var(--blue)" stroke-width="2.5"/><circle cx="17" cy="17.5" r="4" fill="var(--blue)"/></svg>
+      <div><h4>Pay at once, then the balance</h4><p>At once: the price, or at least the recovery amount. The balance within 3 business days. Inverness adds a $200 registration amount.</p><span class="ex">Inverness, Aug 11, 2026</span></div>
+    </div>
+    <div class="spine"><span class="n">4</span><span class="t">Pay</span></div>
+    <div class="cell ten last">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="2" y="9" width="30" height="17" rx="3" fill="var(--paper)" stroke="var(--navy)" stroke-width="2.5"/><circle cx="17" cy="17.5" r="4" fill="var(--navy)"/></svg>
+      <div><h4>Pay as the tender terms set out</h4><p>The tender notice sets the amount due and the deadline.</p><span class="ex">Pictou, 2026 tender</span></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="num">One statute</span>
+    <p><b>MGA s. 141</b> (Halifax: Charter s. 156): auction by default, tender with council's consent. Council may set an acceptable minimum. <b>The current notice names the format and its terms.</b></p>
+  </div>
+
+  <div class="src">Municipal Government Act ss. 141, 148, consolidated to April 9, 2026. CBRM, Inverness, Kings and Pictou sale records, checked July 20, 2026.</div>
+</div></body></html>

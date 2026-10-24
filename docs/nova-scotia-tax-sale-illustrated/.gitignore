@@ -1,0 +1,7 @@
+.venv/
+build/node_modules/
+build/__pycache__/
+out/
+design/infographics/out/
+/*.pdf
+/*.epub

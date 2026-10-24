@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md DATA-002. Data: maps/data/inverness-tax-sale-2026-08-11.json -->
+<style>
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
+  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--ink); }
+  .legend .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: -1px; margin-right: 6px; }
+  .total { text-align: right; }
+  .total .num { font-size: 26px; line-height: 1; color: var(--ink); }
+  .total p { font-size: 11px; color: var(--ink2); margin-top: 2px; }
+  svg { display: block; }
+</style></head>
+<body><div id="fig">
+  <div class="top">
+    <div class="legend">
+      <span><span class="dot" style="background:var(--blue)"></span>Redeemable</span>
+      <span><span class="dot" style="background:var(--ink2)"></span>Non-redeemable</span>
+    </div>
+    <div class="total"><div class="num">$342,793.85</div><p>total recovery amount, all 45 liens</p></div>
+  </div>
+  <svg id="chart" width="668" height="330" viewBox="0 0 668 330" aria-label="Recovery amounts for 45 liens on a log dollar axis"></svg>
+  <div class="src">Inverness County tax sale property packet for August 11, 2026: summary schedule amounts, published July 16, retrieved July 19, 2026. Liens 9 and 12 show different amounts on their detail sheets. Lien numbers only.</div>
+</div>
+<script>
+  // Data: maps/data/inverness-tax-sale-2026-08-11.json (commit a57c690), summary schedule.
+  // [lien, redeemable 1/0, recovery amount in dollars]
+  const D = [[1,0,15529.15],[2,1,1295.63],[3,1,1432.64],[4,1,1755.97],[5,1,1384.5],[6,1,5264.59],[7,1,7620.82],[8,1,25651.51],[9,1,9348.38],[10,1,15578.72],[11,1,9300.65],[12,1,57875.01],[13,1,12882.15],[14,1,56194.07],[15,1,11165.89],[16,1,1946.36],[17,1,3938.48],[18,1,4098.67],[19,0,1978.15],[20,1,1438.57],[21,1,2613.22],[22,0,2193.0],[23,0,2448.75],[24,0,2647.38],[25,0,1745.53],[26,1,3600.36],[27,0,1135.16],[28,1,4293.64],[29,0,27017.28],[30,0,895.62],[31,0,5105.93],[32,0,1459.44],[33,1,1021.21],[34,1,879.69],[35,0,4460.82],[36,0,3381.71],[37,1,1930.32],[38,0,4309.14],[39,0,3417.12],[40,1,7347.7],[41,1,1499.4],[42,0,1030.61],[43,0,3412.09],[44,1,1411.64],[45,0,7857.18]];
+  const MEDIAN = 3412.09;
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('chart');
+  const el = (tag, attrs, text) => { const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+
+  const X0 = 112, X1 = 626, LMIN = Math.log10(500), LMAX = Math.log10(100000);
+  const x = v => X0 + (Math.log10(v) - LMIN) / (LMAX - LMIN) * (X1 - X0);
+  const R = 5.5, GAP = 1.2, DIA = 2 * R + GAP;
+  const lanes = [{key: 1, name: 'Redeemable', n: 27, cy: 92, fill: 'var(--blue)'},
+                 {key: 0, name: 'Non-redeemable', n: 18, cy: 212, fill: 'var(--ink2)'}];
+  const PLOT_TOP = 22, PLOT_BOT = 268;
+
+  // lane grounds
+  for (const L of lanes) el('rect', {x: X0 - 8, y: L.cy - 50, width: X1 - X0 + 16, height: 100, rx: 6, fill: 'var(--panel)'});
+
+  // grid + ticks
+  const ticks = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000];
+  for (const t of ticks) {
+    el('line', {x1: x(t), x2: x(t), y1: PLOT_TOP, y2: PLOT_BOT, stroke: 'var(--rule)', 'stroke-width': 1});
+    el('text', {x: x(t), y: PLOT_BOT + 17, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--ink2)'}, '$' + t.toLocaleString('en-CA'));
+  }
+  el('line', {x1: X0, x2: X1, y1: PLOT_BOT, y2: PLOT_BOT, stroke: 'var(--ink2)', 'stroke-width': 1});
+  el('text', {x: X0, y: PLOT_BOT + 40, 'font-size': 11, fill: 'var(--ink2)'},
+     'Recovery amount, log scale: $1,000 to $10,000 takes the same width as $10,000 to $100,000.');
+
+  // median line across both lanes
+  const mx = x(MEDIAN);
+  el('line', {x1: mx, x2: mx, y1: PLOT_TOP - 6, y2: PLOT_BOT, stroke: 'var(--navy)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'});
+  el('text', {x: mx + 6, y: PLOT_TOP + 2, 'font-size': 12, 'font-weight': 700}, 'Median $3,412.09');
+  el('text', {x: mx + 6, y: PLOT_TOP + 16, 'font-size': 11, fill: 'var(--ink2)'}, '22 liens below, 22 above');
+
+  // beeswarm: greedy placement closest to the lane centre, deterministic order by amount
+  const placed = {};
+  for (const L of lanes) {
+    const pts = D.filter(d => d[1] === L.key).sort((a, b) => a[2] - b[2]).map(d => ({lien: d[0], v: d[2], px: x(d[2])}));
+    const done = [];
+    for (const p of pts) {
+      const near = done.filter(q => Math.abs(q.px - p.px) < DIA);
+      const cands = [0];
+      for (const q of near) { const h = Math.sqrt(DIA * DIA - (q.px - p.px) ** 2); cands.push(q.dy + h, q.dy - h); }
+      cands.sort((a, b) => Math.abs(a) - Math.abs(b) || a - b);
+      p.dy = cands.find(c => near.every(q => Math.hypot(q.px - p.px, q.dy - c) >= DIA - 0.01));
+      done.push(p);
+    }
+    placed[L.key] = done;
+    for (const p of done) el('circle', {cx: p.px, cy: L.cy + p.dy, r: R, fill: L.fill, stroke: '#fff', 'stroke-width': 0.8});
+    // lane label
+    el('text', {x: 0, y: L.cy - 4, 'font-size': 13, 'font-weight': 700}, L.name);
+    el('text', {x: 0, y: L.cy + 12, 'font-size': 11, fill: 'var(--ink2)'}, L.n + ' liens');
+  }
+
+  // direct labels on the extremes
+  const all = [...placed[1].map(p => ({...p, cy: lanes[0].cy})), ...placed[0].map(p => ({...p, cy: lanes[1].cy}))];
+  const lo = all.reduce((a, b) => a.v < b.v ? a : b), hi = all.reduce((a, b) => a.v > b.v ? a : b);
+  const lab = (p, lines, anchor, dx, dy) => lines.forEach((t, i) =>
+    el('text', {x: p.px + dx, y: p.cy + p.dy + dy + i * 14, 'text-anchor': anchor, 'font-size': i ? 11 : 12,
+                'font-weight': i ? 400 : 700, fill: i ? 'var(--ink2)' : 'var(--ink)'}, t));
+  lab(lo, ['$879.69', 'lowest, lien 34'], 'middle', 0, -36);
+  el('line', {x1: lo.px, x2: lo.px, y1: lo.cy + lo.dy - 17, y2: lo.cy + lo.dy - R - 2, stroke: 'var(--ink2)', 'stroke-width': 1});
+  lab(hi, ['$57,875.01', 'highest, lien 12'], 'end', 4, -36);
+  el('line', {x1: hi.px, x2: hi.px, y1: hi.cy + hi.dy - 17, y2: hi.cy + hi.dy - R - 2, stroke: 'var(--ink2)', 'stroke-width': 1});
+</script>
+</body></html>

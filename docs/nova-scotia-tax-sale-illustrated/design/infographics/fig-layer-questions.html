@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md MAP-001 (parcel record), LAND-004 (map vs survey), LAND-007 (exterior only before sale),
+     LAND-005 (legal access), LAND-006 (setbacks, planning), ENV-004 (Coastal Hazard Map scenarios), MAP-006 + ENV-005
+     (geology layers; abandoned-mine positions on private land up to ~50 m off, 2024 Version 9), LAND-003 (PVSC assessment, dated),
+     final chapter 5 (src/chapters/05-map-question-machine.md: buildings from NS Topographic Database; river-flood studies kept apart from coastal scenarios),
+     MAP-007 (historical results labelled historical; current notice controls). -->
+<style>
+  .head, .r { display: grid; grid-template-columns: 168px 206px 1fr; column-gap: 10px; align-items: center; }
+  .head { padding: 0 0 5px; }
+  .head span { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); }
+  .r { min-height: 54px; border-top: 1px solid var(--hair); padding: 5px 0; }
+  .r:last-of-type { border-bottom: 1px solid var(--hair); }
+  .layer { display: flex; align-items: center; gap: 9px; }
+  .layer svg { flex: none; border-radius: 5px; background: var(--panel); }
+  .layer b { font-size: 13px; line-height: 1.2; }
+  .shows { font-size: 12px; line-height: 1.3; color: var(--ink2); }
+  .shows em { font-style: normal; display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 700; color: var(--ink);
+              background: var(--yellow-tint); border-radius: 999px; padding: 1px 7px; }
+  .a { display: flex; flex-wrap: wrap; gap: 5px; }
+  .c { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--ink);
+       padding: 4px 10px 4px 6px; border-radius: 999px; line-height: 1.2; white-space: nowrap; }
+  .c small { font-size: 11px; font-weight: 400; color: var(--ink2); }
+  .c.rec { background: var(--blue-tint); box-shadow: inset 0 0 0 1px #c9d9ef; }
+  .c.pro { background: var(--aqua-tint); box-shadow: inset 0 0 0 1px #bfe3d6; }
+  .c.you { background: var(--paper); box-shadow: inset 0 0 0 1px var(--rule); }
+  .rec svg * { stroke: var(--blue); } .pro svg * { stroke: var(--aqua); } .you svg * { stroke: var(--ink2); }
+  .legend { display: flex; gap: 16px; font-size: 11px; color: var(--ink2); margin: 8px 0 0; align-items: center; }
+  .legend .k { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { display: inline-block; width: 22px; height: 12px; border-radius: 999px; }
+  .ly * { fill: none; stroke: var(--navy); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+</style></head>
+<body><div id="fig">
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <!-- chip icons (24 grid) -->
+      <g id="i-doc" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 11.5h7M9 15h7"/></g>
+      <g id="i-book" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5.5a2.5 2.5 0 0 1 2.5-2.5H19v15H7.5A2.5 2.5 0 0 0 5 20.5z"/><path d="M5 20.5A2.5 2.5 0 0 1 7.5 18H19v3H7.5"/><path d="M9 7h6"/></g>
+      <g id="i-survey" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6v4H9z"/><path d="M12 7.5v3M12 10.5l-6 10M12 10.5v10M12 10.5l6 10"/></g>
+      <g id="i-law" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v16M7.5 20.5h9M5 7h14"/><path d="M5 7l-2.8 6.5h5.6zM19 7l-2.8 6.5h5.6z"/></g>
+      <g id="i-plan" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M4 11h9v9M13 11V4"/><path d="M15.5 14.5h2.5M15.5 17h2.5"/></g>
+      <g id="i-inspect" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l5.5 5.5"/><path d="M7 11.5l3-2.5 3 2.5V13H7z"/></g>
+      <g id="i-umbrella" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 18 0z"/><path d="M12 12v6.5a2 2 0 0 1-4 0"/></g>
+      <g id="i-eye" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></g>
+      <g id="i-pro" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5c0-4 3.1-7 7-7s7 3 7 7"/></g>
+      <g id="i-pick" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5C8 4 15 3.5 20 6.5"/><path d="M12 5L6 20.5"/></g>
+      <g id="i-pvsc" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.5h16"/><path d="M6 20.5V11h4v9.5M14 20.5V6.5h4v14"/></g>
+    </defs>
+  </svg>
+
+  <div class="head"><span>Map layer</span><span>What it shows</span><span>Confirm with</span></div>
+
+  <div class="r"><div class="layer"><svg class="ly" width="34" height="34" viewBox="0 0 34 34"><path d="M7 11l11-4 10 6-3 14-16 1z" stroke-dasharray="0"/></svg><b>Parcel outline</b></div>
+    <div class="shows">The mapped shape for this PID</div>
+    <div class="a"><span class="c rec"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-book"/></svg>Legal description</span><span class="c pro"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-survey"/></svg>Surveyor</span></div></div>
+
+  <div class="r"><div class="layer"><svg class="ly" width="34" height="34" viewBox="0 0 34 34"><rect x="6" y="6" width="22" height="22" rx="2"/><path d="M6 21l7-6 5 4 4-3 6 5"/><circle cx="21.5" cy="12" r="2"/></svg><b>Aerial photo</b></div>
+    <div class="shows">What was visible on the image date</div>
+    <div class="a"><span class="c you"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-eye"/></svg>Look from public land</span><span class="c pro"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-inspect"/></svg>Inspector <small>after lawful access</small></span></div></div>
+
+  <div class="r"><div class="layer"><svg class="ly" width="34" height="34" viewBox="0 0 34 34"><path d="M4 23c8-1 12-9 26-10" style="stroke:#8d96a1;stroke-width:6;stroke-linecap:butt"/><path d="M4 23c8-1 12-9 26-10" style="stroke:#fff;stroke-width:1.2;stroke-dasharray:2.5 2.5;stroke-linecap:butt"/></svg><b>Roads</b></div>
+    <div class="shows">Where public roads run near the parcel</div>
+    <div class="a"><span class="c rec"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-book"/></svg>Registry plans</span><span class="c pro"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-law"/></svg>Lawyer <small>legal access</small></span></div></div>
+
+  <div class="r"><div class="layer"><svg class="ly" width="34" height="34" viewBox="0 0 34 34"><path d="M5 12c4-3 6 3 10 0s6 3 10 0 3-1 4-1"/><path d="M5 18c4-3 6 3 10 0s6 3 10 0 3-1 4-1"/><path d="M5 24c4-3 6 3 10 0s6 3 10 0 3-1 4-1"/></svg><b>Water</b></div>
+    <div class="shows">Where a mapped watercourse or the coast meets the parcel</div>
+    <div class="a"><span class="c rec"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-plan"/></svg>Municipal planner <small>setbacks</small></span><span class="c pro"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-survey"/></svg>Surveyor</span></div></div>
+
+  <div class="r"><div class="layer"><svg class="ly" width="34" height="34" viewBox="0 0 34 34"><path d="M5 26h24"/><path d="M5 21h24" stroke-dasharray="3 2"/><path d="M5 16h24" stroke-dasharray="3 2"/><path d="M5 11h24" stroke-dasharray="1.5 2"/><path d="M22 26V14l4-3"/></svg><b>Flood and coast</b></div>
+    <div class="shows">River-flood studies where mapped;<br>coastal: today, 2050, 2100</div>
+    <div class="a"><span class="c rec"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-plan"/></svg>Municipal planner</span><span class="c pro"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-umbrella"/></svg>Insurer</span></div></div>
+
+  <div class="r"><div class="layer"><svg class="ly" width="34" height="34" viewBox="0 0 34 34"><path d="M4 12c8 3 18-3 26 0M4 18c8 3 18-3 26 0M4 24c8 3 18-3 26 0"/><path d="M15 6v22M12 6h6" stroke-width="2"/></svg><b>Geology and mines</b></div>
+    <div class="shows">Recorded mineral occurrences and mine openings <em>private-land points: up to ~50 m off</em></div>
+    <div class="a"><span class="c rec"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-pick"/></svg>Provincial mine records</span><span class="c pro"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-pro"/></svg>Professional review</span></div></div>
+
+  <div class="r"><div class="layer"><svg class="ly" width="34" height="34" viewBox="0 0 34 34"><path d="M7 9h10v9H7zM20 15h8v11h-8zM9 21h7v6H9z"/></svg><b>Buildings and assessment</b></div>
+    <div class="shows">Mapped building features and a dated PVSC assessment</div>
+    <div class="a"><span class="c rec"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-doc"/></svg>Municipal records</span><span class="c pro"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-inspect"/></svg>Inspector</span></div></div>
+
+  <div class="r"><div class="layer"><svg class="ly" width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="10"/><path d="M17 11v6l4 3"/><path d="M5 9l2 4 4-2"/></svg><b>Historical results</b></div>
+    <div class="shows">What happened at a past sale</div>
+    <div class="a"><span class="c rec"><svg width="17" height="17" viewBox="0 0 24 24"><use href="#i-doc"/></svg>Current municipal notice</span></div></div>
+
+  <div class="legend">
+    <span class="k"><i style="background:var(--blue-tint);box-shadow:inset 0 0 0 1px #c9d9ef"></i>Public record or authority</span>
+    <span class="k"><i style="background:var(--aqua-tint);box-shadow:inset 0 0 0 1px #bfe3d6"></i>Professional you engage</span>
+    <span class="k"><i style="background:var(--paper);box-shadow:inset 0 0 0 1px var(--rule)"></i>Your own check</span>
+  </div>
+
+  <div class="src">Layers as used in chapter 5 (NS Marks The Spot build d3114b5c, July 20, 2026), including NS Topographic Database buildings, PVSC assessment and the provincial Coastal Hazard Map. Mine-opening accuracy: Abandoned Mine Openings Database, Version 9 (2024).</div>
+</div></body></html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md
+     ENV-001 Environmental Registry: contaminated-site notices and closure records; spills and historic uses.
+     ENV-002 Well Logs Database: location, geology, construction, depth, yield; some positions estimated; verify the original log.
+     ENV-003 Environmental Records Management System: on-site sewage records retained seven years (refreshed 2026-07-20).
+     ENV-004 Coastal Hazard Map: search by community, address or PID; current, 2050 and 2100 scenarios (refreshed 2026-07-20).
+     ENV-005 Abandoned Mine Openings Database (DP ME 10, Version 9, 2024): known openings; private-land positions up to ~50 m off.
+     Schematic cross-section of a fictional parcel. -->
+<style>
+  .xs { display: block; }
+  .xs .nm { font-size: 12px; font-weight: 700; fill: var(--ink); }
+  .xs .sm { font-size: 11px; fill: var(--ink2); }
+  .xs .lead { stroke: var(--ink2); stroke-width: 1; fill: none; }
+  .key { margin-top: 8px; display: flex; flex-direction: column; }
+  .k { display: grid; grid-template-columns: 22px 236px 1fr 216px; column-gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--hair); }
+  .k:last-child { border-bottom: 1px solid var(--hair); }
+  .k.hd { border-top: 0; padding: 0 0 3px; }
+  .k.hd span { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); }
+  .k .n { width: 20px; height: 20px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 11px; font-weight: 700;
+          display: flex; align-items: center; justify-content: center; }
+  .k .rec b { display: block; font-size: 12.5px; line-height: 1.2; }
+  .k .rec span { display: block; font-size: 11px; color: var(--ink2); line-height: 1.25; }
+  .k .shows { font-size: 12px; line-height: 1.3; color: var(--ink); }
+  .k .lim { font-size: 11px; line-height: 1.3; color: var(--ink); background: var(--yellow-tint); border-left: 3px solid var(--yellow);
+            padding: 3px 7px; border-radius: 0 4px 4px 0; }
+</style></head>
+<body><div id="fig">
+  <svg class="xs" width="668" height="252" viewBox="0 0 668 252" aria-label="Cross-section of a fictional coastal parcel">
+    <defs>
+      <pattern id="rock" width="16" height="10" patternUnits="userSpaceOnUse">
+        <rect width="16" height="10" fill="#e6e1d5"/><path d="M1 3h5M9 8h5" stroke="#cbc3b1" stroke-width="1.1"/></pattern>
+      <clipPath id="land"><path d="M0 98 L420 100 L540 168 L668 190 V252 H0 Z"/></clipPath>
+    </defs>
+
+    <!-- sea (today's level y=154), drawn first so land covers its lower edge -->
+    <rect x="500" y="154" width="168" height="98" fill="var(--blue-tint)"/>
+    <!-- land: soil over rock -->
+    <g clip-path="url(#land)">
+      <rect x="0" y="0" width="668" height="252" fill="#f4eee0"/>
+      <path d="M0 176 C 120 168, 220 186, 330 180 S 520 196, 668 206 V252 H0 Z" fill="url(#rock)"/>
+    </g>
+    <path d="M0 98 L420 100 L540 168 L668 190" fill="none" stroke="var(--ink2)" stroke-width="1.6"/>
+    <line x1="515" y1="154" x2="668" y2="154" stroke="#5f8fcf" stroke-width="1.6"/>
+
+    <!-- coastal scenarios -->
+    <line x1="490.5" y1="140" x2="668" y2="140" stroke="var(--blue)" stroke-width="1.3" stroke-dasharray="5 3"/>
+    <line x1="458.8" y1="122" x2="668" y2="122" stroke="var(--blue)" stroke-width="1.3" stroke-dasharray="2 3"/>
+    <text class="sm" x="662" y="118" text-anchor="end">2100 worst case</text>
+    <text class="sm" x="662" y="136" text-anchor="end">2050</text>
+    <text class="sm" x="662" y="150" text-anchor="end">today</text>
+
+    <!-- 1 mine opening: shaft + drift, with position bracket -->
+    <path d="M40 98 V226 H172 V212 H54 V98 Z" fill="var(--ink2)"/>
+    <path d="M17 82 H77 M17 77 V87 M77 77 V87" stroke="var(--ink2)" stroke-width="1.2" fill="none"/>
+    <text class="sm" x="84" y="86">up to ~50 m</text>
+
+    <!-- 2 contaminated soil under an old shed -->
+    <rect x="150" y="80" width="28" height="18" fill="#fff" stroke="var(--ink2)" stroke-width="1.2"/>
+    <path d="M148 108 C 160 100, 200 102, 214 112 C 226 122, 218 146, 198 150 C 178 156, 150 150, 144 136 C 138 124, 140 114, 148 108 Z"
+          fill="var(--orange-tint)" stroke="var(--orange)" stroke-width="1.3" stroke-dasharray="3 2.5"/>
+
+    <!-- 3 well -->
+    <rect x="234" y="89" width="14" height="9" fill="#fff" stroke="var(--ink2)" stroke-width="1.2"/>
+    <path d="M238 98 V234 M244 98 V234" stroke="var(--ink2)" stroke-width="1.3"/>
+    <path d="M232 228 H250 V240 H232 Z" fill="var(--blue-tint)" stroke="#5f8fcf" stroke-width="1"/>
+
+    <!-- house -->
+    <path d="M262 98 V70 H326 V98" fill="#fff" stroke="var(--ink2)" stroke-width="1.3"/>
+    <path d="M256 71 L294 46 L332 71 Z" fill="#fff" stroke="var(--ink2)" stroke-width="1.3" stroke-linejoin="round"/>
+    <rect x="288" y="80" width="12" height="18" fill="none" stroke="var(--ink2)" stroke-width="1.1"/>
+
+    <!-- 4 on-site sewage: tank + field -->
+    <path d="M326 92 H346 V106" fill="none" stroke="var(--ink2)" stroke-width="1.2"/>
+    <rect x="338" y="106" width="30" height="16" rx="4" fill="#fff" stroke="var(--ink2)" stroke-width="1.2"/>
+    <path d="M368 114 H418" stroke="var(--ink2)" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <g fill="var(--ink2)"><circle cx="382" cy="114" r="1.6"/><circle cx="398" cy="114" r="1.6"/><circle cx="414" cy="114" r="1.6"/></g>
+
+    <!-- callouts -->
+    <g>
+      <path class="lead" d="M47 32 V75"/>
+      <circle cx="47" cy="22" r="10" fill="var(--navy)"/><text x="47" y="26" text-anchor="middle" style="font-size:11px;font-weight:700;fill:#fff">1</text>
+      <text class="nm" x="62" y="26">Mine opening</text>
+
+      <path class="lead" d="M184 32 V103"/>
+      <circle cx="184" cy="22" r="10" fill="var(--navy)"/><text x="184" y="26" text-anchor="middle" style="font-size:11px;font-weight:700;fill:#fff">2</text>
+      <text class="nm" x="199" y="26">Contaminated site</text>
+
+      <path class="lead" d="M241 66 V87"/>
+      <circle cx="241" cy="56" r="10" fill="var(--navy)"/><text x="241" y="60" text-anchor="middle" style="font-size:11px;font-weight:700;fill:#fff">3</text>
+      <text class="nm" x="226" y="60" text-anchor="end">Well</text>
+
+      <path class="lead" d="M353 66 V104"/>
+      <circle cx="353" cy="56" r="10" fill="var(--navy)"/><text x="353" y="60" text-anchor="middle" style="font-size:11px;font-weight:700;fill:#fff">4</text>
+      <text class="nm" x="368" y="60">On-site sewage</text>
+
+      <path class="lead" d="M520 32 V120"/>
+      <circle cx="520" cy="22" r="10" fill="var(--navy)"/><text x="520" y="26" text-anchor="middle" style="font-size:11px;font-weight:700;fill:#fff">5</text>
+      <text class="nm" x="535" y="26">Coast and flooding</text>
+    </g>
+  </svg>
+
+  <div class="key">
+    <div class="k hd"><span></span><span>Record and keeper</span><span>What it shows</span><span>Read it with</span></div>
+    <div class="k"><span class="n">1</span><div class="rec"><b>Abandoned mine openings</b><span>Abandoned Mine Openings Database, Nova Scotia Natural Resources (Version 9, 2024)</span></div>
+      <div class="shows">Known mine openings, mapped as points</div><div class="lim">Incomplete; private-land points can be up to ~50 m off</div></div>
+    <div class="k"><span class="n">2</span><div class="rec"><b>Contaminated sites</b><span>Environmental Registry, Nova Scotia Environment and Climate Change</span></div>
+      <div class="shows">Contaminated-site notices and closure records</div><div class="lim">Covers this search's terms and date only</div></div>
+    <div class="k"><span class="n">3</span><div class="rec"><b>Well logs</b><span>Well Logs Database, Province of Nova Scotia</span></div>
+      <div class="shows">Location, geology, construction, depth and yield</div><div class="lim">Some positions estimated; check the original log</div></div>
+    <div class="k"><span class="n">4</span><div class="rec"><b>On-site sewage records</b><span>Environmental Records Management System, Province of Nova Scotia</span></div>
+      <div class="shows">Records of on-site sewage systems</div><div class="lim">Kept seven years, then destroyed</div></div>
+    <div class="k"><span class="n">5</span><div class="rec"><b>Coastal flooding</b><span>Coastal Hazard Map, Province of Nova Scotia; search by address or PID</span></div>
+      <div class="shows">Flooding scenarios for today, 2050 and 2100</div><div class="lim">2100 worst case: highest high tide + 1&#8209;in&#8209;100&#8209;year surge + sea&#8209;level rise</div></div>
+  </div>
+
+  <div class="src">Schematic cross-section of a fictional parcel. Each record as named, refreshed July 20, 2026; mine-opening positional accuracy from the Version 9 metadata (2024).</div>
+</div></body></html>

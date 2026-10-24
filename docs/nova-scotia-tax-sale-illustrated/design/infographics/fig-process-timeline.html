@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Facts: research/evidence-notes.md LAW-001..LAW-007, LAW-009, LAW-012, LAW-018 (MGA ss. 133-155; Marketable Titles Act s. 6). -->
+<style>
+  .lane { border-radius: var(--r); padding: 10px 10px 12px; }
+  .lane.before { background: var(--blue-tint); }
+  .lane.after { background: var(--aqua-tint); }
+  .lane-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+  .lane-head .kicker { color: var(--ink); }
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .step { position: relative; background: var(--paper); border-radius: 5px; padding: 8px 8px 9px; min-height: 118px;
+          display: flex; flex-direction: column; gap: 4px; }
+  .before .step { border-top: 3px solid var(--blue); }
+  .after .step { border-top: 3px solid var(--aqua); }
+  .step:not(:last-child)::after { content: ""; position: absolute; right: -12px; top: 46px; width: 0; height: 0;
+          border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 8px solid var(--ink2); }
+  .step h4 { font-size: 13px; font-weight: 700; line-height: 1.2; }
+  .step p { font-size: 11px; line-height: 1.32; color: var(--ink2); }
+  .chip { margin-top: auto; align-self: flex-start; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+          background: var(--panel); color: var(--ink); white-space: nowrap; }
+  .sale { display: flex; align-items: center; gap: 14px; background: var(--navy); color: #fff; border-radius: var(--r);
+          padding: 10px 14px; margin: 10px 0; }
+  .sale .num { font-size: 20px; letter-spacing: .03em; white-space: nowrap; }
+  .sale p { font-size: 12px; color: #dfe6ee; line-height: 1.35; }
+  .branch { margin-top: 8px; display: flex; gap: 8px; align-items: flex-start; font-size: 11px; color: var(--ink); }
+  .branch .mark { flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--orange); color: #fff;
+          font-weight: 700; text-align: center; line-height: 18px; font-size: 12px; }
+</style></head>
+<body><div id="fig">
+
+  <div class="lane before">
+    <div class="lane-head"><span class="kicker">Before the sale</span><span class="small">the municipality's collection file</span></div>
+    <div class="steps">
+      <div class="step"><h4>Taxes go unpaid</h4><p>A first lien on the property, ahead of other claims, with no registration needed.</p><span class="chip">after June 30 of the next year</span></div>
+      <div class="step"><h4>Preliminary notice</h4><p>The owner is told what is owed and given time to pay.</p><span class="chip">at least 14 days</span></div>
+      <div class="step"><h4>Title search</h4><p>Finds the owner and every mortgage, lien or charge holder. A survey may be ordered.</p></div>
+      <div class="step"><h4>Notice of intent</h4><p>Served on the owner and interest holders: pay, or the property will be sold.</p><span class="chip">60 days</span></div>
+      <div class="step"><h4>Public notice</h4><p>Newspaper or municipal website. Bidders learn about the sale here.</p><span class="chip">at least 30 days</span></div>
+    </div>
+    <div class="small mt8">After three years of arrears, the property must be put up for sale, subject to the Act's exceptions and any council deferral.</div>
+  </div>
+
+  <div class="sale">
+    <span class="num">SALE DAY</span>
+    <p>Public auction by default; a tender with council's consent. The current municipal notice sets the date, place and terms.</p>
+  </div>
+
+  <div class="lane after">
+    <div class="lane-head"><span class="kicker">After the sale</span><span class="small">the purchaser's file</span></div>
+    <div class="steps">
+      <div class="step"><h4>Payment</h4><p>The price, or at least the recovery amount, at once. The balance follows.</p><span class="chip">3 business days</span></div>
+      <div class="step"><h4>Certificate of sale</h4><p>Issued once the price is paid, and registered at the land registry.</p></div>
+      <div class="step"><h4>Redemption window</h4><p>The owner or another interest holder may pay and take the property back.</p><span class="chip">6 months</span></div>
+      <div class="step"><h4>Tax deed</h4><p>The purchaser requests and pays for the deed, which is then registered.</p></div>
+      <div class="step"><h4>Challenge window</h4><p>A tax deed can generally be set aside only within this period after registration.</p><span class="chip">6 years</span></div>
+    </div>
+    <div class="branch"><span class="mark">!</span><span>Taxes more than six years in arrears at the time of sale: no six-month redemption right. The file can go straight to the deed request.</span></div>
+  </div>
+
+  <div class="src">Municipal Government Act ss. 133–155 (Halifax: Charter ss. 147–170); Marketable Titles Act s. 6. Consolidations checked July 2026.</div>
+</div></body></html>

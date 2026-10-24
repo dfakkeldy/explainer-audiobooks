@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Fictional composite: Meadow Line, chapter 13 (src/chapters/13-file-that-knows-its-limits.md, "Meadow Line" note).
+     Every value here is invented for teaching; PID and AAN are masked so they cannot match a real parcel, and the lien
+     number, municipality and sale date belong to no real event. Method: MAP-001 (NS Marks The Spot research record,
+     commit d3114b5c). Search limits: ENV-003 (sewage records kept seven years), ENV-004 (coastal map = scenarios),
+     ENV-005 (mine inventory incomplete, positions up to ~50 m off). Written maximum follows fig-written-maximum
+     (A value to me, B all-in costs, C reserve, D payment on the sale's clock). Label colours and icons copy
+     fig-evidence-labels. -->
+<style>
+  .sheet { border: 1.5px solid var(--ink); border-radius: var(--r); background: var(--paper); overflow: hidden; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; background: var(--panel);
+          padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+  .head .kicker { color: var(--ink); font-size: 12px; }
+  .cols, .row { display: grid; grid-template-columns: 1fr 126px 194px; column-gap: 8px; }
+  .cols { padding: 4px 8px 3px 72px; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted);
+          border-bottom: 1px solid var(--rule); }
+  .sec { display: grid; grid-template-columns: 72px 1fr; border-bottom: 1px solid var(--rule); }
+  .sec.last { border-bottom: 0; }
+  .sn { padding: 5px 0 5px 8px; font-size: 11px; font-weight: 700; letter-spacing: .02em; color: var(--ink); }
+  .row { padding: 4px 8px 4px 0; align-items: start; border-top: 1px solid var(--hair); }
+  .row:first-child { border-top: 0; }
+  .e { font-size: 12px; line-height: 1.3; }
+  .e .sub { display: block; font-size: 11px; color: var(--ink2); margin-top: 1px; }
+  .e .to { font-weight: 700; }
+  .s { font-size: 11px; line-height: 1.3; color: var(--ink2); padding-top: 1px; }
+  .s b { color: var(--ink); font-weight: 700; }
+  .lb { display: flex; align-items: flex-start; gap: 4px; font-size: 11px; font-weight: 700; line-height: 1.25;
+        padding: 1px 6px 1px 3px; border-radius: 4px; justify-self: start; }
+  .lb svg { flex: none; margin-top: 0; }
+  .ver { background: var(--blue-tint); box-shadow: inset 0 0 0 1.25px var(--blue); }
+  .clue { background: var(--yellow-tint); box-shadow: inset 0 0 0 1.25px var(--yellow); }
+  .vis { background: var(--paper); box-shadow: inset 0 0 0 1.25px var(--ink2); }
+  .pro { background: var(--aqua-tint); box-shadow: inset 0 0 0 1.25px var(--aqua); }
+  .stop { background: var(--orange-tint); box-shadow: inset 0 0 0 1.25px var(--orange); }
+  .ic { fill: none; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+  .lim { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 3px; margin-top: 1px; align-items: center; }
+  .lim .br { flex-basis: 100%; height: 0; margin: 0; }
+  .lim i { font-style: normal; font-size: 11px; color: var(--ink2); margin-right: 2px; }
+  .lim span { font-size: 11px; color: var(--ink2); background: var(--panel); border-radius: 3px; padding: 0 5px; white-space: nowrap; }
+  .sign { display: grid; grid-template-columns: 1fr 186px; gap: 12px; align-items: center; background: var(--navy); color: #fff;
+          padding: 8px 10px 9px; }
+  .sign .k { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #dfe6ee; }
+  .sign .num { font-size: 22px; line-height: 1.1; }
+  .sign p { font-size: 11px; color: #dfe6ee; line-height: 1.35; margin-top: 1px; }
+  .sign .by { border-left: 1px solid rgba(255,255,255,.3); padding-left: 12px; font-size: 12px; line-height: 1.35; }
+  .sign .by b { display: block; }
+</style></head>
+<body><div id="fig">
+  <!-- label icons (from fig-evidence-labels) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-ver" viewBox="0 0 24 24"><g class="ic" stroke="var(--blue)"><circle cx="12" cy="12" r="9"/><path d="M7.5 12.5l3 3 6-6.5"/></g></symbol>
+    <symbol id="i-clue" viewBox="0 0 24 24"><g class="ic" stroke="#b07e00"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><path d="M10 8.3a2.1 2.1 0 1 1 2.8 2c-.5.2-.8.6-.8 1.1v.4"/><circle cx="12" cy="14.6" r=".5"/></g></symbol>
+    <symbol id="i-vis" viewBox="0 0 24 24"><g class="ic" stroke="var(--ink2)"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+    <symbol id="i-pro" viewBox="0 0 24 24"><g class="ic" stroke="var(--aqua)"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20.5c0-4 3.1-7 7-7s7 3 7 7"/></g></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><g class="ic" stroke="var(--orange)"><path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z"/><path d="M8 12h8"/></g></symbol>
+  </svg>
+
+  <div class="sheet">
+    <div class="head"><span class="kicker">Research file · Meadow Line</span><span class="small">fictional composite · vacant land · all dates 2026</span></div>
+    <div class="cols"><span>Entry</span><span>Source · date</span><span>Label</span></div>
+
+            <div class="sec"><div class="sn">Event</div><div>
+      <div class="row"><div class="e">Auction Tue Sep 22 · lien 63 · redeemable</div><div class="s">Sale notice · <b>Sep 8</b></div><span class="lb ver"><svg width="13" height="13"><use href="#i-ver"/></svg>Verified record</span></div>
+      <div class="row"><div class="e">Recovery $4,286.40: summary and detail agree</div><div class="s">Both sheets · <b>Sep 8</b></div><span class="lb ver"><svg width="13" height="13"><use href="#i-ver"/></svg>Verified record</span></div>
+      <div class="row"><div class="e">Still listed on the live notice</div><div class="s">Municipal page · <b>Sep 21</b></div><span class="lb ver"><svg width="13" height="13"><use href="#i-ver"/></svg>Verified record</span></div>
+    </div></div>
+
+    <div class="sec"><div class="sn">Parcel</div><div>
+      <div class="row"><div class="e">PID •••••417 selects the described land</div><div class="s">Notice, map · <b>Sep 9</b></div><span class="lb ver"><svg width="13" height="13"><use href="#i-ver"/></svg>Verified record</span></div>
+      <div class="row"><div class="e">AAN •••••208 opens the assessment account</div><div class="s">PVSC search · <b>Sep 9</b></div><span class="lb ver"><svg width="13" height="13"><use href="#i-ver"/></svg>Verified record</span></div>
+      <div class="row"><div class="e">Register and legal description <span class="to">→ lawyer</span></div><div class="s">Detail sheet · <b>Sep 10</b></div><span class="lb pro"><svg width="13" height="13"><use href="#i-pro"/></svg>Professional verification needed</span></div>
+    </div></div>
+
+    <div class="sec"><div class="sn">Access</div><div>
+      <div class="row"><div class="e">Beside a mapped public road; gentle contours</div><div class="s">Map layers · <b>Sep 9</b></div><span class="lb clue"><svg width="13" height="13"><use href="#i-clue"/></svg>Screening clue</span></div>
+      <div class="row"><div class="e">Open ground appears to reach the road edge</div><div class="s">Aerial image · <b>Sep 9</b></div><span class="lb vis"><svg width="13" height="13"><use href="#i-vis"/></svg>Visual interpretation</span></div>
+      <div class="row"><div class="e">Frontage on that road <span class="to">→ lawyer</span>, due Sep 21</div><div class="s">Asked · <b>Sep 10</b></div><span class="lb stop"><svg width="13" height="13"><use href="#i-stop"/></svg>No-go until resolved</span></div>
+      <div class="row"><div class="e">Boundary and road <span class="to">→ surveyor</span>, if needed</div><div class="s">Drafted · <b>Sep 10</b></div><span class="lb pro"><svg width="13" height="13"><use href="#i-pro"/></svg>Professional verification needed</span></div>
+    </div></div>
+
+    <div class="sec"><div class="sn">Planning</div><div>
+      <div class="row"><div class="e">Zoning response covers the vacant-land use</div><div class="s">Planning office · <b>Sep 14</b></div><span class="lb ver"><svg width="13" height="13"><use href="#i-ver"/></svg>Verified record</span></div>
+      <div class="row"><div class="e">Three written questions <span class="to">→ planning staff</span><span class="sub">Permits, servicing and approval are separate steps</span></div><div class="s">Sent · <b>Sep 15</b></div><span class="lb pro"><svg width="13" height="13"><use href="#i-pro"/></svg>Professional verification needed</span></div>
+    </div></div>
+
+    <div class="sec"><div class="sn">Screening</div><div>
+      <div class="row"><div class="e">Five searches: no mapped intersection</div><div class="s">Provincial data · <b>Sep 9</b></div><span class="lb clue"><svg width="13" height="13"><use href="#i-clue"/></svg>Screening clue</span><div class="lim"><i>each with its limits noted:</i><span>environmental registry</span><span>well logs</span><span>sewage: 7-year records</span><i class="br"></i><span>coastal: scenario map</span><span>mine openings: incomplete list</span></div></div>
+      <div class="row"><div class="e">Condition, well, septic <span class="to">→ site professionals</span><span class="sub">after lawful access</span></div><div class="s">Scope noted · <b>Sep 15</b></div><span class="lb pro"><svg width="13" height="13"><use href="#i-pro"/></svg>Professional verification needed</span></div>
+    </div></div>
+
+    <div class="sec last"><div class="sn">Decision</div><div>
+      <div class="row"><div class="e">Payment: authority, funds, balance route</div><div class="s">Bank letter · <b>Sep 17</b></div><span class="lb ver"><svg width="13" height="13"><use href="#i-ver"/></svg>Verified record</span></div>
+      <div class="row"><div class="e">Go if the frontage answer is acceptable</div><div class="s">This file · <b>Sep 18</b></div><span class="lb stop"><svg width="13" height="13"><use href="#i-stop"/></svg>No-go until resolved</span></div>
+    </div></div>
+
+    <div class="sign">
+      <div><div class="k">Written maximum · from the all-in cost file, Sep 17</div>
+        <div class="num">$9,500</div>
+        <p>The lower of A − B − C ($21,000 − $7,000 − $4,500) and D ($12,000)</p>
+        <p>B: tax advice, professional, carrying and site costs · C: reserve for priceable unknowns</p></div>
+      <div class="by"><b>The bidder decides</b>Signed and dated Sep 18, before the sale</div>
+    </div>
+  </div>
+
+  <div class="src">Identifiers masked. Fields follow the book's research method and the NS Marks The Spot parcel record (source commit d3114b5c, checked July 20, 2026).</div>
+</div></body></html>

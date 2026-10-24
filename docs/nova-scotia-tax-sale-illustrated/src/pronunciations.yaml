@@ -1,0 +1,9 @@
+# Pronunciations for the EPUB only (the PDF never changes). Evidence for each
+# choice is in pronunciation-plan.md. Nobody has listened to this markup yet.
+
+lang: en-CA
+entries:
+  - word: Pictou
+    ipa: ˈpɪktoʊ
+    lexicon: true
+    inline: false

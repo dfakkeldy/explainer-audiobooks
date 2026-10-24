@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="kit.css">
+<!-- Data: NS Marks The Spot, SharedData/historicalTaxSales.json at commit 43e40b0b8
+     (git -C ns-marks-the-spot show 43e40b0b8:SharedData/historicalTaxSales.json).
+     Rows: records with outcome == "sold" and both advertisedAmountCents and winningBidCents;
+     ratio = winningBidCents / advertisedAmountCents, rounded to 3 decimals.
+     Only [municipality (event shortMunicipality), sale year, ratio] are embedded: no addresses, PIDs or account numbers.
+     277 rows from 25 events. Facts: research/evidence-notes.md DATA-001, DATA-004, MAP-007. -->
+<style>
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; font-size: 11px; color: var(--ink2); margin: 0 0 6px; }
+  .legend svg { vertical-align: -2px; margin-right: 5px; }
+  #strip { display: block; }
+  #strip .name { font-size: 12px; font-weight: 700; }
+  #strip .sub { font-size: 11px; fill: var(--ink2); }
+  #strip .tick { font-size: 11px; fill: var(--ink2); }
+  #strip .head { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; fill: var(--ink2); }
+  #strip .med { font-size: 12px; font-weight: 700; }
+  #strip .note { font-size: 11px; fill: var(--ink); }
+</style></head>
+<body><div id="fig">
+  <div class="legend">
+    <span><svg width="11" height="11"><circle cx="5.5" cy="5.5" r="3.6" fill="#159f78" stroke="#fff" stroke-width="2"/></svg>One sale: winning bid ÷ advertised amount</span>
+    <span><svg width="6" height="14"><rect x="1.5" y="0" width="3" height="14" rx="1" fill="#14273a"/></svg>Median for the municipality</span>
+    <span>Rows ordered by number of sales</span>
+  </div>
+  <svg id="strip" width="668" height="400" viewBox="0 0 668 400" aria-label="Dot plot of 277 winning-bid ratios by municipality"></svg>
+  <div class="src">Official municipal result documents from 25 sales events, March 2021 to September 2026, compiled in NS Marks The Spot (historicalTaxSales.json, commit 43e40b0b8; retrieved July–October 2026). Sold rows with both amounts. The advertised amount is each event's published minimum or opening bid, total owing, or taxes, interest and charges.</div>
+</div>
+<script>
+  // [municipality, sale year, winning bid / advertised amount]
+  const D = [
+    ["CBRM",2025,1.0],["CBRM",2025,1.0],["CBRM",2025,1.0],["CBRM",2025,1.0],["CBRM",2025,1.0],["CBRM",2025,1.0],
+    ["CBRM",2025,1.0],["CBRM",2025,1.0],["CBRM",2025,1.0],["CBRM",2025,1.0],["CBRM",2025,1.421],
+    ["CBRM",2025,1.647],["CBRM",2025,1.833],["CBRM",2025,2.0],["CBRM",2025,2.0],["CBRM",2025,2.09],
+    ["CBRM",2025,2.167],["CBRM",2025,2.382],["CBRM",2025,2.469],["CBRM",2025,2.5],["CBRM",2025,2.5],
+    ["CBRM",2025,2.693],["CBRM",2025,2.904],["CBRM",2025,3.167],["CBRM",2025,4.333],["CBRM",2025,5.0],
+    ["CBRM",2025,5.0],["CBRM",2025,6.0],["CBRM",2025,6.313],["CBRM",2025,6.5],["CBRM",2025,6.667],
+    ["CBRM",2025,6.848],["CBRM",2025,7.167],["CBRM",2025,7.5],["CBRM",2025,8.5],["CBRM",2025,8.939],
+    ["CBRM",2025,9.167],["CBRM",2025,9.333],["CBRM",2025,9.333],["CBRM",2025,9.5],["CBRM",2025,9.833],
+    ["CBRM",2025,10.833],["CBRM",2025,11.833],["CBRM",2025,12.667],["CBRM",2025,12.833],["CBRM",2025,13.333],
+    ["CBRM",2025,23.333],["CBRM",2025,26.667],["CBRM",2025,30.0],["CBRM",2025,61.833],["Clare",2026,2.246],
+    ["Clare",2026,2.399],["Clare",2026,2.466],["Clare",2026,2.931],["Clare",2026,8.71],["Clare",2026,9.651],
+    ["Clare",2026,14.518],["Clare",2026,14.769],["Clare",2026,17.722],["Clare",2026,20.908],["Clare",2026,23.049],
+    ["Clare",2026,64.103],["Cumberland",2025,1.0],["Cumberland",2025,1.0],["Cumberland",2025,1.0],
+    ["Cumberland",2025,1.055],["Cumberland",2025,1.081],["Cumberland",2025,1.273],["Cumberland",2025,1.361],
+    ["Cumberland",2025,2.386],["Cumberland",2025,2.779],["Cumberland",2025,3.288],["Cumberland",2025,3.555],
+    ["Cumberland",2025,4.87],["Cumberland",2025,5.877],["Cumberland",2025,8.419],["Cumberland",2025,8.894],
+    ["Cumberland",2025,20.977],["Cumberland",2025,26.764],["Cumberland",2025,27.982],["Cumberland",2025,38.89],
+    ["Cumberland",2026,1.0],["Cumberland",2026,1.137],["Cumberland",2026,1.322],["Cumberland",2026,2.263],
+    ["Cumberland",2026,6.274],["Cumberland",2026,8.845],["Cumberland",2026,13.195],["Cumberland",2026,15.452],
+    ["Halifax",2022,1.468],["Halifax",2022,1.584],["Halifax",2022,4.368],["Halifax",2022,5.19],
+    ["Halifax",2022,6.582],["Halifax",2022,7.119],["Halifax",2022,15.441],["Halifax",2022,16.053],
+    ["Halifax",2022,36.571],["Halifax",2023,1.003],["Halifax",2023,1.101],["Halifax",2023,1.263],
+    ["Halifax",2023,1.699],["Halifax",2023,3.741],["Halifax",2023,5.757],["Halifax",2023,7.679],
+    ["Halifax",2023,17.564],["Halifax",2023,24.645],["Halifax",2023,28.442],["Halifax",2024,1.011],
+    ["Halifax",2024,1.259],["Halifax",2024,2.078],["Halifax",2024,2.309],["Halifax",2024,2.971],
+    ["Halifax",2024,3.251],["Halifax",2024,3.432],["Halifax",2024,3.805],["Halifax",2024,5.064],
+    ["Halifax",2024,5.078],["Halifax",2024,5.83],["Halifax",2024,11.146],["Halifax",2024,12.231],
+    ["Halifax",2024,12.33],["Halifax",2024,14.838],["Halifax",2024,15.695],["Halifax",2024,16.83],
+    ["Halifax",2024,18.831],["Halifax",2024,23.997],["Halifax",2024,32.488],["Halifax",2024,47.128],
+    ["Halifax",2025,1.011],["Halifax",2025,1.066],["Halifax",2025,1.302],["Halifax",2025,1.421],
+    ["Halifax",2025,1.51],["Halifax",2025,1.587],["Halifax",2025,1.617],["Halifax",2025,2.046],
+    ["Halifax",2025,2.112],["Halifax",2025,2.244],["Halifax",2025,2.278],["Halifax",2025,2.497],
+    ["Halifax",2025,2.711],["Halifax",2025,3.1],["Halifax",2025,3.655],["Halifax",2025,3.734],
+    ["Halifax",2025,3.79],["Halifax",2025,3.859],["Halifax",2025,3.859],["Halifax",2025,3.864],
+    ["Halifax",2025,4.439],["Halifax",2025,4.517],["Halifax",2025,4.736],["Halifax",2025,5.04],
+    ["Halifax",2025,5.677],["Halifax",2025,6.668],["Halifax",2025,6.793],["Halifax",2025,7.314],
+    ["Halifax",2025,7.889],["Halifax",2025,8.015],["Halifax",2025,8.051],["Halifax",2025,8.855],
+    ["Halifax",2025,9.038],["Halifax",2025,9.265],["Halifax",2025,9.785],["Halifax",2025,9.826],
+    ["Halifax",2025,10.721],["Halifax",2025,12.147],["Halifax",2025,15.71],["Halifax",2025,16.218],
+    ["Halifax",2025,25.08],["Halifax",2025,26.52],["Halifax",2026,2.261],["Halifax",2026,7.528],
+    ["Halifax",2026,23.328],["Lunenburg District",2021,1.026],["Lunenburg District",2021,1.261],
+    ["Lunenburg District",2021,1.312],["Lunenburg District",2021,1.338],["Lunenburg District",2021,1.399],
+    ["Lunenburg District",2021,1.953],["Lunenburg District",2021,2.07],["Lunenburg District",2021,2.786],
+    ["Lunenburg District",2021,2.838],["Lunenburg District",2021,2.929],["Lunenburg District",2021,4.426],
+    ["Lunenburg District",2021,8.755],["Lunenburg District",2021,13.676],["Lunenburg District",2021,79.03],
+    ["Lunenburg District",2021,80.346],["Lunenburg District",2021,97.84],["Lunenburg District",2022,1.011],
+    ["Lunenburg District",2022,1.086],["Lunenburg District",2022,1.106],["Lunenburg District",2022,1.187],
+    ["Lunenburg District",2022,1.58],["Lunenburg District",2022,1.813],["Lunenburg District",2022,2.06],
+    ["Lunenburg District",2022,2.27],["Lunenburg District",2022,3.09],["Lunenburg District",2022,8.628],
+    ["Lunenburg District",2022,8.869],["Lunenburg District",2022,10.952],["Lunenburg District",2022,13.048],
+    ["Lunenburg District",2022,13.523],["Lunenburg District",2022,71.049],["Lunenburg District",2022,74.391],
+    ["Lunenburg District",2023,1.03],["Lunenburg District",2023,1.165],["Lunenburg District",2023,2.408],
+    ["Lunenburg District",2023,2.586],["Lunenburg District",2023,4.316],["Lunenburg District",2023,6.681],
+    ["Lunenburg District",2023,8.277],["Lunenburg District",2024,1.225],["Lunenburg District",2024,1.597],
+    ["Lunenburg District",2024,2.774],["Lunenburg District",2024,3.216],["Lunenburg District",2024,4.636],
+    ["Lunenburg District",2024,6.573],["Lunenburg District",2024,9.08],["Lunenburg District",2024,12.769],
+    ["Lunenburg District",2024,12.995],["Lunenburg District",2024,15.025],["Lunenburg District",2024,28.598],
+    ["Lunenburg District",2025,2.532],["Lunenburg District",2025,2.876],["Lunenburg District",2025,3.1],
+    ["Lunenburg District",2025,4.094],["Lunenburg District",2025,4.582],["Lunenburg District",2025,6.977],
+    ["Lunenburg District",2025,7.603],["Lunenburg District",2025,8.598],["Lunenburg District",2025,9.497],
+    ["Lunenburg District",2025,11.797],["Lunenburg District",2025,12.719],["Lunenburg District",2026,2.633],
+    ["Lunenburg District",2026,2.675],["Lunenburg District",2026,3.081],["Lunenburg District",2026,3.529],
+    ["Lunenburg District",2026,5.112],["Lunenburg District",2026,6.677],["Lunenburg District",2026,11.23],
+    ["Lunenburg District",2026,95.292],["Pictou",2026,1.25],["Pictou",2026,2.714],["Pictou",2026,2.721],
+    ["Pictou",2026,2.917],["Pictou",2026,3.333],["Pictou",2026,4.292],["Pictou",2026,6.25],["Pictou",2026,7.083],
+    ["Pictou",2026,7.28],["Pictou",2026,8.375],["Pictou",2026,8.417],["Pictou",2026,8.667],["Pictou",2026,9.259],
+    ["Pictou",2026,10.03],["Pictou",2026,10.833],["Pictou",2026,12.5],["Pictou",2026,12.5],["Pictou",2026,18.438],
+    ["Queens",2026,1.055],["Queens",2026,8.598],["Queens",2026,9.344],["Queens",2026,9.751],
+    ["Richmond",2026,1.329],["Richmond",2026,6.283],["Richmond",2026,6.591],["Victoria County",2025,2.539],
+    ["Victoria County",2025,3.431],["Victoria County",2025,7.564],["Victoria County",2026,1.0],
+    ["Victoria County",2026,1.0],["Victoria County",2026,1.168],["Victoria County",2026,1.698],
+    ["Victoria County",2026,7.902],["Victoria County",2026,44.454]
+  ];
+
+  const NAMES = {"Halifax": "Halifax (HRM)", "Lunenburg District": "Lunenburg (district)", "CBRM": "Cape Breton (CBRM)",
+    "Cumberland": "Cumberland County", "Pictou": "Pictou County", "Clare": "Clare", "Victoria County": "Victoria County",
+    "Queens": "Region of Queens", "Richmond": "Richmond County"};
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('strip');
+  const W = 668, X0 = 172, X1 = 600, MEDX = 664;
+  const R = 3.6, GAP = 8.4;                   // dot radius; minimum centre-to-centre distance
+  const x = r => X0 + (X1 - X0) * Math.log10(r) / 2;   // 1x .. 100x
+  const el = (tag, attrs, text) => { const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+  const median = a => { const s = [...a].sort((p, q) => p - q), n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; };
+
+  // group by municipality
+  const groups = {};
+  for (const [m, y, r] of D) (groups[m] = groups[m] || {years: new Set(), r: []}), groups[m].years.add(y), groups[m].r.push(r);
+  const order = Object.keys(groups).sort((a, b) => groups[b].r.length - groups[a].r.length || median(groups[b].r) - median(groups[a].r));
+
+  // beeswarm: each dot takes the free vertical offset nearest the row's centre line
+  function swarm(rs) {
+    const placed = [];
+    for (const r of [...rs].sort((p, q) => p - q)) {
+      const px = x(r);
+      const near = placed.filter(p => Math.abs(p.x - px) < GAP);
+      let y = 0;
+      for (let k = 0; k < 400; k++) {
+        const c = (k % 2 ? 1 : -1) * Math.ceil(k / 2) * 0.5;
+        if (near.every(p => (p.x - px) ** 2 + (p.y - c) ** 2 >= GAP * GAP)) { y = c; break; }
+      }
+      placed.push({x: px, y, r});
+    }
+    return placed;
+  }
+
+  const TOP = 22, PAD = 9, MINH = 34;
+  let yCursor = TOP;
+  const rows = order.map(m => {
+    const pts = swarm(groups[m].r);
+    const lo = Math.min(...pts.map(p => p.y)), hi = Math.max(...pts.map(p => p.y));
+    const h = Math.max(MINH, hi - lo + 2 * R + 2 * PAD);
+    const row = {m, pts, lo, hi, top: yCursor, h, cy: yCursor + h / 2 - (lo + hi) / 2};
+    yCursor += h;
+    return row;
+  });
+  const BOTTOM = yCursor;
+  const H = BOTTOM + 44;
+  svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  // column heads
+  el('text', {x: MEDX, y: 11, class: 'head', 'text-anchor': 'end'}, 'Median');
+
+  // grid and axis
+  const TICKS = [1, 2, 5, 10, 20, 50, 100];
+  for (const t of TICKS) {
+    el('line', {x1: x(t), x2: x(t), y1: TOP, y2: BOTTOM, stroke: t === 1 ? '#44505e' : '#e7e3db', 'stroke-width': 1});
+    el('text', {x: x(t), y: BOTTOM + 15, class: 'tick', 'text-anchor': 'middle'}, t + '×');
+    el('text', {x: x(t), y: TOP - 4, class: 'tick', 'text-anchor': 'middle'}, t + '×');
+  }
+  el('text', {x: (X0 + X1) / 2, y: BOTTOM + 34, class: 'tick', 'text-anchor': 'middle', style: 'fill:#14273a'},
+     'Winning bid ÷ advertised amount (log scale; 1× = sold for the advertised amount)');
+
+  for (const [i, row] of rows.entries()) {
+    if (i) el('line', {x1: 0, x2: W, y1: row.top, y2: row.top, stroke: '#e7e3db', 'stroke-width': 1});
+    const g = groups[row.m];
+    const ys = [...g.years].sort();
+    const yrs = ys.length === 1 ? ys[0] : `${ys[0]}–${String(ys[ys.length - 1]).slice(2)}`;
+    const mid = row.top + row.h / 2;
+    el('text', {x: 0, y: mid - 2, class: 'name'}, NAMES[row.m] || row.m);
+    el('text', {x: 0, y: mid + 12, class: 'sub'}, `${yrs} · n = ${g.r.length}`);
+    for (const p of row.pts) el('circle', {cx: p.x, cy: row.cy + p.y, r: R, fill: '#159f78', stroke: '#fff', 'stroke-width': 2});
+    const med = median(g.r), mx = x(med);
+    const t0 = row.cy + row.lo - R - 3, t1 = row.cy + row.hi + R + 3;
+    el('line', {x1: mx, x2: mx, y1: t0, y2: t1, stroke: '#fff', 'stroke-width': 5, 'stroke-linecap': 'round'});
+    el('line', {x1: mx, x2: mx, y1: t0, y2: t1, stroke: '#14273a', 'stroke-width': 3, 'stroke-linecap': 'round'});
+    el('text', {x: MEDX, y: mid + 4, class: 'med', 'text-anchor': 'end'}, med.toFixed(1) + '×');
+    // direct label on the largest pile at exactly 1x
+    const ones = g.r.filter(r => r === 1).length;
+    if (ones >= 5) el('text', {x: x(1) + 8, y: row.top + 14, class: 'note'}, `${ones} at exactly 1×`);
+  }
+</script>
+</body></html>
