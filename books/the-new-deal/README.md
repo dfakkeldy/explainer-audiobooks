@@ -5,7 +5,7 @@
 - **Title:** The New Deal
 - **Subtitle:** Canada Post, CUPW, and What It Means for Rural Mail
 - **Slug:** the-new-deal
-- **Requester/topic:** Dan Fakkeldy — Canada Post's new collective agreement with CUPW, implications for the Port Hood Post Office, and especially RSMCs and OCREs
+- **Topic:** Canada Post's new collective agreement with CUPW and what it means for small rural post offices, especially RSMCs and OCREs
 - **Public-safe/private/sensitive status:** Public-safe. Educational overview of a public collective agreement and public restructuring plan. Not workplace advice.
 - **Permission-to-publish status:** Approved by Dan for public release on 2026-07-11.
 - **Length mode:** Standard beta book (~2 hours, 16,471 words)
