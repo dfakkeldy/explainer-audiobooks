@@ -666,6 +666,24 @@ if [[ -e "$SUCCESS_RECEIPT" ]]; then
   exit 65
 fi
 
+# Every source edit selects a new RUN_ID and WORK, so the synthesis cache sits
+# directly under RUN_ROOT to survive it. Renderers without the flag render as
+# before. Cache keys cover the renderer build and the frozen plan, so nothing
+# here enters RUN_ID, a receipt or resume validation. SELECTION_RESOURCE already
+# serializes every render of this book, so the cache needs no lease of its own.
+# This check stays above reset-state, which deletes WORK and DB.
+SYNTHESIS_CACHE=
+SYNTHESIS_RENDER_LOG=
+narrate_help=$(ECHO_RESOURCE_DIR="$ECHO_RESOURCE_DIR" "$CLI" narrate --help 2>/dev/null || true)
+if [[ "$narrate_help" == *--synthesis-cache* ]]; then
+  SYNTHESIS_CACHE="$RUN_ROOT/echo-synthesis-cache"
+  if [[ -L "$SYNTHESIS_CACHE" \
+    || ( -e "$SYNTHESIS_CACHE" && ! -d "$SYNTHESIS_CACHE" ) ]]; then
+    printf 'synthesis cache directory is unsafe: %s\n' "$SYNTHESIS_CACHE" >&2
+    exit 65
+  fi
+fi
+
 verify_locked_inputs
 
 state_command=(
@@ -759,13 +777,48 @@ if [[ -n "$MAX_CHAPTERS" ]]; then
   narrate_command+=(--max-chapters "$MAX_CHAPTERS")
 fi
 
-"${narrate_command[@]}" &
+if [[ -n "$SYNTHESIS_CACHE" ]]; then
+  narrate_command+=(--synthesis-cache "$SYNTHESIS_CACHE")
+  SYNTHESIS_RENDER_LOG="$RUN_ROOT/research/echo-synthesis-render-$RUN_ID-$ATTEMPT_ID.txt"
+fi
+
+# The forecast is evidence, not a gate: the render below keeps every existing
+# check. A resume skips it because this run's own chapters are already cached.
+if [[ -n "$SYNTHESIS_CACHE" ]] && (( ! RESUME )); then
+  SYNTHESIS_DRY_RUN_LOG="$RUN_ROOT/research/echo-synthesis-dry-run-$RUN_ID-$ATTEMPT_ID.txt"
+  "${narrate_command[@]}" --dry-run >"$SYNTHESIS_DRY_RUN_LOG" &
+  NARRATE_PID=$!
+  set +e
+  wait "$NARRATE_PID"
+  dry_run_status=$?
+  set -e
+  NARRATE_PID=
+  if (( dry_run_status == 0 )); then
+    /usr/bin/grep '^DRY_RUN ' "$SYNTHESIS_DRY_RUN_LOG" || true
+  else
+    printf 'synthesis dry run exited %s; rendering without a forecast\n' \
+      "$dry_run_status" >&2
+  fi
+fi
+
+# Echo writes progress to stderr and its summary lines to stdout, so only the
+# summary waits for the replay. A pipe here would make NARRATE_PID the wrong
+# process for signal forwarding.
+if [[ -n "$SYNTHESIS_RENDER_LOG" ]]; then
+  "${narrate_command[@]}" >"$SYNTHESIS_RENDER_LOG" &
+else
+  "${narrate_command[@]}" &
+fi
 NARRATE_PID=$!
 set +e
 wait "$NARRATE_PID"
 narrate_status=$?
 set -e
 NARRATE_PID=
+if [[ -n "$SYNTHESIS_RENDER_LOG" ]]; then
+  # A replay failure must not discard the finished render below.
+  cat -- "$SYNTHESIS_RENDER_LOG" || true
+fi
 if ! verify_locked_inputs; then
   exit 65
 fi

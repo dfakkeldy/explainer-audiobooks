@@ -524,6 +524,50 @@ pronunciation audit, success receipt, or current-accepted selector. Partial
 capture audio is listening evidence, not a deliverable package. Resume later
 without `--max-chapters` only once the book is ready to complete.
 
+## Incremental re-render after a small edit
+
+When the installed renderer's `narrate --help` lists `--synthesis-cache`, the
+wrapper passes `--synthesis-cache "$RUN_ROOT/echo-synthesis-cache"`. An older
+renderer renders as before, with no cache. There is one cache per book, not one
+per run. A source edit still selects a new `RUN_ID`, `WORK`, and `DB`, so the
+cache must stay outside `WORK` to survive the edit. The edited book is a fresh
+run that replays every unchanged chunk. Never use `--resume` after an edit.
+
+Each cache attempt records its evidence in `$RUN_ROOT/research`:
+
+| File | Content |
+| --- | --- |
+| `echo-synthesis-dry-run-$RUN_ID-$ATTEMPT_ID.txt` | The forecast: one `RENDER` line per block to synthesize, then the `DRY_RUN` summary. A `--resume` attempt has none. |
+| `echo-synthesis-render-$RUN_ID-$ATTEMPT_ID.txt` | Echo's stdout for the render, including the `SYNTHESIS_CACHE <reused> reused, <synthesized> synthesized` line. |
+
+The wrapper also prints the `DRY_RUN` line before the render and replays the
+render's stdout after it. Read the `RENDER` lines after an edit: a block you did
+not expect to change means the edit reached further than you meant. The forecast
+is evidence, not a gate, so a failed dry run only prints a warning. These files
+quote book text, so keep them private with the rest of `research`.
+
+The cache changes no `RUN_ID`, receipt, or resume check. Cache keys include the
+SHA-256 of `echo-cli`, so a new renderer install reuses nothing, by design. Echo
+checks each entry on read and synthesizes a corrupt entry again.
+
+One failure stays in the cache. If the duration head fails to load during a
+render, Echo stores those chunks without word timings, and the cache key does not
+record that. Later renders then replay audio with no word timings. If a render
+logs that failure or a book loses its word-level read-along, delete the cache and
+render again.
+
+Do not compare M4B bytes to prove that nothing changed. AVFoundation stamps
+container metadata, so the bytes differ between runs even for identical audio.
+Untouched chapters decode to sample-identical PCM. Verify with the normal
+`verify-sidecar`, audit, and listening gates.
+
+The cache holds raw PCM, about 5.8 MB per minute of speech, or about 0.5 GB for
+an 80-minute book. Each edit and each renderer build adds entries. It lives under
+the gitignored `.build` tree. Delete `$RUN_ROOT/echo-synthesis-cache` when the
+book's final render is accepted and no render of the book is running. The wrapper
+does not pass `--prune-synthesis-cache`, because that flag needs a whole-book
+render in one process and `--max-chapters` runs do not qualify.
+
 ## Alignment sidecar
 
 Every render publishes `<slug>.alignment.json` beside `<slug>.m4b`,

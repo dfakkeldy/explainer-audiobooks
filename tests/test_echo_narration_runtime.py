@@ -555,7 +555,7 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             "if [[ ${1:-} == --version ]]; then\n"
             f"  echo 'ONNX rv{render_version} (Release)'\n"
             "elif [[ ${1:-} == narrate && ${2:-} == --help ]]; then\n"
-            f"  echo '{help_text}'\n"
+            f"  echo '{help_text}' \"${{FAKE_NARRATE_HELP_EXTRA:-}}\"\n"
             "elif [[ ${1:-} == resolve-voice-plan && ${2:-} == --help ]]; then\n"
             "  echo 'resolve-voice-plan --epub --voice-plan'\n"
             "elif [[ ${1:-} == export-blocks && ${2:-} == --help ]]; then\n"
@@ -624,6 +624,18 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
             '    printf \'ENV=RUN_ID=%s INPUT_RECEIPT=%s STATE_RECEIPT=%s ARTIFACT_ROOT=%s VOICE=%s\\n\' '
             '"${RUN_ID-<unset>}" "${ECHO_RENDER_INPUT_RECEIPT-<unset>}" '
             '"${STATE_RECEIPT-<unset>}" "${ARTIFACT_ROOT-<unset>}" "${VOICE-<unset>}" >>"$FAKE_NARRATE_LOG"\n'
+            "  fi\n"
+            "  if [[ \" $* \" == *' --dry-run '* ]]; then\n"
+            "    echo 'RENDER ch1 s2-b3 [am_michael] 1/1 chunk(s): fixture text'\n"
+            "    echo 'DRY_RUN 1 of 3 blocks to render (1 of 4 chunks); chapters with changes: 1'\n"
+            '    [[ -z ${FAKE_DRY_RUN_READY:-} ]] || touch "$FAKE_DRY_RUN_READY"\n'
+            "    if [[ -n ${FAKE_DRY_RUN_RELEASE:-} ]]; then\n"
+            "      while [[ ! -e $FAKE_DRY_RUN_RELEASE ]]; do sleep 0.05; done\n"
+            "    fi\n"
+            '    exit "${FAKE_DRY_RUN_EXIT:-0}"\n'
+            "  fi\n"
+            "  if [[ \" $* \" == *' --synthesis-cache '* ]]; then\n"
+            "    echo 'SYNTHESIS_CACHE 3 reused, 1 synthesized'\n"
             "  fi\n"
             "  work= db= out= sidecar= epub= voice= chapter_voice= voice_plan=\n"
             "  while (( $# )); do\n"
@@ -2112,6 +2124,238 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertFalse(
             (self.run_root / "research" / "echo-render-output.owner.env").exists()
         )
+
+    def narrate_invocations(self, log: Path) -> list[list[str]]:
+        invocations: list[list[str]] = []
+        for line in log.read_text(encoding="utf-8").splitlines():
+            if line.startswith("BEGIN="):
+                invocations.append([])
+            elif line.startswith("ARG="):
+                invocations[-1].append(line.removeprefix("ARG="))
+        return invocations
+
+    def synthesis_cache_environment(self, log: Path) -> dict[str, str]:
+        environment = self.environment()
+        environment.update(
+            {
+                "FAKE_NARRATE_LOG": str(log),
+                "FAKE_NARRATE_HELP_EXTRA": "--synthesis-cache --dry-run",
+            }
+        )
+        return environment
+
+    def test_renderer_without_the_flag_gets_no_synthesis_cache(self) -> None:
+        log = self.tmp / "narrate.log"
+        environment = self.environment()
+        environment["FAKE_NARRATE_LOG"] = str(log)
+        # The prune flag's name must not read as support for the cache flag.
+        environment["FAKE_NARRATE_HELP_EXTRA"] = "--prune-synthesis-cache"
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        invocations = self.narrate_invocations(log)
+        self.assertEqual(1, len(invocations))
+        self.assertNotIn("--synthesis-cache", invocations[0])
+        self.assertNotIn("--dry-run", invocations[0])
+        self.assertEqual(
+            [], list((self.run_root / "research").glob("echo-synthesis-*"))
+        )
+        self.assertFalse((self.run_root / "echo-synthesis-cache").exists())
+
+    def test_supported_renderer_forecasts_then_renders_with_a_cache_outside_work(
+        self,
+    ) -> None:
+        log = self.tmp / "narrate.log"
+
+        result = self.run_narrate(
+            environment=self.synthesis_cache_environment(log)
+        )
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        forecast, render = self.narrate_invocations(log)
+        # The forecast must plan exactly what the render plans.
+        self.assertEqual(render + ["--dry-run"], forecast)
+        cache = Path(render[render.index("--synthesis-cache") + 1])
+        work = Path(render[render.index("--work-dir") + 1])
+        self.assertEqual(self.run_root / "echo-synthesis-cache", cache)
+        self.assertFalse(cache.is_relative_to(work))
+        self.assertFalse(work.is_relative_to(cache))
+
+        research = self.run_root / "research"
+        attempt = json.loads(
+            (research / "echo-render-current-attempt.json").read_text(encoding="utf-8")
+        )
+        suffix = f"{attempt['runID']}-{attempt['attemptID']}.txt"
+        dry_run = (research / f"echo-synthesis-dry-run-{suffix}").read_text(
+            encoding="utf-8"
+        )
+        rendered = (research / f"echo-synthesis-render-{suffix}").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("RENDER ch1 s2-b3", dry_run)
+        self.assertIn("DRY_RUN 1 of 3 blocks to render", dry_run)
+        self.assertIn("SYNTHESIS_CACHE 3 reused, 1 synthesized", rendered)
+        self.assertIn("DRY_RUN 1 of 3 blocks to render", result.stdout)
+        self.assertIn("SYNTHESIS_CACHE 3 reused, 1 synthesized", result.stdout)
+        self.assertNotIn("RENDER ch1", result.stdout)
+
+    def test_synthesis_cache_survives_a_source_edit_that_changes_work(self) -> None:
+        def paragraph(reading: str) -> str:
+            return f'<p>Keep a <span ssml:ph="ˈɹɛkɚd">{reading}</span>.</p>'
+
+        log = self.tmp / "narrate.log"
+        self.write_narrated_fixture_epub(paragraph("record"))
+        first = self.run_narrate(environment=self.synthesis_cache_environment(log))
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.write_narrated_fixture_epub(paragraph("records"))
+        second = self.run_narrate(environment=self.synthesis_cache_environment(log))
+        self.assertEqual(0, second.returncode, second.stderr)
+
+        renders = [
+            arguments
+            for arguments in self.narrate_invocations(log)
+            if "--dry-run" not in arguments
+        ]
+        self.assertEqual(2, len(renders))
+        works = [args[args.index("--work-dir") + 1] for args in renders]
+        caches = [args[args.index("--synthesis-cache") + 1] for args in renders]
+        self.assertNotEqual(works[0], works[1])
+        self.assertEqual(caches[0], caches[1])
+
+    def test_cache_support_changes_neither_run_identity_nor_receipt_shape(self) -> None:
+        plain_log = self.tmp / "plain.log"
+        cached_log = self.tmp / "cached.log"
+        plain_environment = self.environment()
+        plain_environment["FAKE_NARRATE_LOG"] = str(plain_log)
+        research = self.run_root / "research"
+
+        plain = self.run_narrate(environment=plain_environment)
+        self.assertEqual(0, plain.returncode, plain.stderr)
+        plain_receipts = set(research.glob("echo-render-success-*.json"))
+        cached = self.run_narrate(
+            environment=self.synthesis_cache_environment(cached_log)
+        )
+        self.assertEqual(0, cached.returncode, cached.stderr)
+
+        plain_render = self.narrate_invocations(plain_log)[0]
+        cached_render = self.narrate_invocations(cached_log)[-1]
+        for flag in ("--work-dir", "--db"):
+            self.assertEqual(
+                plain_render[plain_render.index(flag) + 1],
+                cached_render[cached_render.index(flag) + 1],
+            )
+        cached_receipts = set(research.glob("echo-render-success-*.json"))
+        new_receipt = (cached_receipts - plain_receipts).pop()
+        self.assertEqual(
+            set(json.loads(plain_receipts.copy().pop().read_text(encoding="utf-8"))),
+            set(json.loads(new_receipt.read_text(encoding="utf-8"))),
+        )
+
+    def test_resume_keeps_the_cache_without_a_new_forecast(self) -> None:
+        log = self.tmp / "narrate.log"
+        environment = self.synthesis_cache_environment(log)
+        environment["FAKE_NARRATE_EXIT"] = "2"
+        partial = self.run_narrate(
+            "--max-chapters", "1", environment=environment
+        )
+        # A partial attempt still records what the cache did.
+        self.assertEqual(2, partial.returncode, partial.stderr)
+        self.assertIn("SYNTHESIS_CACHE 3 reused", partial.stdout)
+        self.assertEqual(
+            1, len(list((self.run_root / "research").glob("echo-synthesis-render-*")))
+        )
+
+        resumed = self.run_narrate(
+            *self.resume_arguments(),
+            environment=self.synthesis_cache_environment(log),
+        )
+
+        self.assertEqual(0, resumed.returncode, resumed.stderr)
+        invocations = self.narrate_invocations(log)
+        self.assertEqual(3, len(invocations))
+        self.assertIn("--resume", invocations[-1])
+        self.assertIn("--synthesis-cache", invocations[-1])
+        self.assertNotIn("--dry-run", invocations[-1])
+        self.assertEqual(
+            2, len(list((self.run_root / "research").glob("echo-synthesis-render-*")))
+        )
+
+    def test_failed_forecast_does_not_stop_the_render(self) -> None:
+        log = self.tmp / "narrate.log"
+        environment = self.synthesis_cache_environment(log)
+        environment["FAKE_DRY_RUN_EXIT"] = "1"
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("rendering without a forecast", result.stderr)
+        self.assertNotIn("DRY_RUN", result.stdout)
+        self.assertEqual(2, len(self.narrate_invocations(log)))
+
+    def test_sigterm_reaches_the_child_in_both_cache_stages(self) -> None:
+        # The fake child waits for a release file nobody creates, so the wrapper
+        # exits only if the signal reaches the child, not just the wrapper.
+        for stage, ready_key, release_key in (
+            ("forecast", "FAKE_DRY_RUN_READY", "FAKE_DRY_RUN_RELEASE"),
+            ("render", "FAKE_NARRATE_READY", "FAKE_NARRATE_RELEASE"),
+        ):
+            with self.subTest(stage):
+                ready = self.tmp / f"{stage}-ready"
+                log = self.tmp / f"{stage}.log"
+                environment = self.synthesis_cache_environment(log)
+                environment.update(
+                    {
+                        ready_key: str(ready),
+                        release_key: str(self.tmp / f"{stage}-release"),
+                    }
+                )
+                process = subprocess.Popen(
+                    [str(NARRATE_WRAPPER)],
+                    cwd=self.explainer,
+                    env=environment,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                self.addCleanup(lambda p=process: p.poll() is None and p.kill())
+                self.wait_for_path(ready, process)
+
+                process.send_signal(signal.SIGTERM)
+                stdout, stderr = process.communicate(timeout=WAIT_TIMEOUT)
+
+                self.assertEqual(143, process.returncode, f"{stdout}\n{stderr}")
+                self.assertEqual(
+                    1 if stage == "forecast" else 2,
+                    len(self.narrate_invocations(log)),
+                )
+
+    def test_unsafe_synthesis_cache_path_fails_before_narrate(self) -> None:
+        target = self.tmp / "elsewhere"
+        target.mkdir()
+        cache = self.run_root / "echo-synthesis-cache"
+        # A refused attempt must not cost an earlier run its captures.
+        partial_log = self.tmp / "narrate-partial.log"
+        environment = self.synthesis_cache_environment(partial_log)
+        environment["FAKE_NARRATE_EXIT"] = "2"
+        partial = self.run_narrate("--max-chapters", "1", environment=environment)
+        self.assertEqual(2, partial.returncode, partial.stderr)
+        marker = next(self.run_root.glob("audio-work-*/.anchors-ch0.json"))
+        for name, make_unsafe, undo in (
+            ("symlink", lambda: cache.symlink_to(target), cache.unlink),
+            ("file", lambda: cache.write_bytes(b"not a directory"), cache.unlink),
+        ):
+            with self.subTest(name):
+                log = self.tmp / f"narrate-{name}.log"
+                make_unsafe()
+                result = self.run_narrate(
+                    environment=self.synthesis_cache_environment(log)
+                )
+                undo()
+                self.assertEqual(65, result.returncode, result.stderr)
+                self.assertIn("synthesis cache directory is unsafe", result.stderr)
+                self.assertFalse(log.exists())
+                self.assertTrue(marker.is_file())
 
     def test_bounded_partial_render_is_sealed_but_not_published(self) -> None:
         log = self.tmp / "narrate-partial.log"
