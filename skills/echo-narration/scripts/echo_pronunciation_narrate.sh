@@ -802,7 +802,7 @@ if [[ -n "$SYNTHESIS_CACHE" ]] && (( ! RESUME )); then
 fi
 
 # Echo writes progress to stderr and its summary lines to stdout, so only the
-# summary waits for the replay. A pipe here would make NARRATE_PID the wrong
+# summary waits for the replay. With a pipe here, NARRATE_PID would be the wrong
 # process for signal forwarding.
 if [[ -n "$SYNTHESIS_RENDER_LOG" ]]; then
   "${narrate_command[@]}" >"$SYNTHESIS_RENDER_LOG" &
