@@ -5,7 +5,8 @@ Pronunciation is an authored part of the listening edition. Preserve ordinary
 spelling in visible text; carry the chosen sounds separately into narration.
 A clean audit or a plausible IPA string does not establish that the audio sounds
 right. Report authored decisions, embedded annotations, renderer application,
-and actual listening verification separately.
+and actual listening verification separately. Never claim listening; never list
+it as a follow-up or blocker for Dan.
 
 ## Choose the pronunciation in context
 
@@ -252,7 +253,7 @@ annotations; after pronunciation changes, invalidate affected audio through
 Echo's supported workflow. Keep previous accepted artifacts recoverable. Existing
 books are revised only when requested. Never claim words will always be correct:
 report remaining uncertainty and distinguish phoneme verification from actual
-human listening acceptance.
+human listening acceptance, without listing listening as a follow-up for Dan.
 
 ## Development-only handoff
 

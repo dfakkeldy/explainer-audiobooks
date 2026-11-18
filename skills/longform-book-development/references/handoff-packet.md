@@ -19,7 +19,7 @@ blocker honestly.
 
 - Privacy:
 - Permission to publish:
-- Length target:
+- Length target: (default 4 to 5 hours of narration)
 - Audience:
 - Prior knowledge:
 - Listening mode: road-book / focused-study

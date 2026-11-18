@@ -240,6 +240,9 @@ reliable way to manufacture filler. Estimate chapter lengths in the outline and
 report the real final total. Falling outside the estimate is a planning signal,
 not a reason to add or remove material after the learning job is complete.
 
+The default learning book is 4 to 5 hours of narration at 1.0x, about
+36,000-45,000 words; the rows below are listening times at 1.25x.
+
 | Target listen | ~Words | Suggested chapters |
 |---|---|---|
 | ~2 hours (1.25x) | ~22,000 | 8-10 |
