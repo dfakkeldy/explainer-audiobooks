@@ -54,5 +54,7 @@ Report the iCloud folder and final file paths, together with verification status
 and any actual limitation. Local presence in the iCloud-managed folder proves
 local delivery, not remote sync or arrival on the phone; report those separately
 when verified. Human listening acceptance also remains a separate state and
-must not be implied by automated checks. Private iCloud authorization does not
+must not be implied by automated checks. Do not list listening as a follow-up
+or blocker for Dan: listening is the purpose of the book, and his feedback
+after listening starts the redo loop. Private iCloud authorization does not
 authorize GitHub publication or other destinations.

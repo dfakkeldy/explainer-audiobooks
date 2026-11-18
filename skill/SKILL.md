@@ -43,7 +43,7 @@ once for exactly these five questions:
 1. What is the book about, and what should the listener be able to do after it?
 2. Who is it for?
 3. What do they already know about the subject?
-4. Roughly how long?
+4. Roughly how long? (Default: 4 to 5 hours.)
 5. Should it be built around a specific real thing — a repo, product, place, or
    document?
 
@@ -65,6 +65,7 @@ Apply silent defaults and write them to `source/brief.md`:
 | Choice | Default |
 |---|---|
 | Listening | `road-book`, for driving and delivering mail |
+| Length | about 4 to 5 hours of narration, never under 4 unless the request names a shorter length; at Echo's ~150 words a minute, 4 h ≈ 36,000 words and 5 h ≈ 45,000. Word count stays a planning estimate (`references/road-book-mode.md`): reach the length with more chapters, worked cases and deeper coverage, never padding |
 | Semantic cast | guide am_michael; memory plus optional field/coach; never af_heart |
 | Guide fallback | `am_puck` only when the guide voice is unavailable; record it; never `af_heart` |
 | Credits | author `Dan Fakkeldy`; model name in `--contributor` |
@@ -108,8 +109,7 @@ a place, a date, and a turn nobody expected — teach better than hypotheticals;
 gather them into a story ledger while researching.
 
 Accuracy is the one writing rule that does not bend: the manuscript may only
-assert what the research supports, and a citation-shaped memory is not
-evidence.
+assert what the research supports; a citation-shaped memory is not evidence.
 
 ## Write and revise
 
@@ -131,8 +131,8 @@ IPA. Run `../skills/echo-narration/scripts/epub_pronunciation.py`: `scan` the
 built EPUB for candidates, author the decisions file, `apply` it to a new EPUB,
 and freeze that one. The narration preflight runs its `check` and refuses an
 EPUB without IPA, with any content, record, or read left unannotated, or with
-markup Echo can't use. Keep pending renderer support and actual listening
-acceptance explicit.
+markup Echo can't use. Keep pending renderer support explicit, and never claim
+the book was listened to or accepted.
 
 Design exactly three coordinated cover pairs with
 `references/cover-art.md`. At least two of the three complete pairs must be intentionally high-key, and one of those high-key pairs must be a Designed flat graphic. The third candidate is tonally unrestricted and may be dark when its subject and central metaphor earn that treatment. Render each with

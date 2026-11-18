@@ -776,8 +776,9 @@ exact raw sibling M4B bytes; when a reel is listed, require
 `listeningReelSHA256` to match the exact raw sibling reel bytes. The audit
 JSON is the pronunciation audit; an optional pronunciation reel accompanies
 it when timed review samples exist. Automated checks do not substitute for
-hearing the result: human listening remains explicitly pending until someone
-actually listens, and the report must say so.
+human listening: never claim the book was listened to or accepted. Do not
+list listening as a follow-up or blocker for Dan; listening is the purpose of
+the book, and his feedback after listening starts the redo loop.
 
 ## Interior Figures
 
