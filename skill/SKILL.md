@@ -6,7 +6,7 @@ description: "Create and deliver a researched nonfiction audiobook from a topic,
 # Audiobook
 
 Write the best book you can. The angle, structure, chapter count, voice,
-examples, length, and revision method are yours to choose. The references named
+examples, and revision method are yours to choose. The references named
 below record what has worked for this listener; use what helps and skip what
 does not. No humanizer pass, AI-tell sweep, or prose-style gate is required.
 
