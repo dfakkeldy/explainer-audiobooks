@@ -143,12 +143,15 @@ audio adaptations, not permission to revise an already accepted manuscript or re
 ## Pronunciation for listening editions
 
 Follow `../echo-narration/references/epub-pronunciation.md` when preparing audio.
-Review every occurrence of content, record, and read, including Michael's guide
+Review every heteronym occurrence (content, record, read and the rest of the
+reference's list), including Michael's guide
 passages, as well as names and archaic uses whose intended meaning affects sound.
 Maintain the source-linked pronunciation plan; put IPA into the EPUB through the
 verified Echo contract before freezing it, using
 `../echo-narration/scripts/epub_pronunciation.py` (`scan`, then `apply`). The
-narration preflight runs its `check` and refuses an EPUB without IPA. Keep disputed readings visible in the
+narration preflight runs its `check` and refuses an EPUB with a word the renderer
+would guess, a heteronym without a reading, a hyphen-spelled initialism or a
+token Echo mangles. Keep disputed readings visible in the
 plan and review choices against the source. For manuscript-only work, hand off
 known decisions without starting packaging or narration.
 

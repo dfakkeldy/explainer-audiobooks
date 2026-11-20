@@ -120,7 +120,7 @@ The narration must remain complete with eyes closed.
 - Listener-named pronunciation risks:
 - Author-anticipated pronunciation risks and spoken variants:
 - Pronunciation plan path, known IPA decisions with evidence, and open questions:
-- Final-manuscript review of every content, record, and read occurrence: production responsibility; record any decisions already grounded in drafted passages.
+- Final-manuscript review of every heteronym occurrence (content, record, read and the rest of the list in `epub-pronunciation.md`), plus words the renderer would guess and hyphen-spelled initialisms: production responsibility; record any decisions already grounded in drafted passages.
 - Echo EPUB pronunciation contract/support status: verified or pending, with evidence location when available.
 
 ## Delivery

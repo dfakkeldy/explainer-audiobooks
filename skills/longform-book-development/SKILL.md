@@ -38,10 +38,12 @@ and fiction-specific revision.
 
 Follow `../echo-narration/references/epub-pronunciation.md` for the pronunciation
 part of an audiobook handoff. Keep a source/research pronunciation plan for names,
-technical terms, and known context-dependent readings, including content, record,
-and read in any drafted passages. Hand off the plan and open questions; production
-reviews the final manuscript's occurrences and embeds verified IPA before freezing
-the EPUB. Do not invent occurrence locations for prose that has not been drafted.
+technical terms, and every heteronym (content, record, read and the rest of the
+reference's list) in drafted passages. Write initialisms closed (AI, API), never
+letter-hyphenated (A-I), which Echo reads as "uh-EYE". Hand off the plan and open
+questions; production reviews the final manuscript's occurrences and embeds
+verified IPA before freezing the EPUB. Do not invent occurrence locations for
+prose that has not been drafted.
 
 ## Resuming an in-progress project
 

@@ -15,14 +15,16 @@ iCloud package. A successful render alone does not complete an audiobook request
 
 Before freezing a new listening edition, follow
 [EPUB pronunciation](epub-pronunciation.md) for contextual IPA decisions,
-including every content, record, and read occurrence. Embed with
+including every heteronym occurrence. Embed with
 `scripts/epub_pronunciation.py` (`scan`, then `apply` the decisions to a new
 EPUB) and freeze that EPUB. A written pronunciation plan alone is not evidence
 that narration applied them.
 
 The governed preflight runs `check` before hashing the EPUB for a fresh render
-and refuses an EPUB with no IPA, any unannotated content, record, or read, or
-markup Echo can't use. Resumed runs are not gated; they keep the EPUB their
+and refuses an EPUB with no IPA, a heteronym without an inline reading, a word
+the renderer would guess, a hyphen-spelled initialism, a token Echo mangles, or
+markup Echo can't use; [EPUB pronunciation](epub-pronunciation.md#the-tool)
+has the full list. Resumed runs are not gated; they keep the EPUB their
 receipts already bind. Frozen EPUBs from before this gate that have no IPA must
 go through `apply` and a refreeze before their next fresh render.
 
@@ -680,9 +682,15 @@ export ECHO_RESOURCE_DIR
   --reel "$REEL" \
   --voice-plan-sha256 "$VOICE_PLAN_SHA256" \
   --block-count "$VOICE_PLAN_BLOCK_COUNT"
+GATE_ACCEPT="$RUN_ROOT/research/pronunciation-gate-accepted.json"
+gate_command=(/usr/local/bin/python3 \
+  "$EXPLAINER_ROOT/skills/echo-narration/scripts/pronunciation_audit_gate.py" "$AUDIT")
+[[ ! -e "$GATE_ACCEPT" && ! -L "$GATE_ACCEPT" ]] || gate_command+=(--accept "$GATE_ACCEPT")
+"${gate_command[@]}"
 ```
 
-Require `SIDECAR_OK` and `pronunciation_audit: clean` before `record-use`.
+Require `SIDECAR_OK`, `pronunciation_audit: clean` and `pronunciation_gate: clean`
+before `record-use`.
 The block reader owns the meaning of `SEALED_VOICE`; do not export or replace
 it with a caller-controlled `VOICE`.
 
@@ -763,9 +771,17 @@ ffprobe -v error -show_entries format=duration \
 
 /usr/local/bin/python3 "$EXPLAINER_ROOT/skills/echo-narration/scripts/validate_pronunciation_audit.py" \
   "$AUDIT"
+GATE_ACCEPT="$RUN_ROOT/research/pronunciation-gate-accepted.json"
+gate_command=(/usr/local/bin/python3 \
+  "$EXPLAINER_ROOT/skills/echo-narration/scripts/pronunciation_audit_gate.py" "$AUDIT")
+[[ ! -e "$GATE_ACCEPT" && ! -L "$GATE_ACCEPT" ]] || gate_command+=(--accept "$GATE_ACCEPT")
+"${gate_command[@]}"
 ```
 
-Require `SIDECAR_OK` from `verify-sidecar`. The current media-bound manifest
+Require `SIDECAR_OK` from `verify-sidecar` and `pronunciation_gate: clean` from the
+gate: no guessed word, no "uh-EYE" initialism and one reading per initialism (see
+[EPUB pronunciation](epub-pronunciation.md)). The wrapper runs the same gate
+and leaves a failing render unaccepted; never deliver one. The current media-bound manifest
 schema version is `6`; schemas `2` through `5` remain accepted for earlier
 governed renders. Require `coverage=complete`, render version 12 or newer, a
 known Echo English voice or `mixed`, complete valid `chapterVoices` provenance

@@ -23,7 +23,9 @@ structured, and revised is the author's call; what gets delivered is not.
   inline decisions, linked lexicons, and plan-to-render reconciliation. This is
   required production work, not an optional polish pass. Embed it with
   `scripts/epub_pronunciation.py`; the narration preflight refuses an EPUB
-  without it.
+  without it, or with a heteronym that lacks a reading, a word the renderer
+  would guess, a hyphen-spelled initialism or a mangled token (the full list
+  is in [EPUB pronunciation](epub-pronunciation.md#the-tool)).
 - Both selected cover files: portrait `cover.png` and square `m4b-cover.png`.
   Embed the square cover in the M4B and retain both image files in delivery.
 - The complete package in

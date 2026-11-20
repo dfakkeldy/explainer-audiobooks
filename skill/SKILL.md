@@ -87,7 +87,8 @@ attention shared with the road. That shapes the writing more than any rule.
 
 - Write for the ear. Name the real files, tools, commands, places, and
   documents with a one-breath gloss instead of vague paraphrase, and speak at
-  most one short line of code at a time before unpacking it.
+  most one short line of code at a time before unpacking it. Write initialisms
+  closed (AI, API), never letter-hyphenated: Echo reads "A-I" as "uh-EYE".
 - Attention drifts, so open each section so a drifted listener can join it
   cold, re-naming the running subject instead of leaning on the last close.
 - Practical situation-choice-consequence examples ground abstract ideas.
@@ -124,15 +125,14 @@ is a good way to find where a listener would get lost.
 
 ## Produce and deliver
 
-Follow `../skills/echo-narration/references/epub-pronunciation.md` before packaging; the standard builder automatically embeds `../skills/echo-narration/references/pronunciation-dictionary.json`, with per-book overrides:
-review every content, record, and read occurrence in context and embed verified
-IPA through Echo's supported contract before freezing the EPUB. Every EPUB gets
-IPA. Run `../skills/echo-narration/scripts/epub_pronunciation.py`: `scan` the
-built EPUB for candidates, author the decisions file, `apply` it to a new EPUB,
-and freeze that one. The narration preflight runs its `check` and refuses an
-EPUB without IPA, with any content, record, or read left unannotated, or with
-markup Echo can't use. Keep pending renderer support explicit, and never claim
-the book was listened to or accepted.
+Follow `../skills/echo-narration/references/epub-pronunciation.md` before packaging; the standard builder automatically embeds `../skills/echo-narration/references/pronunciation-dictionary.json`, with per-book overrides.
+Its rule: every word Echo would guess gets IPA, checked against the renderer's
+own lexicon; initialisms are closed, with one reading per book; every heteronym,
+in headings and number blocks too, gets an inline reading. Run
+`../skills/echo-narration/scripts/epub_pronunciation.py`: `scan`, author the
+decisions, `apply` to a new EPUB, `check`, and freeze it. The preflight runs
+`check`; the wrapper refuses a render whose pronunciation gate fails. Keep pending
+renderer support explicit, and never claim the book was listened to or accepted.
 
 Design exactly three coordinated cover pairs with
 `references/cover-art.md`. At least two of the three complete pairs must be intentionally high-key, and one of those high-key pairs must be a Designed flat graphic. The third candidate is tonally unrestricted and may be dark when its subject and central metaphor earn that treatment. Render each with

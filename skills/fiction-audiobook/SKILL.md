@@ -18,13 +18,15 @@ Read `references/express-fiction-craft.md` and
 `skills/echo-narration/references/narrating.md` before narration and
 `references/public-fiction-gate.md` before delivery.
 Read `../echo-narration/references/epub-pronunciation.md` before packaging.
-Review every occurrence of content, record, and read in context; include dialogue
-and narration. Carry the pronunciation plan from manuscript development, embed
+Its rule: IPA for every word the renderer's lexicon lacks, for every heteronym in
+context (dialogue and narration, headings too), and closed initialisms (AI, never
+A-I). Carry the pronunciation plan from manuscript development, embed
 IPA through the verified Echo contract before freezing the EPUB, and verify with
 the assigned voices. Embed with `../echo-narration/scripts/epub_pronunciation.py`
 (`scan`, then `apply` the decisions to a new EPUB). The narration preflight runs
-its `check` and refuses an EPUB without IPA. Pending renderer support is not
-completed integration.
+its `check` and refuses an EPUB that breaks the rule; the narration wrapper refuses
+a render whose pronunciation gate finds a guessed word. Pending renderer support is
+not completed integration.
 
 1. Listening packages use this; `fiction-book-development` for manuscript-only
    work.
