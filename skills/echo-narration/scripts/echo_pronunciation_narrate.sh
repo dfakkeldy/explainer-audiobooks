@@ -915,6 +915,21 @@ if [[ ${VOICE_PLAN_MODE:-chapter} == block ]]; then
 fi
 "${audit_command[@]}"
 verify_locked_inputs
+# Guessed words, "uh-EYE" initialisms and mixed initialism readings refuse the
+# render. It stays unaccepted under ARTIFACT_ROOT for diagnosis. The accept
+# file lists words that truly can't be fixed; by default there is none.
+gate_command=(
+  /usr/local/bin/python3 "$SCRIPT_DIR/pronunciation_audit_gate.py" "$AUDIT"
+)
+GATE_ACCEPT="$RUN_ROOT/research/pronunciation-gate-accepted.json"
+if [[ -e "$GATE_ACCEPT" || -L "$GATE_ACCEPT" ]]; then
+  gate_command+=(--accept "$GATE_ACCEPT")
+fi
+if ! "${gate_command[@]}"; then
+  printf 'pronunciation gate failed; the render at %s is not accepted and must not be delivered\n' \
+    "$ARTIFACT_ROOT" >&2
+  exit 65
+fi
 if ! /usr/local/bin/python3 "$SCRIPT_DIR/echo_pronunciation_state.py" \
   verify-state "${state_command[@]}"; then
   printf 'resume state receipt does not match final WORK, DB, or version-bound Echo captures\n' >&2

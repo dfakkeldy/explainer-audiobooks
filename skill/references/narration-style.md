@@ -136,6 +136,10 @@ NUMBERS, JARGON, FORM:
   seventeen", "three matches in a row".
 - Define each piece of jargon in one short breath the first time, ideally with an
   everyday analogy.
+- Write initialisms closed (AI, API, GDP), never letter-hyphenated (A-I): Echo
+  reads each hyphenated letter as a word, and a capital A as the article "uh".
+  Give each initialism one reading for the whole book; see
+  `../../skills/echo-narration/references/epub-pronunciation.md`.
 - Flowing prose. Avoid bullet lists (they sound choppy aloud), no tables, and no
   headings inside the chapter except the single title line at the top.
 

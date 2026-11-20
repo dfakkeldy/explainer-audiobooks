@@ -207,8 +207,10 @@ listed rather than silently guessed.
 
 Keep known name pronunciations and context-dependent readings in a separate
 `research/pronunciation-plan.md`, following
-`../echo-narration/references/epub-pronunciation.md`. Capture content, record, and
-read decisions in their actual sentences, including dialogue and narrative tense.
+`../echo-narration/references/epub-pronunciation.md`. Capture decisions for every
+heteronym (content, record, read and the rest of its list) in their actual
+sentences, including dialogue and narrative tense, and note invented names the
+renderer would guess. Write initialisms closed (AI, never A-I).
 Include the plan and open questions in the production handoff; production owns
 the complete final occurrence review, EPUB annotations, and audio verification.
 Do not put IPA into visible prose or alter accepted chapter bytes for this plan.

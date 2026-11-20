@@ -4,18 +4,32 @@
   scan   list every pronunciation candidate in the narrated text, with context
   apply  embed authored decisions (inline IPA, token readings, a PLS lexicon)
          into a new EPUB, then run `check` on it
-  check  the narration gate: fail when narrated text lacks required IPA or
-         breaks Echo's epub.*.ipa-v1 annotation contract
+  check  the narration gate: fail when narrated text lacks required IPA,
+         would make Echo guess a word, or breaks Echo's epub.*.ipa-v1
+         annotation contract
 
 Narrated text is the body of every spine document that isn't `linear="no"` and
 isn't the nav document. The rules follow references/epub-pronunciation.md and
-three traps found in production:
+the traps found in production:
 
 - A lexicon grapheme matches inside dotted or hyphenated tokens (`md` inside
   `open-loops.md`), and synthesis then fails mid-render.
 - An annotated block skips Echo's text expansion, so numerals and file names
   in it need their own readings.
 - An inline span whose text contains a slash makes Echo import nothing at all.
+- A hyphen-spelled initialism (`A-I`) is read "uh-EYE": the capital A is tagged
+  as the article.
+- A word missing from the renderer's misaki lexicons (us_gold, us_silver) is
+  guessed by letter rules (`labeller`, `Ryan`, `Claude.ai`, `5pp`), and Echo's
+  text expansion turns `LLMs.` into "LLMiz".
+- A heteronym read by the engine can take the wrong sense (`read` as "reed"
+  in the past tense), in headings and number blocks as much as anywhere.
+
+`check` tests words against the lexicon of the renderer that will narrate:
+`--lexicon-dir`, else `$ECHO_RESOURCE_DIR`, else the installed renderer named
+by `$APPROVED_ECHO_PRONUNCIATION_SHA` (and `$ECHO_RENDERER_ROOT`). It fails
+closed when none is found. `apply` and `scan` test words only with an explicit
+`--lexicon-dir`.
 
 Decisions file (JSON) for `apply`:
 
@@ -32,7 +46,8 @@ Decisions file (JSON) for `apply`:
 An occurrence's context is quoted from the book and must appear exactly once
 in narrated text (narrowed by `doc`, the document's file name, when given); the
 word must appear once inside it, or `nth` picks one. Readings apply to every
-whole-token use of their text inside blocks that carry other annotations.
+whole-token use of their text inside blocks that carry other annotations
+(an inline span, an occurrence, a shared-dictionary word or a linked PLS word).
 Exit codes: 0 pass, 1 check failed, 64 usage, 65 unreadable input.
 """
 from __future__ import annotations
@@ -40,13 +55,17 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import posixpath
 import re
 import sys
+import unicodedata
 import xml.etree.ElementTree as ET
 import zipfile
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Callable, Mapping
 
 OPF_NS = "http://www.idpf.org/2007/opf"
 CONTAINER_NS = "urn:oasis:names:tc:opendocument:xmlns:container"
@@ -54,10 +73,9 @@ SSML_NS = "http://www.w3.org/2001/10/synthesis"
 PLS_NS = "http://www.w3.org/2005/01/pronunciation-lexicon"
 XHTML_TYPES = {"application/xhtml+xml"}
 
-# Every occurrence must carry an inline reading: each spelling has two
-# pronunciations that depend on sense or tense.
+# Each spelling has two pronunciations that depend on sense or tense.
 MANDATORY = ("re-read", "reread", "contents", "content", "records", "record", "read")
-# Other spellings whose sound depends on meaning; `scan` lists them for review.
+# Other spellings whose sound depends on meaning.
 WATCH = (
     "lead", "leads", "live", "lives", "close", "closes", "minute", "minutes", "wind", "wound",
     "tear", "tears", "present", "presents", "object", "objects", "produce", "project", "projects",
@@ -66,7 +84,16 @@ WATCH = (
     "duplicate", "row", "rows", "resume", "digest", "deliberate", "graduate", "advocate",
     "associate", "moderate", "appropriate", "learned", "blessed", "aged", "bass", "polish",
     "Polish", "address", "addresses", "invite", "bow", "bows", "does", "dove", "sow",
+    "increase", "increases",
 )
+# The renderer reads these one way and their other sense is rare in modern prose,
+# so `scan` lists them but `check` doesn't require a reading. Annotating every
+# "does" would switch off text expansion in most blocks for no gain.
+SCAN_ONLY = ("does", "row", "rows", "address", "addresses", "polish", "Polish")
+# The heteronym family: every occurrence needs an inline reading, in headings,
+# number blocks and hyphenated compounds too (`well-read`, `A-P-I records`).
+HETERONYMS = MANDATORY + tuple(w for w in WATCH if w not in SCAN_ONLY)
+HETERONYM_SET = frozenset(w.lower() for w in HETERONYMS)
 BLOCKS = {"p", "li", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "dd", "dt", "td",
           "th", "figcaption", "caption", "pre", "div", "section", "article", "aside", "body"}
 # Echo's contract: no instructions on code, images, head content or captions.
@@ -81,7 +108,38 @@ WORD_EDGE_L = r"(?<![\w'’\-])"
 WORD_EDGE_R = r"(?![\w\-]|['’]\w)"
 TAG = re.compile(r"<!--.*?-->|<!\[CDATA\[.*?\]\]>|<\?.*?\?>|<![^>]*>|<[^>]+>", re.S)
 ENTITY = re.compile(r"&(#\d+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);")
-MANDATORY_RX = re.compile(WORD_EDGE_L + "(" + "|".join(map(re.escape, MANDATORY)) + ")" + WORD_EDGE_R, re.I)
+# Hyphens don't end a heteronym: misaki splits `well-read` and tags `read` alone.
+HETERONYM_RX = re.compile(r"(?<![\w'’])(" + "|".join(map(re.escape, sorted(set(HETERONYMS), key=len, reverse=True)))
+                          + r")(?![\w]|['’]\w)", re.I)
+SCAN_ONLY_RX = re.compile(WORD_EDGE_L + "(" + "|".join(map(re.escape, SCAN_ONLY)) + ")" + WORD_EDGE_R)
+# A-I, A-P-I, G-D-P: misaki splits the hyphens and reads a capital A as the article.
+HYPHEN_INITIALISM = re.compile(r"\b[A-Z](?:-[A-Z])+s?\b")
+# Echo's text expansion (TextNormalizer) runs only on blocks without IPA spans.
+# It replaces these anywhere, even inside a word: `LLMs.` -> "LLMiz".
+GLUED_ABBREVIATION = re.compile(r"[A-Za-z0-9](?:Mrs|Mr|Ms|Dr|Prof)\.")
+# Abbreviations it speaks as words, matched at the token's start in the block text.
+# Dr., Mrs., Mr., Prof. and St. expand anywhere; the rest need no letter, digit or
+# underscore before them; a month needs a day or year after it ("Jan. 5").
+EXPANDED_ABBREVIATION = re.compile(
+    r"(?:Dr|Mrs|Mr|Prof|St)\.|(?<!\w)(?:e\.g|i\.e|etc|vs|approx|Mt)\."
+    r"|(?<!\w)(?:Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\.(?=\s+[0-9])")
+# "Ms." becomes "Miz", which isn't in the lexicon either.
+MS_TITLE = re.compile(r"Ms\.")
+# Unit symbols it speaks as words: a whole token, not after / . - and not before / -.
+EXPANDED_UNIT = re.compile(r"(?<![\w/.\-])(?:km|hrs)(?![\w/\-])")
+# Letters misaki reads after a number: 2nd, 1990s, 3pm.
+NUMBER_SUFFIXES = {"st", "nd", "rd", "th", "s", "ed", "ing", "am", "pm"}
+TOKEN = re.compile(r"[^\s—–/]+")
+NOT_NARRATED = {"script", "style", "svg", "math"}
+LEXICON_FILES = ("us_gold.json", "us_silver.json")
+# misaki's subtokenizer (EnglishG2P.subtokenizeRegexPattern): it splits a word at
+# case changes (`McTavish` -> Mc + Tavish, `SaaS` -> Saa + S).
+_UP, _LOW, _LETTER = "A-ZÀ-ÖØ-Þ", "a-zß-öø-ÿ", r"[^\W\d_]"
+SUBTOKEN = re.compile(rf"[{_UP}](?=[{_UP}][{_LOW}])|{_LETTER}*?(?:'{_LETTER})*?[{_LOW}](?=[{_UP}])"
+                      rf"|{_LETTER}+(?:'{_LETTER})*")
+MISAKI_SUBTOKEN = re.compile(rf"^'+|[{_UP}](?=[{_UP}][{_LOW}])|(?:^-)?(?:\d?[,.]?\d)+|[-_]+|'{{2,}}"
+                             rf"|{_LETTER}*?(?:'{_LETTER})*?[{_LOW}](?=[{_UP}])|{_LETTER}+(?:'{_LETTER})*"
+                             r"|[^\w'\-]|'+$")
 
 
 class InputError(Exception):
@@ -133,6 +191,7 @@ class Segment:
     block_tag: str = ""
     annotated: bool = False
     unsupported: str = ""          # innermost unsupported element, if any
+    in_pre: bool = False           # inside <pre>: Echo speaks "Code listing." instead
     text: str = ""
     starts: list[int] = field(default_factory=list)
 
@@ -165,6 +224,7 @@ class Doc:
             seg.in_body = "body" in names
             seg.annotated = any(ph for _, _, ph in stack)
             seg.unsupported = next((n for n in reversed(names) if n in UNSUPPORTED), "")
+            seg.in_pre = "pre" in names
             for n, u, _ in reversed(stack):
                 if n in BLOCKS:
                     seg.block, seg.block_tag = u, n
@@ -282,16 +342,370 @@ def context_of(text: str, start: int, end: int, width: int = 60) -> str:
     return " ".join(text[a:start].split()) + " [[" + text[start:end] + "]] " + " ".join(text[end:b].split())
 
 
+# ---------------------------------------------------------------- renderer lexicon
+
+
+def _grow(words: set[str]) -> set[str]:
+    """misaki's growDictionary: lower-case keys gain a capitalised form, and back."""
+    grown = set(words)
+    for word in words:
+        if len(word) < 2:
+            continue
+        if word == word.lower():
+            grown.add(word.capitalize())
+        elif word == word.lower().capitalize():
+            grown.add(word.lower())
+    return grown
+
+
+def misaki_subtokens(word: str) -> list[str]:
+    """EnglishG2P.subtokenize: the regex matches plus the text between them."""
+    parts, cursor = [], 0
+    for m in MISAKI_SUBTOKEN.finditer(word):
+        if m.start() > cursor:
+            parts.append(word[cursor:m.start()])
+        parts.append(m.group(0))
+        cursor = m.end()
+    if cursor < len(word):
+        parts.append(word[cursor:])
+    return parts
+
+
+def misaki_splits_camel_case(word: str, parts: list[str]) -> bool:
+    """True when misaki reads each part of `word` on its own (preserveCamelCaseWordBreaks):
+    the word has a case boundary, and two neighbouring parts both hold letters and the
+    first isn't `Mc`. misaki then never looks the whole word up."""
+    if len(parts) < 2 or not any(
+            (word[i].isupper() and word[i - 1].islower())
+            or (i + 1 < len(word) and word[i - 1].isupper() and word[i].isupper() and word[i + 1].islower())
+            for i in range(1, len(word))):
+        return False
+    return any(any(c.isalpha() for c in a) and any(c.isalpha() for c in b) and a.lower() != "mc"
+               for a, b in zip(parts, parts[1:]))
+
+
+class RendererLexicon:
+    """The words Echo's misaki G2P can read without its letter-rule fallback.
+
+    Mirrors misaki's lexicon lookup (exact and case-grown keys, initialisms read
+    letter by letter, and the -s, -'s, -es, -ies, -ed, -ied and -ing stems). It
+    leaves out misaki's closed-compound guess, which Echo's audit records as a
+    fallback, and Echo's supplemental pack, which isn't misaki.
+    """
+
+    def __init__(self, gold: set[str], silver: set[str], source: str = ""):
+        self.gold = _grow(gold)
+        self.words = self.gold | _grow(silver)
+        self.source = source
+        self._cache: dict[str, bool] = {}
+        # Echo reads its built-in overrides and contextual homographs before misaki;
+        # the audit validator keeps this vocabulary in step with the renderer.
+        scripts = str(Path(__file__).resolve().parent)
+        if scripts not in sys.path:
+            sys.path.insert(0, scripts)
+        from validate_pronunciation_audit import WATCH_WORDS
+        self.echo_words = frozenset(WATCH_WORDS)
+
+    @classmethod
+    def load(cls, directory: Path) -> "RendererLexicon":
+        keys = []
+        for name in LEXICON_FILES:
+            path = directory / name
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+                raise InputError(f"cannot read the renderer lexicon {path}: {error}") from error
+            if not isinstance(data, dict) or not data:
+                raise InputError(f"{path} is not a misaki lexicon (a JSON object of words)")
+            keys.append(set(data))
+        return cls(keys[0], keys[1], str(directory))
+
+    def _known(self, word: str) -> bool:
+        if word in self.words:
+            return True
+        if not re.fullmatch(r"[A-Za-z'-]+", word):
+            return False
+        if len(word) == 1 or (word.isupper() and word.lower() in self.gold):
+            return True
+        return word[1:] == word[1:].upper()      # an initialism, read letter by letter
+
+    def _stem_s(self, word: str) -> bool:
+        if not word.endswith("s") or not (len(word) >= 3 or (len(word) == 2 and word[0].isupper())):
+            return False
+        if not word.endswith("ss") and self._known(word[:-1]):
+            return True
+        if (word.endswith("'s") or (len(word) > 4 and word.endswith("es") and not word.endswith("ies"))) \
+                and self._known(word[:-2]):
+            return True
+        return len(word) > 4 and word.endswith("ies") and self._known(word[:-3] + "y")
+
+    def _stem_ed(self, word: str) -> bool:
+        if len(word) < 4 or not word.endswith("d"):
+            return False
+        if not word.endswith("dd") and self._known(word[:-1]):
+            return True
+        if len(word) > 4 and word.endswith("ied") and self._known(word[:-3] + "y"):
+            return True
+        return len(word) > 4 and word.endswith("ed") and not word.endswith("eed") and self._known(word[:-2])
+
+    def _stem_ing(self, word: str) -> bool:
+        if len(word) < 5 or not word.endswith("ing"):
+            return False
+        if (len(word) > 5 and self._known(word[:-3])) or self._known(word[:-3] + "e"):
+            return True
+        return (len(word) > 5 and re.search(r"([bcdgklmnprstvxz])\1ing$|cking$", word) is not None
+                and self._known(word[:-4]))
+
+    def _stems(self, word: str) -> bool:
+        return self._stem_s(word) or self._stem_ed(word) or self._stem_ing(word)
+
+    def _resolves(self, word: str) -> bool:
+        lower = word.lower()
+        candidate = word
+        if (len(word) > 1 and word.replace("'", "").isalpha() and word != lower and word not in self.words
+                and (word == word.upper() or word[1:] == word[1:].lower())
+                and (lower in self.words or self._stems(lower))):
+            candidate = lower
+        if self._known(candidate):
+            return True
+        if candidate.endswith("s'") and self._known(candidate[:-2] + "'s"):
+            return True
+        if candidate.endswith("'") and self._known(candidate[:-1]):
+            return True
+        return self._stems(candidate)
+
+    def knows(self, word: str) -> bool:
+        """True when misaki reads `word` (letters and apostrophes) from its lexicon."""
+        word = unicodedata.normalize("NFKC", word.replace("’", "'").replace("‘", "'"))
+        if word not in self._cache:
+            parts = misaki_subtokens(word)
+            if word.lower() in self.echo_words:
+                known = True
+            elif misaki_splits_camel_case(word, parts):
+                # `SaaS` is a lexicon key, but misaki reads `Saa` and `S` apart.
+                known = all(self._resolves(part) for part in parts if re.search(_LETTER, part))
+            else:
+                known = self._resolves(word)
+                if not known:
+                    parts = SUBTOKEN.findall(word)
+                    known = len(parts) > 1 and all(self._resolves(part) for part in parts)
+            self._cache[word] = known
+        return self._cache[word]
+
+
+def installed_renderer_resources(source_sha: str, renderer_root: str | None) -> Path:
+    """EchoNarrationResources of the installed renderer the narration wrapper would select."""
+    scripts = str(Path(__file__).resolve().parent)
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    try:
+        import echo_installed_renderer as installed
+
+        if not re.fullmatch(r"[0-9a-f]{40}", source_sha):
+            raise ValueError("APPROVED_ECHO_PRONUNCIATION_SHA must be a 40-character commit SHA")
+        root = installed.canonical_renderer_root(renderer_root)
+        selector = installed.strict_json_object(root / source_sha / "approved-renderer.json",
+                                                "renderer selector")
+        manifest = selector.get("manifestSHA256")
+        if selector.get("echoSourceSHA") != source_sha or not isinstance(manifest, str) \
+                or not re.fullmatch(r"[0-9a-f]{64}", manifest):
+            raise ValueError("renderer selector doesn't name an installed build for this source")
+        return root / source_sha / manifest / "EchoNarrationResources"
+    except (ImportError, OSError, ValueError) as error:
+        raise InputError(f"cannot find installed Echo renderer {source_sha}: {error}") from error
+
+
+def find_lexicon_dir(explicit: Path | None, environ: Mapping[str, str] | None = None) -> Path:
+    """The directory holding the renderer's us_gold.json and us_silver.json; fails closed."""
+    environ = os.environ if environ is None else environ
+    if explicit is not None:
+        directory = explicit
+    elif environ.get("ECHO_RESOURCE_DIR"):
+        directory = Path(environ["ECHO_RESOURCE_DIR"])
+    elif environ.get("APPROVED_ECHO_PRONUNCIATION_SHA"):
+        directory = installed_renderer_resources(environ["APPROVED_ECHO_PRONUNCIATION_SHA"],
+                                                 environ.get("ECHO_RENDERER_ROOT") or None)
+    else:
+        raise InputError("cannot find the renderer's lexicon, so the check can't tell which words Echo "
+                         "would guess. Pass --lexicon-dir <renderer>/EchoNarrationResources, or set "
+                         "APPROVED_ECHO_PRONUNCIATION_SHA to the Echo renderer you will narrate with")
+    missing = [name for name in LEXICON_FILES if not (directory / name).is_file()]
+    if missing:
+        raise InputError(f"renderer lexicon directory {directory} lacks {', '.join(missing)}; point "
+                         "--lexicon-dir at the renderer's EchoNarrationResources")
+    return directory
+
+
 # ---------------------------------------------------------------- check
 
 
-def check(epub: Epub) -> tuple[list[str], list[str]]:
+class _Tally:
+    """Problems grouped by word: count plus the first place each was seen."""
+
+    def __init__(self) -> None:
+        self.counts: Counter[tuple[str, str]] = Counter()
+        self.first: dict[tuple[str, str], tuple[str, str]] = {}
+
+    def add(self, kind: str, word: str, doc: str, context: str) -> None:
+        self.counts[(kind, word)] += 1
+        self.first.setdefault((kind, word), (doc, context))
+
+    def items(self):
+        for key, (doc, context) in self.first.items():
+            yield key[0], key[1], self.counts[key], doc, context
+
+
+def hyphen_initialism_errors(epub: Epub) -> list[str]:
+    """`A-I`, `A-P-I`: Echo reads the capital A as the article ("uh-EYE")."""
+    tally = _Tally()
+    for name, doc in epub.docs.items():
+        for block in doc.blocks.values():
+            text, where = doc.block_text(block)
+            for m in HYPHEN_INITIALISM.finditer(text):
+                seg = doc.segments[where[m.start()][0]]
+                if not seg.annotated and not seg.in_pre:
+                    tally.add("initialism", m.group(0), name, context_of(text, m.start(), m.end()))
+        for alt in doc.alts:
+            for m in HYPHEN_INITIALISM.finditer(alt):
+                tally.add("initialism", m.group(0), name, "image alt text: " + context_of(alt, m.start(), m.end()))
+    return [f"{doc}: '{word}' x{count} spells an initialism with hyphens, so Echo reads each letter as its "
+            f"own word and a capital A as the article 'uh' (A-I becomes 'uh-EYE'); write the closed form "
+            f"({word.replace('-', '')}) and give it one reading for the whole book, or, if the letters stand "
+            f"apart (A-Z, an X-Y plane), keep the hyphen and give each use an inline reading: {context}"
+            for _, word, count, doc, context in tally.items()]
+
+
+def _pls_patterns(epub: Epub) -> list[re.Pattern]:
+    """One pattern per PLS grapheme, with the word edges Echo's applyLexicons uses."""
+    return [re.compile(r"(?<![\w'’])" + re.escape(g) + r"(?![\w'’])")
+            for g in sorted({g for _, entries in epub.lexicons for g, _ in entries if g})]
+
+
+def _pls_matches(epub: Epub, doc: Doc, text: str, rxs: list[re.Pattern]) -> list[tuple[int, int]]:
+    """Where Echo applies the PLS in this block: only in documents that link it."""
+    if not epub.linked_lexicon(doc):
+        return []
+    return [(m.start(), m.end()) for rx in rxs for m in rx.finditer(text)]
+
+
+def _spoken_tokens(epub: Epub):
+    """(doc, token, start, end, block text, block annotated) for narrated text with no IPA
+    from a span or the PLS. A block is annotated when it has an inline span or a PLS
+    match: Echo stores both as pronunciation spans and then skips its text expansion."""
+    rxs = _pls_patterns(epub)
+    for name, doc in epub.docs.items():
+        for block in doc.blocks.values():
+            text, where = doc.block_text(block)
+            covered = _pls_matches(epub, doc, text, rxs)
+            annotated = block.has_span or bool(covered)
+            for m in TOKEN.finditer(text):
+                segments = [doc.segments[si] for si in {where[i][0] for i in range(m.start(), m.end())}]
+                if any(s.annotated or s.in_pre or s.unsupported in NOT_NARRATED for s in segments):
+                    continue
+                if any(a < m.end() and m.start() < b for a, b in covered):
+                    continue
+                yield name, m.group(0), m.start(), m.end(), text, annotated
+
+
+def _whole_token(rx: re.Pattern, text: str, offset: int, length: int) -> bool:
+    """True when `rx` matches exactly `length` characters of `text` at `offset`."""
+    m = rx.match(text, offset)
+    return m is not None and m.end() == offset + length
+
+
+def spoken_token_errors(epub: Epub, lexicon: RendererLexicon | None) -> list[str]:
+    """Tokens Echo would mangle or guess. Without a lexicon, only the shape rules run."""
+    tally = _Tally()
+    for name, chunk, start, end, text, annotated_block in _spoken_tokens(epub):
+        token = re.sub(r"^[\W_]+|[\W_]+$", "", chunk)
+        offset = start + max(chunk.find(token), 0)
+        context = context_of(text, offset, offset + len(token))
+        if not annotated_block:
+            # Echo's text expansion runs only here; an annotated block reads every token raw.
+            if GLUED_ABBREVIATION.search(chunk):
+                tally.add("glued", token, name, context)
+                continue
+            if _whole_token(MS_TITLE, text, offset, len(token) + 1):
+                tally.add("miz", token, name, context)
+                continue
+            if _whole_token(EXPANDED_ABBREVIATION, text, offset, len(token) + 1) \
+                    or _whole_token(EXPANDED_UNIT, text, offset, len(token)):
+                continue
+        if not re.search(r"[^\W\d_]", token):
+            continue                                    # numbers and punctuation
+        for part in re.split(r"[-_‐‑]+", token):
+            if not re.search(r"[^\W\d_]", part):
+                continue
+            if re.search(r"[^\W_]\.[^\W\d_]", part):
+                # U.S., e.g. and Ph.D. are read as letters, also before a hyphen (U.S.-based);
+                # in an annotated block the numeral and file-name rule already asks for a reading.
+                if any(len(piece) > 2 for piece in part.split(".")) and not annotated_block:
+                    tally.add("dotted", part, name, context)
+                continue
+            if re.search(r"\d", part):
+                if annotated_block:
+                    continue
+                for run in re.finditer(r"[^\W\d_]+", part):
+                    letters = run.group(0)
+                    after_number = run.start() > 0 and part[run.start() - 1].isdigit()
+                    if len(letters) < 2 or letters.isupper() \
+                            or (after_number and letters.lower() in NUMBER_SUFFIXES) \
+                            or (lexicon.knows(letters) if lexicon else not after_number):
+                        continue
+                    tally.add("unit", part, name, context)
+                    break
+            elif lexicon is not None and not lexicon.knows(part):
+                tally.add("fallback", part, name, context)
+    messages = {
+        "glued": "is followed by a period, and Echo's text expansion reads its Mr., Mrs., Ms. or Dr. ending "
+                 "as a title ('LLMs.' becomes 'LLMiz'); give it a reading or reword so no period follows it",
+        "dotted": "has a period inside it, so Echo reads it as one unknown word and guesses; write it in "
+                  "words (for example 'Claude dot AI') or give it a reading",
+        "unit": "joins a number to letters Echo can't read, so it guesses them; write it out (for example "
+                "'five percentage points') or give it a reading",
+        "miz": "is a title that Echo's text expansion reads as 'Miz', a word the renderer guesses; drop "
+               "the title, or give it a reading (an annotated block skips the expansion)",
+        "fallback": "isn't in the renderer's lexicon, so Echo would guess it by letter rules; give it IPA "
+                    "(a lexicon entry, or a reading at each use)",
+    }
+    return [f"{doc}: '{word}' x{count} {messages[kind]}: {context}"
+            for kind, word, count, doc, context in tally.items()]
+
+
+def heteronym_errors(epub: Epub) -> list[str]:
+    """Every heteronym needs an inline reading: headings, number blocks and compounds too."""
+    errors = []
+    for name, doc in epub.docs.items():
+        for block in doc.blocks.values():
+            text, where = doc.block_text(block)
+            for m in HETERONYM_RX.finditer(text):
+                seg = doc.segments[where[m.start()][0]]
+                if seg.annotated or seg.in_pre:
+                    continue
+                if seg.unsupported:
+                    errors.append(f"{name}: '{m.group(0)}' in <{seg.unsupported}> can't carry IPA; reword it "
+                                  f"or move it out: {context_of(text, m.start(), m.end())}")
+                else:
+                    errors.append(f"{name}: '{m.group(0)}' has no IPA reading: {context_of(text, m.start(), m.end())}")
+        for alt in doc.alts:
+            for m in HETERONYM_RX.finditer(alt):
+                errors.append(f"{name}: '{m.group(0)}' in image alt text can't carry IPA; reword it: "
+                              f"{context_of(alt, m.start(), m.end())}")
+    return errors
+
+
+def check(epub: Epub, lexicon: RendererLexicon | Callable[[], RendererLexicon] | None = None
+          ) -> tuple[list[str], list[str]]:
+    """The narration gate. `lexicon` (or a loader for it) turns on the word-coverage rule."""
     errors: list[str] = []
     warnings: list[str] = []
     narrated_words = sum(len(d.visible_text().split()) for d in epub.docs.values())
     if not narrated_words:
         return errors, ["no narrated text found; nothing to pronounce"]
+    if callable(lexicon):
+        lexicon = lexicon()
     graphemes = {word for _, entries in epub.lexicons for g, _ in entries for word in [g, *g.split()]}
+    pls_rxs = _pls_patterns(epub)
     any_ipa = False
     for name, doc in epub.docs.items():
         linked = epub.linked_lexicon(doc)
@@ -319,21 +733,14 @@ def check(epub: Epub) -> tuple[list[str], list[str]]:
             errors.append(f"{name}: nested ssml:ph spans")
         for block in doc.blocks.values():
             text, where = doc.block_text(block)
-            for m in MANDATORY_RX.finditer(text):
-                si, _ = where[m.start()]
-                seg = doc.segments[si]
-                if seg.annotated:
-                    continue
-                if seg.unsupported:
-                    errors.append(f"{name}: '{m.group(0)}' in <{seg.unsupported}> can't carry IPA; reword it "
-                                  f"or move it out: {context_of(text, m.start(), m.end())}")
-                else:
-                    errors.append(f"{name}: '{m.group(0)}' has no IPA reading: {context_of(text, m.start(), m.end())}")
-            if not block.has_span:
+            pls = _pls_matches(epub, doc, text, pls_rxs)
+            if not block.has_span and not pls:
                 continue
             for m in RAW_TOKEN.finditer(text):
                 si, _ = where[m.start()]
-                if doc.segments[si].annotated:
+                if doc.segments[si].annotated or doc.segments[si].in_pre:
+                    continue
+                if any(a < m.end() and m.start() < b for a, b in pls):
                     continue
                 errors.append(f"{name}: '{m.group(0)}' sits in an annotated block, where Echo skips text "
                               f"expansion; add a reading for it: {context_of(text, m.start(), m.end())}")
@@ -342,16 +749,15 @@ def check(epub: Epub) -> tuple[list[str], list[str]]:
                 if not doc.segments[si].annotated and m.group(0) not in graphemes:
                     warnings.append(f"{name}: '{m.group(0)}' sits unexpanded in an annotated block; "
                                     "consider a lexicon entry")
-        for alt in doc.alts:
-            for m in MANDATORY_RX.finditer(alt):
-                errors.append(f"{name}: '{m.group(0)}' in image alt text can't carry IPA; reword it: "
-                              f"{context_of(alt, m.start(), m.end())}")
+    errors.extend(heteronym_errors(epub))
+    errors.extend(hyphen_initialism_errors(epub))
+    errors.extend(spoken_token_errors(epub, lexicon))
     for href, entries in epub.lexicons:
         for grapheme, phoneme in entries:
             problem = check_ipa(phoneme)
             if problem:
                 errors.append(f"{href}: lexeme {grapheme!r}: {problem}")
-            if grapheme.lower() in MANDATORY:
+            if grapheme.lower() in HETERONYM_SET:
                 errors.append(f"{href}: {grapheme!r} reads differently by sense; give each occurrence "
                               "an inline reading instead of a lexicon entry")
             rx = re.compile(r"(?<![\w'’])" + re.escape(grapheme) + r"(?![\w'’])")
@@ -375,20 +781,32 @@ def check(epub: Epub) -> tuple[list[str], list[str]]:
 # ---------------------------------------------------------------- scan
 
 
-def scan(epub: Epub) -> list[dict]:
-    watch = re.compile(WORD_EDGE_L + "(" + "|".join(map(re.escape, sorted(set(WATCH), key=len, reverse=True)))
-                       + ")" + WORD_EDGE_R)
+def scan(epub: Epub, lexicon: RendererLexicon | None = None) -> list[dict]:
+    """Candidates by kind: mandatory (heteronyms), watch, token, caps, hyphen-initialism
+    and, with a lexicon, fallback (words Echo would guess)."""
+    kinds = [("mandatory", HETERONYM_RX), ("watch", SCAN_ONLY_RX), ("token", RAW_TOKEN), ("caps", CAPS),
+             ("hyphen-initialism", HYPHEN_INITIALISM)]
     rows = []
     for name, doc in epub.docs.items():
         for bi, block in enumerate(doc.blocks.values()):
             text, where = doc.block_text(block)
-            for kind, rx in (("mandatory", MANDATORY_RX), ("watch", watch), ("token", RAW_TOKEN), ("caps", CAPS)):
+            for kind, rx in kinds:
                 for m in rx.finditer(text):
                     seg = doc.segments[where[m.start()][0]]
+                    if seg.in_pre:
+                        continue                        # Echo speaks "Code listing." for <pre>
                     rows.append({"doc": posixpath.basename(name), "block": bi, "tag": block.tag, "kind": kind,
                                  "word": m.group(0), "annotated": seg.annotated,
                                  "surface": seg.unsupported or block.tag,
                                  "context": " ".join(text[max(0, m.start() - 50):m.end() + 50].split())})
+    if lexicon is not None:
+        for name, chunk, start, end, text, _ in _spoken_tokens(epub):
+            token = re.sub(r"^[\W_]+|[\W_]+$", "", chunk)
+            for part in re.split(r"[-_‐‑]+", token):
+                if re.fullmatch(r"[^\W\d_]+(?:['’][^\W\d_]+)*", part) and not lexicon.knows(part):
+                    rows.append({"doc": posixpath.basename(name), "block": None, "tag": "", "kind": "fallback",
+                                 "word": part, "annotated": False, "surface": "",
+                                 "context": " ".join(text[max(0, start - 50):end + 50].split())})
     return rows
 
 
@@ -450,7 +868,7 @@ def load_decisions(path: Path) -> dict:
         for g in graphemes:
             if not isinstance(g, str) or not g.strip() or len(g) > 200:
                 problems.append(f"{where}: bad grapheme {g!r}")
-            elif g.lower() in MANDATORY:
+            elif g.lower() in HETERONYM_SET:
                 problems.append(f"{where}: {g!r} reads differently by sense; use per-occurrence readings")
             elif g in owner and owner[g] != lex.get("ipa"):
                 problems.append(f"{where}: {g!r} already has the pronunciation {owner[g]!r}")
@@ -530,7 +948,8 @@ def apply_dictionary(epub_path: Path) -> None:
     out.replace(epub_path)
 
 
-def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls", *, validate: bool = True) -> tuple[list[dict], list[str]]:
+def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls", *, validate: bool = True,
+          lexicon: RendererLexicon | None = None) -> tuple[list[dict], list[str]]:
     # Rebuild shared spans so later per-book decisions can replace defaults.
     for name, doc in list(epub.docs.items()):
         source = re.sub(r'<span ssml:ph="[^"]*" data-pronunciation="shared">([^<]*)</span>',
@@ -552,12 +971,21 @@ def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls
         edits.setdefault(name, {}).setdefault(si, []).append((a, b, d["ipa"]))
         report.append({"doc": posixpath.basename(name), "word": d["word"], "ipa": d["ipa"],
                        "context": d["context"], "kind": "occurrence"})
+    # A PLS match is a pronunciation span in Echo too, so token readings reach its block.
+    # The book's own PLS applies where a document links it; this run's lexicon is linked
+    # to every document that it writes.
+    book_pls = _pls_patterns(epub)
+    run_pls = [re.compile(r"(?<![\w'’])" + re.escape(g) + r"(?![\w'’])")
+               for g in sorted({g for lex in decisions.get("lexicon", []) for g in lex["graphemes"] if g})]
     for name, doc in epub.docs.items():
         doc_edits = edits.get(name, {})
+        pls_rxs = run_pls + (book_pls if epub.linked_lexicon(doc) else [])
         for block in doc.blocks.values():
             shared_match = any(word_rx(entry["text"]).search(doc.segments[si].text)
                                for si in block.segments for entry in dictionary["entries"])
-            if not block.has_span and not any(si in doc_edits for si in block.segments) and not shared_match:
+            pls_match = bool(pls_rxs) and any(rx.search(doc.block_text(block)[0]) for rx in pls_rxs)
+            if not block.has_span and not any(si in doc_edits for si in block.segments) \
+                    and not shared_match and not pls_match:
                 continue
             for r in decisions.get("readings", []):
                 rx = word_rx(r["text"])
@@ -649,7 +1077,7 @@ def apply(epub: Epub, decisions: dict, out: Path, lexicon_name: str = "names.pls
                 z.writestr(info, epub.zip.read(info.filename))
         if pls_path:
             z.writestr(pls_path, build_pls(decisions["lexicon"], lang))
-    errors, warnings = check(Epub(tmp)) if validate else ([], [])
+    errors, warnings = check(Epub(tmp), lexicon) if validate else ([], [])
     if errors:
         tmp.unlink()
         raise CheckFailed(errors, warnings)
@@ -700,38 +1128,50 @@ def build_pls(entries: list[dict], lang: str) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = parser.add_subparsers(dest="command", required=True)
+    lexicon_help = "the renderer's EchoNarrationResources directory (holds us_gold.json and us_silver.json)"
     p_scan = sub.add_parser("scan", help="list pronunciation candidates in narrated text")
     p_scan.add_argument("--epub", required=True, type=Path)
     p_scan.add_argument("--out", type=Path, help="write JSON here instead of stdout")
+    p_scan.add_argument("--lexicon-dir", type=Path, help=lexicon_help + "; adds words Echo would guess")
     p_apply = sub.add_parser("apply", help="embed decisions into a new EPUB")
     p_apply.add_argument("--epub", required=True, type=Path)
     p_apply.add_argument("--decisions", required=True, type=Path)
     p_apply.add_argument("--out", required=True, type=Path)
     p_apply.add_argument("--report", type=Path, help="write the embedded decisions as JSON")
+    p_apply.add_argument("--lexicon-dir", type=Path, help=lexicon_help + "; also checks word coverage")
     p_check = sub.add_parser("check", help="the narration gate")
     p_check.add_argument("--epub", required=True, type=Path)
+    p_check.add_argument("--lexicon-dir", type=Path,
+                         help=lexicon_help + "; default $ECHO_RESOURCE_DIR, then the installed renderer "
+                              "named by $APPROVED_ECHO_PRONUNCIATION_SHA")
     try:
         args = parser.parse_args(argv)
     except SystemExit as exit_:
         return 0 if exit_.code == 0 else 64
     try:
         if args.command == "scan":
-            rows = scan(Epub(args.epub))
+            lexicon = RendererLexicon.load(find_lexicon_dir(args.lexicon_dir)) if args.lexicon_dir else None
+            rows = scan(Epub(args.epub), lexicon)
             payload = json.dumps(rows, ensure_ascii=False, indent=1) + "\n"
             if args.out:
                 args.out.write_text(payload, encoding="utf-8")
             else:
                 sys.stdout.write(payload)
-            kinds = {k: sum(1 for r in rows if r["kind"] == k) for k in ("mandatory", "watch", "token", "caps")}
+            names = ("mandatory", "watch", "token", "caps", "hyphen-initialism", "fallback")
+            kinds = {k: sum(1 for r in rows if r["kind"] == k) for k in names}
             open_mandatory = sum(1 for r in rows if r["kind"] == "mandatory" and not r["annotated"])
-            print(f"candidates: {kinds}; content/record/read without IPA: {open_mandatory}", file=sys.stderr)
+            print(f"candidates: {kinds}; heteronyms without IPA: {open_mandatory}", file=sys.stderr)
+            if lexicon is None:
+                print("words Echo would guess aren't listed; pass --lexicon-dir to add them", file=sys.stderr)
             return 0
         if args.command == "apply":
             if args.out.resolve() == args.epub.resolve():
                 print("apply writes a new EPUB; --out must differ from --epub", file=sys.stderr)
                 return 64
+            lexicon = RendererLexicon.load(find_lexicon_dir(args.lexicon_dir)) if args.lexicon_dir else None
             try:
-                report, warnings = apply(Epub(args.epub), load_decisions(args.decisions), args.out)
+                report, warnings = apply(Epub(args.epub), load_decisions(args.decisions), args.out,
+                                         lexicon=lexicon)
             except CheckFailed as failed:
                 for line in failed.errors:
                     print(f"ERROR {line}", file=sys.stderr)
@@ -745,8 +1185,12 @@ def main(argv: list[str] | None = None) -> int:
             occurrences = sum(1 for r in report if r["kind"] == "occurrence")
             print(f"embedded {occurrences} occurrence and {len(report) - occurrences} token readings; "
                   f"wrote {args.out}")
+            if lexicon is None:
+                print("word coverage wasn't checked; run check (it finds the renderer lexicon) before "
+                      "narration", file=sys.stderr)
             return 0
-        errors, warnings = check(Epub(args.epub))
+        errors, warnings = check(Epub(args.epub),
+                                 lambda: RendererLexicon.load(find_lexicon_dir(args.lexicon_dir)))
         for line in warnings:
             print(f"warning {line}", file=sys.stderr)
         for line in errors:

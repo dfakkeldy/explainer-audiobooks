@@ -75,6 +75,17 @@ INSTALLED_RENDERER = (
 )
 
 ACCEPTED_INSTALLER_SHA = "2f23aceedb1b9f25b7ea4410756eea32a59af8cd"
+# Every word the narrated fixture EPUBs speak, here and in
+# test_fiction_audiobook_integration, as the fake renderer's lexicon.
+FIXTURE_LEXICON = tuple(
+    """
+    one keep a record of what you read
+    and answering at beacon bells boat by carried chapter chart counted dan dawn
+    distant down ensemble faced find folded for found go harbor held is ivo knot
+    lantern last leave lit narrator now oars quietly rain said signal smiled storm
+    the three tide tied to took two waited waiting watched we without
+    """.split()
+)
 ACCEPTED_SOURCE_SHA = "81a635df84f75f2e391706e071878b379e6fe0a0"
 REQUIRED_CAPABILITIES = (
     "--cover",
@@ -427,6 +438,13 @@ class EchoPronunciationPreflightTests(unittest.TestCase):
         (resources / "pronunciations.json").write_text(
             json.dumps({"renderVersion": render_version}) + "\n", encoding="utf-8"
         )
+        # The preflight checks narrated words against the renderer's misaki lexicon.
+        (resources / "us_gold.json").write_text(
+            json.dumps({word: "x" for word in FIXTURE_LEXICON}) + "\n", encoding="utf-8"
+        )
+        (resources / "us_silver.json").write_text(
+            json.dumps({"fixture": "x"}) + "\n", encoding="utf-8"
+        )
         emitter = resources / "fake_echo_emit.py"
         emitter_source = """#!/usr/bin/env python3
 import hashlib, json, os, pathlib, sys
@@ -518,6 +536,15 @@ if os.environ.get("FAKE_EMIT_REEL"):
         "bookRelativeAudioRange": {"start": 0.1, "end": 0.5},
         "timingPrecision": "exactSynthesisWord",
     }]
+if os.environ.get("FAKE_EMIT_FALLBACK"):
+    audit["watchCounts"]["labeller"] = 1
+    audit["decisions"].append({
+        "blockID": "s2-b3" if resolved_plan is not None else "block-1", "wordStart": 5, "wordEnd": 5,
+        "normalizedWord": "labeller", "sourceWord": "labeller",
+        "sourceContext": "the team kept the old labeller, and the numbers rose by three",
+        "selectedIPA": "lˈæbɛlɛɹ", "kokoroTokenIDs": [1], "source": "fallback",
+        "ruleID": "g2p.fallback.labeller", "rationale": "fixture fallback",
+    })
 if not os.environ.get("FAKE_SKIP_AUDIT"):
     out.with_suffix(".pronunciation-audit.json").write_text(json.dumps(audit))
 """
@@ -2554,6 +2581,48 @@ if not os.environ.get("FAKE_SKIP_AUDIT"):
         self.assertEqual(
             hashlib.sha256(reel.read_bytes()).hexdigest(), success["reelSHA256"]
         )
+
+    def test_pronunciation_gate_refuses_a_render_with_guessed_words(self) -> None:
+        environment = self.environment()
+        environment["FAKE_EMIT_FALLBACK"] = "1"
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(65, result.returncode, result.stderr)
+        self.assertIn("FAIL fallback 'labeller' x1", result.stderr)
+        self.assertIn("pronunciation gate failed", result.stderr)
+        research = self.run_root / "research"
+        self.assertFalse((research / "echo-render-current-accepted.json").exists())
+        self.assertEqual([], list(research.glob("echo-render-success-*.json")))
+        audits = list((self.run_root / "dist" / "echo-renders").glob("*/*/fixture.pronunciation-audit.json"))
+        self.assertEqual(1, len(audits), "the refused render stays for diagnosis")
+
+    def test_pronunciation_gate_accept_file_lists_words_that_cannot_be_fixed(self) -> None:
+        environment = self.environment()
+        environment["FAKE_EMIT_FALLBACK"] = "1"
+        research = self.run_root / "research"
+        research.mkdir(parents=True, exist_ok=True)
+        (research / "pronunciation-gate-accepted.json").write_text(
+            json.dumps({"schemaVersion": 1, "accepted": [
+                {"check": "fallback", "word": "labeller", "reason": "fixture: accepted guess"}]}),
+            encoding="utf-8",
+        )
+
+        result = self.run_narrate(environment=environment)
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("accepted fallback 'labeller' x1: fixture: accepted guess", result.stderr)
+        self.assertTrue((research / "echo-render-current-accepted.json").is_file())
+
+    def test_preflight_refuses_a_word_missing_from_the_renderer_lexicon(self) -> None:
+        self.write_narrated_fixture_epub(
+            '<p>Keep a <span ssml:ph="ˈɹɛkɚd">record</span> of the labeller.</p>'
+        )
+        result = self.run_preflight()
+        self.assertEqual(65, result.returncode, result.stderr)
+        self.assertIn("'labeller' x1 isn't in the renderer's lexicon", result.stderr)
+        self.assertNotIn("'the' x1", result.stderr)
+        self.assertIn("EPUB pronunciation check failed", result.stderr)
 
     def test_block_narration_contains_review_media_outside_the_attempt(self) -> None:
         """Block-plan output publishes only delivery media into an attempt."""
